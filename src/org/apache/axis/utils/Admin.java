@@ -68,10 +68,8 @@ import org.apache.axis.encoding.*;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.Transport;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.transport.http.HTTPConstants;
 
 import org.w3c.dom.* ;
-import javax.servlet.http.*;
 
 /**
  * Handy static utility functions for turning XML into
@@ -279,21 +277,25 @@ public class Admin {
              */
             
             /** For now, though - make sure we can only admin from our own
-             * IP.
+             * IP, unless the remoteAdmin option is set.
              */
-            HttpServletRequest req =
-                     (HttpServletRequest)msgContext.
-                          getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
-            if (req != null) {
-                String remoteIP = req.getRemoteAddr();
-                if (!remoteIP.equals("127.0.0.1")) {
-                    InetAddress myAddr = InetAddress.getLocalHost();
-                    InetAddress remoteAddr = InetAddress.getByName(remoteIP);
-             
-                    if (!myAddr.equals(remoteAddr))
-                        throw new AxisFault("Server.Unauthorized",
-                            "Remote admin access is not allowed! ",
-                            null, null);
+            String remoteAdmin = (String)msgContext.getServiceHandler().
+                                            getOption("enableRemoteAdmin");
+            if ((remoteAdmin == null) ||
+                !remoteAdmin.equals("true")) {
+                String remoteIP =
+                            msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
+                if (remoteIP != null) {
+                    if (!remoteIP.equals("127.0.0.1")) {
+                        InetAddress myAddr = InetAddress.getLocalHost();
+                        InetAddress remoteAddr =
+                                            InetAddress.getByName(remoteIP);
+                        
+                        if (!myAddr.equals(remoteAddr))
+                            throw new AxisFault("Server.Unauthorized",
+                                "Remote admin access is not allowed! ",
+                                null, null);
+                    }
                 }
             }
             

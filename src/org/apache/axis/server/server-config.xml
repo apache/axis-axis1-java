@@ -27,6 +27,7 @@
   <service name="AdminService" pivot="MsgDispatcher">
    <option name="className" value="org.apache.axis.utils.Admin"/>
    <option name="methodName" value="AdminService"/>
+   <option name="enableRemoteAdmin" value="false"/>
   </service>
 
   <!-- An echo service for testing -->

@@ -121,6 +121,7 @@ public class AxisServlet extends HttpServlet {
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
+        msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
         
         /* Save the SOAPAction header in the MessageContext bag - this will */
         /* be used to tell the Axis Engine which service is being invoked.  */
