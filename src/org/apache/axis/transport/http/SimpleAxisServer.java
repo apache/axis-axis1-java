@@ -191,6 +191,8 @@ public class SimpleAxisServer implements Runnable {
         StringBuffer cookie = new StringBuffer();
         StringBuffer cookie2 = new StringBuffer();
         StringBuffer authInfo = new StringBuffer();
+        StringBuffer contentType= new StringBuffer();
+        StringBuffer contentLocation= new StringBuffer();
         
         Message responseMsg = null;
 
@@ -242,7 +244,8 @@ public class SimpleAxisServer implements Runnable {
                     // read headers
                     is.setInputStream(socket.getInputStream());
                     // parse all headers into hashtable
-                    int contentLength = parseHeaders(is, soapAction,
+                    int contentLength = parseHeaders(is, contentType,
+                                                     contentLocation, soapAction,
                                                      httpRequest, fileName,
                                                      cookie, cookie2, authInfo);
                     is.setContentLength(contentLength);
@@ -345,7 +348,11 @@ public class SimpleAxisServer implements Runnable {
                         msgContext.setUseSOAPAction(true);
                         msgContext.setSOAPActionURI(soapActionString);
                     }
-                    requestMsg = new Message(is);
+                    requestMsg = new Message(is,
+                                             false,
+                                             contentType.toString(),
+                                             contentLocation.toString()
+                                            );
                     msgContext.setRequestMessage(requestMsg);
 
                     // set up session, if any
@@ -431,24 +438,27 @@ public class SimpleAxisServer implements Runnable {
                 OutputStream out = socket.getOutputStream();
                 out.write(HTTP);
                 out.write(status);
-                out.write(XML_MIME_STUFF);
-                putInt(out, response.length);
+                //out.write(XML_MIME_STUFF);
+                out.write(("\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType()).getBytes()); 
+                out.write(("\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes()); 
+                // putInt(out, response.length);
 
-                if (doSessions) {
+                if (doSessions && null != cooky && 0 != cooky.trim().length()) {
                     // write cookie headers, if any
                     // don't sweat efficiency *too* badly
                     // optimize at will
                     StringBuffer cookieOut = new StringBuffer();
-                    cookieOut.append("\r\nSet-Cookie: ")
+                    cookieOut.append("\nSet-Cookie: ")
                         .append(cooky)
-                        .append("\r\nSet-Cookie2: ")
+                        .append("\nSet-Cookie2: ")
                         .append(cooky);
                     // OH, THE HUMILITY!  yes this is inefficient.
                     out.write(cookieOut.toString().getBytes());
                 }
 
                 out.write(SEPARATOR);
-                out.write(response);
+                responseMsg.writeContentToStream(out);
+               // out.write(response);
                 out.flush();
 
                 if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
@@ -487,6 +497,14 @@ public class SimpleAxisServer implements Runnable {
     // mime header for content length
     private static final byte lenHeader[] = "content-length: ".getBytes();
     private static final int lenLen = lenHeader.length;
+
+    // mime header for content type
+    private static final byte typeHeader[] = (HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase() +": ").getBytes();
+    private static final int typeLen = typeHeader.length;
+
+    // mime header for content location
+    private static final byte locationHeader[] = (HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase()+": ").getBytes();
+    private static final int locationLen = locationHeader.length;
 
     // mime header for soap action
     private static final byte actionHeader[] = "soapaction: ".getBytes();
@@ -527,15 +545,21 @@ public class SimpleAxisServer implements Runnable {
      * @param off       starting offset into the byte array
      * @param len       maximum number of bytes to read
      */
-    private int readLine(InputStream is, byte[] b, int off, int len)
+    private int readLine(NonBlockingBufferedInputStream is, byte[] b, int off, int len)
         throws IOException
     {
         int count = 0, c;
 
         while ((c = is.read()) != -1) {
-            b[off++] = (byte)c;
-            count++;
-            if (c == '\n' || count == len) break;
+            if(c != '\n' && c != '\r'){
+              b[off++] = (byte)c;
+              count++;
+            }
+            if (count == len) break;
+            if( '\n' == c ){
+              int peek= is.peek(); //If the next line begins with tab or space then this is a continuation.
+              if(peek != ' ' && peek != '\t') break;
+            }
         }
         return count > 0 ? count : -1;
     }
@@ -544,13 +568,17 @@ public class SimpleAxisServer implements Runnable {
      * Read all mime headers, returning the value of Content-Length and
      * SOAPAction.
      * @param is         InputStream to read from
+     * @param contentType The content type. 
+     * @param contentLocation The content location
      * @param soapAction StringBuffer to return the soapAction into
      * @param httpRequest StringBuffer for GET / POST
      * @param cookie first cookie header (if doSessions)
      * @param cookie2 second cookie header (if doSessions)
      * @return Content-Length
      */
-    private int parseHeaders(InputStream is,
+    private int parseHeaders(NonBlockingBufferedInputStream is,
+                             StringBuffer contentType,
+                             StringBuffer contentLocation,
                              StringBuffer soapAction,
                              StringBuffer httpRequest,
                              StringBuffer fileName,
@@ -572,6 +600,8 @@ public class SimpleAxisServer implements Runnable {
         // which does it begin with?
         httpRequest.delete(0, httpRequest.length());
         fileName.delete(0, fileName.length());
+        contentType.delete(0, contentType.length());
+        contentLocation.delete(0, contentLocation.length());
 
         if (buf[0] == getHeader[0]) {
             httpRequest.append("GET");
@@ -596,9 +626,9 @@ public class SimpleAxisServer implements Runnable {
             throw new IOException(JavaUtils.getMessage("badRequest00"));
         }
 
+        StringBuffer lastbuf=null; 
         while ((n=readLine(is,buf,0,buf.length)) > 0) {
 
-            // if we are at the separator blank line, bail right now
             if ((n<=2) && (buf[0]=='\n'||buf[0]=='\r') && (len>0)) break;
 
             // RobJ gutted the previous logic; it was too hard to extend for more headers.
@@ -670,6 +700,18 @@ public class SimpleAxisServer implements Runnable {
                     throw new IOException(
                             JavaUtils.getMessage("badAuth00"));
                 }
+            }
+            else if (endHeaderIndex == locationLen && matches(buf, locationHeader)) {
+                    while (++i<n && (buf[i]!='\r') && (buf[i]!='\n')) {
+                        if (buf[i]==' ') continue;
+                        contentLocation.append((char)(buf[i] & 0x7f));
+                    }
+            }
+            else if (endHeaderIndex == typeLen&& matches(buf, typeHeader)) {
+                    while (++i<n && (buf[i]!='\r') && (buf[i]!='\n')) {
+                        if (buf[i]==' ') continue;
+                        contentType.append((char)(buf[i] & 0x7f));
+                    }
             }
 
         }

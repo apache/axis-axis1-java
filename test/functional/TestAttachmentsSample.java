@@ -86,7 +86,7 @@ public class TestAttachmentsSample extends TestCase {
     
     public void doTestAttachments2() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echo("samples/attachments");
+        boolean res = new EchoAttachment(opts).echoDir("samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
     
