@@ -436,41 +436,11 @@ public class Utils {
      */
     public static String xmlNameToJava(String name)
     {
-        char[] nameArray = name.toCharArray();
-        int len = name.length();
-        StringBuffer result = new StringBuffer(len);
-        
-        // First character, lower case
-        int i = 0;
-        while (i < name.length() 
-                && !Character.isLetter(nameArray[i])) {
-            i++;
-        }
-        result.append( Character.toLowerCase(nameArray[i]) );
-        
-        // The rest of the string
-        boolean wordStart = false;
-        for(int j = i + 1; j < len; ++j) {
-            char c = nameArray[j];
-
-            // if this is a bad char, skip it a remember to capitolize next
-            // good character we encounter
-            if( !Character.isLetterOrDigit(c)) {
-                wordStart = true;
-                continue;
-            }
-            result.append( wordStart ? Character.toUpperCase(c) : c );
-            wordStart = false;
-        }
-        
-        // covert back to a String
-        String newName = result.toString();
-        
-        // check for Java keywords
-        if (JavaUtils.isJavaKeyword(newName))
-            newName = JavaUtils.makeNonJavaKeyword(newName);
-        
-        return newName;
+        // NOTE:  This method should really go away and all callers should call
+        // JavaUtils.xmlNameToJava directly.  But there are a lot of them and I wanted
+        // to keep the changes to a minimum.  Besides, these are static methods so the should
+        // be inlined.
+        return JavaUtils.xmlNameToJava(name);
     }
 
     /**

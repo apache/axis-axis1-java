@@ -58,6 +58,9 @@
       <input message="tns:GetAddressFromNameRequest"/>
       <output message="tns:GetAddressFromNameResponse"/>
     </operation>
+    <operation name="Capitalized">
+      <input message="tns:AddEntryRequest"/>
+    </operation>
   </portType>
 
   <!-- binding declns -->
@@ -78,6 +81,19 @@
       </output>
     </operation>
     <operation name="public">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="http://names.wsdl.test/javanames"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="http://names.wsdl.test/javanames"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="Capitalized">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded"
