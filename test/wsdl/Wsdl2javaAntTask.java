@@ -81,6 +81,8 @@ public class Wsdl2javaAntTask extends Task
     private boolean testCase = false;
     private boolean noImports = false;
     private boolean all = false;
+    private boolean helperGen = false;
+    private String factory = null;
     private HashMap namespaceMap = new HashMap();
     private String output = "." ;
     private String deployScope = "";
@@ -95,6 +97,8 @@ public class Wsdl2javaAntTask extends Task
             log("\tverbose:" + verbose, Project.MSG_VERBOSE);
             log("\tserver-side:" + server, Project.MSG_VERBOSE);
             log("\tskeletonDeploy:" + skeletonDeploy, Project.MSG_VERBOSE);
+            log("\thelperGen:" + helperGen, Project.MSG_VERBOSE);
+            log("\tfactory:" + factory, Project.MSG_VERBOSE);
             log("\ttestCase:" + testCase, Project.MSG_VERBOSE);
             log("\tnoImports:" + noImports, Project.MSG_VERBOSE);
             log("\tNStoPkg:" + namespaceMap, Project.MSG_VERBOSE);
@@ -127,6 +131,10 @@ public class Wsdl2javaAntTask extends Task
                 emitter.setNamespaceMap(namespaceMap);
             }
             emitter.generateTestCase(testCase);
+            emitter.helperGen(helperGen);    
+            if (factory != null) {
+                emitter.factory(factory);
+            }   
             emitter.generateImports(!noImports);
             emitter.generateAll(all);
             emitter.setOutputDir(output);
@@ -175,6 +183,16 @@ public class Wsdl2javaAntTask extends Task
     // The setter for the "testcase" attribute
     public void setTestCase(String parameter) {
         this.testCase = Project.toBoolean(parameter);
+    }
+
+    // The setter for the "helperGen" attribute
+    public void setHelperGen(String parameter) {
+        this.helperGen = Project.toBoolean(parameter);
+    }
+
+    // The setter for the "factory" attribute
+    public void setFactory(String parameter) {
+        this.factory = parameter;
     }
 
     // The setter for the "noimports" attribute

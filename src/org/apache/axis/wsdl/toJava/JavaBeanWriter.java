@@ -243,7 +243,13 @@ public class JavaBeanWriter extends JavaWriter {
 
         writeEqualsMethod();
 
-        helper.write(pw);
+        // Write the meta data into a Helper class or
+        // embed it in the bean class
+        if (emitter.getHelperGeneration()) {
+            helper.write(); // separate Helper Class
+        } else {
+            helper.write(pw); // embed in Bean Class
+        }
         pw.println("}");
         pw.close();
     } // writeFileBody

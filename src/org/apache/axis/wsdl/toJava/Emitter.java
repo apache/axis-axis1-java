@@ -114,6 +114,7 @@ public class Emitter {
     protected boolean bVerbose = false;
     protected boolean bGenerateImports = true;
     protected boolean bGenerateAll = false;
+    protected boolean bHelperGeneration = false;
     protected String outputDir = null;
     protected String packageName = null;
     protected byte scope = NO_EXPLICIT_SCOPE;
@@ -132,6 +133,21 @@ public class Emitter {
     public Emitter(WriterFactory writerFactory) {
         this.writerFactory = writerFactory;
     } // ctor
+
+    /**
+     * Sets the <code>WriterFactory Class</code> to use
+     * @param className the name of the factory <code>Class</code> 
+     */
+    public void setFactory(String className) {
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            writerFactory = (WriterFactory) 
+                Class.forName(className, true,cl).newInstance();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public SymbolTable getSymbolTable() { return symbolTable;}
     public WriterFactory getWriterFactory() { return writerFactory;}
@@ -299,6 +315,21 @@ public class Emitter {
      */ 
     public boolean getDeploySkeleton() {
         return bDeploySkeleton;
+    }
+
+    /**
+     * Turn on/off Helper class generation
+     * @param boolean value
+     */
+    public void setHelperGeneration(boolean value) {
+        bHelperGeneration = value;
+    }
+
+    /**
+     * Indicate if we should be generating Helper classes           
+     */ 
+    public boolean getHelperGeneration() {
+        return bHelperGeneration;
     }
 
     /**

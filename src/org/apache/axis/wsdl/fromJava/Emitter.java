@@ -1031,8 +1031,9 @@ public class Emitter {
      */
     public void setFactory(String className) {
         try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
             factory = (Java2WSDLFactory) 
-                Class.forName(className).newInstance();
+                Class.forName(className, true,cl).newInstance();
         }
         catch (Exception ex) {
             ex.printStackTrace();
