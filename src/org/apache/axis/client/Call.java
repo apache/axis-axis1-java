@@ -202,7 +202,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param url the target endpoint URL
      * @exception MalformedURLException
      */
-    public Call(String url) throws MalformedURLException, JAXRPCException {
+    public Call(String url) throws MalformedURLException {
         this(new Service());
         setTargetEndpointAddress(new URL(url));
     }
@@ -212,7 +212,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param url the target endpoint URL
      */
-    public Call(URL url) throws JAXRPCException {
+    public Call(URL url) {
         this(new Service());
         setTargetEndpointAddress(url);
     }
@@ -257,7 +257,7 @@ public class Call implements javax.xml.rpc.Call {
      *                       or PARAM_MODE_INOUT
      */
     public void addParameter(String paramName, QName paramType,
-            ParameterMode parameterMode) throws JAXRPCException {
+            ParameterMode parameterMode) {
         if (parmAndRetReq) {
 
             if ( paramNames == null ) {
@@ -301,7 +301,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param type QName of the return value type.
      */
-    public void setReturnType(QName type) throws JAXRPCException {
+    public void setReturnType(QName type) {
         if (parmAndRetReq) {
             returnType = type ;
         }
@@ -327,7 +327,7 @@ public class Call implements javax.xml.rpc.Call {
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
      * removeAllParameters will throw JAXRPCException.
      */
-    public void removeAllParameters() throws JAXRPCException {
+    public void removeAllParameters() {
         if (parmAndRetReq) {
             paramNames = null ;
             paramTypes = null ;
@@ -366,8 +366,7 @@ public class Call implements javax.xml.rpc.Call {
         operationName = new QName(opName);
     }
 
-    public void setOperation(QName portName, String opName) 
-                      throws JAXRPCException{
+    public void setOperation(QName portName, String opName) {
         if ( service == null ) 
             throw new JAXRPCException( JavaUtils.getMessage("noService04") );
 
@@ -782,13 +781,12 @@ public class Call implements javax.xml.rpc.Call {
      * @param  params Array of parameters to invoke the Web Service with
      * @throws JAXRPCException is there's an error
      */
-    public void invokeOneWay(Object[] params)
-                           throws javax.xml.rpc.JAXRPCException {
+    public void invokeOneWay(Object[] params) {
         try {
             invoke( getParamList(params) );
         }
         catch( Exception exp ) {
-            throw new javax.xml.rpc.JAXRPCException( exp.toString() );
+            throw new JAXRPCException( exp.toString() );
         }
     }
 
@@ -900,8 +898,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param  params   Array of parameters to pass into the operation/method
      * @return Object[] Array of parameters to pass to invoke()
      */
-    private Object[] getParamList(Object[] params)
-                           throws javax.xml.rpc.JAXRPCException {
+    private Object[] getParamList(Object[] params) {
         int  numParams = 0 ;
         int  i ;
 
@@ -919,7 +916,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         if ( numParams != params.length )
-            throw new javax.xml.rpc.JAXRPCException(
+            throw new JAXRPCException(
                     JavaUtils.getMessage("parmMismatch00",
                     "" + params.length, "" + numParams) );
 

@@ -103,7 +103,7 @@ public interface Call {
      * addParameter will throw JAXRPCException.
      */
     public void addParameter(String paramName, QName paramType,
-            ParameterMode parameterMode) throws JAXRPCException;
+            ParameterMode parameterMode);
 
     /**
      * Given a parameter name, return the QName of its type.  If the parameter doesn't exist, this
@@ -120,7 +120,7 @@ public interface Call {
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
      * setReturnType will throw JAXRPCException.
      */
-    public void setReturnType(QName xmlType) throws JAXRPCException;
+    public void setReturnType(QName xmlType);
 
     /**
      * Get the QName of the return type.
@@ -132,7 +132,7 @@ public interface Call {
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
      * removeAllParameters will throw JAXRPCException.
      */
-    public void removeAllParameters() throws JAXRPCException;
+    public void removeAllParameters();
 
     /**
      * Gets the name of the operation to be invoked using this Call instance.
@@ -259,7 +259,7 @@ public interface Call {
      * a non-void return type has been incorrectly specified for the one-way call) or if there is any error during 
      * the invocation of the one-way remote call
      */
-    public void invokeOneWay(Object[] params) throws JAXRPCException;
+    public void invokeOneWay(Object[] params);
 
     /**
      * This method returns a java.util.Map of {name, value} for the PARAM_MODE_OUT and
@@ -270,7 +270,7 @@ public interface Call {
      * @throws javax.xml.rpc.JAXRPCException - if this method is invoked on a one-way operation or
      * if it is invoked before any invoke method has been called.
      */
-    public Map getOutputParams() throws JAXRPCException;
+    public Map getOutputParams();
 }
 
 

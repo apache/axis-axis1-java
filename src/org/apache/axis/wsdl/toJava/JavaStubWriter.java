@@ -435,7 +435,6 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
         pw.println("        javax.xml.rpc.Call call = getCall();");
-        pw.println("        try {");
 
         // DUG: need to set the isRPC flag in the Call object
 
@@ -448,13 +447,13 @@ public class JavaStubWriter extends JavaWriter {
                     qn.getNamespaceURI() + "\", \"" +
                     qn.getLocalPart() + "\")";
             if (p.mode == Parameter.IN) {
-                pw.println("            call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_IN);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_IN);");
             }
             else if (p.mode == Parameter.INOUT) {
-                pw.println("            call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);");
             }
             else { // p.mode == Parameter.OUT
-                pw.println("            call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);");
             }
         }
         // set output type
@@ -463,16 +462,11 @@ public class JavaStubWriter extends JavaWriter {
             String outputType = "new javax.xml.rpc.namespace.QName(\"" +
                 qn.getNamespaceURI() + "\", \"" +
                 qn.getLocalPart() + "\")";
-            pw.println("            call.setReturnType(" + outputType + ");");
+            pw.println("        call.setReturnType(" + outputType + ");");
         }
         else {
-            pw.println("            call.setReturnType(null);");
+            pw.println("        call.setReturnType(null);");
         }
-        pw.println("        }");
-        pw.println("        catch (javax.xml.rpc.JAXRPCException jre) {");
-        pw.println("            throw new java.rmi.RemoteException(\"" +
-                JavaUtils.getMessage("badCall00") + "\");");
-        pw.println("        }");
 
         // SoapAction
         if (soapAction != null) {
@@ -541,13 +535,7 @@ public class JavaStubWriter extends JavaWriter {
                     }
                     String javifiedName = Utils.xmlNameToJava(p.name);
                     pw.println("            java.util.Map output;");
-                    pw.println("            try {");
-                    pw.println("                output = call.getOutputParams();");
-                    pw.println("            }");
-                    pw.println("            catch (javax.xml.rpc.JAXRPCException jre) {");
-                    pw.println("            throw new java.rmi.RemoteException(\"" +
-                            JavaUtils.getMessage("badCall02") + "\");");
-                    pw.println("            }");
+                    pw.println("            output = call.getOutputParams();");
                     // If expecting an array, need to call convert(..) because
                     // the runtime stores arrays in a different form (ArrayList). 
                     // NOTE A:
@@ -592,13 +580,7 @@ public class JavaStubWriter extends JavaWriter {
                 // resp or call.getOutputParms - and put them in the appropriate place,
                 // either in a holder or as the return value.
                 pw.println("            java.util.Map output;");
-                pw.println("            try {");
-                pw.println("                output = call.getOutputParams();");
-                pw.println("            }");
-                pw.println("            catch (javax.xml.rpc.JAXRPCException jre) {");
-                pw.println("            throw new java.rmi.RemoteException(\"" +
-                           JavaUtils.getMessage("badCall02") + "\");");
-                pw.println("            }");
+                pw.println("            output = call.getOutputParams();");
                 boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
