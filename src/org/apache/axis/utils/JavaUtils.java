@@ -949,7 +949,13 @@ public class JavaUtils
         public HolderException(String msg) { super(msg); }
     }
 
-
+    
+    /**
+     * Used to cache a result from IsEnumClassSub(). 
+     * Class->Boolean mapping.
+     */
+    private static HashMap enumMap = new HashMap();
+    
     /**
      * Determine if the class is a JAX-RPC enum class.
      * An enumeration class is recognized by
@@ -958,11 +964,21 @@ public class JavaUtils
      * of a setValue(type) method
      */
     public static boolean isEnumClass(Class cls) {
+        Boolean b = (Boolean)enumMap.get(cls);
+        if (b == null) {
+            b = (isEnumClassSub(cls)) ? Boolean.TRUE : Boolean.FALSE;
+            enumMap.put(cls, b);
+        }
+        return b.booleanValue();
+    }
+
+    private static boolean isEnumClassSub(Class cls) {
         try {
             java.lang.reflect.Method[] methods = cls.getMethods();
-            java.lang.reflect.Method getValueMethod = null, fromValueMethod = null,
+            java.lang.reflect.Method getValueMethod = null, 
+                fromValueMethod = null,
                 setValueMethod = null, fromStringMethod = null;
-
+            
             // linear search: in practice, this is faster than
             // sorting/searching a short array of methods.
             for (int i = 0; i < methods.length; i++) {
