@@ -91,17 +91,18 @@ public class MsgDispatchHandler extends BasicHandler {
     Debug.Print( 2, "MethodName: " + methodName );
 
     try {
-      Class        cls    = Class.forName(clsName);
-      Object       obj    = cls.newInstance();
-      Class[]      argClasses = new Class[2];
-      Object[]     argObjects = new Object[2];
+      AxisClassLoader cl     = new AxisClassLoader();
+      Class           cls    = cl.loadClass(clsName);
+      Object          obj    = cls.newInstance();
+      Class[]         argClasses = new Class[2];
+      Object[]        argObjects = new Object[2];
 
       Message       reqMsg  = msgContext.getIncomingMessage();
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
       SOAPBody      reqBody = reqEnv.getFirstBody();
   
-      argClasses[0] = Class.forName("org.apache.axis.MessageContext");
-      argClasses[1] = Class.forName("org.w3c.dom.Document");
+      argClasses[0] = cl.loadClass("org.apache.axis.MessageContext");
+      argClasses[1] = cl.loadClass("org.w3c.dom.Document");
       argObjects[0] = (Object) msgContext ;
       argObjects[1] = (Object) reqBody.getAsDocument();
 

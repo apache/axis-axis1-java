@@ -85,12 +85,13 @@ public class RPCDispatchHandler extends BasicHandler {
       /* SOAPBody as an RPCBody and process it accordingly.        */
       /*************************************************************/
       int          i ;
-      Class        cls    = Class.forName(clsName);
-      Object       obj    = cls.newInstance();
-      Message      inMsg  = msgContext.getIncomingMessage();
-      SOAPEnvelope env    = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
-      Vector       bodies = env.getAsRPCBody();
-      SOAPEnvelope resEnv = null ;
+      AxisClassLoader cl     = new AxisClassLoader();
+      Class           cls    = cl.loadClass(clsName); 
+      Object          obj    = cls.newInstance();
+      Message         inMsg  = msgContext.getIncomingMessage();
+      SOAPEnvelope    env    = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
+      Vector          bodies = env.getAsRPCBody();
+      SOAPEnvelope    resEnv = null ;
 
       /* Loop over each entry in the SOAPBody - each one is a different */
       /* RPC call.                                                      */
@@ -110,7 +111,7 @@ public class RPCDispatchHandler extends BasicHandler {
         Class[]  argClasses = new Class[ args.size() ];
         Object[] argValues  = new Object[ args.size()];
         for ( i = 0 ; i < args.size() ; i++ ) {
-          argClasses[i] = Class.forName("java.lang.String") ;
+          argClasses[i] = cl.loadClass("java.lang.String") ;
           argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // only String 4now
         }
   
