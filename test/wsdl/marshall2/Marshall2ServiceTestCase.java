@@ -13,6 +13,7 @@ import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.net.URI;
 
 import test.wsdl.marshall2.types.JavaBean;
 import test.wsdl.marshall2.types.JavaBean2;
@@ -640,4 +641,26 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
         // TBD - validate results
     }
 
+    public void test27Marshall2PortAnyURITest() throws Exception {
+        test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
+                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if(jre.getLinkedCause()!=null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+
+        URI b = new URI("urn:something");
+        // Time out after a minute
+        binding.setTimeout(60000);
+
+        // Test operation
+        test.wsdl.marshall2.types.FooAnyURITypeResponse value = null;
+        value = binding.fooAnyURITest(new test.wsdl.marshall2.types.FooAnyURIType(b));
+        // TBD - validate results
+    }
 }

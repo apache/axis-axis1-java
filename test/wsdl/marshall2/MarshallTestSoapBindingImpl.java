@@ -20,6 +20,8 @@ import test.wsdl.marshall2.types.DoubleArrayTestResponse;
 import test.wsdl.marshall2.types.DoubleTestResponse;
 import test.wsdl.marshall2.types.FloatArrayTestResponse;
 import test.wsdl.marshall2.types.FloatTestResponse;
+import test.wsdl.marshall2.types.FooAnyURIType;
+import test.wsdl.marshall2.types.FooAnyURITypeResponse;
 import test.wsdl.marshall2.types.IntArrayTestResponse;
 import test.wsdl.marshall2.types.IntTestResponse;
 import test.wsdl.marshall2.types.JavaBeanArrayTestResponse;
@@ -163,5 +165,10 @@ public class MarshallTestSoapBindingImpl implements test.wsdl.marshall2.
     public test.wsdl.marshall2.types.JavaBeanTestResponse javaBeanTest(test.wsdl.marshall2.types.JavaBeanTest parameters)
             throws java.rmi.RemoteException {
         return new JavaBeanTestResponse(parameters.getJavaBean());
+    }
+
+    public test.wsdl.marshall2.types.FooAnyURITypeResponse fooAnyURITest(test.wsdl.marshall2.types.FooAnyURIType parameters)
+    throws java.rmi.RemoteException {
+        return new FooAnyURITypeResponse(parameters.getFooAnyURIType());
     }
 }

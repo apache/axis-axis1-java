@@ -347,6 +347,16 @@
                              nillable="true"/>
                 </sequence>
             </complexType>
+			<complexType name="FooAnyURIType">
+                <sequence>
+                    <element name="FooAnyURIType" type="anyURI"/>
+                </sequence>
+            </complexType>
+			<complexType name="FooAnyURITypeResponse">
+                <sequence>
+                    <element name="FooAnyURIType" type="anyURI"/>
+                </sequence>
+            </complexType>
         </schema>
     </types>
     <message name="bigDecimalArrayTest">
@@ -505,6 +515,12 @@
     <message name="javaBeanTestResponse">
         <part name="result" type="ns1:JavaBeanTestResponse"/>
     </message>
+    <message name="fooAnyURITest">
+        <part name="parameters" type="ns1:FooAnyURIType"/>
+    </message>
+    <message name="fooAnyURITestResponse">
+        <part name="result" type="ns1:FooAnyURITypeResponse"/>
+    </message>
 
     <portType name="MarshallTest">
         <operation name="bigDecimalArrayTest">
@@ -631,7 +647,11 @@
             <output message="tns:javaBeanTestResponse"
                     name="javaBeanTestResponse"/>
         </operation>
-
+        <operation name="fooAnyURITest">
+            <input message="tns:fooAnyURITest" name="fooAnyURITest"/>
+            <output message="tns:fooAnyURITestResponse"
+                    name="fooAnyURITestResponse"/>
+        </operation>
     </portType>
     <binding name="MarshallTestSoapBinding" type="tns:MarshallTest">
         <soap:binding style="rpc"
@@ -912,6 +932,17 @@
             </output>
         </operation>
         <operation name="javaBeanTest">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"
+                           namespace="http://marshall2.wsdl.test/"/>
+            </input>
+            <output>
+                <soap:body use="literal"
+                           namespace="http://marshall2.wsdl.test/"/>
+            </output>
+        </operation>
+        <operation name="fooAnyURITest">
             <soap:operation soapAction=""/>
             <input>
                 <soap:body use="literal"
