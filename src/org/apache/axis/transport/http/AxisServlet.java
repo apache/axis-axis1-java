@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,11 +74,17 @@ public class AxisServlet extends HttpServlet {
   private static final String AXIS_ENGINE = "AxisEngine" ;
 
   public void init() {
+      String param = getInitParameter("transport.input");
       ServletContext context = getServletConfig().getServletContext();
-      String param = context.getInitParameter("transport.input");
+
+      if (param == null)
+          param = context.getInitParameter("transport.input");
       if (param != null)
           transportInName = param;
+      
       param = getInitParameter("transport.output");
+      if (param == null)
+          param = context.getInitParameter("transport.output");
       if (param != null)
           transportOutName = param;
   }

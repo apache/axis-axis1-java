@@ -1,8 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,48 +52,45 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.handlers.http;
 
-import java.util.* ;
+import org.apache.axis.*;
+import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.utils.Debug;
+import org.apache.axis.transport.http.HTTPConstants;
 
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.DebugHeader;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import javax.servlet.http.* ;
 
-import org.w3c.dom.* ;
-
-/**
- *
- * @author Doug Davis (dug@us.ibm.com)
+/** An <code>URLMapper</code> attempts to use the extra path info
+ * of this request as the service name.
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class DebugHandler extends BasicHandler {
-    
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: DebugHandler::invoke" );
-        try {
-            Message       msg = msgContext.getRequestMessage();
+public class URLMapper extends BasicHandler
+{
+    public void invoke(MessageContext msgContext) throws AxisFault
+    {
+        Debug.Print( 1, "Enter: URLMapper::invoke" );
+
+        /** If there's already a targetService (ie. JWSProcessor) then
+         *  just return.
+         */
+        if ( msgContext.getTargetService() == null ) {
+            HttpServletRequest req = (HttpServletRequest) msgContext.getProperty(
+                                              HTTPConstants.MC_HTTP_SERVLETREQUEST);
             
-            SOAPEnvelope message = (SOAPEnvelope)msg.getAs("SOAPEnvelope");
-            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, "Debug");
-            if ((header != null) && (header instanceof DebugHeader)) {
-                int debugVal = ((DebugHeader)header).getDebugLevel();
-                Debug.Print( 1, "Setting debug level to: " + debugVal );
-                Debug.setDebugLevel(debugVal);
-                header.setProcessed(true);
-            }
+            // Assumes "/" + servicename
+            String path = req.getPathInfo().substring(1);
+    
+            msgContext.setTargetService( path );
         }
-        catch( Exception e ) {
-            Debug.Print( 1, e );
-            throw new AxisFault( e );
-        }
-        Debug.Print( 1, "Exit: DebugHandler::invoke" );
+
+        Debug.Print( 1, "Exit : URLMapper::invoke" );
     }
 
-    public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: DebugHandler::undo" );
-        Debug.Print( 1, "Exit: DebugHandler::undo" );
+    public void undo(MessageContext msgContext) 
+    {
+        Debug.Print( 1, "Enter: URLMapper::undo" );
+        Debug.Print( 1, "Exit: URLMapper::undo" );
     }
-    
-};
+}

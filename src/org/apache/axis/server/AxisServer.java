@@ -213,12 +213,18 @@ public class AxisServer extends BasicHandler
                                      null, null );
               */
               hName = msgContext.getTargetService();
-              if ( hName != null && (h = hr.find( hName )) != null )
-                h.invoke(msgContext);
-              else
-                throw new AxisFault( "Server.error",
+              if ( hName != null ) {
+                if ((h = hr.find( hName )) != null)
+                  h.invoke(msgContext);
+                else
+                  throw new AxisFault( "Server.error",
                                      "Can't find '" + hName + "' handler", 
                                      null, null );
+              } else {
+                throw new AxisFault("Server.NoService", 
+                                    "The Axis engine couldn't find a target service to invoke!",
+                                    null, null );
+              }
       
               /* Process the Global Output Chain */
               /***********************************/
