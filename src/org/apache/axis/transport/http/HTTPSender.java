@@ -124,20 +124,17 @@ public class HTTPSender extends BasicHandler {
             if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
             Socket             sock = null ;
+            StringBuffer  otherHeaders = new StringBuffer();
 
             if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
                 if ( (port = tmpURL.getPort()) == -1 ) port = 443;
 
                 // Use http.proxyXXX settings if https.proxyXXX is not set 
-                String tunnelHost = System.getProperty("http.proxyHost");
-                String tunnelPortStr = System.getProperty("http.proxyPort");
-                String tunnelUsername = System.getProperty("http.proxyUsername");
-                String tunnelPassword = System.getProperty("http.proxyPassword");
+                String tunnelHost = System.getProperty("https.proxyHost");
+                String tunnelPortStr = System.getProperty("https.proxyPort");
                 
-                if (tunnelHost==null) tunnelHost = System.getProperty("https.proxyHost");
-                if (tunnelPortStr==null) tunnelPortStr = System.getProperty("https.proxyPort");
-                if (tunnelUsername==null) tunnelUsername = System.getProperty("https.proxyUsername");
-                if (tunnelPassword==null) tunnelPassword = System.getProperty("https.proxyPassword");
+                if (tunnelHost==null) tunnelHost = System.getProperty("http.proxyHost");
+                if (tunnelPortStr==null) tunnelPortStr = System.getProperty("http.proxyPort");
 
                 try {
                     Class SSLSocketFactoryClass =
@@ -242,6 +239,19 @@ public class HTTPSender extends BasicHandler {
                 String proxyPort = System.getProperty("http.proxyPort");
                 String nonProxyHosts = System.getProperty("http.nonProxyHosts");
                 boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
+                String proxyUsername = System.getProperty("http.proxyUser");
+                String proxyPassword = System.getProperty("http.proxyPassword");
+
+                if ( proxyUsername != null ) {
+                    StringBuffer tmpBuf = new StringBuffer();
+                    tmpBuf.append( proxyUsername )
+                   .append( ":" )
+                   .append( (proxyPassword == null) ? "" : proxyPassword) ;
+                    otherHeaders.append( HTTPConstants.HEADER_PROXY_AUTHORIZATION )
+                         .append( ": Basic " )
+                         .append( Base64.encode( tmpBuf.toString().getBytes() ) )
+                         .append("\n" );
+                }            
 
                 if ((port = tmpURL.getPort()) == -1 ) port = 80;
 
@@ -272,7 +282,6 @@ public class HTTPSender extends BasicHandler {
 
 
             OutputStream  out  = new BufferedOutputStream(sock.getOutputStream(), 8*1024);
-            StringBuffer  otherHeaders = new StringBuffer();
             String        userID = null ;
             String        passwd = null ;
 
