@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import java.net.Socket;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -71,7 +70,7 @@ public class DefaultSocketFactory implements SocketFactory {
             throws Exception {
 
         int timeout = 0;
-        if(attributes.contains(CONNECT_TIMEOUT)) {
+        if(attributes != null && attributes.contains(CONNECT_TIMEOUT)) {
             timeout = Integer.parseInt((String)attributes.get(CONNECT_TIMEOUT));
         }
         TransportClientProperties tcp = TransportClientPropertiesFactory.create("http");
