@@ -74,10 +74,13 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 * <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
 */
 public class JavaBindingWriter implements Generator {
-    Generator stubWriter = null;
-    Generator skelWriter = null;
-    Generator implWriter = null;
-    Generator interfaceWriter = null;
+    protected Generator stubWriter = null;
+    protected Generator skelWriter = null;
+    protected Generator implWriter = null;
+    protected Generator interfaceWriter = null;
+    protected Emitter emitter;
+    protected Binding binding;
+    protected SymbolTable symbolTable;
 
     // This is the dynamic var key for the SEI (Service Endpoint
     // Interface) name.  This name could either be derived from
@@ -93,42 +96,9 @@ public class JavaBindingWriter implements Generator {
             Emitter emitter,
             Binding binding,
             SymbolTable symbolTable) {
-
-        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
-
-        // Interface writer
-        PortTypeEntry ptEntry =
-                symbolTable.getPortTypeEntry(binding.getPortType().getQName());
-        if (ptEntry.isReferenced()) {
-            interfaceWriter = getJavaInterfaceWriter(
-                    emitter, ptEntry, bEntry, symbolTable);
-        }
-
-        if (bEntry.isReferenced()) {
-            // Stub writer
-            stubWriter = getJavaStubWriter(emitter, bEntry, symbolTable);
-
-            // Skeleton and Impl writers
-            if (emitter.isServerSide()) {
-                if (emitter.isSkeletonWanted()) {
-                    skelWriter = getJavaSkelWriter(emitter, bEntry, symbolTable);
-                }
-                String fileName = Utils.getJavaLocalName(bEntry.getName())
-                        + "Impl.java";
-                try {
-                // NOTE:  Where does the fileExists method really belong?
-                    if (!((JavaWriter) stubWriter).fileExists (fileName,
-                            binding.getQName().getNamespaceURI())) {
-                        implWriter = getJavaImplWriter(
-                                emitter, bEntry, symbolTable);
-                    }
-                }
-                catch (IOException ioe) {
-                    System.err.println(
-                            JavaUtils.getMessage("fileExistError00", fileName));
-                }
-            }
-        }
+        this.emitter = emitter;
+        this.binding = binding;
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -166,9 +136,10 @@ public class JavaBindingWriter implements Generator {
     }
 
     /**
-     * Write all the binding bindnigs:  stub, skeleton, and impl.
+     * Write all the binding bindings:  stub, skeleton, and impl.
      */
     public void generate() throws IOException {
+        setGenerators();
         if (interfaceWriter != null) {
             interfaceWriter.generate();
         }
@@ -183,4 +154,47 @@ public class JavaBindingWriter implements Generator {
         }
     } // generate
 
+    /** 
+     * setGenerators
+     * Logic to set the generators that are based on the Binding
+     * This logic was moved from the constructor so extended interfaces
+     * can more effectively use the hooks.
+     */
+    protected void setGenerators() {
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+        
+        // Interface writer
+        PortTypeEntry ptEntry =
+            symbolTable.getPortTypeEntry(binding.getPortType().getQName());
+        if (ptEntry.isReferenced()) {
+            interfaceWriter = getJavaInterfaceWriter(
+                                 emitter, ptEntry, bEntry, symbolTable);
+        }
+        
+        if (bEntry.isReferenced()) {
+            // Stub writer
+            stubWriter = getJavaStubWriter(emitter, bEntry, symbolTable);
+
+            // Skeleton and Impl writers
+            if (emitter.isServerSide()) {
+                if (emitter.isSkeletonWanted()) {
+                    skelWriter = getJavaSkelWriter(emitter, bEntry, symbolTable);
+                }
+                String fileName = Utils.getJavaLocalName(bEntry.getName())
+                        + "Impl.java";
+                try {
+                // NOTE:  Where does the fileExists method really belong?
+                    if (!((JavaWriter) stubWriter).fileExists (fileName,
+                            binding.getQName().getNamespaceURI())) {
+                        implWriter = getJavaImplWriter(
+                                emitter, bEntry, symbolTable);
+                    }
+                }
+                catch (IOException ioe) {
+                    System.err.println(
+                            JavaUtils.getMessage("fileExistError00", fileName));
+                }
+            }
+        }
+}
 } // class JavaBindingWriter
