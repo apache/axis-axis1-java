@@ -57,6 +57,8 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
+import org.apache.axis.wsdl.symbolTable.DefinedType;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -271,18 +273,19 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     fieldName = getAsFieldName(fieldName);
                     QName xmlName = elem.getName();
                     
-                    // Some special handling for arrays
+                    // Some special handling for arrays.
                     TypeEntry elemType = elem.getType();
-                    while (elemType.getRefType() != null &&
-                           !(elem.getType().getDimensions().indexOf("[") > -1)) {
-                        elemType = elemType.getRefType();
-                    }
-                    
-                    QName xmlType = elemType.getQName();
-                    
-                    if (xmlType != null && xmlType.getLocalPart().indexOf("[") > 0) {
-                        // Skip array types, because they are special
-                        xmlType = null;
+                    QName xmlType = null;
+
+                    if (elemType.getDimensions().length() > 1 &&
+                            (elemType.getClass() == DefinedType.class)) {
+                        // SOAP array, don't write type.
+                        xmlType = elemType.getRefType().getQName();
+                    } else {
+                        while (elemType.getRefType() != null) {
+                            elemType = elemType.getRefType();
+                        }
+                        xmlType = elemType.getQName();
                     }
                     
                     pw.print("        ");
