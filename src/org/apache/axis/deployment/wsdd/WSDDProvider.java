@@ -102,9 +102,9 @@ public abstract class WSDDProvider
      * @param uri XXX
      * @param _class XXX
      */
-    public static void registerProvider(String uri, Class _class)
+    public static void registerProvider(QName uri, WSDDProvider prov)
     {
-        providers.put(uri, _class);
+        providers.put(uri, prov);
     }
 
     /**
