@@ -84,6 +84,8 @@ public class WSDDConstants
     public static final QName JAVAMSG_PROVIDER = new QName(WSDD_JAVA,
                                                         "MSG");
     public static final QName HANDLER_PROVIDER = new QName("", "Handler");
+    public static final QName EJB_PROVIDER     = new QName(WSDD_JAVA,
+                                                           "EJB");
 
     public static final QName PARAM_QNAME = new QName(WSDD_NS,
                                                       "parameter");
