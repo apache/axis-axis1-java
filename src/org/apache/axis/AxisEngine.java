@@ -79,18 +79,16 @@ import org.w3c.dom.*;
  */
 public abstract class AxisEngine extends BasicHandler
 {
+    protected String engineConfigFilename = "engine-config.xml";
+    
     /** The handler registry this Engine uses. */
-    protected HandlerRegistry _handlerRegistry;
-    protected String _handlerRegFilename;
+    protected HandlerRegistry _handlerRegistry = new SupplierRegistry();
     
     /** The service registry this Engine uses. */
-    protected HandlerRegistry _serviceRegistry;
-    protected String _serviceRegFilename;
+    protected HandlerRegistry _serviceRegistry = new SupplierRegistry();
     
-    protected String _transportRegFilename;
-    
-    private boolean readRegistryFiles = true;
-    private boolean dontSaveYet = false;
+    /** A map of protocol names to "client" (sender) transports  */
+    protected SupplierRegistry transportRegistry = new SupplierRegistry();
     
     /** This Engine's global type mappings     */
     protected TypeMappingRegistry _typeMappingRegistry =
@@ -98,10 +96,6 @@ public abstract class AxisEngine extends BasicHandler
     
     protected Properties props = new Properties();
     
-    /** A map of protocol names to "client" (sender) transports
-     */
-    protected SupplierRegistry transportRegistry = new SupplierRegistry();
-                                                        
     //protected SupplierRegistry listenerRegistry = new SupplierRegistry();
     
     /**
@@ -112,13 +106,29 @@ public abstract class AxisEngine extends BasicHandler
     private Session session = new SimpleSession();
     
     /**
-     * No-arg constructor.  Loads properties from the "axis.properties"
-     * file if it exists.
+     * No-arg constructor.
      *
      */
     public AxisEngine()
     {
-        Debug.Print( 1, "Enter: AxisEngine no-arg constructor");
+        init();
+        
+        Debug.Print( 1, "Exit: AxisEngine no-arg constructor");
+    }
+    
+    public AxisEngine(String fileName)
+    {
+        engineConfigFilename = fileName;
+        init();
+    }
+    
+    /**
+     * (re)initialize - What should really go in here???
+     */
+    public void init() {
+        /** Load properties 1st, so that debug level gets
+         * set ASAP.
+         */
         try {
             File propFile = new File("axis.properties");
             if (propFile.exists()) {
@@ -130,75 +140,58 @@ public abstract class AxisEngine extends BasicHandler
             e.printStackTrace();
         }
         
-        Debug.Print( 1, "Exit: AxisEngine no-arg constructor");
-    }
-    
-    /**
-     * Allows the Listener to specify which handler/service registry
-     * implementation they want to use.
-     *
-     * @param handlers the Handler registry.
-     * @param services the Service registry.
-     */
-    public AxisEngine(HandlerRegistry handlers, HandlerRegistry services)
-    {
-        this();
-        setHandlerRegistry(handlers);
-        setServiceRegistry(services);
-        
-        readRegistryFiles = false;
-        
-        init();
-    }
-
-    /**
-     * Constructor specifying registry filenames.
-     *
-     * @param handlerRegFilename the name of the Handler registry file.
-     * @param serviceRegFilename the name of the Service registry file.
-     */
-    public AxisEngine(String handlerRegFilename,
-                      String serviceRegFilename,
-                      String transportRegFilename)
-    {
-        this();
-        setHandlerRegistry(new SupplierRegistry());
-        setServiceRegistry(new SupplierRegistry());
-        
-        _handlerRegFilename = handlerRegFilename;
-        _serviceRegFilename = serviceRegFilename;
-        _transportRegFilename = transportRegFilename;
-        
-        init();
-    }
-
-
-    /**
-     * Subclasses (client and server) must define the defaults.
-     */
-    abstract protected void deployDefaultHandlers();
-    abstract protected void deployDefaultServices();
-    abstract protected void deployDefaultTransports();
-
-    /**
-     * (re)initialize - What should really go in here???
-     */
-    public void init() {
-        // Load the simple handler registry and init it
-        Debug.Print( 1, "Enter: AxisEngine::init" );
-        
         String propVal = props.getProperty("debugLevel", "0");
         Debug.setDebugLevel(Integer.parseInt(propVal));
         
         propVal = props.getProperty("debugFile");
         Debug.setToFile(propVal != null);
-
-        initializeHandlers();
-        initializeServices();
-        initializeTransports();
-
-        // Later...
-        //initializeTypeMappings();
+        
+        Debug.Print( 1, "Enter: AxisEngine::init" );
+        
+        readConfiguration();
+        
+        Debug.Print( 1, "Exit: AxisEngine::init" );
+    }
+    
+    /**
+     * Load up our engine's configuration of Handlers, Chains,
+     * Services, etc.
+     * 
+     * NOTE: Right now this can only read an "engine-config.xml" in an
+     * appropriate place on the classpath (org/apache/axis/client or
+     * org/apache/axis/server).  This should be modified to do something like
+     * look in the server startup directory first, or perhaps check a
+     * system property for the repository location.  (OK, now it checks the
+     * local directory first.)
+     * 
+     * We need to complete discussions about the packaging and deployment
+     * patterns for Axis before this code solidifies.
+     */
+    private void readConfiguration()
+    {
+        InputStream is;
+        try {
+          is = new FileInputStream(engineConfigFilename);
+        } catch (Exception e) {
+          is = getResourceStream("engine-config.xml");
+        }
+        
+        if (is == null) {
+          // TODO: Deal with this in a nicer way...
+          System.err.println("No engine configuration in " + 
+                             this.getClass().getPackage().getName() +
+                             " - aborting!");
+          return;
+        }
+        
+        Document doc = XMLUtils.newDocument(is);
+        try {
+          // ??? Clear registries first?
+          Admin.processEngineConfig(doc, this);
+        } catch (Exception e) {
+          e.printStackTrace();
+          System.exit(-1);
+        }
 
         // Load the registry of deployed types
         TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
@@ -206,140 +199,13 @@ public abstract class AxisEngine extends BasicHandler
         _typeMappingRegistry = tmr;
         
         tmr.init();
-        
-        Debug.Print( 1, "Exit: AxisEngine::init" );
     }
     
-    /**
-     * Set up our handler registry, either by reading from the designated
-     * XML file or setting up the defaults if that doesn't work.
-     */
-    private void initializeHandlers()
+    private InputStream getResourceStream(String name)
     {
-      if (!readRegistryFiles)
-        return;
-      
-      dontSaveYet = true;
-
-      try {
-        FileInputStream    fis = new FileInputStream(_handlerRegFilename);
-        
-        Document doc = XMLUtils.newDocument(fis);
-        
-        Element root = doc.getDocumentElement();
-        Element elem;
-        
-        NodeList list = root.getElementsByTagName("handler");
-        for (int i = 0; i < list.getLength(); i++) {
-          elem = (Element)list.item(i);
-          Admin.registerHandler(elem, this);
-        }
-        
-        list = root.getElementsByTagName("chain");
-        for (int i = 0; i < list.getLength(); i++) {
-          elem = (Element)list.item(i);
-          Admin.registerChain(elem, this);
-        }
-        
-        fis.close();
-        return;
-      }
-      catch( Exception e ) {
-        if ( !(e instanceof FileNotFoundException) ) {
-          e.printStackTrace( System.err );
-        }
-      } finally {
-        dontSaveYet = false;
-      }
-      
-      Debug.Print(2, "Deploying default handlers...");
-      deployDefaultHandlers();
-      dontSaveYet = false;
-      
-      // We don't actually need to save right now, since by definition
-      // nothing has changed from the persistent version (or the defaults)
+        return this.getClass().getResourceAsStream(name);
     }
     
-    /**
-     * Set up our service registry, either by reading from the designated
-     * XML file or setting up the defaults if that doesn't work.
-     */
-    private void initializeServices()
-    {
-      if (!readRegistryFiles)
-        return;
-      
-      dontSaveYet = true;
-      try {
-        FileInputStream    fis = new FileInputStream(_serviceRegFilename);
-        
-        Document doc = XMLUtils.newDocument(fis);
-        
-        Element root = doc.getDocumentElement();
-        
-        NodeList list = root.getChildNodes();
-        for (int i = 0; i < list.getLength(); i++) {
-          if (!(list.item(i) instanceof Element))
-            continue;
-          Element elem = (Element)list.item(i);
-          if (!elem.getTagName().equals("service")) {
-            System.err.println("Found element '" + elem.getTagName() +
-                  " in service reg file, wanted <service>");
-          }
-          Admin.registerService(elem, this);
-        }
-        
-        fis.close();
-        return;
-      }
-      catch( Exception e ) {
-        if ( !(e instanceof FileNotFoundException) ) {
-          e.printStackTrace( System.err );
-        }
-      } finally {
-        dontSaveYet = false;
-      }
-      
-      Debug.Print(2, "Deploying default services...");
-      deployDefaultServices();
-      dontSaveYet = false;
-    }
-    
-    public void initializeTransports()
-    {
-      if (!readRegistryFiles)
-        return;
-      
-      dontSaveYet = true;
-      try {
-        FileInputStream    fis = new FileInputStream(_transportRegFilename);
-        
-        Document doc = XMLUtils.newDocument(fis);
-        
-        Element root = doc.getDocumentElement();
-        
-        NodeList list = root.getChildNodes();
-        for (int i = 0; i < list.getLength(); i++) {
-          if (!(list.item(i) instanceof Element))
-            continue;
-          Element elem = (Element)list.item(i);
-          Admin.registerTransport(elem, this);
-        }
-        
-        fis.close();
-        return;
-      }
-      catch( Exception e ) {
-        if ( !(e instanceof FileNotFoundException) ) {
-          e.printStackTrace( System.err );
-        }
-      } finally {
-        dontSaveYet = false;
-      }
-
-      Debug.Print(2, "Deploying default transports...");
-      deployDefaultTransports();
-    }
 
     public HandlerRegistry getHandlerRegistry()
     {
@@ -374,60 +240,6 @@ public abstract class AxisEngine extends BasicHandler
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         return _typeMappingRegistry;
-    }
-    
-    public void saveHandlerRegistry()
-    {
-      if (dontSaveYet || (_handlerRegFilename == null))
-        return;
-      
-      try {
-        FileOutputStream fos = new FileOutputStream(_handlerRegFilename);
-        Document doc = XMLUtils.newDocument();
-        Element el = doc.createElement("handlers");
-        Admin.list(el, getHandlerRegistry());
-        doc.appendChild(el);
-        XMLUtils.DocumentToStream(doc, fos);
-        fos.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    
-    public void saveServiceRegistry()
-    {
-      if (dontSaveYet || (_serviceRegFilename == null))
-        return;
-      
-      try {
-        FileOutputStream fos = new FileOutputStream(_serviceRegFilename);
-        Document doc = XMLUtils.newDocument();
-        Element el = doc.createElement("services");
-        Admin.list(el, getServiceRegistry());
-        doc.appendChild(el);
-        XMLUtils.DocumentToStream(doc, fos);
-        fos.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    
-    public void saveTransportRegistry()
-    {
-      if (dontSaveYet || (_transportRegFilename == null))
-        return;
-      
-      try {
-        FileOutputStream fos = new FileOutputStream(_transportRegFilename);
-        Document doc = XMLUtils.newDocument();
-        Element el = doc.createElement("transports"); 
-        Admin.list(el, getTransportRegistry());
-        doc.appendChild(el);
-        XMLUtils.DocumentToStream(doc, fos);
-        fos.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
     }
     
     /*********************************************************************
@@ -469,7 +281,6 @@ public abstract class AxisEngine extends BasicHandler
     {
         handler.setName(key);
         getHandlerRegistry().add(key, handler);
-        saveHandlerRegistry();
     }
     
     /**
@@ -478,7 +289,6 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployHandler(String key)
     {
         getHandlerRegistry().remove(key);
-        saveHandlerRegistry();
     }
 
     /**
@@ -490,7 +300,6 @@ public abstract class AxisEngine extends BasicHandler
         service.setEngine(this);
         
         getServiceRegistry().add(key, service);
-        saveServiceRegistry();
     }
     
     /**
@@ -499,7 +308,6 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployService(String key)
     {
         getServiceRegistry().remove(key);
-        saveServiceRegistry();
     }
 
     /**
@@ -509,7 +317,6 @@ public abstract class AxisEngine extends BasicHandler
     {
         transport.setName(key);
         transportRegistry.add(key, transport);
-        saveTransportRegistry();
     }
     
     /**
@@ -518,7 +325,6 @@ public abstract class AxisEngine extends BasicHandler
     public void deployTransport(String key, Supplier supplier)
     {
         transportRegistry.add(key, supplier);
-        saveTransportRegistry();
     }
     
     /**
@@ -527,7 +333,6 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployTransport(String key)
     {
         transportRegistry.remove(key);
-        saveTransportRegistry();
     }
 
     /**

@@ -123,6 +123,9 @@ public class SimpleChain extends BasicHandler implements Chain {
   }
 
   public void addHandler(Handler handler) {
+    if (handler == null)
+      throw new NullPointerException("SimpleChain.addHandler: Null handler!");
+    
     if ( handlers == null ) handlers = new Vector();
     handlers.add( handler );
   }

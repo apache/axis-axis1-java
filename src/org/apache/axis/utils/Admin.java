@@ -141,6 +141,52 @@ public class Admin {
   public Document process(MessageContext msgContext, Document doc) throws AxisFault {
     return( process( msgContext, doc.getDocumentElement() ) );
   }
+  
+  public static void processEngineConfig(Document doc, AxisEngine engine)
+    throws Exception
+  {
+    Element el = doc.getDocumentElement();
+    if (!el.getTagName().equals("engineConfig"))
+      throw new Exception("Wanted 'engineConfig' element, got '" + el.getTagName() + "'");
+    
+    NodeList nl = el.getElementsByTagName("handlers");
+    deploy(nl, engine);
+    
+    nl = el.getElementsByTagName("services");
+    deploy(nl, engine);
+    
+    nl = el.getElementsByTagName("transports");
+    deploy(nl, engine);
+      
+  }
+  
+  static void deploy(NodeList nl, AxisEngine engine) throws Exception
+  {
+    for (int i = 0; i < nl.getLength(); i++) {
+      Element el = (Element)nl.item(i);
+      
+      NodeList children = el.getChildNodes();
+      for (int j = 0; j < children.getLength(); j++) {
+        if (!(children.item(j) instanceof Element)) continue;
+        
+        Element item = (Element)children.item(j);
+        String type = item.getTagName();
+      
+        if ( type.equals( "handler" ) ) {
+          registerHandler(item, engine);
+        }
+        else if ( type.equals( "chain" ) ) {
+          registerChain(item, engine);
+        }
+        else if ( type.equals( "service" ) ) {
+          registerService(item, engine);
+        }
+        else if (type.equals("transport")) {
+          registerTransport(item, engine);
+        }
+      }
+    }
+  }
 
   /**
    * The meat of the Admin service.  Process an xML document rooted with
@@ -371,8 +417,6 @@ public class Admin {
                                                              hr);
       hr.add(name,supp);
     }
-    
-    engine.saveHandlerRegistry();
   }
   
   /**

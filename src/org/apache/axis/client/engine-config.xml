@@ -1,0 +1,16 @@
+<engineConfig>
+
+ <handlers>
+  <handler name="HTTPSender" class="org.apache.axis.transport.http.HTTPSender"/>
+  <handler name="LocalSender" class="org.apache.axis.transport.local.LocalSender"/>
+ </handlers>
+
+ <transports>
+  <transport name="http" pivot="HTTPSender"/>
+  <transport name="local" pivot="LocalSender"/>
+ </transports>
+
+ <services>
+ </services>
+
+</engineConfig>

@@ -1,0 +1,36 @@
+<engineConfig>
+
+ <handlers>
+  <handler name="debug" class="org.apache.axis.handlers.DebugHandler"/>
+  <handler name="MsgDispatcher" class="org.apache.axis.providers.java.MsgProvider"/>
+  <handler name="RPCDispatcher" class="org.apache.axis.providers.java.RPCProvider"/>
+  <handler name="HTTPSender" class="org.apache.axis.transport.http.HTTPSender"/>
+  <handler name="EchoHandler" class="org.apache.axis.handlers.EchoHandler"/>
+  <handler name="JWSProcessor" class="org.apache.axis.handlers.JWSProcessor"/>
+  <handler name="JWSHandler" class="org.apache.axis.handlers.JWSHandler"/>
+
+  <chain name="global.request" flow="JWSHandler,debug"/>
+ </handlers>
+
+ <transports>
+  <transport name="http" pivot="HTTPSender"/>
+  <transport name="local" pivot="LocalSender"/>
+ </transports>
+
+ <services>
+  <!-- JWS Processor -->
+  <service name="JWSProcessor" pivot="JWSProcessor"/>
+
+  <!-- The admin service -->
+  <service name="AdminService" pivot="MsgDispatcher">
+   <option name="pivot" value="MsgDispatcher"/>
+   <option name="className" value="org.apache.axis.utils.Admin"/>
+   <option name="methodName" value="AdminService"/>
+  </service>
+
+  <!-- An echo service for testing -->
+  <service name="EchoService" pivot="EchoHandler"/>
+
+ </services>
+
+</engineConfig>
