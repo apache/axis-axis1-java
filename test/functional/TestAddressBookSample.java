@@ -66,6 +66,7 @@ import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.log4j.Category;
 
 import junit.framework.TestCase;
 
@@ -74,7 +75,10 @@ import samples.addr.Main;
 /** Test the address book sample code.
  */
 public class TestAddressBookSample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestAddressBookSample.class.getName());
+
+
     public TestAddressBookSample(String name) {
         super(name);
     }
@@ -91,12 +95,12 @@ public class TestAddressBookSample extends TestCase {
     
     public void testAddressBookService () throws Exception {
         try {
-            System.out.println("Testing address book sample.");
-            System.out.println("Testing deployment...");
+            category.info("Testing address book sample.");
+            category.info("Testing deployment...");
             doTestDeploy();
-            System.out.println("Testing service...");
+            category.info("Testing service...");
             doTest();
-            System.out.println("Test complete.");
+            category.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

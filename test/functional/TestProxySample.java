@@ -64,6 +64,7 @@ import org.apache.axis.AxisFault ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.client.ServiceClient;
+import org.apache.log4j.Category;
 
 import junit.framework.TestCase;
 
@@ -72,7 +73,9 @@ import samples.misc.TestClient;
 /** Test the proxy sample code.
  */
 public class TestProxySample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestProxySample.class.getName());
+
     public TestProxySample(String name) {
         super(name);
     }
@@ -89,23 +92,23 @@ public class TestProxySample extends TestCase {
     
     public void testService () throws Exception {
         try {
-            System.out.println("Testing proxy sample.");
+            category.info("Testing proxy sample.");
             
-            System.out.println("Testing deployment...");
+            category.info("Testing deployment...");
             
             // deploy the proxy service
             String[] args = { "samples/proxy/deploy.xml" };
             AdminClient.main(args);
             
-            System.out.println("Testing server-side client deployment...");
+            category.info("Testing server-side client deployment...");
             
             // deploy the proxy service
             String[] args2 = { "samples/proxy/client_deploy.xml" };
             AdminClient.main(args2);
             
-            System.out.println("Testing service...");
+            category.info("Testing service...");
             doTest();
-            System.out.println("Test complete.");
+            category.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

@@ -66,6 +66,7 @@ import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.log4j.Category;
 
 import junit.framework.TestCase;
 
@@ -74,7 +75,9 @@ import samples.stock.GetQuote;
 /** Test the stock sample code.
  */
 public class TestStockSample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestStockSample.class.getName());
+
     public TestStockSample(String name) {
         super(name);
     }
@@ -125,18 +128,18 @@ public class TestStockSample extends TestCase {
 
     public void testStockService () throws Exception {
         try {
-            System.out.println("Testing stock sample.");
-            System.out.println("Testing JWS...");
+            category.info("Testing stock sample.");
+            category.info("Testing JWS...");
             doTestStockJWS();
-            System.out.println("Testing deployment...");
+            category.info("Testing deployment...");
             doTestDeploy();
-            System.out.println("Testing service...");
+            category.info("Testing service...");
             doTestStock();
-            System.out.println("Testing service with SOAPAction: \"\"...");
+            category.info("Testing service with SOAPAction: \"\"...");
             doTestStockNoAction();
-            System.out.println("Testing undeployment...");
+            category.info("Testing undeployment...");
             doTestUndeploy();
-            System.out.println("Test complete.");
+            category.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

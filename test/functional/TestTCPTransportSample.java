@@ -66,6 +66,7 @@ import org.apache.axis.utils.Admin;
 import org.apache.axis.client.ServiceClient;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.log4j.Category;
 
 import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
@@ -73,39 +74,41 @@ import junit.framework.AssertionFailedError;
 /** Test the stock sample code.
  */
 public class TestTCPTransportSample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestTCPTransportSample.class.getName());
+
     public TestTCPTransportSample(String name) {
         super(name);
     }
-    
+
     public void doTransportDeploy() throws Exception {
         String[] args = { "client", "samples/transport/tcp/deploy.xml" };
         Admin.main(args);
     }
-    
+
     public void doTestDeploy () throws Exception {
         String[] args = { "-ltcp://localhost:8088", "samples/transport/deploy.xml" };
         AdminClient.main(args);
     }
-    
+
     public void doTestUndeploy () throws Exception {
         String[] args = { "-ltcp://localhost:8088", "samples/stock/undeploy.xml" };
         AdminClient.main(args);
     }
-    
+
     public void doTestStock() throws Exception {
         try {
-            System.out.println("Testing TCP stock service...");
+            category.info("Testing TCP stock service...");
             String   symbol = "XXX"; // args[0] ;
 
             ServiceClient call   = new ServiceClient
                 ( new TCPTransport("localhost", "8088") );
-            
+
             // reconstruct URL
             ServiceDescription sd = new ServiceDescription("stockQuotes", true);
             sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
             call.setServiceDescription(sd);
-            
+
             Float res = new Float(0.0F);
             //      for (int i=0; i<count; i++) {
             Object ret = call.invoke(
@@ -119,7 +122,7 @@ public class TestTCPTransportSample extends TestCase {
                 throw new AssertionFailedError("Bad return value from TCP stock test: "+ret);
             }
         }
-        
+
         //    }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();
@@ -127,28 +130,28 @@ public class TestTCPTransportSample extends TestCase {
             throw new AssertionFailedError("Fault returned from TCP stock test: "+e);
         }
     }
-    
+
     public void testTCPTransportSample () throws Exception {
         try {
-            System.out.println("Testing TCP transport.");
-            
+            category.info("Testing TCP transport.");
+
             System.out.print("Deploying TCP client transport...");
             doTransportDeploy();
-            System.out.println("OK!");
-            
+            category.info("OK!");
+
             System.out.print("Testing deployment...");
             doTestDeploy();
-            System.out.println("OK!");
-            
+            category.info("OK!");
+
             System.out.print("Testing service...");
             doTestStock();
-            System.out.println("OK!");
-            
+            category.info("OK!");
+
             System.out.print("Testing undeployment...");
             doTestUndeploy();
-            System.out.println("OK!");
-            
-            System.out.println("Test complete.");
+            category.info("OK!");
+
+            category.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();
@@ -156,7 +159,7 @@ public class TestTCPTransportSample extends TestCase {
             throw new AssertionFailedError("Fault returned from test: "+e);
         }
     }
-    
+
     public static void main(String [] args)
     {
       TestTCPTransportSample tester = new TestTCPTransportSample("TCP test");
@@ -165,6 +168,6 @@ public class TestTCPTransportSample extends TestCase {
       } catch (Exception e) {
       }
     }
-    
+
 }
 
