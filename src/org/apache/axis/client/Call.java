@@ -352,15 +352,15 @@ public class Call implements javax.xml.rpc.Call {
     } // setProperty
 
     /**
-     * Returns the value associated with the named property - or null if not
-     * defined/set.
+     * Returns the value associated with the named property
      *
-     * @return Object value of the property - or null
+     * @return Object value of the property or null if the property is not set
+     * @throws IllegalArgumentException if the requested property is not a supported property
      */
     public Object getProperty(String name) {
-        if (name != null)
-            return callProperties.get(name);
-        return null;
+        if (name == null || !isPropertySupported(name))
+            throw new IllegalArgumentException();
+        return callProperties.get(name);
     } // getProperty
 
     /**
