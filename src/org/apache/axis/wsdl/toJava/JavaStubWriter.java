@@ -185,6 +185,9 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("            if (super.cachedEndpoint != null) {");
         pw.println("                call.setTargetEndpointAddress(super.cachedEndpoint);");
         pw.println("            }");
+        pw.println("            if (super.cachedTimeout != null) {");
+        pw.println("                call.setTimeout(super.cachedTimeout);");
+        pw.println("            }");
         pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
         pw.println("            while (keys.hasMoreElements()) {");
         pw.println("                String key = (String) keys.nextElement();");

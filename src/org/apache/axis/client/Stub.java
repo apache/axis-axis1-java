@@ -95,6 +95,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     protected String     cachedUsername     = null;
     protected String     cachedPassword     = null;
     protected URL        cachedEndpoint     = null;
+    protected Integer    cachedTimeout      = null;
 
     /**
      * Sets the value for a named property. JAX-RPC 1.0 specification 
@@ -223,6 +224,20 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     public String getPassword() {
         return cachedPassword;
     } // getPassword
+
+    /**
+     * Get the timeout value in milliseconds.  0 means no timeout.
+     */
+    public int getTimeout() {
+        return cachedTimeout == null ? 0 : cachedTimeout.intValue();
+    } // getTimeout
+
+    /**
+     * Set the timeout in milliseconds.
+     */
+    public void setTimeout(int timeout) {
+        cachedTimeout = new Integer(timeout);
+    } // setTimeout
 
     /**
      * If set to true, session is maintained; if false, it is not.
