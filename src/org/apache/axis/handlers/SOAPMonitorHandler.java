@@ -62,8 +62,6 @@ import org.apache.axis.SOAPPart;
 import org.apache.axis.monitor.SOAPMonitorConstants;
 import org.apache.axis.monitor.SOAPMonitorService;
 
-import javax.xml.namespace.QName;
-
 /**
  * This handler is used to route SOAP messages to the
  * SOAP monitor service.
@@ -74,9 +72,6 @@ import javax.xml.namespace.QName;
 public class SOAPMonitorHandler extends BasicHandler {
 
   private static long next_message_id = 1;
-  private String wsdlURL = null;
-  private QName  serviceQName = null;
-  private QName  portQName = null;
 
   /**
    * Constructor
