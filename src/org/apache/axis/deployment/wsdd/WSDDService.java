@@ -144,7 +144,7 @@ public class WSDDService
         for (int i = 0; i < operationElements.length; i++) {
             WSDDOperation operation = new WSDDOperation(operationElements[i],
                                                         desc);
-            operations.add(operation);
+            addOperation(operation);
         }
 
         Element [] typeMappingElements = getChildElements(e, "typeMapping");
@@ -394,12 +394,6 @@ public class WSDDService
                 wrapper.setOption("fault-" + flow.getQName().getLocalPart(),
                                   faultHandler);
             }
-        }
-
-        for (Iterator i = operations.iterator(); i.hasNext();) {
-            OperationDesc operationDesc =
-                    ((WSDDOperation) i.next()).getOperationDesc();
-            desc.addOperationDesc(operationDesc);
         }
 
         service.setServiceDescription(desc);
