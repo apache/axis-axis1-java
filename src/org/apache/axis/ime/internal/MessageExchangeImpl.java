@@ -67,6 +67,8 @@ import org.apache.axis.ime.MessageContextListener;
 import org.apache.axis.ime.MessageExchangeLifecycle;
 import org.apache.axis.ime.internal.util.uuid.UUIDGenFactory;
 
+import java.util.Map;
+
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
@@ -272,6 +274,87 @@ public class MessageExchangeImpl
     public synchronized MessageExchangeStatusListener getMessageExchangeStatusListener() {
         return this.statusListener;
     }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@enableFeature(featureId)
+     */
+    public void enableFeature(String featureId)
+            throws AxisFault {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@disableFeature(featureId)
+     */
+    public void disableFeature(String featureId)
+            throws AxisFault {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@isFeatureEnabled(featureId)
+     */
+    public boolean isFeatureEnabled(String featureId)
+            throws AxisFault {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@setProperty(String,Object)
+     */
+    public void setProperty(
+            String propertyId,
+            Object propertyValue) {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@getProperty(String)
+     */
+    public Object getProperty(
+            String propertyId) {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@getProperty(String,Object)
+     */
+    public Object getProperty(
+            String propertyId,
+            Object defaultValue) {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@getProperties()
+     */
+    public Map getProperties() {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@setProperties(java.lang.Map)
+     */
+    public void setProperties(Map properties) {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@clearProperties()
+     */
+    public void clearProperties() {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+    
     
 
   // -- Utility Classes --- //

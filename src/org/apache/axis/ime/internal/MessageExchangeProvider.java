@@ -56,6 +56,7 @@
 package org.apache.axis.ime.internal;
 
 import org.apache.axis.i18n.Messages;
+import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchange;
 import org.apache.axis.ime.MessageContextListener;
@@ -65,6 +66,8 @@ import org.apache.axis.ime.MessageExchangeFaultListener;
 import org.apache.axis.ime.internal.util.WorkerPool;
 import org.apache.axis.ime.internal.util.KeyedBuffer;
 import org.apache.axis.ime.internal.util.NonPersistentKeyedBuffer;
+
+import java.util.Map;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
@@ -86,9 +89,23 @@ public abstract class MessageExchangeProvider
 
     protected abstract ReceivedMessageDispatchPolicy getReceivedMessageDispatchPolicy();
 
-    public MessageExchange createMessageExchange() {
+    public MessageExchange createMessageExchange()
+            throws AxisFault {
         return new MessageExchangeImpl(this);
     }
+
+    /**
+     * Unsupported for now
+     */
+    public MessageExchange createMessageExchange(
+            Map properties,
+            String[] enabledFeatures)
+            throws AxisFault {
+        throw AxisFault.makeFault(
+            new UnsupportedOperationException(
+                Messages.getMessage("unsupportedOperationException00")));
+    }
+              
 
     public void init() {
         init(DEFAULT_THREAD_COUNT);
