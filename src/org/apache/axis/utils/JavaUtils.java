@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -60,6 +60,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import java.text.Collator;
 import java.text.MessageFormat;
@@ -70,11 +71,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.io.IOException;
+
 import org.apache.axis.encoding.Hex;
+import com.techtrader.modules.tools.bytecode.BCClass;
+import com.techtrader.modules.tools.bytecode.BCMethod;
+import com.techtrader.modules.tools.bytecode.Code;
+import com.techtrader.modules.tools.bytecode.LocalVariableTableAttribute;
+import com.techtrader.modules.tools.bytecode.Constants;
+import com.techtrader.modules.tools.bytecode.LocalVariable;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class JavaUtils
@@ -83,10 +94,18 @@ public class JavaUtils
         LogFactory.getLog(JavaUtils.class.getName());
 
     /**
+     * Cache of tt-bytecode BCClass objects which correspond to particular
+     * Java classes.
+     *
+     * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
+     */
+    private static Hashtable ttClassCache = new Hashtable();
+
+    /**
      * It the argument to the convert(...) method implements
-     * the ConvertCache interface, the convert(...) method 
+     * the ConvertCache interface, the convert(...) method
      * will use the set/get methods to store and retrieve
-     * converted values.  
+     * converted values.
      **/
     public interface ConvertCache {
         /**
@@ -96,12 +115,12 @@ public class JavaUtils
         public Object getConvertedValue(Class cls);
         /**
          * Get the destination array class described by the xml
-         **/         
+         **/
         public Class getDestClass();
     }
 
     /** Utility function to convert an Object to some desired Class.
-     * 
+     *
      * Right now this works for:
      *     arrays <-> Lists,
      *     Holders <-> held values
@@ -109,7 +128,7 @@ public class JavaUtils
      * @param destClass the actual class we want
      */
     public static Object convert(Object arg, Class destClass)
-    {  
+    {
         if (destClass == null) {
             return arg;
         }
@@ -136,7 +155,7 @@ public class JavaUtils
         }
 
         // Convert between Axis special purpose Hex and byte[]
-        if (arg instanceof Hex && 
+        if (arg instanceof Hex &&
             destClass == byte[].class) {
             return ((Hex) arg).getBytes();
         } else if (arg instanceof byte[] &&
@@ -146,8 +165,8 @@ public class JavaUtils
 
 
         // Return if no conversion is available
-        if (!(arg instanceof List || 
-              (arg != null && arg.getClass().isArray())) && 
+        if (!(arg instanceof List ||
+              (arg != null && arg.getClass().isArray())) &&
             ((destHeldType == null && argHeldType == null) ||
              (destHeldType != null && argHeldType != null))) {
             return arg;
@@ -176,7 +195,7 @@ public class JavaUtils
         }
 
         // Flow to here indicates that neither arg or destClass is a Holder
-        
+
         // Check to see if the argument has a prefered destination class.
         if (arg instanceof ConvertCache &&
             (( ConvertCache) arg).getDestClass() != destClass) {
@@ -191,7 +210,7 @@ public class JavaUtils
                     return destValue;
             }
         }
-            
+
         if (arg == null) {
             return arg;
         }
@@ -205,21 +224,21 @@ public class JavaUtils
         }
         if (destClass.isArray()) {
             if (destClass.getComponentType().isPrimitive()) {
-                
+
                 Object array = Array.newInstance(destClass.getComponentType(),
                                                  length);
                 // Assign array elements
                 if (arg.getClass().isArray()) {
                     for (int i = 0; i < length; i++) {
                         Array.set(array, i, Array.get(arg, i));
-                    }                                
-                } else {  
+                    }
+                } else {
                     for (int i = 0; i < length; i++) {
                         Array.set(array, i, ((List) arg).get(i));
                     }
                 }
                 destValue = array;
-                
+
             } else {
                 Object [] array;
                 try {
@@ -232,15 +251,15 @@ public class JavaUtils
                 // Use convert to assign array elements.
                 if (arg.getClass().isArray()) {
                     for (int i = 0; i < length; i++) {
-                        array[i] = convert(Array.get(arg, i), 
-                                           destClass.getComponentType());
-                    }                                
-                } else {  
-                    for (int i = 0; i < length; i++) {
-                        array[i] = convert(((List) arg).get(i), 
+                        array[i] = convert(Array.get(arg, i),
                                            destClass.getComponentType());
                     }
-                }   
+                } else {
+                    for (int i = 0; i < length; i++) {
+                        array[i] = convert(((List) arg).get(i),
+                                           destClass.getComponentType());
+                    }
+                }
                 destValue = array;
             }
         }
@@ -256,12 +275,12 @@ public class JavaUtils
             if (arg.getClass().isArray()) {
                 for (int j = 0; j < length; j++) {
                     newList.add(Array.get(arg, j));
-                }                                
+                }
             } else {
                 for (int j = 0; j < length; j++) {
                     newList.add(((List) arg).get(j));
-                }                
-            }                
+                }
+            }
             destValue = newList;
         }
         else {
@@ -307,7 +326,7 @@ public class JavaUtils
      * @return boolean true/false
      **/
     public static boolean isJavaId(String id) {
-        if (id == null || id.equals("") || isJavaKeyword(id)) 
+        if (id == null || id.equals("") || isJavaKeyword(id))
             return false;
         if (!Character.isJavaIdentifierStart(id.charAt(0)))
             return false;
@@ -338,7 +357,7 @@ public class JavaUtils
      * Foo[] to the proper class name for loading [LFoo
      */
     public static String getLoadableClassName(String text) {
-        if (text == null || 
+        if (text == null ||
             text.indexOf("[") < 0 ||
             text.charAt(0) == '[')
             return text;
@@ -374,7 +393,7 @@ public class JavaUtils
      * [LFoo to the Foo[]
      */
     public static String getTextClassName(String text) {
-        if (text == null || 
+        if (text == null ||
             text.indexOf("[") != 0)
             return text;
         String className = "";
@@ -410,7 +429,7 @@ public class JavaUtils
 
     /**
      * Map an XML name to a Java identifier per
-     * the mapping rules of JSR 101 (in 
+     * the mapping rules of JSR 101 (in
      * version 0.7 this is
      * "Chapter 20: Appendix: Mapping of XML Names"
      * @param name is the xml name
@@ -421,12 +440,12 @@ public class JavaUtils
         // protect ourselves from garbage
         if (name == null || name.equals(""))
             return name;
-        
+
         char[] nameArray = name.toCharArray();
         int nameLen = name.length();
         StringBuffer result = new StringBuffer(nameLen);
         boolean wordStart = false;
-        
+
         // The mapping indicates to convert first
         // character.
         int i = 0;
@@ -461,11 +480,11 @@ public class JavaUtils
                 result.append("_" + nameArray.length);
             }
         }
-        
+
         // The mapping indicates to skip over
         // all characters that are not letters or
-        // digits.  The first letter/digit 
-        // following a skipped character is 
+        // digits.  The first letter/digit
+        // following a skipped character is
         // upper-cased.
         for (++i; i < nameLen; ++i) {
             char c = nameArray[i];
@@ -487,14 +506,14 @@ public class JavaUtils
             // For example:  "22hi" becomes "22Hi"
             wordStart = !Character.isLetter(c);
         }
-        
+
         // covert back to a String
         String newName = result.toString();
-        
+
         // check for Java keywords
         if (isJavaKeyword(newName))
             newName = makeNonJavaKeyword(newName);
-        
+
         return newName;
     } // xmlNameToJava
 
@@ -580,7 +599,7 @@ public class JavaUtils
      * replace:
      * Like String.replace except that the old new items are strings.
      *
-     * @param name string 
+     * @param name string
      * @param oldt old text to replace
      * @param newt new text to use
      * @return replacement string
@@ -592,13 +611,13 @@ public class JavaUtils
 
         // Create a string buffer that is twice initial length.
         // This is a good starting point.
-        StringBuffer sb = new StringBuffer(name.length()* 2); 
+        StringBuffer sb = new StringBuffer(name.length()* 2);
 
         int len = oldT.length ();
         try {
             int start = 0;
             int i = name.indexOf (oldT, start);
-            
+
             while (i >= 0) {
                 sb.append(name.substring(start, i));
                 sb.append(newT);
@@ -649,14 +668,14 @@ public class JavaUtils
     }
 
     /**
-     * Gets the Holder value. 
-     * @param holder Holder object            
-     * @return value object 
+     * Gets the Holder value.
+     * @param holder Holder object
+     * @return value object
      */
     public static Object getHolderValue(Object holder) throws HolderException {
         if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
             throw new HolderException();
-        }            
+        }
         try {
             Field valueField = holder.getClass().getField("value");
             return valueField.get(holder);
@@ -666,14 +685,14 @@ public class JavaUtils
     }
 
     /**
-     * Sets the Holder value. 
-     * @param holder Holder object            
-     * @param value is the object value 
+     * Sets the Holder value.
+     * @param holder Holder object
+     * @param value is the object value
      */
     public static void setHolderValue(Object holder, Object value) throws HolderException {
         if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
             throw new HolderException();
-        }            
+        }
         try {
             Field valueField = holder.getClass().getField("value");
             if (valueField.getType().isPrimitive()) {
@@ -691,7 +710,7 @@ public class JavaUtils
     public static class HolderException extends Exception
     {
         public HolderException () {}
-    }; 
+    };
 
 
     /**
@@ -707,7 +726,7 @@ public class JavaUtils
             java.lang.reflect.Method m2 = cls.getMethod("toString", null);
             java.lang.reflect.Method m3 = cls.getMethod("fromString",
                                                         new Class[] {java.lang.String.class});
-            
+
             if (m != null && m2 != null && m3 != null &&
                 cls.getMethod("fromValue", new Class[] {m.getReturnType()}) != null) {
                 try {
@@ -715,10 +734,85 @@ public class JavaUtils
                         return true;
                     return false;
                 } catch (java.lang.NoSuchMethodException e) {
-                    return true;  // getValue & fromValue exist.  setValue does not exist.  Thus return true. 
+                    return true;  // getValue & fromValue exist.  setValue does not exist.  Thus return true.
                 }
             }
         } catch (java.lang.NoSuchMethodException e) {}
         return false;
-    }  
+    }
+
+    /**
+     * Get Parameter Names using tt-bytecode
+     *
+     * @param method the Java method we're interested in
+     * @return list of names or null
+     */
+    public static String[] getParameterNamesFromDebugInfo(Method method) {
+        Class c = method.getDeclaringClass();
+        int numParams = method.getParameterTypes().length;
+        Vector temp = new Vector();
+
+        // Don't worry about it if there are no params.
+        if (numParams == 0)
+            return null;
+
+        // Try to obtain a tt-bytecode class object
+        BCClass bclass = (BCClass)ttClassCache.get(c);
+
+        if(bclass == null) {
+            try {
+                bclass = new BCClass(c);
+                ttClassCache.put(c, bclass);
+            } catch (IOException e) {
+                // what now?
+            }
+        }
+
+        // Obtain the exact method we're interested in.
+        BCMethod bmeth = bclass.getMethod(method.getName(),
+                                          method.getParameterTypes());
+
+        if (bmeth == null)
+            return null;
+
+        // Get the Code object, which contains the local variable table.
+        Code code = bmeth.getCode();
+        if (code == null)
+            return null;
+
+        LocalVariableTableAttribute attr =
+                (LocalVariableTableAttribute)code.getAttribute(Constants.ATTR_LOCALS);
+
+        if (attr == null)
+            return null;
+
+        // OK, found it.  Now scan through the local variables and record
+        // the names in the right indices.
+        LocalVariable [] vars = attr.getLocalVariables();
+
+        String [] argNames = new String[numParams + 1];
+        argNames[0] = null; // don't know return name
+
+        // NOTE: we scan through all the variables here, because I have been
+        // told that jikes sometimes produces unpredictable ordering of the
+        // local variable table.
+        for (int j = 0; j < vars.length; j++) {
+            LocalVariable var = vars[j];
+            if (! var.getName().equals("this")) {
+                if(temp.size() < var.getIndex() + 1)
+                    temp.setSize(var.getIndex() + 1);
+                temp.setElementAt(var.getName(), var.getIndex());
+            }
+        }
+        int k = 0;
+        for (int j = 0; j < temp.size(); j++) {
+            if (temp.elementAt(j) != null) {
+                k++;
+                argNames[k] = (String)temp.elementAt(j);
+                if(k + 1 == argNames.length)
+                    break;
+            }
+        }
+        return argNames;
+    }
 }
