@@ -65,6 +65,7 @@ import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
@@ -148,8 +149,9 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             if (axisFault.getFaultString() != null) {
                 if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                     context.startElement(Constants.QNAME_FAULTREASON_SOAP12, null);
-                    // TODO: put an xml:lang attribute on the <Text> element?
-                    context.startElement(Constants.QNAME_TEXT_SOAP12, null);
+                    AttributesImpl attrs = new AttributesImpl();
+                    attrs.addAttribute("http://www.w3.org/XML/1998/namespace", "xml", "xml:lang", "CDATA", "en");
+                    context.startElement(Constants.QNAME_TEXT_SOAP12, attrs);
                 } else
                     context.startElement(Constants.QNAME_FAULTSTRING, null);
                 context.writeSafeString(axisFault.getFaultString());

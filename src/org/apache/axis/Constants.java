@@ -279,12 +279,6 @@ public class Constants {
     /** @deprecated use URI_SOAP12_NEXT_ROLE */
     public static final String URI_SOAP12_NEXT_ACTOR = URI_SOAP12_NEXT_ROLE;
 
-    public static final String URI_SOAP12_FAULT =
-                                     "http://www.w3.org/2002/12/soap-faults";
-
-    public static final String URI_SOAP12_UPGRADE =
-                                     "http://www.w3.org/2002/12/soap-upgrade";
-
     public static final String URI_SOAP12_RPC =
                                      "http://www.w3.org/2002/12/soap-rpc";
 

@@ -218,7 +218,7 @@ public class SOAPService extends SimpleTargetedChain
                         whatWasMissUnderstood.append( badQName.toString() );
 
                         SOAPHeaderElement newHeader = new
-                            SOAPHeaderElement(Constants.URI_SOAP12_FAULT,
+                            SOAPHeaderElement(Constants.URI_SOAP12_ENV,
                                               Constants.ELEM_NOTUNDERSTOOD);
                         newHeader.addAttribute(null,
                                                Constants.ATTR_QNAME,
