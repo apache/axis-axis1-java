@@ -1,29 +1,33 @@
-The address book sample requires that you generate the Java bindings from
-the AddressBook.wsdl file.
+To run the address book sample, you must do the following:
+1.  Set up your CLASSPATH.
+2.  Generate the Java bindings from the AddressBook.wsdl file.
+3.  Compile the code.
+4.  Start a server.
+5.  Run the sample.
 
-First, set up the CLASSPATH.  It must contain an XML parser (ie., xerces.jar);
-all the jars in the lib directory; and the directory containing the samples
-subdirectory.
+1.  Set up your CLASSPATH.
+    The CLASSPATH must contain:  an XML parser (ie., Xerces), JUnit
+    (www.junit.org), all the jars in the lib directory, and the directory
+    containing the samples subdirectory.
 
-Now change directory to the directory that contains the samples subdirectory.
+2.  Generate the Java bindings from the AddressBook.wsdl file.
+    a.  Change directory to the directory that contains the samples
+        subdirectory.
+    b.  Run the command: java org.apache.axis.wsdl.WSDL2Java -s -d Session
+        -Nurn:AddressFetcher2=samples.addr samples\addr\AddressBook.wsdl
 
-Finally, run the command:
+    This will generate all the bindings, both client-side and server-side,
+    into the samples/addr subdirectory.
 
-java org.apache.axis.wsdl.WSDL2Java -s -d Session -Nurn:AddressFetcher2=samples.addr samples\addr\AddressBook.wsdl 
+3.  Compile the code.
+    a.  Now you can change directory to samples/addr
+    b.  And compile the sample:  javac *.java
 
-This will generate all the bindings, both client-side and server-side,
-into the samples/addre subdirectory.
+4.  Start a  server.
+    To run the sample, you will first need to run a server.  To run a very
+    simple server you could run, in a separate window:
+        java org.apache.axis.transport.http.SimpleAxisServer -p 8080
 
-Now you can change directory to samples/addr and compile the sample.
-BUT FIRST, this sample depends on junit, so you have to get junit.jar
-(www.junit.org) and add it to your CLASSPATH.  THEN you can compile:
-
-javac *.java
-
-To run the sample, you will first need to run a server.  To run a very simple server you could run,
-in a separate window:
-
-java org.apache.axis.transport.http.SimpleAxisServer -p 8080
-
-Finally, to run the client, simple run testit.sh or testit.cmd,
-depending on your platform.
+5.  Run the sample.
+    Finally, to run the client, run testit.sh or testit.cmd, depending on
+    your platform.
