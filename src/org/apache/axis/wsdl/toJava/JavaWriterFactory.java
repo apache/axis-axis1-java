@@ -371,7 +371,7 @@ public class JavaWriterFactory implements WriterFactory {
                     while(operations.hasNext()) {
                         Operation operation = (Operation) operations.next();
                         String name = operation.getName();
-                        constructSignatures(ptEntry.getParameters(name), name);
+                        constructSignature(ptEntry.getParameters(name), name);
                     }
                 }
             }
@@ -379,23 +379,14 @@ public class JavaWriterFactory implements WriterFactory {
     } // constructSignatures
 
     /**
-     * Construct the signatures.  signature is used by both the interface and the stub.
-     * skelSig is used by the skeleton.
+     * Construct the signature, which is used by both the interface and the stub.
      */
-    private void constructSignatures(Parameters parms, String opName) {
+    private void constructSignature(Parameters parms, String opName) {
         String name  = Utils.xmlNameToJava(opName);
-        int allOuts = parms.outputs + parms.inouts;
         String ret = parms.returnType == null ? "void" : parms.returnType.getName();
         String signature = "    public " + ret + " " + name + "(";
-        String skelSig = null;
-
-        if (allOuts == 0)
-            skelSig = "    public void " + name + "(";
-        else
-            skelSig = "    public Object " + name + "(";
 
         boolean needComma = false;
-        boolean needSkelSigComma = false;
 
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
@@ -410,40 +401,18 @@ public class JavaWriterFactory implements WriterFactory {
             String javifiedName = Utils.xmlNameToJava(p.name);
             if (p.mode == Parameter.IN) {
                 signature = signature + p.type.getName() + " " + javifiedName;
-                if (needSkelSigComma) {
-                    skelSig = skelSig + ", ";
-                }
-                else {
-                    needSkelSigComma = true;
-                }
-                skelSig = skelSig + p.type.getName() + " " + javifiedName;
             }
-            else if (p.mode == Parameter.INOUT) {
-                signature = signature + Utils.holder(p.type, symbolTable) + " "
-                        + javifiedName;
-                if (needSkelSigComma) {
-                    skelSig = skelSig + ", ";
-                }
-                else {
-                    needSkelSigComma = true;
-                }
-                skelSig = skelSig + p.type.getName() + " " + javifiedName;
-            }
-            else// (p.mode == Parameter.OUT)
-            {
+            else {
                 signature = signature + Utils.holder(p.type, symbolTable) + " "
                         + javifiedName;
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";
-        skelSig = skelSig + ") throws java.rmi.RemoteException";
         if (parms.faultString != null) {
             signature = signature + ", " + parms.faultString;
-            skelSig = skelSig + ", " + parms.faultString;
         }
         parms.signature = signature;
-        parms.skelSignature = skelSig;
-    } // constructSignatures
+    } // constructSignature
 
     /**
      * Find all inout/out parameters and add a flag to the Type of that parameter saying a holder
