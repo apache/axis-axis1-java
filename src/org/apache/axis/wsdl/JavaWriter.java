@@ -298,7 +298,7 @@ public abstract class JavaWriter implements Writer {
         }
         pw.println(JavaUtils.getMessage("deploy09"));
         pw.println();
-        pw.println("<deployment");
+        pw.println("<" + deploymentOpName + "ment");
         pw.println("    xmlns=\"http://xml.apache.org/axis/wsdd/\"");
         pw.println("    xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">");
     } // initializeDeploymentDoc
