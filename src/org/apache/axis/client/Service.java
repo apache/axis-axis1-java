@@ -202,6 +202,19 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
     /**
      * Constructs a new Service object for the service in the WSDL document
+     *
+     * @param parser          Parser for this service
+     * @param serviceName      Qualified name of the desired service
+     * @throws ServiceException If there's an error 
+     */
+    public Service(Parser parser, QName serviceName) throws ServiceException {
+        this.serviceName = serviceName;
+        engine = getAxisClient();
+        initService( parser, serviceName );
+    }
+
+    /**
+     * Constructs a new Service object for the service in the WSDL document
      * pointed to by the wsdlLocation and serviceName parameters.  This is
      * just like the previous constructor but instead of URL the
      * wsdlLocation parameter points to a file on the filesystem relative

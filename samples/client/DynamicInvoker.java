@@ -54,35 +54,29 @@
  */
 package samples.client;
 
-import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Import;
 import javax.wsdl.Input;
-import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
-import javax.xml.rpc.ServiceFactory;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -92,16 +86,31 @@ import java.util.Vector;
  * complex types (it could if there was defined a to encode complex
  * values as command line arguments).
  *
- * @author Sanjiva Weerawarana
- * @author Alekander Slominski
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class DynamicInvoker {
+
+    /** Field wsdlParser           */
+    private Parser wsdlParser = null;
+
+    /**
+     * Constructor DynamicInvoker
+     *
+     * @param wsdlURL
+     *
+     * @throws Exception
+     */
+    public DynamicInvoker(String wsdlURL) throws Exception {
+        // Start by reading in the WSDL using Parser
+        wsdlParser = new Parser();
+        System.out.println("Reading WSDL document from '" + wsdlURL + "'");
+        wsdlParser.run(wsdlURL);
+    }
+
     /**
      * Method usage
      */
     private static void usage() {
-
         System.err.println(
                 "Usage: java " + DynamicInvoker.class.getName() + " wsdlLocation "
                 + "operationName[(portName)]:[inputMessageName]:[outputMessageName] "
@@ -117,7 +126,6 @@ public class DynamicInvoker {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-
         if (args.length < 2) {
             usage();
         }
@@ -153,16 +161,16 @@ public class DynamicInvoker {
                 break;
             }
         }
+        
         try {
-            portName =
-                    operationName.substring(operationName.indexOf("(") + 1,
-                                            operationName.indexOf(")"));
-            operationName =
-                    operationName.substring(0, operationName.indexOf("("));
+            portName = operationName.substring(operationName.indexOf("(") + 1,
+                                               operationName.indexOf(")"));
+            operationName = operationName.substring(0, operationName.indexOf("("));
         } catch (Exception ignored) {
         }
-        HashMap map = invokeMethod(wsdlLocation, operationName, inputName,
-                                   outputName, portName, args);
+        
+        DynamicInvoker invoker = new DynamicInvoker(wsdlLocation);
+        HashMap map = invoker.invokeMethod(operationName, inputName, outputName, portName, args);
 
         // print result
         System.out.println("Result:");
@@ -188,34 +196,20 @@ public class DynamicInvoker {
      *
      * @throws Exception
      */
-    public static HashMap invokeMethod(
-            String wsdlLocation, String operationName, String inputName, String outputName, String portName, String[] args)
+    public HashMap invokeMethod(
+            String operationName, String inputName, String outputName, String portName, String[] args)
             throws Exception {
-
         String serviceNS = null;
         String serviceName = null;
         String portTypeNS = null;
         String portTypeName = null;
         String operationQName = null;
 
-        System.out.println("Reading WSDL document from '" + wsdlLocation + "'");
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-
-        reader.setFeature("javax.wsdl.verbose", false);
-        Document doc = XMLUtils.newDocument(wsdlLocation);
-        Definition def = reader.readWSDL(null, doc);
-
         System.out.println("Preparing Axis dynamic invocation");
-        Service service = selectService(def,
-                                        serviceNS, serviceName);
-        PortType portType = selectPortType(def,
-                                           portTypeNS,
-                                           portTypeName);
+        Service service = selectService(serviceNS, serviceName);
+        PortType portType = selectPortType(portTypeNS, portTypeName);
         Operation operation = null;
-        ServiceFactory factory = ServiceFactory.newInstance();
-        org.apache.axis.client.Service dpf =
-                (org.apache.axis.client.Service) factory.createService(
-                        new URL(wsdlLocation), service.getQName());
+        org.apache.axis.client.Service dpf = new org.apache.axis.client.Service(wsdlParser, service.getQName());
 
         if ((inputName == null) && (outputName == null)) {
 
@@ -269,7 +263,7 @@ public class DynamicInvoker {
         // Input types and names
         Vector inNames = new Vector();
         Vector inTypes = new Vector();
-        SymbolTable symbolTable = dpf.getWSDLParser().getSymbolTable();
+        SymbolTable symbolTable = wsdlParser.getSymbolTable();
         BindingEntry bEntry =
                 symbolTable.getBindingEntry(binding.getQName());
         Parameters parameters = null;
@@ -349,6 +343,7 @@ public class DynamicInvoker {
         for (int pos = 0; pos < outNames.size(); ++pos) {
             String name = (String) outNames.get(pos);
             Object value = outputs.get(name);
+
             if ((value == null) && (pos == 0)) {
                 map.put(name, ret);
             } else {
@@ -364,7 +359,7 @@ public class DynamicInvoker {
      * @param v
      * @param type
      */
-    private static void addTypeClass(Vector v, String type) {
+    private void addTypeClass(Vector v, String type) {
 
         if ("string".equals(type)) {
             v.add(String.class);
@@ -392,19 +387,49 @@ public class DynamicInvoker {
      *
      * @throws Exception
      */
-    public static Service selectService(
-            Definition def, String serviceNS, String serviceName)
+    public Service selectService(String serviceNS, String serviceName)
             throws Exception {
 
-        Map services = getAllItems(def, "Service");
-        QName serviceQName = (((serviceNS != null) && (serviceName != null))
+        QName serviceQName = (((serviceNS != null)
+                && (serviceName != null))
                 ? new QName(serviceNS, serviceName)
                 : null);
-        Service service = (Service) getNamedItem(services, serviceQName,
-                                                 "Service");
+        ServiceEntry serviceEntry = (ServiceEntry) getSymTabEntry(serviceQName,
+                                                                  ServiceEntry.class);
 
-        return service;
+        return serviceEntry.getService();
     }
+
+    /**
+     * Method getSymTabEntry
+     *
+     * @param qname
+     * @param cls
+     *
+     * @return
+     */
+    public SymTabEntry getSymTabEntry(QName qname, Class cls) {
+
+        HashMap map = wsdlParser.getSymbolTable().getHashMap();
+        Iterator iterator = map.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            QName key = (QName) entry.getKey();
+            Vector v = (Vector) entry.getValue();
+
+            if ((qname == null) || qname.equals(qname)) {
+                for (int i = 0; i < v.size(); ++i) {
+                    SymTabEntry symTabEntry = (SymTabEntry) v.elementAt(i);
+
+                    if (cls.isInstance(symTabEntry)) {
+                        return symTabEntry;
+                    }
+                }
+            }
+        }
+        return null;
+    }    // get
 
     /**
      * Method selectPortType
@@ -417,17 +442,17 @@ public class DynamicInvoker {
      *
      * @throws Exception
      */
-    public static PortType selectPortType(
-            Definition def, String portTypeNS, String portTypeName)
+    public PortType selectPortType(String portTypeNS, String portTypeName)
             throws Exception {
-        Map portTypes = getAllItems(def, "PortType");
+
         QName portTypeQName = (((portTypeNS != null)
                 && (portTypeName != null))
                 ? new QName(portTypeNS, portTypeName)
                 : null);
-        PortType portType = (PortType) getNamedItem(portTypes,
-                                                    portTypeQName, "PortType");
-        return portType;
+        PortTypeEntry portTypeEntry =
+                (PortTypeEntry) getSymTabEntry(portTypeQName, PortTypeEntry.class);
+
+        return portTypeEntry.getPortType();
     }
 
     /**
@@ -440,7 +465,8 @@ public class DynamicInvoker {
      *
      * @throws Exception
      */
-    public static Port selectPort(Map ports, String portName) throws Exception {
+    public Port selectPort(Map ports, String portName) throws Exception {
+
         Iterator valueIterator = ports.keySet().iterator();
 
         while (valueIterator.hasNext()) {
@@ -464,190 +490,5 @@ public class DynamicInvoker {
         }
         return null;
     }
-
-    /**
-     * Method getNamedItem
-     *
-     * @param items
-     * @param qname
-     * @param itemType
-     *
-     * @return
-     *
-     * @throws Exception
-     */
-    public static Object getNamedItem(Map items, QName qname, String itemType)
-            throws Exception {
-
-        if (qname != null) {
-            Object item = items.get(qname);
-
-            if (item != null) {
-                return item;
-            } else {
-                throw new Exception(itemType + " '" + qname
-                                    + "' not found. Choices are: "
-                                    + getCommaListFromQNameMap(items));
-            }
-        } else {
-            int size = items.size();
-
-            if (size >= 1) {
-                Iterator valueIterator = items.values().iterator();
-                Object o = valueIterator.next();
-                return o;
-            } else if (size == 0) {
-                throw new Exception("WSDL document contains no " + itemType
-                                    + "s.");
-            } else {
-                throw new Exception("Please specify a " + itemType
-                                    + ". Choices are: "
-                                    + getCommaListFromQNameMap(items));
-            }
-        }
-    }
-
-    /**
-     * Method getCommaListFromQNameMap
-     *
-     * @param qnameMap
-     *
-     * @return
-     */
-    private static String getCommaListFromQNameMap(Map qnameMap) {
-
-        StringBuffer strBuf = new StringBuffer("{");
-        Set keySet = qnameMap.keySet();
-        Iterator keyIterator = keySet.iterator();
-        int index = 0;
-
-        while (keyIterator.hasNext()) {
-            strBuf.append(((index > 0)
-                           ? ", "
-                           : "") + keyIterator.next());
-            index++;
-        }
-        strBuf.append("}");
-        return strBuf.toString();
-    }
-
-    /**
-     * Method addDefinedItems
-     *
-     * @param fromItems
-     * @param itemType
-     * @param toItems
-     */
-    public static void addDefinedItems(Map fromItems, String itemType,
-                                       Map toItems) {
-        if (fromItems != null) {
-            Iterator entryIterator = fromItems.entrySet().iterator();
-
-            if (itemType.equals("Message")) {
-                while (entryIterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entryIterator.next();
-                    Message message = (Message) entry.getValue();
-
-                    if (!message.isUndefined()) {
-                        toItems.put(entry.getKey(), message);
-                    }
-                }
-            } else if (itemType.equals("Operation")) {
-                while (entryIterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entryIterator.next();
-                    Operation operation = (Operation) entry.getValue();
-
-                    if (!operation.isUndefined()) {
-                        toItems.put(entry.getKey(), operation);
-                    }
-                }
-            } else if (itemType.equals("PortType")) {
-                while (entryIterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entryIterator.next();
-                    PortType portType = (PortType) entry.getValue();
-
-                    if (!portType.isUndefined()) {
-                        toItems.put(entry.getKey(), portType);
-                    }
-                }
-            } else if (itemType.equals("Binding")) {
-                while (entryIterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entryIterator.next();
-                    Binding binding = (Binding) entry.getValue();
-
-                    if (!binding.isUndefined()) {
-                        toItems.put(entry.getKey(), binding);
-                    }
-                }
-            } else if (itemType.equals("Service")) {
-                while (entryIterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entryIterator.next();
-                    Service service = (Service) entry.getValue();
-
-                    toItems.put(entry.getKey(), service);
-                }
-            }
-        }
-    }
-
-    /**
-     * Method getAllItems
-     *
-     * @param def
-     * @param itemType
-     * @param toItems
-     */
-    private static void getAllItems(Definition def, String itemType,
-                                    Map toItems) {
-        Map items = null;
-
-        if (itemType.equals("PortType")) {
-            items = def.getPortTypes();
-        } else if (itemType.equals("Service")) {
-            items = def.getServices();
-        } else {
-            throw new IllegalArgumentException("Don't know how to find all "
-                                               + itemType + "s.");
-        }
-        addDefinedItems(items, itemType, toItems);
-        Map imports = def.getImports();
-
-        if (imports != null) {
-            Iterator valueIterator = imports.values().iterator();
-
-            while (valueIterator.hasNext()) {
-                List importList = (List) valueIterator.next();
-
-                if (importList != null) {
-                    Iterator importIterator = importList.iterator();
-
-                    while (importIterator.hasNext()) {
-                        Import tempImport = (Import) importIterator.next();
-
-                        if (tempImport != null) {
-                            Definition importedDef = tempImport.getDefinition();
-
-                            if (importedDef != null) {
-                                getAllItems(importedDef, itemType, toItems);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Method getAllItems
-     *
-     * @param def
-     * @param itemType
-     *
-     * @return
-     */
-    public static Map getAllItems(Definition def, String itemType) {
-        Map ret = new HashMap();
-        getAllItems(def, itemType, ret);
-        return ret;
-    }
 }
+
