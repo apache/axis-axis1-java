@@ -144,6 +144,9 @@ public class SOAPEnvelope extends MessageElement
     public void setEncodingStyleURI(String uri)
     {
         encodingStyleURI = uri;
+        setAttribute(Constants.URI_SOAP_ENV,
+                     Constants.ATTR_ENCODING_STYLE,
+                     encodingStyleURI);
     }
     
     public Vector getBodyElements() throws AxisFault
@@ -397,14 +400,6 @@ public class SOAPEnvelope extends MessageElement
         }
         
         Enumeration enum;
-        if (encodingStyleURI != null) {
-            if(attributes == null)
-                attributes = new AttributesImpl();
-            attributes.addAttribute(Constants.URI_SOAP_ENV,
-                               Constants.ATTR_ENCODING_STYLE,
-                               "SOAP-ENV:" + Constants.ATTR_ENCODING_STYLE,
-                               "CDATA", encodingStyleURI);
-        }
         
         context.startElement(new QName(Constants.URI_SOAP_ENV,
                                        Constants.ELEM_ENVELOPE), attributes);

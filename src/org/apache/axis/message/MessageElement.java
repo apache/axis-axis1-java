@@ -353,6 +353,32 @@ public class MessageElement
         attributes.addAttribute(namespace, localName, "", "CDATA",
                                 value);
     }
+    
+    /**
+     * Set an attribute, adding the attribute if it isn't already present
+     * in this element, and changing the value if it is.  Passing null as the
+     * value will cause any pre-existing attribute by this name to go away.
+     */ 
+    public void setAttribute(String namespace, String localName,
+                             String value)
+    {
+        if (attributes != null) {
+            int idx = attributes.getIndex(namespace, localName);
+            if (idx > -1) {
+                // Got it, so replace it's value.
+                if (value != null) {
+                    attributes.setValue(idx, value);
+                } else {
+                    attributes.removeAttribute(idx);
+                }
+                return;
+            }
+        } else if (value != null) {
+            attributes = new AttributesImpl();
+        }
+
+        addAttribute(namespace, localName, value);
+    }
 
     public String getAttributeValue(String localName)
     {
