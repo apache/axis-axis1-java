@@ -975,6 +975,10 @@ public class SymbolTable {
                     if (vTypes != null) {
                         // add the elements in this list
                         v.addAll(vTypes);
+                        // turn off generation of the element type
+                        // XXX is there a better way to do this?
+                        symbolTable.remove(elementName);
+                        types.remove(e);
                     } else {
                         // XXX - This should be a SOAPElement/SOAPBodyElement
                         v.add(getElement(elementName));

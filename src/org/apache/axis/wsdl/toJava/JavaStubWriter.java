@@ -336,11 +336,14 @@ public class JavaStubWriter extends JavaWriter {
         HashSet types = new HashSet();
         HashSet firstPassTypes = new HashSet();
 
+        PortTypeEntry pe = symbolTable.getPortTypeEntry(portType.getQName());
+
         // Get all the types from all the operations
         List operations = portType.getOperations();
 
         for (int i = 0; i < operations.size(); ++i) {
-            firstPassTypes.addAll(getTypesInOperation((Operation) operations.get(i)));
+            Operation op = (Operation) operations.get(i);
+            firstPassTypes.addAll(getTypesInOperation(op, pe));
         }
 
         // Extract those types which are complex types.
@@ -362,28 +365,22 @@ public class JavaStubWriter extends JavaWriter {
      * This method returns a set of all the TypeEntry in a given Operation.
      * The elements of the returned HashSet are TypeEntry.
      */
-    private HashSet getTypesInOperation(Operation operation) {
+    private HashSet getTypesInOperation(Operation operation, PortTypeEntry portEntry) {
         HashSet types = new HashSet();
         Vector v = new Vector();
 
-        // Collect all the input types
-        Input input = operation.getInput();
-
-        if (input != null) {
-            partTypes(v,
-                    input.getMessage().getOrderedParts(null),
-                    (bEntry.getInputBodyType(operation) == BindingEntry.USE_LITERAL));
+        Parameters params = portEntry.getParameters(operation.getName());
+        
+        // Loop over parameter types for this operation
+        for (int i=0; i < params.list.size(); i++) {
+            Parameter p = (Parameter) params.list.get(i);
+            v.add(p.type);
         }
-
-        // Collect all the output types
-        Output output = operation.getOutput();
-
-        if (output != null) {
-            partTypes(v,
-                    output.getMessage().getOrderedParts(null),
-                    (bEntry.getOutputBodyType(operation) == BindingEntry.USE_LITERAL));
-        }
-
+        
+        // Add the return type
+        if (params.returnType != null)
+            v.add(params.returnType);
+        
         // Collect all the types in faults
         Map faults = operation.getFaults();
 
@@ -397,10 +394,10 @@ public class JavaStubWriter extends JavaWriter {
                         (bEntry.getFaultBodyType(operation, f.getName()) == BindingEntry.USE_LITERAL));
             }
         }
-
         // Put all these types into a set.  This operation eliminates all duplicates.
         for (int i = 0; i < v.size(); i++)
             types.add(v.get(i));
+
         return types;
     } // getTypesInOperation
 
@@ -412,45 +409,18 @@ public class JavaStubWriter extends JavaWriter {
 
         while (i.hasNext()) {
             Part part = (Part) i.next();
-
-            QName qType;
-            if (literal) {
+            
+            QName qType = part.getTypeName(); 
+            if (qType != null) {
+                v.add(symbolTable.getType(qType));
+            } else {
                 qType = part.getElementName();
                 if (qType != null) {
-                    // Get the Element
-                    Element e = symbolTable.getElement((qType));
-                    
-                    // Get the nested type entries.
-                    // even indexes are TypeEntries, odd are names
-                    Vector vTypes = SchemaUtils.getComplexElementTypesAndNames(
-                            symbolTable.getTypeEntry(qType, true).getNode(), 
-                            symbolTable);
-                    
-                    if (vTypes != null) {
-                        // add the typeEntries in this list
-                        for (int j = 0; j < vTypes.size(); j +=2) {
-                            v.add(vTypes.get(j));
-                        }
-                    } else {
-                        // XXX This should probably be a SOAPElement/SOAPBodyElement
-                        v.add(symbolTable.getElement(qType));
-                    }
-                }
-            } else {
-                qType = part.getTypeName(); 
-                if (qType == null) {
-                    qType = part.getElementName();
-                    if (qType != null) {
-                        v.add(symbolTable.getElement(qType));
-                    }
-                }
-                else {
-                    if (qType != null) {
-                        v.add(symbolTable.getType(qType));
-                    }
+                    v.add(symbolTable.getElement(qType));
                 }
             }
-        }
+        } // while
+        
     } // partTypes
 
     /**
