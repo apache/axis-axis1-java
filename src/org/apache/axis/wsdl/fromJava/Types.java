@@ -309,8 +309,10 @@ public class Types {
      */
     private void writeWsdlTypesElement() throws Exception {
         if (wsdlTypesElem == null) {
+            // Create a <wsdl:types> element corresponding to the wsdl namespaces.
             wsdlTypesElem = 
-                    docHolder.createElementNS(Constants.NSPREFIX_WSDL, "types");
+                    docHolder.createElementNS(Constants.URI_CURRENT_WSDL, "types");
+            wsdlTypesElem.setPrefix(Constants.NSPREFIX_WSDL);
         }
     }
 
@@ -741,10 +743,14 @@ public class Types {
      * @param doc
      */
     public void insertTypesFragment(Document doc) {
+
         if (wsdlTypesElem != null) {
-            doc.getDocumentElement().insertBefore(
-                          doc.importNode(wsdlTypesElem, true),
-                          doc.getDocumentElement().getFirstChild());
+            // Import the wsdlTypesElement into the doc.
+            org.w3c.dom.Node node = doc.importNode(wsdlTypesElem, true);
+            // Insert the imported element at the beginning of the document
+            doc.getDocumentElement().
+                insertBefore(node,
+                             doc.getDocumentElement().getFirstChild());
         }
     }
 
