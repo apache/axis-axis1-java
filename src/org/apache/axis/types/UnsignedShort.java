@@ -84,7 +84,7 @@ public class UnsignedShort extends UnsignedInt {
      *
      * validates the data and sets the value for the object.
      *
-     * @param short value
+     * @param sValue value
      */
     public void setValue(long sValue) throws NumberFormatException {
         if (UnsignedShort.isValid(sValue) == false)

@@ -69,21 +69,21 @@ import org.apache.axis.AxisFault;
 public interface FeatureEnabled {
 
     /**
-     * @param String The id of the feature to enable
+     * @param featureId The id of the feature to enable
      * @throws AxisFault
      */
     public void enableFeature(String featureId)
             throws AxisFault;
 
     /**
-     * @param String The id of the feature to disable
+     * @param featureId The id of the feature to disable
      * @throws AxisFault
      */
     public void disableFeature(String featureId)
             throws AxisFault;
 
     /**
-     * @param String The id of the feature to check
+     * @param featureId The id of the feature to check
      * @return boolean
      * @throws AxisFault
      */

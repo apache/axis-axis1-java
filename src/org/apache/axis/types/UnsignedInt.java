@@ -88,7 +88,7 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
      *
      * validates the data and sets the value for the object.
      *
-     * @param int value
+     * @param iValue value
      */
     public void setValue(long iValue) throws NumberFormatException {
       if (UnsignedInt.isValid(iValue) == false)

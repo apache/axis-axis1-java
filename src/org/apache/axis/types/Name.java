@@ -92,7 +92,7 @@ public class Name extends Token {
     /**
      *
      * validates the data and sets the value for the object.
-     * @param Name String value
+     * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {

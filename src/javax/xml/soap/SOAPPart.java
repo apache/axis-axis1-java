@@ -217,7 +217,7 @@ public abstract class SOAPPart implements org.w3c.dom.Document {
      *     current value(s) of the first header that is a match if
      *     there is one. If there is no match, this value will be
      *     the value for a new <CODE>MimeHeader</CODE> object.
-     * @ throws java.lang.IllegalArgumentException if
+     * @throws java.lang.IllegalArgumentException if
      *     there was a problem with the specified mime header name
      *     or value
      * @throws java.lang.IllegalArgumentException if there was a problem with the specified mime header name or value

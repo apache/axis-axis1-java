@@ -85,7 +85,7 @@ public class NormalizedString extends Object implements java.io.Serializable {
     /**
      *
      * validates the data and sets the value for the object.
-     * @param normalizedString String value
+     * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
@@ -114,7 +114,7 @@ public class NormalizedString extends Object implements java.io.Serializable {
      * the set of strings that do not contain the carriage return (#xD)
      * nor tab (#x9) characters.
      *
-     * @param the String to test
+     * @param stValue the String to test
      * @returns true if valid normalizedString
      */
     public static boolean isValid(String stValue)  {

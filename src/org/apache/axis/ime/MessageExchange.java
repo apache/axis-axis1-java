@@ -74,7 +74,7 @@ public interface MessageExchange {
      * need to create a new MessageExchangeCorrelator and 
      * put it into the MessageContext if one does not already
      * exist.)
-     * @param MessageContext The Axis MessageContext being sent
+     * @param context The Axis MessageContext being sent
      * @return MessageExchangeCorrelator The correlator for the sent MessageContext
      * @throws AxisFault
      */

@@ -74,7 +74,7 @@ public class JDK13IO extends Component implements ImageIO {
      * Save an image.
      * @param mimeType the mime-type of the format to save the image
      * @param image the image to save
-     * @param filename the file to write to
+     * @param os the stream to write to
      * @exception JimiException if an error prevents image encoding
      */
     public void saveImage(String mimeType, Image image, OutputStream os)

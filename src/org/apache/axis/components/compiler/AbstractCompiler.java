@@ -174,7 +174,7 @@ public abstract class AbstractCompiler implements Compiler {
   /**
    * Fill the arguments taken by the Java compiler
    *
-   * @param argument The list of compilation arguments
+   * @param arguments The list of compilation arguments
    * @return The prepared list of compilation arguments
    */
   protected List fillArguments(List arguments) {
