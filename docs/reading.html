@@ -38,11 +38,13 @@ things work (or why they don't).
 
 </li>
 
-<li><a href="http://www.sosnoski.com/presents/java-xml/axis/">Apache Axis SOAP for Java</a>
+<li><a href="http://www.sosnoski.com/presents/java-xml/axis/">Apache Axis SOAP for Java</a><br>
     Dennis Sosnoski covers Axis. This is another good introductory guide.
 
 <li><a href="http://www.sosnoski.com/presents/java-xml/axis/axis-monitor.html">
-    Enabling SOAPMonitor in Axis 1.0</a>. How to turn the SOAP monitor on and off, and use it.
+    Enabling SOAPMonitor in Axis 1.0</a>.<br>
+    How to turn the SOAP monitor on and off, and use it to log your
+    Soap application.
 </ol>
 
 <a name="specifications">
@@ -72,7 +74,7 @@ things work (or why they don't).
 <li>
     <a href="http://ietf.org/rfc/rfc2616.txt">
     RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1
-    </a>
+    </a><
 </li>
 <li>
     <a href="http://java.sun.com/xml/downloads/jaxrpc.html">
@@ -100,7 +102,7 @@ things work (or why they don't).
 <li>
     <a href="http://www.intertwingly.net/stories/2002/03/16/aGentleIntroductionToSoap.html">
     A Gentle Introduction to SOAP
-    </a>
+    </a><br>
     Sam Ruby tries not to scare people.
 </li>
 <li>
@@ -122,12 +124,13 @@ things work (or why they don't).
     Steve Loughran tries to scare people.
     A painful demonstration how deployment and system management are 
     trouble spots in a production service, followed by an espousal of a
-    deployment-centric development process. 
+    deployment-centric development process. Remember, it doesn't have to
+    be that bad.
     
 </li>
 <li>
     <a href="http://servlet.java.sun.com/javaone/sf2002/conf/sessions/index.en.jsp">
-    JavaOne 2002,Web Services Today and Tomorrow </a><br>
+    JavaOne 2002, Web Services Today and Tomorrow </a><br>
     (Java Developer connection login required) 
 </li>    
 
@@ -188,7 +191,8 @@ things work (or why they don't).
 <li>
     <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">
     Architectural Styles and the Design of Network-based Software Architectures
-    </a>
+    </a><br>
+    The theoretical basis of the REST architecture
 </li>
 <li>
     <a href="http://www.extreme.indiana.edu/xgws/papers/soap-hpdc2002/soap-hpdc2002.pdf">
@@ -198,7 +202,8 @@ things work (or why they don't).
 <li>
     <a href="http://www.w3.org/TR/webarch/">
     Architectural Principles of the World Wide Web        
-    </a>
+    </a><br>
+    The W3C architects say how things should be done.
 </li>
 </ol>
 <a name="books">
@@ -206,22 +211,53 @@ things work (or why they don't).
 </a>
 
 <ol>
-<li><i>AXIS: Next Generation Java SOAP</i>
-by Romin Irani, May 2002. 
 
-<li><i>Building Web Services with Java: Making Sense of XML, SOAP, WSDL and UDDI</i>
-Steve Graham et al, December 2001. 
+<li><i><a href="http://www.wrox.com/books/1861007531.htm">
+Beginning Java Web Services</a></i>
+Meeraj Kunnumpurath et al, Wrox Press, September 2002.<br>
+    An introductory book, with the early chapters focusing on Axis. The
+    <a href="http://www.wrox.com/books/sample-chapters/SampleChapter_1861007531.pdf">
+    sample chapter</a> shows how to install Axis with Tomcat 4.0: we do not believe
+    that their approach is the best. It is easier to drop jaxrpc.jar and
+    saaj.jar into the CATALINA_HOME/common/lib dir than it is to add all
+    axis jars to the classpath by hand. The book is based on Axis Beta-3.   
 
 <li>
     <a href="http://manning.com/antbook">
-    Java development with Ant 
+    <i>Java development with Ant</i>i> 
     </a><br>
-    by Hatcher and Loughran. 
+    by Erik Hatcher and Steve Loughran, Manning Press, July 2002. <br>
     A book on Ant development which covers Web Service development with Axis, 
     along with other topics relevant to Java developers using Ant. The Web Service
-    chapter, chapter 15, is free to download. 
+    chapter, <A href="http://www.manning.com/hatcher/chap15.pdf">
+    chapter 15</A>, is free to download, and was the birthplace of 
+    happyaxis.jar. 
+    The book is based on Axis Beta-2; the web site contains updated
+    documentation where appropriate.  
     
 </li>
+    
+<li>
+<A href="http://www.wrox.com/books/toc/1861007159_toc.htm">
+<i>AXIS: Next Generation Java SOAP</i>
+</A>
+    by Romin Irani and S Jeelani Bashna, Wrox Press, May 2002.<br> 
+    The first nothing but Axis book.
+    It is based on Beta-1.  
+<li>
+<A
+href="http://sams.com/catalog/product.asp?product_id={ABC81EE6-0D9F-4BD7-99DB-84F9C983ACF7}">
+<i>
+Building Web Services with Java: Making Sense of XML, SOAP, WSDL and UDDI</i>
+</A>
+    Steve Graham et al, December 2001. <br>
+    Covering very early versions of Axis
+    along with other aspects of Web Service technologies. One of the
+    authors, Glen Daniels, is an Axis committer and active contributor, so
+    the quality of the Axis is high.   
 
 </ol>
+
+Authors, publishers: we welcome additions to this section of any books which
+have some explicit coverage of Axis.     
     
