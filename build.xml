@@ -574,6 +574,13 @@ Copyright:
             </fileset>
           </classpath>
       </java>
+  </target>
 
+  <target name="report">
+     <antcall target="my-forking-ant">
+       <param name="dir" value="${axis.home}"/>
+       <param name="file" value="buildTest.xml"/>
+       <param name="target" value="create-test-report"/>
+     </antcall>
   </target>
 </project>
