@@ -60,7 +60,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
+import org.apache.axis.AxisFault;
 import javax.xml.namespace.QName;
 
 /**
@@ -69,6 +69,7 @@ import javax.xml.namespace.QName;
  * HeaderBuilder and BodyBuilders.
  *
  * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Andras Avar (andras.avar@nokia.com)
  */
 public class EnvelopeBuilder extends SOAPHandler
 {
@@ -113,8 +114,32 @@ public class EnvelopeBuilder extends SOAPHandler
             // SOAP 1.2
             soapConstants = SOAPConstants.SOAP12_CONSTANTS;
         } else {
-            throw new SAXException(
-                    Messages.getMessage("badNamespace00", namespace));
+            soapConstants = Constants.DEFAULT_SOAP_VERSION;
+
+            try {
+                AxisFault fault = new AxisFault(soapConstants.getVerMismatchFaultCodeQName(),
+                    null, Messages.getMessage("versionMissmatch00"), null, null, null);
+
+                SOAPHeaderElement newHeader = new
+                                SOAPHeaderElement(soapConstants.getEnvelopeURI(),
+                                                  Constants.ELEM_UPGRADE);
+
+                // TODO: insert soap 1.1 upgrade header in case of soap 1.2 response if
+                // axis supports both simultaneously
+                MessageElement innerHeader = new
+                                MessageElement(soapConstants.getEnvelopeURI(),
+                                                  Constants.ELEM_SUPPORTEDENVELOPE);
+                innerHeader.addAttribute(null, Constants.ATTR_QNAME,
+                    new QName(soapConstants.getEnvelopeURI(), Constants.ELEM_ENVELOPE));
+
+                newHeader.addChildElement(innerHeader);
+                fault.addHeader(newHeader);
+
+                throw new SAXException(fault);
+
+            } catch (javax.xml.soap.SOAPException e) {
+                throw new SAXException(e);
+            }
         }
 
         // Indicate what version of SOAP we're using to anyone else involved

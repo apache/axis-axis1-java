@@ -428,6 +428,8 @@ public class Constants {
     public static final String ELEM_FAULT    = "Fault" ;
 
     public static final String ELEM_NOTUNDERSTOOD = "NotUnderstood";
+    public static final String ELEM_UPGRADE           = "Upgrade";
+    public static final String ELEM_SUPPORTEDENVELOPE = "SupportedEnvelope";
 
     public static final String ELEM_FAULT_CODE   = "faultcode" ;
     public static final String ELEM_FAULT_STRING = "faultstring" ;
@@ -466,6 +468,10 @@ public class Constants {
 
     public static final String FAULT_SERVER_USER =
                                                    "Server.userException";
+
+    public static final QName FAULT_VERSIONMISMATCH =
+                                  new QName(URI_SOAP11_ENV, "VersionMismatch");
+
     public static final QName FAULT_MUSTUNDERSTAND =
                                   new QName(URI_SOAP11_ENV, "MustUnderstand");
 

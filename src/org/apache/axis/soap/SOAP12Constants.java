@@ -62,6 +62,7 @@ import javax.xml.namespace.QName;
  * SOAP 1.2 constants
  *
  * @author Glen Daniels (gdaniels@apache.org)
+ * @author Andras Avar (andras.avar@nokia.com)
  */
 public class SOAP12Constants implements SOAPConstants {
     private static QName headerQName = new QName(Constants.URI_SOAP12_ENV,
@@ -133,5 +134,11 @@ public class SOAP12Constants implements SOAPConstants {
         return Constants.ATTR_ITEM_TYPE;
     }
 
+    /**
+     * Obtain the Qname of VersionMismatch fault code
+     */
+    public QName getVerMismatchFaultCodeQName() {
+        return Constants.FAULT_SOAP12_VERSIONMISMATCH;
+    }
 
 }
