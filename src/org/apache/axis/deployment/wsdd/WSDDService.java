@@ -206,7 +206,8 @@ public class WSDDService
         }
         
         SOAPService   service  = new SOAPService();
-        service.setName(getQName().getLocalPart()); 
+        if ( getQName() != null )
+            service.setName(getQName().getLocalPart()); 
         service.setOptions(getParametersTable());
         
         WSDDChain     request  = getRequestFlow();

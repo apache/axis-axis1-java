@@ -130,6 +130,8 @@ public class Wsdl2javaAntTask extends Task
             try {
                 doc = XMLUtils.newDocument(url);
                 doc.getDocumentElement().getTagName();
+                // THIS IS WRONG - the one outside the try-catch block is right
+                emitter.emit(doc);
             } catch (Throwable e) {
                 if (url.startsWith("http://")) {
                     // What we have is either a network error or invalid XML -
@@ -142,7 +144,7 @@ public class Wsdl2javaAntTask extends Task
                 throw e;
             }
 
-            emitter.emit(doc);
+            // emitter.emit(doc);
         } catch (Throwable t) {
             throw new BuildException("Error while running " + getClass().getName(), t); 
         }

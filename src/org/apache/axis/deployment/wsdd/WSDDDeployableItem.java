@@ -317,7 +317,8 @@ public abstract class WSDDDeployableItem
             h = (Handler)createInstance(c);
             
             if (h != null) {
-                h.setName(getQName().getLocalPart()); 
+                if ( qname != null )
+                  h.setName(qname.getLocalPart()); 
                 h.setOptions(getParametersTable());
             }
         } else {
