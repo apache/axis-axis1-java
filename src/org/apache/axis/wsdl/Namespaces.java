@@ -118,6 +118,7 @@ public class Namespaces extends HashMap {
      */
     public String toDir(String pkg) {
         String dir = null;
+        pkg = pkg.replace('.', File.separatorChar);
         if (root == null) {
             dir = pkg;
         }
@@ -125,12 +126,7 @@ public class Namespaces extends HashMap {
             dir = root + File.separatorChar + pkg;
         }
 
-        if (dir == null || dir.equals("")) {
-            return "";
-        }
-        else {
-            return dir.replace('.', File.separatorChar) + File.separatorChar;
-        }
+        return dir == null ? "" : dir + File.separatorChar;
     } // toDir
 
     /**
