@@ -73,6 +73,9 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
     private static boolean isBasic(Class javaType) {
         return (javaType.isPrimitive() || 
                 javaType == java.lang.String.class ||
+                javaType == java.lang.Boolean.class ||
+                javaType == java.lang.Float.class ||
+                javaType == java.lang.Double.class ||
                 javaType == org.apache.axis.types.URI.class);
     }
 
