@@ -358,55 +358,38 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                                        Attributes attrs)
     {
         QName typeQName = getTypeFromXSITypeAttr(namespace, localName, attrs);
-        if (typeQName == null) {
+        if ( (typeQName == null) && Constants.isSOAP_ENC(namespace) ) {
 
             // If the element is a SOAP-ENC element, the name of the element is the type.
             // If the default type mapping accepts SOAP 1.2, then use then set
             // the typeQName to the SOAP-ENC type.
-            // Else if the default type mapping accepts SOAP 1.1, then 
-            // convert the SOAP-ENC type to the appropriate SOAP Schema Type.
-            if (Constants.isSOAP_ENC(namespace)) {
-                QName myQName = new QName(namespace, localName);
-                if (Constants.URI_DEFAULT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC) &&
-                    Constants.isSOAP_ENC(namespace)) {
-                    typeQName = myQName;
-                } else if (myQName.equals(Constants.SOAP_ARRAY)) {
-                    typeQName = Constants.SOAP_ARRAY;
-                } else if (myQName.equals(Constants.SOAP_STRING)) {
-                    typeQName = Constants.SOAP_STRING;
-                } else if (myQName.equals(Constants.SOAP_BOOLEAN)) {
-                    typeQName = Constants.SOAP_BOOLEAN;
-                } else if (myQName.equals(Constants.SOAP_DOUBLE)) {
-                    typeQName = Constants.SOAP_DOUBLE;
-                } else if (myQName.equals(Constants.SOAP_FLOAT)) {
-                    typeQName = Constants.SOAP_FLOAT;
-                } else if (myQName.equals(Constants.SOAP_INT)) {
-                    typeQName = Constants.SOAP_INT;
-                } else if (myQName.equals(Constants.SOAP_LONG)) {
-                    typeQName = Constants.SOAP_LONG;
-                } else if (myQName.equals(Constants.SOAP_SHORT)) {
-                    typeQName = Constants.SOAP_SHORT;
-                } else if (myQName.equals(Constants.SOAP_BYTE)) {
-                    typeQName = Constants.SOAP_BYTE;
-                }
+            // Else if the default type mapping accepts SOAP 1.1, then
+            // convert the SOAP-ENC type to the appropriate XSD Schema Type.
+            if (namespace.equals(Constants.URI_SOAP12_ENC)) {
+                typeQName = new QName(namespace, localName);
+            } else if (localName.equals(Constants.SOAP_ARRAY.getLocalPart())) {
+                typeQName = Constants.SOAP_ARRAY;
+            } else if (localName.equals(Constants.SOAP_STRING.getLocalPart())) {
+                typeQName = Constants.SOAP_STRING;
+            } else if (localName.equals(Constants.SOAP_BOOLEAN.getLocalPart())) {
+                typeQName = Constants.SOAP_BOOLEAN;
+            } else if (localName.equals(Constants.SOAP_DOUBLE.getLocalPart())) {
+                typeQName = Constants.SOAP_DOUBLE;
+            } else if (localName.equals(Constants.SOAP_FLOAT.getLocalPart())) {
+                typeQName = Constants.SOAP_FLOAT;
+            } else if (localName.equals(Constants.SOAP_INT.getLocalPart())) {
+                typeQName = Constants.SOAP_INT;
+            } else if (localName.equals(Constants.SOAP_LONG.getLocalPart())) {
+                typeQName = Constants.SOAP_LONG;
+            } else if (localName.equals(Constants.SOAP_SHORT.getLocalPart())) {
+                typeQName = Constants.SOAP_SHORT;
+            } else if (localName.equals(Constants.SOAP_BYTE.getLocalPart())) {
+                typeQName = Constants.SOAP_BYTE;
             }
+
         }
 
-        // Return with the type if the name matches one of the above primitives
-        if (typeQName != null)
-            return typeQName;
-
-
-        /*  Removing this code for now - Glen 2/20/02
-
-        // If all else fails see if the name is a known type
-        typeQName = new QName(namespace, localName);
-        if (getTypeMapping().getClassForQName(typeQName) != null)
-            return typeQName;
-
-        */
-
-        return null;
+        return typeQName;
     }
 
     /**
