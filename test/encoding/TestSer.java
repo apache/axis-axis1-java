@@ -5,6 +5,7 @@ import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.QName;
+import org.apache.log4j.Category;
 import org.xml.sax.InputSource;
 import java.io.*;
 import java.util.*;
@@ -14,6 +15,8 @@ import junit.framework.TestCase;
 /** Little serialization test with a struct.
  */
 public class TestSer extends TestCase {
+    static Category category =
+            Category.getInstance(TestSer.class.getName());
 
     public static final String myNS = "urn:myNS";
     
@@ -52,9 +55,9 @@ public class TestSer extends TestCase {
         
         String msgString = stringWriter.toString();
         
-        System.out.println("---");
-        System.out.println(msgString);
-        System.out.println("---");
+        category.debug("---");
+        category.debug(msgString);
+        category.debug("---");
         
         StringReader reader = new StringReader(msgString);
         
