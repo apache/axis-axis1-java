@@ -129,6 +129,10 @@ public class RPCParam
     public void serialize(SerializationContext context)
         throws IOException
     {
-        context.serialize(new QName(namespaceURI,name), null, value);
+        if (value != null) {
+            context.serialize(new QName(namespaceURI,name), null, value, value.getClass());
+        } else {
+            context.serialize(new QName(namespaceURI,name), null, value, null);
+        }
     }
 }

@@ -67,7 +67,9 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.FieldTarget;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
@@ -176,7 +178,7 @@ public class RPCHandler extends SOAPHandler
         String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI,"nil");
 
         if ( isNil != null && isNil.equals("true") )
-          return( new Deserializer() );
+          return( (SOAPHandler) new DeserializerImpl() );
         
         // xsi:type always overrides everything else
         if (type == null) {
@@ -206,7 +208,7 @@ public class RPCHandler extends SOAPHandler
             if (type == null && defaultParamTypes!=null &&
                 params.size()<=defaultParamTypes.length) {
 
-                TypeMappingRegistry typeMap = context.getTypeMappingRegistry();
+                TypeMapping typeMap = context.getTypeMapping();
                 int index = params.size()-1;
                 if (index+1<defaultParamTypes.length)
                     if (defaultParamTypes[0]==MessageContext.class) index++;
@@ -219,9 +221,9 @@ public class RPCHandler extends SOAPHandler
         
         Deserializer dser;
         if (type != null) {
-            dser = context.getTypeMappingRegistry().getDeserializer(type);
+            dser = context.getDeserializerForType(type);
         } else {
-            dser = new Deserializer();
+            dser = new DeserializerImpl();
         }
 
         if (dser == null) {
@@ -230,13 +232,13 @@ public class RPCHandler extends SOAPHandler
         }
         
         dser.registerValueTarget(
-             new Deserializer.FieldTarget(currentParam, 
+             new FieldTarget(currentParam, 
                  RPCParam.getValueField()));
         
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "RPCHandler.onStartChild()"));
         }
-        return dser;
+        return (SOAPHandler) dser;
     }
     
     public void endElement(String namespace, String localName,

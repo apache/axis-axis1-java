@@ -153,7 +153,7 @@ public class SOAPHeader extends MessageElement {
         if (value == null) {
             super.outputImpl(context);
         } else {
-            context.serialize(new QName(namespaceURI,name), attributes, value);
+            context.serialize(new QName(namespaceURI,name), attributes, value, value.getClass() );
         }
     }
 };
