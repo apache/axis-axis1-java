@@ -394,19 +394,30 @@ public class Admin {
     }
     else {
       Debug.Print( 2, "Deploying chain: " + name );
+      
+      if ((request == null) &&
+          (response == null) &&
+          (pivot == null))
+        throw new AxisFault("No request/response/pivot for chain!");
+      
       StringTokenizer      st = null ;
       Vector reqNames = new Vector();
       Vector respNames = new Vector();
 
-      st = new StringTokenizer( request, " \t\n\r\f," );
-      while ( st.hasMoreElements() ) {
-        reqNames.addElement(st.nextToken());
+      if (request != null) {
+        st = new StringTokenizer( request, " \t\n\r\f," );
+        while ( st.hasMoreElements() ) {
+          reqNames.addElement(st.nextToken());
+        }
       }
       
-      st = new StringTokenizer( response, " \t\n\r\f," );
-      while ( st.hasMoreElements() ) {
-        respNames.addElement(st.nextToken());
+      if (response != null) {
+        st = new StringTokenizer( response, " \t\n\r\f," );
+        while ( st.hasMoreElements() ) {
+          respNames.addElement(st.nextToken());
+        }
       }
+      
       getOptions( elem, options );
       
       TargetedChainSupplier supp = new TargetedChainSupplier(name,
