@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+   
+   The purpose of this test is to verify the option implementationClassName
+   in the wsdl2java emitter.
+   
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+  Mans Tanneryd mans@tanneryd.com
+
+Copyright:
+  Copyright (c) 2002-2004 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/webref" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+
+<target name="clean">
+    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+    <delete dir="${build.dir}/classes/${componentName}"/>
+    <delete dir="${build.dir}/work/${componentName}"/>
+</target>
+
+<!-- main target, always start from scratch -->
+<target name="compile" depends="setenv, clean">
+    <echo message="Compiling test.wsdl.webref"/>
+  
+    <!-- Compile the implementation class for Java2WSDL -->
+    <javac srcdir="${axis.home}/${componentName}" 
+           destdir="${build.dest}" 
+           fork="${javac.fork}"
+           nowarn="${nowarn}" 
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="DoubleBack.java" />
+    </javac>
+    
+    <mkdir dir="${build.dir}/work/${componentName}"/>
+    
+    <!-- Generate WSDL from java -->
+    <java2wsdl output="${build.dir}/work/${componentName}/DoubleBackService.wsdl"
+               className= "test.wsdl.webref.DoubleBack"
+               location="http://localhost:8080/axis/services/DoubleBackService"
+               porttypename="DoubleBackPortType"
+               style="DOCUMENT"
+               namespace="http://webref.wsdl.test/DoubleBack">
+    	<mapping package="test.wsdl.webref" namespace="http://webref.wsdl.test/DoubleBack" />
+    </java2wsdl>
+        
+    <!-- Generate skeletons and stubs for client and server with custom implementation class -->
+    <wsdl2java url="${build.dir}/work/${componentName}/DoubleBackService.wsdl"
+               output="${axis.home}/build/work"
+               all="yes"
+               serverside="yes"
+               skeletondeploy="no"
+               verbose="no"
+               testcase="no"
+               implementationClassName="test.wsdl.webref.DoubleBack">
+        <mapping namespace="http://webref.wsdl.test/DoubleBack" package="test.wsdl.webref"/>
+    </wsdl2java>
+
+    <copy todir="${build.dir}/work/${componentName}" overwrite="yes">
+      <fileset dir="${axis.home}/${componentName}">
+        <include name="DoubleBack.java"/>
+        <include name="DoubleBackServiceTestCase.java"/>
+      </fileset>
+    </copy>
+
+    <!-- Compile it all -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="${componentName}/*.java" />
+    </javac>
+
+</target>
+
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
+
+</project>

@@ -124,7 +124,14 @@ public class Emitter extends Parser {
      * that can be used by custom JavaGeneratorFactories.
      */
     protected List properties = new ArrayList();
-
+    
+    /**
+     * Field implementationClassName - defines a non default classname for the actual
+     * implementation class. Particularly useful when exporting a webservice directly
+     * from the java implementation.
+     */
+	private String implementationClassName = null;
+	
     /**
      * Default constructor.
      */
@@ -900,4 +907,22 @@ public class Emitter extends Parser {
     public void setTypeCollisionProtection(boolean value){
         this.typeCollisionProtection = value;
     }
+    
+	/**
+	 * Get an implementation classname to use instead of the default.
+	 * @return
+	 */
+	public String getImplementationClassName() {
+		return implementationClassName;
+	}
+
+	/**
+	 * Set an implementation classname to use instead of the default.
+	 * 
+	 * @param implementationClassName 
+	 */
+	public void setImplementationClassName(String implementationClassName) {
+		this.implementationClassName = implementationClassName;
+	}
+
 }
