@@ -3,6 +3,7 @@ package test;
 import java.io.*;
 import org.apache.axis.*;
 import org.apache.axis.client.ServiceClient;
+import org.apache.axis.transport.http.HTTPTransport ;
 import org.apache.axis.utils.*;
 
 /**
@@ -17,10 +18,12 @@ class put {
     static void main(String[] args) throws Exception {
         Options opts = new Options(args);
         Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-        args = opts.getRemainingArgs();
+        String action = opts.isValueSet('a');
 
         ServiceClient sc = new ServiceClient(opts.getURL());
+        if (action != null) sc.set(HTTPTransport.ACTION, action);
   
+        args = opts.getRemainingArgs();
         for (int i=0; i<args.length; i++) {
             FileInputStream stream = new FileInputStream(new File(args[i]));
             sc.setRequestMessage(new Message(stream));
