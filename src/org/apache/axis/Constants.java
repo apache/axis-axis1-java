@@ -101,6 +101,11 @@ public class Constants {
   public static String ATTR_ID              = "id" ;
   public static String ATTR_HREF            = "href" ;
 
+  // Fault Codes
+  //////////////////////////////////////////////////////////////////////////
+  public static String FAULT_SERVER_GENERAL = "Server.generalException";
+
+
   // Misc Strings
   //////////////////////////////////////////////////////////////////////////
   public static String URI_DEBUG = "http://xml.apache.org/axis/debug" ;
