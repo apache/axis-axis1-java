@@ -86,7 +86,7 @@ public class TestVersionMismatch extends TestCase {
         "<?xml version=\"1.0\"?>\n" +
         "<soap:Envelope " +
           "xmlns:soap=\"http://www.w3.org/2002/wrong-envelope-version\" " +
-          "xmlns:soapenc=\"http://www.w3.org/2002/12/soap-encoding\" " +
+          "xmlns:soapenc=\"http://www.w3.org/2003/05/soap-encoding\" " +
           "xmlns:this=\"http://encoding.test\" " +
           "xmlns:xsi=\"" + Constants.URI_DEFAULT_SCHEMA_XSI + "\" " +
           "xmlns:xsd=\"" + Constants.URI_DEFAULT_SCHEMA_XSD + "\">\n" +

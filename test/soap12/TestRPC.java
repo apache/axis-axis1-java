@@ -89,7 +89,7 @@ public class TestRPC extends TestCase {
 
         // Check DOM
         Element e = body.getAsDOM();
-        NodeList l = e.getElementsByTagNameNS("http://www.w3.org/2002/12/soap-rpc","result");
+        NodeList l = e.getElementsByTagNameNS("http://www.w3.org/2003/05/soap-rpc","result");
         assertTrue("No result element was fount", l.getLength() == 1);
         String ptr = l.item(0).getFirstChild().getNodeValue();
         assertNotNull("Ptr to the result value was null", ptr);
