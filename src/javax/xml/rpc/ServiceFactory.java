@@ -55,7 +55,6 @@
 package javax.xml.rpc;
 
 import javax.xml.namespace.QName;
-
 import java.net.URL;
 
 /**
@@ -99,20 +98,14 @@ public abstract class ServiceFactory {
      */
     public static ServiceFactory newInstance() throws ServiceException {
 
-        String factoryImplName =
-            System.getProperty("javax.xml.rpc.ServiceFactory",
-                               "org.apache.axis.client.ServiceFactory");
-
         try {
-            Class clazz = Class.forName(factoryImplName);
-
-            return (ServiceFactory) clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new ServiceException(e);
-        } catch (IllegalAccessException e) {
-            throw new ServiceException(e);
-        } catch (InstantiationException e) {
-            throw new ServiceException(e);
+            return (ServiceFactory) FactoryFinder.find(
+                /* The default property name according to the JAXRPC spec */
+                SERVICEFACTORY_PROPERTY,
+                /* The fallback implementation class name */
+                "org.apache.axis.client.ServiceFactory");
+        } catch (FactoryFinder.ConfigurationError e) {
+            throw new ServiceException(e.getException());
         }
     }
 
