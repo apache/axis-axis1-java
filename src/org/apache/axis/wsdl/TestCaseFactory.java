@@ -161,17 +161,6 @@ public class TestCaseFactory {
         }
 
         writer.println();
-        this.writeImport("junit.framework.TestCase");
-        this.writeImport("junit.framework.AssertionFailedError");
-        writer.println();
-    }
-
-    public final void writeImport(String className) {
-        if (this.state < TESTS) {
-            writer.print("import ");
-            writer.print(className);
-            writer.println(";");
-        }
     }
 
     public final void writeHeader(String filename) {
@@ -189,7 +178,7 @@ public class TestCaseFactory {
         writer.println(" */");
         writer.print("public class ");
         writer.print(this.className);
-        writer.println(" extends TestCase {");
+        writer.println(" extends junit.framework.TestCaseTestCase {");
 
         writer.print("    public ");
         writer.print(this.className);
@@ -278,6 +267,12 @@ public class TestCaseFactory {
             }
 
             writer.println(");");
+
+            if ( !"void".equals(params.returnType) ) {
+                writer.print(INDENT);
+                writer.println("assertTrue(value != null)");
+            }
+
             writer.println("        }");
         }
     }
