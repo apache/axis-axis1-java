@@ -97,6 +97,8 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
+        // This test is no longer valid if Axis treats arrays as always single-ref
+        /*        
         try {
             // Test 4F: Foo arrays are multi-referenced.   
             Foo[][][] in = new Foo[3][3][3];
@@ -122,6 +124,7 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
+        */
     }
 
     public void fill(int[][][] array) {
