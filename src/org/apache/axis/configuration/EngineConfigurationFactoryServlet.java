@@ -144,37 +144,50 @@ public class EngineConfigurationFactoryServlet
      * @return a server EngineConfiguration
      */
     private static EngineConfiguration getServerEngineConfig(ServletContext ctx) {
+        /**
+         * Flow can be confusing.  Here is the logic:
+         * 1) Make all attempts to open resource IF it exists
+         *    - If it exists as a file, open as file (r/w)
+         *    - If not a file, it may still be accessable as a stream (r)
+         *    (env will handle security checks).
+         * 2) If it doesn't exist, allow it to be opened/created
+         * 
+         * Now, the way this is done below is:
+         * a) If the file does NOT exist, attempt to open as a stream (r)
+         * b) Open named file (opens existing file, creates if not avail).
+         */
+
         /*
          * Use the WEB-INF directory
          * (so the config files can't get snooped by a browser)
          */
         String appWebInfPath = "/WEB-INF";
 
-        String realWebInfPath = ctx.getRealPath(appWebInfPath);
-
         FileProvider config = null;
-        if (realWebInfPath != null  &&
-            (new File(realWebInfPath, SERVER_CONFIG_FILE)).exists()) {
 
+        String realWebInfPath = ctx.getRealPath(appWebInfPath);
+        if (realWebInfPath == null) {
+            File configFile = new File(realWebInfPath, SERVER_CONFIG_FILE);
+            if (!configFile.exists()) {
+                InputStream is = ctx.getResourceAsStream(appWebInfPath + "/" + SERVER_CONFIG_FILE);
+                if (is != null) {
+                    // FileProvider assumes responsibility for 'is':
+                    // do NOT call is.close().
+                    config = new FileProvider(is);
+                }
+    
+                if (config == null) {
+                    log.error(Messages.getMessage("servletEngineWebInfError01",
+                                                   configFile.toString()));
+                }
+            }
+        }
+
+        if (config == null) {
             try {
                 config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
             } catch (ConfigurationException e) {
                 log.error(Messages.getMessage("servletEngineWebInfError00"), e);
-            }
-        }
-        
-        if (config == null) {
-            String appServerConfigFileName = appWebInfPath + "/" + SERVER_CONFIG_FILE;
-            InputStream is = ctx.getResourceAsStream(appServerConfigFileName);
-            if (is != null) {
-                // FileProvider assumes responsibility for 'is':
-                // do NOT call is.close().
-                config = new FileProvider(is);
-            }
-
-            if (config == null) {
-                log.error(Messages.getMessage("servletEngineWebInfError01",
-                                               appServerConfigFileName));
             }
         }
 
