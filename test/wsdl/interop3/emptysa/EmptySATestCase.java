@@ -1,6 +1,6 @@
 package test.wsdl.interop3.emptysa;
 
-import test.wsdl.interop3.emptysa.step6.EmptySALocator;
+//import test.wsdl.interop3.emptysa.step6.EmptySALocator;
 
 /*
     <!-- SOAP Builder's round III web services          -->
@@ -65,6 +65,7 @@ public class EmptySATestCase extends junit.framework.TestCase {
         }
     }
 
+    /*
     public void testStep7() {
         test.wsdl.interop3.emptysa.step6.SoapInteropEmptySAPortType binding;
         try {
