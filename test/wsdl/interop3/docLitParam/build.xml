@@ -19,7 +19,8 @@
 
     <!-- generate skeletons -->
     <wsdl2java url="http://www.whitemesa.com/r3/InteropTestDocLitParameters.wsdl"
-               output="${root.dir}/build/work" skeleton="yes"/>
+               output="${root.dir}/build/work" skeletonDeploy="yes"
+               serverSide="yes"/>
 
     <mkdir dir="${root.dir}/${build.dest}"/>
 
