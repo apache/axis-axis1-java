@@ -66,6 +66,7 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.Mapping;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.xml.security.c14n.Canonicalizer;
 import org.apache.xml.security.signature.XMLSignature;

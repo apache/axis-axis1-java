@@ -62,6 +62,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.axis.utils.Messages;
 
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.utils.Constants;
