@@ -62,9 +62,9 @@ import javax.servlet.* ;
 import javax.servlet.http.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
-import org.apache.xerces.parsers.* ;
-import org.apache.xerces.framework.* ;
-import org.apache.xml.serialize.* ;
+import org.apache.xerces.parsers.DOMParser ;
+import org.apache.xml.serialize.OutputFormat ;
+import org.apache.xml.serialize.XMLSerializer ;
 import org.apache.axis.message.* ;
 
 /**

@@ -62,10 +62,7 @@ package org.apache.axis.message ;
 import java.util.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
-import org.apache.xerces.parsers.* ;
-import org.apache.xerces.framework.* ;
-import org.apache.xml.serialize.* ;
-import org.apache.xerces.dom.* ;
+import org.apache.xerces.dom.DocumentImpl ;
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.* ;
 
