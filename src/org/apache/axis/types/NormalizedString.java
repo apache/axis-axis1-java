@@ -89,7 +89,7 @@ public class NormalizedString extends Object implements java.io.Serializable {
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
-        if (isValid(stValue) == false)
+        if (NormalizedString.isValid(stValue) == false)
             throw new IllegalArgumentException(
                Messages.getMessage("badNormalizedString00") +
                " data=[" + stValue + "]");
@@ -117,7 +117,7 @@ public class NormalizedString extends Object implements java.io.Serializable {
      * @param the String to test
      * @returns true if valid normalizedString
      */
-    public boolean isValid(String stValue)  {
+    public static boolean isValid(String stValue)  {
         int scan;
 
         for (scan = 0; scan < stValue.length(); scan++) {

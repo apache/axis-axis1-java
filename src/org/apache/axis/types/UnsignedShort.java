@@ -87,7 +87,7 @@ public class UnsignedShort extends UnsignedInt {
      * @param short value
      */
     public void setValue(long sValue) throws NumberFormatException {
-        if (isValid(sValue) == false)
+        if (UnsignedShort.isValid(sValue) == false)
             throw new NumberFormatException(
                 Messages.getMessage("badUnsignedShort00") +
                     String.valueOf(sValue) + "]");
@@ -99,7 +99,7 @@ public class UnsignedShort extends UnsignedInt {
      * validate the value against the xsd definition
      *
      */
-    public boolean isValid(long sValue) {
+    public static boolean isValid(long sValue) {
       if ( (sValue < 0L  ) || (sValue > 65535L) )
         return false;
       else

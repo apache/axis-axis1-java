@@ -89,7 +89,7 @@ public class UnsignedByte extends UnsignedShort {
      * @param sValue the number to set
      */
     public void setValue(long sValue) throws NumberFormatException {
-        if (isValid(sValue) == false)
+        if (UnsignedByte.isValid(sValue) == false)
             throw new NumberFormatException(
                     Messages.getMessage("badUnsignedByte00") +
                     String.valueOf(sValue) + "]");
@@ -101,7 +101,7 @@ public class UnsignedByte extends UnsignedShort {
      * validate the value against the xsd value space definition
      * @param sValue number to check against range
      */
-    public boolean isValid(long sValue) {
+    public static boolean isValid(long sValue) {
       if ( (sValue < 0L ) ||  (sValue > 255L) )
         return false;
       else

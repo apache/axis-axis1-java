@@ -89,6 +89,19 @@ public class NCName extends Name {
         }
     }
 
+    /**
+     *
+     * validates the data and sets the value for the object.
+     * @param Token String value
+     * @throws IllegalArgumentException if invalid format
+     */
+    public void setValue(String stValue) throws IllegalArgumentException {
+        if (NCName.isValid(stValue) == false)
+            throw new IllegalArgumentException(
+               Messages.getMessage("badNCNameType00") +
+               " data=[" + stValue + "]");
+        m_value = stValue;
+    }
 
     /**
      *
@@ -97,7 +110,7 @@ public class NCName extends Name {
      * NCName ::=  (Letter | '_') (NCNameChar)*
      * NCNameChar ::=  Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender
      */
-    public boolean isValid(String stValue) {
+    public static boolean isValid(String stValue) {
         int scan;
         boolean bValid = true;
 
