@@ -71,7 +71,7 @@ import org.xml.sax.*;
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/2001/PR-xmlschema-2-20010330/#boolean">XML Schema 3.2.7</a>
+ * @see <a href="http://www.w3.org/TR/2001/PR-xmlschema-2-20010330/#boolean">XML Schema 3.2.2</a>
  */
 public class BooleanDeserializerFactory implements DeserializerFactory {
 
