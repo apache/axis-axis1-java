@@ -310,6 +310,26 @@ public class SchemaUtils {
             }
 
             return v;
+        } else if (isXSDNode(node, "group")) {
+            NodeList children = node.getChildNodes();
+            Vector v = new Vector();
+            for (int j = 0; j < children.getLength(); j++) {
+                QName subNodeKind = Utils.getNodeQName(children.item(j));
+                if ((subNodeKind != null)
+                        && Constants.isSchemaXSD(
+                                subNodeKind.getNamespaceURI())) {
+                    if (subNodeKind.getLocalPart().equals("sequence")) {
+                        v.addAll(processSequenceNode(children.item(j),
+                                symbolTable));
+                    } else if (subNodeKind.getLocalPart().equals("all")) {
+                        v.addAll(processAllNode(children.item(j), symbolTable));
+                    } else if (subNodeKind.getLocalPart().equals("choice")) {
+                        v.addAll(processChoiceNode(children.item(j),
+                                symbolTable));
+                    }
+                }
+            }
+            return v;
         } else {
 
             // This may be a simpleType, return the type with the name "value"
@@ -503,9 +523,8 @@ public class SchemaUtils {
 
     /**
      * Invoked by getContainedElementDeclarations to get the child element types
-     * and child element names underneath a group node.
-     * (Currently the code only supports a defined group it does not
-     * support a group that references a previously defined group)
+     * and child element names underneath a group node. If a ref attribute is 
+     * specified, only the referenced group element is returned.
      * 
      * @param groupNode   
      * @param symbolTable 
@@ -515,26 +534,35 @@ public class SchemaUtils {
                                            SymbolTable symbolTable) {
 
         Vector v = new Vector();
-        NodeList children = groupNode.getChildNodes();
+        if (groupNode.getAttributes().getNamedItem("ref") == null) {
+            NodeList children = groupNode.getChildNodes();
+            for (int j = 0; j < children.getLength(); j++) {
+                QName subNodeKind = Utils.getNodeQName(children.item(j));
 
-        for (int j = 0; j < children.getLength(); j++) {
-            QName subNodeKind = Utils.getNodeQName(children.item(j));
-
-            if ((subNodeKind != null)
-                    && Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
-                if (subNodeKind.getLocalPart().equals("choice")) {
-                    v.addAll(processChoiceNode(children.item(j), symbolTable));
-                } else if (subNodeKind.getLocalPart().equals("sequence")) {
-                    v.addAll(processSequenceNode(children.item(j),
-                            symbolTable));
-                } else if (subNodeKind.getLocalPart().equals("all")) {
-                    v.addAll(processAllNode(children.item(j), symbolTable));
+                if ((subNodeKind != null)
+                        && Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
+                    if (subNodeKind.getLocalPart().equals("choice")) {
+                        v.addAll(processChoiceNode(children.item(j), symbolTable));
+                    } else if (subNodeKind.getLocalPart().equals("sequence")) {
+                        v.addAll(processSequenceNode(children.item(j),
+                                symbolTable));
+                    } else if (subNodeKind.getLocalPart().equals("all")) {
+                        v.addAll(processAllNode(children.item(j), symbolTable));
+                    }
                 }
             }
-        }
+        } else {
+            BooleanHolder forElement = new BooleanHolder();
+            QName nodeName = Utils.getTypeQName(groupNode, forElement, false);
+            TypeEntry type = symbolTable.getTypeEntry(nodeName, forElement.value);
 
+            if (type != null) {
+                v.add(new ElementDecl(type, nodeName));
+            }
+        }
         return v;
     }
+
 
     /**
      * Invoked by getContainedElementDeclarations to get the child element types

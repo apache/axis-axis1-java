@@ -995,6 +995,11 @@ public class SymbolTable {
 
                 // Create a type representing an attributeGroup.
                 createTypeFromDef(node, false, level > SCHEMA_LEVEL);
+            }  else if (isXSD && localPart.equals("group")) {
+                // Create a type entry for the referenced type
+                createTypeFromRef(node);
+                // Create a type representing an group
+                createTypeFromDef(node, false, level > SCHEMA_LEVEL);
             } else if (isXSD && localPart.equals("attribute")) {
 
                 // Create a type entry for the referenced type
