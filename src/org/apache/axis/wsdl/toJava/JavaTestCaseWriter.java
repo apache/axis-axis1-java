@@ -198,7 +198,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                 pw.print(" value = ");
 
                 if (  isPrimitiveType( params.returnType ) ) {
-                    if ( "boolean".equals( params.returnType ) ) {
+                    if ( "boolean".equals( params.returnType.getName() ) ) {
                         pw.println("false;");
                     } else {
                         pw.println("-3;");
