@@ -60,7 +60,6 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.http.AdminClient;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
@@ -92,15 +91,22 @@ public class TestTransportSample extends TestCase {
     }
     
     /* NOT RECOMMENDED -- this calls out to xmltoday.com which is flaky.
-       Do not do this in regular regression tests since it can result in
-       spurious failures due to no fault of Axis code. -- RobJ
+       Verify that it either succeeds, or that it produces a specific
+       failure. */
     
     public void doTestIBM () throws Exception {
         String[] args = { "IBM" };
-        FileTest.main(args);
+        try {
+            FileTest.main(args);
+        } catch (AxisFault e) {
+            String fault = e.getFaultString();
+            if (fault == null || fault.indexOf("java.net.UnknownHost")<0)
+                throw e;
+            int start = fault.indexOf(": ");
+            int eol   = fault.indexOf('\n', start+1);
+            System.out.println(fault.substring(start+2, eol));
+        }
     }
-    
-     */
     
     public void doTestXXX () throws Exception {
         String[] args = { "XXX" };
@@ -114,10 +120,8 @@ public class TestTransportSample extends TestCase {
             doTestClientDeploy();
             System.out.println("Testing deployment...");
             doTestDeploy();
-            /*
             System.out.println("Testing service with symbol IBM...");
             doTestIBM();
-             */
             System.out.println("Testing service with symbol XXX...");
             doTestXXX();
             System.out.println("Test complete.");
