@@ -52,6 +52,13 @@
         <mapping namespace="urn:iface.import.test" package="test.import2.iface"/>
         <mapping namespace="urn:messages.import.test" package="test.import2.messages"/>
     </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/_import/*.java" />
+    </javac>
+
 </target>
 
 <target name="deploy"/>

@@ -34,6 +34,13 @@
                testcase="yes">
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/names/*.java" />
+    </javac>
+
 </target>
 
 <target name="deploy"/>

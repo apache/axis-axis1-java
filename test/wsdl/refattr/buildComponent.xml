@@ -35,6 +35,18 @@
         <mapping namespace="urn:ref.types.test" package="test.wsdl.refattr"/>
         <mapping namespace="urn:ref.types" package="test.wsdl.refattr"/>
     </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/refattr/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/refattr/*.java" />
+    </javac>
+
 </target>
 
 <target name="deploy" unless="batch">
