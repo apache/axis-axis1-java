@@ -609,24 +609,24 @@ public class JavaBeanWriter extends JavaClassWriter {
                         variableType.equals("double") ||
                         variableType.equals("boolean") ||
                         variableType.equals("byte")) {
-                    pw.print("            " + variable + " == other." + get +
+                    pw.print("            this." + variable + " == other." + get +
                             Utils.capitalizeFirstChar(variable) + "()");
                 } else if (variableType.indexOf("[") >=0) {
                     // Use java.util.Arrays.equals to compare arrays.
-                    pw.println("            ((" + variable +
+                    pw.println("            ((this." + variable +
                                "==null && other." + get +
                                Utils.capitalizeFirstChar(variable) + "()==null) || ");
-                    pw.println("             (" + variable + "!=null &&");
-                    pw.print("              java.util.Arrays.equals(" + variable +
+                    pw.println("             (this." + variable + "!=null &&");
+                    pw.print("              java.util.Arrays.equals(this." + variable +
                              ", other." + get +
                              Utils.capitalizeFirstChar(variable) + "())))");
 
                 } else {
-                    pw.println("            ((" + variable +
+                    pw.println("            ((this." + variable +
                                "==null && other." + get +
                                Utils.capitalizeFirstChar(variable) + "()==null) || ");
-                    pw.println("             (" + variable + "!=null &&");
-                    pw.print("              " + variable +
+                    pw.println("             (this." + variable + "!=null &&");
+                    pw.print("              this." + variable +
                              ".equals(other." + get +
                              Utils.capitalizeFirstChar(variable) + "())))");
                 }
