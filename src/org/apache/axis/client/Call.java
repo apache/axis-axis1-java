@@ -1367,7 +1367,7 @@ public class Call implements javax.xml.rpc.Call {
             if (tm == null || tm == defaultTM ) {
                 tm = (TypeMapping) tmr.createTypeMapping();
                 tm.setSupportedNamespaces(new String[] {encodingStyle});
-                tmr.register(msgContext.getEncodingStyle(), tm);
+                tmr.register(encodingStyle, tm);
             }
             if (!force && tm.isRegistered(javaType, xmlType)) 
                 return;

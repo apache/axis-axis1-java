@@ -414,7 +414,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public TypeMapping getTypeMapping()
     {
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
-        return (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        return (TypeMapping) tmr.getTypeMapping(msgContext.getEncodingStyle());
         /* 
          * TODO: This code doesn't yet work, but we aren't looking up the right
          * TypeMapping by just using SOAP_ENC.
