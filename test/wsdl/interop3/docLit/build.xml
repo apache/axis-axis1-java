@@ -18,7 +18,7 @@
     <property name="testname" value="docLit"/>
 
     <!-- generate skeletons -->
-    <wsdl2java url="http://www.whitemesa.com/r3/InteropTestDocLit.wsdl"
+    <wsdl2java url="http://www.whitemesa.net/wsdl/r3/interoptestdoclit.wsdl"
                output="${root.dir}/build/work" skeletonDeploy="yes"
                serverSide="yes"/>
 
