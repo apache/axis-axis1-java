@@ -3,8 +3,8 @@ package org.apache.axis.message.adapters;
 import org.apache.axis.message.SOAPDocument;
 
 final public class ToStringAdapter {
-    private ToStringAdapter() {}
-    public static String convert(SOAPDocument message) {
+    public ToStringAdapter() {}
+    public String convert(SOAPDocument message) {
         return message.toXML();
     }
 }
