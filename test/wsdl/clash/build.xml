@@ -61,6 +61,10 @@ Copyright:
                serverSide="yes">
     </wsdl2java>
 
+    <wsdl2java url="${axis.home}/test/wsdl/clash/duplicate-element.wsdl"
+               output="${axis.home}/build/work">
+    </wsdl2java>
+
     <copy todir="${build.dir}/work/test/wsdl/clash" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/clash">
         <include name="*TestCase.java"/>

@@ -38,6 +38,8 @@ public class VerifyFilesTestCase extends FileGenTestCase {
         HashSet set = new HashSet();
         set.add("AnotherNonSharedNameImpl.java");
         set.add("AnotherNonSharedNameStub.java");
+        set.add("DescribeLayoutType0.java");
+        set.add("DescribeLayout.java");
         set.add("NonSharedNameImpl.java");
         set.add("NonSharedNameStub.java");
         set.add("SayHello.java");

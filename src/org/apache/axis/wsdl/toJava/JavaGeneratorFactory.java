@@ -640,10 +640,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     // If there is an existing anon type,
                     // there will be a  collision.
                     // In both cases, mangle the name.
-                    symbolTable.getType(typeQName);
-                    
-                    if (anonQNames.get(typeQName) != null) {
-                        localName += "Type" + uniqueNum++;
+                    if (symbolTable.getType(typeQName) != null ||
+                            anonQNames.get(typeQName) != null) {
+                        localName += "Type" + unique+;
                         typeQName =
                             new QName(typeQName.getNamespaceURI(),
                                       localName);
