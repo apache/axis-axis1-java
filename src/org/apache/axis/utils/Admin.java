@@ -325,7 +325,8 @@ public class Admin {
             }
           }
           
-          cc.setPivotHandler( hr.find( pivot ) );
+          if ( pivot != null )
+            cc.setPivotHandler( hr.find( pivot ) );
   
           if ( output != null ) {
             st = new StringTokenizer( output, " \t\n\r\f," );
