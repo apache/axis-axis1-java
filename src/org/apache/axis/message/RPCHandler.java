@@ -157,7 +157,8 @@ public class RPCHandler extends SOAPHandler
                 Call c = (Call) msgContext.getProperty( MessageContext.CALL );
                 if ( c != null ) {
                     // First look for this param by name
-                    type = c.getParameterTypeByName(localName);
+                    QName qname = new QName(namespace, localName);
+                    type = c.getParameterTypeByQName(qname);
 
                     // If we can't find it by name then assume it must
                     // be the return type - is this correct/safe????
