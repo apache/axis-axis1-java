@@ -219,8 +219,10 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                 getClassForQName(defaultItemType);
             if (arrayItemClass != null) {
                 try {
+                    ClassLoader cl = 
+                            context.getMessageContext().getClassLoader();
                     arrayClass = Class.forName(JavaUtils.getLoadableClassName(
-                      arrayItemClass.getName() + "[]"));   
+                            arrayItemClass.getName() + "[]"), true, cl);   
                 } catch (Exception e) {
                     throw new SAXException(
                        JavaUtils.getMessage("noComponent00",  "" + defaultItemType));
