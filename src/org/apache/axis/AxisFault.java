@@ -66,13 +66,19 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.rpc.soap.SOAPFaultException;
+import javax.xml.soap.Detail;
+
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -201,6 +207,11 @@ public class AxisFault extends java.rmi.RemoteException {
         // ? SOAP 1.2 or 1.1 ?
         setFaultCodeAsString( Constants.FAULT_SERVER_USER );
         initFromException(target);
+        
+        // if the target is a JAX-RPC SOAPFaultException init
+        // AxisFault with the values from the SOAPFaultException
+        if ( target instanceof SOAPFaultException)
+            initFromSOAPFaultException((SOAPFaultException)target);
     }
 
     /**
@@ -277,6 +288,38 @@ public class AxisFault extends java.rmi.RemoteException {
         //add stack trace
         addFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE,
                 JavaUtils.stackToString(target));
+    }
+    
+    /**
+     * Initiates the AxisFault with the values from a SOAPFaultException
+     * @param fault SOAPFaultException
+     */
+    private void initFromSOAPFaultException(SOAPFaultException fault) {
+        
+        // faultcode
+        if ( fault.getFaultCode() != null)
+            setFaultCode( fault.getFaultCode());
+        
+        // faultstring
+        if ( fault.getFaultString() != null)        
+            setFaultString( fault.getFaultString());
+        
+        // actor
+        if ( fault.getFaultActor() != null)
+            setFaultActor( fault.getFaultActor());          
+        
+        if ( null == fault.getDetail())
+            return;        
+        
+        // We get an Iterator but we need a List
+        Vector details = new Vector();       
+        Iterator detailIter = fault.getDetail().getChildElements();
+        while (detailIter.hasNext()) {
+            details.add( detailIter.next());            
+        }        
+        
+        // Convert the List in an Array an return the array 
+        setFaultDetail( XMLUtils.asElementArray(details));                
     }
 
     /**
