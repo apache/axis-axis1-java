@@ -190,6 +190,7 @@ public abstract class TestClient {
 
             // safety first
             ((InteropTestSoapBindingStub)binding).setTimeout(60000);
+            ((InteropTestSoapBindingStub)binding).setMaintainSession(true);
         } catch (Exception exp) {
             throw AxisFault.makeFault(exp);
         }

@@ -347,8 +347,6 @@ public class EJBProvider extends RPCProvider
                 // cannot get the interface name from the configuration, we get
                 // it from the EJB Home (if remote)
                 if (isRemoteEjb(service)) {
-                    String remoteHomeName = getStrOption(OPTION_HOMEINTERFACENAME, 
-                                                         service);
                     interfaceClass = getRemoteInterfaceClassFromHome(beanJndiName,
                                                                      service,
                                                                      msgContext);

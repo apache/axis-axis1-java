@@ -423,7 +423,8 @@ public class BeanSerializer implements Serializer, Serializable {
      * @param where location for the generated schema node
      * @throws Exception
      */
-    protected void writeField(Types types, String fieldName,
+    protected void writeField(Types types,
+                              String fieldName,
                               Class fieldType,
                               boolean isUnbounded,
                               boolean isOmittable,
