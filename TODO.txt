@@ -11,10 +11,11 @@ owner (if any) in "<>" brackets.  Example:
 BETA 2 MUST DO LIST
 -------------------
 ! <Glen> Clean up User's Guide
-! <Russell> Clean up sample readme's
+* <Russell> Clean up sample readme's
 ! <Russell> beta1-to-beta2 document
 ! <Russell?> Grow the FAQ
-! <> Make sure the gump build works
+X <> Make sure the gump build works
+* <RickR/Doug> Make sure the attachment sample works
 
 MESSAGE PARSING / ENCODING
 --------------------------
