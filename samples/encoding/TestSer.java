@@ -67,9 +67,9 @@ public class TestSer
             TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
             
-            DeserializationContext dser = new DeserializationContext(new InputSource(reader), msgContext);
+            DeserializationContext dser = new DeserializationContext(
+                new InputSource(reader), msgContext, ServiceDescription.REQUEST);
             SOAPEnvelope env = dser.getEnvelope();
-            env.setMessageType(ServiceDescription.REQUEST);
             
             RPCElement rpcElem = (RPCElement)env.getFirstBody();
             RPCParam struct = rpcElem.getParam("struct");

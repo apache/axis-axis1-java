@@ -103,7 +103,8 @@ public class RPCHandler extends SOAPHandler
             // but if we don't find one, see if the ServiceDescription
             // might shed some light...
             if (serviceDesc != null) {
-                type = serviceDesc.getInputParamTypeByName(localName);
+                String msgType = context.getEnvelope().getMessageType();
+                type = serviceDesc.getParamTypeByName(msgType, localName);
             }
             
             // and if we still don't know, check the introspected types
