@@ -76,16 +76,11 @@ import org.apache.axis.i18n.MessagesConstants;
  * 
  * Copy this template to your package.
  * 
- * For AXIS, the following constants are set appropriately.
- * To adapt this scheme to another project, edit these attributes
- * as/if necessary:
- * 
- *   packageName
- *   classLoader
- *   projectName
- *   resourceName
- *   locale
- *   parent
+ * For subpackages of org.apache.axis.*, the internal constants
+ * are set appropriately.  To adapt this scheme to an extension project
+ * (package prefix differs from org.apache.axis.*), edit the projectName
+ * attribute.  The others shouldn't need to be changed unless this is
+ * being adapted to a non-AXIS related project..
  * 
  * @author Richard A. Sitze (rsitze@us.ibm.com)
  * @author Karl Moss (kmoss@macromedia.com)
@@ -94,12 +89,13 @@ import org.apache.axis.i18n.MessagesConstants;
 public class Messages {
     private static final Class  thisClass = Messages.class;
 
-    private static final String packageName = getPackage(thisClass.getName());
-    private static final ClassLoader classLoader = thisClass.getClassLoader();
-
     private static final String projectName = MessagesConstants.projectName;
+
     private static final String resourceName = MessagesConstants.resourceName;
     private static final Locale locale = MessagesConstants.locale;
+
+    private static final String packageName = getPackage(thisClass.getName());
+    private static final ClassLoader classLoader = thisClass.getClassLoader();
 
     private static final ResourceBundle parent =
         (MessagesConstants.rootPackageName == packageName)

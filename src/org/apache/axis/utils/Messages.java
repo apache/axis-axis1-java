@@ -78,12 +78,13 @@ import org.apache.axis.i18n.MessagesConstants;
 public class Messages {
     private static final Class  thisClass = Messages.class;
 
-    private static final String packageName = getPackage(thisClass.getName());
-    private static final ClassLoader classLoader = thisClass.getClassLoader();
-
     private static final String projectName = MessagesConstants.projectName;
+
     private static final String resourceName = MessagesConstants.resourceName;
     private static final Locale locale = MessagesConstants.locale;
+
+    private static final String packageName = getPackage(thisClass.getName());
+    private static final ClassLoader classLoader = thisClass.getClassLoader();
 
     private static final ResourceBundle parent =
         (MessagesConstants.rootPackageName == packageName)
