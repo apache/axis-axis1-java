@@ -618,7 +618,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public void pushNewElement(MessageElement elem)
     {
-        if (recorder != null) {
+        if (!doneParsing && (recorder != null)) {
             recorder.newElement(elem);
         }
         
@@ -691,7 +691,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public void startDocument() throws SAXException {
         // Should never receive this in the midst of a parse.
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.startDocument();
     }
 
@@ -702,7 +702,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("endDoc00"));
         }
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.endDocument();
         
         doneParsing = true;
@@ -723,7 +723,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void startPrefixMapping(String prefix, String uri)
         throws SAXException
     {
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.startPrefixMapping(prefix, uri);
         
         if (startOfMappingsPos == -1)
@@ -751,7 +751,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug(JavaUtils.getMessage("endPrefix00", prefix));
         }
         
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.endPrefixMapping(prefix);
         
         SOAPHandler handler = getTopHandler();
@@ -761,20 +761,20 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     
     public void setDocumentLocator(Locator locator) 
     {
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.setDocumentLocator(locator);
         this.locator = locator;
     }
 
     public void characters(char[] p1, int p2, int p3) throws SAXException {
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.characters(p1, p2, p3);
         if (getTopHandler() != null)
             getTopHandler().characters(p1, p2, p3);
     }
     
     public void ignorableWhitespace(char[] p1, int p2, int p3) throws SAXException {
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.ignorableWhitespace(p1, p2, p3);
         if (getTopHandler() != null)
             getTopHandler().ignorableWhitespace(p1, p2, p3);
@@ -787,7 +787,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     }
 
     public void skippedEntity(String p1) throws SAXException {
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.skippedEntity(p1);
         getTopHandler().skippedEntity(p1);
     }
@@ -834,7 +834,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         nextHandler.startElement(namespace, localName, qName,
                                  attributes, this);
         
-        if (recorder != null) {
+        if (!doneParsing && (recorder != null)) {
             recorder.startElement(namespace, localName, qName,
                                   attributes);
             if (!doneParsing)
@@ -857,7 +857,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                     "['" + namespace + "' " + localName + "]"));
         }
         
-        if (recorder != null)
+        if (!doneParsing && (recorder != null))
             recorder.endElement(namespace, localName, qName);
         
         try {
