@@ -461,7 +461,7 @@ public class HTTPSender extends BasicHandler {
 
             if (returnCode > 199 && returnCode < 300) {
                 // SOAP return is OK - so fall through
-            } else if (!contentType.equals("text/html") &&
+            } else if (contentType!=null && !contentType.equals("text/html") &&
                        (returnCode > 499 && returnCode < 600) ) {
                 // SOAP Fault should be in here - so fall through
             } else {
