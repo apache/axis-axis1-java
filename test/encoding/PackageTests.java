@@ -19,6 +19,7 @@ public class PackageTests extends TestCase
     {
         TestSuite suite = new TestSuite();
 
+        suite.addTestSuite(TestDerivatedBeanSerializer.class);
         suite.addTestSuite(TestDeser.class);
         suite.addTestSuite(TestDeser1999.class);
         suite.addTestSuite(TestDeser2000.class);

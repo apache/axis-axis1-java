@@ -254,7 +254,7 @@ public class BeanUtils {
                     typeDesc.getFields() != null) {
                 ArrayList ordered = new ArrayList();
                 // Add the TypeDesc elements first
-                FieldDesc[] fds = typeDesc.getFields();
+                FieldDesc[] fds = typeDesc.getFields(true);
                 for (int i=0; i<fds.length; i++) {
                     FieldDesc field = fds[i];
                     if (field.isElement()) {
