@@ -1,73 +1,14 @@
-How to use the current version of the code....
-----------------------------------------------
-(these instructions assume tomcat)
+             Axis (Apache eXtensible Interaction System)
+             -------------------------------------------
+             Alpha 1 Release             August 13, 2001
 
-- Deploy Axis in Tomcat
-  - Add the following section to your conf/server.xml file:
-    <Context path="/axis" docBase="d:/xml-axis/java/webapps/axis" 
-             debug ="0" reloadable="true" />
-    Replace "d:/" with the path to your version of axis
 
-- Deploy services
-  - Two ways to deploy new services:
-    1 - From the tomcat directory, run:
-          java org.apche.axis.utils.Admin <whatever>.xml
-    2 - Once tomcat is running, run (from anywhere/any dir):
-          java org.apache.axis.client.AdminClient <whatever>.xml
-        
-There is a sample service in java/samples/stock - this will illustrate
-how to deploy a service that consists of a chain of handlers on the
-client and the server.
+Welcome to Axis!  You'll find documentation in the docs/ directory.
 
-Format of deployment xml files:
--------------------------------
-(This is temporary until WSDD is ready)
+Please read the release notes (release-notes.html) in this directory for
+details on the current release.
 
-<deploy>
-  <handler name="log" class="org.apache.axis.handlers.LogHandler" />
-  <handler name="rpc-dispatch" class="org.apache.axis.handlers.RPCDispatchHandle
-r" />
-  <handler name="echo" class="org.apache.axis.handlers.EchoHandler" />
-  <handler name="error" class="org.apache.axis.handlers.ErrorHandler" />
-
-  <chain name="pre" flow="log" />
-  <chain name="echoChain" input="log" pivot="echo" output="log" />
-  <chain name="errorChain" input="log,log" pivot="error" output="log,log" />
-
-  <service name="AdminService" handler="admin" />
-  <service name="EchoService" handler="echoChain" />
-  <service name="ErrorService" handler="errorChain" />
-  <service name="ErrorService1" handler="error" />
-
-  <chain name="JavaRPC" flow="log,rpc-dispatch,log" />
-
-  <service name="urn:GetQuote" handler="JavaRPC" >
-    <option name="className" value="samples.stockquote.StockQuoteService" />
-    <option name="methodName" value="getQuote" />
-  </service>
-</deploy>
-
-The outermost element can be either 'deploy' or 'undeploy'.
-The child elements of the root must be one of the following (and must have
-the specified attributes):
-  handler
-    - name
-    - class
-  chain
-    - name
-    - flow 
-        comma separated list of handlers
-        for defining a single chain
-    or
-    - input,pivot,output
-        3 different attributes
-        input/output are comma separated list of handlers, pivot is a
-        single handler
-  service
-    - name
-    - handler
-
-Any of these allow for 'option' sub-elements to allow for name/value pairs
-of options.
+Thanks from all of us on the Axis team for downloading the package; help
+us make it better by sending comments to axis-dev@xml.apache.org.
 
 
