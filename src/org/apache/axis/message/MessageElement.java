@@ -387,17 +387,11 @@ public class MessageElement implements SOAPElement, Serializable
         this.encodingStyle = encodingStyle;
 
         // Wherever we set the encoding style, map the SOAP-ENC prefix
-        // just for fun.
+        // just for fun (if it's a known style)
         if (encodingStyle.equals(Constants.URI_SOAP11_ENC)) {
             addMapping(enc11Mapping);
         } else if (encodingStyle.equals(Constants.URI_SOAP12_ENC)) {
             addMapping(enc12Mapping);
-        } else if (encodingStyle.equals(Constants.URI_SOAP12_NOENC)) {
-            // Do nothing.
-        } else if(encodingStyle.length() == 0){
-            // Do nothing.
-        } else {
-            throw new IllegalArgumentException(Messages.getMessage("badEncodingStyle"));            
         }
     }
 
