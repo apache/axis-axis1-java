@@ -20,14 +20,22 @@ Copyright:
 
 <project name="Interop3GroupE" default="Interop3GroupE.main">
 
-    <path id="test-classpath">
-        <pathelement location="${build.dest}" />
-        <pathelement path="${java.class.path}" />
-        <pathelement location="${java.home}/../lib/tools.jar"/>
-        <fileset dir="lib">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
+  <path id="test-classpath">
+    <pathelement location="${xerces.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${j2ee.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jimi.jar}"/>
+    <pathelement location="${tools.jar}"/>
+    <pathelement location="${xmlsec.jar}"/>
+    <fileset dir="${lib.dir}">
+        <include name="*.jar"/>
+    </fileset>
+    <pathelement path="${java.class.path}"/>
+    <pathelement location="${build.dest}" />
+    <pathelement location="${build.dir}/tools" />
+  </path>
 
     <taskdef name="wsdl2java" classname="test.wsdl.Wsdl2javaAntTask">
         <classpath refid="test-classpath" />
