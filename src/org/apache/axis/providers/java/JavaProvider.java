@@ -57,7 +57,6 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -69,7 +68,6 @@ import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.Constants;
@@ -83,10 +81,9 @@ import org.w3c.dom.Document;
 
 import javax.xml.rpc.server.ServiceLifecycle;
 import javax.xml.rpc.holders.IntHolder;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * Base class for Java dispatching.  Fetches various fields out of envelope,
@@ -212,19 +209,13 @@ public abstract class JavaProvider extends BasicProvider
      * Process the current message.  Side-effect resEnv to create return value.
      *
      * @param msgContext self-explanatory
-     * @param serviceName the class name of the ServiceHandler
-     * @param allowedMethods the 'method name' of ditto
      * @param reqEnv the request envelope
      * @param resEnv the response envelope
-     * @param jc the JavaClass of the service object
      * @param obj the service object itself
      */
     public abstract void processMessage (MessageContext msgContext,
-                                         String serviceName,
-                                         String allowedMethods,
                                          SOAPEnvelope reqEnv,
                                          SOAPEnvelope resEnv,
-                                         JavaClass jc,
                                          Object obj)
         throws Exception;
 
@@ -246,7 +237,6 @@ public abstract class JavaProvider extends BasicProvider
         /* Now get the service (RPC) specific info  */
         /********************************************/
         String  clsName    = getServiceClassName(service);
-        String  allowedMethods = getAllowedMethods(service);
 
         if ((clsName == null) || clsName.equals("")) {
             throw new AxisFault("Server.NoClassForService",
@@ -254,23 +244,12 @@ public abstract class JavaProvider extends BasicProvider
                 null, null);
         }
 
-        if ((allowedMethods == null) || allowedMethods.equals("")) {
-            throw new AxisFault("Server.NoMethodConfig",
-                JavaUtils.getMessage("noOption00",
-                                     OPTION_ALLOWEDMETHODS, serviceName),
-                null, null);
-        }
-
-        if (allowedMethods.equals("*"))
-            allowedMethods = null;
-
         try {
             IntHolder scope   = new IntHolder();
             Object obj        = getServiceObject(msgContext,
                                                  service,
                                                  clsName,
                                                  scope);
-            JavaClass jc	  = JavaClass.find(obj.getClass());
 
             Message        reqMsg  = msgContext.getRequestMessage();
             SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
@@ -286,17 +265,9 @@ public abstract class JavaProvider extends BasicProvider
                 msgContext.setResponseMessage( resMsg );
             }
 
-            /** If the class knows what it should be exporting,
-            * respect its wishes.
-            */
-            AxisServiceConfig axisConfig = getConfiguration(obj);
-            if (axisConfig != null) {
-                allowedMethods = axisConfig.getAllowedMethods();
-            }
-
             try {
-                processMessage(msgContext, clsName, allowedMethods, reqEnv,
-                               resEnv, jc, obj);
+                processMessage(msgContext, reqEnv,
+                               resEnv, obj);
             } catch (Exception exp) {
                 throw exp;
             } finally {
@@ -329,27 +300,8 @@ public abstract class JavaProvider extends BasicProvider
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
-        String serviceName = msgContext.getTargetService();
         SOAPService service = msgContext.getService();
-        ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
-
-        /* Now get the service (RPC) specific info  */
-        /********************************************/
-        String  allowedMethods = getAllowedMethods(service);
-
-        /** ??? Should we enforce setting methodName?  As it was,
-         * if it's null, we allowed any method.  This seems like it might
-         * be considered somewhat insecure (it's an easy mistake to
-         * make).  Tossing an Exception if it's not set, and using "*"
-         * to explicitly indicate "any method" is probably better.
-         */
-        if ((allowedMethods == null) || allowedMethods.equals(""))
-          throw new AxisFault("Server.NoMethodConfig",
-            JavaUtils.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
-            null, null);
-
-        if (allowedMethods.equals("*"))
-          allowedMethods = null;
+        ServiceDesc serviceDesc = service.getInitializedServiceDesc();
 
         try {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
@@ -383,16 +335,6 @@ public abstract class JavaProvider extends BasicProvider
                 }
             }
 
-
-            Class cls = getServiceClass(msgContext, getServiceClassName(service));
-
-            // If the class knows what it should be exporting, respect it's
-            // wishes.
-            AxisServiceConfig axisConfig = getConfiguration(cls);
-            if (axisConfig != null) {
-                allowedMethods = axisConfig.getAllowedMethods();
-            }
-
             Emitter emitter = new Emitter();
 
             // service alias may be provided if exact naming is required,
@@ -404,8 +346,7 @@ public abstract class JavaProvider extends BasicProvider
                              ? Emitter.MODE_RPC
                              : Emitter.MODE_DOCUMENT);
 
-            emitter.setClsSmart(cls,url);
-            emitter.setAllowedMethods(allowedMethods);
+            emitter.setClsSmart(serviceDesc.getImplClass(),url);
 
             // If a wsdl target namespace was provided, use the targetNamespace.
             // Otherwise use the interfaceNamespace constructed above.
@@ -505,20 +446,15 @@ public abstract class JavaProvider extends BasicProvider
     /**
      * Returns the Class info about the service class.
      */
-    protected Class getServiceClass(MessageContext msgContext, String clsName)
+    protected Class getServiceClass(String clsName, AxisEngine engine)
             throws AxisFault {
-        AxisEngine engine = null;
         ClassLoader cl = null;
         Class serviceClass = null;
         
         // If we have a message context, use that to get classloader and engine
         // otherwise get the current threads classloader
-        if (msgContext == null) {
-            cl = Thread.currentThread().getContextClassLoader();
-        } else {
-            cl = msgContext.getClassLoader();
-            engine = msgContext.getAxisEngine();
-        }
+        cl = Thread.currentThread().getContextClassLoader();
+
         // If we have an engine, use its class cache
         if (engine != null) {
             ClassCache cache     = engine.getClassCache();
@@ -542,79 +478,38 @@ public abstract class JavaProvider extends BasicProvider
     }
 
     /**
-     * For a given object or class, if there is a static method called
-     * "getAxisServiceConfig()", we call it and return the value as an
-     * AxisServiceConfig object.  This allows us to obtain metadata about
-     * a class' configuration without instantiating an object of that class.
-     *
-     * @param obj an object, which may be a Class
-     */
-    public AxisServiceConfig getConfiguration(Object obj)
-    {
-        Class cls;
-        if (obj instanceof Class) {
-            cls = (Class)obj;
-        } else {
-            cls = obj.getClass();
-        }
-
-        try {
-            Method method =
-                    cls.getDeclaredMethod("getAxisServiceConfig", new Class [] {});
-            if (method != null && Modifier.isStatic(method.getModifiers())) {
-                return (AxisServiceConfig)method.invoke(null, null);
-            }
-        } catch (NoSuchMethodException e) {
-        } catch (SecurityException e) {
-        } catch (IllegalAccessException e) {
-        } catch (IllegalArgumentException e) {
-        } catch (InvocationTargetException e) {
-        }
-
-        return null;
-    }
-
-    /**
      * Fill in a service description with the correct impl class
      * and typemapping set.  This uses methods that can be overridden by
      * other providers (like the EJBProvider) to get the class from the
      * right place.
-     * 
-     * @param msgContext message context
-     * @param serviceDescription service description to be updated
-     * @return updated service description
-     */ 
-    public ServiceDesc getServiceDesc(MessageContext msgContext, ServiceDesc serviceDescription) 
+     */
+    public void initServiceDesc(SOAPService service)
             throws AxisFault 
     {
-        // Set up the Implimentation class for the service
+        // Set up the Implementation class for the service
 
-        String clsName = null;
-        if (msgContext != null) {
-            SOAPService service = msgContext.getService();
-            clsName = getServiceClassName(service);
-        } else {
-            // no service, try the local options
-            clsName = (String) getOption(getServiceClassNameOptionName());
-        }
-        
+        String clsName = getServiceClassName(service);
+        ServiceDesc serviceDescription = service.getServiceDescription();
+
         if (clsName != null) {
-            Class cls = getServiceClass(msgContext, clsName);
+            Class cls = getServiceClass(clsName, service.getEngine());
             serviceDescription.setImplClass(cls);
         }
         
-        // Set up the type mapping for the service
-        TypeMapping tm;
-        if (msgContext == null) {
-            tm = DefaultTypeMappingImpl.getSingleton();
-        } else {
-            tm = msgContext.getTypeMapping();
+        // And the allowed methods, if necessary
+        if (serviceDescription.getAllowedMethods() == null && service != null) {
+            String allowedMethods = getAllowedMethods(service);
+            if (allowedMethods != null && !"*".equals(allowedMethods)) {
+                ArrayList methodList = new ArrayList();
+                StringTokenizer tokenizer = new StringTokenizer(allowedMethods, " ,");
+                while (tokenizer.hasMoreTokens()) {
+                    methodList.add(tokenizer.nextToken());
+                }
+                serviceDescription.setAllowedMethods(methodList);
+            }
         }
-        serviceDescription.setTypeMapping(tm);
 
-        // return the updated ServiceDesc
-        return serviceDescription;
+        serviceDescription.loadServiceDescByIntrospection();
     }
-    
     
 }

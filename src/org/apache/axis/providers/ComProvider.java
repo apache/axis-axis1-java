@@ -57,7 +57,7 @@ package org.apache.axis.providers;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
-import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.handlers.soap.SOAPService;
 
 public class ComProvider extends BasicProvider {
     
@@ -68,8 +68,7 @@ public class ComProvider extends BasicProvider {
     public void invoke(MessageContext msgContext) {
     }
 
-    public ServiceDesc getServiceDesc(MessageContext msgContext, ServiceDesc serviceDesc)
+    public void initServiceDesc(SOAPService service)
             throws AxisFault {
-        return serviceDesc;
     }
 }

@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
@@ -298,7 +299,12 @@ public class JWSProcessor extends BasicHandler
                 // Set up service description
                 ServiceDesc sd = rpc.getServiceDescription();
                 sd.setImplClass(ClassUtils.forName(clsName, true, cl));
+
+                TypeMappingRegistry tmr = msgContext.getAxisEngine().getTypeMappingRegistry();
+                sd.setTypeMappingRegistry(tmr);
                 sd.setTypeMapping(msgContext.getTypeMapping());
+
+                rpc.getInitializedServiceDesc();
 
                 soapServices.put(clsName, rpc);
 

@@ -61,31 +61,21 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistryImpl;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.enum.Style;
-import org.apache.axis.providers.java.JavaProvider;
-import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.cache.ClassCache;
-import org.apache.axis.utils.cache.JavaClass;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -112,10 +102,6 @@ public class SOAPService extends SimpleTargetedChain
      * transports are valid.
      */
     private Vector validTransports = null;
-
-    /** Service-specific type mappings
-     */
-    private TypeMappingRegistry tmr;
 
     /**
      * Does this service require a high-fidelity SAX recording of messages?
@@ -210,7 +196,7 @@ public class SOAPService extends SimpleTargetedChain
                                                           nextElement();
                         QName badQName = new QName(badHeader.getNamespaceURI(),
                                                    badHeader.getName());
-                        SOAPHeaderElement newHeader = new 
+                        SOAPHeaderElement newHeader = new
                             SOAPHeaderElement(Constants.URI_SOAP12_FAULT,
                                               Constants.ELEM_MISUNDERSTOOD);
                         newHeader.addAttribute(null,
@@ -233,7 +219,6 @@ public class SOAPService extends SimpleTargetedChain
     public SOAPService()
     {
         initHashtable(true);
-        initTypeMappingRegistry();
 
         // For now, always assume we're the ultimate destination.
         // TODO : Handle SOAP 1.2 ultimateDestination actor as well
@@ -250,37 +235,29 @@ public class SOAPService extends SimpleTargetedChain
         init(reqHandler, new SOAPRequestHandler(), pivHandler, null, respHandler);
     }
 
-    private void initTypeMappingRegistry() {
-        tmr = new TypeMappingRegistryImpl();
-    }
-    
     public TypeMappingRegistry getTypeMappingRegistry()
     {
-        return tmr;
+        return serviceDescription.getTypeMappingRegistry();
     }
-    
-    public void setTypeMappingRegistry(TypeMappingRegistry map)
-    {
-        tmr = map;
-    }
-    
+
     /** Convenience constructor for wrapping SOAP semantics around
      * "service handlers" which actually do work.
      */
     public SOAPService(Handler serviceHandler)
     {
         init(null, new SOAPRequestHandler(), serviceHandler, null, null);
-        initTypeMappingRegistry();
     }
-    
+
     /** Tell this service which engine it's deployed to.
      *
      */
     public void setEngine(AxisEngine engine)
     {
         this.engine = engine;
-        if (engine != null)
-            tmr.delegate(engine.getTypeMappingRegistry());
+    }
+
+    public AxisEngine getEngine() {
+        return engine;
     }
 
     public boolean availableFromTransport(String transportName)
@@ -293,7 +270,7 @@ public class SOAPService extends SimpleTargetedChain
             }
             return false;
         }
-        
+
         return true;
     }
 
@@ -311,18 +288,25 @@ public class SOAPService extends SimpleTargetedChain
 
     /**
      * Returns a service description with the implementation class filled in.
-     * 
+     *
      * Syncronized to prevent simutaneous modification of serviceDescription.
-     */ 
-    public synchronized ServiceDesc getInitializedServiceDesc(MessageContext msgContext) throws AxisFault {
+     */
+    public synchronized ServiceDesc getInitializedServiceDesc()
+            throws AxisFault {
+
         if (serviceDescription.getImplClass() == null) {
-            // Fill in the service class from the provider
+
+            // Let the provider do the work of filling in the service
+            // descriptor.  This is so that it can decide itself how best
+            // to map the Operations.  In the future, we may want to support
+            // providers which don't strictly map to Java class backends
+            // (BSFProvider, etc.), and as such we hand off here.
             if (pivotHandler instanceof BasicProvider) {
-                serviceDescription = 
-                     ((BasicProvider)pivotHandler).getServiceDesc(msgContext, serviceDescription);
+                ((BasicProvider)pivotHandler).initServiceDesc(this);
             }
+
         }
-        
+
         return serviceDescription;
     }
 
@@ -372,19 +356,19 @@ public class SOAPService extends SimpleTargetedChain
      *
      *********************************************************************
      */
-    
+
     /** Placeholder for "enable this service" method
      */
     public void start()
     {
     }
-    
+
     /** Placeholder for "disable this service" method
      */
     public void stop()
     {
     }
-    
+
     /**
      * Make this service available on a particular transport
      */
@@ -399,7 +383,7 @@ public class SOAPService extends SimpleTargetedChain
             validTransports = new Vector();
         validTransports.addElement(transportName);
     }
-    
+
     /**
      * Disable access to this service from a particular transport
      */

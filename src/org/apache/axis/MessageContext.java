@@ -78,6 +78,7 @@ import javax.xml.rpc.Call;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import java.io.File;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Some more general docs will go here.
@@ -231,7 +232,7 @@ public class MessageContext implements SOAPMessageContext {
         }
 
         if (serviceHandler != null) {
-            ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
+            ServiceDesc desc = serviceHandler.getInitializedServiceDesc();
 
             if (desc != null) {
                 possibleOperations = desc.getOperationsByQName(qname);
@@ -617,6 +618,22 @@ public class MessageContext implements SOAPMessageContext {
             // of deserialized messages according to the setting on the
             // new service.
             highFidelity = service.needsHighFidelityRecording();
+
+            ServiceDesc sd = null;
+            try {
+                sd = service.getInitializedServiceDesc();
+            } catch (AxisFault axisFault) {
+                // FIXME
+            }
+
+            if (service.getStyle() == Style.MESSAGE) {
+                // There should be only one operation
+                List ops = sd.getOperations();
+                if (ops.size() != 1) {
+                    // ERROR
+                }
+                this.currentOperation = (OperationDesc)ops.get(0);
+            }
         }
     }
 
