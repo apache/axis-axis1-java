@@ -16,4 +16,7 @@ public class PersonalInfoBookSOAPBindingImpl implements test.arrays.PersonalInfo
     public test.arrays.PersonalInfo getPersonalInfoFromName(java.lang.String name) throws java.rmi.RemoteException {
         return (test.arrays.PersonalInfo) table.get(name);
     }
+    public String[] getPetsFromName(java.lang.String name) throws java.rmi.RemoteException {
+        return ((test.arrays.PersonalInfo) table.get(name)).getPets();
+    }
 }

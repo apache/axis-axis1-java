@@ -448,7 +448,18 @@ public class JavaStubWriter extends JavaWriter {
                 else {
                     // (parms.outputs == 1)
                     // There is only one output and it is the return value.
-                    pw.println("             return " + getResponseString(parms.returnType, "resp"));
+                    
+                    // Quick Fix By scheu for now.  This should be fixed elsewhere. 
+                    if (parms.returnType != null &&
+                        parms.returnType.getJavaName() != null &&
+                        parms.returnType.getJavaName().indexOf("[]") > 0) {
+                        pw.println("             // REVISIT THIS!");
+                        pw.println("             return ("+parms.returnType.getJavaName() + ")" 
+                                   +"org.apache.axis.utils.JavaUtils.convert(resp,"
+                                   + parms.returnType.getJavaName()+".class);");
+                    } else {
+                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
+                    }
                 }
             }
             else {
@@ -472,8 +483,20 @@ public class JavaStubWriter extends JavaWriter {
                     }
 
                 }
-                if (parms.outputs > 0)
-                    pw.println ("            return " + getResponseString(parms.returnType, "resp"));
+                if (parms.outputs > 0) {
+                    // Quick Fix By scheu for now.  This should be fixed elsewhere.
+                    if (parms.returnType != null &&
+                        parms.returnType.getJavaName() != null &&
+                        parms.returnType.getJavaName().indexOf("[]") > 0) {
+                        pw.println("             // REVISIT THIS!");
+                        pw.println("             return ("+parms.returnType.getJavaName() + ")" 
+                                   +"org.apache.axis.utils.JavaUtils.convert(resp,"
+                                   + parms.returnType.getJavaName()+".class);");
+                    } else {
+                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
+                    }
+
+                }
 
             }
             pw.println("        }");
