@@ -1640,9 +1640,9 @@ public class SymbolTable {
         if ((parameterOrder != null) && parameterOrder.isEmpty()) {
             parameterOrder = null;
         }
-
+        
         // All input parts MUST be in the parameterOrder list.  It is an error otherwise.
-        if (parameterOrder != null) {
+        if (parameterOrder != null && !wrapped) {
             Input input = operation.getInput();
 
             if (input != null) {
@@ -1688,7 +1688,7 @@ public class SymbolTable {
                     bindingEntry);
         }
 
-        if (parameterOrder != null) {
+        if (parameterOrder != null && !wrapped) {
 
             // Construct a list of the parameters in the parameterOrder list, determining the
             // mode of each parameter and preserving the parameterOrder list.
