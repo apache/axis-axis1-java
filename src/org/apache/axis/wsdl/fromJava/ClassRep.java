@@ -292,10 +292,15 @@ public class ClassRep extends BaseRep {
     private void walkInheritanceChain(Class cls, boolean inhMethods, Class implClass) {
         Method[] m;
         Class currentClass = cls;
+        HashMap ttClassCache;
+        BCClass bclass;
+        
         while (isClassOk(currentClass)) {
 
             // get the methods in this class
             m = currentClass.getDeclaredMethods();
+
+            ttClassCache = new HashMap();
 
             // add each method in this class to the list
             for (int i=0; i < m.length; i++) {
@@ -309,7 +314,17 @@ public class ClassRep extends BaseRep {
                         continue;  // skip it
                     }
                     Class[] types = getParameterTypes(m[i]);
-                    String[] names = getParameterNames(m[i], implClass);
+                    bclass = (BCClass)ttClassCache.get(currentClass);
+                    
+                    if(bclass == null) {
+                        try {
+                            bclass = new BCClass(currentClass);
+                            ttClassCache.put(currentClass, bclass);
+                        } catch (IOException e) {
+                            // what now?
+                        }
+                    }
+                    String[] names = getParameterNames(m[i], implClass, bclass);
                     ParameterMode[] modes = getParameterModes(m[i], implClass);
                     MethodRep methodRep = new MethodRep(m[i], types, modes, names);
                     getMethodMetaData(methodRep, m[i], implClass);
@@ -428,7 +443,7 @@ public class ClassRep extends BaseRep {
      * @param types  are the parameter types after converting Holders.
      * @return array of Strings which represent the return name followed by parameter names
      */ 
-    protected String[] getParameterNames(Method method, Class implClass) {
+    protected String[] getParameterNames(Method method, Class implClass, BCClass bclass) {
         String[] paramNames = null;
         
         paramNames = getParameterNamesFromSkeleton(method);
@@ -436,7 +451,7 @@ public class ClassRep extends BaseRep {
             return paramNames;
         }
         
-        paramNames = getParameterNamesFromDebugInfo(method); 
+        paramNames = getParameterNamesFromDebugInfo(method, bclass); 
         
         // If failed, try getting a method of the impl class.
         if (paramNames == null && implClass != null) {
@@ -454,7 +469,7 @@ public class ClassRep extends BaseRep {
                 if (paramNames != null) {
                     return paramNames;
                 }
-                paramNames = getParameterNamesFromDebugInfo(m); 
+                paramNames = getParameterNamesFromDebugInfo(m, bclass); 
             }
         }            
 
@@ -504,9 +519,10 @@ public class ClassRep extends BaseRep {
      * @param method
      * @return list of names or null
      */
-    public String[] getParameterNamesFromDebugInfo(java.lang.reflect.Method method) {
+    public String[] getParameterNamesFromDebugInfo(java.lang.reflect.Method method, BCClass bclass) {
         Class c = method.getDeclaringClass();
         int numParams = method.getParameterTypes().length;
+        Vector temp = new Vector();
 
         // Don't worry about it if there are no params.
         if (numParams == 0)
@@ -514,12 +530,12 @@ public class ClassRep extends BaseRep {
 
         // Try to make a tt-bytecode
         BCMethod bmeth = null;
-        BCClass bclass = null;
-        try {
-            bclass = new BCClass(c);
-        } catch (IOException e) {
-            return null;  // no dice
-        }
+//        BCClass bclass = null;
+//        try {
+//            bclass = new BCClass(c);
+//        } catch (IOException e) {
+//            return null;  // no dice
+//        }
 
         // Obtain the exact method we're interested in.
         bmeth = bclass.getMethod(method.getName(), method.getParameterTypes());
@@ -550,10 +566,19 @@ public class ClassRep extends BaseRep {
         // local variable table.
         for (int j = 0; j < vars.length; j++) {
             LocalVariable var = vars[j];
-            if (var.getIndex() <= numParams) {
-                if (var.getName().equals("this"))
-                    continue;
-                argNames[var.getIndex()] = var.getName();
+            if (! var.getName().equals("this")) {
+                if(temp.size() < var.getIndex() + 1)
+                    temp.setSize(var.getIndex() + 1);
+                temp.setElementAt(var.getName(), var.getIndex());
+            }
+        }
+        int k = 0;
+        for (int j = 0; j < temp.size(); j++) {
+            if (temp.elementAt(j) != null) {
+                k++;
+                argNames[k] = (String)temp.elementAt(j);
+                if(k + 1 == argNames.length)
+                    break;
             }
         }
         return argNames;
