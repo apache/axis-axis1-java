@@ -34,6 +34,11 @@
   </servlet-mapping>
 
   <servlet-mapping>
+    <servlet-name>AxisServlet</servlet-name>
+    <url-pattern>/services</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
     <servlet-name>AdminServlet</servlet-name>
     <url-pattern>servlet/AdminServlet</url-pattern>
   </servlet-mapping>
