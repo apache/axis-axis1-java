@@ -159,11 +159,10 @@ public class HTTPMessage {
     }
     else {
       client = new AxisClient();
+      msgContext.setTargetService( action );
       msgContext.setProperty( 
-                      MessageContext.ENGINE_HANDLER,
+                      MessageContext.TRANS_INPUT,
                       "org.apache.axis.transport.http.HTTPDispatchHandler" );
-      // msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.input" );
-      // msgContext.setProperty(MessageContext.TRANS_OUTPUT , "HTTP.output" );
     }
 
     if ( true ) { // Debug.getDebugLevel() > 0  ) {

@@ -104,6 +104,26 @@ public class AxisClient extends BasicHandler
         Debug.Print( 1, "Exit: AxisClient::init" );
     }
 
+    /** Look for the <b>name</b> in the registry.  If there is no
+     *  registry then just see if <b>name</b> is a className, and if
+     *  so, create a new instance of it.
+     *  Should this go into the registry logic itself???
+     */
+    private Handler find(HandlerRegistry hr, String name) {
+        Handler  h = null ;
+        if ( name == null ) return( null );
+        if ( hr != null ) h = hr.find( name);
+        if ( h != null ) return( h );
+        try {
+            ClassLoader cl = new AxisClassLoader();
+            Class       cls = cl.loadClass( name );
+            h = (Handler) cls.newInstance();
+        }
+        catch( Exception e ) {
+        }
+        return( h );
+    }
+
     /**
      * Main routine of the AXIS server.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
@@ -132,17 +152,7 @@ public class AxisClient extends BasicHandler
           Debug.Print( 2, "EngineHandler: " + hName );
 
           if ( hName != null ) {
-            if ( hr == null || (h = hr.find(hName)) == null ) {
-              ClassLoader cl = new AxisClassLoader();
-              try {
-                Debug.Print( 2, "Trying to load class: " + hName );
-                Class cls = cl.loadClass( hName );
-                h = (Handler) cls.newInstance();
-              }
-              catch( Exception e ) {
-                h = null ;
-              }
-            }
+            h = find( hr, hName );
             if ( h != null ) 
               h.invoke(msgContext);
             else
@@ -172,7 +182,7 @@ public class AxisClient extends BasicHandler
             /* Process the Service Specific Request Chain */
             /**********************************************/
             hName =  msgContext.getTargetService();
-            if ( hName != null && (h = sr.find( hName )) != null ) {
+            if ( hName != null && (h = find( sr, hName )) != null ) {
               if ( h instanceof SimpleTargetedChain ) {
                 service = (SimpleTargetedChain) h ;
                 h = service.getInputChain();
@@ -183,13 +193,13 @@ public class AxisClient extends BasicHandler
             /* Process the Global Input Chain */
             /**********************************/
             hName = Constants.GLOBAL_INPUT ;
-            if ( hName != null  && (h = hr.find( hName )) != null )
+            if ( hName != null  && (h = find( hr, hName )) != null )
                 h.invoke(msgContext);
   
             /* Process the Transport Specific Input Chain */
             /**********************************************/
             hName = msgContext.getStrProp(MessageContext.TRANS_INPUT);
-            if ( hName != null && (h = hr.find( hName )) != null )
+            if ( hName != null && (h = find( hr, hName )) != null )
               h.invoke(msgContext);
   
             /* Note: at the end of the transport specific input chain should */
@@ -199,13 +209,13 @@ public class AxisClient extends BasicHandler
             /* Process the Transport Specific Output Chain */
             /***********************************************/
             hName = msgContext.getStrProp(MessageContext.TRANS_OUTPUT);
-            if ( hName != null  && (h = hr.find( hName )) != null )
+            if ( hName != null  && (h = find( hr, hName )) != null )
               h.invoke(msgContext);
   
             /* Process the Global Output Chain */
             /***********************************/
             hName = Constants.GLOBAL_OUTPUT ;
-            if ( hName != null && (h = hr.find( hName )) != null )
+            if ( hName != null && (h = find( hr, hName )) != null )
               h.invoke(msgContext);
   
             if ( service != null ) {
