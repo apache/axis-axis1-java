@@ -60,6 +60,7 @@ import org.apache.axis.utils.QName;
 import org.xml.sax.*;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import java.util.Date;
 import java.util.List;
@@ -126,11 +127,21 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
                                String qName)
             throws SAXException
         {
-            value = makeValue(val.toString());
-            valueComplete();
+            try {
+                value = makeValue(val.toString());
+                valueComplete();
+            } catch (InvocationTargetException ite) {
+                Throwable realException = ite.getTargetException();
+                if (realException instanceof Exception)
+                   throw new SAXException((Exception)realException);
+                else
+                   throw new SAXException(ite.getMessage());
+            } catch (Exception e) {
+                throw new SAXException(e);
+            }
         }
         
-        abstract Object makeValue(String source);
+        abstract Object makeValue(String source) throws Exception;
     }
     
     /** A deserializer for any simple type with a (String) constructor.
@@ -151,15 +162,9 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             }
         }
         
-        public Object makeValue(String source)
+        public Object makeValue(String source) throws Exception
         {
-            try {
-                return constructor.newInstance(new Object [] { source });
-            } catch (Exception e) {
-                // TODO: Handle errors / throw?
-                e.printStackTrace();
-                return null;
-            }
+            return constructor.newInstance(new Object [] { source });
         }
     }
     

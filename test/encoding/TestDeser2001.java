@@ -18,7 +18,7 @@ public class TestDeser2001 extends TestDeser {
     /** 
      * Test deserialization of Date responses
      */
-    public void testMinDate() {
+    public void testMinDate() throws Exception {
         Calendar date = Calendar.getInstance();
         date.set(1999,04,31,12,01,30);
         date.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -29,7 +29,7 @@ public class TestDeser2001 extends TestDeser {
                      date.getTime());
     }
 
-    public void testDateZ() {
+    public void testDateZ() throws Exception {
         Calendar date = Calendar.getInstance();
         date.set(1999,04,31,12,01,30);
         date.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -40,7 +40,7 @@ public class TestDeser2001 extends TestDeser {
                      date.getTime());
     }
 
-    public void testDateTZ() {
+    public void testDateTZ() throws Exception {
         Calendar date = Calendar.getInstance();
         date.set(1999,04,31,12,01,30);
         date.setTimeZone(TimeZone.getTimeZone("GMT-05:00"));

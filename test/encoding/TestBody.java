@@ -37,7 +37,7 @@ public class TestBody extends TestCase {
           "</soap:Body>\n" +
         "</soap:Envelope>\n";
 
-    public void testBodyNamespace() {
+    public void testBodyNamespace() throws Exception {
 
        // setup
        AxisEngine engine = new AxisServer();

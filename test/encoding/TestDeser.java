@@ -73,7 +73,9 @@ public class TestDeser extends TestCase {
     /**
      * Verify that a given XML deserialized produces the expected result
      */
-    protected void deserialize(String data, Object expected) {
+    protected void deserialize(String data, Object expected)
+       throws Exception
+    {
        Message message = new Message(header + data + footer);
        message.setMessageContext(new MessageContext(server));
 
@@ -94,42 +96,42 @@ public class TestDeser extends TestCase {
        if (!equals(result, expected)) assertEquals(expected, result);
     }
 
-    public void testString() {
+    public void testString() throws Exception {
         deserialize("<result xsi:type=\"xsd:string\">abc</result>",
                     "abc");
     }
 
-    public void testBoolean() {
+    public void testBoolean() throws Exception {
         deserialize("<result xsi:type=\"xsd:boolean\">true</result>",
                     new Boolean(true));
     }
 
-    public void testDouble() {
+    public void testDouble() throws Exception {
         deserialize("<result xsi:type=\"xsd:double\">3.14</result>",
                     new Double(3.14));
     }
 
-    public void testFloat() {
+    public void testFloat() throws Exception {
         deserialize("<result xsi:type=\"xsd:float\">3.14</result>",
                     new Float(3.14F));
     }
 
-    public void testInt() {
+    public void testInt() throws Exception {
         deserialize("<result xsi:type=\"xsd:int\">10</result>",
                     new Integer(10));
     }
 
-    public void testLong() {
+    public void testLong() throws Exception {
         deserialize("<result xsi:type=\"xsd:long\">17</result>",
                     new Long(17));
     }
 
-    public void testShort() {
+    public void testShort() throws Exception {
         deserialize("<result xsi:type=\"xsd:short\">3</result>",
                     new Short((short)3));
     }
 
-    public void testArray() {
+    public void testArray() throws Exception {
         Vector v = new Vector();
         v.addElement("abc");
         v.addElement("def");
@@ -141,7 +143,7 @@ public class TestDeser extends TestCase {
                     v);
     }
 
-    public void testUntyped() {
+    public void testUntyped() throws Exception {
          deserialize("<result>10</result>", "10");
     }
 }

@@ -60,6 +60,7 @@ import java.util.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.QName;
+import org.apache.axis.AxisFault;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -118,19 +119,27 @@ public class SOAPEnvelope
         return null;
     }
     
-    public Vector getBodyElements()
+    public Vector getBodyElements() throws AxisFault
     {
         if ((handler != null) && !handler.hasParsedBody()) {
-            handler.parseToEnd();
+            try {
+                handler.parseToEnd();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
         }
         
         return bodyElements;
     }
     
-    public SOAPBodyElement getFirstBody()
+    public SOAPBodyElement getFirstBody() throws AxisFault
     {
         if ((handler != null) && !handler.hasParsedBody()) {
-            handler.parseToEnd();
+            try {
+                handler.parseToEnd();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
         }
         
         if (bodyElements.isEmpty())
@@ -139,10 +148,14 @@ public class SOAPEnvelope
         return (SOAPBodyElement)bodyElements.elementAt(0);
     }
     
-    public Vector getHeaders()
+    public Vector getHeaders() throws AxisFault
     {
         if ((handler != null) && !handler.hasParsedHeaders()) {
-            handler.parse();
+            try {
+                handler.parseToEnd();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
         }
         
         return headers;
@@ -183,36 +196,54 @@ public class SOAPEnvelope
         processID(element);
     }
 
-    public void parseToEnd()
+    public void parseToEnd() throws AxisFault
     {
         if (handler != null)
-            handler.parseToEnd();
+            try {
+                handler.parseToEnd();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
     }
     
-    public MessageElement getElementByID(String id)
+    public MessageElement getElementByID(String id) throws AxisFault
     {
         MessageElement el = (MessageElement)idMapping.get(id);
         if ((el != null) || (handler == null))
             return el;  // Got it, or else don't have anything to parse.
         
         // Must find it...
-        return handler.parseForID(id);
+        try {
+            return handler.parseForID(id);
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
     }
     
     public SOAPHeader getHeaderByName(String namespace, String localPart)
+        throws AxisFault
     {
         SOAPHeader header = (SOAPHeader)findElement(headers, namespace, localPart);
         
         if ((header == null) && (handler != null))
-            return handler.parseForHeader(namespace, localPart);
+            try {
+                return handler.parseForHeader(namespace, localPart);
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
         
         return header;
     }
 
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
+        throws AxisFault
     {
         if ((handler != null) && !handler.hasParsedBody()) {
-            return handler.parseForBody(namespace, localPart);
+            try {
+                return handler.parseForBody(namespace, localPart);
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
         }
         
         return (SOAPBodyElement)findElement(bodyElements, namespace, localPart);
@@ -237,13 +268,18 @@ public class SOAPEnvelope
     }
     
     public Enumeration getHeadersByName(String namespace, String localPart)
+        throws AxisFault
     {
         /** This might be optimizable by creating a custom Enumeration
          * which moves through the headers list (parsing on demand, again),
          * returning only the next one each time.... this is Q&D for now.
          */
         if ((handler != null) && !handler.hasParsedHeaders()) {
-            handler.parse();
+            try {
+                handler.parse();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
         }
         
         Vector v = new Vector();
