@@ -168,17 +168,21 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, new DecimalDeserializerFactory());
         addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, new DecimalDeserializerFactory());
 
-        addSerializer(java.util.Date.class, 
+        // handle the various datetime QNames...
+        addDeserializerFactory(
           new QName(Constants.URI_1999_SCHEMA_XSD, "timeInstant"),
-          new DateSerializer());
+          java.util.Date.class,
+          new DateSerializer.DateDeserializerFactory());
 
-        addSerializer(java.util.Date.class, 
+        addDeserializerFactory(
           new QName(Constants.URI_2000_SCHEMA_XSD, "timeInstant"),
-          new DateSerializer());
+          java.util.Date.class,
+          new DateSerializer.DateDeserializerFactory());
 
-        addSerializer(java.util.Date.class, 
+        addDeserializerFactory(
           new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime"),
-          new DateSerializer());
+          java.util.Date.class,
+          new DateSerializer.DateDeserializerFactory());
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);
