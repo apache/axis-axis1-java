@@ -70,7 +70,7 @@
       classpathref="classpath"/>
 
     <available property="commons-discovery.present"
-      classname="org.apache.commons.discovery.DiscoverSingleton"
+      classname="org.apache.commons.discovery.tools.DiscoverSingleton"
       classpathref="classpath"/>
 
     <available property="commons-httpclient.present"
