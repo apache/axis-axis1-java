@@ -41,6 +41,7 @@ import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.encoding.XMLEncoder;
+import org.apache.axis.components.encoding.XMLEncoderFactory;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
@@ -150,6 +151,12 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     private boolean noNamespaceMappings = true;
     private QName writeXMLType;
     private XMLEncoder encoder = null;
+    
+    /** The flag whether the XML decl should be written */
+    protected boolean startOfDocument = true;
+ 
+    /** The encoding to serialize */
+    private String encoding = XMLEncoderFactory.DEFAULT_ENCODING;
     
     class MultiRefItem {
         String id;
@@ -979,6 +986,13 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         secondLevelObjects = null;
     }
 
+    public void writeXMLDeclaration() throws IOException {
+        writer.write("<?xml version=\"1.0\" encoding=\"");        
+        writer.write(encoding);
+        writer.write("\"?>");
+        startOfDocument = false;        
+    }
+    
     /**
      * Writes (using the Writer) the start tag for element QName along with the
      * indicated attributes and namespace mappings.
@@ -992,6 +1006,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         if (debugEnabled) {
             log.debug(Messages.getMessage("startElem00",
                     "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
+        }
+
+        if (startOfDocument && sendXMLDecl) {
+            writeXMLDeclaration();
         }
 
         if (writingStartTag) {
@@ -1129,6 +1147,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     public void writeChars(char [] p1, int p2, int p3)
         throws IOException
     {
+        if (startOfDocument && sendXMLDecl) {
+            writeXMLDeclaration();
+        }
+        
         if (writingStartTag) {
             writer.write('>');
             writingStartTag = false;
@@ -1144,6 +1166,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     public void writeString(String string)
         throws IOException
     {
+        if (startOfDocument && sendXMLDecl) {
+            writeXMLDeclaration();
+        }
+        
         if (writingStartTag) {
             writer.write('>');
             writingStartTag = false;
@@ -1160,6 +1186,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     public void writeSafeString(String string)
         throws IOException
     {
+        if (startOfDocument && sendXMLDecl) {
+            writeXMLDeclaration();
+        }
+        
         if (writingStartTag) {
             writer.write('>');
             writingStartTag = false;
@@ -1176,6 +1206,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     public void writeDOMElement(Element el)
         throws IOException
     {
+        if (startOfDocument && sendXMLDecl) {
+            writeXMLDeclaration();
+        }
+        
         // If el is a Text element, write the text and exit
         if (el instanceof org.apache.axis.message.Text) {            
             writeSafeString(((Text)el).getData());
@@ -1508,8 +1542,24 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
     public XMLEncoder getEncoder() {
         if(encoder == null) {
-            encoder = XMLUtils.getXMLEncoder(msgContext);
+            encoder = XMLUtils.getXMLEncoder(encoding);
         }
         return encoder;
+    }
+
+    /**
+     * get the encoding for the serialization
+     * @return
+     */
+    public String getEncoding() {
+        return encoding;
+    }
+
+    /**
+     * set the encoding for the serialization
+     * @return
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 }

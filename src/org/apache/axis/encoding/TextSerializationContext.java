@@ -41,11 +41,13 @@ public class TextSerializationContext extends SerializationContext {
     public TextSerializationContext(Writer writer)
     {
         super(writer);
+        startOfDocument = false;    // prevent XML decl for text
     }
 
     public TextSerializationContext(Writer writer, MessageContext msgContext)
     {
         super(writer, msgContext);
+        startOfDocument = false;    // prevent XML decl for text
     }
 
     public void serialize(QName elemQName,

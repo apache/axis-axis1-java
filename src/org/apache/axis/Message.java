@@ -515,12 +515,8 @@ public class Message extends javax.xml.soap.SOAPMessage
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
                 String charEncoding = XMLUtils.getEncoding(this, msgContext);;
-                // write the xml declaration header
-                String incXMLDecl = (String)getProperty(SOAPMessage.WRITE_XML_DECLARATION);
-                if(incXMLDecl == null){
-                    incXMLDecl = "false";
-                }
-                mSOAPPart.writeTo(os, charEncoding, incXMLDecl);
+                mSOAPPart.setEncoding(charEncoding);
+                mSOAPPart.writeTo(os);
             } catch (java.io.IOException e) {
                 log.error(Messages.getMessage("javaIOException00"), e);
             }

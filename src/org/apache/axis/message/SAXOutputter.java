@@ -41,15 +41,7 @@ public class SAXOutputter extends DefaultHandler implements LexicalHandler
     }
     
     public void startDocument() throws SAXException {
-        try {
-			context.writeString("<?xml version=\"1.0\" encoding=\"");
-	        String encoding = XMLUtils.getEncoding(context.getMessageContext());
-	        context.writeString(encoding);
-	        context.writeString("\"?>\n");
-	        context.setSendDecl(false);
-		} catch (IOException e) {
-			throw new SAXException(e);
-		}
+        context.setSendDecl(true);
     }
     
     public void endDocument() throws SAXException {

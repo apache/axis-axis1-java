@@ -135,9 +135,16 @@ public class XMLUtils {
      * Get the current XMLEncoder
      * @return XMLEncoder
      */
-    public static XMLEncoder getXMLEncoder(MessageContext msgContext) {
+    public static XMLEncoder getXMLEncoder(MessageContext msgContext) {        
+        return getXMLEncoder(getEncoding(null, msgContext));
+    }
+    
+    /**
+     * Get the XMLEncoder for specific encoding
+     * @return XMLEncoder
+     */
+    public static XMLEncoder getXMLEncoder(String encoding) {
         XMLEncoder encoder = null;
-        String encoding = getEncoding(null, msgContext);
         try {
             encoder = XMLEncoderFactory.getEncoder(encoding);
         } catch (Exception e) {

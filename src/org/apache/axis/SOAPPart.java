@@ -49,6 +49,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
@@ -256,34 +257,15 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      *
      * @param os  the <code>java.io.OutputStream</code> to write to
      * @param charEncoding  
-     * @param incXMLDecl  
      */
-    public void writeTo(java.io.OutputStream os, String charEncoding,
-                         String incXMLDecl) throws IOException {
+    public void writeTo(java.io.OutputStream os) throws IOException {
         if ( currentForm == FORM_BYTES ) {
-            if(incXMLDecl.equalsIgnoreCase("true")){
-                os.write(("<?xml version=\"1.0\" encoding=\"" + charEncoding +
-                        "\"?>").getBytes());
-            }
             os.write((byte[])currentMessage);
         } else if ( currentForm == FORM_OPTIMIZED ) {
-            // If the message already has XML declaration, don't write it again.
-            // TODO: FIXME. how do we do this better?
-            //ByteArray array = (ByteArray) currentMessage;
-            //String content = new String(array.toByteArray(), charEncoding);
-            //if (!content.startsWith("<?xml")) {
-                if (incXMLDecl.equalsIgnoreCase("true")) {
-                    os.write(("<?xml version=\"1.0\" encoding=\"" + charEncoding + "\"?>").getBytes());
-                }
-            //}
             ((ByteArray) currentMessage).writeTo(os);
         } else {
-            Writer writer = new OutputStreamWriter(os,charEncoding);
+            Writer writer = new OutputStreamWriter(os, currentEncoding);
             writer = new BufferedWriter(new PrintWriter(writer));
-    
-            if(incXMLDecl.equalsIgnoreCase("true")){
-                writer.write("<?xml version=\"1.0\" encoding=\"" + charEncoding +"\"?>");
-            }
             writeTo(writer);
             writer.flush();
         }
@@ -295,11 +277,28 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @param writer  the <code>Writer</code> to write to
      */
     public void writeTo(Writer writer) throws IOException {
-
+        boolean inclXmlDecl = false;         
+        
+        if (msgObject.getMessageContext() != null) {    // if we have message context (JAX-RPC), write xml decl always. 
+            inclXmlDecl = true;            
+        } else {    // if we have no message context (SAAJ), write xml decl according to property.
+            try {
+                String xmlDecl = (String)msgObject.getProperty(SOAPMessage.WRITE_XML_DECLARATION);
+                if (xmlDecl != null && xmlDecl.equals("true")) {
+                    inclXmlDecl = true;                    
+                }                
+            } catch (SOAPException e) {
+                throw new IOException(e.getMessage());
+            }
+        }
+        
         if ( currentForm == FORM_FAULT ) {
             AxisFault env = (AxisFault)currentMessage;
             try {
-                env.output(new SerializationContext(writer, getMessage().getMessageContext()));
+                SerializationContext serContext = new SerializationContext(writer, getMessage().getMessageContext()); 
+                serContext.setSendDecl(inclXmlDecl);
+                serContext.setEncoding(currentEncoding);
+                env.output(serContext);
             } catch (Exception e) {
                 log.error(Messages.getMessage("exception00"), e);
                 throw env;
@@ -310,7 +309,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if ( currentForm == FORM_SOAPENVELOPE ) {
             SOAPEnvelope env = (SOAPEnvelope)currentMessage;
             try {
-                env.output(new SerializationContext(writer, getMessage().getMessageContext()));
+                SerializationContext serContext = new SerializationContext(writer, getMessage().getMessageContext());
+                serContext.setSendDecl(inclXmlDecl);
+                serContext.setEncoding(currentEncoding);
+                env.output(serContext);
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
             }
@@ -466,7 +468,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             BufferedOutputStream os = new BufferedOutputStream(baos);
             try {
-                this.writeTo(os, currentEncoding, "false");
+                this.writeTo(os);
                 os.flush();
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
@@ -518,7 +520,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             currentEncoding = XMLUtils.getEncoding(msgObject, null);
             ByteArray array = new ByteArray();
             try {
-                this.writeTo(array, currentEncoding, "false");
+                this.writeTo(array);
                 array.flush();
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
@@ -1110,12 +1112,12 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     public String getEncoding()
     {
-        throw new UnsupportedOperationException("Not yet implemented.69");
+        return currentEncoding;
     }
 
     public  void setEncoding(String s)
     {
-        throw new UnsupportedOperationException("Not yet implemented.70");
+        currentEncoding = s;
     }
 
     public  boolean getStandalone()
