@@ -58,12 +58,14 @@ package test.functional;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 import org.apache.log4j.Category;
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
+import samples.transport.tcp.TCPSender;
 
 import java.net.URL;
 
@@ -96,6 +98,10 @@ public class TestTCPTransportSample extends TestCase {
 
             Service  service = new Service();
             Call     call    = (Call) service.createCall();
+
+            SimpleTargetedChain c = new SimpleTargetedChain();
+            c.setPivotHandler(new TCPSender());
+            call.getEngine().deployTransport("tcp", c);
 
             call.setTargetEndpointAddress( new URL("tcp://localhost:8088") );
             call.setOperationName( "getQuote" );

@@ -88,21 +88,21 @@ public class TCPListener implements Runnable {
 
     // These have default values.
     private String transportName = "TCPTransport";
-    
+
     private static final String AXIS_ENGINE = "AxisEngine" ;
-    
+
     private int port;
     private ServerSocket srvSocket;
-    
+
     private AxisEngine engine = null ;
-    
+
     // becomes true when we want to quit
     private boolean done = false;
-    
+
     public static void main (String args[]) {
         new TCPListener(args).run();
     }
-    
+
     public TCPListener (String[] args) {
         // look for -p, -d arguments
         try {
@@ -112,22 +112,22 @@ public class TCPListener implements Runnable {
             category.error("Hosed URL: "+ex);
             System.exit(1);
         }
-        
+
         try {
             srvSocket = new ServerSocket(port);
         } catch (IOException ex) {
             category.error("Can't create server socket on port "+port);
             System.exit(1);
         }
-        
+
         category.info("TCPListener is listening on port "+port+".");
     }
-    
+
     public void run () {
         if (srvSocket == null) {
             return;
         }
-        
+
         Socket sock;
         while (!done) {
             try {
@@ -142,8 +142,8 @@ public class TCPListener implements Runnable {
             }
         }
     }
-    
-    
+
+
     public class SocketHandler implements Runnable {
         private Socket socket;
         public SocketHandler (Socket socket) {
@@ -154,7 +154,7 @@ public class TCPListener implements Runnable {
             if ( engine == null ) {
                 engine = new AxisServer();
                 engine.init();
-                
+
                 SimpleTargetedChain c = new SimpleTargetedChain();
                 c.setPivotHandler(new TCPSender());
 
@@ -165,7 +165,7 @@ public class TCPListener implements Runnable {
                     System.exit(-1);
                 }
             }
-            
+
             /* Place the Request message in the MessagContext object - notice */
             /* that we just leave it as a 'ServletRequest' object and let the  */
             /* Message processing routine convert it - we don't do it since we */
@@ -173,7 +173,7 @@ public class TCPListener implements Runnable {
             /* even need to be parsed.                                         */
             /*******************************************************************/
             MessageContext    msgContext = new MessageContext(engine);
-            
+
             InputStream inp;
             try {
                 inp = socket.getInputStream();
@@ -181,7 +181,7 @@ public class TCPListener implements Runnable {
                 category.error("Couldn't get input stream from "+socket);
                 return;
             }
-            
+
             // ROBJ 911
             // the plain ol' inputstream seems to hang in the SAX parse..... WHY?????
             // because there is no content length!
@@ -198,7 +198,7 @@ public class TCPListener implements Runnable {
                     category.error("Length line "+line+" was not terminated with \r\n");
                     return;
                 }
-                
+
                 // TEST SUPPORT ONLY
                 // If the line says "ping", then respond "\n".
                 // If the line says "quit", then respond "\n" and exit.
@@ -215,18 +215,18 @@ public class TCPListener implements Runnable {
                     category.error("AxisListener quitting.");
                     System.exit(0);
                 }
-                
-                
+
+
                 // OK, assume it is content length
                 int len = Integer.parseInt(line.toString());
                 // read that many bytes into ByteArrayInputStream...
-                
+
                 // experiment, doesn't work:
                 //        NonBlockingBufferedInputStream nbbinp = new NonBlockingBufferedInputStream();
                 //        nbbinp.setContentLength(len);
                 //        nbbinp.setInputStream(inp);
                 //        msg = new Message(nbbinp, "InputStream");
-                
+
                 byte[] mBytes = new byte[len];
                 inp.read(mBytes);
                 msg = new Message(new ByteArrayInputStream(mBytes));
@@ -234,16 +234,16 @@ public class TCPListener implements Runnable {
                 category.error("Couldn't read from socket input stream: "+ex);
                 return;
             }
-            
-            
+
+
             /* Set the request(incoming) message field in the context */
             /**********************************************************/
             msgContext.setRequestMessage( msg );
-            
+
             /* Set the Transport Specific Request/Response chains IDs */
             /******************************************************/
             msgContext.setTransportName(transportName);
-            
+
             try {
                 /* Invoke the Axis engine... */
                 /*****************************/
@@ -254,7 +254,7 @@ public class TCPListener implements Runnable {
                     e = new AxisFault( e );
                 msgContext.setResponseMessage( new Message((AxisFault)e) );
             }
-            
+
             /* Send it back along the wire...  */
             /***********************************/
             msg = msgContext.getResponseMessage();

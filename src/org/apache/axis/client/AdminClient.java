@@ -59,7 +59,9 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
+import org.apache.log4j.Category;
 
+import javax.xml.rpc.JAXRPCException;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -83,13 +85,24 @@ import java.util.Vector;
 
 public class AdminClient
 {
+    static Category category =
+            Category.getInstance(AdminClient.class.getName());
+
     protected PrintWriter _log;
+    protected Call call;
 
     /**
      * Construct an admin client w/o a logger
      */
     public AdminClient()
     {
+        try {
+            Service service = new Service();
+            call = (Call) service.createCall();
+        } catch (JAXRPCException e) {
+            category.fatal("Couldn't get a call", e);
+            call = null;
+        }
     }
 
     /**
@@ -97,6 +110,7 @@ public class AdminClient
      */
     public AdminClient(PrintWriter log)
     {
+        this();
         _log = log;
     }
 
@@ -105,6 +119,7 @@ public class AdminClient
      */
     public AdminClient(OutputStream out)
     {
+        this();
         _log = new PrintWriter(out);
     }
 
@@ -118,6 +133,14 @@ public class AdminClient
             _log.println(msg);
             _log.flush();
         }
+    }
+
+    /**
+     * External access to our Call object
+     */
+    public Call getCall()
+    {
+        return call;
     }
 
     /**
@@ -218,10 +241,11 @@ public class AdminClient
         return sb.toString();
     }
 
-    public static String process(Options opts, InputStream input)  throws Exception
+    public String process(Options opts, InputStream input)  throws Exception
     {
-        Service service = new Service();
-        Call    call = (org.apache.axis.client.Call) service.createCall();
+        if (call == null) {
+            throw new Exception("AdminClient did not initialize correctly: 'call' is null!");
+        }
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) );
         call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
