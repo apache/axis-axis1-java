@@ -60,17 +60,13 @@
 package org.apache.axis.attachments;
 
 
-import java.io.IOException;
-import java.util.StringTokenizer;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.Messages;
+import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
+import java.util.StringTokenizer;
 
 
 /**

@@ -55,17 +55,16 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.Target;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.SAXException;
-import java.lang.reflect.InvocationTargetException;
+
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Class which knows how to update a bean property

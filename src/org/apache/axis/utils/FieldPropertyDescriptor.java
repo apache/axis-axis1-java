@@ -55,10 +55,10 @@
 
 package org.apache.axis.utils;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Array;
-import java.beans.PropertyDescriptor;
 
 
 /**

@@ -54,10 +54,6 @@
  */
 package org.apache.axis.types;
 
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLChar;
-
 import java.util.StringTokenizer;
 
 /**

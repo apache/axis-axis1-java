@@ -55,8 +55,8 @@
 
 package org.apache.axis.session;
 
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * A trivial session implementation.

@@ -55,21 +55,17 @@
 
 package org.apache.axis.server;
 
-import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.util.Map;
 import java.io.File;
+import java.util.Map;
 
 /**
  * Helper class for obtaining AxisServers.  Default implementation.

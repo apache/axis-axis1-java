@@ -56,6 +56,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -65,14 +66,11 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;

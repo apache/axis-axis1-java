@@ -59,8 +59,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 
-import java.util.ArrayList;
-
 /**
  * This class records SAX2 Events and allows
  * the events to be replayed by start and stop index

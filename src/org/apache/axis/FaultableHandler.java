@@ -55,15 +55,12 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 

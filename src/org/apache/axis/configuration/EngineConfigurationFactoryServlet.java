@@ -55,21 +55,18 @@
 
 package org.apache.axis.configuration;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.servlet.ServletContext;
-
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
-import org.apache.axis.server.AxisServer;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.Messages;
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
+
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * This is a default implementation of ServletEngineConfigurationFactory.

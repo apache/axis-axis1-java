@@ -61,9 +61,9 @@ import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
 
+import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.namespace.QName;
 
 /**
  * DeserializerFactory for Bean

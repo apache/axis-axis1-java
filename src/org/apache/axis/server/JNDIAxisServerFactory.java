@@ -55,10 +55,8 @@
 
 package org.apache.axis.server;
 
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import javax.naming.InitialContext;

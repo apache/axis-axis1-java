@@ -59,17 +59,16 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
-import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.handlers.soap.SOAPService;
 
 import javax.xml.namespace.QName;
-
-import java.util.Hashtable;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * A SimpleProvider is an EngineConfiguration which contains a simple

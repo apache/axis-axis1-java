@@ -57,54 +57,52 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
+import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.Handler;
-import org.apache.axis.types.HexBinary;
-import org.apache.axis.schema.SchemaVersion;
-import org.apache.axis.soap.SOAPConstants;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.attachments.Attachments;
+import org.apache.axis.client.Call;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.attachments.Attachments;
-import org.apache.axis.client.Call;
+import org.apache.axis.schema.SchemaVersion;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.types.HexBinary;
 import org.apache.axis.utils.IDKey;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.description.TypeDesc;
-
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Attr;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.Comment;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.QNameHolder;
 import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.holders.QNameHolder;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
-import java.util.HashMap;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.

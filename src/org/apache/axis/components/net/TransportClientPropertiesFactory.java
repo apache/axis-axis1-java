@@ -54,13 +54,11 @@
  */
 package org.apache.axis.components.net;
 
-import java.util.HashMap;
-
 import org.apache.axis.AxisProperties;
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
+import java.util.HashMap;
 
 
 /**

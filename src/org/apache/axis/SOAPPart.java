@@ -55,26 +55,22 @@
 
 package org.apache.axis ;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
-import org.apache.axis.transport.http.HTTPConstants;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
 import javax.xml.transform.Source;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -83,7 +79,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 

@@ -66,7 +66,7 @@ import javax.activation.DataHandler;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.awt.Image;
+import java.awt.*;
 import java.beans.Introspector;
 import java.io.IOException;
 import java.io.InputStream;

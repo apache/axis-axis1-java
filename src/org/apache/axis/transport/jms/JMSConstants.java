@@ -55,9 +55,9 @@
 
 package org.apache.axis.transport.jms;
 
+import javax.jms.DeliveryMode;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.DeliveryMode;
 
 /**
  * JMSConstants contains constants that apply to all JMS providers.

@@ -55,15 +55,12 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.ConfigurationException;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;

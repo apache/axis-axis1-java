@@ -54,12 +54,10 @@
  */
 package org.apache.axis.types;
 
-import java.math.BigInteger;
-
-import java.util.Random;
-
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+
+import java.math.BigInteger;
+import java.util.Random;
 
 /**
  * Custom class for supporting primitive XSD data type nonPositiveInteger

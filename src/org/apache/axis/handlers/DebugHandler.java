@@ -59,12 +59,10 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 

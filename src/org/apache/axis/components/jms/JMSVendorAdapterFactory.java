@@ -55,16 +55,7 @@
 
  package org.apache.axis.components.jms;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
-import java.util.HashMap;
-
-import javax.jms.ConnectionFactory;
-
 import org.apache.axis.AxisProperties;
-
-import org.apache.commons.discovery.tools.SPInterface;
 
 /**
  * Discovery class used to locate vendor adapters.  Switch the default

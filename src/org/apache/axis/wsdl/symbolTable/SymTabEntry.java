@@ -55,11 +55,10 @@
 
 package org.apache.axis.wsdl.symbolTable;
 
+import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
 
 /**
 * SymTabEntry is the base class for all symbol table entries.  It contains four things:

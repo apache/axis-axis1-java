@@ -54,23 +54,20 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
 * This is Wsdl2java's service writer.  It writes the <serviceName>.java file.

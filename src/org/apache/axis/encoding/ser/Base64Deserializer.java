@@ -55,13 +55,12 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.encoding.Base64;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
-
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.Base64;
 
 /**
  * Deserializer for Base64

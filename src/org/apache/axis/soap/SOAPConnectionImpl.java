@@ -54,15 +54,13 @@
  */
 package org.apache.axis.soap;
 
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPException;
-import javax.xml.messaging.Endpoint;
-
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.attachments.Attachments;
 
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import java.util.Iterator;
 
 /**

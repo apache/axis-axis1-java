@@ -55,27 +55,23 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.fromJava.Types;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
-import org.apache.axis.MessageContext;
-import org.apache.axis.AxisEngine;
-import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.schema.SchemaVersion;
-
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.commons.logging.Log;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
-import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collection;

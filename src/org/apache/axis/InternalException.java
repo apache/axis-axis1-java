@@ -55,14 +55,9 @@
 
 package org.apache.axis;
 
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-
-import java.io.StringWriter;
-import java.io.PrintWriter;
 
 /**
  * Encapsulates exceptions for "should never occur" situations.  Extends

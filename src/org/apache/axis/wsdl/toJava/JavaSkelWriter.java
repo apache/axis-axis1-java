@@ -54,12 +54,12 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -67,21 +67,15 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
-
 import javax.wsdl.extensions.ExtensibilityElement;
-
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
-
 import javax.xml.namespace.QName;
-
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.FaultInfo;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-
-import org.apache.axis.utils.Messages;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java

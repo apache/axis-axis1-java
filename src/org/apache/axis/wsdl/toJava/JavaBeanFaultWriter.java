@@ -54,11 +54,11 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.util.Vector;
-import java.io.PrintWriter;
-import java.io.IOException;
-
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 /**
  * This is Wsdl2java's Complex Faylt Writer.

@@ -54,24 +54,19 @@
  */
 package org.apache.axis.components.net;
 
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
+
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.security.KeyStore;
 import java.util.Hashtable;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-
-import org.apache.axis.AxisProperties;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
 
 
 /**

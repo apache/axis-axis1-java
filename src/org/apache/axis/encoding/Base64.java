@@ -54,12 +54,11 @@
  */
 package org.apache.axis.encoding ;
 
+import org.apache.axis.utils.Messages;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 /**
  *

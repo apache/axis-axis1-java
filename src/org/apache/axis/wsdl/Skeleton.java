@@ -54,8 +54,7 @@
  */
 package org.apache.axis.wsdl;
 
-import javax.xml.namespace.QName;
-import javax.xml.rpc.ParameterMode;
+
 
 /**
  * Interface for WSDL2Java generated skeletons    

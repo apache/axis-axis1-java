@@ -55,7 +55,6 @@
 package org.apache.axis.holders;
 
 import javax.mail.internet.MimeMultipart;
-
 import javax.xml.rpc.holders.Holder;
 
 /**

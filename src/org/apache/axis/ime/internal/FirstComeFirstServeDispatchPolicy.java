@@ -55,12 +55,12 @@
 package org.apache.axis.ime.internal;
 
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeEventListener;
 import org.apache.axis.ime.event.MessageFaultEvent;
 import org.apache.axis.ime.event.MessageReceiveEvent;
 import org.apache.axis.ime.internal.util.KeyedBuffer;
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 /**

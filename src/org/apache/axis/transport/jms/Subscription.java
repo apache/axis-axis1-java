@@ -56,7 +56,6 @@
 package org.apache.axis.transport.jms;
 
 import javax.jms.MessageListener;
-
 import java.util.HashMap;
 
 /*

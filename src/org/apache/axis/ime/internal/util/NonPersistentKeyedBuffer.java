@@ -55,13 +55,13 @@
 
 package org.apache.axis.ime.internal.util;
 
-import org.apache.axis.i18n.Messages;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.threadpool.ThreadPool;
+import org.apache.axis.i18n.Messages;
 import org.apache.commons.logging.Log;
 
-import java.util.Vector;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Creates a non-persistent KeyedBuffer.  Queued messages

@@ -55,18 +55,15 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SimpleValueSerializer;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
-
 import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SimpleValueSerializer;
-import org.w3c.dom.Element;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

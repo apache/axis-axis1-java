@@ -54,15 +54,14 @@
  */
 package org.apache.axis.components.net;
 
-import java.util.Hashtable;
-
+import com.ibm.net.ssl.SSLContext;
+import com.ibm.net.ssl.TrustManager;
+import com.ibm.net.ssl.X509TrustManager;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
-import com.ibm.net.ssl.SSLContext;
-import com.ibm.net.ssl.TrustManager;
-import com.ibm.net.ssl.X509TrustManager;
+import java.util.Hashtable;
 
 /**
  * Hook for Axis sender, allowing unsigned server certs

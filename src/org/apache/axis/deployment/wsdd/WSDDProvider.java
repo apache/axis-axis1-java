@@ -57,24 +57,23 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaCORBAProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaEJBProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDJavaCORBAProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaRMIProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.commons.discovery.ResourceNameIterator;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
+import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 import java.util.Hashtable;
-
-import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
-import org.apache.commons.discovery.ResourceNameIterator;
-import org.apache.commons.discovery.resource.ClassLoaders;
-import org.apache.commons.logging.Log;
 
 
 /**

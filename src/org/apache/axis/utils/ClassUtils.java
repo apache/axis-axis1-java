@@ -54,9 +54,9 @@
  */
 package org.apache.axis.utils;
 
+import java.io.InputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.io.InputStream;
 
 /**
  * Utility methods for Class Loading.

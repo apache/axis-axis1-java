@@ -54,25 +54,23 @@
  */
 package org.apache.axis.utils;
 
-import org.apache.axis.InternalException;
-import org.apache.axis.Constants;
 import org.apache.axis.AxisFault;
-import org.apache.axis.description.TypeDesc;
+import org.apache.axis.Constants;
+import org.apache.axis.InternalException;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FieldDesc;
+import org.apache.axis.description.TypeDesc;
+import org.apache.commons.logging.Log;
 
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
-import java.beans.PropertyDescriptor;
-import java.beans.Introspector;
-import java.util.Vector;
-import java.lang.reflect.Method;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
+import java.util.Vector;
 
 public class BeanUtils {
 

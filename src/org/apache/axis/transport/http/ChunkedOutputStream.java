@@ -55,9 +55,9 @@
 package org.apache.axis.transport.http;
 
 
-import java.io.OutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 
 /**

@@ -57,22 +57,19 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.handlers.soap.SOAPService;
-
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPException;
 import javax.xml.namespace.QName;
-
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;

@@ -58,14 +58,13 @@ package org.apache.axis.handlers ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * A simple Handler which logs the request and response messages to either

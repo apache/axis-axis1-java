@@ -57,13 +57,11 @@ package org.apache.axis.handlers ;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.security.simple.SimpleSecurityProvider;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 

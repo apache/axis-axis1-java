@@ -59,27 +59,24 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Document;
 
 import java.io.OutputStream;
-import java.net.Socket;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class SimpleAxisWorker implements Runnable {

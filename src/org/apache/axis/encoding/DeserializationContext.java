@@ -56,31 +56,17 @@
 
 package org.apache.axis.encoding;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-
-
 import org.apache.axis.message.IDResolver;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
-import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.NSStack;
 import org.apache.axis.message.SOAPEnvelope;
-
-import org.w3c.dom.Element;
-
+import org.apache.axis.message.SOAPHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParser;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Stack;
 
 /**
  * This interface describes the AXIS DeserializationContext, note that

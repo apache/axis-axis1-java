@@ -54,16 +54,14 @@
  */
 package org.apache.axis.wsdl;
 
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.Messages;
-
 import org.apache.axis.wsdl.fromJava.Emitter;
-
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 
 import java.util.HashMap;
 import java.util.List;

@@ -56,20 +56,14 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.attachments.PlainTextDataSource;
-
 import org.apache.axis.components.logger.LogFactory;
-
 import org.apache.axis.encoding.SerializationContext;
-
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
 
-import java.io.IOException;
-
 import javax.activation.DataHandler;
-
 import javax.xml.namespace.QName;
+import java.io.IOException;
 
 /**
  * text/plain DataHandler Serializer

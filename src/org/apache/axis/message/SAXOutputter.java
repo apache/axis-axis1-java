@@ -54,18 +54,15 @@
  */
 package org.apache.axis.message;
 
-import org.apache.axis.encoding.SerializationContext;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.namespace.QName;
-
 import java.io.IOException;
 
 public class SAXOutputter extends DefaultHandler implements LexicalHandler

@@ -55,22 +55,22 @@
 
 package org.apache.axis.ime.internal.util.handler;
 
-import java.util.Hashtable;
-
 import org.apache.axis.Handler;
-import org.apache.axis.TargetedChain;
 import org.apache.axis.MessageContext;
+import org.apache.axis.TargetedChain;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageExchangeEventListener;
 import org.apache.axis.ime.MessageExchangeEvent;
+import org.apache.axis.ime.MessageExchangeEventListener;
 import org.apache.axis.ime.event.MessageFaultEvent;
 import org.apache.axis.ime.event.MessageSendEvent;
+import org.apache.axis.ime.internal.FirstComeFirstServeDispatchPolicy;
 import org.apache.axis.ime.internal.MessageExchangeProvider;
 import org.apache.axis.ime.internal.MessageExchangeSendContext;
 import org.apache.axis.ime.internal.ReceivedMessageDispatchPolicy;
-import org.apache.axis.ime.internal.FirstComeFirstServeDispatchPolicy;
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
+import java.util.Hashtable;
 
 /**
  * Used to wrap synchronous handlers (e.g. Axis 1.0 transports)

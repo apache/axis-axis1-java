@@ -55,11 +55,9 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

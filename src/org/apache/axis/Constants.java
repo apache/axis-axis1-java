@@ -55,12 +55,11 @@
 
 package org.apache.axis;
 
-import org.xml.sax.Attributes;
 import org.apache.axis.schema.SchemaVersion1999;
 import org.apache.axis.schema.SchemaVersion2000;
 import org.apache.axis.schema.SchemaVersion2001;
-
 import org.apache.axis.soap.SOAPConstants;
+import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
 

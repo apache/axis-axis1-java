@@ -54,9 +54,8 @@
  */
 package org.apache.axis.holders;
 
-import java.awt.Image;
-
 import javax.xml.rpc.holders.Holder;
+import java.awt.*;
 
 /**
  * Class ImageHolder

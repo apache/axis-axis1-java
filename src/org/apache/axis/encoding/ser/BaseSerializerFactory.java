@@ -55,21 +55,19 @@
 
 package org.apache.axis.encoding.ser;
 
-import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
-
-import java.util.Vector;
-import java.util.Iterator;
-
 import org.apache.axis.Constants;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 
+import javax.xml.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Base class for Axis Serialization Factory classes for code reuse

@@ -54,10 +54,9 @@
 package javax.xml.transform.stream;
 
 import javax.xml.transform.Source;
-
+import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.File;
 
 
 /**

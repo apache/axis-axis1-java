@@ -54,10 +54,10 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
 * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.

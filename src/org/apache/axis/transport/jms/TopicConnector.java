@@ -55,33 +55,27 @@
 
 package org.apache.axis.transport.jms;
 
-import java.lang.reflect.InvocationTargetException;
+import org.apache.axis.components.jms.JMSVendorAdapter;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import javax.jms.MessageListener;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageProducer;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TemporaryTopic;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
-import javax.jms.TemporaryTopic;
-import javax.jms.Destination;
-import javax.jms.Session;
-import javax.jms.TopicSession;
-import javax.jms.TopicPublisher;
-import javax.jms.TopicSubscriber;
-import javax.jms.Connection;
 import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.ExceptionListener;
-
-import org.apache.axis.components.jms.JMSVendorAdapter;
+import javax.jms.TopicPublisher;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
+import java.util.HashMap;
 
 /**
  * TopicConnector is a concrete JMSConnector subclass that specifically handles

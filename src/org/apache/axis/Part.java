@@ -55,28 +55,7 @@
 
 package org.apache.axis;
 
-import org.apache.axis.utils.JavaUtils;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Hashtable;
-
-/**
- * A MIME component of an Axis Message.
- * <p>
- * Loosely based on javax.xml.soap.SOAPPart and javax.xml.soap.AttachmentPart.
- * (Why don't <i>they</i> have a Part superclass?)
- * <p>
- * In general, all methods of Part and its subclasses are (or should
- * be) implemented as efficiently as possible.  No buffering is done
- * unless necessary.  (Look-ahead (and hence buffering) is necessary
- * when calculating content length.)
- *
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Rick Rineholt
- */
-
-import org.apache.axis.transport.http.HTTPConstants;
 
 public interface Part extends java.io.Serializable
 {

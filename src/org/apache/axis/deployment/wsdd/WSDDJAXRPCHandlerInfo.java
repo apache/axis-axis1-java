@@ -55,7 +55,6 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
@@ -64,10 +63,9 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
-import java.util.Hashtable;
 
 
 /**

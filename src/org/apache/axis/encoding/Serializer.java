@@ -56,12 +56,11 @@
 
 package org.apache.axis.encoding;
 
-import org.xml.sax.Attributes;
-import org.w3c.dom.Element;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
-
 import java.io.IOException;
 
 /**

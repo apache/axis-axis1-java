@@ -56,12 +56,11 @@ package org.apache.axis.attachments;
 
 import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataSource;
-import java.awt.Image;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -55,11 +55,9 @@
 
 package org.apache.axis.components.compiler;
 
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import java.io.BufferedReader;

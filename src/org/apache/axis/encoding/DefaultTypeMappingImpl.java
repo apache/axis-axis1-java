@@ -56,12 +56,12 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
-import org.apache.axis.types.HexBinary;
-import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.Base64DeserializerFactory;
 import org.apache.axis.encoding.ser.Base64SerializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.DateDeserializerFactory;
 import org.apache.axis.encoding.ser.DateSerializerFactory;
 import org.apache.axis.encoding.ser.ElementDeserializerFactory;
@@ -78,8 +78,8 @@ import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
 import org.apache.axis.encoding.ser.SimpleSerializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.schema.SchemaVersion;
+import org.apache.axis.types.HexBinary;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 

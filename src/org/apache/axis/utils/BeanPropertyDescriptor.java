@@ -54,13 +54,13 @@
  */
 package org.apache.axis.utils;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.beans.PropertyDescriptor;
-import java.beans.IndexedPropertyDescriptor;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
+import java.beans.IndexedPropertyDescriptor;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 
 
 /**

@@ -54,22 +54,18 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Vector;
-
+import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.apache.axis.Constants;
-
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.

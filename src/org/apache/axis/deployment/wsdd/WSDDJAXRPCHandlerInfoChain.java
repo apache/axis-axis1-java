@@ -54,19 +54,19 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.utils.ClassUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerInfo;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  *

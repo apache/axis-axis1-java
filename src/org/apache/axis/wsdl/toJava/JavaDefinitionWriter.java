@@ -54,35 +54,23 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.ArrayList;
-
-import javax.wsdl.Definition;
-import javax.wsdl.Import;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.PortType;
-import javax.wsdl.BindingFault;
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.extensions.soap.SOAPFault;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.utils.Messages;
-
 import org.apache.axis.wsdl.gen.Generator;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Import;
+import javax.wsdl.Message;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This is Wsdl2java's Definition Writer.  

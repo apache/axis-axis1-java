@@ -55,16 +55,13 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
 /**
  * The DateSerializer deserializes a Date.  Much of the work is done in the 
  * base class.                                               

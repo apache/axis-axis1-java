@@ -57,20 +57,17 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
-import org.apache.axis.encoding.DeserializationContextImpl;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Mapping;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -80,21 +77,17 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.Name;
-import javax.xml.namespace.QName;
-
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Serializable;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.Iterator;
+import java.util.Vector;
 
 /*
  * MessageElement is the base type of nodes of the SOAP message parse tree.

@@ -54,26 +54,15 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Vector;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Collection;
-
-import javax.wsdl.BindingFault;
-import javax.wsdl.Message;
-import javax.wsdl.PortType;
-import javax.wsdl.extensions.soap.SOAPFault;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.enum.Use;
-
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import javax.wsdl.Message;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 /**
  * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.

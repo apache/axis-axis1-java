@@ -55,10 +55,8 @@
 package javax.xml.soap;
 
 import javax.activation.DataHandler;
-
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.util.Iterator;
 
 /**

@@ -55,15 +55,10 @@
 
 package org.apache.axis.encoding;
 
-import org.apache.axis.Constants;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author Rich Scheuerle (scheu@us.ibm.com)

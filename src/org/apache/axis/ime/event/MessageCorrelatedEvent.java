@@ -54,9 +54,10 @@
  */
 package org.apache.axis.ime.event;
 
-import org.apache.axis.ime.MessageExchangeEvent;
-import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.MessageContext;
+import org.apache.axis.ime.MessageExchangeCorrelator;
+import org.apache.axis.ime.MessageExchangeEvent;
+
 import java.io.Serializable;
 
 /**

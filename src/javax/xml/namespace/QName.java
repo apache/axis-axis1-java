@@ -54,9 +54,9 @@
  */
 package javax.xml.namespace;
 
-import java.io.Serializable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 
 /**
  * <code>QName</code> class represents the value of a qualified name

@@ -55,17 +55,15 @@
 
  package org.apache.axis.components.jms;
 
-import java.util.HashMap;
+import progress.message.client.ENetworkFailure;
+import progress.message.client.EUserAlreadyConnected;
+import progress.message.jclient.ErrorCodes;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.TopicConnectionFactory;
-import javax.jms.JMSException;
-
-import progress.message.client.EUserAlreadyConnected;
-import progress.message.client.ENetworkFailure;
-
-import progress.message.jclient.ErrorCodes;
+import java.util.HashMap;
 
 /**
  * Defines SonicMQ specific constants for connnection factory creation.

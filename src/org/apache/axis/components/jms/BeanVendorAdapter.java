@@ -55,19 +55,18 @@
 
  package org.apache.axis.components.jms;
 
-import java.util.HashMap;
+import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.utils.ClassUtils;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.QueueConnectionFactory;
 import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.QueueSession;
-import javax.jms.TopicConnectionFactory;
 import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicSession;
-
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.utils.BeanPropertyDescriptor;
+import java.util.HashMap;
 
 /**
  * Uses ClassUtils.forName and reflection to configure ConnectionFactory.  Uses

@@ -54,12 +54,9 @@
  */
 package org.apache.axis.utils;
 
-import org.xml.sax.InputSource;
-import org.apache.commons.logging.Log;
 import org.apache.axis.components.logger.LogFactory;
-
-import java.io.OutputStream;
-import java.io.ByteArrayInputStream;
+import org.apache.commons.logging.Log;
+import org.xml.sax.InputSource;
 
 public class DefaultEntityResolver implements org.xml.sax.EntityResolver {
     protected static Log log =

@@ -54,11 +54,9 @@
  */
 package org.apache.axis.components.net;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 

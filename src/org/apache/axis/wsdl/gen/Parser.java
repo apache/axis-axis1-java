@@ -65,13 +65,12 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.Document;
-
-import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;

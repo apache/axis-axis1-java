@@ -57,16 +57,14 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -76,7 +74,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Date;
 
 
 /**

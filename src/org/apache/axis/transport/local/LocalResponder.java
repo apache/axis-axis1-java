@@ -57,10 +57,8 @@ package org.apache.axis.transport.local;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.commons.logging.Log;
 
 

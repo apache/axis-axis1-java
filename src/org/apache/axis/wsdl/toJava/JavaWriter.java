@@ -54,18 +54,15 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.gen.Generator;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
-import org.apache.axis.wsdl.gen.Generator;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
 * Emitter knows about WSDL writers, one each for PortType, Binding, Service,

@@ -55,17 +55,16 @@
 
 package org.apache.axis.components.jms;
 
-import java.util.HashMap;
-
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.Queue;
-import javax.jms.QueueSession;
-import javax.jms.Topic;
-import javax.jms.TopicSession;
+import javax.jms.InvalidDestinationException;
 import javax.jms.JMSException;
 import javax.jms.JMSSecurityException;
-import javax.jms.InvalidDestinationException;
+import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.QueueSession;
+import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicSession;
+import java.util.HashMap;
 
 /**
  * SPI Interface that all JMSVendorAdaptors must implement.  Allows for

@@ -54,43 +54,21 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Fault;
-import javax.wsdl.Input;
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.BooleanHolder;
-
-import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPOperation;
-
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
-import org.w3c.dom.Node;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.xml.rpc.holders.BooleanHolder;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.List;
 
 /**
 * This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java

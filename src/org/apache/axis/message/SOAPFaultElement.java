@@ -55,8 +55,7 @@
 
 package org.apache.axis.message;
 
-import javax.xml.soap.Detail;
-import javax.xml.soap.SOAPException;
+
 
 /**
  * SOAP Fault implementation

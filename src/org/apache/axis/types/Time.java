@@ -54,14 +54,12 @@
  */
 package org.apache.axis.types;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.text.SimpleDateFormat;
 
 /**
  * Class that represents the xsd:time XML Schema type

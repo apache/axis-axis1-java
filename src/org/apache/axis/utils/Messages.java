@@ -55,18 +55,12 @@
 
 package org.apache.axis.utils;
 
+import org.apache.axis.i18n.MessageBundle;
+import org.apache.axis.i18n.MessagesConstants;
+
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-/**
- * These two imports added to facilitate copying to different packages...
- * 
- *    import org.apache.axis.i18n.MessageBundle;
- *    import org.apache.axis.i18n.MessagesConstants;
- */
-import org.apache.axis.i18n.MessageBundle;
-import org.apache.axis.i18n.MessagesConstants;
 
 /**
  * @see org.apache.axis.i18n.Messages

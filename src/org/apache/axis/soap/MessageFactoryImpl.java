@@ -54,14 +54,14 @@
  */
 package org.apache.axis.soap;
 
+import org.apache.axis.Message;
+import org.apache.axis.message.SOAPEnvelope;
+
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.Message;
 
 /**
  * Message Factory implementation

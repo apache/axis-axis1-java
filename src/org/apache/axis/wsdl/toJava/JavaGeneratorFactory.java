@@ -54,37 +54,13 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.lang.reflect.Constructor;
-
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Fault;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.BooleanHolder;
-import javax.wsdl.Service;
-
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
-
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
-
+import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -93,12 +69,30 @@ import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
-import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
 * This is Wsdl2java's implementation of the GeneratorFactory

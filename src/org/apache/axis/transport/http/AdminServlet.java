@@ -55,18 +55,15 @@
 
 package org.apache.axis.transport.http ;
 
-import java.io.IOException;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.Messages;
+import org.apache.commons.logging.Log;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.axis.server.AxisServer;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
+import java.io.IOException;
 
 /**
  * Proof-of-concept "management" servlet for Axis.

@@ -54,11 +54,12 @@
  */
 package org.apache.axis.encoding;
 
-import org.apache.axis.attachments.Attachments;
-
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.attachments.Attachments;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.message.EnvelopeHandler;
 import org.apache.axis.message.IDResolver;
@@ -67,28 +68,23 @@ import org.apache.axis.message.NullAttributes;
 import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.ext.LexicalHandler; 
+import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
-import org.apache.axis.AxisFault;
-import org.apache.axis.soap.SOAPConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
 import javax.xml.rpc.JAXRPCException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -55,10 +55,8 @@
 package org.apache.axis.description;
 
 import org.apache.axis.AxisServiceConfig;
-import org.apache.axis.InternalException;
 import org.apache.axis.Constants;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.InternalException;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
@@ -66,13 +64,15 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.bytecode.ParamNameExtractor;
 import org.apache.axis.wsdl.Skeleton;
 import org.apache.commons.logging.Log;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
@@ -81,12 +81,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Collections;
-import java.util.Comparator;
 
 
 /**

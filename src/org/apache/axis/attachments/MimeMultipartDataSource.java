@@ -54,18 +54,13 @@
  */
 package org.apache.axis.attachments;
 
+import javax.activation.DataSource;
+import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.activation.DataSource;
-
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-
-import javax.mail.internet.MimeMultipart;
 
 public class MimeMultipartDataSource implements DataSource {
     public static final String CONTENT_TYPE = "multipart/mixed";

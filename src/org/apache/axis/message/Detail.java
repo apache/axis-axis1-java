@@ -63,7 +63,6 @@ import javax.xml.soap.DetailEntry;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * Detail Container implementation

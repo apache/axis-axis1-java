@@ -57,12 +57,7 @@
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
-import org.apache.axis.utils.Admin;
-import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
-import java.io.StringReader;
 import java.io.ByteArrayInputStream;
 
 /**

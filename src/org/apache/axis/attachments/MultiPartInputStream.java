@@ -56,12 +56,7 @@
 package org.apache.axis.attachments;
 
 
-import org.apache.axis.transport.http.HTTPConstants; 
-import org.apache.axis.attachments.ManagedMemoryDataSource;
-import javax.activation.DataHandler;
 import org.apache.axis.Part;
-import org.apache.axis.utils.JavaUtils;
-import javax.mail.internet.MimeUtility;
 
 
 /**

@@ -56,22 +56,15 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.attachments.ImageDataSource;
-
 import org.apache.axis.components.logger.LogFactory;
-
 import org.apache.axis.encoding.SerializationContext;
-
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
 
-import java.awt.Image;
-
-import java.io.IOException;
-
 import javax.activation.DataHandler;
-
 import javax.xml.namespace.QName;
+import java.awt.*;
+import java.io.IOException;
 
 /**
  * ImageDataHandler Serializer

@@ -57,14 +57,14 @@ package org.apache.axis.transport.http;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.soap.SOAP12Constants;
-import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.components.net.SocketFactory;
 import org.apache.axis.components.net.SocketFactoryFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.soap.SOAP12Constants;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 

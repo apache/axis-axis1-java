@@ -55,9 +55,7 @@
 package org.apache.axis.wsdl.symbolTable;
 
 
-import org.w3c.dom.Node;
 
-import javax.xml.namespace.QName;
 /*
  * Common marker interface for CollectionType and CollectionElement
  */

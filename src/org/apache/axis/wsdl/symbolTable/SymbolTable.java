@@ -55,20 +55,17 @@
 
 package org.apache.axis.wsdl.symbolTable;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.ArrayList;
+import org.apache.axis.Constants;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.URLHashSet;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -87,41 +84,33 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
-
+import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.mime.MIMEContent;
 import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 import javax.wsdl.extensions.mime.MIMEPart;
-
-import javax.wsdl.factory.WSDLFactory;
-
-import javax.xml.namespace.QName;
-
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.parsers.ParserConfigurationException;
-
-import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPHeaderFault;
-
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
-
-import org.apache.axis.Constants;
-
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.URLHashSet;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
 * This class represents a table of all of the top-level symbols from a set of WSDL Definitions and

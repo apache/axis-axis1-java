@@ -55,13 +55,6 @@
 
 package org.apache.axis;
 
-import java.lang.reflect.InvocationTargetException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
@@ -81,6 +74,13 @@ import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
 import org.apache.commons.logging.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
 
 
 /**

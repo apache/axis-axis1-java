@@ -56,16 +56,12 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.components.logger.LogFactory;
-
 import org.apache.commons.logging.Log;
 
-import java.awt.Image;
-
 import javax.mail.internet.MimeMultipart;
-
 import javax.xml.namespace.QName;
-
 import javax.xml.transform.Source;
+import java.awt.*;
 
 /**
  * A JAFDataHandlerDeserializer Factory

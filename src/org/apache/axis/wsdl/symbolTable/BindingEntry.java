@@ -55,15 +55,14 @@
 
 package org.apache.axis.wsdl.symbolTable;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
 import javax.wsdl.extensions.soap.SOAPFault;
-import javax.wsdl.extensions.soap.SOAPHeaderFault;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
 * This class represents a WSDL binding.  It encompasses the WSDL4J Binding object so it can

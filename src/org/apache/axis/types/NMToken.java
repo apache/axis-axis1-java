@@ -54,9 +54,6 @@
  */
 package org.apache.axis.types;
 
-import java.util.ArrayList;
-
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLChar;
 

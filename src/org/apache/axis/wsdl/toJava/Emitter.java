@@ -54,36 +54,29 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.enum.Scope;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.gen.GeneratorFactory;
+import org.apache.axis.wsdl.gen.Parser;
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
+import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import java.lang.reflect.Constructor;
-
-import javax.xml.namespace.QName;
-import javax.wsdl.WSDLException;
-
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
-
-import org.apache.axis.enum.Scope;
-
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.gen.GeneratorFactory;
-import org.apache.axis.wsdl.gen.Parser;
-
-import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a

@@ -54,14 +54,12 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-
-import javax.wsdl.Service;
-
 import org.apache.axis.wsdl.gen.Generator;
-
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import javax.wsdl.Service;
+import java.io.IOException;
 
 /**
 * This is Wsdl2java's Service Writer.  It writes the following files, as appropriate:

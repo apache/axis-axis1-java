@@ -55,17 +55,14 @@
 
 package org.apache.axis.providers.java;
 
-import org.apache.commons.logging.Log;
-
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.naming.Context;

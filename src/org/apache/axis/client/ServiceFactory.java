@@ -56,7 +56,6 @@
 package org.apache.axis.client;
 
 import org.apache.axis.EngineConfiguration;
-
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
 
@@ -66,17 +65,11 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
-
 import javax.naming.spi.ObjectFactory;
-
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
-
-
 import java.lang.reflect.Constructor;
-
 import java.net.URL;
-
 import java.util.Hashtable;
 import java.util.Map;
 
