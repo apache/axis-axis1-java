@@ -12,7 +12,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         super(name);
     }
     public void test1DataTypesSoapSayHello() {
-        DataTypes_Binding binding;
+        DataTypes_Port binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -32,7 +32,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test2DataTypesSoapSayHelloName() {
-        DataTypes_Binding binding;
+        DataTypes_Port binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -52,7 +52,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test3DataTypesSoapGetIntArray() {
-        DataTypes_Binding binding;
+        DataTypes_Port binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -80,7 +80,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test4DataTypesSoapGetMode() {
-        DataTypes_Binding binding;
+        DataTypes_Port binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -100,7 +100,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test5DataTypesSoapGetOrder() {
-        DataTypes_Binding binding;
+        DataTypes_Port binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -120,7 +120,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test6DataTypesSoapGetOrders() {
-        DataTypes_Binding binding;
+        DataTypes_Port binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }

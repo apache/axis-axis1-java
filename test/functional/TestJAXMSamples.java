@@ -85,6 +85,7 @@ public class TestJAXMSamples extends TestCase {
             throw new Exception("Fault returned from test: " + t);
         }
     }
+
     public void testUddiPing() throws Exception {
         try {
             log.info("Testing JAXM UddiPing sample.");

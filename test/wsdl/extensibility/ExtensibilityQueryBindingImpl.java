@@ -39,7 +39,7 @@ import java.util.Vector;
 import java.rmi.RemoteException;
 
 
-public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryBinding {
+public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType {
     private final static String[] books = new String[] { "The Grid", "The Oxford Dictionary" }; 
     private final static String[] subjects = new String[] { "Computer Science", "English" }; 
 
