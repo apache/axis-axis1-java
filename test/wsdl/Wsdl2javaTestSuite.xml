@@ -103,9 +103,8 @@
         <include name="SequenceInfo.java"/>
       </fileset>
     </copy>
-    <!-- Compile Java (debug is turned on so that Java2WSDL can access parm names) -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
-           debug="on">
+    <!-- Compile Java -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="test-classpath" />
       <include name="test/wsdl/sequence/**.java" />
       <exclude name="test/wsdl/sequence/*TestCase.java" />
@@ -114,7 +113,7 @@
     <!-- Now create a WSDL file from the Java classes -->
     <java2wsdl output="build/work/test/wsdl/sequence/SequenceTest.wsdl"
                className= "test.wsdl.sequence.SequenceTestPortType"
-               implClass= "test.wsdl.sequence.SequenceTestSoapBindingImpl"
+               implClass= "test.wsdl.sequence.SequenceTestSoapBindingSkeleton"
                namespace="urn:SequenceTest2"
                location="http://localhost:8080/axis/services/SequenceTest">
         <mapping namespace="urn:SequenceTest2" package="test.wsdl.sequence"/>

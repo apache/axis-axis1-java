@@ -131,8 +131,12 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("    public String getParameterName(String opName, int i) {");
         pw.println("        return skel.getParameterName(opName, i);");
         pw.println("    }");
+        pw.println("    public static String getParameterNameStatic(String opName, int i) {");
+        pw.println("        init();");
+        pw.println("        return skel.getParameterName(opName, i);");
+        pw.println("    }");
         // Initialize operation parameter names
-        pw.println("    protected void init() {");
+        pw.println("    protected static void init() {");
         pw.println("        if (skel != null) ");
         pw.println("            return;");
         pw.println("        skel = new org.apache.axis.wsdl.SkeletonImpl();");

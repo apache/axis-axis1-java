@@ -63,4 +63,9 @@ public interface Skeleton {
      * Returns null if problems occur or the parameter is not known.
      */
     public String getParameterName(String operationName, int n);
+
+    /**
+     * Note: The implementor should also provide a static version of the
+     * above class named getParameterNameStatic
+     */
 }
