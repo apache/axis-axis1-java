@@ -375,6 +375,7 @@ public abstract class AxisEngine extends BasicHandler
         newHandler.setName(key);
         newHandler.setType(new QName(WSDDConstants.WSDD_JAVA,
                                      handler.getClass().getName()));
+        newHandler.setOptionsHashtable(handler.getOptions());
         myRegistry.deployHandler(newHandler);
     }
 
