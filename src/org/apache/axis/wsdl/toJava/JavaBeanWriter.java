@@ -555,25 +555,16 @@ public class JavaBeanWriter extends JavaClassWriter {
             return;
         }
 
-        // Sort by variable name.
-        TreeMap map = new TreeMap();
-        for (int i = 0; i < names.size(); i += 2) {
-            map.put(names.get(i + 1),names.get(i));
-        }        
-        
-        Iterator iterator = map.entrySet().iterator();
         pw.println("    public " + className + "(");
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String typeName = (String) entry.getValue();
-            String variable = (String) entry.getKey();
+        for (int i = 0; i < names.size(); i += 2) {
+            String typeName = (String) names.get(i);
+            String variable = (String) names.get(i + 1);
             pw.print("           " + typeName + " "
                     + variable);
-            if (iterator.hasNext()) {
-                pw.println(",");
-            } else {
+            if (i >= names.size() - 2) {
                 pw.println(") {");
-                break;
+            } else {
+                pw.println(",");
             } 
         }
         
