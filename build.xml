@@ -278,11 +278,10 @@ Copyright:
     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="functional-tests"/>
   </target>
 
-  <target name="functional-tests-secure-only" depends="buildFunctional" description="secure functional tests">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="functional-tests-secure-only">
+  <target name="functional-tests-secure" depends="buildFunctional" description="secure functional tests">
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="functional-tests-secure">
       <property name="junit.present" value="${junit.present}"/>
     </ant>
-
   </target>
 
   <!-- All tests -->
