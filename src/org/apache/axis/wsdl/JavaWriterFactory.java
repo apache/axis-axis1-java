@@ -91,6 +91,7 @@ public class JavaWriterFactory implements WriterFactory {
         resolveNameClashes(symbolTable);
         ignoreNonSOAPBindingPortTypes(symbolTable);
         constructSignatures(symbolTable);
+        determineIfHoldersNeeded(symbolTable);
     } // writerPass
 
     /**
@@ -340,5 +341,40 @@ public class JavaWriterFactory implements WriterFactory {
         parms.axisSignature = axisSig;
         parms.skelSignature = skelSig;
     } // constructSignatures
+
+    /**
+     * Find all inout/out parameters and add a flag to the Type of that parameter saying a holder
+     * is needed.
+     */
+    private void determineIfHoldersNeeded(SymbolTable symbolTable) {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                if (v.get(i) instanceof PortTypeEntry) {
+
+                        // If entry is a portTypeEntry, look at all the Parameters
+                    PortTypeEntry ptEntry = (PortTypeEntry) v.get(i);
+                    Iterator operations =
+                      ptEntry.getParameters().values().iterator();
+                    while (operations.hasNext()) {
+                        Parameters parms = (Parameters) operations.next();
+                        for (int j = 0; j < parms.list.size(); ++j) {
+                            Parameters.Parameter p =
+                                    (Parameters.Parameter)parms.list.get(j);
+
+                            // If the given parameter is an inout or out parameter, then
+                            // set a HOLDER_IS_NEEDED flag using the dynamicVar design.
+                            if (p.mode != Parameters.Parameter.IN) {
+                                p.type.setDynamicVar(
+                                        JavaTypeWriter.HOLDER_IS_NEEDED,
+                                        new Boolean(true));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } // determineIfHoldersNeeded
 
 } // class JavaWriterFactory

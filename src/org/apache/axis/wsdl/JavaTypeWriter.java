@@ -63,14 +63,17 @@ import javax.wsdl.QName;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
 * <typeName>.java, <typeName>Holder.java.
 */
 public class JavaTypeWriter implements Writer {
-    Writer typeWriter = null;
-    Writer holderWriter = null;
-    SymbolTable symbolTable = null;
+    public static final String HOLDER_IS_NEEDED = "Holder is needed";
+
+    private Writer typeWriter = null;
+    private Writer holderWriter = null;
 
     /**
      * Constructor.
@@ -79,29 +82,28 @@ public class JavaTypeWriter implements Writer {
             Emitter emitter,
             Type type,
             SymbolTable symbolTable) {
-        this.symbolTable = symbolTable;
+        if (type.isReferenced()) {
 
-        // Determine what sort of type this is and instantiate the appropriate Writer.
-        Node node = type.getNode();
+            // Determine what sort of type this is and instantiate the appropriate Writer.
+            Node node = type.getNode();
 
-        // Generate the proper class for either "complex" or "enumeration" types
-        Vector v = SchemaUtils.getComplexElementTypesAndNames(node, symbolTable);
-        if (v != null) {
-            typeWriter = new JavaComplexTypeWriter(emitter, type, v);
-        }
-        else {
-            v = SchemaUtils.getEnumerationBaseAndValues(node, symbolTable);
+            // Generate the proper class for either "complex" or "enumeration" types
+            Vector v = SchemaUtils.getComplexElementTypesAndNames(
+                    node, symbolTable);
             if (v != null) {
-                typeWriter = new JavaEnumTypeWriter(emitter, type, v);
+                typeWriter = new JavaComplexTypeWriter(emitter, type, v);
             }
-        }
+            else {
+                v = SchemaUtils.getEnumerationBaseAndValues(node, symbolTable);
+                if (v != null) {
+                    typeWriter = new JavaEnumTypeWriter(emitter, type, v);
+                }
+            }
 
-        // If a type class is written, also write a holder
-        if (v != null) {
-            holderWriter = new JavaHolderWriter(emitter, type);
-        } else {
-            if (emitter.bVerbose) {
-                System.out.println("No java binding for " + type.getQName());
+            // If a type class is written, and the holder is needed (ie., something uses this
+            // type as an out or inout parameter), instantiate the holder writer.
+            if (v != null && holderIsNeeded(type)) {
+                holderWriter = new JavaHolderWriter(emitter, type);
             }
         }
     } // ctor
@@ -117,5 +119,12 @@ public class JavaTypeWriter implements Writer {
         }
     } // write
 
-
+    /**
+     * Does anything use this type as an inout/out parameter?  Query the Type dynamicVar
+     */
+    private boolean holderIsNeeded(SymTabEntry entry) {
+        Boolean holderIsNeeded =
+                (Boolean) entry.getDynamicVar(HOLDER_IS_NEEDED);
+        return (holderIsNeeded != null && holderIsNeeded.booleanValue());
+    } // holderIsNeeded
 } // class JavaTypeWriter
