@@ -97,9 +97,10 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_ATTACHMENT_IMPLEMENTATION  = "attachments.implementation" ;
     public static final String PROP_ATTACHMENT_CLEANUP = "attachment.DirectoryCleanUp";
     public static final String PROP_CONFIG_CLASS = "axis.engineConfigClass";
+    public static final String PROP_SOAP_VERSION = "defaultSOAPVersion";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
-    
+
     public static final String ENV_ATTACHMENT_DIR = "axis.attachments.Directory";
     public static final String ENV_SERVLET_REALPATH = "servlet.realpath";
     public static final String ENV_SERVLET_CONTEXT = "servletContext";
@@ -403,7 +404,7 @@ public abstract class AxisEngine extends BasicHandler
     public ClassCache getClassCache() {
         return classCache;
     }
-    
+
     protected void invokeJAXRPCHandlers(MessageContext context){
         org.apache.axis.client.Service service = (org.apache.axis.client.Service) context.getProperty(org.apache.axis.client.Call.WSDL_SERVICE);
         if(service == null)

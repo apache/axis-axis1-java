@@ -55,7 +55,6 @@
 
 package org.apache.axis.client ;
 
-import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
@@ -63,6 +62,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.InternalException;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.enum.Style;
@@ -1192,6 +1192,17 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Allow the user to set the default SOAP version.  For SOAP 1.2, pass
+     * SOAPConstants.SOAP12_CONSTANTS.
+     *
+     * @param soapConstants the SOAPConstants object representing the correct
+     *                      version
+     */
+    public void setSOAPVersion(SOAPConstants soapConstants) {
+        msgContext.setSOAPConstants(soapConstants);
+    }
+
+    /**
      * Invokes a specific operation using a synchronous request-response interaction mode. The invoke method takes
      * as parameters the object values corresponding to these defined parameter types. Implementation of the invoke
      * method must check whether the passed parameter values correspond to the number, order and types of parameters
@@ -1257,7 +1268,7 @@ public class Call implements javax.xml.rpc.Call {
         if ( params != null && params.length > 0 && i == params.length ) {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
-            env = new SOAPEnvelope();
+            env = new SOAPEnvelope(msgContext.getSOAPConstants());
 
             if ( !(params[0] instanceof SOAPEnvelope) )
                 for ( i = 0 ; i < params.length ; i++ )
@@ -1799,7 +1810,7 @@ public class Call implements javax.xml.rpc.Call {
             log.error(JavaUtils.getMessage("mustSpecifyReturnType"));
         }
 
-        SOAPEnvelope         reqEnv = new SOAPEnvelope();
+        SOAPEnvelope         reqEnv = new SOAPEnvelope(msgContext.getSOAPConstants());
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
         Message              resMsg = null ;
