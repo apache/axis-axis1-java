@@ -119,7 +119,6 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         for (int i = 0; i < pd.length; i++) {
             BeanPropertyDescriptor descriptor = pd[i];
             propertyMap.put(descriptor.getName(), descriptor);
-            propertyMap.put(JavaUtils.xmlNameToJava(descriptor.getName()), descriptor);
         }
 
         typeDesc = TypeDesc.getTypeDescForClass(javaType);
@@ -164,11 +163,6 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             // look for a field by this name.
             propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
         }
-        if (propDesc == null) {
-            // look for a field by the "adjusted" name.
-            propDesc = (BeanPropertyDescriptor) propertyMap.get(JavaUtils.xmlNameToJava(localName));
-        }
-
         if (propDesc == null) {
             // No such field
             throw new SAXException(
