@@ -373,6 +373,19 @@ public class JWSHandler extends BasicHandler
             }
         }
 
+        // axis.ext.dirs can be used in any appserver
+        String jwsClasspath = AxisProperties.getProperty("axis.ext.dirs");
+        try {
+            jwsClasspath = expandDirs(jwsClasspath);
+        } catch (Exception e) {
+            // Oh well.  No big deal.
+        }
+        if (jwsClasspath != null) {
+            classpath.append(jwsClasspath);
+            classpath.append(File.pathSeparatorChar);
+        }
+
+        // ws.ext.dirs is set in websphere.
         String wsClasspath = AxisProperties.getProperty("ws.ext.dirs");
         if( wsClasspath  != null) {
             classpath.append(wsClasspath);
