@@ -60,6 +60,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.wsdl.Skeleton;
 
 import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.holders.Holder;
 import java.util.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -425,8 +426,15 @@ public class ServiceDesc {
                     // If no type is specified, just use the Java type
                     QName typeQName = param.getTypeQName();
                     if (typeQName == null) {
+                        if (Holder.class.isAssignableFrom(type)) {
+                            typeQName = tm.getTypeQName(
+                                            JavaUtils.getHolderValueType(type));
+                        } else {
+                            typeQName = tm.getTypeQName(type);
+                        }
+
                         param.setJavaType(type);
-                        param.setTypeQName(tm.getTypeQName(type));
+                        param.setTypeQName(typeQName);
                     } else {
                         // A type was specified - see if they match
                         Class paramClass = tm.getClassForQName(
