@@ -234,13 +234,23 @@ public class WSDDTypeMapping
     }
 
     /**
-     *
-     * @param lsType XXX
+     * Set javaType (type= attribute or languageSpecificType= attribute)
+     * @param javaType the class of the javaType
      */
-    public void setLanguageSpecificType(Class lsType)
+    public void setLanguageSpecificType(Class javaType)
     {
-        String type = lsType.getName();
+        String type = javaType.getName();
         typeQName = new QName(WSDDConstants.WSDD_JAVA, type);
+    }
+
+    /**
+     * Set javaType (type= attribute or languageSpecificType= attribute)
+     * @param lsType is the name of the class.  (For arrays this
+     * could be the form my.Foo[] or could be in the form [Lmy.Foo;
+     */
+    public void setLanguageSpecificType(String javaType)
+    {
+        typeQName = new QName(WSDDConstants.WSDD_JAVA, javaType);
     }
 
     /**

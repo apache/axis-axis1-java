@@ -324,7 +324,12 @@ public class JavaUtils
     }
 
     /**
-     * Map an XML name to a valid Java identifier
+     * Map an XML name to a Java identifier per
+     * the mapping rules of JSR 101 (in 
+     * version 0.7 this is
+     * "Chapter 20: Appendix: Mapping of XML Names"
+     * @param name is the xml name
+     * @return the java name per JSR 101 specification
      */
     public static String xmlNameToJava(String name)
     {
@@ -336,7 +341,8 @@ public class JavaUtils
         int nameLen = name.length();
         StringBuffer result = new StringBuffer(nameLen);
         
-        // First character, lower case
+        // The mapping indicates to convert first
+        // character.
         int i = 0;
         while (i < nameLen
                 && !Character.isLetter(nameArray[i])) {
@@ -349,13 +355,14 @@ public class JavaUtils
             result.append("_" + nameArray[0]);
         }
         
-        // The rest of the string
+        // The mapping indicates to skip over
+        // all characters that are not letters or
+        // digits.  The first letter/digit 
+        // following a skipped character is 
+        // upper-cased.
         boolean wordStart = false;
         for(int j = i + 1; j < nameLen; ++j) {
             char c = nameArray[j];
-
-            // if this is a bad char, skip it a remember to capitalize next
-            // good character we encounter
             if( !Character.isLetterOrDigit(c)) {
                 wordStart = true;
                 continue;
