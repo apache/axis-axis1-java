@@ -110,12 +110,14 @@ public class WSDDOperation extends WSDDElement
                 throw new WSDDException(JavaUtils.getMessage("onlyOneMapping"));
             }
 
-            // Register a mapping from an Element QName to a particular
-            // method so we can dispatch for doc/lit services.
-            Element el = mappingElements[0];
-            String elString = el.getAttribute("qname");
-            QName elQName = XMLUtils.getQNameFromString(elString, el);
-            desc.setElementQName(elQName);
+            if (mappingElements.length > 0) {
+                // Register a mapping from an Element QName to a particular
+                // method so we can dispatch for doc/lit services.
+                Element el = mappingElements[0];
+                String elString = el.getAttribute("qname");
+                QName elQName = XMLUtils.getQNameFromString(elString, el);
+                desc.setElementQName(elQName);
+            }
         }
     }
 

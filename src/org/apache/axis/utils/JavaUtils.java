@@ -92,6 +92,50 @@ public class JavaUtils
 {
     protected static Log log =
         LogFactory.getLog(JavaUtils.class.getName());
+    
+    public static Class getWrapperClass(Class primitive)
+    {
+        if (primitive == int.class)
+            return java.lang.Integer.class;
+        else if (primitive == short.class)
+            return java.lang.Short.class;
+        else if (primitive == boolean.class)
+            return java.lang.Boolean.class;
+        else if (primitive == byte.class)
+            return java.lang.Byte.class;
+        else if (primitive == long.class)
+            return java.lang.Long.class;
+        else if (primitive == double.class)
+            return java.lang.Double.class;
+        else if (primitive == float.class)
+            return java.lang.Float.class;
+        else if (primitive == char.class)
+            return java.lang.Character.class;
+        
+        return null;
+    }
+    
+    public static Class getPrimitiveClass(Class wrapper)
+    {
+        if (wrapper == java.lang.Integer.class)
+            return int.class;
+        else if (wrapper == java.lang.Short.class)
+            return short.class;
+        else if (wrapper == java.lang.Boolean.class)
+            return boolean.class;
+        else if (wrapper == java.lang.Byte.class)
+            return byte.class;
+        else if (wrapper == java.lang.Long.class)
+            return long.class;
+        else if (wrapper == java.lang.Double.class)
+            return double.class;
+        else if (wrapper == java.lang.Float.class)
+            return float.class;
+        else if (wrapper == java.lang.Character.class)
+            return char.class;
+        
+        return null;
+    }
 
     /**
      * Cache of tt-bytecode BCClass objects which correspond to particular
@@ -130,6 +174,10 @@ public class JavaUtils
     public static Object convert(Object arg, Class destClass)
     {
         if (destClass == null) {
+            return arg;
+        }
+        
+        if (arg != null && destClass.isAssignableFrom(arg.getClass())) {
             return arg;
         }
 
@@ -294,7 +342,68 @@ public class JavaUtils
         return destValue;
     }
 
+    public static boolean isConvertable(Object obj, Class dest)
+    {
+        Class src = null;
+        
+        if (obj != null) {
+            if (obj instanceof Class) {
+                src = (Class)obj;
+            } else {
+                src = obj.getClass();
+            }
+        }
+        
+        if (dest == null)
+            return false;
+        
+        if (src != null) {
+            // If we're directly assignable, we're good.
+            if (dest.isAssignableFrom(src))
+                return true;
 
+            // If it's a wrapping conversion, we're good.
+            if (getWrapperClass(src) == dest)
+                return true;
+            if (getWrapperClass(dest) == src)
+                return true;
+            
+            // If it's List -> Array or vice versa, we're good.
+            if ((List.class.isAssignableFrom(src) || src.isArray()) &&
+                (List.class.isAssignableFrom(dest) || dest.isArray()))
+                return true;
+            
+            if ((src == Hex.class && dest == byte[].class) ||
+                (src == byte[].class && dest == Hex.class))
+                return true;
+            
+        }
+        
+        Class destHeld = JavaUtils.getHolderValueType(dest);
+        // Can always convert a null to an empty holder
+        if (src == null)
+            return (destHeld != null);
+        
+        if (destHeld != null) {
+            if (destHeld.isAssignableFrom(src) || isConvertable(src, destHeld))
+                return true;
+        }
+
+//        // FIXME : This is a horrible hack put in here to deal with a problem
+//        // with our default typemappings.
+//        if (destHeld != null && (getPrimitiveClass(destHeld) == src))
+//            return true;
+
+        // If it's holder -> held or held -> holder, we're good
+        Class srcHeld = JavaUtils.getHolderValueType(src);
+        if (srcHeld != null) {
+            if (dest.isAssignableFrom(srcHeld) || isConvertable(srcHeld, dest))
+                return true;
+        }
+
+        return false;
+    }
+    
     /**
      * These are java keywords as specified at the following URL (sorted alphabetically).
      * http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#229308

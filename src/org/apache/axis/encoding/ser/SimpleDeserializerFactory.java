@@ -102,23 +102,7 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
                     javaType.getDeclaredConstructor(new Class [] {String.class});
             }
             else {
-                Class wrapper = null;
-                if (javaType == int.class)
-                    wrapper = java.lang.Integer.class;
-                else if (javaType == short.class)
-                    wrapper = java.lang.Short.class;
-                else if (javaType == boolean.class)
-                    wrapper = java.lang.Boolean.class;
-                else if (javaType == byte.class)
-                    wrapper = java.lang.Byte.class;
-                else if (javaType == long.class)
-                    wrapper = java.lang.Long.class;
-                else if (javaType == double.class)
-                    wrapper = java.lang.Double.class;
-                else if (javaType == float.class)
-                    wrapper = java.lang.Float.class;
-                else if (javaType == char.class)
-                    wrapper = java.lang.Character.class;
+                Class wrapper = JavaUtils.getWrapperClass(javaType);
                 if (wrapper != null)
                     constructor = 
                         wrapper.getDeclaredConstructor(new Class [] {String.class});

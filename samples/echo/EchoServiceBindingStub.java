@@ -62,6 +62,13 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             cachedSerFactories.add(arraysf);
             cachedDeserFactories.add(arraydf);
 
+            qName = new javax.xml.rpc.namespace.QName("http://soapinterop.org/", "ArrayOf_tns2_Map");
+            cachedSerQNames.add(qName);
+            cls = java.util.HashMap[].class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(arraysf);
+            cachedDeserFactories.add(arraydf);
+
             qName = new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfstring");
             cachedSerQNames.add(qName);
             cls = java.lang.String[].class;

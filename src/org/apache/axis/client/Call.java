@@ -698,7 +698,12 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void addParameter(QName paramName, QName xmlType,
             ParameterMode parameterMode) {
-        addParameter(paramName, xmlType, null, parameterMode);
+        Class javaType = null;
+        TypeMapping tm = getTypeMapping();
+        if (tm != null) {
+            javaType = tm.getClassForQName(xmlType);
+        }
+        addParameter(paramName, xmlType, javaType, parameterMode);
     }
 
     /**
@@ -749,7 +754,12 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void addParameter(String paramName, QName xmlType,
             ParameterMode parameterMode) {
-        addParameter(new QName("", paramName), xmlType, null, parameterMode);
+        Class javaType = null;
+        TypeMapping tm = getTypeMapping();
+        if (tm != null) {
+            javaType = tm.getClassForQName(xmlType);
+        }
+        addParameter(new QName("", paramName), xmlType, javaType, parameterMode);
     }
 
     /**
@@ -812,7 +822,11 @@ public class Call implements javax.xml.rpc.Call {
     public void setReturnType(QName type) {
         if (parmAndRetReq) {
             returnType = type ;
-            if (operation != null) operation.setReturnType(type);
+            if (operation != null) {
+                operation.setReturnType(type);
+                TypeMapping tm = getTypeMapping();
+                operation.setReturnClass(tm.getClassForQName(type));
+            }
         }
         else {
             throw new JAXRPCException();
@@ -1517,6 +1531,22 @@ public class Call implements javax.xml.rpc.Call {
     {
         myHeaders = null;
     }
+    
+    public TypeMapping getTypeMapping()
+    {
+        // Get the TypeMappingRegistry
+        TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
+
+        // If a TypeMapping is not available, add one.
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
+        TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
+        if (tm == null || tm == defaultTM ) {
+            tm = (TypeMapping) tmr.createTypeMapping();
+            tm.setSupportedNamespaces(new String[] {encodingStyle});
+            tmr.register(encodingStyle, tm);
+        }
+        return tm;
+    }
 
     /**
      * Register type mapping information for serialization/deserialization
@@ -1537,25 +1567,14 @@ public class Call implements javax.xml.rpc.Call {
                                     SerializerFactory sf,
                                     DeserializerFactory df,
                                     boolean force) {
-        // Get the TypeMappingRegistry
-        TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
-
-        // If a TypeMapping is not available, add one.
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
-        TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
-        try {
-            if (tm == null || tm == defaultTM ) {
-                tm = (TypeMapping) tmr.createTypeMapping();
-                tm.setSupportedNamespaces(new String[] {encodingStyle});
-                tmr.register(encodingStyle, tm);
-            }
-            if (!force && tm.isRegistered(javaType, xmlType))
-                return;
-
-            // Register the information
-            tm.register(javaType, xmlType, sf, df);
-        } catch (Exception e) {}
+        TypeMapping tm = getTypeMapping();
+        if (!force && tm.isRegistered(javaType, xmlType))
+            return;
+        
+        // Register the information
+        tm.register(javaType, xmlType, sf, df);
     }
+
     public void registerTypeMapping(Class javaType, QName xmlType,
                                     Class sfClass, Class dfClass) {
         registerTypeMapping(javaType, xmlType, sfClass, dfClass, true);

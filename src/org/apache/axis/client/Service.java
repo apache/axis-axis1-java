@@ -548,7 +548,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return TypeMappingRegistry The registry
      */
     public TypeMappingRegistry getTypeMappingRegistry() {
-        return( null );
+        return( engine.getTypeMappingRegistry() );
     }
 
     /**

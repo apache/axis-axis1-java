@@ -243,8 +243,12 @@ public class TypeMappingImpl implements TypeMapping
         }
         Pair pair = new Pair(javaType, xmlType);
 
-        qName2Pair.put(xmlType, pair);
-        class2Pair.put(javaType, pair);   
+        // Only register the appropriate mappings.
+        if ((dsf != null) || (qName2Pair.get(xmlType) == null))
+            qName2Pair.put(xmlType, pair);
+        if ((sf != null) || (class2Pair.get(javaType) == null))
+            class2Pair.put(javaType, pair);   
+        
         pair2SF.put(pair, sf);
         pair2DF.put(pair, dsf);
     }

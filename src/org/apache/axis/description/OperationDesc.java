@@ -57,6 +57,7 @@ package org.apache.axis.description;
 import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.lang.reflect.Method;
 
 /**
  * An OperationDesc is an abstract description of an operation on a service.
@@ -83,9 +84,17 @@ public class OperationDesc {
 
     /** The return type */
     private QName returnType;
+    
+    /** The return class */
+    private Class returnClass;
+    
+    // FIXME : Just have a return ParamDesc???
 
     /** The Java method name this maps to (is this just name?) */
     private String methodName;
+
+    /** The actual Java method associated with this operation, if known */
+    private Method method;
 
     /** This operation's style.  If null, we default to our parent's */
     private Integer style;
@@ -127,6 +136,14 @@ public class OperationDesc {
 
     public void setReturnType(QName returnType) {
         this.returnType = returnType;
+    }
+
+    public Class getReturnClass() {
+        return returnClass;
+    }
+
+    public void setReturnClass(Class returnClass) {
+        this.returnClass = returnClass;
     }
 
     public QName getElementQName() {
@@ -194,6 +211,14 @@ public class OperationDesc {
         return parameters.size();
     }
 
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
     public ParameterDesc getParamByQName(QName qname)
     {
         for (Iterator i = parameters.iterator(); i.hasNext();) {
@@ -211,7 +236,7 @@ public class OperationDesc {
 
         param = getParamByQName(qname);
 
-        if ((param == null) || (param.getMode() != ParameterDesc.IN)) {
+        if ((param == null) || (param.getMode() == ParameterDesc.OUT)) {
             param = null;
         }
 
@@ -233,10 +258,25 @@ public class OperationDesc {
                 param = new ParameterDesc();
                 param.setQName(qname);
                 param.setTypeQName(returnType);
+                param.setJavaType(returnClass);
             }
         }
 
         return param;
+    }
+
+    /**
+     * Returns an ordered list of out params (NOT inouts)
+     */
+    public ArrayList getOutParams() {
+        ArrayList result = new ArrayList();
+        for (Iterator i = parameters.iterator(); i.hasNext();) {
+            ParameterDesc desc = (ParameterDesc) i.next();
+            if (desc.getMode() == ParameterDesc.OUT) {
+                result.add(desc);
+            }
+        }
+        return result;
     }
 }
 
