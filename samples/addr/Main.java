@@ -126,6 +126,7 @@ public class Main {
         Options opts = new Options(args);
         
         System.err.println ("Using proxy without session maintenance.");
+        System.err.println ("(queries without session should say:  \"ADDRESS NOT FOUND!\")");
 
         AddressBookService abs = new AddressBookServiceLocator();
         opts.setDefaultURL( abs.getAddressBookAddress() );
