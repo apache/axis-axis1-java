@@ -70,7 +70,11 @@ public interface DeploymentDocument
     void deploy(DeploymentRegistry registry)
         throws DeploymentException;
     
-    void importItem(DeployableItem item) throws DeploymentException;
+    /**
+     * Undeploy the contents of this document from the given registry.
+     */ 
+    void undeploy(DeploymentRegistry registry)
+        throws DeploymentException;
     
     Document getDOMDocument() throws DeploymentException;
 }

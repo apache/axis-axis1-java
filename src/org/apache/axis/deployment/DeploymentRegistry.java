@@ -164,7 +164,7 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
-     * deploy the given item
+     * deploy the given service
      * @param item XXX
      * @throws DeploymentException XXX
      */
@@ -172,7 +172,7 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
-     * deploy the given item
+     * deploy the given handler
      * @param item XXX
      * @throws DeploymentException XXX
      */
@@ -180,7 +180,7 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
-     * deploy the given item
+     * deploy the given transport
      * @param item XXX
      * @throws DeploymentException XXX
      */
@@ -196,7 +196,15 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
-     * remove the given item
+     * remove the given handler
+     * @param qname XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void undeployHandler(QName qname)
+        throws DeploymentException;
+
+    /**
+     * remove the given service
      * @param qname XXX
      * @throws DeploymentException XXX
      */
@@ -204,7 +212,7 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
-     * remove the given item
+     * remove the given transport
      * @param qname XXX
      * @throws DeploymentException XXX
      */

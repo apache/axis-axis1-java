@@ -290,7 +290,7 @@ public class AdminClient
             call.setProperty( Call.TRANSPORT_NAME, tName );
     }
 
-    public String process(InputStream input) throws Exception { 
+    public String  process(InputStream input) throws Exception { 
         return process(null, input );
     }
 

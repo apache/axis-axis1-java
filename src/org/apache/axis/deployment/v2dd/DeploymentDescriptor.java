@@ -114,8 +114,11 @@ public class DeploymentDescriptor implements DeploymentDocument {
         registry.deployItem(item);
     }
 
-    public void importItem(DeployableItem item) throws DeploymentException {
-        throw new DeploymentException(
-                JavaUtils.getMessage("notImplemented00", "importItem"));
+    /**
+     * Undeploy the contents of this document from the given registry.
+     */
+    public void undeploy(DeploymentRegistry registry)
+            throws DeploymentException {
+        // !!! Not yet implemented
     }
 }

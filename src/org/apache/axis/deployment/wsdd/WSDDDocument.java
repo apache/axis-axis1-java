@@ -65,6 +65,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.StringReader;
@@ -193,6 +194,36 @@ public class WSDDDocument
         }
     }
 
+    /**
+     * Undeploy the contents of this document from the given registry.
+     */
+    public void undeploy(DeploymentRegistry registry)
+            throws DeploymentException {
+        WSDDHandler[]     handlers   = dep.getHandlers();
+        WSDDTransport[]   transports = dep.getTransports();
+        WSDDService[]     services   = dep.getServices();
+        WSDDTypeMapping[] mappings   = dep.getTypeMappings();
+        QName qname = null;
+        
+        for (int n = 0; n < handlers.length; n++) {
+            qname = handlers[n].getQName();
+            if (qname != null)
+                registry.undeployHandler(qname);
+        }
+
+        for (int n = 0; n < transports.length; n++) {
+            qname = transports[n].getQName();
+            if (qname != null)
+                registry.undeployTransport(qname);
+        }
+
+        for (int n = 0; n < services.length; n++) {
+            qname = services[n].getQName();
+            if (qname != null)
+                registry.undeployService(qname);
+        }
+    }
+
     public static void deployMappingToRegistry(WSDDTypeMapping mapping, 
                                                DeploymentRegistry registry) 
             throws DeploymentException {
@@ -229,8 +260,5 @@ public class WSDDDocument
         catch (Exception e) {
             throw new DeploymentException(e.getMessage());
         }
-    }
-
-    public void importItem(DeployableItem item) throws DeploymentException {
     }
 }

@@ -272,8 +272,18 @@ public class SimpleDeploymentManager
     {
         handlers.remove(qname);
     }
-
-
+    
+    /**
+     * remove the given handler
+     * @param qname XXX
+     * @throws DeploymentException XXX
+     */
+    public void undeployHandler(QName qname)
+        throws DeploymentException
+    {
+        handlers.remove(qname);
+    }
+    
     /**
      * remove the given item
      * @param qname XXX
