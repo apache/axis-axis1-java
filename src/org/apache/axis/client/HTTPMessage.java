@@ -63,6 +63,8 @@ import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.transport.http.HTTPDispatchHandler;
 
 /**
  *
@@ -114,7 +116,7 @@ public class HTTPMessage {
     Element              root = doc.getDocumentElement();
     SOAPBody             reqBody = new SOAPBody( root );
     SOAPEnvelope         reqEnv = new SOAPEnvelope();
-    HTTPDispatchHandler  client = new HTTPDispatchHandler();
+    Handler              client = new HTTPDispatchHandler();
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     MessageContext       msgContext = new MessageContext( reqMsg );
 
@@ -125,8 +127,8 @@ public class HTTPMessage {
       // Debug.Print( 1, (String) reqMsg.getAs("String") );
     // }
 
-    msgContext.setProperty( Constants.MC_TRANS_URL, url );
-    msgContext.setProperty( Constants.MC_HTTP_SOAPACTION, action );
+    msgContext.setProperty( MessageContext.TRANS_URL, url );
+    msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
     try {
       client.init();
       client.invoke( msgContext );

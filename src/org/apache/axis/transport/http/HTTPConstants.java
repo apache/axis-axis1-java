@@ -55,16 +55,40 @@
 
 package org.apache.axis.transport.http;
 
+/**
+ * HTTP protocol and message context constants.
+ *  
+ * @author Doug Davis (dug@us.ibm.com)
+ * @author Jacek Kopecky (jacek@idoox.com)
+ */
 public class HTTPConstants {
-  // HTTP Stuff
-  //////////////////////////////////////////////////////////////////////////
-  public static final String HEADER_POST = "POST";
-  public static final String HEADER_HOST = "Host";
-  public static final String HEADER_CONTENT_TYPE = "Content-Type";
-  public static final String HEADER_CONTENT_TYPE_JMS = "ContentType";
-  public static final String HEADER_CONTENT_LENGTH = "Content-Length";
-  public static final String HEADER_CONTENT_LOCATION = "Content-Location";
-  public static final String HEADER_CONTENT_ID = "Content-ID";
-  public static final String HEADER_SOAP_ACTION = "SOAPAction";
-  public static final String HEADER_AUTHORIZATION = "Authorization";
+    /** The MessageContext transport ID of HTTP.
+     *  (Maybe this should be more specific, like "http_servlet",
+     *   whaddya think? - todo by Jacek)
+     */
+    public static String TRANSPORT_ID = "http";
+
+    public static final String HEADER_POST = "POST";
+    public static final String HEADER_HOST = "Host";
+    public static final String HEADER_CONTENT_TYPE = "Content-Type";
+    public static final String HEADER_CONTENT_TYPE_JMS = "ContentType";
+    public static final String HEADER_CONTENT_LENGTH = "Content-Length";
+    public static final String HEADER_CONTENT_LOCATION = "Content-Location";
+    public static final String HEADER_CONTENT_ID = "Content-ID";
+    public static final String HEADER_SOAP_ACTION = "SOAPAction";
+    public static final String HEADER_AUTHORIZATION = "Authorization";
+    
+    /** Integer
+     */
+    public static String MC_HTTP_STATUS_CODE    = "transport.http.statusCode";
+
+    /** String
+     */
+    public static String MC_HTTP_STATUS_MESSAGE = "transport.http.statusMessage";
+
+    /** String
+     *  This can be moved to MessageContext.TRANS_SOAPACTION if more transports
+     *  have it.
+     */
+    public static String MC_HTTP_SOAPACTION     = "transport.http.soapAction";
 }

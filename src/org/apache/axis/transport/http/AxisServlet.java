@@ -108,13 +108,15 @@ public class AxisServlet extends HttpServlet {
     MessageContext    msgContext = new MessageContext();
     Message           msg        = new Message( req, "ServletRequest" );
 
+    msgContext.setProperty(MessageContext.TRANS_ID, HTTPConstants.TRANSPORT_ID);
+    
     msgContext.setIncomingMessage( msg );
     
     /** Set the target which tells the engine where to dispatch.  In the
      * real world, this would probably be gotten from the servlet
      * configuration.
      */
-    msgContext.setProperty(Constants.MC_TARGET, Constants.SERVLET_TARGET);
+    msgContext.setProperty(MessageContext.TARGET_SERVICE, Constants.SERVLET_TARGET);
     
 
     /* Save the SOAPAction header in the MessageContext bag - this will */
@@ -131,7 +133,7 @@ public class AxisServlet extends HttpServlet {
     tmp = (String) req.getHeader( HTTPConstants.HEADER_SOAP_ACTION );
     if ( tmp != null && "".equals(tmp) )
       tmp = req.getContextPath(); // Is this right?
-    if ( tmp != null ) msgContext.setProperty( Constants.MC_HTTP_SOAPACTION, tmp );
+    if ( tmp != null ) msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
 
     tmp = (String) req.getHeader( HTTPConstants.HEADER_AUTHORIZATION );
     if ( tmp != null ) tmp = tmp.trim();
@@ -143,12 +145,12 @@ public class AxisServlet extends HttpServlet {
       i = tmp.indexOf( ':' );
       if ( i == -1 ) user = tmp ;
       else           user = tmp.substring( 0, i);
-      msgContext.setProperty( Constants.MC_USERID, user );
+      msgContext.setProperty( MessageContext.USERID, user );
       if ( i != -1 )  {
         String pwd = tmp.substring(i+1);
         if ( pwd != null && pwd.equals("") ) pwd = null ;
         if ( pwd != null )
-          msgContext.setProperty( Constants.MC_PASSWORD, pwd );
+          msgContext.setProperty( MessageContext.PASSWORD, pwd );
       }
     }
 

@@ -75,8 +75,8 @@ public class SimpleAuthenticationHandler extends BasicHandler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
     try {
-      String  userID = (String) msgContext.getProperty( Constants.MC_USERID );
-      String  passwd = (String) msgContext.getProperty( Constants.MC_PASSWORD );
+      String  userID = (String) msgContext.getProperty( MessageContext.USERID );
+      String  passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
       Debug.Print( 1, "User: " + userID );
       Debug.Print( 2, "Pass: " + passwd );
 

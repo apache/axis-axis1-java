@@ -121,7 +121,7 @@ public class EchoClient {
                 msgContext.setIncomingMessage(message);
                 
                 // This is fixed, as this client tightly binds to the echo service.
-                msgContext.setProperty(Constants.MC_TARGET, "EchoService");
+                msgContext.setProperty(MessageContext.TARGET_SERVICE, "EchoService");
                 engine.init();
                 engine.invoke(msgContext);
                 
