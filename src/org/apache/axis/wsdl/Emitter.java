@@ -72,10 +72,7 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -402,44 +399,11 @@ public class Emitter {
 
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
-
-            writePortType(portType);
-            if (bEmitSkeleton && bMessageContext) {
-                writeAxisPortType(portType);
-            }
+            HashMap operationParameters = (HashMap) portTypesInfo.get(portType);
+            Writer writer = writerFactory.getWriter(portType, operationParameters);
+            writer.write();
         }
     } // writePortTypes
-
-    /**
-     * Generate the interface for the given port type.
-     */
-    private void writePortType(PortType portType) throws IOException {
-        HashMap operationParameters = (HashMap) portTypesInfo.get(portType);
-        Writer writer = writerFactory.getWriter(portType, operationParameters);
-        writer.write();
-    } // writePortType
-
-    /**
-     * Generate the server-side (Axis) interface for the given port type.
-     */
-    private void writeAxisPortType(PortType portType) throws IOException {
-        QName portTypeQName = portType.getQName();
-        PrintWriter interfacePW = printWriter(portTypeQName, "Axis", "java", "Generating server-side PortType interface:  ");
-        String nameValue = Utils.xmlNameToJava(portTypeQName.getLocalPart()) + "Axis";
-
-        writeFileHeader(nameValue + ".java", namespaces.getCreate(portTypeQName.getNamespaceURI()), interfacePW);
-        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
-
-        List operations = portType.getOperations();
-
-        for (int i = 0; i < operations.size(); ++i) {
-            Operation operation = (Operation) operations.get(i);
-            writeOperationAxisSkelSignatures(portType, operation, portType.getQName().getNamespaceURI(), interfacePW);
-        }
-
-        interfacePW.println("}");
-        interfacePW.close();
-    } // writeAxisPortType
 
     /**
      * This class simply collects
@@ -604,10 +568,12 @@ public class Emitter {
         Map faults = operation.getFaults();
         Iterator i = faults.values().iterator();
         while (i.hasNext()) {
+            Fault fault = (Fault) i.next();
+            String exceptionName = Utils.capitalize(Utils.xmlNameToJava((String) fault.getName()));
             if (parameters.faultString == null)
-                parameters.faultString = fault((Fault) i.next(), namespace);
+                parameters.faultString = exceptionName;
             else
-                parameters.faultString = parameters.faultString + ", " + fault((Fault) i.next(), namespace);
+                parameters.faultString = parameters.faultString + ", " + exceptionName;
         }
 
         if (parameters.returnType == null)
@@ -744,7 +710,7 @@ public class Emitter {
      * This method returns a vector containing the Java types (even indices) and
      * names (odd indices) of the parts.
      */
-    private void partStrings(Vector v, Collection parts, boolean literal) {
+    protected void partStrings(Vector v, Collection parts, boolean literal) {
         Iterator i = parts.iterator();
 
         while (i.hasNext()) {
@@ -770,56 +736,6 @@ public class Emitter {
             }
         }
     } // partStrings
-
-    /**
-     * This method generates the axis server side impl interface signatures operation.
-     */
-    private void writeOperationAxisSkelSignatures(PortType portType, Operation operation, String namespace, PrintWriter interfacePW) throws IOException {
-        Parameters parms = (Parameters) ((HashMap) portTypesInfo.get(portType)).get(operation);
-        interfacePW.println(parms.axisSignature + ";");
-    } // writeOperationAxisSkelSignatures
-
-    /**
-     * This generates an exception class for the given fault and returns the capitalized name of
-     * the fault.
-     */
-    private String fault(Fault operation, String namespace) throws IOException {
-        String exceptionName = Utils.capitalize(Utils.xmlNameToJava(operation.getName()));
-        QName qname = new QName(namespace, exceptionName);
-        PrintWriter pw = printWriter(qname, null, "java", "Generating Fault class:  ");
-
-        writeFileHeader(exceptionName + ".java", namespaces.getCreate(namespace), pw);
-        pw.println("public class " + exceptionName + " extends Exception {");
-
-        Vector params = new Vector();
-
-        partStrings(params, operation.getMessage().getOrderedParts(null), false);
-
-        for (int i = 0; i < params.size(); i += 2)
-            pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");
-
-        pw.println();
-        pw.println("    public " + exceptionName + "() {");
-        pw.println("    }");
-        pw.println();
-        if (params.size() > 0) {
-            pw.print("      public " + exceptionName + "(");
-            for (int i = 0; i < params.size(); i += 2) {
-                if (i != 0) pw.print(", ");
-                pw.print(params.get(i) + " " + params.get(i + 1));
-            }
-            pw.println(") {");
-            for (int i = 1; i < params.size(); i += 2) {
-                String variable = (String) params.get(i);
-
-                pw.println("        this." + variable + " = " + variable + ";");
-            }
-            pw.println("    }");
-        }
-        pw.println("}");
-        pw.close();
-        return exceptionName;
-    } // fault
 
     /**
      * Generate the stubs and skeletons for all binding tags.
@@ -896,54 +812,4 @@ public class Emitter {
     public TypeFactory getTypeFactory() {
         return emitFactory;
     } // getTypeFactory
-
-    /**
-     * Does the given file already exist?
-     */
-    protected boolean fileExists (String name, String namespace) throws IOException
-    {
-        String packageName = namespaces.getAsDir(namespace);
-        String fullName = packageName + name;
-        return new File (fullName).exists();
-    } // fileExists
-
-    /**
-     * Get a PrintWriter attached to a file with the given name.
-     */
-    private PrintWriter printWriter(QName qname, String suffix, String extension, String message) throws IOException
-    {
-        String name = qname.getLocalPart();
-        // Don't capitalize for deploy.xml and undeploy.xml
-        if(name.indexOf("deploy")==-1)
-            name = Utils.capitalize(Utils.xmlNameToJava(name));
-        String fileName = name + (suffix == null ? "" : suffix) + '.' + extension;
-        String packageName = namespaces.getCreate(qname.getNamespaceURI());
-        String packageDirName = namespaces.toDir(packageName);
-        fileList.add(packageDirName + fileName);
-        classList.add(packageName + "." + name);
-        File file = new File(packageDirName, fileName);
-        if (bVerbose) {
-            System.out.println(message + file.getPath());
-        }
-        return new PrintWriter(new FileWriter(file));
-    } // printWriter
-
-
-    /**
-     * Write a common header, including the package name to the
-     * provided stream
-     */
-    protected void writeFileHeader(String filename, String pkgName, PrintWriter pw) {
-        pw.println("/**");
-        pw.println(" * " + filename);
-        pw.println(" *");
-        pw.println(" * This file was auto-generated from WSDL");
-        pw.println(" * by the Apache Axis Wsdl2java emitter.");
-        pw.println(" */");
-        pw.println();
-
-        // print package declaration
-        pw.println("package " + pkgName + ";");
-        pw.println();
-    }
 }

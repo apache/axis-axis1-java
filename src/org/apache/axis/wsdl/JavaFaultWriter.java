@@ -56,41 +56,59 @@ package org.apache.axis.wsdl;
 
 import java.io.IOException;
 
-import java.util.HashMap;
+import java.util.Vector;
 
-import javax.wsdl.PortType;
+import javax.wsdl.Fault;
 import javax.wsdl.QName;
 
 /**
-* This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
-* which contains the <portTypeName> interface and, when appropriate, the
-* <portTypeName>AXIS.java file which contains the server-side interface.
+* This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
+* NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
 */
-public class JavaPortTypeWriter implements Writer {
-    private Writer interfaceWriter = null;
-    private Writer serviceInterfaceWriter = null;
+public class JavaFaultWriter extends JavaWriter {
+    private Fault fault;
 
     /**
      * Constructor.
      */
-    protected JavaPortTypeWriter(
-            Emitter emitter,
-            PortType portType, HashMap operationParameters) {
-        QName qname = new QName(portType.getQName().getNamespaceURI(), Utils.capitalize(Utils.xmlNameToJava(portType.getQName().getLocalPart())));
-        portType.setQName(qname);
-        interfaceWriter = new JavaInterfaceWriter(emitter, portType, operationParameters);
-        if (emitter.bEmitSkeleton && emitter.bMessageContext) {
-            serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, portType, operationParameters);
-        }
+    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault) {
+        super(emitter, qname, "", "java", "Generating Fault class:  ");
+        this.fault = fault;
     } // ctor
 
     /**
-     * Write all the portType bindings:  <portTypeName>.java, <portTypeName>AXIS.java.
+     * Write the body of the Fault file.
      */
-    public void write() throws IOException {
-        interfaceWriter.write();
-        if (serviceInterfaceWriter != null) {
-            serviceInterfaceWriter.write();
+    protected void writeFileBody() throws IOException {
+        pw.println("public class " + className + " extends Exception {");
+
+        Vector params = new Vector();
+
+        emitter.partStrings(params, fault.getMessage().getOrderedParts(null), false);
+
+        for (int i = 0; i < params.size(); i += 2)
+            pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");
+
+        pw.println();
+        pw.println("    public " + className + "() {");
+        pw.println("    }");
+        pw.println();
+        if (params.size() > 0) {
+            pw.print("      public " + className + "(");
+            for (int i = 0; i < params.size(); i += 2) {
+                if (i != 0) pw.print(", ");
+                pw.print(params.get(i) + " " + params.get(i + 1));
+            }
+            pw.println(") {");
+            for (int i = 1; i < params.size(); i += 2) {
+                String variable = (String) params.get(i);
+
+                pw.println("        this." + variable + " = " + variable + ";");
+            }
+            pw.println("    }");
         }
-    } // write
-} // class JavaPortTypeWriter
+        pw.println("}");
+        pw.close();
+    } // writeFileBody
+
+} // class JavaFaultWriter

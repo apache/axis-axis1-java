@@ -56,7 +56,16 @@ package org.apache.axis.wsdl;
 
 import java.io.IOException;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Operation;
+import javax.wsdl.PortType;
+import javax.wsdl.QName;
 
 /**
 * This is Wsdl2java's Definition Writer.  It writes the following files:
@@ -65,6 +74,8 @@ import javax.wsdl.Definition;
 public class JavaDefinitionWriter implements Writer {
     Writer deployWriter = null;
     Writer undeployWriter = null;
+    Emitter emitter;
+    Definition definition;
 
     /**
      * Constructor.
@@ -72,6 +83,8 @@ public class JavaDefinitionWriter implements Writer {
     protected JavaDefinitionWriter(Emitter emitter, Definition definition) {
         deployWriter = new JavaDeployWriter(emitter, definition);
         undeployWriter = new JavaUndeployWriter(emitter, definition);
+        this.emitter = emitter;
+        this.definition = definition;
     } // ctor
 
     /**
@@ -80,6 +93,36 @@ public class JavaDefinitionWriter implements Writer {
     public void write() throws IOException {
         deployWriter.write();
         undeployWriter.write();
+        writeFaults();
     } // write
+
+    /**
+     * Write all the faults.
+     * NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
+     */
+    private void writeFaults() throws IOException {
+        HashSet faults = new HashSet();
+        Map portTypes = definition.getPortTypes();
+        Iterator pti = portTypes.values().iterator();
+        while (pti.hasNext()) {
+            PortType portType = (PortType) pti.next();
+            List operations = portType.getOperations();
+            for (int i = 0; i < operations.size(); ++i) {
+                Operation operation = (Operation) operations.get(i);
+                Map opFaults = operation.getFaults();
+                Iterator fi = opFaults.values().iterator();
+                while (fi.hasNext()) {
+                    faults.add(fi.next());
+                }
+            }
+        }
+        Iterator fi = faults.iterator();
+        while (fi.hasNext()) {
+            Fault fault = (Fault) fi.next();
+            String exceptionName = Utils.capitalize(Utils.xmlNameToJava(fault.getName()));
+            QName faultName = new QName(definition.getTargetNamespace(), exceptionName);
+            new JavaFaultWriter(emitter, faultName, fault).write();
+        }
+    } // writeFaults
 
 } // class JavaDefinitionWriter

@@ -57,40 +57,58 @@ package org.apache.axis.wsdl;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
+import javax.wsdl.Operation;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
 
 /**
 * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
-* which contains the <portTypeName> interface and, when appropriate, the
-* <portTypeName>AXIS.java file which contains the server-side interface.
+* which contains the <portTypeName> interface.
 */
-public class JavaPortTypeWriter implements Writer {
-    private Writer interfaceWriter = null;
-    private Writer serviceInterfaceWriter = null;
+public class JavaInterfaceWriter extends JavaWriter {
+    private PortType portType;
+    private HashMap  operationParameters;
 
     /**
      * Constructor.
      */
-    protected JavaPortTypeWriter(
+    protected JavaInterfaceWriter(
             Emitter emitter,
             PortType portType, HashMap operationParameters) {
-        QName qname = new QName(portType.getQName().getNamespaceURI(), Utils.capitalize(Utils.xmlNameToJava(portType.getQName().getLocalPart())));
-        portType.setQName(qname);
-        interfaceWriter = new JavaInterfaceWriter(emitter, portType, operationParameters);
-        if (emitter.bEmitSkeleton && emitter.bMessageContext) {
-            serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, portType, operationParameters);
-        }
+        super(emitter, portType.getQName(), "", "java", "Generating portType interface:  ");
+        this.portType = portType;
+        this.operationParameters = operationParameters;
     } // ctor
 
     /**
-     * Write all the portType bindings:  <portTypeName>.java, <portTypeName>AXIS.java.
+     * Write the body of the portType interface file.
      */
-    public void write() throws IOException {
-        interfaceWriter.write();
-        if (serviceInterfaceWriter != null) {
-            serviceInterfaceWriter.write();
+    protected void writeFileBody() throws IOException {
+        pw.println("public interface " + className + " extends java.rmi.Remote {");
+
+        // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
+        // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
+        // TODO: Remove this patch...
+        // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
+        Iterator operations = (new HashSet(portType.getOperations())).iterator();
+        while(operations.hasNext()) {
+            Operation operation = (Operation) operations.next();
+            writeOperation(portType, operation, qname.getNamespaceURI());
         }
-    } // write
-} // class JavaPortTypeWriter
+
+        pw.println("}");
+        pw.close();
+    } // writeFileBody
+
+    /**
+     * This method generates the interface signatures for the given operation.
+     */
+    private void writeOperation(PortType portType, Operation operation, String namespace) throws IOException {
+        writeComment(pw, operation.getDocumentationElement());
+        Emitter.Parameters parms = (Emitter.Parameters) operationParameters.get(operation);
+        pw.println(parms.signature + ";");
+    } // writeOperation
+
+} // class JavaInterfaceWriter

@@ -69,6 +69,22 @@ import org.w3c.dom.Element;
 * All of Wsdl2java's Writer implementations do some common stuff.  All this
 * common stuff resides in this abstract base class.  All that extensions to
 * this class have to do is implement writeFileBody.
+*
+* Emitter knows about WSDL writers, one each for PortType, Binding, Service,
+* Definition, Type.  But for some of these WSDL types, Wsdl2java generates
+* multiple files.  Each of these files has a corresponding writer that extends
+* JavaWriter.  So the Java WSDL writers (JavaPortTypeWriter, JavaBindingWriter,
+* etc.) each calls a file writer (JavaStubWriter, JavaSkelWriter, etc.) for
+* each file that that WSDL generates.
+*
+* For example, when Emitter calls JavaWriterFactory for a Binding Writer, it
+* returns a JavaBindingWriter.  JavaBindingWriter, in turn, contains a
+* JavaStubWriter, JavaSkelWriter, and JavaImplWriter since a Binding may cause
+* a stub, skeleton, and impl template to be generated.
+*
+* Note that the writers that are given to Emitter by JavaWriterFactory DO NOT
+* extend JavaWriter.  They simply implement Writer and delegate the actual
+* task of writing to extensions of JavaWriter.
 */
 
 public abstract class JavaWriter implements Writer {
@@ -244,6 +260,16 @@ public abstract class JavaWriter implements Writer {
         pw.println();
         pw.println("<m:" + deploymentOpName + " xmlns:m=\"AdminService\">");
     } // initializeDeploymentDoc
+
+    /**
+     * Does the given file already exist?
+     */
+    protected boolean fileExists (String name, String namespace) throws IOException
+    {
+        String packageName = emitter.getNamespaces().getAsDir(namespace);
+        String fullName = packageName + name;
+        return new File (fullName).exists();
+    } // fileExists
 
     /**
      * Write the body of the file.  This is what extenders of this class must

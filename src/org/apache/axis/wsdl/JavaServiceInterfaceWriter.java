@@ -57,40 +57,53 @@ package org.apache.axis.wsdl;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.List;
 
+import javax.wsdl.Operation;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
 
 /**
-* This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
-* which contains the <portTypeName> interface and, when appropriate, the
-* <portTypeName>AXIS.java file which contains the server-side interface.
+* This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
 */
-public class JavaPortTypeWriter implements Writer {
-    private Writer interfaceWriter = null;
-    private Writer serviceInterfaceWriter = null;
+public class JavaServiceInterfaceWriter extends JavaWriter {
+    private PortType portType;
+    private HashMap operationParameters;
 
     /**
      * Constructor.
      */
-    protected JavaPortTypeWriter(
+    protected JavaServiceInterfaceWriter(
             Emitter emitter,
-            PortType portType, HashMap operationParameters) {
-        QName qname = new QName(portType.getQName().getNamespaceURI(), Utils.capitalize(Utils.xmlNameToJava(portType.getQName().getLocalPart())));
-        portType.setQName(qname);
-        interfaceWriter = new JavaInterfaceWriter(emitter, portType, operationParameters);
-        if (emitter.bEmitSkeleton && emitter.bMessageContext) {
-            serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, portType, operationParameters);
-        }
+            PortType portType,
+            HashMap operationParameters) {
+        super(emitter, portType.getQName(), "AXIS", "java", "Generating server-side PortType interface:  ");
+        this.portType = portType;
+        this.operationParameters = operationParameters;
     } // ctor
 
     /**
-     * Write all the portType bindings:  <portTypeName>.java, <portTypeName>AXIS.java.
+     * Generate the server-side (Axis) interface for the given port type.
      */
-    public void write() throws IOException {
-        interfaceWriter.write();
-        if (serviceInterfaceWriter != null) {
-            serviceInterfaceWriter.write();
+    protected void writeFileBody() throws IOException {
+        pw.println("public interface " + className + " extends java.rmi.Remote {");
+
+        List operations = portType.getOperations();
+
+        for (int i = 0; i < operations.size(); ++i) {
+            Operation operation = (Operation) operations.get(i);
+            writeOperationAxisSkelSignatures(operation);
         }
-    } // write
-} // class JavaPortTypeWriter
+
+        pw.println("}");
+        pw.close();
+    } // writeFileBody
+
+    /**
+     * This method generates the axis server side impl interface signatures operation.
+     */
+    private void writeOperationAxisSkelSignatures(Operation operation) throws IOException {
+        Emitter.Parameters parms = (Emitter.Parameters) operationParameters.get(operation);
+        pw.println(parms.axisSignature + ";");
+    } // writeOperationAxisSkelSignatures
+
+} // class JavaServiceInterfaceWriter
