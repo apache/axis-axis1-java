@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package samples.stock ;
+package test.functional;
 
 import java.net.*;
 import java.io.*;
@@ -61,84 +61,95 @@ import java.util.*;
 
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPClient ;
+import org.apache.axis.client.tcp.TCPClient;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
-/**
- *
- * @author Doug Davis (dug@us.ibm.com.com)
+import junit.framework.TestCase;
+
+/** Little serialization test with a struct.
  */
-public class GetQuote {
-    
-  // helper function; does all the real work
-    public float getQuote (String args[]) throws Exception {
-      Options opts = new Options( args );
-
+public class TestTCPEcho extends TestCase {
+  
+  public TestTCPEcho(String name) {
+    super(name);
+  }
+  
+  public void testData() throws Exception {
+    try {
+      /*
+       Options opts = new Options( args );
+      
       Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-
+      
       args = opts.getRemainingArgs();
-
+       
       if ( args == null ) {
-        System.err.println( "Usage: GetQuote <symbol>" );
+        System.err.println( "Usage: GetQuoteTCP -h <host> -p <port> <symbol>" );
         System.exit(1);
       }
-
-      String action = "urn:xmltoday-delayed-quotes";
-      String   symbol = args[0] ;
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, opts.getURL());
-      call.set(HTTPClient.ACTION, action);
+       */
+      String   symbol = "XXX"; // args[0] ;
+      URL url = null;
+      // parse host, port out of URL by hand
+      // what to do about that URL format issue.....
+      try {
+        url = new URL("http://localhost:8088"); // (opts.getURL());
+      } catch (IOException ex) {
+        System.err.println("URL "+url+" hosed: "+ex);
+        System.exit(1);
+      }
+      
+      ServiceClient call   = new ServiceClient( new TCPClient() );
+      call.set(TCPClient.HOST, url.getHost());
+      call.set(TCPClient.PORT, ""+url.getPort());
+      
+      // reconstruct URL
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
       sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);
       
-      if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-
-      call.set( HTTPClient.USER, opts.getUser() );
-      call.set( HTTPClient.PASSWORD, opts.getPassword() );
-
+      // if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
+      
+      /*
+       call.setUserID( opts.getUser() );
+       call.setPassword( opts.getPassword() );
+       */
+      
       // useful option for profiling - perhaps we should remove before
       // shipping?
-      String countOption = opts.isValueSet('c');
+      /*
+       String countOption = opts.isValueSet('c');
       int count=1;
       if ( countOption != null) {
         count=Integer.valueOf(countOption).intValue();
         System.out.println("Iterating " + count + " times");
-      }
-
+       }
+       */
+      
       Float res = new Float(0.0F);
-      for (int i=0; i<count; i++) {
-        // the namespace of the call should be the service.
-        // ...according to Glen... -- RobJ
-          Object ret = call.invoke(
-          action, "getQuote", new Object[] {symbol} );
-          if (ret instanceof String) {
-              System.out.println("Received problem response from server: "+ret);
-              throw new AxisFault("", (String)ret, null, null);
-          }
-        res = (Float) ret;
+//      for (int i=0; i<count; i++) {
+        Object ret = call.invoke(
+          "urn:xmltoday-delayed-quotes", "getQuote",
+          new Object[] {symbol} );
+        if (ret instanceof Float) {
+          res = (Float) ret;
+          // System.out.println( symbol + ": " + res );
+          assertEquals("TestTCPEcho: stock price is 55.25", res.floatValue(), 55.25, 0.000001);
+        } else {
+          throw new Exception("Bad return value from echo test: "+ret);
+        }
       }
-
-        return res.floatValue();
-    }
-
-  public static void main(String args[]) {
-    try {
-        float val = new GetQuote().getQuote(args);
-        // args array gets side-effected
-        System.out.println(args[0] + ": " + val);
-    }
+      
+//    }
     catch( Exception e ) {
       if ( e instanceof AxisFault ) ((AxisFault)e).dump();
       e.printStackTrace();
+      throw new Exception("Fault returned from echo test: "+e);
     }
   }
-  
-  public GetQuote () {
-  };
+}
 
-};

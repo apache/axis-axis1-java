@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<!-- ===================================================================
+
+   Build file for Axis functional test Ant task
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+   This build file builds an Ant task used to perform Axis functional tests.
+
+Prerequisites:
+
+   a successful Axis build configuration
+   
+Author:
+  Rob Jellinghaus <robj@unrealities.com>
+
+Copyright:
+  Copyright (c) 2001 Apache Software Foundation.
+
+==================================================================== -->
+
+<project default="functional-tests" basedir=".">
+
+  <path id="test-classpath">
+    <!-- build.dir for test classes and build.dest for classes to test -->
+    <pathelement location="${build.dir}" />
+    <pathelement location="${build.dest}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+
+  <taskdef name="runaxisfunctionaltests" classname="test.functional.ant.RunAxisFunctionalTestsTask" />
+
+  <!-- =================================================================== -->
+  <!-- Launches the functional test TCP server -->
+  <!-- =================================================================== -->
+  <target name="start-functional-test-tcp-server" if="junit.present">
+    <echo message="Starting test tcp server."/>
+    <java classname="org.apache.axis.transport.tcp.AxisListener" fork="yes" dir="./build">
+      <arg line="-p 8088" /> <!-- arbitrary port -->
+      <classpath refid="test-classpath" />
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Launches the functional test HTTP server -->
+  <!-- =================================================================== -->
+  <target name="start-functional-test-http-server" if="junit.present">
+    <echo message="Starting test http server."/>
+    <java classname="org.apache.axis.transport.http.SimpleAxisServer" fork="yes" dir="./build">
+      <classpath refid="test-classpath" />
+    </java>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Runs the JUnit functional test -->
+  <!-- =================================================================== -->
+  <target name="junit-functional" if="junit.present">
+    <junit printsummary="yes" haltonfailure="yes" fork="yes">
+      <classpath refid="test-classpath" />
+      <formatter type="plain" />
+      <batchtest>
+        <fileset dir="${build.dir}">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+          <include name="**/FunctionalTests.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Stops the functional test HTTP server -->
+  <!-- =================================================================== -->
+  <target name="stop-functional-test-http-server" if="junit.present">
+    <echo message="Stopping test http server."/>
+    <java classname="org.apache.axis.client.http.HTTPAdminClient" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg line="quit"/>
+    </java>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Run functional tests                                                -->
+  <!-- =================================================================== -->
+  <target name="functional-tests" if="junit.present">
+    <!-- This uses a custom Ant task.  See test/functional/ant/RunAxisFunctionalTests.java -->
+    <!-- This pattern taken from Cactus, http://jakarta.apache.org/commons/cactus -->
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="junit-functional"
+      stopTarget="stop-functional-test-http-server" />
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Runs the JUnit functional test, with special class parameter.       -->
+  <!-- This is because RobJ's IDE can't build into multiple directories;   -->
+  <!-- it builds all the tests & samples into build/classes.               -->
+  <!-- If he wants to build & run the server under the debugger while      -->
+  <!-- firing the client tests at it, he has to use this target so junit   -->
+  <!-- will find the classes in the IDE's build location.                  -->
+  <!-- =================================================================== -->
+  <target name="junit-functional-noserver" if="junit.present">
+    <junit printsummary="yes" haltonfailure="yes" fork="yes">
+      <classpath refid="test-classpath" />
+      <formatter type="plain" />
+      <batchtest>
+        <fileset dir="${build.dir}/classes">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+          <include name="**/FunctionalTests.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+
+</project>
+
+

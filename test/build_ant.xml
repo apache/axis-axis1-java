@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<!-- ===================================================================
+
+   Build file for Axis functional test Ant task
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+   This build file builds an Ant task used to perform Axis functional tests.
+
+Prerequisites:
+
+   a successful Axis build configuration
+   
+Author:
+  Rob Jellinghaus <robj@unrealities.com>
+
+Copyright:
+  Copyright (c) 2001 Apache Software Foundation.
+
+==================================================================== -->
+
+<project default="buildAntTask" basedir=".">
+
+  <path id="test-classpath">
+    <!-- build.dir for test classes and build.dest for classes to test -->
+    <pathelement location="${build.dir}" />
+    <pathelement location="${build.dest}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+
+  <!--
+  I am not sure how else to get this optional-ant-task class onto
+  the Ant classpath.  I know that environment is system-dependent, though it
+  should work on both Unix and Windows.
+  Any thoughts?
+  -->
+  <property name="myenv" environment="myenv" />
+  <property name="ant.dir" value="${myenv.ANT_HOME}/lib" />
+
+  <!-- =================================================================== -->
+  <!-- Build the Ant task for Axis functional testing.  Put the resulting  -->
+  <!-- Ant task class into the Ant lib directory (where extension tasks    -->
+  <!-- ought to go).                                                       -->
+  <!-- Hope that the user has ANT_HOME/lib on their Ant path.              -->
+  <!-- =================================================================== -->
+  <target name="buildAntTask" if="junit.present">
+    <echo message="ant.dir is ${ant.dir}" />
+    <!-- Tests are packaged as test.*, so source dir is main dir -->
+    <javac srcdir="${basedir}"
+      destdir="${ant.dir}">
+      <include name="test/functional/ant/*.java" />
+      <classpath refid="test-classpath" />
+    </javac>
+  </target>
+
+</project>
+

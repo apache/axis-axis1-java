@@ -25,6 +25,7 @@ Most useful targets:
  - javadocs -> creates the javadocs in "./build/javadocs"
  - dist     -> creates the complete binary distribution
  - srcdist  -> creates the complete src distribution
+ - functional-tests -> attempts to build Ant task and then run client-server functional test
 
 Custom post-compilation work:
 
@@ -99,7 +100,7 @@ Copyright:
       classname="javax.servlet.Servlet"
       classpathref="classpath"/>
 
-    <available property="junit.present" 
+    <available property="junit.present"
       classname="junit.framework.TestCase"
       classpathref="classpath"/>
 
@@ -154,7 +155,7 @@ Copyright:
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
   <target name="samples" depends="compile">
-    <javac srcdir="." destdir="${build.dest}" 
+    <javac srcdir="." destdir="${build.dest}"
            classpath="${build.lib}/${name}.jar" debug="${debug}">
       <include name="samples/**/*.java" />
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
@@ -190,7 +191,7 @@ Copyright:
 
 
   <!-- =================================================================== -->
-  <!-- Runs the JUnit testcases -->
+  <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
   <target name="junit" if="junit.present" depends="buildTest">
     <mkdir dir="${basedir}/test-reports" />
@@ -206,11 +207,50 @@ Copyright:
       </batchtest>
     </junit>
   </target>
+  
+  <!-- =================================================================== -->
+  <!-- Functional tests, no dependencies (for no-build testing)            -->
+  <!-- =================================================================== -->
+  <target name="functional-tests-only" depends="setenv">
+  
+    <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
+    <ant antfile="test/build_ant.xml" />
+    
+    <!--
+    ...and then the functional tests can be run.  If this step yields a
+    "can't find class test.functional.ant.RunAxisFunctionalTestsTask",
+    verify that your Ant classpath contains ANT_HOME/lib.
+    -->
+    <ant antfile="test/build_functional_tests.xml" />
+    
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Functional tests, no server (for testing under debugger)            -->
+  <!-- =================================================================== -->
+  <target name="functional-tests-noserver" depends="setenv">
+  
+    <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
+    <ant antfile="test/build_ant.xml" />
+    
+    <!--
+    ...and then the functional tests can be run.  If this step yields a
+    "can't find class test.functional.ant.RunAxisFunctionalTestsTask",
+    verify that your Ant classpath contains ANT_HOME/lib.
+    -->
+    <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver"/>
+    
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- After junit, functional tests, if explicitly invoked                -->
+  <!-- =================================================================== -->
+  <target name="functional-tests" depends="junit, samples, functional-tests-only">
+  </target>
 
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
-
   <target name="javadocs" depends="setenv" unless="javadoc.notrequired">
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"

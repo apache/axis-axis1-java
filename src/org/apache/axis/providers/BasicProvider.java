@@ -1,4 +1,4 @@
-package org.apache.axis.handlers.providers;
+package org.apache.axis.providers;
 
 import java.util.Hashtable;
 import org.apache.axis.handlers.BasicHandler;
@@ -9,7 +9,7 @@ import org.apache.axis.utils.QName;
  * operations declared for a particular service
  * provider.  I'm not exactly married to this though.
  */
-public abstract class BasicProvider extends BasicHandler { 
+public abstract class BasicProvider extends BasicHandler {
     
     public void addOperation(String name, QName qname) {
         Hashtable operations = (Hashtable)getOption("Operations");

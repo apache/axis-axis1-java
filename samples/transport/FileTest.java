@@ -3,7 +3,9 @@ package samples.transport ;
 import java.lang.Thread ;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.* ;
+import org.apache.axis.client.AxisClient ;
+import org.apache.axis.client.ServiceClient ;
+import org.apache.axis.client.http.HTTPClient ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.encoding.* ;
@@ -33,27 +35,28 @@ class FileTest {
       }
     
       String   symbol = args[0] ;
-      HTTPCall call   = new HTTPCall( opts.getURL(),
-                                      "urn:xmltoday-delayed-quotes" );
+      ServiceClient call   = new ServiceClient(new HTTPClient());
+      call.set(HTTPClient.URL, opts.getURL());
+      call.set(HTTPClient.ACTION, "urn:xmltoday-delayed-quotes");
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
       sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);
     
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
     
-      call.setUserID( opts.getUser() );
-      call.setPassword( opts.getPassword() );
+      call.set(AxisClient.USER, opts.getUser() );
+      call.set(AxisClient.PASSWORD, opts.getPassword() );
       call.setTransportInput( "FileSender" );
     
       Float res = new Float(0.0F);
-      res = (Float) call.invoke( "http://schemas.xmlsoap.org/soap/envelope/", 
+      res = (Float) call.invoke( "http://schemas.xmlsoap.org/soap/envelope/",
                                  "getQuote",
                                  new Object[] {symbol} );
     
       System.out.println( symbol + ": " + res );
 
       // Once more just for fun...
-      res = (Float) call.invoke( "http://schemas.xmlsoap.org/soap/envelope/", 
+      res = (Float) call.invoke( "http://schemas.xmlsoap.org/soap/envelope/",
                                  "getQuote",
                                  new Object[] {symbol} );
     

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2000 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -90,17 +90,24 @@ public class SimpleAxisServer implements Runnable {
     private static byte ISE[]    = "500 Internal Server Error".getBytes();
 
     // Standard MIME headers
-    private static byte MIME_STUFF[] = 
+    private static byte MIME_STUFF[] =
         ( "\nContent-Type: text/xml\n" +
           "Content-Length: ").getBytes();
 
     // Mime/Content separator
     private static byte SEPARATOR[] = "\n\n".getBytes();
+    
+    // Tiddly little response
+    private static byte cannedResponse[] = "<empty/>".getBytes();
 
     // Axis specific constants
     private static String transportInName = "HTTPAction";
     private static String transportOutName = "HTTP.output";
     private static final String AXIS_ENGINE = "AxisEngine" ;
+    
+    // are we stopped?
+    // latch to true if stop() is called
+    private boolean stopped = false;
 
     /**
      * The main workhorse method.
@@ -121,20 +128,21 @@ public class SimpleAxisServer implements Runnable {
         msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
 
         // Reusuable, buffered, content length controlled, InputStream
-        NonBlockingBufferedInputStream is = 
+        NonBlockingBufferedInputStream is =
             new NonBlockingBufferedInputStream();
 
         // SoapAction
         StringBuffer soapAction = new StringBuffer();
+        StringBuffer httpRequest = new StringBuffer();
 
         // And, just in case it is needed...
         Message faultMsg = new Message(null, "AxisFault");
 
         // Accept and process requests from the socket
-	while (worker==null || !worker.isInterrupted()) {
+    while (!stopped) {
             Socket socket = null;
 
-            // prepare request (do as much as possible while waiting for the 
+            // prepare request (do as much as possible while waiting for the
             // next connection).  Note the next two statements are commented
             // out.  Uncomment them if you experience any problems with not
             // resetting state between requests:
@@ -146,9 +154,9 @@ public class SimpleAxisServer implements Runnable {
             msgContext.clearProperties();
             msgContext.setProperty(MessageContext.TRANS_INPUT, transportInName);
             msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
-	    try {
+        try {
                 try {
-	            socket = serverSocket.accept();
+                socket = serverSocket.accept();
                 } catch (IOException ioe) {
                     break;
                 }
@@ -159,14 +167,29 @@ public class SimpleAxisServer implements Runnable {
                 try {
                     // read headers
                     is.setInputStream(socket.getInputStream());
-		    int contentLength = parseHeaders(is, soapAction);
+                    int contentLength = parseHeaders(is, soapAction, httpRequest);
                     is.setContentLength(contentLength);
 
+                    // if get, then return simpleton document as response
+                    if (httpRequest.toString().equals("GET")) {
+                        OutputStream out = socket.getOutputStream();
+                        out.write(HTTP);
+                        out.write(status);
+                        out.write(MIME_STUFF);
+                        putInt(out, cannedResponse.length);
+                        out.write(SEPARATOR);
+                        out.write(cannedResponse);
+                        out.flush();
+                        continue;
+                    }
+                        
                     // set up request
+                    
+                    
                     String soapActionString = soapAction.toString();
                     requestMsg.setCurrentMessage(is, "InputStream");
                     msgContext.setTargetService(soapActionString);
-                    msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, 
+                    msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION,
                                            soapActionString);
 
                     // invoke the Axis engine
@@ -174,16 +197,16 @@ public class SimpleAxisServer implements Runnable {
 
                 } catch( AxisFault af ) {
                     if ("Server.Unauthorized".equals(af.getFaultCode())) {
-                        status = ISE; // SC_INTERNAL_SERVER_ERROR 
+                        status = ISE; // SC_INTERNAL_SERVER_ERROR
                     } else {
-                        status = UNAUTH; // SC_UNAUTHORIZED 
+                        status = UNAUTH; // SC_UNAUTHORIZED
                     }
 
                     faultMsg.setCurrentMessage(af, "AxisFault");
                     msgContext.setResponseMessage(faultMsg);
 
                 } catch( Exception e ) {
-                    status = ISE; // SC_INTERNAL_SERVER_ERROR 
+                    status = ISE; // SC_INTERNAL_SERVER_ERROR
                     faultMsg.setCurrentMessage(new AxisFault(e), "AxisFault");
                     msgContext.setResponseMessage(faultMsg);
                 }
@@ -194,26 +217,32 @@ public class SimpleAxisServer implements Runnable {
                 byte[] response = (byte[]) responseMsg.getAs("Bytes");
 
                 // Send it on its way...
-		OutputStream out = socket.getOutputStream();
-		out.write(HTTP);
-		out.write(status);
-		out.write(MIME_STUFF);
-	        putInt(out, response.length);
-		out.write(SEPARATOR);
+        OutputStream out = socket.getOutputStream();
+        out.write(HTTP);
+        out.write(status);
+        out.write(MIME_STUFF);
+            putInt(out, response.length);
+        out.write(SEPARATOR);
                 out.write(response);
                 out.flush();
+            
+            if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
+                // why then, quit!
+                this.stop();
+            }
 
-	    } catch (InterruptedIOException iie) {
-		break;
-	    } catch (Exception e) {
-		e.printStackTrace();
-	    } finally {
-		try {
-		    if (socket!=null) socket.close();
-		} catch (Exception e) {
-		}
-	    }
-	}
+        } catch (InterruptedIOException iie) {
+        break;
+        } catch (Exception e) {
+        e.printStackTrace();
+        } finally {
+        try {
+            if (socket!=null) socket.close();
+        } catch (Exception e) {
+        }
+        }
+    }
+        System.out.println("SimpleAxisServer quitting.");
     }
 
     // ASCII character mapping to lower case
@@ -236,6 +265,12 @@ public class SimpleAxisServer implements Runnable {
     // mime header for soap action
     private static final byte actionHeader[] = "soapaction: \"".getBytes();
     private static final int actionLen = actionHeader.length;
+    
+    // mime header for GET
+    private static final byte getHeader[] = "GET".getBytes();
+
+    // mime header for POST
+    private static final byte postHeader[] = "POST".getBytes();
 
     // buffer for IO
     private static final int BUFSIZ = 4096;
@@ -248,8 +283,8 @@ public class SimpleAxisServer implements Runnable {
      * @param off       starting offset into the byte array
      * @param len       maximum number of bytes to read
      */
-    private int readLine(InputStream is, byte[] b, int off, int len) 
-        throws IOException 
+    private int readLine(InputStream is, byte[] b, int off, int len)
+        throws IOException
     {
         int count = 0, c;
 
@@ -266,17 +301,39 @@ public class SimpleAxisServer implements Runnable {
      * SOAPAction.
      * @param is         InputStream to read from
      * @param soapAction StringBuffer to return the soapAction into
+     * @param httpRequest StringBuffer for GET / POST
      * @return Content-Length
      */
-    private int parseHeaders(InputStream is, StringBuffer soapAction)
-      throws IOException 
+    private int parseHeaders(InputStream is, StringBuffer soapAction, StringBuffer httpRequest)
+      throws IOException
     {
         int n;
         int len = 0;
+        
+        // parse first line as GET or POST
+        n=this.readLine(is, buf, 0, buf.length);
+        if (n < 0) {
+            // nothing!
+            throw new IOException("Unexpected end of stream");
+        }
+        
+        // which does it begin with?
+        httpRequest.delete(0, httpRequest.length());
+        if (buf[0] == getHeader[0]) {
+            httpRequest.append("GET");
+            // return immediately, don't look for more headers
+            return 0;
+        } else if (buf[0] == postHeader[0]) {
+            httpRequest.append("POST");
+        } else {
+            throw new IOException("Cannot handle non-GET, non-POST request");
+        }
+        
         while ((n=readLine(is,buf,0,buf.length)) > 0) {
         
             int lenMatch = 0;
             int actionMatch = 0;
+            int getMatch = 0;
             for (int i=0; i<n; i++) {
                 byte c = toLower[buf[i]];
 
@@ -379,10 +436,10 @@ public class SimpleAxisServer implements Runnable {
     }
 
     /**
-     * Start this server as a daemon.
+     * Start this server as a NON-daemon.
      */
     public void start() throws Exception {
-        start(true);
+        start(false);
     }
 
     /**
@@ -391,9 +448,7 @@ public class SimpleAxisServer implements Runnable {
      * This will interrupt any pending accept().
      */
     public void stop() throws Exception {
-        /// Calling Thread.stop() is deprecated. See docs for
-        ///  better patterns using interrupt()
-        ////////////
+        stopped = true;
         if (worker != null) worker.interrupt();
     }
 

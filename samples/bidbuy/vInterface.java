@@ -1,6 +1,5 @@
 package samples.bidbuy ;
 
-import org.apache.axis.client.HTTPCall ;
 import org.apache.axis.message.RPCElement ;
 import org.apache.axis.message.RPCParam ;
 import org.apache.axis.utils.* ;

@@ -215,7 +215,7 @@ public class MessageContext {
       HandlerRegistry sr = (HandlerRegistry)
                             getProperty(Constants.SERVICE_REGISTRY);
       if (sr == null)
-	    return;
+        return;
       
       Handler service = sr.find(tServ);
       if (service == null)
@@ -273,6 +273,12 @@ public class MessageContext {
 
     /** The protocol specific handler (ie. SOAP) */
     public static String PROTOCOL_HANDLER    = "procotol.handler";
+    
+    /** Has a quit been requested? Hackish... but useful... -- RobJ */
+    public static String QUIT_REQUESTED = "quit.requested";
+  
+  /** Property name for session context */
+  public static String SESSION_CONTEXT = "session.context";
 
     /** A String with the user's ID (if available)
      */

@@ -2,7 +2,7 @@
 # this assumes webserver is running on port 8080
 
 echo "Deploy everything first"
-java org.apache.axis.client.AdminClient deploy.xml
+java org.apache.axis.client.http.HTTPAdminClient deploy.xml
 
 echo "These next 2 should work..."
 java samples.stock.GetQuote -uuser1 -wpass1 XXX
@@ -17,4 +17,4 @@ echo "This should work but print debug info on the client and server"
 java samples.stock.GetQuote -d -uuser1 -wpass1 XXX
 
 # Now undeploy everything
-java org.apache.axis.client.AdminClient undeploy.xml
+java org.apache.axis.client.http.HTTPAdminClient undeploy.xml

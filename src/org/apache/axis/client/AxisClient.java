@@ -62,14 +62,25 @@ import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 
 /**
+ * Provides the equivalent of an "Axis engine" on the client side.
+ * Subclasses hardcode initialization & setup logic for particular
+ * client-side transports.
  *
+ * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class AxisClient extends BasicHandler
+public abstract class AxisClient extends BasicHandler
 {
     public AxisClient() {}
-
+    
+    /**
+     * Property names for user & password.
+     * Soon to be moved elsewhere.
+     */
+    public static String USER = "user";
+    public static String PASSWORD = "password";
+    
     /**
      * Allows the Listener to specify which handler/service registry
      * implementation they want to use.
@@ -83,7 +94,7 @@ public class AxisClient extends BasicHandler
         addOption(Constants.SERVICE_REGISTRY, services);
         Debug.Print( 1, "Exit: AxisClient::Constructor");
     }
-
+    
     /**
      * Find/load the registries and save them so we don't need to do this
      * each time we're called.
@@ -96,27 +107,37 @@ public class AxisClient extends BasicHandler
         hr.setOnServer( false );
         hr.init();
         addOption( Constants.HANDLER_REGISTRY, hr );
-
+        
         // Load the simple deployed services registry and init it
-        DefaultServiceRegistry  sr = 
-          new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
+        DefaultServiceRegistry  sr =
+            new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
         sr.setHandlerRegistry( hr ); // Needs to know about 'hr'
         sr.setOnServer( false );
         sr.init();
         addOption( Constants.SERVICE_REGISTRY, sr );
         Debug.Print( 1, "Exit: AxisClient::init" );
     }
-
+    
+    /**
+     * Set up the message context as appropriate for this transport.
+     * @param context the context to set up (with transport chain info, etc.)
+     * @param message the client service instance
+     * @throws AxisFault if service cannot be found
+     */
+    public abstract void setupMessageContext
+        (MessageContext context, ServiceClient message, boolean doLocal)
+        throws AxisFault;
+    
     /**
      * Main routine of the AXIS server.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         Debug.Print( 1, "Enter: AxisClient::invoke" );
-
+        
         String  hName = null ;
         Handler h     = null ;
-
+        
         /* Do some prep-work.  Get the registries and put them in the */
         /* msgContext so they can be used by later handlers.          */
         /**************************************************************/
@@ -124,92 +145,92 @@ public class AxisClient extends BasicHandler
             (HandlerRegistry) getOption(Constants.HANDLER_REGISTRY);
         HandlerRegistry sr = 
             (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
-
+        
         if ( hr != null )
-          msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
+            msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
         if ( sr != null )
-          msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
-
+            msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
+        
         try {
-          hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
-          Debug.Print( 2, "EngineHandler: " + hName );
-
-          if ( hName != null ) {
-            h = hr.find( hName );
-            if ( h != null ) 
-              h.invoke(msgContext);
-            else
-              throw new AxisFault( "Client.error",
-                                   "Can't locate handler: " + hName,
-                                   null, null );
-          }
-          else {
-            // This really should be in a handler - but we need to discuss it
-            // first - to make sure that's what we want.
-  
-            /* Now we do the 'real' work.  The flow is basically:         */
-            /*                                                            */
-            /*   Service Specific Request Chain                           */
-            /*   Global Request Chain                                     */
-            /*   Transport Request Chain - must have a send at the end    */
-            /*   Transport Response Chain                                 */
-            /*   Global Response Chain                                    */
-            /*   Service Specific Response Chain                          */
-            /*   Protocol Specific-Handler/Checker                        */
-            /**************************************************************/
-   
-            // When do we call init/cleanup??
-  
-            SimpleTargetedChain service = null ;
-  
-            /* Process the Service Specific Request Chain */
-            /**********************************************/
-            hName =  msgContext.getTargetService();
-            if ( hName != null && (h = sr.find( hName )) != null ) {
-              if ( h instanceof SimpleTargetedChain ) {
-                service = (SimpleTargetedChain) h ;
-                h = service.getInputChain();
-              }
-              if ( h != null ) h.invoke( msgContext );
+            hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
+            Debug.Print( 2, "EngineHandler: " + hName );
+            
+            if ( hName != null ) {
+                h = hr.find( hName );
+                if ( h != null )
+                    h.invoke(msgContext);
+                else
+                    throw new AxisFault( "Client.error",
+                                        "Can't locate handler: " + hName,
+                                        null, null );
             }
-  
-            /* Process the Global Input Chain */
-            /**********************************/
-            hName = Constants.GLOBAL_INPUT ;
-            if ( hName != null  && (h = hr.find( hName )) != null )
-                h.invoke(msgContext);
-  
-            /* Process the Transport Specific Input Chain */
-            /**********************************************/
-            hName = msgContext.getStrProp(MessageContext.TRANS_INPUT);
-            if ( hName != null && (h = hr.find( hName )) != null )
-              h.invoke(msgContext);
-  
-            /* Note: at the end of the transport specific input chain should */
-            /* have been a handler that called the server.                   */
-            /*****************************************************************/
-    
-            /* Process the Transport Specific Output Chain */
-            /***********************************************/
-            hName = msgContext.getStrProp(MessageContext.TRANS_OUTPUT);
-            if ( hName != null  && (h = hr.find( hName )) != null )
-              h.invoke(msgContext);
-  
-            /* Process the Global Output Chain */
-            /***********************************/
-            hName = Constants.GLOBAL_OUTPUT ;
-            if ( hName != null && (h = hr.find( hName )) != null )
-              h.invoke(msgContext);
-  
-            if ( service != null ) {
-              h = service.getOutputChain();
-              if ( h != null )
-                h.invoke(msgContext);
+            else {
+                // This really should be in a handler - but we need to discuss it
+                // first - to make sure that's what we want.
+                
+                /* Now we do the 'real' work.  The flow is basically:         */
+                /*                                                            */
+                /*   Service Specific Request Chain                           */
+                /*   Global Request Chain                                     */
+                /*   Transport Request Chain - must have a send at the end    */
+                /*   Transport Response Chain                                 */
+                /*   Global Response Chain                                    */
+                /*   Service Specific Response Chain                          */
+                /*   Protocol Specific-Handler/Checker                        */
+                /**************************************************************/
+                
+                // When do we call init/cleanup??
+                
+                SimpleTargetedChain service = null ;
+                
+                /* Process the Service Specific Request Chain */
+                /**********************************************/
+                hName =  msgContext.getTargetService();
+                if ( hName != null && (h = sr.find( hName )) != null ) {
+                    if ( h instanceof SimpleTargetedChain ) {
+                        service = (SimpleTargetedChain) h ;
+                        h = service.getInputChain();
+                    }
+                    if ( h != null ) h.invoke( msgContext );
+                }
+                
+                /* Process the Global Input Chain */
+                /**********************************/
+                hName = Constants.GLOBAL_INPUT ;
+                if ( hName != null  && (h = hr.find( hName )) != null )
+                    h.invoke(msgContext);
+                
+                /* Process the Transport Specific Input Chain */
+                /**********************************************/
+                hName = msgContext.getStrProp(MessageContext.TRANS_INPUT);
+                if ( hName != null && (h = hr.find( hName )) != null )
+                    h.invoke(msgContext);
+                
+                /* Note: at the end of the transport specific input chain should */
+                /* have been a handler that called the server.                   */
+                /*****************************************************************/
+                
+                /* Process the Transport Specific Output Chain */
+                /***********************************************/
+                hName = msgContext.getStrProp(MessageContext.TRANS_OUTPUT);
+                if ( hName != null  && (h = hr.find( hName )) != null )
+                    h.invoke(msgContext);
+                
+                /* Process the Global Output Chain */
+                /***********************************/
+                hName = Constants.GLOBAL_OUTPUT ;
+                if ( hName != null && (h = hr.find( hName )) != null )
+                    h.invoke(msgContext);
+                
+                if ( service != null ) {
+                    h = service.getOutputChain();
+                    if ( h != null )
+                        h.invoke(msgContext);
+                }
+                
+                // Do SOAP Semantics checks here - this needs to be a call to
+                // a pluggable object/handler/something
             }
-  
-            // Do SOAP Semantics checks here - this needs to be a call to
-            // a pluggable object/handler/something
-          }
         }
         catch( Exception e ) {
             // Should we even bother catching it ?
@@ -219,7 +240,7 @@ public class AxisClient extends BasicHandler
         }
         Debug.Print( 1, "Exit: AxisClient::invoke" );
     };
-
+    
     public void undo(MessageContext msgContext) {
         Debug.Print( 1, "Enter: AxisClient::undo" );
         Debug.Print( 1, "Exit: AxisClient::undo" );

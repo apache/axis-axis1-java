@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -118,23 +118,23 @@ public class Admin {
     }
   }
 
-  public Document AdminService(MessageContext msgContext, Document xml) 
+  public Document AdminService(MessageContext msgContext, Document xml)
                   throws AxisFault
   {
     Debug.Print( 1, "Enter: Admin:AdminService" );
     hr = (DefaultHandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
     sr = (DefaultServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
     tmr = msgContext.getTypeMappingRegistry();
-    Document doc = process( xml );
+    Document doc = process( msgContext, xml );
     Debug.Print( 1, "Exit: Admin:AdminService" );
     return( doc );
   }
 
-  public Document process(Document doc) throws AxisFault {
-    return( process( doc.getDocumentElement() ) );
+  public Document process(MessageContext msgContext, Document doc) throws AxisFault {
+    return( process( msgContext, doc.getDocumentElement() ) );
   }
 
-  public Document process(Element root) throws AxisFault {
+  public Document process(MessageContext msgContext, Element root) throws AxisFault {
     Document doc = null ;
     try {
       init();
@@ -142,12 +142,25 @@ public class Admin {
       String            action = root.getLocalName();
 
       if ( !action.equals("deploy") && !action.equals("undeploy") &&
-           !action.equals("list") )
-        throw new AxisFault( "Admin.error", 
+           !action.equals("list") && !action.equals("quit") )
+        throw new AxisFault( "Admin.error",
                              "Root element must be 'deploy', 'undeploy' " +
                              "or 'list'",
                              null, null );
 
+        if (action.equals("quit")) {
+            System.err.println("Admin service requested to quit, quitting.");
+            if (msgContext != null) {
+                // put a flag into message context so listener will exit after
+                // sending response
+                msgContext.setProperty(msgContext.QUIT_REQUESTED, "true");
+            }
+              doc = XMLUtils.newDocument();
+              doc.appendChild( root = doc.createElement( "Admin" ) );
+              root.appendChild( doc.createTextNode( "Quitting" ) );
+            return doc;
+        }
+        
       if ( action.equals("list") ) {
         String[]   names ;
         Handler    h ;
@@ -226,8 +239,8 @@ public class Admin {
             hr.remove( name );
           }
           else
-            throw new AxisFault( "Admin.error", 
-                                 "Unknown type; " + type, 
+            throw new AxisFault( "Admin.error",
+                                 "Unknown type; " + type,
                                  null, null );
           continue ;
         }
@@ -289,7 +302,7 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                throw new AxisFault( "Admin.error", 
+                throw new AxisFault( "Admin.error",
                                      "Unknown handler: " + hName,
                                      null, null );
               c.addHandler( tmpH );
@@ -310,12 +323,12 @@ public class Admin {
   
             st = new StringTokenizer( input, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
-              if ( c == null ) 
+              if ( c == null )
                 cc.setInputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                throw new AxisFault( "Admin.error", 
+                throw new AxisFault( "Admin.error",
                                      "Unknown handler: " + hName,
                                      null, null );
               c.addHandler( tmpH );
@@ -326,12 +339,12 @@ public class Admin {
             st = new StringTokenizer( output, " \t\n\r\f," );
             c  = null ;
             while ( st.hasMoreElements() ) {
-              if ( c == null ) 
+              if ( c == null )
                 cc.setOutputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                throw new AxisFault( "Admin.error", 
+                throw new AxisFault( "Admin.error",
                                      "Unknown handler: " + hName,
                                      null, null );
               c.addHandler( tmpH );
@@ -347,8 +360,8 @@ public class Admin {
           Chain                c  = null ;
 
           if ( pivot == null && input == null && output == null )
-            throw new AxisFault( "Admin.error", 
-                                 "Services must use targeted chains", 
+            throw new AxisFault( "Admin.error",
+                                 "Services must use targeted chains",
                                  null, null );
 
           service = (SOAPService) hr.find( name );
@@ -365,7 +378,7 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                throw new AxisFault( "Admin.error", 
+                throw new AxisFault( "Admin.error",
                                      "Unknown handler: " + hName,
                                      null, null );
               c.addHandler( tmpH );
@@ -387,7 +400,7 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                throw new AxisFault( "Admin.error", 
+                throw new AxisFault( "Admin.error",
                                      "Unknown handler: " + hName,
                                      null, null );
               c.addHandler( tmpH );
@@ -405,8 +418,8 @@ public class Admin {
         else if ( type.equals( "bean" ) ) {
           Debug.Print( 2, "Deploying bean: " + name );
           registerTypeMapping(elem, tmr.getParent());
-        } else 
-          throw new AxisFault( "Admin.error", 
+        } else
+          throw new AxisFault( "Admin.error",
                                "Unknown type to " + action + ": " + type,
                                null, null );
       }
@@ -444,21 +457,21 @@ public class Admin {
 
     String qname = elem.getAttribute( "qname" );
     if (qname == null)
-      throw new AxisFault( "Admin.error", 
+      throw new AxisFault( "Admin.error",
         "Missing qname in bean " + name, null, null);
 
-    int pos = qname.indexOf(':'); 
+    int pos = qname.indexOf(':');
     if (pos < 0)
-      throw new AxisFault( "Admin.error", 
-        "Missing namespace in qname " + qname, 
+      throw new AxisFault( "Admin.error",
+        "Missing namespace in qname " + qname,
         null, null);
 
     String prefix = qname.substring(0, pos);
     String localPart = qname.substring(pos+1);
-    String namespace = XMLUtils.getNamespace(prefix, elem); 
+    String namespace = XMLUtils.getNamespace(prefix, elem);
     if (namespace == null)
-      throw new AxisFault( "Admin.error", 
-        "Unknown namespace in qname " + qname, 
+      throw new AxisFault( "Admin.error",
+        "Unknown namespace in qname " + qname,
         null, null);
 
     QName qn = new QName(namespace, localPart);
@@ -501,7 +514,7 @@ public class Admin {
     try {
       for ( i = 1 ; i < args.length ; i++ ) {
         System.out.println( "Processing '" + args[i] + "'" );
-        admin.process(XMLUtils.newDocument( new FileInputStream( args[i] ) ));
+        admin.process(null, XMLUtils.newDocument( new FileInputStream( args[i] ) ));
       }
     }
     catch( AxisFault e ) {

@@ -60,6 +60,8 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.utils.AxisClassLoader ;
+import org.apache.axis.providers.java.RPCProvider;
+
 import sun.tools.javac.Main;
 
 import org.w3c.dom.* ;
@@ -131,7 +133,7 @@ public class JWSProcessor extends BasicHandler
         String            outdir   = f1.getParent();
         String[]          args     = null ;
         
-        args = new String[] { "-d", outdir, 
+        args = new String[] { "-d", outdir,
                               "-classpath",
                                 System.getProperty("java.class.path" ),
                               jFile };
@@ -174,10 +176,10 @@ public class JWSProcessor extends BasicHandler
         cl.registerClass( clsName, cFile );
       msgContext.setClassLoader( cl );
 
-      /* Create a new RPCDispatchHandler - this will be the "service"   */
+      /* Create a new RPCProvider - this will be the "service"   */
       /* that we invoke.                                                */
       /******************************************************************/
-      Handler rpc = new RPCDispatchHandler();
+      Handler rpc = new RPCProvider();
       msgContext.setServiceHandler( rpc );
 
       rpc.addOption( "className", clsName );

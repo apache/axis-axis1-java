@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -57,7 +57,8 @@ package org.apache.axis.deployment.v2dd;
 import java.io.Serializable;
 import org.apache.axis.Handler;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.handlers.providers.*;
+import org.apache.axis.providers.*;
+import org.apache.axis.providers.java.*;
 import org.apache.axis.deployment.v2dd.providers.*;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
@@ -66,16 +67,16 @@ import org.apache.axis.utils.QName;
 /**
  * This is the class that actually bridges the gap between
  * SOAP 2.x and Axis.  An instance of this class is stored
- * within the registry and a new handler is created that 
+ * within the registry and a new handler is created that
  * represents the SOAP 2.x service when the newInstance
  * method is called.
  */
-public class V2DDDeployableItem implements DeployableItem, Serializable { 
+public class V2DDDeployableItem implements DeployableItem, Serializable {
 
     V2DDService service;
     QName qname;
     
-    public V2DDDeployableItem(V2DDService service) {        
+    public V2DDDeployableItem(V2DDService service) {
         this.service = service;
     }
     
@@ -102,14 +103,18 @@ public class V2DDDeployableItem implements DeployableItem, Serializable {
             
             if (prov instanceof V2DDComProvider) provider = new ComProvider();
             if (prov instanceof V2DDScriptProvider) provider = new BSFProvider();
-            if (provider == null) provider = new JavaProvider();
+            
+            // ROBJ 911 -- this will need to be fixed now that JavaProvider really
+            // exists!  But I am not sure of the intended semantics here.  Nor am
+            // I sure whether any test code exists for this...?!?!
+            if (provider == null) provider = new RPCProvider();
                
             provider.setOptions(prov.getOptionsTable());
             prov.newInstance(provider);
             
             for (int n = 0; n < methods.length; n++) {
                 provider.addOperation(methods[n],
-                                      new QName(V2DDConstants.V2DD_NS, 
+                                      new QName(V2DDConstants.V2DD_NS,
                                                 methods[n]));
             }
             
