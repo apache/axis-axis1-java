@@ -131,6 +131,7 @@ public class AxisServlet extends HttpServlet {
         ServletContext context = getServletConfig().getServletContext();
         MessageContext msgContext = new MessageContext(engine);
         HandlerRegistry hr = engine.getHandlerRegistry();
+        PrintWriter writer = res.getWriter();
 
         String realpath = context.getRealPath(req.getServletPath());
         String configPath = context.getRealPath("/WEB-INF");
@@ -173,19 +174,25 @@ public class AxisServlet extends HttpServlet {
                     Document doc = (Document) msgContext.getProperty("WSDL");
                     if (doc != null) {
                         res.setContentType("text/xml");
-                        XMLUtils.DocumentToWriter(doc, res.getWriter());
-                        res.getWriter().close();
+                        XMLUtils.DocumentToWriter(doc, writer);
+                    } else {
+                        res.setContentType("text/html");
+                        writer.println("<h2>Axis Error</h2>");
+                        writer.println("<p>No WSDL can be found!</p>");
                     }
                 } else if (listRequested) {
                     Document doc = Admin.listConfig(engine);
                     if (doc != null) {
                         res.setContentType("text/xml");
-                        XMLUtils.DocumentToWriter(doc, res.getWriter());
-                        res.getWriter().close();
+                        XMLUtils.DocumentToWriter(doc, writer);
+                    } else {
+                        res.setContentType("text/html");
+                        writer.println("<h2>Axis Error</h2>");
+                        writer.println("<p>No Configuration list can be found!</p>");
                     }
                 } else if (req.getParameterNames().hasMoreElements()) {
+                    res.setContentType("text/html");
                     Enumeration enum = req.getParameterNames();
-                    PrintWriter writer = res.getWriter();
                     String method = null;
                     String args = "";
                     while (enum.hasMoreElements()) {
@@ -200,7 +207,6 @@ public class AxisServlet extends HttpServlet {
                     }
                     if (method == null) {
                         writer.println("<p>No method!</p>");
-                        writer.close();
                         return;
                     }
                     String body = "<" + method + ">" + args +
@@ -221,42 +227,46 @@ public class AxisServlet extends HttpServlet {
                     if (respMsg != null) {
                         writer.println("<p>Got response message:</p>");
                         writer.println(respMsg.getAsString());
-                        writer.close();
                     } else {
                         writer.println("<p>No response message!</p>");
-                        writer.close();
                     }
-                    return;
                 } else {
                     res.setContentType("text/html");
-                    res.getWriter().println("<h1>" + req.getRequestURI() +
+                    writer.println("<h1>" + req.getRequestURI() +
                             "</h1>");
-                    res.getWriter().println(configPath);
-                    res.getWriter().println(
+                    writer.println(configPath);
+                    writer.println(
                             "<p>Hi there, this is an Axis service!</p>");
-                    res.getWriter().println(
+                    writer.println(
                             "<i>Perhaps there'll be a form for invoking the service here...</i>");
-                    res.getWriter().close();
-                    return;
                 }
             } catch (AxisFault fault) {
-                res.getWriter().println("<pre>Fault - " + fault + " </pre>");
+                res.setContentType("text/html");
+                writer.println("<h2>Axis Error</h2>");
+                writer.println("<p>Sorry, something seems to have gone wrong... here are the details:</p>");
+                writer.println("<pre>Fault - " + fault + " </pre>");
             } catch (Exception e) {
-                  res.getWriter().println("<pre>Exception - " + e + "<br>");
-                  e.printStackTrace(res.getWriter());
-                  res.getWriter().println("</pre>");
+                res.setContentType("text/html");
+                writer.println("<h2>Axis Error</h2>");
+                writer.println("<p>Sorry, something seems to have gone wrong... here are the details:</p>");
+                writer.println("<pre>Exception - " + e + "<br>");
+                e.printStackTrace(res.getWriter());
+                writer.println("</pre>");
+            } finally {
+                writer.close();
+                return;
             }
         }
 
         res.setContentType("text/html");
-        res.getWriter().println( "<html><h1>Axis HTTP Servlet</h1>" );
-        res.getWriter().println( "Hi, you've reached the Axis HTTP servlet." +
+        writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
+        writer.println( "Hi, you've reached the Axis HTTP servlet." +
            "Normally you would be hitting this URL with a SOAP client " +
            "rather than a browser.");
 
-        res.getWriter().println("<p>In case you're interested, my Axis " +
+        writer.println("<p>In case you're interested, my Axis " +
             "transport name appears to be '<b>" + transportName + "</b>'");
-        res.getWriter().println("</html>");
+        writer.println("</html>");
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
