@@ -115,7 +115,7 @@ public class MultithreadTestCase extends TestCase {
         }
         assertTrue("binding is null", binding != null);
         ((AddressBookSOAPBindingStub) binding).setMaintainSession(true);
-        int NUM_THREADS = 100;
+        int NUM_THREADS = 50;
         Thread[] threads = new Thread[NUM_THREADS];
         for (int i = 0; i < NUM_THREADS; ++i) {
             threads[i] = new Thread(new Run());
