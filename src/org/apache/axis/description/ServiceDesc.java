@@ -57,12 +57,14 @@ package org.apache.axis.description;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.wsdl.Skeleton;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * A ServiceDesc is an abstract description of a service.
@@ -114,6 +116,14 @@ public class ServiceDesc {
 
     /** Place to store user-extensible service-related properties */
     private HashMap properties = null;
+
+    /**
+     * Is the implementation a Skeleton?  If this is true, it will generate
+     * a Fault to provide OperationDescs via WSDD.
+     */
+    private boolean isSkeletonClass = false;
+    /** Cached copy of the skeleton "getParameterDescStatic" method */
+    private Method skelMethod = null;
 
     /** Lookup caches */
     private HashMap name2OperationsMap = null;
@@ -173,6 +183,9 @@ public class ServiceDesc {
 
     public void setImplClass(Class implClass) {
         this.implClass = implClass;
+        if (Skeleton.class.isAssignableFrom(implClass)) {
+            isSkeletonClass = true;
+        }
     }
 
     public TypeMapping getTypeMapping() {
@@ -320,17 +333,24 @@ public class ServiceDesc {
                 for (j = 0; j < paramTypes.length; j++) {
                     Class type = paramTypes[j];
                     ParameterDesc param = oper.getParameter(j);
-                    // See if they match
-                    Class paramClass = tm.getClassForQName(
-                            param.getTypeQName());
-
-                    // This is a match if the paramClass is somehow
-                    // convertable to the "real" parameter type.
-                    if (JavaUtils.isConvertable(paramClass, type)) {
+                    // If no type is specified, just use the Java type
+                    QName typeQName = param.getTypeQName();
+                    if (typeQName == null) {
                         param.setJavaType(type);
-                        continue;
+                        param.setTypeQName(tm.getTypeQName(type));
+                    } else {
+                        // A type was specified - see if they match
+                        Class paramClass = tm.getClassForQName(
+                                param.getTypeQName());
+
+                        // This is a match if the paramClass is somehow
+                        // convertable to the "real" parameter type.  If not,
+                        // break out of this loop.
+                        if (!JavaUtils.isConvertable(paramClass, type))
+                            break;
+
+                        param.setJavaType(type);
                     }
-                    break;
                 }
 
                 if (j != paramTypes.length) {
@@ -437,7 +457,9 @@ public class ServiceDesc {
      * Make an OperationDesc from a Java method.
      *
      * In the absence of deployment metadata, this code will introspect a
-     * Method and create an appropriate OperationDesc, using parameter names
+     * Method and create an appropriate OperationDesc.  If the class
+     * implements the Skeleton interface, we will use the metadata from there
+     * in constructing the OperationDesc.  If not, we use parameter names
      * from the bytecode debugging info if available, or "in0", "in1", etc.
      * if not.
      */
@@ -447,42 +469,69 @@ public class ServiceDesc {
             return;
         }
 
-        // Make an OperationDesc
+        // Make an OperationDesc, fill in common stuff
         OperationDesc operation = new OperationDesc();
         operation.setName(method.getName());
         operation.setMethod(method);
-        Class [] paramTypes = method.getParameterTypes();
-        String [] paramNames =
-                JavaUtils.getParameterNamesFromDebugInfo(method);
-
-        for (int k = 0; k < paramTypes.length; k++) {
-            Class type = paramTypes[k];
-            ParameterDesc paramDesc = new ParameterDesc();
-            // If we have a name for this param, use it, otherwise call
-            // it "in*"
-            if (paramNames != null) {
-                paramDesc.setName(paramNames[k+1]);
-            } else {
-                paramDesc.setName("in" + k);
-            }
-            paramDesc.setJavaType(type);
-
-            // If it's a Holder, mark it INOUT and set the type to the
-            // held type.  Otherwise it's IN with its own type.
-
-            Class heldClass = JavaUtils.getHolderValueType(type);
-            if (heldClass != null) {
-                paramDesc.setMode(ParameterDesc.INOUT);
-                paramDesc.setTypeQName(tm.getTypeQName(heldClass));
-            } else {
-                paramDesc.setMode(ParameterDesc.IN);
-                paramDesc.setTypeQName(tm.getTypeQName(type));
-            }
-            operation.addParameter(paramDesc);
-        }
-
         operation.setReturnClass(method.getReturnType());
         operation.setReturnType(tm.getTypeQName(method.getReturnType()));
+
+        Class [] paramTypes = method.getParameterTypes();
+
+        if (isSkeletonClass) {
+            if (skelMethod == null) {
+                // Grab metadata from the Skeleton for parameter info
+                try {
+                    skelMethod = implClass.getDeclaredMethod(
+                                            "getOperationDescByName",
+                                            new Class [] { int.class });
+                } catch (NoSuchMethodException e) {
+                } catch (SecurityException e) {
+                }
+                if (skelMethod == null) {
+                    // FIXME : Throw an error?
+                    return;
+                }
+            }
+            try {
+                OperationDesc skelDesc =
+                        (OperationDesc)skelMethod.invoke(implClass,
+                                            new Object [] { method.getName() });
+            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException e) {
+            } catch (InvocationTargetException e) {
+            }
+            //operation.setParameters(skelDesc.getParameters());
+        } else {
+            String [] paramNames =
+                    JavaUtils.getParameterNamesFromDebugInfo(method);
+
+            for (int k = 0; k < paramTypes.length; k++) {
+                Class type = paramTypes[k];
+                ParameterDesc paramDesc = new ParameterDesc();
+                // If we have a name for this param, use it, otherwise call
+                // it "in*"
+                if (paramNames != null) {
+                    paramDesc.setName(paramNames[k+1]);
+                } else {
+                    paramDesc.setName("in" + k);
+                }
+                paramDesc.setJavaType(type);
+
+                // If it's a Holder, mark it INOUT and set the type to the
+                // held type.  Otherwise it's IN with its own type.
+
+                Class heldClass = JavaUtils.getHolderValueType(type);
+                if (heldClass != null) {
+                    paramDesc.setMode(ParameterDesc.INOUT);
+                    paramDesc.setTypeQName(tm.getTypeQName(heldClass));
+                } else {
+                    paramDesc.setMode(ParameterDesc.IN);
+                    paramDesc.setTypeQName(tm.getTypeQName(type));
+                }
+                operation.addParameter(paramDesc);
+            }
+        }
 
         addOperationDesc(operation);
         method2OperationMap.put(method, operation);

@@ -179,10 +179,44 @@ public class Admin
         return result;
     }
 
-    protected static Document processWSDD(AxisEngine engine, Element root)
+    protected static Document processWSDD(MessageContext msgContext,
+                                          AxisEngine engine,
+                                          Element root)
         throws Exception
     {
         Document doc = null ;
+
+        String action = root.getLocalName();
+        if (action.equals("passwd")) {
+            String newPassword = root.getFirstChild().getNodeValue();
+            engine.setAdminPassword(newPassword);
+            doc = XMLUtils.newDocument();
+            doc.appendChild( root = doc.createElementNS("", "Admin" ) );
+            root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
+            return doc;
+        }
+
+        if (action.equals("quit")) {
+            log.error(JavaUtils.getMessage("quitRequest00"));
+            if (msgContext != null) {
+                // put a flag into message context so listener will exit after
+                // sending response
+                msgContext.setProperty(msgContext.QUIT_REQUESTED, "true");
+            }
+            doc = XMLUtils.newDocument();
+            doc.appendChild( root = doc.createElementNS("", "Admin" ) );
+            root.appendChild( doc.createTextNode( JavaUtils.getMessage("quit00", "") ) );
+            return doc;
+        }
+
+        if ( action.equals("list") ) {
+            return listConfig(engine);
+        }
+
+        if (action.equals("clientdeploy")) {
+            // set engine to client engine
+            engine = engine.getClientEngine();
+        }
 
         WSDDDocument wsddDoc = new WSDDDocument(root);
         EngineConfiguration config = engine.getConfig();
@@ -262,7 +296,7 @@ public class Admin
         
         // If this is WSDD, process it correctly.
         if (rootNS != null && rootNS.equals(WSDDConstants.WSDD_NS)) {
-            return processWSDD(engine, root);
+            return processWSDD(msgContext, engine, root);
         }
 
         // Not WSDD, use old code.

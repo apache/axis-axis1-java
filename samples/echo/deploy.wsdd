@@ -97,12 +97,72 @@
         <handler type="java:samples.echo.echoHeaderStructHandler"/>
     </responseFlow>
 
-    <operation name="echoStructAsSimpleTypes">
+    <operation returnQName="return" name="echoString">
+      <parameter name="input"/>
+    </operation>
+    <operation returnQName="return" name="echoStringArray">
+      <parameter name="inputStringArray"/>
+    </operation>
+    <operation returnQName="return" name="echoInteger">
+      <parameter name="inputInteger"/>
+    </operation>
+    <operation returnQName="return" name="echoIntegerArray">
+      <parameter name="inputIntegerArray"/>
+    </operation>
+    <operation returnQName="return" name="echoFloat">
+      <parameter name="inputFloat"/>
+    </operation>
+    <operation returnQName="return" name="echoFloatArray">
+      <parameter name="inputFloatArray"/>
+    </operation>
+    <operation returnQName="return" name="echoStruct">
+      <parameter name="inputStruct"/>
+    </operation>
+    <operation returnQName="return" name="echoStructArray">
+      <parameter name="inputStructArray"/>
+    </operation>
+    <operation returnQName="return" name="echoVoid"/>
+    <operation returnQName="return" name="echoBase64">
+      <parameter name="inputBase64"/>
+    </operation>
+    <operation returnQName="return" name="echoHexBinary">
+      <parameter name="inputHexBinary"/>
+    </operation>
+    <operation returnQName="return" name="echoDate">
+      <parameter name="inputDate"/>
+    </operation>
+    <operation returnQName="return" name="echoDecimal">
+      <parameter name="inputDecimal"/>
+    </operation>
+    <operation returnQName="return" name="echoBoolean">
+      <parameter name="inputBoolean"/>
+    </operation>
+    <operation returnQName="return" name="echoMap">
+      <parameter name="inputMap"/>
+    </operation>
+    <operation returnQName="return" name="echoMapArray">
+      <parameter name="inputMapArray"/>
+    </operation>
+    <operation returnQName="return" name="echoSimpleTypesAsStruct">
+      <parameter name="inputString"/>
+      <parameter name="inputInteger"/>
+      <parameter name="inputFloat"/>
+    </operation>
+    <operation returnQName="return" name="echoStructAsSimpleTypes">
       <parameter name="inputStruct" xmlns:ns="http://soapinterop.org/xsd"
                  type="ns:SOAPStruct"/>
       <parameter name="outputString" type="xsd:string" mode="OUT"/>
       <parameter name="outputInteger" type="xsd:int" mode="OUT"/>
       <parameter name="outputFloat" type="xsd:float" mode="OUT"/>
+    </operation>
+    <operation returnQName="return" name="echo2DStringArray">
+      <parameter name="input2DStringArray"/>
+    </operation>
+    <operation returnQName="return" name="echoNestedStruct">
+      <parameter name="inputNestedStruct"/>
+    </operation>
+    <operation returnQName="return" name="echoNestedArray">
+      <parameter name="inputNestedArray"/>
     </operation>
   </service>
 </deployment>
