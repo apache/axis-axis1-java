@@ -445,9 +445,6 @@ public class BeanSerializer extends Deserializer
                                     field,
                                     pd.getType().getName()}));
                     throw new SAXException(ex);
-                    //throw new SAXException(ex.toString() + " " + pd.getReadMethod().toString() + " " +
-                    //                       pd.getWriteMethod().toString() + " " + field + " " + 
-                    //                       value.toString()+ " " + value.getClass().getName());
                 }
             }
         }

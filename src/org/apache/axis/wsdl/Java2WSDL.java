@@ -60,6 +60,7 @@ import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
 import org.apache.avalon.excalibur.cli.CLUtil;
 
 import org.apache.axis.wsdl.fromJava.Emitter;
+import org.apache.axis.utils.JavaUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +69,7 @@ import java.util.List;
  * Command line interface to the java2wsdl utility
  *
  * @author Ravi Kumar (rkumar@borland.com)
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 
 public class Java2WSDL {
@@ -82,7 +84,6 @@ public class Java2WSDL {
     protected static final int SERVICE_NAME_OPT = 's';
     protected static final int LOCATION_OPT = 'l';
     protected static final int LOCATION_IMPORT_OPT = 'L';
-//    protected static final int CLASSDIR_OPT = 'c';
     protected static final int METHODS_ALLOWED_OPT = 'm';
     protected static final int INHERITED_CLASS_OPT = 'a';
     protected static final int FACTORY_CLASS_OPT = 'f';
@@ -100,61 +101,55 @@ public class Java2WSDL {
         new CLOptionDescriptor("help",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
-                "print this message and exit"),
+                JavaUtils.getMessage("j2wopthelp00")),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
-                "output Wsdl filename"),
+                JavaUtils.getMessage("j2woptoutput00")),
         new CLOptionDescriptor("location",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_OPT,
-                "service location url"),
+                JavaUtils.getMessage("j2woptlocation00")),
         new CLOptionDescriptor("service",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SERVICE_NAME_OPT,
-                "service name (obtained from --location if not specified)"),
+                JavaUtils.getMessage("j2woptservice00")),
         new CLOptionDescriptor("namespace",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_OPT,
-                "target namespace"),
+                JavaUtils.getMessage("j2woptnamespace00")),
         new CLOptionDescriptor("PkgtoNS",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 PACKAGE_OPT,
-                "package=namespace, name value pairs"),
+                JavaUtils.getMessage("j2woptPkgtoNS00")),
         new CLOptionDescriptor("methods",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_ALLOWED_OPT,
-                "space separated list of methods to export"),
+                JavaUtils.getMessage("j2woptmethods00")),
         new CLOptionDescriptor("all",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 INHERITED_CLASS_OPT,
-                "look for allowed methods in inherited class"),
-//        there is no implementation for a class loader
-//        look at todo in Emitter
-//        new CLOptionDescriptor("classDir",
-//                CLOptionDescriptor.ARGUMENT_REQUIRED,
-//                CLASSDIR_OPT,
-//                "classes directory"),
+                JavaUtils.getMessage("j2woptall00")),
         new CLOptionDescriptor("outputWsdlMode",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_WSDL_MODE_OPT,
-                "output WSDL mode: All, Interface, Implementation"),
+                JavaUtils.getMessage("j2woptoutputWsdlMode00")),
         new CLOptionDescriptor("locationImport",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_IMPORT_OPT,
-                "location of interface wsdl"),
+                JavaUtils.getMessage("j2woptlocationImport00")),
         new CLOptionDescriptor("namespaceImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_IMPL_OPT,
-                "target namespace for implementation wsdl"),
+                JavaUtils.getMessage("j2woptnamespaceImpl00")),
         new CLOptionDescriptor("outputImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_IMPL_OPT,
-                "output Implementation Wsdl filename, setting this causes --outputWsdlMode to be ignored"),
+                JavaUtils.getMessage("j2woptoutputImpl00")),
         new CLOptionDescriptor("factory",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 FACTORY_CLASS_OPT,
-                "name of the Java2WSDLFactory class for extending WSDL generation functions"),
+                JavaUtils.getMessage("j2woptfactory00")),
 
     };
 
@@ -176,7 +171,7 @@ public class Java2WSDL {
 
         // Print parser errors, if any
         if (null != parser.getErrorString()) {
-            System.err.println("Error: " + parser.getErrorString());
+            System.err.println(JavaUtils.getMessage("j2werror00",parser.getErrorString()));
             printUsage();
         }
 
@@ -217,10 +212,6 @@ public class Java2WSDL {
                         printUsage();
                         break;
 
-//                    case CLASSDIR_OPT:
-//                        classDir = option.getArgument();
-//                        break;
-//
                     case OUTPUT_WSDL_MODE_OPT:
                         String modeArg = option.getArgument();
                         if ("All".equalsIgnoreCase(modeArg))
@@ -231,9 +222,7 @@ public class Java2WSDL {
                             mode = Emitter.MODE_IMPLEMENTATION;
                         else {
                             mode = Emitter.MODE_ALL; 
-                            System.err.println("unrecognized mode : " + modeArg);
-                            System.err.println("use All, Interface and Implementation");
-                            System.err.println("using default: All");
+                            System.err.println(JavaUtils.getMessage("j2wmodeerror", modeArg));
                         }
                         break;
 
@@ -304,18 +293,14 @@ public class Java2WSDL {
     private static void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
-        msg.append("Java2WSDL generator").append(lSep);
-        msg.append("Usage: java " + Java2WSDL.class.getName() + " [options] class-of-portType").append(lSep);
-        msg.append("Options: ").append(lSep);
+        msg.append("Java2WSDL " 
+                   + JavaUtils.getMessage("j2wemitter00")).append(lSep);
+        msg.append(JavaUtils.getMessage("j2wusage00", 
+                   "java " + Java2WSDL.class.getName() + " [options] class-of-portType")).append(lSep);
+        msg.append(JavaUtils.getMessage("j2woptions00")).append(lSep);
         msg.append(CLUtil.describeOptions(Java2WSDL.options).toString());
-        msg.append("Details: ").append(lSep);
-        msg.append("\tportType    name= <class-of-portType name>").append(lSep);
-        msg.append("\tbinding     name= <--service value>SoapBinding").append(lSep);
-        msg.append("\tservice     name= <--service value>Service").append(lSep);
-        msg.append("\tport        name= <--service value>").append(lSep);
-        msg.append("\taddress location= <--location value>").append(lSep);
+        msg.append(JavaUtils.getMessage("j2wdetails00")).append(lSep);
         System.out.println(msg.toString());
         System.exit(0);
     }
-
 }
