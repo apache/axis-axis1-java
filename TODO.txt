@@ -135,6 +135,10 @@ GENERAL / UNCATEGORIZED
      strings into resources.properties!
 ! <Glen> Handle static methods without needing to create object instances
 ! <> Make Version accept org.apache.axis.utils.Options-style args
+! <> If soapenc types are used in our WSDL, we must add an import statement
+     for that type:
+       <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+     We must also check for this import statement in WSDL2Java.
 
 
 FUTURE ENHANCEMENTS (not necessary for current release)
