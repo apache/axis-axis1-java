@@ -752,7 +752,7 @@ public class Utils {
 
     public static String getLastLocalPart(String localPart) {
         int anonymousDelimitorIndex = localPart.lastIndexOf('>');
-        if (anonymousDelimitorIndex > -1) {
+        if (anonymousDelimitorIndex > -1 && anonymousDelimitorIndex < localPart.length()-1) {
             localPart = localPart.substring(anonymousDelimitorIndex + 1);
         }
         return localPart;
