@@ -91,7 +91,6 @@ public class EchoAttachment {
 
     Options opts = null;
 
-    static boolean doTheDIME= false;
 
     public EchoAttachment( Options opts) {
         this.opts = opts;
@@ -104,7 +103,7 @@ public class EchoAttachment {
      *  @param The filename that is the source to send.
      *  @return True if sent and compared.
      */
-    public boolean echo(String filename) throws Exception {
+    public boolean echo(final boolean doTheDIME, String filename) throws Exception {
 
         //javax.activation.MimetypesFileTypeMap map= (javax.activation.MimetypesFileTypeMap)javax.activation.MimetypesFileTypeMap.getDefaultFileTypeMap();
         //map.addMimeTypes("application/x-org-apache-axis-wsdd wsdd");
@@ -196,7 +195,7 @@ public class EchoAttachment {
      *  @param The directory that is the source to send.
      *  @return True if sent and compared.
      */
-    public boolean echoDir(String filename) throws Exception {
+    public boolean echoDir(final boolean doTheDIME, String filename) throws Exception {
         boolean rc = true;
 
 
@@ -319,6 +318,7 @@ public class EchoAttachment {
                 System.exit(8);
             }
 
+            boolean doTheDIME= false;
             if( args[0].trim().equalsIgnoreCase("+FDR")){
               doTheDIME= true;
               ++argpos;
@@ -339,7 +339,7 @@ public class EchoAttachment {
             }
 
             if (source.isFile()) {
-                if (echoattachment.echo(argFile)) {
+                if (echoattachment.echo(doTheDIME, argFile)) {
                     System.out.println("Attachment sent and received ok!");
                     System.exit(0);
                 }
@@ -349,7 +349,7 @@ public class EchoAttachment {
                 }
             }
             else { //a directory?
-                if (echoattachment.echoDir(argFile)) {
+                if (echoattachment.echoDir(doTheDIME, argFile)) {
                     System.out.println("Attachments sent and received ok!");
                     System.exit(0);
                 }
