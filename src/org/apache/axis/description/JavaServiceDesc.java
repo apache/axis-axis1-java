@@ -619,7 +619,7 @@ public class JavaServiceDesc implements ServiceDesc {
 
         // Find the method.  We do this once for each Operation.
         
-        Method [] methods = implClass.getDeclaredMethods();
+        Method[] methods = getMethods(implClass);
         // A place to keep track of possible matches
         Method possibleMatch = null;
         
@@ -754,6 +754,15 @@ public class JavaServiceDesc implements ServiceDesc {
                                                            oper.getName(),
                                                            implClass.getName()));
             throw ie;
+        }
+    }
+
+    private Method[] getMethods(Class implClass) {
+        if (implClass.isInterface()){
+            // Returns all methods incl inherited
+            return implClass.getMethods();
+        } else {
+            return implClass.getDeclaredMethods();
         }
     }
 
@@ -908,7 +917,7 @@ public class JavaServiceDesc implements ServiceDesc {
             return;
         }
 
-        Method [] methods = implClass.getDeclaredMethods();
+        Method [] methods = getMethods(implClass);
 
         for (int i = 0; i < methods.length; i++) {
             if (Modifier.isPublic(methods[i].getModifiers()) && !isServiceLifeCycleMethod(implClass, methods[i])) {
@@ -1074,7 +1083,7 @@ public class JavaServiceDesc implements ServiceDesc {
                 return;
         }
         
-        Method [] methods = implClass.getDeclaredMethods();
+        Method [] methods = getMethods(implClass);
 
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
