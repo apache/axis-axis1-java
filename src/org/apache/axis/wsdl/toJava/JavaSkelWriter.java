@@ -75,8 +75,8 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -221,6 +221,23 @@ public class JavaSkelWriter extends JavaClassWriter {
                 }
                 pw.println("        _oper = new org.apache.axis.description.OperationDesc(\"" +
                             javaOpName + "\", _params, " + returnStr + ");");
+
+                // Set the return type QName
+                TypeEntry returnTE = parameters.returnType;
+                if (returnTE != null &&
+                    returnTE instanceof Element &&
+                    returnTE.getRefType() != null) {
+                    returnTE = returnTE.getRefType();
+                } 
+                if (returnTE != null &&
+                    returnTE instanceof CollectionType &&
+                    returnTE.getRefType() != null) {
+                    returnTE = returnTE.getRefType();
+                }
+                if (returnTE != null) {
+                    pw.println("        _oper.setReturnType(" +
+                               Utils.getNewQName(returnTE.getQName()) + ");");
+                }
 
                 // If we need to know the QName (if we have a namespace or
                 // the actual method name doesn't match the XML we expect),

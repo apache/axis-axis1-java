@@ -157,6 +157,20 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // byte[] -ser-> XSD_BASE64
         // XSD_BASE64 -deser-> byte[]
         // SOAP_BASE64 -deser->byte[]
+        // 
+        // Special case:
+        // If serialization is requested for xsd:byte with byte[],
+        // the array serializer is used.  If deserialization
+        // is specifically requested for xsd:byte with byte[], the
+        // simple deserializer is used.  This is necessary 
+        // to support the serialization/deserialization 
+        // of <element name="a" type="xsd:byte" maxOccurs="unbounded" />
+        // as discrete bytes without interference with XSD_BASE64.
+        myRegister(Constants.XSD_BYTE,       byte[].class,
+                   new ArraySerializerFactory(),
+                   null,
+                   false);
+
         myRegister(Constants.SOAP_BASE64,     byte[].class,
                    new Base64SerializerFactory(byte[].class,
                                                Constants.SOAP_BASE64 ),
@@ -237,7 +251,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    null, null,true);
         myRegister(Constants.XSD_BYTE,       byte.class,
                    null, null,true);
-
 
         // Map QNAME to the jax rpc QName class
         myRegister(Constants.XSD_QNAME,
