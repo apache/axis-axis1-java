@@ -30,8 +30,9 @@ JAX-RPC COMPATIBILITY
 ! <> Implement TypeMapping and TypeMappingRegistry ala JAX-RPC 0.8
 ! <> Implement Handler code ala JAX-RPC 0.8
 ! <> Once we get word that javax.xml.rpc.encoding.XMLType is a real class (it's in the JAX-RPC javadocs but not in the spec) then replace all the constants in org.apache.axis.encoding.XMLType with the JAX-RPC constants.
+! <> Once we get word that javax.xml.rpc.namespace.NamespaceConstants is a real class (it's in the JAX-RPC javadocs but not in the spec) then use it.
 ! <> Implement javax.xml.rpc.server interfaces.
-! <> Change all the samples (and the tests?) to use the JAX-RPC interfaces rather than the AXIS ones.
+! <> Add some JAX-RPC compliance samples/tests.
 
 SOAP 1.2 SUPPORT
 ----------------
