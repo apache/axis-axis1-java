@@ -55,8 +55,9 @@
 
 package org.apache.axis.encoding;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -67,6 +68,7 @@ import javax.xml.rpc.JAXRPCException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Rich Scheuerle (scheu@us.ibm.com)
@@ -132,6 +134,12 @@ public class TypeMappingImpl implements TypeMapping
     private ArrayList namespaces;   // Supported namespaces
 
     /**
+     * Should we "auto-type" classes we don't recognize into the "java:"
+     * namespace?
+     */
+    private boolean doAutoTypes = false;
+
+    /**
      * Construct TypeMapping
      */
     public TypeMappingImpl(TypeMapping delegate) {
@@ -191,8 +199,9 @@ public class TypeMappingImpl implements TypeMapping
      * pair is registered.
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
-     * @return: 
+     * @return true if there is a mapping for the given pair, or
      * false if the pair is not specifically registered.
+     *
      * For example if called with (java.lang.String[], soapenc:Array)
      * this routine will return false because this pair is
      * probably not specifically registered.
@@ -288,26 +297,38 @@ public class TypeMappingImpl implements TypeMapping
         throws JAXRPCException
     {
         javax.xml.rpc.encoding.SerializerFactory sf = null;
-        // Try to get the serializer associated with this pair
-        Pair pair = new Pair(javaType, xmlType);
 
         // If the xmlType was not provided, get one
         if (xmlType == null) {
-            pair.xmlType = getTypeQName(javaType);
-        }
-        // Now get the serializer with the pair
-        if (pair.xmlType != null) {
-            sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
-            // If not successful, use the xmlType to get
-            // another pair.  For some xmlTypes (like SOAP_ARRAY)
-            // all of the possible javaTypes are not registered.
-            if (sf == null) {
-                pair = (Pair) qName2Pair.get(pair.xmlType);
-                if (pair != null) {
-                    sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
-                }
+            xmlType = getTypeQName(javaType);
+            // If we couldn't find one, we're hosed, since getTypeQName()
+            // already asked all of our delegates.
+            if (xmlType == null) {
+                return null;
+            }
+
+            // If we're doing autoTyping, we can use the default.
+            if (doAutoTypes &&
+                    xmlType.getNamespaceURI().equals(Constants.NS_URI_JAVA)) {
+                return new BeanSerializerFactory(javaType, xmlType);
             }
         }
+
+        // Try to get the serializer associated with this pair
+        Pair pair = new Pair(javaType, xmlType);
+
+        // Now get the serializer with the pair
+        sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
+        // If not successful, use the xmlType to get
+        // another pair.  For some xmlTypes (like SOAP_ARRAY)
+        // all of the possible javaTypes are not registered.
+        if (sf == null) {
+            pair = (Pair) qName2Pair.get(pair.xmlType);
+            if (pair != null) {
+                sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
+            }
+        }
+
         if (sf == null && delegate != null) {
             sf = (SerializerFactory)
                 delegate.getSerializer(javaType, xmlType);
@@ -333,20 +354,36 @@ public class TypeMappingImpl implements TypeMapping
         getDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
         javax.xml.rpc.encoding.DeserializerFactory df = null;
-        Pair pair = new Pair(javaType, xmlType);
+
         if (javaType == null) {
-            pair.javaType = getClassForQName(xmlType);
+            javaType = getClassForQName(xmlType);
+            // If we don't have a mapping, we're hosed since getClassForQName()
+            // has already asked all our delegates.
+            if (javaType == null) {
+                return null;
+            }
+
+            if (doAutoTypes &&
+                Constants.NS_URI_JAVA.equals(xmlType.getNamespaceURI())) {
+                try {
+                    javaType = Class.forName(xmlType.getLocalPart());
+                } catch (ClassNotFoundException e) {
+                    return null;
+                }
+                return new BeanDeserializerFactory(javaType, xmlType);
+            }
         }
-        if (pair.javaType != null) {
-            df = (javax.xml.rpc.encoding.DeserializerFactory) pair2DF.get(pair);
-        }
+
+        Pair pair = new Pair(javaType, xmlType);
+
+        df = (javax.xml.rpc.encoding.DeserializerFactory) pair2DF.get(pair);
+
         if (df == null && delegate != null) {
             df = (javax.xml.rpc.encoding.DeserializerFactory)
                 delegate.getDeserializer(javaType, xmlType);
         }
         return df;
     }
-
 
     /**
      * Removes the SerializerFactory registered for the specified
@@ -401,12 +438,28 @@ public class TypeMappingImpl implements TypeMapping
      */
     public QName getTypeQName(Class javaType) {
         //log.debug("getTypeQName javaType =" + javaType);
+        if (javaType == null)
+            return null;
+
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
         if (pair == null && delegate != null) {
             xmlType = delegate.getTypeQName(javaType);
         } else if (pair != null) {
             xmlType = pair.xmlType;
+        }
+
+        // Can only detect arrays via code
+        if (xmlType == null &&
+            (javaType.isArray() ||
+             javaType == List.class ||
+             List.class.isAssignableFrom(javaType))) {
+            xmlType = Constants.SOAP_ARRAY;
+        }
+
+        if (xmlType == null && doAutoTypes) {
+            xmlType = new QName(Constants.NS_URI_JAVA,
+                                javaType.getName());
         }
 
         //log.debug("getTypeQName xmlType =" + xmlType);
@@ -426,6 +479,15 @@ public class TypeMappingImpl implements TypeMapping
             javaType = delegate.getClassForQName(xmlType);
         } else if (pair != null) {
             javaType = pair.javaType;
+        }
+
+        if (javaType == null && doAutoTypes &&
+                Constants.NS_URI_JAVA.equals(xmlType.getNamespaceURI())) {
+            // Classloader?
+            try {
+                javaType = Class.forName(xmlType.getLocalPart());
+            } catch (ClassNotFoundException e) {
+            }
         }
 
         //log.debug("getClassForQName javaType =" + javaType);
@@ -467,5 +529,9 @@ public class TypeMappingImpl implements TypeMapping
         getDeserializer(QName xmlType)
         throws JAXRPCException {
         return getDeserializer(null, xmlType);
+    }
+
+    public void setDoAutoTypes(boolean doAutoTypes) {
+        this.doAutoTypes = doAutoTypes;
     }
 }

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -84,6 +84,11 @@ public class Constants {
     public static final String NS_URI_AXIS = "http://xml.apache.org/axis/";
     public static final String NS_URI_XMLSOAP = "http://xml.apache.org/xml-soap";
 
+    // Special namespace URI to indicate an "automatically" serialized Java
+    // type.  This allows us to use types without needing explicit mappings,
+    // such that Java classes like "org.foo.Bar" map to QNames like
+    // {http://xml.apache.org/axis/java}org.foo.Bar
+    public static final String NS_URI_JAVA = "http://xml.apache.org/axis/java";
 
     //
     // SOAP-ENV Namespaces
@@ -113,7 +118,7 @@ public class Constants {
 
 
     public static final String URI_LITERAL_ENC = "";
-    
+
     //
     // SOAP-ENC Namespaces
     //
@@ -191,8 +196,8 @@ public class Constants {
      * equals
      * The first QName is the current version of the name.  The second qname is compared
      * with the first considering all namespace uri versions.
-     * @param first Currently supported QName              
-     * @param second any qname                                                    
+     * @param first Currently supported QName
+     * @param second any qname
      * @return true if the qnames represent the same qname (paster namespace uri versions considered
      */
     public static boolean equals(QName first, QName second) {
@@ -250,7 +255,7 @@ public class Constants {
     public static final String URI_SOAP12_HTTP =
                                     "http://www.w3.org/2002/06/http";
 
-    public static final String NS_URI_XMLNS = 
+    public static final String NS_URI_XMLNS =
                                        "http://www.w3.org/2000/xmlns/";
 
     //
@@ -298,7 +303,7 @@ public class Constants {
     public static final String URI_2001_SCHEMA_XSI =
                                  "http://www.w3.org/2001/XMLSchema-instance";
     public static final String URI_DEFAULT_SCHEMA_XSI = URI_2001_SCHEMA_XSI;
-    
+
     public static final String[] URIS_SCHEMA_XSI = {
         URI_1999_SCHEMA_XSI,
         URI_2000_SCHEMA_XSI,
@@ -316,7 +321,7 @@ public class Constants {
         }
         return false;
     }
-    
+
     //
     // WSDL Namespace
     //
@@ -368,7 +373,7 @@ public class Constants {
     public static final String ELEM_HEADER   = "Header" ;
     public static final String ELEM_BODY     = "Body" ;
     public static final String ELEM_FAULT    = "Fault" ;
-    
+
     public static final String ELEM_MISUNDERSTOOD = "Misunderstood";
 
     public static final String ELEM_FAULT_CODE   = "faultcode" ;
@@ -387,12 +392,12 @@ public class Constants {
     public static final String ATTR_OFFSET          = "offset";
     public static final String ATTR_POSITION        = "position";
     public static final String ATTR_TYPE            = "type";
-    
+
     // Fault Codes
     //////////////////////////////////////////////////////////////////////////
     public static final String FAULT_SERVER_GENERAL =
                                                    "Server.generalException";
-    
+
     public static final String FAULT_SERVER_USER =
                                                    "Server.userException";
     public static final QName FAULT_MUSTUNDERSTAND =
@@ -401,11 +406,11 @@ public class Constants {
 
     // QNames
     //////////////////////////////////////////////////////////////////////////
-    public static final QName QNAME_FAULTCODE = 
+    public static final QName QNAME_FAULTCODE =
                                          new QName("", ELEM_FAULT_CODE);
-    public static final QName QNAME_FAULTSTRING = 
+    public static final QName QNAME_FAULTSTRING =
                                        new QName("", ELEM_FAULT_STRING);
-    public static final QName QNAME_FAULTACTOR = 
+    public static final QName QNAME_FAULTACTOR =
                                         new QName("", ELEM_FAULT_ACTOR);
     public static final QName QNAME_FAULTDETAILS =
                                          new QName("", ELEM_FAULT_DETAIL);
@@ -434,7 +439,7 @@ public class Constants {
 
     public static final QName XSD_NORMALIZEDSTRING = new QName(URI_2001_SCHEMA_XSD,    "normalizedString");
     public static final QName XSD_TOKEN = new QName(URI_2001_SCHEMA_XSD,    "token");
-    
+
     public static final QName SOAP_BASE64 = new QName(URI_DEFAULT_SOAP_ENC, "base64");
     public static final QName SOAP_STRING = new QName(URI_DEFAULT_SOAP_ENC, "string");
     public static final QName SOAP_BOOLEAN = new QName(URI_DEFAULT_SOAP_ENC, "boolean");
@@ -451,8 +456,8 @@ public class Constants {
     public static final QName SOAP_MAP = new QName(NS_URI_XMLSOAP, "Map");
     public static final QName SOAP_ELEMENT = new QName(NS_URI_XMLSOAP, "Element");
     public static final QName SOAP_VECTOR = new QName(NS_URI_XMLSOAP, "Vector");
-    
-    
+
+
     public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
     public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
     
