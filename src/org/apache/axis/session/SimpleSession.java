@@ -100,8 +100,10 @@ public class SimpleSession implements Session
      */
     public void set(String key, Object value)
     {
-        if (rep == null)
-            rep = new Hashtable();
+        synchronized (this) {
+            if (rep == null)
+                rep = new Hashtable();
+        }
         lastTouched = System.currentTimeMillis();
         rep.put(key, value);
     }
@@ -162,7 +164,7 @@ public class SimpleSession implements Session
      * which use database connections, etc. it might be an object wrapping
      * a table ID or somesuch.
      */
-    public Object getLockObject() {
+    public synchronized Object getLockObject() {
         if (rep == null) {
             rep = new Hashtable();
         }
