@@ -55,6 +55,7 @@
 
 package samples.echo ;
 
+import java.lang.reflect.Array;
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.HTTPCall ;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
@@ -75,12 +76,26 @@ public class TestClient {
     private static TypeMappingRegistry map = new SOAPTypeMappingRegistry();
 
     /**
+     * 
+     */
+    private static boolean equals(Object obj1, Object obj2) {
+       if (obj1 == null) return (obj2 == null);
+       if (obj1.equals(obj2)) return true;
+       if (!obj2.getClass().isArray()) return false;
+       if (!obj1.getClass().isArray()) return false;
+       if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
+       for (int i=0; i<Array.getLength(obj1); i++)
+           if (!equals(Array.get(obj1,i),Array.get(obj2,i))) return false;
+       return true;
+    }
+
+    /**
      * Test an echo method.  Declares success if the response returns
      * true with an Object.equal comparison with the object to be sent.
      * @param method name of the method to invoke
      * @param toSend object of the correct type to be sent
      */
-    public static void test(String method, Object toSend) {
+    private static void test(String method, Object toSend) {
 
         try {
             // Default return type based on what we expect
@@ -93,7 +108,7 @@ public class TestClient {
                 "http://soapinterop.org/", method, new Object[] {toSend} );
 
             // verify the result
-            if (toSend.equals(gotBack)) {
+            if (equals(toSend,gotBack)) {
                 System.out.println(method + "\t OK");
             } else {
                 System.out.println(method + "\t FAIL: " + gotBack);
@@ -122,10 +137,17 @@ public class TestClient {
                                     SOAPStructSer.getFactory());
 
         // execute the tests
-        test("echoString", "abdefg");
-        test("echoFloat", new Float(3.7F));
+        test("echoString", "abcdefg");
+        test("echoStringArray", new String[] {"abc", "def"});
         test("echoInteger", new Integer(42));
+        test("echoIntegerArray", new Integer[] {new Integer(42)});
+        test("echoFloat", new Float(3.7F));
+        test("echoFloatArray", new Float[] {new Float(3.7F), new Float(7F)});
         test("echoStruct", new SOAPStruct(5, "Hello", 10.3F));
+        test("echoStructArray", new SOAPStruct[] {
+          new SOAPStruct(1, "one", 1.1F),
+          new SOAPStruct(2, "two", 2.2F),
+          new SOAPStruct(3, "three", 3.3F)});
     }
 
 }
