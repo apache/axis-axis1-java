@@ -80,7 +80,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -159,10 +158,16 @@ public class AxisServlet extends HttpServlet
             jwsClassDir = context.getRealPath("/");
         }
     }
+    
+    public AxisServer getEngine() throws AxisFault { return getEngine(this); }
 
-    public AxisServer getEngine() throws AxisFault {
-        ServletContext  context = getServletContext();
-
+    /**
+     * This is a uniform method of initializing AxisServer in a servlet
+     * context.
+     */
+    static public AxisServer getEngine(HttpServlet servlet) throws AxisFault {
+        ServletContext context = servlet.getServletContext();
+        
         if (context.getAttribute("AxisEngine") == null) {
             String webInfPath = context.getRealPath("/WEB-INF");
 
@@ -172,7 +177,7 @@ public class AxisServlet extends HttpServlet
 
             Map environment = new HashMap();
             environment.put("servletContext", context);
-            String attdir= getInitParameter("axis.attachments.Directory");
+            String attdir= servlet.getInitParameter("axis.attachments.Directory");
             if(attdir != null) environment.put("axis.attachments.Directory",  attdir);
             if(null != webInfPath){
                 environment.put("servlet.realpath",  webInfPath + File.separator + "attachments");
@@ -249,7 +254,7 @@ public class AxisServlet extends HttpServlet
                                    req.getRemoteAddr());
 
             try {
-                String url = HttpUtils.getRequestURL(req).toString();
+                String url = req.getRequestURL().toString();
 
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 

@@ -59,6 +59,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.AxisFault;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -77,16 +78,8 @@ import java.io.IOException;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class AdminServlet extends HttpServlet {
-    public AxisServer getEngine() {
-        ServletContext context = getServletContext();
-        if (context.getAttribute("AxisEngine") == null) {
-            EngineConfiguration config =
-                (new ServletEngineConfigurationFactory(context)).
-                getServerEngineConfig();
-
-            context.setAttribute("AxisEngine", new AxisServer(config));
-        }
-        return (AxisServer)context.getAttribute("AxisEngine");
+    public AxisServer getEngine() throws AxisFault {
+        return AxisServlet.getEngine(this);
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
