@@ -158,12 +158,8 @@ public class EngineConfigurationFactoryServlet
                                            name));
             config = null;
         } else {
+            // FileProvider assumes responsibility for 'is'.
             config = new FileProvider(is);
-            try {
-                is.close();
-            } catch (IOException e) {
-                // ignore
-            }
         }
 
         return config;
