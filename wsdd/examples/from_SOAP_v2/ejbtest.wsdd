@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <deployment 	name="EJBTest" 
 				xmlns="http://xml.apache.org/axis/wsdd/" 
-				xlmns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
 				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
 				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
 	<documentation>
