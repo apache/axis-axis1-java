@@ -1905,7 +1905,7 @@ public class Emitter {
        if (packageName == null) {
            this.classList.add(javaName);
        } else {
-           this.classList.add(packageName + "." + javaName);
+           this.classList.add(type.getJavaPackageName() + "." + javaName);
        }
         PrintWriter typePW = printWriter(fileName, type.getJavaPackageName());
 
@@ -1989,7 +1989,7 @@ public class Emitter {
        if (packageName == null) {
            this.classList.add(javaName);
        } else {
-           this.classList.add(packageName + "." + javaName);
+           this.classList.add(eType.getJavaPackageName() + "." + javaName);
        }
 
         PrintWriter typePW = printWriter(fileName, eType.getJavaPackageName());
@@ -2021,7 +2021,7 @@ public class Emitter {
         if (packageName == null) {
             this.classList.add(javaName);
         } else {
-            this.classList.add(packageName + "." + javaName);
+            this.classList.add(type.getJavaPackageName() + "." + javaName + "Holder");
         }
 
         PrintWriter pw = printWriter(fileName, type.getJavaPackageName());
