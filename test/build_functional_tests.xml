@@ -57,7 +57,7 @@ Copyright:
   <target name="start-functional-test-http-server" if="junit.present">
     <echo message="Starting test http server."/>
     <java classname="org.apache.axis.transport.http.SimpleAxisServer" fork="yes" dir="./build">
-        <!-- Uncomment this to use Jikes instead of Javac for compiling JWS Files   
+        <!-- Uncomment this to use Jikes instead of Javac for compiling JWS Files
         <jvmarg value="-Daxis.Compiler=org.apache.axis.utils.compiler.Jikes"/>
         -->
         <arg line="-p ${test.functional.SimpleAxisPort}" /> <!-- arbitrary port -->
@@ -79,16 +79,20 @@ Copyright:
     <!--...not to mention the sample user list -->
     <copy file="samples/stock/users.lst" todir="build"/>
 
-    <!-- Uncomment following section to enable transparent Signing 
+    <!-- Uncomment following section to enable transparent Signing
          of SOAP Messages sent from the client -->
     <!--
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg line="samples/security/serversecuritydeploy.wsdd"/>
+    </java>
     <java classname="org.apache.axis.utils.Admin" fork="yes">
       <classpath refid="test-classpath" />
       <arg value="client"/>
       <arg value="samples/security/clientsecuritydeploy.wsdd"/>
     </java>
     -->
-    
+
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
       <arg line="${deploy.xml.property}"/>
@@ -103,7 +107,7 @@ Copyright:
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
               <include name="**/FunctionalTests.class" />
-              <include name="**/*TestCase.class" /> 
+              <include name="**/*TestCase.class" />
         </fileset>
       </batchtest>
     </junit>
@@ -113,9 +117,13 @@ Copyright:
       <arg line="${undeploy.xml.property}"/>
     </java>
 
-    <!-- Uncomment following section to enable transparent Signing 
+    <!-- Uncomment following section to enable transparent Signing
          of SOAP Messages sent from the client -->
     <!--
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg line="samples/security/serversecurityundeploy.wsdd"/>
+    </java>
     <java classname="org.apache.axis.utils.Admin" fork="yes">
       <classpath refid="test-classpath" />
       <arg value="client"/>
