@@ -83,6 +83,14 @@ public class TestDeser extends TestCase {
                     new QName("urn:me", "ArrayOfSOAPStruct"),
                     new org.apache.axis.encoding.ser.ArraySerializerFactory(),
                     new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        tm.register(samples.echo.SOAPStructStruct.class,
+                    new QName("urn:me", "SOAPStructStruct"),
+                    new org.apache.axis.encoding.ser.BeanSerializerFactory(
+                          samples.echo.SOAPStructStruct.class,
+                          new QName("urn:me", "SOAPStructStruct")),
+                    new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+                          samples.echo.SOAPStructStruct.class,
+                          new QName("urn:me", "SOAPStructStruct")));
     }
 
     /**
@@ -526,4 +534,22 @@ public class TestDeser extends TestCase {
                     "</soapenc:Array>",
                     s, true);
     }
+
+    /*
+    // Struct within Struct
+    public void testStructStruct() throws Exception {
+        samples.echo.SOAPStruct s = new samples.echo.SOAPStruct(1, "one",   1.1F);
+        samples.echo.SOAPStructStruct ss = new samples.echo.SOAPStructStruct("hello", 2, 2.2F, s);
+        deserialize("<me:SOAPStructStruct>" +
+                    "<varString xsi:type=\"xsd:string\">hello</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">2</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">2.2</varFloat>" +
+                    "<me:SOAPStruct>" +
+                    "<varString xsi:type=\"xsd:string\">one</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">1</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">1.1</varFloat>" +
+                    "</me:SOAPStruct>" +
+                    "</me:SOAPStructStruct>", s, true);
+    }
+    */
 }
