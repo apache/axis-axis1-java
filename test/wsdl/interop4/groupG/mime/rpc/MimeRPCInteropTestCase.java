@@ -8,6 +8,7 @@
 package test.wsdl.interop4.groupG.mime.rpc;
 
 import java.util.Arrays;
+import java.net.URL;
 
 public class MimeRPCInteropTestCase extends junit.framework.TestCase {
     public MimeRPCInteropTestCase(java.lang.String name) {
@@ -17,7 +18,7 @@ public class MimeRPCInteropTestCase extends junit.framework.TestCase {
     public void test1MimeRPCSoapPortEchoAttachment() throws Exception {
         test.wsdl.interop4.groupG.mime.rpc.AttachmentsPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort();
+            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort(url);
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -36,7 +37,7 @@ public class MimeRPCInteropTestCase extends junit.framework.TestCase {
     public void test2MimeRPCSoapPortEchoAttachments() throws Exception {
         test.wsdl.interop4.groupG.mime.rpc.AttachmentsPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort();
+            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort(url);
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -60,7 +61,7 @@ public class MimeRPCInteropTestCase extends junit.framework.TestCase {
     public void test3MimeRPCSoapPortEchoAttachmentAsBase64() throws Exception {
         test.wsdl.interop4.groupG.mime.rpc.AttachmentsPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort();
+            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort(url);
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -78,7 +79,7 @@ public class MimeRPCInteropTestCase extends junit.framework.TestCase {
     public void test4MimeRPCSoapPortEchoBase64AsAttachment() throws Exception {
         test.wsdl.interop4.groupG.mime.rpc.AttachmentsPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort();
+            binding = new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPort(url);
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -94,4 +95,14 @@ public class MimeRPCInteropTestCase extends junit.framework.TestCase {
         assertTrue(Arrays.equals(input, output));
     }
 
+    public static URL url = null;
+    
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            url = new URL(args[0]);
+        } else {
+            url = new URL(new test.wsdl.interop4.groupG.mime.rpc.MimeRPCInteropLocator().getMimeRPCSoapPortAddress());
+        }
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(MimeRPCInteropTestCase.class));
+    } // main
 }
