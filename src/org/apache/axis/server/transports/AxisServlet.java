@@ -64,6 +64,10 @@ import org.apache.axis.* ;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class AxisServlet extends HttpServlet {
   public void init() {
   }

@@ -68,6 +68,10 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class EchoHandler implements Handler {
   protected Hashtable  options ;
 

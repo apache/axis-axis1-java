@@ -70,6 +70,10 @@ import org.apache.axis.message.* ;
 import org.apache.axis.utils.* ;
 
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class SOAPEnvelope {
   protected String       prefix ;
   protected ArrayList    headers ;

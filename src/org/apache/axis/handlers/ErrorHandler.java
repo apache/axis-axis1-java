@@ -61,6 +61,10 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class ErrorHandler implements Handler {
   protected Hashtable  options ;
 

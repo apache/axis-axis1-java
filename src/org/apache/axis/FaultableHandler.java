@@ -62,6 +62,10 @@ import java.io.Serializable ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class FaultableHandler implements Handler {
   protected Handler    workHandler ;
   protected Hashtable  faultHandlers ;

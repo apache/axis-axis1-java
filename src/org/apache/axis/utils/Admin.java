@@ -67,6 +67,10 @@ import org.apache.xerces.framework.* ;
 
 import org.apache.axis.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class Admin {
   private static SimpleHandlerRegistry  hr = null ;
   private static SimpleServiceRegistry  sr = null ;

@@ -60,6 +60,10 @@ package org.apache.axis ;
 import java.util.* ;
 import org.apache.axis.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class MessageContext {
   /**
    * Just a placeholder until we figure out how many messages we'll actually

@@ -67,6 +67,10 @@ import org.apache.xerces.framework.* ;
 import org.apache.xml.serialize.* ;
 import org.apache.axis.message.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class SOAPBody {
   protected String    name ;
   protected String    namespace ;

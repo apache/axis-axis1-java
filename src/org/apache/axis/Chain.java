@@ -59,6 +59,11 @@ package org.apache.axis ;
 
 import org.apache.axis.* ;
 
+/** 
+ *
+ * @author Doug Davis (dug@us.ibm.com.com)
+ */
+
 public interface Chain extends Handler {
   /**
    * Adds a handler to the end of the chain

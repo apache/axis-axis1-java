@@ -66,6 +66,10 @@ import org.apache.xml.serialize.* ;
 
 // PLACEHOLDER until we figure out what we really want to put here
 // Just something to keep us moving forward
+/** 
+ *
+ * @author Doug Davis (dug@us.ibm.com.com)
+ */
 
 public class AxisFault extends Exception {
   protected String    faultCode ;

@@ -57,6 +57,10 @@
 
 package org.apache.axis.utils ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class QName {
   /**
    * Template code for QName.

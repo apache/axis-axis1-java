@@ -69,6 +69,7 @@ import org.apache.xerces.framework.* ;
  * See \samples\stock\readme for info.
  *
  * @author Sanjiva Weerawarana (sanjiva@watson.ibm.com)
+ * @author Doug Davis (dug@us.ibm.com)
  */
 public class StockQuoteService {
   public float getQuote (String symbol) throws Exception {

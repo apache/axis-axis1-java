@@ -67,6 +67,10 @@ import org.apache.xerces.framework.* ;
 import org.apache.xml.serialize.* ;
 import org.apache.axis.message.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class Message {
   /**
    * Just a placeholder until we figure out what the actual Message
