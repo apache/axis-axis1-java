@@ -114,6 +114,7 @@ GENERAL / UNCATEGORIZED
      strings into resources.properties!
 X <Glen> Refactor AxisServiceConfig so it doesn't require object
          instantiation (static metadata)
+! <Glen> Handle static methods without needing to create object instances
 
 FUTURE ENHANCEMENTS (not necessary for current release)
 -------------------------------------------------------
