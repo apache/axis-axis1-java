@@ -209,7 +209,7 @@ public class Jikes extends AbstractCompiler
      * Parse the compiler error stream to produce a list of
      * <code>CompilerError</code>s
      *
-     * @param errors The error stream
+     * @param input The error stream
      * @return The list of compiler error messages
      * @exception IOException If an error occurs during message collection
      */

@@ -219,7 +219,7 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
      * not been processed.  If it is not a MessageElement, the Object is the
      * actual deserialized value.  
      * In addition, this method is invoked to get Object values via Attachments.
-     * @param id is the value of an href attribute (or an Attachment id)
+     * @param href is the value of an href attribute (or an Attachment id)
      * @return MessageElement other Object or null
      */ 
     public Object getObjectByRef(String href);
@@ -229,7 +229,7 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
      * i.e. it does not start with #).  
      * This routine is called to associate the deserialized object
      * with the id specified on the XML element.
-     * @param id (id name without the #)
+     * @param _id (id name without the #)
      * @param obj is the deserialized object for this id.
      */
     public void addObjectById(String _id, Object obj);
@@ -303,7 +303,7 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
     /**
      * Are we in the midst of processing an href target?  If so, we shouldn't
      * be pushing the element stack...
-     * @return
+     * @return true if we are
      */
     boolean isProcessingRef();
 }

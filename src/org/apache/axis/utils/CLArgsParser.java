@@ -196,9 +196,9 @@ public final class CLArgsParser
     /**
      * Create a parser that can deal with options and parses certain args.
      *
-     * @param args[] the args, typically that passed to the
+     * @param args the args, typically that passed to the
      * <code>public static void main(String[] args)</code> method.
-     * @param optionDescriptors[] the option descriptors
+     * @param optionDescriptors the option descriptors
      */
     public CLArgsParser( final String[] args,
                          final CLOptionDescriptor[] optionDescriptors,
@@ -336,8 +336,8 @@ public final class CLArgsParser
     /**
      * Create a parser that deals with options and parses certain args.
      *
-     * @param args[] the args
-     * @param optionDescriptors[] the option descriptors
+     * @param args the args
+     * @param optionDescriptors the option descriptors
      */
     public CLArgsParser( final String[] args,
                          final CLOptionDescriptor[] optionDescriptors )

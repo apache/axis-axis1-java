@@ -206,7 +206,7 @@ public class SOAPEnvelope extends MessageElement
 
     /**
      * Return trailers
-     * @return
+     * @return vector of some type
      */ 
     public Vector getTrailers()
     {
