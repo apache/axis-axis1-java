@@ -69,7 +69,17 @@ import org.apache.axis.utils.* ;
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
  */
-public class SimpleAxisServer {
+public class SimpleAxisServer implements Runnable {
+
+    // Axis server (shared between instances)
+    private static AxisServer myAxisServer = null;
+    private static synchronized AxisServer getAxisServer() {
+        if (myAxisServer == null) {
+            myAxisServer = new AxisServer();
+            myAxisServer.init();
+        }
+        return myAxisServer;
+    }
 
     // HTTP prefix
     private static byte HTTP[]   = "HTTP/1.0 ".getBytes();
@@ -93,11 +103,12 @@ public class SimpleAxisServer {
     private static final String AXIS_ENGINE = "AxisEngine" ;
 
     /**
-     * Process SOAP requests.  Terminates upon IOException on 
-     * ServerSocket.accept.
-     * @param ss ServerSocket to listen to
+     * The main workhorse method.
+     *
+     * Accept requests from a given TCP port and send them through the
+     * Axis engine for processing.
      */
-    public void run(ServerSocket ss) {
+    public void run() {
 
         // create an Axis server
         AxisServer engine = new AxisServer();
@@ -120,7 +131,7 @@ public class SimpleAxisServer {
         Message faultMsg = new Message(null, "AxisFault");
 
         // Accept and process requests from the socket
-	while (true) {
+	while (worker==null || !worker.isInterrupted()) {
             Socket socket = null;
 
             // prepare request (do as much as possible while waiting for the 
@@ -137,7 +148,7 @@ public class SimpleAxisServer {
             msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
 	    try {
                 try {
-	            socket = ss.accept();
+	            socket = serverSocket.accept();
                 } catch (IOException ioe) {
                     break;
                 }
@@ -192,6 +203,8 @@ public class SimpleAxisServer {
                 out.write(response);
                 out.flush();
 
+	    } catch (InterruptedIOException iie) {
+		break;
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    } finally {
@@ -224,8 +237,8 @@ public class SimpleAxisServer {
     private static final byte actionHeader[] = "soapaction: \"".getBytes();
     private static final int actionLen = actionHeader.length;
 
-    // simple buffer per server
-    private final int BUFSIZ = 4096;
+    // buffer for IO
+    private static final int BUFSIZ = 4096;
     private byte buf[] = new byte[BUFSIZ];
 
     /**
@@ -332,6 +345,58 @@ public class SimpleAxisServer {
         out.write(buf, offset, len);
     }
 
+    // per thread socket information
+    private ServerSocket serverSocket;
+    private volatile Thread worker = null;
+
+    /**
+     * Obtain the serverSocket that that SimpleAxisServer is listening on.
+     */
+    public ServerSocket getServerSocket() {
+        return serverSocket;
+    }
+
+    /**
+     * Set the serverSocket this server should listen on.
+     * (note : changing this will not affect a running server, but if you
+     *  stop() and then start() the server, the new socket will be used).
+     */
+    public void setServerSocket(ServerSocket serverSocket) {
+        this.serverSocket = serverSocket;
+    }
+
+    /**
+     * Start this server.
+     *
+     * Spawns a worker thread to listen for HTTP requests.
+     *
+     * @param daemon a boolean indicating if the thread should be a daemon.
+     */
+    public void start(boolean daemon) throws Exception {
+        worker = new Thread(this);
+        worker.setDaemon(daemon);
+        worker.start();
+    }
+
+    /**
+     * Start this server as a daemon.
+     */
+    public void start() throws Exception {
+        start(true);
+    }
+
+    /**
+     * Stop this server.
+     *
+     * This will interrupt any pending accept().
+     */
+    public void stop() throws Exception {
+        /// Calling Thread.stop() is deprecated. See docs for
+        ///  better patterns using interrupt()
+        ////////////
+        if (worker != null) worker.interrupt();
+    }
+
     /**
      * Server process.
      * @parms args[1] port number (default is 8080)
@@ -343,7 +408,8 @@ public class SimpleAxisServer {
         try {
             int port = (args.length==0)? 8080 : Integer.parseInt(args[0]);
             ServerSocket ss = new ServerSocket(port);
-            sas.run(ss);
+            sas.setServerSocket(ss);
+            sas.run();
         } catch (Exception e) {
             e.printStackTrace();
             return;
