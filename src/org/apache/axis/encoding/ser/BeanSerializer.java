@@ -57,6 +57,7 @@ package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
@@ -89,12 +90,14 @@ import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Tom Jordahl <tomj@macromedia.com>
  */
 public class BeanSerializer implements Serializer, Serializable {
 
@@ -117,23 +120,25 @@ public class BeanSerializer implements Serializer, Serializable {
     QName xmlType;
     Class javaType;
 
-    // Static Table to store pd[] keyed by class
-    private static HashMap pdMap = new HashMap();
+    private BeanPropertyDescriptor[] propertyDescriptor = null;
+    private Vector beanAttributeNames = null;
+    
 
     // Construct BeanSerializer for the indicated class/qname
     public BeanSerializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
+        propertyDescriptor = getPd(javaType);
+        beanAttributeNames = getBeanAttributes(javaType);
     }
 
     // Construct BeanSerializer for the indicated class/qname and format
     public BeanSerializer(Class javaType, QName xmlType, short format) {
         this.xmlType = xmlType;
         this.javaType = javaType;
-        if (format > FORCE_LOWER ||
-            format < PROPERTY_NAME)
-            format = PROPERTY_NAME;
-        this.elementPropertyFormat = format;
+        setElementPropertyFormat(format);
+        propertyDescriptor = getPd(javaType);
+        beanAttributeNames = getBeanAttributes(javaType);
     }
 
     /**
@@ -147,32 +152,43 @@ public class BeanSerializer implements Serializer, Serializable {
                           Object value, SerializationContext context)
         throws IOException
     {
-        // Get the property descriptors describing the bean properties
-        BeanPropertyDescriptor[] pd = getPd(javaType);
-
-        context.startElement(name, attributes);
+        boolean isSOAP_ENC = Constants.
+                isSOAP_ENC(context.getMessageContext().getEncodingStyle());
+        if (isSOAP_ENC) {
+            // SOAP encoding doesn't allow attributes
+            context.startElement(name, attributes);
+        } else {
+            // Check for meta-data in the bean that will tell us if any of the
+            // properties are actually attributes, add those to the element
+            // attribute list
+            Attributes beanAttrs = getObjectAttributes(value, attributes);
+            context.startElement(name, beanAttrs);
+        }
 
         try {
             // Serialize each property
-            for (int i=0; i<pd.length; i++) {
-                String propName = pd[i].getName();
-                if (propName.equals("class")) continue;
+            for (int i=0; i<propertyDescriptor.length; i++) {
+                String propName = propertyDescriptor[i].getName();
+                if (propName.equals("class")) 
+                    continue;
+                if (!isSOAP_ENC && beanAttributeNames.contains(propName)) 
+                    continue;
                 propName = format(propName, elementPropertyFormat);
 
-                Method readMethod = pd[i].getReadMethod();
+                Method readMethod = propertyDescriptor[i].getReadMethod();
                 if (readMethod != null && readMethod.getParameterTypes().length == 0) {
                     // Normal case: serialize the value
-                    Object propValue = pd[i].getReadMethod().invoke(value,noArgs);
+                    Object propValue = propertyDescriptor[i].getReadMethod().invoke(value,noArgs);
                     context.serialize(new QName("", propName), null,
                                       propValue,
-                                      pd[i].getReadMethod().getReturnType());
+                                      propertyDescriptor[i].getReadMethod().getReturnType());
                 } else {
                     // Collection of properties: serialize each one
                     int j=0;
                     while(j >= 0) {
                         Object propValue = null;
                         try {
-                            propValue = pd[i].getReadMethod().invoke(value,
+                            propValue = propertyDescriptor[i].getReadMethod().invoke(value,
                                                                      new Object[] { new Integer(j) });
                             j++;
                         } catch (Exception e) {
@@ -181,7 +197,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         if (j >= 0) {
                             context.serialize(new QName("", propName), null,
                                               propValue,
-                                              pd[i].getReadMethod().getReturnType());
+                                              propertyDescriptor[i].getReadMethod().getReturnType());
                         }
                     }
                 }
@@ -195,22 +211,39 @@ public class BeanSerializer implements Serializer, Serializable {
     }
 
     /**
-     * Get/Create a BeanPropertyDescriptor array for the indicated class.
+     * Create a BeanPropertyDescriptor array for the indicated class.
      */
     static BeanPropertyDescriptor[] getPd(Class javaType) {
-        BeanPropertyDescriptor[] pd = (BeanPropertyDescriptor[]) pdMap.get(javaType);
-        if (pd == null) {
-            try {
-                PropertyDescriptor[] rawPd = Introspector.getBeanInfo(javaType).getPropertyDescriptors();
-                pd = BeanPropertyDescriptor.processPropertyDescriptors(rawPd,javaType);
-            } catch (Exception e) {
-                // this should never happen
-                throw new InternalException(e);
-            }
+        BeanPropertyDescriptor[] pd;
+        try {
+            PropertyDescriptor[] rawPd = Introspector.getBeanInfo(javaType).getPropertyDescriptors();
+            pd = BeanPropertyDescriptor.processPropertyDescriptors(rawPd,javaType);
+        } catch (Exception e) {
+            // this should never happen
+            throw new InternalException(e);
         }
         return pd;
     }
 
+    /**
+     * Return a list of properties in the bean which should be attributes
+     */ 
+    static Vector getBeanAttributes(Class javaType) {
+        // See if this object defined the 'getAttributeElements' function
+        // which returns a Vector of property names that are attributes
+        try {
+            Method getAttributeElements = 
+                    javaType.getMethod("getAttributeElements",
+                                       new Class [] {});
+            
+            return (Vector) getAttributeElements.invoke(null, noArgs);
+            
+        } catch (Exception e) {
+            return new Vector();  // empty vector
+        }
+    }
+    
+    
     /**
      * Get the format of the elements for the properties
      */
@@ -260,4 +293,50 @@ public class BeanSerializer implements Serializer, Serializable {
         return true;
     }
 
+    /**
+     * Check for meta-data in the bean that will tell us if any of the
+     * properties are actually attributes, add those to the element
+     * attribute list
+     * 
+     * @param value the object we are serializing
+     * @param pd the properties of this class
+     * @return attributes for this element, null if none
+     */ 
+    private Attributes getObjectAttributes(Object value,
+                                           Attributes attributes) {
+        
+        if (beanAttributeNames.isEmpty())
+            return attributes;
+        
+        AttributesImpl attrs = new AttributesImpl(attributes);
+        
+        try {
+            // Find each property that is an attribute 
+            // and add it to our attribute list
+            for (int i=0; i<propertyDescriptor.length; i++) {
+                String propName = propertyDescriptor[i].getName();
+                // skip it if its not in the list
+                if (!beanAttributeNames.contains(propName)) continue;
+                if (propName.equals("class")) continue;
+                propName = format(propName, elementPropertyFormat);
+                
+                Method readMethod = propertyDescriptor[i].getReadMethod();
+                if (readMethod != null && 
+                    readMethod.getParameterTypes().length == 0) {
+                    // add to our attributes
+                    Object propValue = propertyDescriptor[i].
+                                        getReadMethod().invoke(value,noArgs);
+                    // NOTE: we will always set the attribute here to something, 
+                    // which we may not want (i.e. if null, omit it)
+                    String propString = propValue != null ? propValue.toString() : "";
+                    attrs.addAttribute("", propName, propName, "CDATA", propString);
+                }
+            }
+        } catch (Exception e) {
+            // no attributes
+            return attrs;
+        }
+        
+        return attrs;
+    }
 }

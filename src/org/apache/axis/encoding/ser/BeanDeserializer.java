@@ -71,6 +71,8 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.Constants;
+
 import java.beans.IntrospectionException;
 
 import java.lang.reflect.Method;
@@ -81,12 +83,15 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ObjectStreamField;
 import java.io.Serializable;
+import java.util.Vector;
+import java.util.HashMap;
 
 /**
  * General purpose deserializer for an arbitrary java bean.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Tom Jordahl <tomj@macromedia.com>
  */
 public class BeanDeserializer extends DeserializerImpl implements Deserializer, Serializable  {
     static Log log =
@@ -95,6 +100,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
     QName xmlType;
     Class javaType;
     private BeanPropertyDescriptor[] pd = null;
+    private HashMap propertyMap = new HashMap();
 
     // This counter is updated to deal with deserialize collection properties
     protected int collectionIndex = -1;
@@ -103,9 +109,20 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
     public BeanDeserializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
+        // Get a list of the bean properties
+        this.pd = BeanSerializer.getPd(javaType);
+        // loop through properties and grab the names for later
+        for (int i = 0; i < pd.length; i++) {
+            BeanPropertyDescriptor descriptor = pd[i];
+            propertyMap.put(descriptor.getName(), descriptor);
+        }
+        // create a value
         try {
             value=javaType.newInstance();
-        } catch (Exception e) {} 
+        } catch (Exception e) {
+            //throw new SAXException(e.toString());
+        }
+        
     }
 
     /**
@@ -127,17 +144,6 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                                     DeserializationContext context)
         throws SAXException
     {
-        // Get a list of the bean properties
-        BeanPropertyDescriptor[] pd = BeanSerializer.getPd(javaType);
-
-        // create a value if there isn't one already...
-        if (value==null) {
-            try {
-                value=javaType.newInstance();
-            } catch (Exception e) {
-                throw new SAXException(e.toString());
-            }
-        }
 
         // look for a field by this name.  Assumes the the number of
         // properties in a bean is (relatively) small, so uses a linear
@@ -185,4 +191,82 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         throw new SAXException(
                 JavaUtils.getMessage("badElem00", javaType.getName(), localName));
     }
+
+    /**
+     * Set the bean properties that correspond to element attributes.
+     * 
+     * This method is invoked after startElement when the element requires
+     * deserialization (i.e. the element is not an href and the value is not nil.)
+     * @param namespace is the namespace of the element
+     * @param localName is the name of the element
+     * @param qName is the prefixed qName of the element
+     * @param attributes are the attributes on the element...used to get the type
+     * @param context is the DeserializationContext
+     */
+    public void onStartElement(String namespace, String localName,
+                               String qName, Attributes attributes,
+                               DeserializationContext context)
+            throws SAXException {
+
+        // No attributes are allowed for SOAP encoding
+        if (Constants.isSOAP_ENC(context.getMessageContext().getEncodingStyle())) {
+            return;
+        }
+        // get list of properties that are really attributes
+        Vector beanAttributeNames = BeanSerializer.getBeanAttributes(javaType);
+        
+        // loop through the attributes and set bean properties that 
+        // correspond to attributes
+        for (int i=0; i < attributes.getLength(); i++) {
+            String attrName = attributes.getLocalName(i);
+            String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
+            String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
+            String mangledName = JavaUtils.xmlNameToJava(attrName);
+            
+            // look for the attribute property
+            BeanPropertyDescriptor bpd = 
+                    (BeanPropertyDescriptor) propertyMap.get(attrNameUp);
+            if (bpd == null)
+                bpd = (BeanPropertyDescriptor) propertyMap.get(attrNameLo);
+            if (bpd == null)
+                bpd = (BeanPropertyDescriptor) propertyMap.get(mangledName);
+            if (bpd != null) {
+                if (bpd.getWriteMethod() == null ) continue ;
+                
+                // determine the QName for this child element
+                TypeMapping tm = context.getTypeMapping();
+                Class type = bpd.getType();
+                QName qn = tm.getTypeQName(type);
+                if (qn == null)
+                    throw new SAXException(
+                            JavaUtils.getMessage("unregistered00", type.toString()));
+                
+                // get the deserializer
+                Deserializer dSer = context.getDeserializerForType(qn);
+                if (dSer == null)
+                    throw new SAXException(
+                            JavaUtils.getMessage("noDeser00", type.toString()));
+                if (! (dSer instanceof SimpleDeserializer))
+                    throw new SAXException(
+                            JavaUtils.getMessage("AttrNotSimpleType00", 
+                                                 bpd.getName(), 
+                                                 type.toString()));
+                
+                if (bpd.getWriteMethod().getParameterTypes().length == 1) {
+                    // Success!  Create an object from the string and set
+                    // it in the bean
+                    try {
+                        Object val = ((SimpleDeserializer)dSer).
+                                        makeValue(attributes.getValue(i));
+                        bpd.getWriteMethod().invoke(value, new Object[] {val} );
+                    } catch (Exception e) {
+                        throw new SAXException(e);
+                    }
+                }
+                
+            } // if
+        } // attribute loop
+
+    } // onStartElement
+
 }
