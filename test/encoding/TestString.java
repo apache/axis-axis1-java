@@ -15,6 +15,9 @@ import org.xml.sax.InputSource;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.ByteArrayInputStream;
 
 /** Little serialization test with a struct.
  */
@@ -34,17 +37,15 @@ public class TestString extends TestCase {
         RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[]{ input });
         msg.addBodyElement(body);
         
-        Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
-        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(baos,"UTF-8");
+        SerializationContext context = new SerializationContextImpl(writer, msgContext);
         msg.output(context);
+        writer.flush();
         
-        String msgString = stringWriter.toString();
-        
-        StringReader reader = new StringReader(msgString);
-        
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         DeserializationContext dser = new DeserializationContextImpl(
-            new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
+            new InputSource(bais), msgContext, org.apache.axis.Message.REQUEST);
         dser.parse();
         
         SOAPEnvelope env = dser.getEnvelope();
@@ -85,4 +86,17 @@ public class TestString extends TestCase {
     public void testWhitespace() throws Exception {
         runtest(" \n \t "); // note: \r fails
     }
+/*    
+    public void testFrenchAccents() throws Exception {
+        runtest("\u00e0\u00e2\u00e4\u00e7\u00e8\u00e9\u00ea\u00eb\u00ee\u00ef\u00f4\u00f6\u00f9\u00fb\u00fc");
+    }
+    
+    public void testFrenchAccents2() throws Exception {
+        runtest("Une chaÃ®ne avec des caractÃ¨res accentuÃ©s");
+    }
+    
+    public void testGermanUmlauts() throws Exception {
+        runtest(" Some text \u00df with \u00fc special \u00f6 chars \u00e4.");
+    }
+*/    
 }
