@@ -56,6 +56,7 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +65,7 @@ import java.util.Vector;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
+import javax.wsdl.Import;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
@@ -109,44 +111,71 @@ public class JavaDefinitionWriter implements Writer {
      * The fault name is derived from the fault message name per JAX-RPC
      */
     private void writeFaults() throws IOException {
-        HashSet faults = new HashSet();
+        HashMap faults = new HashMap();
+        collectFaults(definition, faults);
+
+        // iterate over fault list, emitting code.
+        Iterator fi = faults.keySet().iterator();
+        while (fi.hasNext()) {
+            Fault fault = (Fault) fi.next();
+            QName faultQName = (QName) faults.get(fault);
+            new JavaFaultWriter(emitter, faultQName, fault, symbolTable).write();
+        }
+    } // writeFaults
+
+    /**
+     * Collect all of the faults used in this definition.
+     */
+    private HashSet importedFiles = new HashSet();
+    private void collectFaults(Definition def, Map faults) throws IOException {
         Vector faultList = new Vector();
-        Map portTypes = definition.getPortTypes();
+        Map imports = def.getImports();
+        Object[] importKeys = imports.keySet().toArray();
+        for (int i = 0; i < importKeys.length; ++i) {
+            Vector v = (Vector) imports.get(importKeys[i]);
+            for (int j = 0; j < v.size(); ++j) {
+                Import imp = (Import) v.get(j);
+                if (!importedFiles.contains(imp.getLocationURI())) {
+                    importedFiles.add(imp.getLocationURI());
+                    Definition importDef = imp.getDefinition();
+                    if (importDef != null) {
+                        collectFaults(importDef, faults);
+                    }
+                }
+            }
+        }
+        Map portTypes = def.getPortTypes();
         Iterator pti = portTypes.values().iterator();
         // collect referenced faults in a list
         while (pti.hasNext()) {
             PortType portType = (PortType) pti.next();
             
             // Don't emit faults that are not referenced.
-            if (!(symbolTable.getPortTypeEntry(portType.getQName())).isReferenced()) {
-                continue;
-            }
-            
-            List operations = portType.getOperations();
-            for (int i = 0; i < operations.size(); ++i) {
-                Operation operation = (Operation) operations.get(i);
-                Map opFaults = operation.getFaults();
-                Iterator fi = opFaults.values().iterator();
-                while (fi.hasNext()) {
-                    Fault f = (Fault) fi.next();
-                    String name = Utils.getExceptionName(f);
+            if (symbolTable.getPortTypeEntry(portType.getQName()).
+                    isReferenced()) {
+                List operations = portType.getOperations();
+                for (int i = 0; i < operations.size(); ++i) {
+                    Operation operation = (Operation) operations.get(i);
+                    Map opFaults = operation.getFaults();
+                    Iterator fi = opFaults.values().iterator();
+                    while (fi.hasNext()) {
+                        Fault f = (Fault) fi.next();
+                        String name = Utils.getFullExceptionName(
+                                f,
+                                symbolTable,
+                                portType.getQName().getNamespaceURI());
                     // prevent duplicates
-                    if (! faultList.contains(name) ) {
-                        faultList.add(name);
-                        faults.add(f);  // add this fault to the list
+                        if (! faultList.contains(name) ) {
+                            faultList.add(name);
+                            QName faultQName = new QName(
+                                    portType.getQName().getNamespaceURI(),
+                                    Utils.getExceptionName(f));
+                            faults.put(f, faultQName);  // add this fault to the list
+                        }
                     }
                 }
             }
         }
-        
-        // iterate over fault list, emitting code.
-        Iterator fi = faults.iterator();
-        while (fi.hasNext()) {
-            Fault fault = (Fault) fi.next();
-            String exceptionName = Utils.getExceptionName(fault);
-            QName faultQName = new QName(definition.getTargetNamespace(), exceptionName);
-            new JavaFaultWriter(emitter, faultQName, fault, symbolTable).write();
-        }
-    } // writeFaults
+    } // collectFaults
 
 } // class JavaDefinitionWriter

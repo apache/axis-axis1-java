@@ -577,12 +577,42 @@ public class Utils {
         String exceptionName;
         if (faultMessage != null) {
             String faultMessageName = faultMessage.getQName().getLocalPart();
-            exceptionName = Utils.xmlNameToJavaClass(faultMessageName);
+            exceptionName = xmlNameToJavaClass(faultMessageName);
         } else {
-            exceptionName = Utils.xmlNameToJavaClass(fault.getName());
+            exceptionName = xmlNameToJavaClass(fault.getName());
         }
         return exceptionName;
     }
+
+    /**
+     * Given a fault, return the fully qualified Java class name of the exception to be
+     * generated from this fault
+     * 
+     * @param fault - The WSDL fault object
+     * @param symbolTable - the symbol table
+     * @return A Java class name for the fault
+     */ 
+    public static String getFullExceptionName(
+            Fault fault, SymbolTable symbolTable, String namespace) {
+        /**
+         * Use the message name as the fault class name,
+         * fall back to fault name if there isn't a message part
+         * 
+         * NOTE: JAX-RPC version 0.5 says to use the message name, but
+         * hopefully this will change to use the fault name, which makes
+         * a good deal more sense (tomj@macromedia.com)
+         */ 
+        Message faultMessage = fault.getMessage();
+        String exceptionName;
+        if (faultMessage != null) {
+            String faultName = faultMessage.getQName().getLocalPart();
+            QName qname = new QName(namespace, faultName);
+            exceptionName = symbolTable.getJavaName(qname);
+        } else {
+            exceptionName = xmlNameToJavaClass(fault.getName());
+        }
+        return exceptionName;
+    } // getFullExceptionName
 
 
     /**

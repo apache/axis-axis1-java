@@ -55,7 +55,12 @@
 
 package org.apache.axis.wsdl.toJava;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -290,9 +295,11 @@ public class SymbolTable {
      * symbol table has been populated, iterate through it, setting the isReferenced flag
      * appropriately for each entry.
      */
-    protected void add(Definition def, Document doc) throws IOException {
+    protected void add(String context, Definition def, Document doc)
+            throws IOException {
         checkForUndefined(def);
-        populate(def, doc);
+        URL contextURL = context == null ? null : getURL(null, context);
+        populate(contextURL, def, doc);
         setReferences(def, doc);
         checkForUndefined();
     } // add
@@ -361,7 +368,8 @@ public class SymbolTable {
      * symbols), populating it with SymTabEntries for each of the top-level symbols.
      */
     private HashSet importedFiles = new HashSet();
-    private void populate(Definition def, Document doc) throws IOException {
+    private void populate(URL context, Definition def, Document doc)
+            throws IOException {
         if (doc != null) {
             populateTypes(doc);
 
@@ -370,7 +378,7 @@ public class SymbolTable {
             // Definition imports.
             if (def == null && addImports) {
                 // Recurse through children nodes, looking for imports
-                lookForImports(doc);
+                lookForImports(context, doc);
             }
         }
         if (def != null) {
@@ -384,8 +392,9 @@ public class SymbolTable {
                         Import imp = (Import) v.get(j);
                         if (!importedFiles.contains(imp.getLocationURI())) {
                             importedFiles.add(imp.getLocationURI());
-                            populate(imp.getDefinition(),
-                                    XMLUtils.newDocument(imp.getLocationURI()));
+                            URL url = getURL(context, imp.getLocationURI());
+                            populate(url, imp.getDefinition(),
+                                    XMLUtils.newDocument(url.toString()));
                         }
                     }
                 }
@@ -398,9 +407,42 @@ public class SymbolTable {
     } // populate
 
     /**
+     * This is essentially a call to "new URL(contextURL, spec)" with extra handling in case spec is
+     * a file.
+     */
+    private static URL getURL(URL contextURL, String spec) throws IOException {
+        URL url = null;
+        try {
+            url = new URL(contextURL, spec);
+
+            try {
+                url.openStream();
+            }
+            catch (IOException ioe) {
+                throw new MalformedURLException();
+            }
+        }
+        catch (MalformedURLException me)
+        {
+            url = new URL("file", "", spec);
+
+            try {
+                url.openStream();
+            }
+            catch (IOException ioe) {
+                if (contextURL != null) {
+                    String contextFileName = contextURL.getFile();
+                    String parentName = new File(contextFileName).getParent();
+                }
+                throw new FileNotFoundException(url.toString());
+            }
+        }
+        return url;
+    } // getURL
+    /**
      * Recursively find all import objects and call populate for each one.
      */
-    private void lookForImports(Node node) throws IOException {
+    private void lookForImports(URL context, Node node) throws IOException {
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
@@ -408,11 +450,13 @@ public class SymbolTable {
                 NamedNodeMap attributes = child.getAttributes();
                 Node importFile = attributes.getNamedItem("schemaLocation");
                 if (importFile != null) {
-                    populate(null,
-                            XMLUtils.newDocument(importFile.getNodeValue()));
+                    populate(context, null,
+                            XMLUtils.newDocument(
+                                    getURL(context,
+                                    importFile.getNodeValue()).toString()));
                 }
             }
-            lookForImports(child);
+            lookForImports(context, child);
         }
     } // lookForImports
 
@@ -808,7 +852,8 @@ public class SymbolTable {
         Iterator i = faults.values().iterator();
         while (i.hasNext()) {
             Fault fault = (Fault) i.next();
-            String exceptionName = Utils.getExceptionName(fault);
+            String exceptionName =
+                    Utils.getFullExceptionName(fault, this, namespace);
             if (parameters.faultString == null)
                 parameters.faultString = exceptionName;
             else

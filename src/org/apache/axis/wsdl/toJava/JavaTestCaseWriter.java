@@ -173,7 +173,6 @@ public class JavaTestCaseWriter extends JavaWriter {
         while (ops.hasNext()) {
             pw.println("        try {");
             Operation op = (Operation) ops.next();
-            String namespace = (String) emitter.getNamespaces().get(port.getQName().getNamespaceURI());
             Parameters params = ptEntry.getParameters(op.getName());
 
             if (params.returnType != null) {
@@ -280,12 +279,8 @@ public class JavaTestCaseWriter extends JavaWriter {
                 }
             }
 */
-
-            pw.println("        } catch (java.rmi.RemoteException re) {");
-            pw.print("            ");
-            pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re );");
             pw.print("        }");
-            
+
             Map faultMap = op.getFaults();
 
             if (faultMap != null) {
@@ -295,15 +290,20 @@ public class JavaTestCaseWriter extends JavaWriter {
                 while (i.hasNext()) {
                     count++;
                     Fault f = (Fault) i.next();
+                    String namespace = port.getQName().getNamespaceURI();
                     pw.print(" catch (");
-                    pw.print(Utils.getExceptionName(f));
+                    pw.print(Utils.getFullExceptionName(
+                            f, symbolTable, namespace));
                     pw.println(" e" + count + ") {");
                     pw.print("            ");
                     pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");
                     pw.print("        }");
                 }
             }
-            pw.println();
+            pw.println(" catch (java.rmi.RemoteException re) {");
+            pw.print("            ");
+            pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re );");
+            pw.println("        }");
         }
     } // writePortTestCode
 

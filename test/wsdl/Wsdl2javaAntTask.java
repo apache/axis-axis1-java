@@ -128,7 +128,7 @@ public class Wsdl2javaAntTask extends Task
                 doc = XMLUtils.newDocument(url);
                 doc.getDocumentElement().getTagName();
                 // THIS IS WRONG - the one outside the try-catch block is right
-                emitter.emit(doc);
+                emitter.emit(url, doc);
             } catch (Throwable e) {
                 if (url.startsWith("http://")) {
                     // What we have is either a network error or invalid XML -

@@ -7,7 +7,7 @@
     xmlns:messages="urn:messages.import.test">
 
 <import
-    location="test/import_/ImportMessages.wsdl"
+    location="ImportMessages.wsdl"
     namespace="urn:messages.import.test">
 </import>
 
@@ -20,6 +20,7 @@
   <operation name="getAddressFromName">
     <input message="messages:IngetAddressFromNameRequest"/>
     <output message="messages:OutgetAddressFromNameResponse"/>
+    <fault message="messages:Fault"/>
   </operation>
 </portType>
 
