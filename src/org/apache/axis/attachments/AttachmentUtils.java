@@ -82,4 +82,17 @@ public class AttachmentUtils {
        }
        return ((AttachmentPart) part).getActiviationDataHandler();
     }
+
+    /**
+     * Determine if an object is to be treated as an attchment. 
+     *
+     * @param value the value that is to be determined if
+     * its an attachment.
+     *
+     * @return True if value should be treated as an attchment. 
+     */
+    public static boolean isAttachment( Object value){
+        if( null == value ) return false;
+        return value instanceof  javax.activation.DataHandler;
+    }
 }

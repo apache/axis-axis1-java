@@ -58,6 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Message;
 import org.apache.axis.client.Call;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
@@ -82,6 +83,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
+import org.apache.axis.attachments.Attachments;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
@@ -219,6 +221,12 @@ public class SerializationContext
     {
         return getPrefixForURI(uri, "ns" + lastPrefixIndex++);
     }
+    
+
+    public Message getCurrentMessage(){
+
+         return msgContext.getCurrentMessage();
+    }
 
     public String getPrefixForURI(String uri, String defaultPrefix)
     {
@@ -301,6 +309,23 @@ public class SerializationContext
                                "CDATA", "true");
             startElement(qName, attrs);
             endElement();
+        }
+
+        Message msg= getCurrentMessage();
+        if(null != msg){
+            //Get attachments. returns null if no attachment support.
+            Attachments attachments= getCurrentMessage().getAttachments();
+
+            if( null != attachments && attachments.isAttachment(value)){
+             //Attachment support and this is an object that should be treated as an attachment.
+
+             //Allow an the attachment to do its own serialization.
+              getTypeMappingRegistry().serialize(qName, attributes, value, this);
+              
+              //No need to add to mulitRefs. Attachment data stream handled by
+              // the message;
+              return;
+            }
         }
 
         // If multi-reference is enabled and this object value is not a primitive
