@@ -111,7 +111,8 @@ public class MessageFactoryImpl extends javax.xml.soap.MessageFactory {
     public SOAPMessage createMessage(
             MimeHeaders mimeheaders, InputStream inputstream)
             throws IOException, SOAPException {
-        //TODO:Flesh this out.
+        Message message = new Message(inputstream,mimeheaders);
+        message.setMessageType(Message.REQUEST);
         return null;
     }
 }

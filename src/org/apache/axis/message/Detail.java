@@ -76,6 +76,10 @@ public class Detail extends SOAPFaultElement implements javax.xml.soap.Detail {
         super(namespace, localName, prefix, attrs, context);
     }
 
+    public Detail() {
+        super(new AxisFault());
+    }
+
     public Detail(AxisFault fault) {
         super(fault);
     }

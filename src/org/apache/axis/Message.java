@@ -123,6 +123,8 @@ public class Message extends javax.xml.soap.SOAPMessage {
      */
     private Attachments mAttachments = null;
 
+    private MimeHeaders headers;
+
     /**
      * Returns name of the class prividing Attachment Implementation
      * @returns class Name
@@ -164,7 +166,25 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *                     containing just the SOAP body (no SOAP-ENV).
      */
     public Message(Object initialContents, boolean bodyInStream) {
-        this(initialContents, bodyInStream, (String) null, (String) null);
+        setup(initialContents, bodyInStream, (String) null, (String) null, null);
+    }
+
+    /**
+     * Construct a Message, using the provided initialContents as the
+     * contents of the Message's SOAPPart.
+     * <p>
+     * Eventually, genericize this to
+     * return the RootPart instead, which will have some kind of
+     * EnvelopeFactory to enable support for things other than SOAP.
+     * But that all will come later, with lots of additional refactoring.
+     *
+     * @param initialContents may be String, byte[], InputStream, SOAPEnvelope,
+     *                        or AxisFault.
+     * @param bodyInStream is true if initialContents is an InputStream
+     *                     containing just the SOAP body (no SOAP-ENV).
+     */
+    public Message(Object initialContents, MimeHeaders headers) {
+        setup(initialContents, true, (String) null, (String) null, headers);
     }
 
     /**
@@ -187,7 +207,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
                    boolean bodyInStream,
                    String contentType,
                    String contentLocation) {
-        setup(initialContents, bodyInStream, contentType, contentLocation);
+        setup(initialContents, bodyInStream, contentType, contentLocation, null);
     }
 
     /**
@@ -195,7 +215,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      * defaulting bodyInStream to false.
      */
     public Message(Object initialContents) {
-        setup(initialContents, false, null, null);
+        setup(initialContents, false, null, null, null);
     }
 
     private static Class attachImpl = null;
@@ -248,7 +268,8 @@ public class Message extends javax.xml.soap.SOAPMessage {
      * Do the work of construction.
      */
     private void setup(Object initialContents, boolean bodyInStream,
-                       String contentType, String contentLocation) {
+                       String contentType, String contentLocation,
+                       MimeHeaders mimeHeaders) {
 
         // Try to construct an AttachmentsImpl object for attachment
         // functionality.
@@ -291,6 +312,8 @@ public class Message extends javax.xml.soap.SOAPMessage {
 
         // The stream was not determined by a more complex type so default to
         if(mAttachments!=null) mAttachments.setRootPart(mSOAPPart);
+
+        headers = (mimeHeaders == null) ? new MimeHeaders() : mimeHeaders;
     }
 
     /**
