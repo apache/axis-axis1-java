@@ -197,6 +197,8 @@ public class Message {
               // no support for it, leave mAttachments null.
           } catch (IllegalAccessException ex) {
               // no support for it, leave mAttachments null.
+          } catch(java.lang.NoClassDefFoundError ex) {
+              // no support for it, leave mAttachments null.
           }
 
         if(null == mSOAPPart ){ //The stream was not determined by a more complex type so default to text/xml 
