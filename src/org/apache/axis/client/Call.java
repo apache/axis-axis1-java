@@ -80,6 +80,8 @@ import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.attachments.AttachmentPart; 
 import org.apache.axis.InternalException;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -155,7 +157,7 @@ public class Call implements javax.xml.rpc.Call {
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
-    private String             operationStyle  = null;
+    private int                operationStyle  = ServiceDesc.STYLE_RPC;
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
     private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC;
@@ -357,7 +359,7 @@ public class Call implements javax.xml.rpc.Call {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(OPERATION_STYLE_PROPERTY)) {
-                return getOperationStyle();
+                return MessageContext.getStyleFromInt(operationStyle);
             }
             else if (name.equals(SOAPACTION_USE_PROPERTY)) {
                 return new Boolean(useSOAPAction());
@@ -434,22 +436,21 @@ public class Call implements javax.xml.rpc.Call {
      * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
      */
     public void setOperationStyle(String operationStyle) {
-        if ("rpc".equalsIgnoreCase(operationStyle)
-                || "document".equalsIgnoreCase(operationStyle)) {
-            this.operationStyle = operationStyle;
-        }
-        else {
-            throw new IllegalArgumentException(JavaUtils.getMessage(
-                    "badProp01",
-                    new String[] {OPERATION_STYLE_PROPERTY,
-                    "\"rpc\", \"document\"", operationStyle}));
-        }
+        this.operationStyle =
+                MessageContext.getStyleFromString(operationStyle);
+
+/*  Not being used for now... --GD
+        throw new IllegalArgumentException(JavaUtils.getMessage(
+                "badProp01",
+                new String[] {OPERATION_STYLE_PROPERTY,
+                              "\"rpc\", \"document\"", operationStyle}));
+*/
     } // setOperationStyle
 
     /**
      * Get the operation style.
      */
-    public String getOperationStyle() {
+    public int getOperationStyle() {
         return operationStyle;
     } // getOperationStyle
 
@@ -1622,9 +1623,12 @@ public class Call implements javax.xml.rpc.Call {
             msgContext.setPassword(password);
         }
         msgContext.setMaintainSession(maintainSession);
-        if (operationStyle != null) {
-            msgContext.setOperationStyle(MessageContext.getStyleFromString(operationStyle));
-        }
+        OperationDesc operationDesc = new OperationDesc();
+        msgContext.setOperation(operationDesc);
+
+        operationDesc.setStyle(operationStyle);
+        msgContext.setOperationStyle(operationStyle);
+
         if (useSOAPAction) {
             msgContext.setUseSOAPAction(true);
         }

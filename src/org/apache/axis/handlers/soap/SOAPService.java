@@ -63,6 +63,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.Serializer;
@@ -98,9 +99,6 @@ public class SOAPService extends SimpleTargetedChain
     protected static Log log =
         LogFactory.getLog(SOAPService.class.getName());
 
-    public static final int STYLE_RPC = 0;
-    public static final int STYLE_DOCUMENT = 1;
-    
     /** Valid transports for this service
      * (server side only!)
      *
@@ -114,31 +112,10 @@ public class SOAPService extends SimpleTargetedChain
     private TypeMappingRegistry tmr;
     
     /**
-     * Style of the service - document or RPC
-     */ 
-    private int style = STYLE_RPC;
-
-    /**
-     * Mappings of element QNames -> method names if we're doc/literal and
-     * not in wrapped mode.
+     * Our ServiceDescription.  Holds pretty much all the interesting
+     * metadata about this service.
      */
-    private HashMap qName2MethodMap = null;
-
-    private HashMap method2OperationMap = null;
-
-    public void addOperationDesc(String method, OperationDesc operation)
-    {
-        if (method2OperationMap == null)
-            method2OperationMap = new HashMap();
-        method2OperationMap.put(method, operation);
-    }
-
-    public OperationDesc getOperationDescByName(String methodName)
-    {
-        if (method2OperationMap == null)
-            return null;
-        return (OperationDesc)method2OperationMap.get(methodName);
-    }
+    private ServiceDesc serviceDescription = null;
 
     /**
      * SOAPRequestHandler is used to inject SOAP semantics just before
@@ -257,18 +234,6 @@ public class SOAPService extends SimpleTargetedChain
         tmr.delegate(engine.getTypeMappingRegistry());
     }
 
-    /**
-     * Is this an RPC service?  Right now, we default to yes, unless
-     * the provider is in fact a MsgProvider.
-     *
-     * @return true if the service is RPC, false if document-oriented
-     */
-    public boolean isRPC()
-    {
-        return ((pivotHandler == null) ||
-                (pivotHandler.getClass() != MsgProvider.class));
-    }
-
     public boolean availableFromTransport(String transportName)
     {
         if (validTransports != null) {
@@ -284,33 +249,28 @@ public class SOAPService extends SimpleTargetedChain
     }
 
     public int getStyle() {
-        return style;
+        if (serviceDescription == null) {
+            serviceDescription = new ServiceDesc();
+        }
+
+        return serviceDescription.getStyle();
     }
 
     public void setStyle(int style) {
-        this.style = style;
-    }
-
-    public void setElementMap(HashMap elementMap) {
-        this.qName2MethodMap = elementMap;
-    }
-
-    /**
-     * Retreive a method which has been mapped to a particular element
-     * QName (for document/literal services)
-     *
-     * @param elementQName the QName of an XML element to dispatch on
-     * @return a method which should handle the specified element, or
-     *         null if no such method has been mapped.
-     */
-    public String getMethodForElementName(QName elementQName)
-    {
-        if (qName2MethodMap != null) {
-            return (String)qName2MethodMap.get(elementQName);
+        if (serviceDescription == null) {
+            serviceDescription = new ServiceDesc();
         }
-        return null;
+
+        serviceDescription.setStyle(style);
     }
 
+    public ServiceDesc getServiceDescription() {
+        return serviceDescription;
+    }
+
+    public void setServiceDescription(ServiceDesc serviceDescription) {
+        this.serviceDescription = serviceDescription;
+    }
     /*********************************************************************
      * Administration and management APIs
      *

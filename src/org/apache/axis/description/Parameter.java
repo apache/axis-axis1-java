@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,122 +54,63 @@
  */
 package org.apache.axis.description;
 
+import org.apache.axis.wsdl.toJava.TypeEntry;
+
 import javax.xml.rpc.namespace.QName;
-import java.util.ArrayList;
+import java.util.Vector;
 
 /**
- * An OperationDesc is an abstract description of an operation on a service.
+ * A Parameter descriptor, collecting the interesting info about an
+ * operation parameter.
  *
- * !!! WORK IN PROGRESS
+ * (mostly taken from org.apache.axis.wsdl.toJava.Parameter right now)
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class OperationDesc {
-    /** The service we're a part of */
-    private ServiceDesc parent;
+public class Parameter {
 
-    /** Parameter list */
-    private ArrayList parameters = new ArrayList();
+    // constant values for the parameter mode.
+    public static final byte IN = 1;
+    public static final byte OUT = 2;
+    public static final byte INOUT = 3;
 
-    /** The operation name (String, or QName?) */
-    private String name;
+    /** The Parameter's XML QName */
+    private QName name;
+    /** A TypeEntry corresponding to this parameter */
+    public TypeEntry typeEntry;
+    /** The Parameter mode (in, out, inout) */
+    public byte mode = IN;
+    /** The XML type of this parameter */
+    private QName typeQName;
+    /** The order of this parameter */
+    private int order = 0;
 
-    /** An XML QName which should dispatch to this method */
-    private QName elementQName;
+    public String toString() {
+        return "(" + typeEntry + ", " + getName() + ", "
+                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
+    } // toString
 
-    /** The return QName (if it should be different from <method>Result) */
-    private QName returnQName;
-
-    /** The return type */
-    private QName returnType;
-
-    /** The Java method name this maps to (is this just name?) */
-    private String methodName;
-
-    /** This operation's style.  If null, we default to our parent's */
-    private Integer style;
-
-    /**
-     * Default constructor.
-     */
-    public OperationDesc() {
-    }
-
-    /**
-     * Return the operation's name
-     */
-    public String getName() {
+    public QName getQName() {
         return name;
     }
 
-    /**
-     * Set the operation's name
-     */
+    public String getName() {
+        return name.getLocalPart();
+    }
+
     public void setName(String name) {
+        this.name = new QName("", name);
+    }
+
+    public void setQName(QName name) {
         this.name = name;
     }
 
-    public QName getReturnQName() {
-        return returnQName;
+    public QName getTypeQName() {
+        return typeQName;
     }
 
-    public void setReturnQName(QName returnQName) {
-        this.returnQName = returnQName;
+    public void setTypeQName(QName typeQName) {
+        this.typeQName = typeQName;
     }
-
-    public QName getReturnType() {
-        return returnType;
-    }
-
-    public void setReturnType(QName returnType) {
-        this.returnType = returnType;
-    }
-
-    public QName getElementQName() {
-        return elementQName;
-    }
-
-    public void setElementQName(QName elementQName) {
-        this.elementQName = elementQName;
-    }
-
-    public ServiceDesc getParent() {
-        return parent;
-    }
-
-    public void setParent(ServiceDesc parent) {
-        this.parent = parent;
-    }
-
-    public void setStyle(int style)
-    {
-        this.style = new Integer(style);
-    }
-
-    /**
-     * Return the style of the operation, defaulting to the parent
-     * ServiceDesc's style if we don't have one explicitly set.
-     */
-    public int getStyle()
-    {
-        if (style == null) {
-            if (parent != null) {
-                return parent.getStyle();
-            }
-            return ServiceDesc.STYLE_RPC; // Default
-        }
-
-        return style.intValue();
-    }
-
-    public void addParameter(Parameter param)
-    {
-        parameters.add(param);
-    }
-
-    public Parameter getParameter(int i)
-    {
-        return (Parameter)parameters.get(i);
-    }
-}
-
+} // class Parameter

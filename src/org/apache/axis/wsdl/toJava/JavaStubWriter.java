@@ -528,9 +528,6 @@ public class JavaStubWriter extends JavaWriter {
         // Encoding: literal or encoded use.
         int use = bEntry.getInputBodyType(operation.getOperation());
         if (use == BindingEntry.USE_LITERAL) {
-            if (symbolTable.isWrapped()) {
-                pw.println("        call.setProperty(\"wrapped\", Boolean.TRUE);");
-            }
             // Turn off encoding
             pw.println("        call.setEncodingStyle(null);");
             // turn off multirefs
@@ -539,14 +536,18 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("        call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
         
-        // Style: document or RPC
+        // Style: document, RPC, or wrapped
         int style = bEntry.getBindingStyle();
+        String styleStr = "rpc";
         if (style == BindingEntry.STYLE_DOCUMENT) {
-            pw.println("        call.setOperationStyle(\"document\");");
-        } else {
-            pw.println("        call.setOperationStyle(\"rpc\");");
+            if (symbolTable.isWrapped()) {
+                styleStr = "wrapped";
+            } else {
+                styleStr = "document";
+            }
         }
-            
+        pw.println("        call.setOperationStyle(\"" + styleStr + "\");");
+
         
         // Operation name
         pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + namespace + "\", \"" + operation.getName() + "\"));" );

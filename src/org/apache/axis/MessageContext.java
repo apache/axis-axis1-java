@@ -62,10 +62,13 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 import java.io.File;
 
@@ -167,7 +170,7 @@ public class MessageContext {
      */
     private String  username       = null;
     private String  password       = null;
-    private int     operationStyle = SOAPService.STYLE_RPC;
+    private int     operationStyle = ServiceDesc.STYLE_RPC;
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
     private String  encodingStyle  = Constants.URI_CURRENT_SOAP_ENC;
@@ -177,6 +180,47 @@ public class MessageContext {
      * should be set to false for document/literal.
      */
     private boolean isEncoded = true;
+
+    private OperationDesc currentOperation = null;
+    public OperationDesc getOperation()
+    {
+        return currentOperation;
+    }
+    public void setOperation(OperationDesc operation)
+    {
+        currentOperation = operation;
+    }
+    public OperationDesc getOperationByQName(QName qname)
+    {
+        if (currentOperation != null)
+            return currentOperation;
+
+        if (serviceHandler == null) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug(JavaUtils.getMessage("dispatching00",
+                                                   qname.getNamespaceURI()));
+                }
+
+                // Try looking this QName up in our mapping table...
+                setService(axisEngine.getConfig().
+                           getServiceByNamespaceURI(qname.getNamespaceURI()));
+            } catch (ConfigurationException e) {
+                // Didn't find one...
+            }
+
+            if (serviceHandler == null)
+                return null;
+        }
+
+        ServiceDesc desc = serviceHandler.getServiceDescription();
+
+        if (desc != null) {
+            currentOperation = desc.getOperationByElementQName(qname);
+            setOperationStyle(desc.getStyle());
+        }
+        return currentOperation;
+    }
 
     /**
      * Get the active message context.
@@ -450,9 +494,8 @@ public class MessageContext {
             SOAPService service = (SOAPService)sh;
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
-            setProperty(ISRPC, new Boolean(service.isRPC()));
             setOperationStyle(service.getStyle());
-            setEncodingStyle((service.getStyle() == SOAPService.STYLE_RPC) ?
+            setEncodingStyle((service.getStyle() == ServiceDesc.STYLE_RPC) ?
                                         Constants.URI_CURRENT_SOAP_ENC : "");
         }
     }
@@ -482,9 +525,6 @@ public class MessageContext {
 
     /** Place to store an AuthenticatedUser */
     public static String AUTHUSER            = "authenticatedUser";
-
-    /** Is this message an RPC message (instead of just a blob of xml) */
-    public static String ISRPC               = "is_rpc" ;
 
     /** If on the client - this is the Call object */
     public static String CALL                = "call_object" ;
@@ -723,10 +763,7 @@ public class MessageContext {
     } // getPassword
 
     /**
-     * Set the operation style.  IllegalArgumentException is thrown if operationStyle
-     * is not "rpc" or "document".
-     *
-     * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
+     * Set the operation style.
      */
     public void setOperationStyle(int operationStyle) {
         this.operationStyle = operationStyle;
@@ -809,30 +846,41 @@ public class MessageContext {
     /**
      * Utility function to convert string to operation style constants
      * 
-     * @param operationStyle "rpc" or "document"
-     * @return either SOAPService.STYLE_RPC or SOAPService.STYLE_DOCUMENT
-     * @throws IllegalArgumentException
-     */ 
+     * @param operationStyle "rpc", "document", or "wrapped"
+     * @return either STYLE_RPC, STYLE_DOCUMENT or STYLE_WRAPPED (all defined
+     *         in org.apache.axis.description.ServiceDesc)
+     */
     public static int getStyleFromString(String operationStyle)
     {
         if ("rpc".equalsIgnoreCase(operationStyle))
-            return SOAPService.STYLE_RPC;
+            return ServiceDesc.STYLE_RPC;
         if ("document".equalsIgnoreCase(operationStyle))
-            return SOAPService.STYLE_DOCUMENT;
+            return ServiceDesc.STYLE_DOCUMENT;
+        if ("wrapped".equalsIgnoreCase(operationStyle))
+            return ServiceDesc.STYLE_WRAPPED;
 
-        throw new IllegalArgumentException(JavaUtils.getMessage(
-                    "badProp01",
-                    new String[] {Call.OPERATION_STYLE_PROPERTY,
-                    "\"rpc\", \"document\"", operationStyle}));
+        // Not one of the recognized values.  We're going to return RPC
+        // as the default, but log an error.
+        log.error(JavaUtils.getMessage("badStyle", operationStyle));
+
+        return ServiceDesc.STYLE_RPC;
     }
-    
+
+    /**
+     * Utility function to return a string representation of a style
+     * constant.
+     */
     public static String getStyleFromInt(int style)
     {
-        if (style == SOAPService.STYLE_RPC)
-            return "rpc";
-        if (style == SOAPService.STYLE_DOCUMENT)
-            return "document";
-        
-        return null;        
+        switch (style) {
+            case ServiceDesc.STYLE_RPC:
+                return "rpc";
+            case ServiceDesc.STYLE_DOCUMENT:
+                return "document";
+            case ServiceDesc.STYLE_WRAPPED:
+                return "wrapped";
+        }
+
+        return null;
     }
 };

@@ -65,6 +65,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.ConfigurationException;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
@@ -82,8 +84,7 @@ public class BodyBuilder extends SOAPHandler
 
     private SOAPBodyElement element;
     boolean gotRPCElement = false;
-    boolean isRPCElement = false;
-    
+
     private SOAPEnvelope envelope;
     
     BodyBuilder(SOAPEnvelope envelope)
@@ -101,8 +102,9 @@ public class BodyBuilder extends SOAPHandler
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onStartChild()"));
         }
+
+        QName qname = new QName(namespace, localName);
         SOAPHandler handler = null;
-        SOAPService service = null;
 
         /** We're about to create a body element.  So we really need
          * to know at this point if this is an RPC service or not.  It's
@@ -118,31 +120,12 @@ public class BodyBuilder extends SOAPHandler
         if ((root != null) && root.equals("0")) isRoot = false;
 
         MessageContext msgContext = context.getMessageContext();
-        service = msgContext.getService();
+        OperationDesc operation = msgContext.getOperationByQName(qname);
 
-        if (isRoot &&
-            service == null) {
-
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("dispatching00",namespace));
-            }
-
-            try {
-                service = msgContext.getAxisEngine().
-                                     getConfig().
-                                     getServiceByNamespaceURI(namespace);
-                if (service != null)
-                    msgContext.setService(service);
-            } catch (ConfigurationException e) {
-                // oh well...
-            }
-        }
-        
         /** Now we make a plain SOAPBodyElement IF we either:
          * a) have an non-root element, or
          * b) have a non-RPC service
          */
-
         if (localName.equals(Constants.ELEM_FAULT) &&
             namespace.equals(Constants.URI_SOAP_ENV)) {
             element = new SOAPFaultElement(namespace, localName, prefix,
@@ -151,23 +134,12 @@ public class BodyBuilder extends SOAPHandler
                                            context);
         } else if (!gotRPCElement) {
             if (isRoot &&
-                (msgContext.isEncoded() || msgContext.isPropertyTrue("wrapped"))) {
+                (operation == null ||
+                 (operation.getStyle() !=
+                  ServiceDesc.STYLE_MESSAGE))) {
                 gotRPCElement = true;
                 element = new RPCElement(namespace, localName, prefix,
-                                         attributes, context);
-            } else {
-                // If we can figure out a method based on the element name,
-                // we must want an RPCElement.  !!! This needs cleaning up
-                //
-                if (service != null) {
-                    QName qname = new QName(namespace, localName);
-                    String method = service.getMethodForElementName(qname);
-                    if (method != null) {
-                        element = new RPCElement(namespace, localName, prefix,
-                                                 attributes, context);
-                        gotRPCElement = true;
-                    }
-                }
+                                         attributes, context, operation);
             }
         }
 

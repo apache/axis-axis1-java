@@ -190,33 +190,12 @@ public class JavaDeployWriter extends JavaWriter {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
 
-        boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
         boolean hasLiteral = bEntry.hasLiteral();
 
         String prefix = Constants.NSPREFIX_WSDD_JAVA;
         pw.println("  <service name=\"" + serviceName
-                + "\" provider=\"" + (isRPC ? prefix +":RPC" : prefix +":MSG")
-                + "\"" + (hasLiteral ? " style=\"literal\"" : "") + ">");
-
-        List operations = binding.getBindingOperations();
-        for (Iterator i = operations.iterator(); i.hasNext();) {
-            BindingOperation bOperation = (BindingOperation) i.next();
-            Operation operation = bOperation.getOperation();
-            // We pass "" as the namespace argument because we're just
-            // interested in the return type for now.
-            Parameters params =
-                    symbolTable.getOperationParameters(operation, "", bEntry);
-            if (params.returnType instanceof DefinedElement) {
-                QName returnQName = params.returnType.getQName();
-                pw.print("      <operation name=\"" + operation.getName() +
-                         "\" returnQName=\"retNS:" +
-                         returnQName.getLocalPart() +
-                         "\" xmlns:retNS=\"" +
-                         returnQName.getNamespaceURI() +
-                         "\"");
-                pw.println("/>");
-            }
-        }
+                + "\" provider=\"" + prefix +":RPC"
+                + "\"" + (hasLiteral ? " style=\"document\"" : "") + ">");
 
         writeDeployBinding(binding);
         writeDeployTypes(hasLiteral);
@@ -240,49 +219,52 @@ public class JavaDeployWriter extends JavaWriter {
                          + className + "\"/>");
 
         String methodList = "";
-        HashMap opMap = new HashMap();
         Iterator operationsIterator = binding.getBindingOperations().iterator();
         for (; operationsIterator.hasNext();) {
-            BindingOperation op = (BindingOperation) operationsIterator.next();
-            Operation ptOperation = op.getOperation();
-            OperationType type = ptOperation.getStyle();
-            
+            BindingOperation bindingOper = (BindingOperation) operationsIterator.next();
+            Operation operation = bindingOper.getOperation();
+            OperationType type = operation.getStyle();
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
             if (type != OperationType.NOTIFICATION
                     && type != OperationType.SOLICIT_RESPONSE) {
-                methodList = methodList + " " + op.getName();
+                methodList = methodList + " " + bindingOper.getName();
             }
-            
-            // map doc/lit elements to operation
-            if (bEntry.getInputBodyType(ptOperation) == BindingEntry.USE_LITERAL) {
-                Map parts = ptOperation.getInput().getMessage().getParts();
+
+            // We pass "" as the namespace argument because we're just
+            // interested in the return type for now.
+            Parameters params =
+                    symbolTable.getOperationParameters(operation, "", bEntry);
+            if (params.returnType instanceof DefinedElement) {
+                QName returnQName = params.returnType.getQName();
+                pw.println("      <operation name=\"" + operation.getName() +
+                         "\" returnQName=\"retNS:" +
+                         returnQName.getLocalPart() +
+                         "\" xmlns:retNS=\"" +
+                         returnQName.getNamespaceURI() +
+                         "\">");
+
+                // map doc/lit elements to this operation
+                Map parts = operation.getInput().getMessage().getParts();
                 if (!parts.isEmpty()) {
                     Iterator i = parts.values().iterator();
                     Part p = (Part) i.next();
                     QName elementQName = p.getElementName();
-                    if (elementQName != null) {
-                        opMap.put(elementQName, op.getName());
-                    }
+                    String ns = elementQName.getNamespaceURI();
+                    pw.println("        <elementMapping xmlns:ns=\"" +
+                            ns + "\" element=\"ns:" +
+                            elementQName.getLocalPart() + "\"/>");
                 }
+
+                pw.println("      </operation>");
             }
+
         }
 
         pw.println("      <parameter name=\"allowedMethods\" value=\""
                 + methodList.substring(1) + "\"/>");
 
-        if (!opMap.isEmpty()) {
-            Iterator i = opMap.keySet().iterator();
-            while (i.hasNext()) {
-                QName qn = (QName) i.next();
-                String ns = qn.getNamespaceURI();
-                pw.println("      <elementMapping xmlns:ns=\"" + 
-                        ns + "\" element=\"ns:" + qn.getLocalPart() + "\" " +
-                        "method=\"" + opMap.get(qn) + "\"/>");
-            }
-        }
-        
         if (emitter.getScope() == Emitter.APPLICATION_SCOPE) {
             pw.println("      <parameter name=\"scope\" value=\"Application\"/>");
         }
