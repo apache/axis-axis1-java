@@ -121,7 +121,7 @@ public class TCPTransport extends Transport
     /**
      * Initialize the given MessageContext with the correct handlers and registries.
      */
-    public void initMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine, boolean doLocal)
+    public void initMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
     {
         HandlerRegistry sr = engine.getServiceRegistry();
         if ( sr == null || sr.find("TCP.input") == null )
@@ -137,9 +137,8 @@ public class TCPTransport extends Transport
      * @param context the context to set up
      * @param message the client service instance
      * @param engine the engine containing the registries
-     * @param doLocal if true, we are setting up for local testing
      */
-    public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine, boolean doLocal)
+    public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
     {
         // kind of ugly... fake up a "http://host:port/" url to send down the chain
         // ROBJ TODO: clean this up so we use TCP transport properties all the way down

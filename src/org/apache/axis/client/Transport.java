@@ -80,7 +80,7 @@ public abstract class Transport {
      * Initialize the given MessageContext with the correct handlers and registries.
      */
     public abstract void initMessageContext
-        (MessageContext context, ServiceClient message, AxisEngine engine, boolean doLocal)
+        (MessageContext context, ServiceClient message, AxisEngine engine)
         throws AxisFault;
     
     /**
@@ -88,11 +88,10 @@ public abstract class Transport {
      * @param context the context to set up
      * @param message the client service instance
      * @param engine the engine containing the registries
-     * @param doLocal if true, we are setting up for local testing
      * @throws AxisFault if service cannot be found
      */
     public abstract void setupMessageContext
-        (MessageContext context, ServiceClient message, AxisEngine engine, boolean doLocal)
+        (MessageContext context, ServiceClient message, AxisEngine engine)
         throws AxisFault;
 }
     
