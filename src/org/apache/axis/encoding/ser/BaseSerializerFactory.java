@@ -127,7 +127,8 @@ public abstract class BaseSerializerFactory implements SerializerFactory {
                 }
                 ser = (Serializer) 
                     serClassConstructor.newInstance(new Object[] {javaType, xmlType});
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         // If not successfull, try newInstance
         if (ser == null) {

@@ -67,6 +67,8 @@ import java.lang.reflect.Field;
 
 import org.apache.axis.Constants;
 import org.apache.axis.AxisFault;
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.description.FieldDesc;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.wsdl.fromJava.ClassRep;
 import org.apache.axis.wsdl.fromJava.FieldRep;
@@ -94,8 +96,8 @@ public class SimpleSerializer implements Serializer {
     public Class javaType;
     
     private BeanPropertyDescriptor[] propertyDescriptor = null;
-    private Vector beanAttributeNames = null;
-    
+    private TypeDesc typeDesc = null;
+
     public SimpleSerializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
@@ -103,7 +105,16 @@ public class SimpleSerializer implements Serializer {
         if (SimpleType.class.isAssignableFrom(javaType)) {
             // get the bean properties and the list of attributes from the bean
             propertyDescriptor = BeanSerializer.getPd(javaType);
-            beanAttributeNames = BeanSerializer.getBeanAttributes(javaType);
+            // Get the class' TypeDesc if it provides one
+            try {
+                Method getTypeDesc =
+                        javaType.getMethod("getTypeDesc",
+                                           new Class [] {});
+                // get string array
+                typeDesc = (TypeDesc)getTypeDesc.invoke(null,
+                                                        BeanSerializer.noArgs);
+            } catch (Exception e) {
+            }
         }
     }
     /**
@@ -123,7 +134,7 @@ public class SimpleSerializer implements Serializer {
 
         // get any attributes
         if (value instanceof SimpleType)
-            attributes = getObjectAttributes(value, attributes);
+            attributes = getObjectAttributes(value, attributes, context);
         
         context.startElement(name, attributes);
         if (value != null) {
@@ -159,39 +170,55 @@ public class SimpleSerializer implements Serializer {
         context.endElement();
     }
 
-    private Attributes getObjectAttributes(Object value, Attributes attributes) {
-        
-        // if nothing, return
-        if (beanAttributeNames.isEmpty())
+    private Attributes getObjectAttributes(Object value,
+                                           Attributes attributes,
+                                           SerializationContext context) {
+        if (typeDesc == null || !typeDesc.hasAttributes())
             return attributes;
-        
+
         AttributesImpl attrs;
         if (attributes != null)
             attrs = new AttributesImpl(attributes);
         else
             attrs = new AttributesImpl();
-        
+
         try {
-            // Find each property that is an attribute 
+            // Find each property that is an attribute
             // and add it to our attribute list
             for (int i=0; i<propertyDescriptor.length; i++) {
                 String propName = propertyDescriptor[i].getName();
                 if (propName.equals("class"))
                     continue;
-                // skip it if its not in the list
-                if (!beanAttributeNames.contains(Utils.xmlNameToJava(propName)))
+
+                FieldDesc field = typeDesc.getFieldByName(propName);
+                // skip it if its not an attribute
+                if (field == null || field.isElement())
                     continue;
-                
+
+                QName qname = field.getXmlName();
+                if (qname == null) {
+                    qname = new QName("", Utils.xmlNameToJava(propName));
+                }
+
                 Method readMethod = propertyDescriptor[i].getReadMethod();
-                if (readMethod != null && 
-                        readMethod.getParameterTypes().length == 0) {
+                if (readMethod != null &&
+                    readMethod.getParameterTypes().length == 0) {
                     // add to our attributes
                     Object propValue = propertyDescriptor[i].
-                            getReadMethod().invoke(value, new Object[]{});
-                    // NOTE: we will always set the attribute here to something, 
+                                        getReadMethod().
+                                        invoke(value,BeanSerializer.noArgs);
+                    // NOTE: we will always set the attribute here to something,
                     // which we may not want (i.e. if null, omit it)
                     String propString = propValue != null ? propValue.toString() : "";
-                    attrs.addAttribute("", propName, propName, "CDATA", propString);
+
+                    String namespace = qname.getNamespaceURI();
+                    String localName = qname.getLocalPart();
+
+                    attrs.addAttribute(namespace,
+                                       localName,
+                                       context.qName2String(qname),
+                                       "CDATA",
+                                       propString);
                 }
             }
         } catch (Exception e) {
@@ -253,17 +280,22 @@ public class SimpleSerializer implements Serializer {
         // allows users to provide their own field mapping.
         ClassRep clsRep = types.getBeanBuilder().build(javaType);
 
-        // Write out fields
+        // Write out fields (only attributes are allowed)
+        if (typeDesc == null || !typeDesc.hasAttributes())
+            return true;
+
         Vector fields = clsRep.getFields();
         for (int i=0; i < fields.size(); i++) {
             FieldRep field = (FieldRep) fields.elementAt(i);
 
             String fieldName = field.getName();
-            
-            // if bean fields are attributes, write attribute element
-            if (!beanAttributeNames.contains(fieldName)) {
+
+            FieldDesc fieldDesc = typeDesc.getFieldByName(field.getName());
+            if (fieldDesc == null || fieldDesc.isElement()) {
+                // Really, it's an error to have element descriptors in there!
                 continue;
             }
+
             //  write attribute element
             Class fieldType = field.getType();
             

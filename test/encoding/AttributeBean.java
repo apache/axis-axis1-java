@@ -53,6 +53,13 @@
 * <http://www.apache.org/>.
 */
 
+import org.apache.axis.description.AttributeDesc;
+import org.apache.axis.description.ElementDesc;
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.description.TypeDesc;
+
+import javax.xml.rpc.namespace.QName;
+
 /**
  * Simple Java Bean with fields that should be serialized as attributes
  */ 
@@ -103,18 +110,50 @@ public class AttributeBean implements java.io.Serializable {
     public void setMale(boolean male) {
         this.male = male;
     }
+
+    public boolean equals(Object obj)
+    {
+        if (obj == null || !(obj instanceof AttributeBean))
+            return false;
+        AttributeBean other = (AttributeBean)obj;
+        if (other.getAge() != age)
+            return false;
+        if (other.getID() != iD)
+            return false;
+        if (other.getMale() != male)
+            return false;
+        if (name == null)
+            return other.getName() == null;
+        return name.equals(other.getName());
+    }
+
+    // Type metadata
+    private static TypeDesc typeDesc;
     
-    // List of fields that are XML attributes
-    public static java.lang.String[] _attrs = new String[] {
-        "name", 
-        "male", 
-    };
-    
-    /**
-     * Return list of bean field names that are attributes
-     */
-    public static java.lang.String[] getAttributeElements() {
-        return _attrs;
+    static {
+        typeDesc = new TypeDesc();
+        FieldDesc field;
+
+        // An attribute with a specified QName
+        field = new AttributeDesc();
+        field.setFieldName("name");
+        field.setXmlName(new QName("foo", "nameAttr"));
+        typeDesc.addFieldDesc(field);
+
+        // An attribute with a default QName
+        field = new AttributeDesc();
+        field.setFieldName("male");
+        typeDesc.addFieldDesc(field);
+
+        // An element with a specified QName
+        field = new ElementDesc();
+        field.setFieldName("age");
+        field.setXmlName(new QName("foo", "ageElement"));
+        typeDesc.addFieldDesc(field);
     }
     
+    public static TypeDesc getTypeDesc()
+    {
+        return typeDesc;
+    }
 }
