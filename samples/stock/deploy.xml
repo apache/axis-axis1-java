@@ -16,9 +16,11 @@
   <service name="urn:xmltoday-delayed-quotes" pivot="stock" >
     <option name="className" value="samples.stock.StockQuoteService" />
     <option name="methodName" value="getQuote" />
+    <option name="allowedRoles" value="user1,user2"/>
   </service>
   <service name="urn:cominfo" pivot="stock" >
     <option name="className" value="samples.stock.ComInfoService" />
     <option name="methodName" value="getInfo" />
+    <option name="allowedRoles" value="user3"/>
   </service>
 </m:deploy>
