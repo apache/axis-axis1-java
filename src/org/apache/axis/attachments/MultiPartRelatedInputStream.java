@@ -489,9 +489,8 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
     /**
      * This will read streams in till the one that is needed is found.
-     * @param The id is the stream being sought.
      *
-     * @param id
+     * @param id id is the stream being sought.
      *
      * @return the part for the id
      *
