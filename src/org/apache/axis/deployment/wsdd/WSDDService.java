@@ -525,6 +525,14 @@ public class WSDDService
         cachedService = service;
     }
 
+    public Vector getTypeMappings() {
+        return typeMappings;
+    }
+
+    public void setTypeMappings(Vector typeMappings) {
+        this.typeMappings = typeMappings;
+    }
+
     public void deployToRegistry(WSDDDeployment registry)
     {
         registry.addService(this);
