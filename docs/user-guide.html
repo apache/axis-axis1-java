@@ -274,20 +274,22 @@ Now when you run the program you'll get a message that looks like this:
   rename it "Calculator.jws". So you might do something like this:</p>
 <pre>% copy Calculator.java <i><font color="#0000FF">&lt;your-webapp-root&gt;</font></i>/axis/Calculator.jws</pre>
 <p>Now for step 2... hm, wait a minute. You're done! You should now be able to 
-  access the service at the following URL (assuming you've mapped the Axis web 
-  application to port 80):</p>
-<p><a href="http://localhost/axis/Calculator.jws">http://localhost/axis/Calculator.jws</a> 
+  access the service at the following URL (assuming your Axis web application 
+  is on port 8080):</p>
+<p><a href="http://localhost:8080/axis/Calculator.jws">http://localhost:8080/axis/Calculator.jws</a> 
 </p>
 <p>Axis automatically locates the file, compiles the class, and converts SOAP 
   calls correctly into Java invocations of your service class. Try it out - there's 
   a calculator client in samples/userguide/example2/CalcClient.java, which you 
   can use like this:</p>
 <pre>% javac CalcClient.java
-% java CalcClient add 2 5
+% java CalcClient -p8080 add 2 5
 Got result : 7
-% java CalcClient subtract 10 9
+% java CalcClient -p8080 subtract 10 9
 Got result : 1
 % </pre>
+(note that you may need to replace the &quot;-p8080&quot; with whatever port your 
+J2EE server is running on) 
 <h3>Custom Deployment - deploy.xml files and the AdminClient</h3>
 <p>JWS files are great quick ways to get your classes out there as Web Services, 
   but they're not always the best choice. For one thing, you need the source code 
