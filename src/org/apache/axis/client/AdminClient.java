@@ -98,35 +98,62 @@ public class AdminClient
     }
 
 
+    /**
+     * the object that represents our call
+     */
     protected Call call;
 
     /**
      * Construct an admin client w/o a logger.
+     * If the client cannot create a call object, then it does not throw an exception.
+     * Instead it prints a message to {@link System.err}.
+     * This is for 'historical reasons'
      */
     public AdminClient()
     {
         try {
-            // Initialize our Service - allow the user to override the
-            // default configuration with a thread-local version (see
-            // setDefaultConfiguration() above)
-            EngineConfiguration config =
-                    (EngineConfiguration)defaultConfiguration.get();
-            Service service;
-            if (config != null) {
-                service = new Service(config);
-            } else {
-                service = new Service();
-            }
-            call = (Call) service.createCall();
+            initAdminClient();
         } catch (ServiceException e) {
             System.err.println(Messages.getMessage("couldntCall00") + ": " + e);
             call = null;
         }
     }
 
+
+    /**
+     * this is a somwhat contrived variant constructor, one that throws an exception
+     * if things go wrong.
+     * @param ignored
+     */
+    public AdminClient(boolean ignored) throws ServiceException {
+        initAdminClient();
+    }
+
+    /**
+     * core initialisation routine
+     *
+     * @throws ServiceException
+     */
+    private void initAdminClient() throws ServiceException {
+        // Initialize our Service - allow the user to override the
+        // default configuration with a thread-local version (see
+        // setDefaultConfiguration() above)
+        EngineConfiguration config =
+                (EngineConfiguration) defaultConfiguration.get();
+        Service service;
+        if (config != null) {
+            service = new Service(config);
+        } else {
+            service = new Service();
+        }
+        call = (Call) service.createCall();
+    }
+
+
     /**
      * External access to our <code>Call</code< object.
-     *
+     * This will be null if the non-excepting constructor was used
+     * and the construction failed.
      * @return the <code>Call</code> object this instance uses
      */
     public Call getCall()
@@ -134,11 +161,22 @@ public class AdminClient
         return call;
     }
 
+    /**
+     * process the options then run a list call
+     * @param opts
+     * @return
+     * @throws Exception
+     */
     public String list(Options opts) throws Exception {
         processOpts( opts );
         return list();
     }
 
+    /**
+     * send a list command
+     * @return the response from the call
+     * @throws Exception
+     */
     public String list() throws Exception {
         log.debug( Messages.getMessage("doList00") );
         String               str   = "<m:list xmlns:m=\"" + WSDDConstants.URI_WSDD + "\"/>" ;
@@ -146,13 +184,27 @@ public class AdminClient
         return process(input);
     }
 
+    /**
+     * process the command line ops, then send a quit command
+     * @param opts
+     * @return
+     * @throws Exception
+     */
     public String quit(Options opts) throws Exception {
         processOpts( opts );
         return quit();
     }
 
+    /**
+     * root element of the undeploy request
+     */
     protected static final String ROOT_UNDEPLOY= WSDDConstants.QNAME_UNDEPLOY.getLocalPart();
 
+    /**
+     * make a quit command
+     * @return
+     * @throws Exception
+     */
     public String quit() throws Exception {
         log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:quit xmlns:m=\"" + WSDDConstants.URI_WSDD + "\"/>";
@@ -160,6 +212,12 @@ public class AdminClient
         return process(input);
     }
 
+    /**
+     * undeploy a handler
+     * @param handlerName name of the handler to undeploy
+     * @return
+     * @throws Exception
+     */
     public String undeployHandler(String handlerName) throws Exception {
         log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.URI_WSDD + "\">" +
@@ -169,6 +227,12 @@ public class AdminClient
         return process(input);
     }
 
+    /**
+     * undeploy a service
+     * @param serviceName name of service
+     * @return
+     * @throws Exception
+     */
     public String undeployService(String serviceName) throws Exception {
         log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.URI_WSDD + "\">" +
@@ -271,17 +335,53 @@ public class AdminClient
         return sb.toString();
     }
 
+    /**
+     * go from the (parsed) command line to setting properties on our call object.
+     * @param opts
+     * @throws Exception if call==null
+     */
     public void processOpts(Options opts) throws Exception {
-        if (call == null)
+        if (call == null) {
             throw new Exception(Messages.getMessage("nullCall00"));
+        }
 
-        call.setTargetEndpointAddress( new URL(opts.getURL()) );
-        call.setUsername( opts.getUser() );
-        call.setPassword( opts.getPassword() );
+        URL address = new URL(opts.getURL());
+        setTargetEndpointAddress(address);
+        setLogin(opts.getUser(), opts.getPassword());
 
         String tName = opts.isValueSet( 't' );
-        if ( tName != null && !tName.equals("") )
-            call.setProperty( Call.TRANSPORT_NAME, tName );
+        setTransport(tName);
+    }
+
+    /**
+     * set the username and password
+     * requires that call!=null
+     * @param user username
+     * @param password password
+     */
+    public void setLogin(String user, String password) {
+        call.setUsername( user );
+        call.setPassword( password );
+    }
+
+    /**
+     * set the URL to deploy to
+     * requires that call!=null
+     * @param address
+     */
+    public void setTargetEndpointAddress(URL address) {
+        call.setTargetEndpointAddress( address );
+    }
+
+    /**
+     * set the transport to deploy with.
+     * requires that call!=null
+     * @param transportName a null or empty value does not trigger a setting
+     */
+    public void setTransport(String transportName) {
+        if(transportName != null && !transportName.equals("")) {
+            call.setProperty( Call.TRANSPORT_NAME, transportName );
+        }
     }
 
     public String  process(InputStream input) throws Exception {
@@ -292,10 +392,15 @@ public class AdminClient
         return process(null, xmlURL.openStream() );
     }
 
+    /**
+     * process an XML file containing a pre-prepared admin message
+     * @param xmlFile file to load
+     * @return
+     * @throws Exception
+     */
     public String process(String xmlFile) throws Exception {
-        FileInputStream in     = new FileInputStream(xmlFile);
-        String          result =  process(null, in );
-        in.close();
+        FileInputStream in = new FileInputStream(xmlFile);
+        String result =  process(null, in );
         return result ;
     }
 
@@ -304,26 +409,43 @@ public class AdminClient
         return process( xmlFile );
     }
 
+    /**
+     * submit the input stream's contents to the endpoint, return the results as a string.
+     * The input stream is always closed after the call, whether the request worked or not
+     * @param opts options -can be null
+     * @param input -input stream for request
+     * @return
+     * @throws Exception if the call was null
+     * @throws AxisFault if the invocation returned an empty response
+     */
     public String process(Options opts, InputStream input)  throws Exception {
-        if (call == null)
-            throw new Exception(Messages.getMessage("nullCall00"));
+        try {
+            if (call == null) {
+                //validate that the call is not null
+                throw new Exception(Messages.getMessage("nullCall00"));
+            }
 
-        if ( opts != null ) processOpts( opts );
+            if ( opts != null ) {
+                //process options if supplied
+                processOpts( opts );
+            }
 
-        call.setUseSOAPAction( true);
-        call.setSOAPActionURI( "AdminService");
+            call.setUseSOAPAction( true);
+            call.setSOAPActionURI( "AdminService");
 
-        Vector result = null ;
-        Object[]  params = new Object[] { new SOAPBodyElement(input) };
-        result = (Vector) call.invoke( params );
+            Vector result = null ;
+            Object[]  params = new Object[] { new SOAPBodyElement(input) };
+            result = (Vector) call.invoke( params );
 
-        input.close();
+            if (result == null || result.isEmpty()) {
+                throw new AxisFault(Messages.getMessage("nullResponse00"));
+            }
 
-        if (result == null || result.isEmpty())
-            throw new AxisFault(Messages.getMessage("nullResponse00"));
-
-        SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
-        return body.toString();
+            SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
+            return body.toString();
+        } finally {
+            input.close();
+        }
     }
 
     /**
