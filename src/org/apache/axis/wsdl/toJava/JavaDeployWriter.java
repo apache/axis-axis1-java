@@ -60,6 +60,7 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -87,7 +88,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
-* This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
+* This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
 */
 public class JavaDeployWriter extends JavaWriter {
     protected Definition definition;
@@ -177,7 +178,7 @@ public class JavaDeployWriter extends JavaWriter {
                 if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
                     continue;
                 }
-                writeDeployPort(pw, myPort, myService);
+                writeDeployPort(pw, myPort, myService, bEntry);
             }
         }
     } //writeDeployServices
@@ -185,8 +186,10 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out bean mappings for each type
      */
-    protected void writeDeployTypes(PrintWriter pw, Binding binding,
-            boolean hasLiteral, boolean hasMIME) throws IOException {
+    protected void writeDeployTypes(PrintWriter pw, 
+                                    Binding binding,
+                                    boolean hasLiteral, 
+                                    boolean hasMIME) throws IOException {
         Vector types = symbolTable.getTypes();
 
         pw.println();
@@ -275,9 +278,10 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment and undeployment instructions for given WSDL port
      */
-    protected void writeDeployPort(PrintWriter pw, Port port, Service service) throws IOException {
-        Binding binding = port.getBinding();
-        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+    protected void writeDeployPort(PrintWriter pw, 
+                                   Port port, 
+                                   Service service, 
+                                   BindingEntry bEntry) throws IOException {
         String serviceName = port.getName();
 
         boolean hasLiteral = bEntry.hasLiteral();
@@ -310,8 +314,8 @@ public class JavaDeployWriter extends JavaWriter {
             pw.println("      <parameter name=\"sendMultiRefs\" value=\"false\"/>");
         }
 
-        writeDeployBinding(pw, binding);
-        writeDeployTypes(pw, binding, hasLiteral, hasMIME);
+        writeDeployBinding(pw, bEntry);
+        writeDeployTypes(pw, bEntry.getBinding(), hasLiteral, hasMIME);
 
         pw.println("  </service>");
     } //writeDeployPort
@@ -319,8 +323,9 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment instructions for given WSDL binding
      */
-    protected void writeDeployBinding(PrintWriter pw, Binding binding) throws IOException {
-        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+    protected void writeDeployBinding(PrintWriter pw, 
+                                      BindingEntry bEntry) throws IOException {
+        Binding binding = bEntry.getBinding();
         String className = bEntry.getName();
         if (emitter.isSkeletonWanted())
             className += "Skeleton";
@@ -369,10 +374,16 @@ public class JavaDeployWriter extends JavaWriter {
                         returnType = Utils.getXSIType(params.returnParam);
                     }
 
+                    // Get the operations faults
+                    Map faultMap = bEntry.getFaults();
+                    ArrayList faults = null; 
+                    if (faultMap != null) {
+                        faults = (ArrayList) faultMap.get(bindingOper);
+                    }
                     // Write the operation metadata
                     writeOperation(pw, javaOperName, elementQName, 
                                    returnQName, returnType,
-                                   params, binding.getQName());
+                                   params, binding.getQName(), faults);
                 }
             }
         }
@@ -399,7 +410,8 @@ public class JavaDeployWriter extends JavaWriter {
                                   QName returnQName,
                                   QName returnType,
                                   Parameters params,
-                                  QName bindingQName) {
+                                  QName bindingQName, 
+                                  ArrayList faults) {
         pw.print("      <operation name=\"" + javaOperName + "\"");
         if (elementQName != null) {
             pw.print(" qname=\"" +
@@ -443,6 +455,25 @@ public class JavaDeployWriter extends JavaWriter {
                 pw.print(" mode=\"" + getModeString(param.getMode()) + "\"");
             }
             pw.println("/>");
+        }
+        if (faults != null) {
+            for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
+                JavaDefinitionWriter.FaultInfo faultInfo = 
+                        (JavaDefinitionWriter.FaultInfo) iterator.next();
+                QName faultQName = Utils.getFaultQName(faultInfo.fault, 
+                                                       faultInfo.soapFault);
+                if (faultQName != null) {
+                    String className = Utils.getFullExceptionName(faultInfo.fault, symbolTable);
+                    pw.print("        <fault");
+                    pw.print(" qname=\"" +
+                             Utils.genQNameAttributeString(faultQName, "fns") + "\"");
+                    pw.print(" class=\"" + className+ "\"");
+                    pw.print(" type=\"" +
+                             Utils.genQNameAttributeString(faultInfo.xmlType,
+                                                           "tns") + "\"");
+                    pw.println("/>");
+                }
+            }
         }
 
         pw.println("      </operation>");

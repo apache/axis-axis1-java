@@ -20,7 +20,7 @@
   <operation name="getAddressFromName">
     <input message="messages:IngetAddressFromNameRequest"/>
     <output message="messages:OutgetAddressFromNameResponse"/>
-    <fault message="messages:Fault"/>
+    <fault name="Fault" message="messages:Fault"/>
   </operation>
 </portType>
 

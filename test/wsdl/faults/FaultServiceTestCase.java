@@ -40,9 +40,8 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
             fail("Should raise an InvalidTickerFault"); 
         } 
         catch (InvalidTickerFaultMessage tickerFault) {
-            // We don't support fault data yet!
-            //assertEquals("Ticker Symbol in Fault doesn't match original argument", 
-            //        symbol, tickerFault.getTickerSymbol());
+            assertEquals("Ticker Symbol in Fault doesn't match original argument", 
+                    symbol, tickerFault.getTickerSymbol());
         }
         catch (org.apache.axis.AxisFault e) {
             throw new junit.framework.
@@ -77,13 +76,12 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
         // that it throws a DerivedFault, but we know the impl actually
         // throws DerivedFault2 which extends DerivedFault)
         catch (DerivedFault2 e) {
-            // We don't support fault data yet!
-            //assertEquals("Param A in DerivedFault2 doesn't match original", 
-            //        a, tickerFault.getA());
-            //assertEquals("Param B in DerivedFault2 doesn't match original", 
-            //        b, tickerFault.getB());
-            //assertEquals("Param C in DerivedFault2 doesn't match original", 
-            //        c, tickerFault.getC());
+            assertEquals("Param A in DerivedFault2 doesn't match original",
+                    a, e.getA());
+            assertEquals("Param B in DerivedFault2 doesn't match original",
+                    b, e.getB());
+            assertEquals("Param C in DerivedFault2 doesn't match original",
+                    c, e.getC(), 0.01F);
         }
         catch (DerivedFault e) {
             throw new junit.framework.

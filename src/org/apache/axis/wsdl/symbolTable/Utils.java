@@ -62,9 +62,14 @@ import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
+import javax.wsdl.Fault;
+import javax.wsdl.Part;
+import javax.wsdl.Message;
+import javax.wsdl.extensions.soap.SOAPFault;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Map;
 
 /**
  * This class contains static utility methods for the emitter.
@@ -99,9 +104,10 @@ public class Utils {
                 rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, 
                                qName.getLocalPart());
             }
-            else if (localName.equals("base64Binary") ||
-                     localName.equals("hexBinary")) {
+            else if (localName.equals("base64Binary")) {
                 rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, "base64");
+            } else if (localName.equals("hexBinary")) {
+                rc = new QName(Constants.URI_DEFAULT_SCHEMA_XSD, "hexBinary");
             }
         }
        return rc;
@@ -602,6 +608,68 @@ public class Utils {
         
         return prefix + ":" + qname.getLocalPart() + "\" xmlns:" + prefix +
                 "=\"" + qname.getNamespaceURI();
+    }
+    
+    /**
+     * Get the XML type (QName) for a Fault - look in the (single) fault
+     * part for type="" or element="" - if type, return the QName.  If
+     * element, return the reference type for the element.
+     * 
+     * @param fault the Fault to dig into
+     * @param st the SymbolTable we're using
+     * @return the XML type of the Fault's part, or null
+     */ 
+    public static QName getFaultType(Fault fault, SymbolTable st) {
+        Part part = getFaultPart(fault);
+        if (part != null) {
+            if (part.getTypeName() != null) {
+                return part.getTypeName();
+            }
+            // Literal, so get the element's type
+            TypeEntry entry = st.getElement(part.getElementName());
+            if (entry != null) {
+                return entry.getRefType().getQName();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return the QName of a fault
+     * 
+     * Can return null if no parts in fault
+     */ 
+    public static QName getFaultQName(Fault fault, SOAPFault soapFault) {
+        Part part = getFaultPart(fault);
+        
+        if (part == null) return null;
+        
+        // Someone should have already made sure that
+        // if use=literal, no use of namespace on the soap:fault
+        // if use=encoded, no use of element on the part
+        if (part.getTypeName() != null) {
+            String namespace = soapFault.getNamespaceURI();
+            // Now make a QName
+            return new QName(namespace, part.getName());
+        } else {
+            // Use the element's QName for the fault
+            return part.getElementName();
+        }
+    }
+
+    private static Part getFaultPart(Fault fault) {
+        // get the name of the part - there can be only one!
+        Message message = fault.getMessage();
+        Map parts = message.getParts();
+        // If no parts, skip it
+        if (parts.size() == 0) {
+            return null;
+        }
+                
+        // We have 2 cases
+        // - part is an element, use element name and namespace
+        // - part is a type, use part name and binding namespace 
+        return (Part) parts.values().iterator().next();
     }
 }
 

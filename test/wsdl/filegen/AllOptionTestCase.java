@@ -75,7 +75,6 @@ public class AllOptionTestCase extends FileGenTestCase {
     protected Set shouldExist() {
         HashSet set = new HashSet();
         set.add("Address.java");
-        set.add("InvalidTickerFaultMessage.java");
         set.add("OpFault.java");
         set.add("PortTypeSoap.java");
         set.add("ReferenceService.java");

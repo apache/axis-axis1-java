@@ -64,7 +64,6 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

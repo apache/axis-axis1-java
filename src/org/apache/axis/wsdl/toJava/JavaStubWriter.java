@@ -54,7 +54,6 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
@@ -67,11 +66,14 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Fault;
+import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
+import javax.wsdl.BindingFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -81,6 +83,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.ArrayList;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -396,6 +399,46 @@ public class JavaStubWriter extends JavaClassWriter {
     } // partTypes
 
     /**
+     * This function writes the regsiterFaultInfo API calls
+     */
+    private void writeFaultInfo(PrintWriter pw, BindingOperation bindOp) throws IOException {
+        Map faultMap = bEntry.getFaults();
+        // Get the list of faults for this operation
+        ArrayList faults = (ArrayList) faultMap.get(bindOp);
+        
+        // check for no faults
+        if (faults == null) {
+            return;
+        }
+        // For each fault, register its information
+        for (Iterator faultIt = faults.iterator(); faultIt.hasNext();) {
+            JavaDefinitionWriter.FaultInfo info = (JavaDefinitionWriter.FaultInfo) faultIt.next();
+            
+            Fault fault = info.fault;
+            QName qname = Utils.getFaultQName(fault, info.soapFault);
+            
+            // if no parts in fault, skip it!
+            if (qname == null) {
+                continue;
+            }
+            
+            // Get the Exception class name
+            String className = Utils.getFullExceptionName(fault, symbolTable);
+            
+            // Get the xmlType of the exception data
+            QName xmlType = Utils.getFaultDataType(fault, symbolTable);
+            
+            // output the registration API call
+            pw.print("        _call.addFault(");
+            pw.print( Utils.getNewQName(qname) + ", ");
+            pw.print( className + ".class, ");
+            pw.print( Utils.getNewQName(xmlType) + ", ");
+            pw.print( Utils.isFaultComplex(fault, symbolTable));
+            pw.println(");");
+        }
+    }
+    
+    /**
      * In the stub constructor, write the serializer code for the complex types.
      */
 
@@ -559,6 +602,10 @@ public class JavaStubWriter extends JavaClassWriter {
         else {
             pw.println("        _call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
         }
+
+        // Register fault/exception information for this operation
+        writeFaultInfo(pw, operation);
+
 
         // SoapAction
         if (soapAction != null) {

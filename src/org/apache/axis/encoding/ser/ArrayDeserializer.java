@@ -75,7 +75,6 @@ import javax.xml.namespace.QName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.StringTokenizer;
 
 
@@ -102,8 +101,6 @@ public class ArrayDeserializer extends DeserializerImpl
     Class arrayClass = null;
     ArrayList mDimLength = null;  // If set, array of multi-dim lengths 
     ArrayList mDimFactor = null;  // If set, array of factors for multi-dim []
-    HashSet waiting = new HashSet();  // List of indices waiting for completion
-
 
     /**
      * This method is invoked after startElement when the element requires
@@ -382,7 +379,7 @@ public class ArrayDeserializer extends DeserializerImpl
             // If the xsi:nil attribute, set the value to null 
             // and return since there is nothing to deserialize.
             if (context.isNil(attributes)) {
-                setValue(null, new Integer(curIndex++));
+                setChildValue(null, new Integer(curIndex++));
                 return null;
             }
         }
@@ -394,7 +391,7 @@ public class ArrayDeserializer extends DeserializerImpl
 
         // Get the deserializer for the type. 
         Deserializer dSer = null;
-        if (itemType != null) {
+        if (itemType != null && (context.getCurElement().getHref() == null)) {
             dSer = context.getDeserializerForType(itemType);
         }
 
@@ -442,7 +439,10 @@ public class ArrayDeserializer extends DeserializerImpl
         // keep track of this index so we know when it has been set.
         dSer.registerValueTarget(
             new DeserializerTarget(this, new Integer(curIndex)));
-        waiting.add(new Integer(curIndex));
+        
+        // The framework handles knowing when the value is complete, as
+        // long as we tell it about each child we're waiting on...
+        addChildDeserializer(dSer);
 
         curIndex++;
         
@@ -451,13 +451,6 @@ public class ArrayDeserializer extends DeserializerImpl
         }
         
         return (SOAPHandler)dSer;
-    }
-
-    /** 
-     * Need to wait for all indices to be set.
-     */
-    public boolean componentsReady() {
-        return (waiting.size() == 0);
     }
 
     /**
@@ -475,7 +468,7 @@ public class ArrayDeserializer extends DeserializerImpl
      * @param value value of the array element
      * @param hint index of the array element (Integer)
      **/
-    public void setValue(Object value, Object hint) throws SAXException
+    public void setChildValue(Object value, Object hint) throws SAXException
     { 
         if (log.isDebugEnabled()) {
             log.debug("Enter: ArrayDeserializer::setValue(" + value + ", " + hint + ")");
@@ -517,11 +510,6 @@ public class ArrayDeserializer extends DeserializerImpl
                 }
             }
         }
-        // If all indices are accounted for, the array is complete.
-        waiting.remove(hint);
-        if (isEnded && waiting.size()==0) {
-            valueComplete();
-        }
     }
 
     /**
@@ -541,7 +529,8 @@ public class ArrayDeserializer extends DeserializerImpl
                // We must ignore exceptions from convert for Arrays with null - why?
            }
         }     
-         super.valueComplete();
+        
+        super.valueComplete();
     }
 
     /**

@@ -55,7 +55,6 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;

@@ -30,6 +30,9 @@
     <output>
       <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:Import" use="encoded"/>
     </output>
+    <fault name="Fault">
+       <soap:fault name="Fault" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:Import"/>
+    </fault>
   </operation>
 </binding>
 </definitions>

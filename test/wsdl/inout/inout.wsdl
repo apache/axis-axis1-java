@@ -286,6 +286,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0Inout0In1">
@@ -301,6 +306,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0Inout0InMany">
@@ -316,6 +326,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0Inout1In0">
@@ -331,6 +346,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0Inout1In1">
@@ -346,6 +366,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0Inout1InMany">
@@ -361,6 +386,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0InoutManyIn0">
@@ -376,6 +406,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0InoutManyIn1">
@@ -391,6 +426,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out0InoutManyInMany">
@@ -406,6 +446,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1Inout0In0">
@@ -421,6 +466,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1Inout0In1">
@@ -436,6 +486,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1Inout0InMany">
@@ -451,6 +506,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1Inout1In0">
@@ -466,6 +526,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1Inout1In1">
@@ -481,6 +546,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1Inout1InMany">
@@ -496,6 +566,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1InoutManyIn0">
@@ -511,6 +586,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1InoutManyIn1">
@@ -526,6 +606,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="out1InoutManyInMany">
@@ -541,6 +626,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInout0In0">
@@ -556,6 +646,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInout0In1">
@@ -571,6 +666,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInout0InMany">
@@ -586,6 +686,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInout1In0">
@@ -601,6 +706,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInout1In1">
@@ -616,6 +726,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInout1InMany">
@@ -631,6 +746,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInoutManyIn0">
@@ -646,6 +766,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInoutManyIn1">
@@ -661,6 +786,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="outManyInoutManyInMany">
@@ -676,6 +806,11 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
       </fault>
     </operation>
     <operation name="dateInout">
@@ -692,6 +827,11 @@
       </output>
     </operation>
     <fault name="TestFailed">
+        <soap:fault 
+            name="TestFailed"
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+            use="encoded"
+            namespace="http://www.apache.org/inout"/>
     </fault>
   </binding>
 

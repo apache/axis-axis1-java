@@ -64,9 +64,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.BeanPropertyDescriptor;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -202,6 +200,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         }  
         prevQName = elemQName;
 
+        // Fastpath nil checks...
+        if (context.isNil(attributes))
+            return null;
+        
         if (typeDesc != null) {       
             // Lookup the name appropriately (assuming an unqualified
             // name for SOAP encoding, using the namespace otherwise)
@@ -270,9 +272,22 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         Deserializer dSer = getDeserializer(childXMLType, propDesc.getType(), 
                                             href,
                                             context);
-        // It is an error if the dSer is not found, the base
-        // deserializer impl is returned so that it can generate the correct message.
+
+        // It is an error if the dSer is not found - the only case where we
+        // wouldn't have a deserializer at this point is when we're trying
+        // to deserialize something we have no clue about (no good xsi:type,
+        // no good metadata).
         if (dSer == null) {
+            
+// FIXME : Currently this doesn't throw an error solely to enable the 
+//     "terra" testcase to pass.  We should, IMO, fix the test (either
+//     to support <xsd:list> or to throw an error when we find such a thing
+//     in the WSDL at WSDL2Java time).  Once that's done, this should be
+//     uncommented and the next two lines deleted.            
+//            
+//            throw new SAXException(Messages.getMessage("noDeser00",
+//                                                       childXMLType.toString()));
+
             dSer = new DeserializerImpl();
             return (SOAPHandler)dSer;
         }
@@ -301,9 +316,14 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                                                 propDesc));
             }
         }
+        
+        // Let the framework know that we need this deserializer to complete
+        // for the bean to complete.
+        addChildDeserializer(dSer);
+        
         return (SOAPHandler)dSer;
     }
-
+    
     /**
      * Get a BeanPropertyDescriptor which indicates where we should
      * put extensibility elements (i.e. XML which falls under the
@@ -427,7 +447,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         
         Deserializer dSer = null;
 
-        if (xmlType != null) {
+        if (xmlType != null && href == null) {
             // Use the xmlType to get the deserializer.
             dSer = context.getDeserializerForType(xmlType);
         } else {

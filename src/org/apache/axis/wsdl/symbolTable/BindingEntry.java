@@ -60,6 +60,7 @@ import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
+import javax.wsdl.extensions.soap.SOAPFault;
 
 /**
 * This class represents a WSDL binding.  It encompasses the WSDL4J Binding object so it can
@@ -86,7 +87,11 @@ public class BindingEntry extends SymTabEntry {
     private int     bindingStyle;
     private boolean hasLiteral;
     private HashMap attributes;
+    // operation to parameter info (Parameter)
     private HashMap parameters = new HashMap();
+    
+    // BindingOperation to faults (ArrayList of FaultInfo)
+    private HashMap faults = new HashMap();
 
     // This is a map of a map.  It's a map keyed on operation name whose values
     // are maps keyed on parameter name.  The ultimate values are simple Strings.
@@ -384,14 +389,30 @@ The caller of this constructor should
         }
         else {
             HashMap m = attr.getFaultBodyTypeMap();
+            SOAPFault soapFault = (SOAPFault) m.get(faultName);
 
-            // Default to encoded if we didn't have a soap:body for the fault
-            if ( ! m.containsKey(faultName) ) {
+            // This should never happen (error thrown in SymbolTable)
+            if (soapFault == null) {
                 return USE_ENCODED;
             }
-
-            return ((Integer) m.get(faultName)).intValue();
+            String use = soapFault.getUse();
+            if ("literal".equals(use)) {
+                return USE_LITERAL;
+            }
+            
+            return USE_ENCODED;
         }
+    }
+
+    /**
+     * Return the map of BindingOperations to ArraList of FaultInfo
+     */
+    public HashMap getFaults() {
+        return faults;
+    }
+
+    public void setFaults(HashMap faults) {
+        this.faults = faults;
     }
 
     /**

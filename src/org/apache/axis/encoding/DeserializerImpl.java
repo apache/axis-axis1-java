@@ -62,7 +62,6 @@ import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.Part;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -77,6 +76,7 @@ import javax.xml.namespace.QName;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.HashSet;
 
 /** The Deserializer base class.
  * 
@@ -86,7 +86,7 @@ import java.util.Vector;
  */
 
 public class DeserializerImpl extends SOAPHandler
-        implements javax.xml.rpc.encoding.Deserializer, Deserializer
+        implements javax.xml.rpc.encoding.Deserializer, Deserializer, Callback
 {
     protected static Log log =
             LogFactory.getLog(DeserializerImpl.class.getName());
@@ -99,8 +99,17 @@ public class DeserializerImpl extends SOAPHandler
     protected Vector targets = null;
 
     protected QName defaultType = null;
-    private boolean componentsReady = true;
 
+    boolean componentsReadyFlag = false;
+
+    /**
+     * A set of sub-deserializers whose values must complete before our
+     * value is complete.
+     */ 
+    private HashSet activeDeserializers = new HashSet();
+
+    public DeserializerImpl() {
+    }
 
     /** 
      * JAX-RPC compliant method which returns mechanism type.
@@ -143,8 +152,22 @@ public class DeserializerImpl extends SOAPHandler
      * The default implementation does nothing.
      * @param hint Object representing deserialized value or null
      */
-    public void setValue(Object value, Object hint) throws SAXException
+    public void setChildValue(Object value, Object hint) throws SAXException
     {
+    }
+
+    public void setValue(Object value, Object hint) throws SAXException {
+        if (hint instanceof Deserializer) {
+            // This one's done
+            activeDeserializers.remove(hint);
+            
+            // If we're past the end of our XML, and this is the last one,
+            // our value has been assembled completely.
+            if (componentsReady()) {
+                // Got everything we need, call valueComplete()
+                valueComplete();
+            }
+        }        
     }
 
     /**
@@ -236,7 +259,8 @@ public class DeserializerImpl extends SOAPHandler
      * The default (true) is useful for most Deserializers.
      */
     public boolean componentsReady() {
-        return componentsReady;
+        return (componentsReadyFlag ||
+                (!isHref && isEnded && activeDeserializers.isEmpty()));
     }
 
     /** 
@@ -269,6 +293,17 @@ public class DeserializerImpl extends SOAPHandler
         }
     }
     
+    public void addChildDeserializer(Deserializer dSer) {
+        // Keep track of our active deserializers.  This enables us to figure
+        // out whether or not we're really done in the case where we get to
+        // our end tag, but still have open hrefs for members.
+        activeDeserializers.add(dSer);
+        
+        // In concert with the above, we make sure each field deserializer
+        // lets us know when it's done so we can take it off our list.
+        dSer.registerValueTarget(new CallbackTarget(this, dSer));
+    }
+
     protected boolean isHref = false;
     protected boolean isNil  = false;  // xsd:nil attribute is set to true
     protected String id = null;  // Set to the id of the element
@@ -358,7 +393,6 @@ public class DeserializerImpl extends SOAPHandler
             if (ref == null) {
                 // Nothing yet... register for later interest.
                 context.registerFixup(href, this);
-                componentsReady = false;
                 return;
             }
             
@@ -379,13 +413,13 @@ public class DeserializerImpl extends SOAPHandler
                              prefix, attributes,
                              context);
                       ref = dser.getValue();       
-                             
-                    }         
+                    }
                }
                 
                 // If the ref is not a MessageElement, then it must be an
                 // element that has already been deserialized.  Use it directly.
                 value = ref;
+                componentsReadyFlag = true;
                 valueComplete();
             }
             
@@ -418,6 +452,7 @@ public class DeserializerImpl extends SOAPHandler
             QName type = context.getTypeFromAttributes(namespace,
                                                        localName,
                                                        attributes);
+
             // If no type is specified, use the defaultType if available.
             // xsd:string is used if no type is provided.
             if (type == null) {
@@ -441,8 +476,11 @@ public class DeserializerImpl extends SOAPHandler
                     dser.moveValueTargets(this);
                     context.replaceElementHandler((SOAPHandler) dser);
                     // And don't forget to give it the start event...
+                    boolean isRef = context.isProcessingRef();
+                    context.setProcessingRef(true);
                     dser.startElement(namespace, localName, prefix,
                                       attributes, context);
+                    context.setProcessingRef(isRef);
                 } else {
                     throw new SAXException(
                                            Messages.getMessage("noDeser00", "" + type));
@@ -489,6 +527,7 @@ public class DeserializerImpl extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
+        super.endElement(namespace, localName, context);
 
         isEnded = true;
         if (!isHref) {
