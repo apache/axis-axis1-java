@@ -1,6 +1,5 @@
 package test.inout;
 
-import test.inout.xml_soap_address_demo.*;
 import javax.xml.rpc.holders.StringHolder;
 
 public class InoutSOAPBindingImpl implements Inout

@@ -3,14 +3,14 @@
 <definitions name="http://www.ibm.com/inout"
              targetNamespace="http://www.ibm.com/inout"
 	         xmlns:tns="http://www.ibm.com/inout"
-             xmlns:typens="urn:xml-soap-address-demo"
+             xmlns:typens="http://www.ibm.com/inout"
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
   <types>
-    <xsd:schema targetNamespace="urn:xml-soap-address-demo"
+    <xsd:schema targetNamespace="http://www.ibm.com/inout"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
       <xsd:complexType name="phone">
         <xsd:all>
