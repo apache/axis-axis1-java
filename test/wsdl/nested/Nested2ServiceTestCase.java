@@ -7,8 +7,8 @@
 
 package test.wsdl.nested;
 import org.apache.axis.message.MessageElement;
-import test.wsdl.nested.holders.PE_ADDRESSHolder;
-import test.wsdl.nested.holders.RETURNHolder;
+import test.wsdl.nested.holders._PE_ADDRESSHolder;
+import test.wsdl.nested.holders._RETURNHolder;
 
 public class Nested2ServiceTestCase extends junit.framework.TestCase {
     public Nested2ServiceTestCase(String name) {
@@ -25,8 +25,8 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            PE_ADDRESSHolder pE_ADDRESS = new PE_ADDRESSHolder();
-            RETURNHolder rETURN = new RETURNHolder();
+            _PE_ADDRESSHolder pE_ADDRESS = new _PE_ADDRESSHolder();
+            _RETURNHolder rETURN = new _RETURNHolder();
             binding.nestedSvc2(new java.lang.String("0000001000"),
                                new java.lang.String("01"),
                                new java.lang.String("00"),
@@ -34,8 +34,8 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
                                new java.lang.String("1000"),
                                pE_ADDRESS,
                                rETURN);
-            PE_ADDRESS address = pE_ADDRESS.value;
-            RETURN ret = rETURN.value;
+            _PE_ADDRESS address = pE_ADDRESS.value;
+            _RETURN ret = rETURN.value;
             assertTrue("NAME is wrong", address.getNAME().equals("Becker Berlin"));
             assertTrue("LOGMSGNO is wrong", ret.getLOG_MSG_NO().equals("123456"));
             MessageElement [] any = address.get_any();

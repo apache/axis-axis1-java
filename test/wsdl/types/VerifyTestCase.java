@@ -43,7 +43,7 @@ import test.wsdl.types.comprehensive_types.Cat;
 import test.wsdl.types.comprehensive_types.ComplexAll;
 import test.wsdl.types.comprehensive_types.ComplexSequence;
 import test.wsdl.types.comprehensive_types.ComplexWComplex;
-import test.wsdl.types.comprehensive_types.ElemWComplex;
+import test.wsdl.types.comprehensive_types._elemWComplex;
 import test.wsdl.types.comprehensive_types.EmptyComplexType;
 import test.wsdl.types.comprehensive_types.Enum;
 import test.wsdl.types.comprehensive_types.EnumByte;
@@ -56,7 +56,7 @@ import test.wsdl.types.comprehensive_types.EnumString;
 import test.wsdl.types.comprehensive_types.PersionCat;
 import test.wsdl.types.comprehensive_types.Simple;
 import test.wsdl.types.comprehensive_types.SimpleFwd;
-import test.wsdl.types.comprehensive_types.Stock_quote;
+import test.wsdl.types.comprehensive_types.ComplexWComplex_stock_quote;
 import test.wsdl.types.comprehensive_types.StringParameter;
 import test.wsdl.types.comprehensive_types.Time;
 import test.wsdl.types.comprehensive_types.Yarn;
@@ -67,7 +67,7 @@ import test.wsdl.types.comprehensive_types.holders.CatHolder;
 import test.wsdl.types.comprehensive_types.holders.ComplexAllHolder;
 import test.wsdl.types.comprehensive_types.holders.ComplexSequenceHolder;
 import test.wsdl.types.comprehensive_types.holders.ComplexWComplexHolder;
-import test.wsdl.types.comprehensive_types.holders.ElemWComplexHolder;
+import test.wsdl.types.comprehensive_types.holders._elemWComplexHolder;
 import test.wsdl.types.comprehensive_types.holders.EmptyComplexTypeHolder;
 import test.wsdl.types.comprehensive_types.holders.EnumHolder;
 import test.wsdl.types.comprehensive_types2.A;
@@ -403,7 +403,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         A a = new A();
         a.setC(3);
         b.setD(a);
-        ElemWComplex elemWComplex = new ElemWComplex();
+        _elemWComplex elemWComplex = new _elemWComplex();
         StringParameter sp = new StringParameter("sweet!");
         sp.setDescription("Pass this as an element and an attribute...wow!");
 
@@ -430,23 +430,23 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("elemWComplexIn Exception caught: " + re );
         }
         try {
-            binding.elemWComplexInout(new ElemWComplexHolder(elemWComplex));
+            binding.elemWComplexInout(new _elemWComplexHolder(elemWComplex));
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("elemWComplexInout Exception caught: " + re );
         }
         try {
-            ElemWComplexHolder value = new ElemWComplexHolder();
+            _elemWComplexHolder value = new _elemWComplexHolder();
             binding.elemWComplexOut(value);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("elemWComplexOut Exception caught: " + re );
         }
         try {
-            ElemWComplex value = null;
+            _elemWComplex value = null;
             value = binding.elemWComplexReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("elemWComplexReturn Exception caught: " + re );
         }
-        Stock_quote stockQuote = new Stock_quote();
+        ComplexWComplex_stock_quote stockQuote = new ComplexWComplex_stock_quote();
         Time time = new Time();
         time.setDST(false);
         stockQuote.setTime(time);

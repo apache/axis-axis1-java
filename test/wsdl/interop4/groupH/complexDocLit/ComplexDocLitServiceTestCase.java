@@ -154,8 +154,8 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
 
         for (int i = 1; i < 3; i++) {
             try {
-                EchoMultipleFaults1Request param = 
-                        new EchoMultipleFaults1Request();
+                _echoMultipleFaults1Request param = 
+                        new _echoMultipleFaults1Request();
                 param.setWhichFault(i);
                 param.setParam1(struct);
                 param.setParam2(base);
@@ -216,8 +216,8 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
         // Test operation multiple times
         for (int i = 1; i < 4; i++) {
             try {
-                EchoMultipleFaults2Request param = 
-                        new EchoMultipleFaults2Request();
+                _echoMultipleFaults2Request param = 
+                        new _echoMultipleFaults2Request();
                 param.setWhichFault(i);
                 param.setParam1(base);
                 param.setParam2(extended);

@@ -104,8 +104,8 @@ public class Round4XSDTestSoapImpl implements test.wsdl.interop4.groupi.Round4XS
         return inputAnyType;
     }
 
-    public test.wsdl.interop4.groupi._return echoAnyElement(test.wsdl.interop4.groupi.InputAny inputAny) throws java.rmi.RemoteException {
-        test.wsdl.interop4.groupi._return output = new test.wsdl.interop4.groupi._return();
+    public test.wsdl.interop4.groupi._echoAnyElementResponse_return echoAnyElement(test.wsdl.interop4.groupi._echoAnyElement_inputAny inputAny) throws java.rmi.RemoteException {
+        test.wsdl.interop4.groupi._echoAnyElementResponse_return output = new test.wsdl.interop4.groupi._echoAnyElementResponse_return();
         output.set_any(inputAny.get_any());
         return output;
     }

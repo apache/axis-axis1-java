@@ -87,11 +87,11 @@ public class OmitTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            test.wsdl.omit.Phone input = new test.wsdl.omit.Phone();
+            test.wsdl.omit._Phone input = new test.wsdl.omit._Phone();
             input.setPrefix("555");
             input.setNumber("1212");
 
-            test.wsdl.omit.Phone out = binding.echoPhone(input);
+            test.wsdl.omit._Phone out = binding.echoPhone(input);
             
             // TODO: Verify the XML omitted the element
             assertNotNull("The return value from the operation was null", out);

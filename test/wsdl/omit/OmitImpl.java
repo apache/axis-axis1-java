@@ -62,7 +62,7 @@
 package test.wsdl.omit;
 
 public class OmitImpl implements test.wsdl.omit.Omit {
-    public test.wsdl.omit.Phone echoPhone(test.wsdl.omit.Phone in) throws java.rmi.RemoteException {
+    public test.wsdl.omit._Phone echoPhone(test.wsdl.omit._Phone in) throws java.rmi.RemoteException {
         return in;
     }
 
