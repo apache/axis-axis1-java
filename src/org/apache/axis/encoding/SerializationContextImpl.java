@@ -328,6 +328,14 @@ public class SerializationContextImpl implements SerializationContext
     }
 
     /**
+     * Are we doing multirefs?
+     * @return true or false
+     */
+    public boolean getDoMultiRefs() {
+        return doMultiRefs;
+    }
+
+    /**
      * Set whether we are doing multirefs
      */
     public void setDoMultiRefs (boolean shouldDo)

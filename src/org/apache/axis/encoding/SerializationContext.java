@@ -148,6 +148,12 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * @param pretty true/false
      */
     public void setPretty(boolean pretty);
+    
+    /**
+     * Are we doing multirefs?
+     * @return true or false
+     */ 
+    public boolean getDoMultiRefs();
 
     /**
      * Set whether we are doing multirefs.
