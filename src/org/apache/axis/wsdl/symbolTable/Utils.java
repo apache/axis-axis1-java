@@ -337,7 +337,7 @@ public class Utils {
      * An XML element or attribute node has several ways of
      * identifying the type of the element or attribute:
      * - use the type attribute to reference a complexType/simpleType
-     * - use the ref attribute to reference another element or attributeGroup
+     * - use the ref attribute to reference another element, group or attributeGroup
      * - use of an anonymous type (i.e. a nested type underneath itself)
      * - a wsdl:part can use the element attribute.
      * - an extension can use the base attribute.
@@ -378,7 +378,8 @@ public class Utils {
             // bug 23145: support attributeGroup (Brook Richan)
             // a ref can be for an element or attributeGroup
             if ((nodeKind != null)
-                    && !nodeKind.getLocalPart().equals("attributeGroup")) {
+                    && !(nodeKind.getLocalPart().equals("attributeGroup") ||
+                         nodeKind.getLocalPart().equals("group"))) {
                 forElement.value = true;
             }
 
