@@ -10,7 +10,6 @@ Notes:
 Prerequisites:
 
    jakarta-ant from http://jakarta.apache.org
-   xml-xerces  from http://xml.apache.org
    
 Build Instructions:
    To build, run
@@ -94,10 +93,6 @@ Copyright:
     <mkdir dir="${build.dest}"/>
     <mkdir dir="${build.lib}"/>
 
-    <available property="xerces.present"
-      classname="org.apache.xml.serialize.XMLSerializer"
-      classpathref="classpath"/>
-
     <available property="servlet.present"
       classname="javax.servlet.Servlet"
       classpathref="classpath"/>
@@ -112,14 +107,15 @@ Copyright:
     <echo message="--- Flags (Note: If the {property name} is displayed, "/>
     <echo message="           then the component is not present)" />
     <echo message=""/>
-    <echo message="--- Required Libraries ---" />
-    <echo message="xerces.present=${xerces.present}" />
+    <!--
+    <echo message="=== Required Libraries ===" />
     <echo message=""/>
+    -->
     <echo message="--- Optional Libraries ---" />
     <echo message="servlet.present=${servlet.present}" />
     <echo message="junit.present=${junit.present}" />
     <echo message=""/>
-    <echo message="--- Property values" />
+    <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
     <echo message="deprecation=${deprecation}" />
 
@@ -323,5 +319,8 @@ Copyright:
   <target name="clean">
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
+    <delete file="client-config.xml"/>
+    <delete file="server-config.xml"/>
+    <delete file="typemap-supp.reg"/>
   </target>
 </project>
