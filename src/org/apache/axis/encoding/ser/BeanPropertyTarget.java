@@ -169,7 +169,14 @@ public class BeanPropertyTarget implements Target {
                 if(ex instanceof InvocationTargetException) {
                     Throwable t = ((InvocationTargetException)ex).getTargetException();
                     if( t != null) {
-                        throw new SAXException(t.getMessage());
+                        String classname = this.object.getClass().getName();
+                        //show the context where this exception occured.
+                        throw new SAXException(Messages.getMessage("cantConvert04",
+                                                   new String[] {
+                                                       classname,
+                                                       field,
+                                                       (value==null)?null:value.toString(),
+                                                       t.getMessage()}));
                     }
                 }
                 throw new SAXException(ex);
