@@ -60,6 +60,7 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.axis.* ;
+import org.apache.axis.encoding.Base64;
 import org.apache.axis.configuration.*;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.* ;
@@ -67,6 +68,7 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.log4j.Category;
+import org.apache.log4j.Priority;
 
 import org.w3c.dom.Document;
 
@@ -171,7 +173,8 @@ public class SimpleAxisServer implements Runnable {
         StringBuffer fileName = new StringBuffer();
         StringBuffer cookie = new StringBuffer();
         StringBuffer cookie2 = new StringBuffer();
-        
+        StringBuffer authInfo = new StringBuffer();
+
         // Accept and process requests from the socket
         while (!stopped) {
             Socket socket = null;
@@ -208,12 +211,13 @@ public class SimpleAxisServer implements Runnable {
                         cookie.delete(0, cookie.length());
                         cookie2.delete(0, cookie.length());
                     }
-                    
+                    authInfo.delete(0, authInfo.length());
+
                     // read headers
                     is.setInputStream(socket.getInputStream());
                     // parse all headers into hashtable
                     int contentLength = parseHeaders(is, soapAction, httpRequest,
-                        fileName, cookie, cookie2);
+                        fileName, cookie, cookie2, authInfo);
                     is.setContentLength(contentLength);
 
                     msgContext.setProperty(Constants.MC_REALPATH,
@@ -224,6 +228,28 @@ public class SimpleAxisServer implements Runnable {
                             this.getServerSocket().getLocalPort() + "/" +
                             fileName.toString();
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
+
+                    if (authInfo.length() > 0) {
+                        // Process authentication info
+                        //authInfo = new StringBuffer("dXNlcjE6cGFzczE=");
+                        byte [] decoded = Base64.decode(authInfo.toString());
+                        StringBuffer userBuf = new StringBuffer();
+                        StringBuffer pwBuf = new StringBuffer();
+                        StringBuffer authBuf = userBuf;
+                        for (int i = 0; i < decoded.length; i++) {
+                            if ((char)(decoded[i] & 0x7f) == ':') {
+                                authBuf = pwBuf;
+                                continue;
+                            }
+                            authBuf.append((char)(decoded[i] & 0x7f));
+                        }
+                        category.info("Username : " + userBuf.toString());
+                        category.info("Password : " + pwBuf.toString());
+                        msgContext.setProperty(MessageContext.USERID,
+                                               userBuf.toString());
+                        msgContext.setProperty(MessageContext.PASSWORD,
+                                               pwBuf.toString());
+                    }
 
                     // if get, then return simpleton document as response
                     if (httpRequest.toString().equals("GET")) {
@@ -388,6 +414,10 @@ public class SimpleAxisServer implements Runnable {
     private static final byte cookie2Header[] = "cookie2: ".getBytes();
     private static final int cookie2Len = cookie2Header.length;
 
+    // HTTP header for authentication
+    private static final byte authHeader[] = "authorization: ".getBytes();
+    private static final int authLen = authHeader.length;
+
     // mime header for GET
     private static final byte getHeader[] = "GET".getBytes();
 
@@ -400,6 +430,9 @@ public class SimpleAxisServer implements Runnable {
     // buffer for IO
     private static final int BUFSIZ = 4096;
     private byte buf[] = new byte[BUFSIZ];
+
+    // "Basic" auth string
+    private static final byte basicAuth[] = "basic ".getBytes();
 
     /**
      * Read a single line from the input stream
@@ -436,7 +469,8 @@ public class SimpleAxisServer implements Runnable {
                              StringBuffer httpRequest,
                              StringBuffer fileName,
                              StringBuffer cookie,
-                             StringBuffer cookie2)
+                             StringBuffer cookie2,
+                             StringBuffer authInfo)
       throws IOException
     {
         int n;
@@ -544,6 +578,17 @@ public class SimpleAxisServer implements Runnable {
                 }
                            
             }
+            else if (endHeaderIndex == authLen && matches(buf, authHeader)) {
+                if (matches(buf, endHeaderIndex, basicAuth)) {
+                    i += basicAuth.length;
+                    while (++i<n && (buf[i]!='\r') && (buf[i]!='\n')) {
+                        if (buf[i]==' ') continue;
+                        authInfo.append((char)(buf[i] & 0x7f));
+                    }
+                } else {
+                    throw new IOException("Bad authentication type (I can only handle Basic).");
+                }
+            }
 
         }
         return len;
@@ -556,6 +601,19 @@ public class SimpleAxisServer implements Runnable {
     public boolean matches (byte[] buf, byte[] target) {
         for (int i = 0; i < target.length; i++) {
             if (toLower[buf[i]] != target[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Case-insensitive match of a target byte [] to a source byte [],
+     * starting from a particular offset into the source.
+     */
+    public boolean matches (byte[] buf, int bufIdx, byte[] target) {
+        for (int i = 0; i < target.length; i++) {
+            if (toLower[buf[bufIdx + i]] != target[i]) {
                 return false;
             }
         }
