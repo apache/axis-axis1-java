@@ -278,10 +278,9 @@ public class Message extends javax.xml.soap.SOAPMessage
             } catch (java.lang.NoClassDefFoundError ex) {
                 // no support for it, leave mAttachments null.
             }
+            log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
+                    attachmentSupportEnabled);
         }
-
-        log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
-                attachmentSupportEnabled);
         return attachmentSupportEnabled;
     }
 

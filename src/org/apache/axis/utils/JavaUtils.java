@@ -1173,10 +1173,10 @@ public class JavaUtils
                 attachmentSupportEnabled = true;
             } catch (Throwable t) {
             }
+            log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
+                    attachmentSupportEnabled);
         }
 
-        log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
-                attachmentSupportEnabled);
         return attachmentSupportEnabled;
     } // isAttachmentSupported
 }
