@@ -62,6 +62,7 @@ import org.apache.axis.Supplier;
 import org.apache.axis.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.registries.HandlerRegistry;
+import org.apache.log4j.Category;
 
 /** A <code>TargetedChainSupplier</code>
  * 
@@ -69,6 +70,9 @@ import org.apache.axis.registries.HandlerRegistry;
  */
 public class TargetedChainSupplier implements Supplier
 {
+    static Category category =
+            Category.getInstance(TargetedChainSupplier.class.getName());
+
     String _myName;
     Hashtable _options;
     Vector _requestNames;
@@ -114,8 +118,9 @@ public class TargetedChainSupplier implements Supplier
     public Handler getHandler()
     {
         if (_chain == null) {
-            Debug.Print(2, "TargetedChainSupplier: Building chain '" + _myName + 
-                           "'");
+            if (category.isDebugEnabled())
+                category.debug("TargetedChainSupplier: Building chain '" + _myName +
+                               "'");
 
             Handler h;
             SimpleTargetedChain c = getNewChain();
@@ -149,10 +154,11 @@ public class TargetedChainSupplier implements Supplier
             
             _chain = c;
         }
-        
-        Debug.Print(2, "TargetedChainSupplier: Returning chain '" + _myName + 
-                       "'");
-        
+
+        if (category.isDebugEnabled())
+            category.debug( "TargetedChainSupplier: Returning chain '" + _myName +
+                            "'");
+        category.log(
         return _chain;
     }
 }

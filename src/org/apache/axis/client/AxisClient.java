@@ -63,6 +63,7 @@ import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.transport.local.LocalSender;
+import org.apache.log4j.Category;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
@@ -75,6 +76,9 @@ import org.apache.axis.transport.local.LocalSender;
  */
 public class AxisClient extends AxisEngine
 {
+    static Category category =
+            Category.getInstance(AxisClient.class.getName());
+
     public AxisClient(ConfigurationProvider provider)
     {
         super(provider);
@@ -92,7 +96,7 @@ public class AxisClient extends AxisEngine
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: AxisClient::invoke" );
+        category.debug("Enter: AxisClient::invoke" );
         
         String  hName = null ;
         Handler h     = null ;
@@ -102,7 +106,7 @@ public class AxisClient extends AxisEngine
         
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
-            Debug.Print( 2, "EngineHandler: " + hName );
+            category.debug( "EngineHandler: " + hName );
             
             if ( hName != null ) {
                 h = hr.find( hName );
@@ -185,12 +189,12 @@ public class AxisClient extends AxisEngine
             if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
             throw (AxisFault) e ;
         }
-        Debug.Print( 1, "Exit: AxisClient::invoke" );
+        category.debug("Exit: AxisClient::invoke" );
     };
     
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: AxisClient::undo" );
-        Debug.Print( 1, "Exit: AxisClient::undo" );
+        category.debug("Enter: AxisClient::undo" );
+        category.debug("Exit: AxisClient::undo" );
     }
 }
 

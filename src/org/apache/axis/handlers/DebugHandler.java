@@ -62,6 +62,7 @@ import org.apache.axis.encoding.*;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
+import org.apache.log4j.Category;
 
 import org.w3c.dom.* ;
 
@@ -70,9 +71,11 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class DebugHandler extends BasicHandler {
-    
+    static Category category =
+            Category.getInstance(DebugHandler.class.getName());
+
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: DebugHandler::invoke" );
+        category.debug("Enter: DebugHandler::invoke" );
         try {
             Message       msg = msgContext.getRequestMessage();
             
@@ -96,12 +99,12 @@ public class DebugHandler extends BasicHandler {
             Debug.Print( 1, e );
             throw new AxisFault( e );
         }
-        Debug.Print( 1, "Exit: DebugHandler::invoke" );
+        category.debug("Exit: DebugHandler::invoke" );
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: DebugHandler::undo" );
-        Debug.Print( 1, "Exit: DebugHandler::undo" );
+        category.debug("Enter: DebugHandler::undo" );
+        category.debug("Exit: DebugHandler::undo" );
     }
     
 };

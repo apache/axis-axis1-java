@@ -174,7 +174,7 @@ public class MsgProvider extends JavaProvider {
     
     
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: MsgDispatcherHandler::undo" );
-        Debug.Print( 1, "Exit: MsgDispatcherHandler::undo" );
+        category.debug("Enter: MsgDispatcherHandler::undo" );
+        category.debug("Exit: MsgDispatcherHandler::undo" );
     }
 };

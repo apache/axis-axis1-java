@@ -64,6 +64,7 @@ import org.apache.axis.registries.* ;
 
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.log4j.Category;
 import org.w3c.dom.*;
 
 /** A <code>SupplierRegistry</code> contains Suppliers, which are used
@@ -74,6 +75,9 @@ import org.w3c.dom.*;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SupplierRegistry implements HandlerRegistry {
+    static Category category =
+            Category.getInstance(SupplierRegistry.class.getName());
+
     private static final boolean DEBUG_LOG = false;
     
     protected Hashtable  suppliers = null ;
@@ -117,22 +121,27 @@ public class SupplierRegistry implements HandlerRegistry {
      * Given a 'key' return the corresponding Handler
      */
     public Handler find(String key) {
-        Debug.Print( 4, "Enter: SupplierRegistry::find(", key, ")" );
+        if (category.isDebugEnabled())
+            category.debug("Enter: SupplierRegistry::find(" + key + ")" );
         if (key == null) {
-          Debug.Print( 4, "Exit: SupplierRegistry::find - key is null" );
-          return( null );
+            if (category.isDebugEnabled())
+                category.debug("Exit: SupplierRegistry::find - key is null" );
+            return( null );
         }
         if ( suppliers == null ) {
-          Debug.Print( 4, "Exit: SupplierRegistry::find - suppliers is null" );
-          return( null );
+            if (category.isDebugEnabled())
+                category.debug("Exit: SupplierRegistry::find - suppliers is null" );
+            return( null );
         }
         Supplier supplier = (Supplier)suppliers.get(key);
         if (supplier == null) {
-          Debug.Print( 4, "Exit: SupplierRegistry::find - supplier is null" );
-          return null;
+            if (category.isDebugEnabled())
+                category.debug( "Exit: SupplierRegistry::find - supplier is null" );
+            return null;
         }
         Handler h = supplier.getHandler();
-        Debug.Print( 4, "Exit: SupplierRegistry::find"  );
+        if (category.isDebugEnabled())
+            category.debug( "Exit: SupplierRegistry::find"  );
         return h ;
     }
 

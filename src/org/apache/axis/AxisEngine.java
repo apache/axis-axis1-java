@@ -67,6 +67,9 @@ import org.apache.axis.registries.* ;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.encoding.*;
+import org.apache.log4j.Category;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Priority;
 
 import org.w3c.dom.*;
 
@@ -79,6 +82,14 @@ import org.w3c.dom.*;
  */
 public abstract class AxisEngine extends BasicHandler
 {
+    static Category category =
+            Category.getInstance(AxisEngine.class.getName());
+
+    static {
+        BasicConfigurator.configure();
+        Category.getRoot().setPriority(Priority.FATAL);
+    }
+
     // Engine property names
     public static final String PROP_XML_DECL = "sendXMLDeclaration";
     public static final String PROP_DEBUG_LEVEL = "debugLevel";
@@ -123,7 +134,7 @@ public abstract class AxisEngine extends BasicHandler
         // !!! Set up default configuration?
         init();
 
-        Debug.Print( 1, "Exit: AxisEngine no-arg constructor");
+        category.debug("Exit: AxisEngine no-arg constructor");
     }
 
     public AxisEngine(ConfigurationProvider configProvider)
@@ -136,7 +147,7 @@ public abstract class AxisEngine extends BasicHandler
      * (re)initialize - What should really go in here???
      */
     public void init() {
-        Debug.Print( 1, "Enter: AxisEngine::init" );
+        category.debug("Enter: AxisEngine::init" );
 
         _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
 
@@ -146,7 +157,7 @@ public abstract class AxisEngine extends BasicHandler
             // !!! throw new EngineConfigException();
         }
 
-        Debug.Print( 1, "Exit: AxisEngine::init" );
+        category.debug("Exit: AxisEngine::init" );
     }
 
     /**

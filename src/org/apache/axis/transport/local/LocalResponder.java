@@ -58,6 +58,7 @@ package org.apache.axis.transport.local;
 import org.apache.axis.*;
 import org.apache.axis.handlers.*;
 import org.apache.axis.utils.Debug;
+import org.apache.log4j.Category;
 
 /**
  * Tiny Handler which just makes sure to Stringize the outgoing
@@ -66,14 +67,17 @@ import org.apache.axis.utils.Debug;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class LocalResponder extends BasicHandler {
+    static Category category =
+            Category.getInstance(LocalResponder.class.getName());
+
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: LocalResponder::invoke" );
+        category.debug("Enter: LocalResponder::invoke" );
         msgContext.getResponseMessage().getAsString();
-        Debug.Print( 1, "Enter: LocalResponder::invoke" );
+        category.debug("Enter: LocalResponder::invoke" );
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: LocalResponder::undo" );
-        Debug.Print( 1, "Exit: LocalResponder::undo" );
+        category.debug("Enter: LocalResponder::undo" );
+        category.debug("Exit: LocalResponder::undo" );
     }
 };

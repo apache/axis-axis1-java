@@ -59,6 +59,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.encoding.Base64 ;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.log4j.Category;
 
 import javax.servlet.* ;
 import javax.servlet.http.* ;
@@ -71,9 +72,12 @@ import javax.servlet.http.* ;
  */
 public class HTTPAuthHandler extends BasicHandler
 {
+    static Category category =
+            Category.getInstance(HTTPAuthHandler.class.getName());
+
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        Debug.Print( 1, "Enter: HTTPAuthHandler::invoke" );
+        category.debug("Enter: HTTPAuthHandler::invoke" );
         
         HttpServletRequest req = (HttpServletRequest)msgContext.getProperty(
                                       HTTPConstants.MC_HTTP_SERVLETREQUEST);
@@ -102,12 +106,12 @@ public class HTTPAuthHandler extends BasicHandler
             }
         }
 
-        Debug.Print( 1, "Exit : HTTPAuthHandler::invoke" );
+        category.debug("Exit : HTTPAuthHandler::invoke" );
     }
 
     public void undo(MessageContext msgContext) 
     {
-        Debug.Print( 1, "Enter: HTTPActionHandler::undo" );
-        Debug.Print( 1, "Exit: HTTPActionHandler::undo" );
+        category.debug("Enter: HTTPActionHandler::undo" );
+        category.debug("Exit: HTTPActionHandler::undo" );
     }
 }

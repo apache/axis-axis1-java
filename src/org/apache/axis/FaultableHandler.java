@@ -61,6 +61,7 @@ import org.apache.axis.* ;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.utils.* ;
+import org.apache.log4j.Category;
 
 import javax.xml.parsers.* ;
 import org.w3c.dom.* ;
@@ -74,6 +75,9 @@ import org.w3c.dom.* ;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class FaultableHandler extends BasicHandler {
+    static Category category =
+            Category.getInstance(FaultableHandler.class.getName());
+
     protected Handler    workHandler ;
 
     /** Constructor
@@ -100,7 +104,7 @@ public class FaultableHandler extends BasicHandler {
      * and already processed it's undo logic - as needed.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: FaultableHandler::invoke" );
+        category.debug("Enter: FaultableHandler::invoke" );
         try {
             workHandler.invoke( msgContext );
         }
@@ -149,16 +153,16 @@ public class FaultableHandler extends BasicHandler {
                 throw (AxisFault) e ;
             }
         }
-        Debug.Print( 1, "Exit: FaultableHandler::invoke" );
+        category.debug("Exit: FaultableHandler::invoke" );
     }
 
     /**
      * Some handler later on has faulted so we need to undo our work.
      */
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: FaultableHandler::undo" );
+        category.debug("Enter: FaultableHandler::undo" );
         workHandler.undo( msgContext );
-        Debug.Print( 1, "Exit: FaultableHandler::undo" );
+        category.debug("Exit: FaultableHandler::undo" );
     };
 
     public boolean canHandleBlock(QName qname) {

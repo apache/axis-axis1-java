@@ -68,6 +68,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.log4j.Category;
 
 import org.xml.sax.*;
 
@@ -79,6 +80,8 @@ import org.xml.sax.*;
 public class BeanSerializer extends Deserializer 
     implements Serializer, Serializable 
 {
+    static Category category =
+            Category.getInstance(BeanSerializer.class.getName());
 
     /**
      * Class being serialized/deserialized
@@ -204,8 +207,10 @@ public class BeanSerializer extends Deserializer
                 try {
                     pd.getWriteMethod().invoke(object, new Object[] {value});
                 } catch (Exception ex) {
-                    Debug.Print(1, "Couldn't convert " + value.getClass().getName() +
-                                   " to bean field '" + pd.getName() + "', type " +
+                    category.error("Couldn't convert " +
+                                   value.getClass().getName() +
+                                   " to bean field '" + pd.getName() +
+                                   "', type " +
                                    pd.getPropertyType().getName());
                     throw new SAXException(ex);
                 }

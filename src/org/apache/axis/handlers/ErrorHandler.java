@@ -57,6 +57,7 @@ package org.apache.axis.handlers ;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.log4j.Category;
 
 /**
  *
@@ -64,15 +65,17 @@ import org.apache.axis.utils.* ;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class ErrorHandler extends BasicHandler {
+    static Category category =
+            Category.getInstance(ErrorHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: ErrorHandler::invoke" );
+        category.debug("Enter: ErrorHandler::invoke" );
         throw new AxisFault( "Server.Whatever", "ERROR", null, null );
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: ErrorHandler::undo" );
-        Debug.Print( 1, "Exit: ErrorHandler::undo" );
+        category.debug("Enter: ErrorHandler::undo" );
+        category.debug("Exit: ErrorHandler::undo" );
     }
 
 };

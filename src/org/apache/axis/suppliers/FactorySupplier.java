@@ -59,6 +59,7 @@ import java.util.Hashtable;
 import org.apache.axis.Supplier;
 import org.apache.axis.Handler;
 import org.apache.axis.utils.Debug;
+import org.apache.log4j.Category;
 
 /** A <code>FactorySupplier</code> always gives you a new Handler instance.
  * 
@@ -66,6 +67,8 @@ import org.apache.axis.utils.Debug;
  */
 public class FactorySupplier implements Supplier
 {
+    static Category category = Category.getInstance(FactorySupplier.class.getName());
+
     Class _class;
     Hashtable _options;
     
@@ -80,7 +83,8 @@ public class FactorySupplier implements Supplier
         try {
             Handler handler = (Handler)_class.newInstance();
             handler.setOptions(_options);
-            Debug.Print(1, "FactorySupplier returning new instance of " + _class.getName());
+            if (category.isDebugEnabled())
+                category.debug("FactorySupplier returning new instance of " + _class.getName());
             return handler;
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();

@@ -68,6 +68,7 @@ import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.utils.AxisClassLoader ;
 import org.apache.axis.providers.java.RPCProvider;
+import org.apache.log4j.Category;
 
 import sun.tools.javac.Main;
 
@@ -89,6 +90,9 @@ import javax.servlet.http.HttpServlet;
 public class JWSProcessor extends BasicHandler
 {
     static String errFile = "jws.err" ;
+    static Category category =
+            Category.getInstance(JWSProcessor.class.getName());
+
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
@@ -98,20 +102,25 @@ public class JWSProcessor extends BasicHandler
     public void invokeImpl(MessageContext msgContext, boolean doWsdl)
             throws AxisFault
     {
-        Debug.Print( 1, "Enter: JWSProcessor::invoke" );
+        if (category.isDebugEnabled())
+            category.debug("Enter: JWSProcessor::invoke");
         try {
             /* Grab the *.jws filename from the context - should have been */
             /* placed there by another handler (ie. HTTPActionHandler)     */
             /***************************************************************/
             Runtime  rt      = Runtime.getRuntime();
             String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
-            Debug.Print( 2, "jwsFile: " + jwsFile );
+            if (category.isInfoEnabled())
+                category.info("jwsFile: " + jwsFile );
             String   jFile   = jwsFile.substring(0, jwsFile.length()-3) +
                     "java" ;
             String   cFile   = jwsFile.substring(0, jwsFile.length()-3) +
                     "class" ;
-            Debug.Print( 2, "jFile: " + jFile );
-            Debug.Print( 2, "cFile: " + cFile );
+
+            if (category.isInfoEnabled()) {
+                category.info("jFile: " + jFile );
+                category.info("cFile: " + cFile );
+            }
 
             File  f1 = new File( cFile );
             File  f2 = new File( jwsFile );
@@ -120,7 +129,9 @@ public class JWSProcessor extends BasicHandler
             /*****************/
             String clsName = f2.getName();
             clsName = clsName.substring( 0, clsName.length()-4 );
-            Debug.Print( 2, "ClsName: " + clsName );
+
+            if (category.isInfoEnabled())
+                category.info("ClsName: " + clsName );
 
             /* Check to see if we need to recompile */
             /****************************************/
@@ -129,8 +140,8 @@ public class JWSProcessor extends BasicHandler
                 /* java file then recompile the java file.                 */
                 /* Start by copying the *.jws file to *.java               */
                 /***********************************************************/
-                Debug.Print(1, "Compiling: " + jwsFile );
-                Debug.Print(3, "copy " + jwsFile + " " + jFile );
+                category.info("Compiling: " + jwsFile );
+                category.debug("copy " + jwsFile + " " + jFile );
                 FileReader fr = new FileReader( jwsFile );
                 FileWriter fw = new FileWriter( jFile );
                 char[] buf = new char[4096];
@@ -142,7 +153,7 @@ public class JWSProcessor extends BasicHandler
 
                 /* Now run javac on the *.java file */
                 /************************************/
-                Debug.Print(2, "javac " + jFile );
+                category.debug("javac " + jFile );
                 // Process proc = rt.exec( "javac " + jFile );
                 // proc.waitFor();
                 FileOutputStream  out      = new FileOutputStream( errFile );
@@ -217,12 +228,13 @@ public class JWSProcessor extends BasicHandler
             rpc.cleanup();  // ??
         }
         catch( Exception e ) {
-            Debug.Print( 1, e );
+            category.error( "JWSProcessor fault", e );
             if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
             throw (AxisFault) e ;
         }
 
-        Debug.Print( 1, "Exit : JWSProcessor::invoke" );
+        if (category.isDebugEnabled())
+            category.debug("Exit : JWSProcessor::invoke" );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
@@ -231,8 +243,9 @@ public class JWSProcessor extends BasicHandler
 
     public void undo(MessageContext msgContext)
     {
-        Debug.Print( 1, "Enter: JWSProcessor::undo" );
-        Debug.Print( 1, "Exit: JWSProcessor::undo" );
+        if (category.isDebugEnabled()) {
+            category.debug("Enter/Exit : JWSProcessor::undo");
+        }
     }
 
     private String getDefaultClasspath(MessageContext msgContext)

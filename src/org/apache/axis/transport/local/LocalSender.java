@@ -63,6 +63,7 @@ import org.apache.axis.transport.http.*;
 import org.apache.axis.utils.*;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
+import org.apache.log4j.Category;
 
 import java.net.*;
 
@@ -72,6 +73,8 @@ import java.net.*;
  * @author Sam Ruby <rubys@us.ibm.com>
  */
 public class LocalSender extends BasicHandler {
+    static Category category =
+            Category.getInstance(LocalSender.class.getName());
 
     private volatile AxisServer server;
 
@@ -85,7 +88,7 @@ public class LocalSender extends BasicHandler {
     }
 
     public void invoke(MessageContext clientContext) throws AxisFault {
-        Debug.Print( 1, "Enter: LocalSender::invoke" );
+        category.debug("Enter: LocalSender::invoke" );
 
         AxisServer targetServer = (AxisServer)clientContext.
                                                             getProperty(LocalTransport.LOCAL_SERVER);
@@ -153,11 +156,11 @@ public class LocalSender extends BasicHandler {
         clientContext.setResponseMessage(serverContext.getResponseMessage());
         //clientContext.getResponseMessage().getAsString();
 
-        Debug.Print( 1, "Exit: LocalSender::invoke" );
+        category.debug("Exit: LocalSender::invoke" );
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: LocalSender::undo" );
-        Debug.Print( 1, "Exit: LocalSender::undo" );
+        category.debug("Enter: LocalSender::undo" );
+        category.debug("Exit: LocalSender::undo" );
     }
 };
