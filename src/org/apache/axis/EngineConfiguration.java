@@ -75,6 +75,12 @@ import java.util.Hashtable;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public interface EngineConfiguration {
+    /**
+     * Property name used for setting an EngineConfiguration to be used
+     * in creating engines.
+     */
+    public static final String PROPERTY_NAME = "engineConfig";
+
      /**
      * Configure this AxisEngine using whatever data source we have.
      *

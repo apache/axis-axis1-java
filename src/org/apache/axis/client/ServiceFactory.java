@@ -45,8 +45,8 @@ public class ServiceFactory {
         Service service = null;
         InitialContext context = null;
 
-        EngineConfiguration configProvider =
-                (EngineConfiguration)environment.get("engineConfig");
+        EngineConfiguration configProvider = (EngineConfiguration)environment.
+            get(EngineConfiguration.PROPERTY_NAME);
         if (configProvider == null)
             configProvider = (EngineConfiguration)threadDefaultConfig.get();
 

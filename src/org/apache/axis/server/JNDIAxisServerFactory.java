@@ -51,7 +51,8 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
         
         EngineConfiguration config = null;
         try {
-            config = (EngineConfiguration)environment.get("engineConfig");
+            config = (EngineConfiguration)environment.
+                get(EngineConfiguration.PROPERTY_NAME);
         } catch (ClassCastException e) {
             // Just in case, fall through here.
         }
