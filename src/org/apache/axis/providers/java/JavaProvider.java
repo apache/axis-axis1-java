@@ -98,13 +98,12 @@ public abstract class JavaProvider extends BasicProvider
     public static final String OPTION_CLASSNAME = "className";
     public static final String OPTION_IS_STATIC = "isStatic";
     public static final String OPTION_CLASSPATH = "classPath";
+    public static final String OPTION_ALLOWEDMETHODS = "allowedMethods";
 
     public static final int SCOPE_REQUEST = 0;
     public static final int SCOPE_SESSION = 1;
     public static final int SCOPE_APPLICATION = 2;
 
-    private String classNameOption = "className";
-    private String allowedMethodsOption = "allowedMethods";
 
     /**
      * Get the service object whose method actually provides the service.
@@ -201,7 +200,8 @@ public abstract class JavaProvider extends BasicProvider
      * @return an initialized service object
      */
     private Object getNewServiceObject(MessageContext msgContext,
-                                       String clsName) throws Exception {
+                                       String clsName) throws Exception
+    {
         Object serviceObject = makeNewServiceObject(msgContext, clsName);
         if (serviceObject != null &&
                 serviceObject instanceof ServiceLifecycle) {
@@ -259,7 +259,7 @@ public abstract class JavaProvider extends BasicProvider
         if ((allowedMethods == null) || allowedMethods.equals("")) {
             throw new AxisFault("Server.NoMethodConfig",
                 JavaUtils.getMessage("noOption00", 
-                                     allowedMethodsOption, serviceName),
+                                     OPTION_ALLOWEDMETHODS, serviceName),
                 null, null);
         }
 
@@ -398,7 +398,7 @@ public abstract class JavaProvider extends BasicProvider
 
     private String getAllowedMethods(Handler service)
     {
-        String val = (String)service.getOption(allowedMethodsOption);
+        String val = (String)service.getOption(OPTION_ALLOWEDMETHODS);
         if (val == null || val.length() == 0) {
             // Try the old option for backwards-compatibility
             val = (String)service.getOption("methodName");
@@ -443,7 +443,7 @@ public abstract class JavaProvider extends BasicProvider
      */
     protected String getServiceClassNameOptionName()
     {
-        return classNameOption;
+        return OPTION_CLASSNAME;
     }
     
     /**
