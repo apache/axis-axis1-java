@@ -55,7 +55,6 @@
 package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.description.ParameterDesc;
 
