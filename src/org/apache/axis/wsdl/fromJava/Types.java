@@ -197,7 +197,7 @@ public class Types {
                     }
                 }; 
         SymbolTable symbolTable = new SymbolTable(btm,
-                                                  true, false, false, false);
+                                                  true, false, false);
         symbolTable.populate(null, doc);
 
         // Walk the type/element entries in the symbol table and 

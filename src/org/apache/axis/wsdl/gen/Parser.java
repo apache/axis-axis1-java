@@ -207,7 +207,6 @@ public class Parser {
                 genFactory.getBaseTypeMapping(),
                 imports,
                 verbose,
-                debug,
                 nowrap);
 
         // We run the actual Emitter in a thread that we can kill
@@ -270,7 +269,6 @@ public class Parser {
                 genFactory.getBaseTypeMapping(),
                 imports,
                 verbose,
-                debug,
                 nowrap);
         symbolTable.populate(context, doc);
         generate(symbolTable);
