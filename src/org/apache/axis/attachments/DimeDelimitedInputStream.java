@@ -120,7 +120,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
 
     protected static int streamCount = 0; //number of streams produced.
 
-    protected synchronized static int newStreamNo() {
+    protected static synchronized int newStreamNo() {
         log.debug(JavaUtils.getMessage("streamNo", "" + (streamCount + 1)));
         return ++streamCount;
     }

@@ -121,8 +121,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * Thread local storage used for storing the last call object
      */
     private static ThreadLocal previousCall = new ThreadLocal();
-    static private HashMap      cachedWSDL  = new HashMap();
-    static private boolean      cachingWSDL = true ;
+    private static HashMap      cachedWSDL  = new HashMap();
+    private static boolean      cachingWSDL = true ;
 
     /**
      * A Hashtable mapping addresses (URLs) to Transports (objects)

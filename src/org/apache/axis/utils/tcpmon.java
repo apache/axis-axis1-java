@@ -116,11 +116,11 @@ import java.util.Vector;
 public class tcpmon extends JFrame {
     private JTabbedPane  notebook = null ;
 
-    static private int STATE_COLUMN    = 0 ;
-    static private int TIME_COLUMN     = 1 ;
-    static private int INHOST_COLUMN   = 2 ;
-    static private int OUTHOST_COLUMN  = 3 ;
-    static private int REQ_COLUMN      = 4 ;
+    private static int STATE_COLUMN    = 0 ;
+    private static int TIME_COLUMN     = 1 ;
+    private static int INHOST_COLUMN   = 2 ;
+    private static int OUTHOST_COLUMN  = 3 ;
+    private static int REQ_COLUMN      = 4 ;
 
     class AdminPage extends JPanel {
         public JRadioButton  listenerButton, proxyButton ;

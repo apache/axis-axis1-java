@@ -120,7 +120,7 @@ public abstract class Enum implements java.io.Serializable {
         return getType().getEnum(value);
     }
     
-    public static abstract class Type implements java.io.Serializable {
+    public abstract static class Type implements java.io.Serializable {
         private final String name;
         private final Enum[] enums;
         private Enum  dephault = null;

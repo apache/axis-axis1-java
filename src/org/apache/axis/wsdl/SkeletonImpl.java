@@ -79,7 +79,7 @@ public class SkeletonImpl implements Skeleton {
         ParameterMode[] modes;
         String inputNamespace;
         String outputNamespace;
-	String soapAction;
+        String soapAction;
 
         MetaInfo(QName[] names, ParameterMode[] modes, String inputNamespace,
                 String outputNamespace, String soapAction) {

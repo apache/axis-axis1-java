@@ -78,21 +78,21 @@ public class HandlerInfoChainFactory {
     }
 
     public HandlerChain createHandlerChain() {
-		HandlerChain hc = new HandlerChainImpl(handlerInfos);
-		return hc;
-		
+        HandlerChain hc = new HandlerChainImpl(handlerInfos);
+        return hc;
+        
     }
-	
-	public String[] getRoles() {
-		return _roles;
-	}
-	
-	public void setRoles(String[] roles) {
-		_roles = roles;
-	}
-	
-	public void init(Map map) {
-		// DO SOMETHING WITH THIS
-	}    
+    
+    public String[] getRoles() {
+        return _roles;
+    }
+    
+    public void setRoles(String[] roles) {
+        _roles = roles;
+    }
+    
+    public void init(Map map) {
+        // DO SOMETHING WITH THIS
+    }    
 }
 

@@ -375,7 +375,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             //    try{
             //        return getAsString().getBytes("UTF-8");
             //     }catch(UnsupportedEncodingException ue){
-	    //        log.debug("Exit: SOAPPart::getAsBytes");
+            //        log.debug("Exit: SOAPPart::getAsBytes");
             //    return getAsString().getBytes();
             //}
         }

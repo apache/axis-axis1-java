@@ -95,7 +95,6 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
               
     /**
      * Multipart stream.
-     * @param the string that holds the contentType
      * @param is the true input stream from where the source.
      */
     public MultiPartDimeInputStream (java.io.InputStream is)
@@ -136,7 +135,8 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
         orderedParts.add(ap); 
     }
 
-    protected final static String[] READ_ALL = { " * \0 ".intern()}; //Shouldn't never match
+    //Shouldn't never match
+    protected static final String[] READ_ALL = { " * \0 ".intern()};
 
     protected void readAll() throws org.apache.axis.AxisFault {
         try {
@@ -154,13 +154,16 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
 
     /** 
      * This will read streams in till the one that is needed is found.
-     * @param The id is the stream being sought. 
+     * @param id is the stream being sought.
      *         
      */
 
     protected Part readTillFound(final String[] id) 
       throws java.io.IOException {
-        if (dimeDelimitedStream == null) return null; //The whole stream has been consumed already
+        if (dimeDelimitedStream == null) {
+            //The whole stream has been consumed already
+            return null;
+        }
         Part ret = null;
 
         try {
@@ -176,10 +179,11 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
 
                     do {
                         byteread = soapStream.read(buf);
-                        if (byteread > 0) soapdata.write(buf, 0, 
-                         byteread);
-                    }
-                    while (byteread > -1);
+                        if (byteread > 0) {
+                            soapdata.write(buf, 0, byteread);
+                        }
+
+                    } while (byteread > -1);
                     soapdata.close();
                     soapStream.close();
                     soapStream = new java.io.ByteArrayInputStream(

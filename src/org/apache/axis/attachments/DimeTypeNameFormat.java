@@ -75,11 +75,11 @@ public final class DimeTypeNameFormat {
         format = f;
     }; 
     //Current type values.
-    final static byte NOCHANGE_VALUE = 0x00; // indicates the type is unchanged from the previous record (used for chunking)
-    final static byte MIME_VALUE = 0x01; //indicates the type is specified as a MIME media-type
-    final static byte URI_VALUE = 0x02; // indicates the type is specified as an absolute URI
-    final static byte UNKNOWN_VALUE = 0x03; // indicates the type is not specified
-    final static byte NODATA_VALUE = 0x04; // indicates the record has no payload 
+    static final byte NOCHANGE_VALUE = 0x00; // indicates the type is unchanged from the previous record (used for chunking)
+    static final byte MIME_VALUE = 0x01; //indicates the type is specified as a MIME media-type
+    static final byte URI_VALUE = 0x02; // indicates the type is specified as an absolute URI
+    static final byte UNKNOWN_VALUE = 0x03; // indicates the type is not specified
+    static final byte NODATA_VALUE = 0x04; // indicates the record has no payload
 
     static final DimeTypeNameFormat NOCHANGE =
       new DimeTypeNameFormat(NOCHANGE_VALUE);
@@ -110,15 +110,20 @@ public final class DimeTypeNameFormat {
     }
 
     public final boolean equals(final Object x) {
-        if (x == null) return false;
-        if (!(x instanceof DimeTypeNameFormat)) return false;
+        if (x == null)  {
+            return false;
+        }
+        if (!(x instanceof DimeTypeNameFormat)) {
+            return false;
+        }
         return ((DimeTypeNameFormat) x).format == this.format;
     }
 
     public static DimeTypeNameFormat parseByte(byte x) {
-        if (x < 0 || x > fromByte.length)
+        if (x < 0 || x > fromByte.length) {
             throw new IllegalArgumentException(JavaUtils.getMessage(
-                        "attach.DimeStreamBadType", "" + x)); 
+                        "attach.DimeStreamBadType", "" + x));
+        }
         return fromByte[x];
     }
 

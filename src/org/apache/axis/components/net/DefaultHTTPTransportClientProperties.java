@@ -63,7 +63,7 @@ import org.apache.axis.AxisProperties;
 public class DefaultHTTPTransportClientProperties
     implements TransportClientProperties {
         
-    private final static String emptyString = "";
+    private static final String emptyString = "";
 
     protected String proxyHost = null;
     protected String nonProxyHosts = null;

@@ -423,10 +423,10 @@ public class WSDDService
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
 
-	// Set handlerInfoChain
-	if (_hiChainFactory != null) {
-	    service.setOption(Constants.ATTR_HANDLERINFOCHAIN, _hiChainFactory);
-	}
+        // Set handlerInfoChain
+        if (_hiChainFactory != null) {
+            service.setOption(Constants.ATTR_HANDLERINFOCHAIN, _hiChainFactory);
+        }
 
         AxisEngine.normaliseOptions(service);
 

@@ -150,7 +150,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
         // Return new AxisServer using the appropriate config
         return (config == null) ? new AxisServer() : new AxisServer(config);
     }
-	
+
     /**
      * Look for EngineConfiguration, it is first of:
      * a) EngineConfiguration instance, keyed to
@@ -164,7 +164,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
         log.debug("Enter: DefaultAxisServerFactory::getEngineConfiguration");
 
         EngineConfiguration config = null;
-		
+
         if (environment != null) {
             try {
                 config = (EngineConfiguration)environment.get(EngineConfiguration.PROPERTY_NAME);
@@ -173,7 +173,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
                 // Fall through
             }
         }
-		
+
         if (config == null) {
             // A default engine configuration class may be set in a system
             // property. If so, try creating an engine configuration.

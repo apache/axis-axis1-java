@@ -204,14 +204,14 @@ public class ClassReader extends ByteArrayInputStream {
     /**
      * @return the next unsigned 16 bit value
      */
-    final protected int readShort() {
+    protected final int readShort() {
         return (read() << 8) | read();
     }
 
     /**
      * @return the next signed 32 bit value
      */
-    final protected int readInt() {
+    protected final int readInt() {
         return (read() << 24) | (read() << 16) | (read() << 8) | read();
     }
 
@@ -227,7 +227,7 @@ public class ClassReader extends ByteArrayInputStream {
         }
     }
 
-    final protected Member resolveMethod(int index) throws IOException, ClassNotFoundException, NoSuchMethodException {
+    protected final Member resolveMethod(int index) throws IOException, ClassNotFoundException, NoSuchMethodException {
         int oldPos = pos;
         try {
             Member m = (Member) cpool[index];
@@ -264,7 +264,7 @@ public class ClassReader extends ByteArrayInputStream {
 
     }
 
-    final protected Field resolveField(int i) throws IOException, ClassNotFoundException, NoSuchFieldException {
+    protected final Field resolveField(int i) throws IOException, ClassNotFoundException, NoSuchFieldException {
         int oldPos = pos;
         try {
             Field f = (Field) cpool[i];
@@ -290,7 +290,7 @@ public class ClassReader extends ByteArrayInputStream {
         }
     }
 
-    final protected NameAndType resolveNameAndType(int i) throws IOException {
+    protected final NameAndType resolveNameAndType(int i) throws IOException {
         int oldPos = pos;
         try {
             NameAndType nt = (NameAndType) cpool[i];
@@ -307,7 +307,7 @@ public class ClassReader extends ByteArrayInputStream {
     }
 
 
-    final protected Class resolveClass(int i) throws IOException, ClassNotFoundException {
+    protected final Class resolveClass(int i) throws IOException, ClassNotFoundException {
         int oldPos = pos;
         try {
             Class c = (Class) cpool[i];
@@ -322,7 +322,7 @@ public class ClassReader extends ByteArrayInputStream {
         }
     }
 
-    final protected String resolveUtf8(int i) throws IOException {
+    protected final String resolveUtf8(int i) throws IOException {
         int oldPos = pos;
         try {
             String s = (String) cpool[i];
@@ -338,7 +338,7 @@ public class ClassReader extends ByteArrayInputStream {
         }
     }
 
-    final protected void readCpool() throws IOException {
+    protected final void readCpool() throws IOException {
         int count = readShort(); // cpool count
         cpoolIndex = new int[count];
         cpool = new Object[count];
@@ -391,7 +391,7 @@ public class ClassReader extends ByteArrayInputStream {
         }
     }
 
-    final protected void skipAttributes() throws IOException {
+    protected final void skipAttributes() throws IOException {
         int count = readShort();
         for (int i = 0; i < count; i++) {
             readShort(); // name index
@@ -404,7 +404,7 @@ public class ClassReader extends ByteArrayInputStream {
      * can contain attributes are: fields, methods, the class itself,
      * and some other types of attributes.
      */
-    final protected void readAttributes() throws IOException {
+    protected final void readAttributes() throws IOException {
         int count = readShort();
         for (int i = 0; i < count; i++) {
             int nameIndex = readShort(); // name index

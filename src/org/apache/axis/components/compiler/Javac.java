@@ -88,8 +88,8 @@ public class Javac extends AbstractCompiler
     protected static Log log =
         LogFactory.getLog(Javac.class.getName());
 
-    public final static String CLASSIC_CLASS = "sun.tools.javac.Main";
-    public final static String MODERN_CLASS = "com.sun.tools.javac.Main";
+    public static final String CLASSIC_CLASS = "sun.tools.javac.Main";
+    public static final String MODERN_CLASS = "com.sun.tools.javac.Main";
 
     private boolean modern = false;
 
@@ -117,11 +117,7 @@ public class Javac extends AbstractCompiler
     /**
      * Compile a source file yielding a loadable class file.
      *
-     * @param filename The object program base file name
-     * @param baseDirectory The directory containing the object program file
-     * @param encoding The encoding expected in the source file or
-     * <code>null</code> if it is the platform's default encoding
-     * @exception LanguageException If an error occurs during compilation
+     * @exception IOException If an error occurs during compilation
      */
     public boolean compile() throws IOException {
         ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -155,7 +151,7 @@ public class Javac extends AbstractCompiler
      * Parse the compiler error stream to produce a list of
      * <code>CompilerError</code>s
      *
-     * @param errors The error stream
+     * @param input The error stream
      * @return The list of compiler error messages
      * @exception IOException If an error occurs during message collection
      */
@@ -171,7 +167,7 @@ public class Javac extends AbstractCompiler
      * Parse the compiler error stream to produce a list of
      * <code>CompilerError</code>s
      *
-     * @param errors The error stream
+     * @param input The error stream
      * @return The list of compiler error messages
      * @exception IOException If an error occurs during message collection
      */
@@ -235,7 +231,7 @@ public class Javac extends AbstractCompiler
      * Parse the compiler error stream to produce a list of
      * <code>CompilerError</code>s
      *
-     * @param errors The error stream
+     * @param input The error stream
      * @return The list of compiler error messages
      * @exception IOException If an error occurs during message collection
      */

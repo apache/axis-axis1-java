@@ -85,17 +85,17 @@ package org.apache.axis.utils;
  * @version $Revision: 1.8 $ $Date: 2002/01/05 11:15:59 $
  */
 final class Base64 {
-    static private final int  BASELENGTH         = 255;
-    static private final int  LOOKUPLENGTH       = 64;
-    static private final int  TWENTYFOURBITGROUP = 24;
-    static private final int  EIGHTBIT           = 8;
-    static private final int  SIXTEENBIT         = 16;
-    static private final int  SIXBIT             = 6;
-    static private final int  FOURBYTE           = 4;
-    static private final int  SIGN               = -128;
-    static private final byte PAD                = ( byte ) '=';
-    static private byte [] base64Alphabet       = new byte[BASELENGTH];
-    static private byte [] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
+    private static final int  BASELENGTH         = 255;
+    private static final int  LOOKUPLENGTH       = 64;
+    private static final int  TWENTYFOURBITGROUP = 24;
+    private static final int  EIGHTBIT           = 8;
+    private static final int  SIXTEENBIT         = 16;
+    private static final int  SIXBIT             = 6;
+    private static final int  FOURBYTE           = 4;
+    private static final int  SIGN               = -128;
+    private static final byte PAD                = ( byte ) '=';
+    private static byte [] base64Alphabet       = new byte[BASELENGTH];
+    private static byte [] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
 
     static {
 
@@ -116,14 +116,17 @@ final class Base64 {
         base64Alphabet['+']  = 62;
         base64Alphabet['/']  = 63;
 
-        for (int i = 0; i<=25; i++ )
+        for (int i = 0; i<=25; i++ ) {
             lookUpBase64Alphabet[i] = (byte) ('A'+i );
+        }
 
-        for (int i = 26,  j = 0; i<=51; i++, j++ )
+        for (int i = 26,  j = 0; i<=51; i++, j++ ) {
             lookUpBase64Alphabet[i] = (byte) ('a'+ j );
+        }
 
-        for (int i = 52,  j = 0; i<=61; i++, j++ )
+        for (int i = 52,  j = 0; i<=61; i++, j++ ) {
             lookUpBase64Alphabet[i] = (byte) ('0' + j );
+        }
         lookUpBase64Alphabet[62] = (byte) '+';
         lookUpBase64Alphabet[63] = (byte) '/';
 
@@ -146,8 +149,9 @@ final class Base64 {
             return true;
         }
         for ( int i=0; i < length; i++ ) {
-            if ( Base64.isBase64( arrayOctect[i] ) == false)
+            if ( Base64.isBase64( arrayOctect[i] ) == false) {
                 return false;
+            }
         }
         return true;
     }
@@ -166,10 +170,14 @@ final class Base64 {
         byte     encodedData[]     = null;
 
 
-        if ( fewerThan24bits != 0 ) //data not divisible by 24 bit
+        if ( fewerThan24bits != 0 ) {
+            //data not divisible by 24 bit
             encodedData = new byte[ (numberTriplets + 1 )*4  ];
-        else // 16 or 8 bit
+        }
+        else {
+            // 16 or 8 bit
             encodedData = new byte[ numberTriplets*4 ];
+        }
 
         byte k=0, l=0, b1=0,b2=0,b3=0;
 
@@ -230,7 +238,7 @@ final class Base64 {
     /**
      * Decodes Base64 data into octects
      *
-     * @param binaryData Byte array containing Base64 data
+     * @param base64Data Byte array containing Base64 data
      * @return Array containing decoded data.
      */
     static byte[] decode( byte[] base64Data ) {

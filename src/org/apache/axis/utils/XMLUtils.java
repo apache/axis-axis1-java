@@ -234,13 +234,16 @@ public class XMLUtils {
      *
      * @return a SAXParser instance.
      */
-    public synchronized static SAXParser getSAXParser() {
-        if(!saxParsers.empty())
+    public static synchronized SAXParser getSAXParser() {
+        if(!saxParsers.empty()) {
             return (SAXParser )saxParsers.pop();
+        }
 
         try {
             SAXParser parser = saxFactory.newSAXParser();
-            parser.getXMLReader().setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+            parser.getXMLReader().
+                    setFeature("http://xml.org/sax/features/namespace-prefixes",
+                            true);
             return parser;
         } catch (ParserConfigurationException e) {
             log.error(JavaUtils.getMessage("parserConfigurationException00"), e);
@@ -270,8 +273,9 @@ public class XMLUtils {
                     saxParsers.push(parser);
                 }
             }
-            else
+            else {
                 tryReset= false;
+            }
         } catch (org.xml.sax.SAXException e) {
             tryReset= false;
         }
@@ -493,7 +497,7 @@ public class XMLUtils {
    *                 be combined.
    * @return the concatanated string.
    */
-  static public String getChildCharacterData (Element parentEl) {
+  public static String getChildCharacterData (Element parentEl) {
     if (parentEl == null) {
       return null;
     }
@@ -566,7 +570,7 @@ public class XMLUtils {
     /**
      * Utility to get the bytes uri
      *
-     * @param uri the resource to get
+     * @param source the resource to get
      */
     public static InputSource sourceToInputSource(Source source) {
         if (source instanceof SAXSource) {

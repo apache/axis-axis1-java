@@ -120,7 +120,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      *
      * @return
      */
-    protected synchronized static int newStreamNo() {
+    protected static synchronized int newStreamNo() {
 
         log.debug(JavaUtils.getMessage("streamNo", "" + (streamCount + 1)));
 
