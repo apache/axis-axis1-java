@@ -93,8 +93,11 @@ public class DeserializationContext extends DefaultHandler
     static class LocalIDResolver implements IDResolver
     {
         HashMap idMap = null;
-        
-        public void addIDMapping(String id, Object referent)
+
+        /**
+         * Add object associated with id
+         */
+        public void addReferencedObject(String id, Object referent)
         {
             if (idMap == null)
                 idMap = new HashMap();
@@ -102,6 +105,9 @@ public class DeserializationContext extends DefaultHandler
             idMap.put(id, referent);
         }
         
+        /**
+         * Get object regferenced by href
+         */
         public Object getReferencedObject(String href)
         {
             if ((idMap == null) || (href == null))
@@ -301,6 +307,11 @@ public class DeserializationContext extends DefaultHandler
         return msgContext.getTypeMappingRegistry();
     }
     
+    /**
+     * Get the object referenced by the href.
+     * The object returned may be a MessageElement requiring deserialization or it 
+     * may be a deserialized java object.
+     */
     public Object getObjectByRef(String href)
     {
         if ((idMap == null) || (href == null))
@@ -313,6 +324,26 @@ public class DeserializationContext extends DefaultHandler
         return resolver.getReferencedObject(href);
     }
     
+    /**
+     * Add the object associated with this id.
+     * This routine is called to associate the deserialized object
+     * with the id specified on the XML element. 
+    */
+    public void addObjectById(String _id, Object obj)
+    {
+        // The resolver uses the href syntax as the key.
+        String id = "#" + _id;
+        if ((idMap == null) || (id == null))
+            return ;
+        
+        IDResolver resolver = (IDResolver)idMap.get(id);
+        if (resolver == null)
+            return ;
+        
+        resolver.addReferencedObject(id, obj);
+        return;
+    }
+
     public void registerFixup(String id, Deserializer dser)
     {
         if (fixups == null)
@@ -328,7 +359,7 @@ public class DeserializationContext extends DefaultHandler
         
         String absID = "#" + id;
         
-        localIDs.addIDMapping(absID, elem);
+        localIDs.addReferencedObject(absID, elem);
         
         registerResolverForID(absID, localIDs);
         

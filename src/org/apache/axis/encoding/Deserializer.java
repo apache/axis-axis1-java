@@ -308,6 +308,21 @@ public class Deserializer extends SOAPHandler
           return;
         }
 
+        // If this element has an id, then associate the value with the id.
+        // (Prior to this association, the MessageElement of the element is
+        // associated with the id. Failure to replace the MessageElement at this
+        // point will cause an infinite loop during deserialization if the 
+        // current element contains child elements that cause an href back to this id.)
+        // Also note that that endElement() method is responsible for the final
+        // assoication of this id with the completed value.
+        String id = attributes.getValue("id");
+        if (id != null) {
+            context.addObjectById(id, value);
+            if (category.isDebugEnabled()) {
+                category.debug("Initiali put of deserialized value=" + value + " for id= "+ id);
+            }     
+        }
+
         String href = attributes.getValue("href");
         if (href != null) {
             isHref = true;
@@ -315,7 +330,7 @@ public class Deserializer extends SOAPHandler
             Object ref = context.getObjectByRef(href);
             
             if (category.isDebugEnabled()) {
-                category.debug("Got " + ref + " for ID " + href);
+                category.debug("Got " + ref + " for ID " + href + " (Class =" + ref.getClass()+")");
             }
             
             if (ref == null) {
@@ -342,6 +357,10 @@ public class Deserializer extends SOAPHandler
                 context.recorder = null;
                 ((MessageElement)ref).publishToHandler(context);
                 context.recorder = r;
+            } else {
+                // If the ref is not a MessageElement, then it must be an
+                // element that has already been deserialized.  Use it directly.
+                value = ref;
             }
             
             // !!! INSERT DEALING WITH ATTACHMENTS STUFF HERE?
@@ -423,5 +442,16 @@ public class Deserializer extends SOAPHandler
         }
         if (value != null)
             valueComplete();
+
+        // If this element has an id, then associate the value with the id.
+        // Subsequent hrefs to the id will obtain the value directly.
+        // This is necessary for proper multi-reference deserialization.
+        String id = context.curElement.getAttributeValue("id");
+        if (id != null) {
+            context.addObjectById(id, value);
+            if (category.isDebugEnabled()) {
+                category.debug("Put deserialized value=" + value + " for id= "+ id);
+            }     
+        }
     }
 }
