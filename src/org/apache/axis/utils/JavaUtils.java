@@ -422,19 +422,22 @@ public class JavaUtils
     /**
      * These are java keywords as specified at the following URL (sorted alphabetically).
      * http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#229308
+     * Note that false, true, and null are not strictly keywords; they are literal values,
+     * but for the purposes of this array, they can be treated as literals.
      */
     static final String keywords[] =
     {
-        "abstract",     "boolean",   "break",      "byte",     "case",
-        "catch",        "char",      "class",      "const",    "continue",
-        "default",      "do",        "double",     "else",     "extends",
-        "false",        "final",     "finally",    "float",    "for",
-        "goto",         "if",        "implements", "import",   "instanceof",
-        "int",          "interface", "long",       "native",   "new",
-        "package",      "private",   "protected",  "public",   "return",
-        "short",        "static",    "strictfp",   "super",    "switch",
-        "synchronized", "this",      "throw",      "throws",   "transient",
-        "true",         "try",       "void",       "volatile", "while"
+        "abstract",  "boolean",      "break",      "byte",      "case",
+        "catch",     "char",         "class",      "const",     "continue",
+        "default",   "do",           "double",     "else",      "extends",
+        "false",     "final",        "finally",    "float",     "for",
+        "goto",      "if",           "implements", "import",    "instanceof",
+        "int",       "interface",    "long",       "native",    "new",
+        "null",      "package",      "private",    "protected", "public",
+        "return",    "short",        "static",     "strictfp",  "super",
+        "switch",    "synchronized", "this",       "throw",     "throws",
+        "transient", "true",         "try",        "void",      "volatile",
+        "while"
     };
 
     /** Collator for comparing the strings */
