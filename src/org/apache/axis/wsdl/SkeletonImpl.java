@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl;
 
 import java.util.HashMap;
+import javax.xml.rpc.ParameterMode;
 
 /**
  * Provides Base function implementation for the Skeleton interface    
@@ -71,26 +72,52 @@ public class SkeletonImpl implements Skeleton {
         }
     }
 
+    class NamesAndModes {
+        String[] names;
+        ParameterMode[] modes;
+
+        NamesAndModes(String[] names, ParameterMode[] modes) {
+            this.names = names;
+            this.modes = modes;
+        }
+    }
+
     /**
      * Add operation name and vector containing return and parameter names.
      * The first name in the array is either the return name (which
      * should be set to null if there is no return name)
      **/
-    public void add(String operation, String[] names) {
-        table.put(operation, names);
+    public void add(String operation, String[] names, ParameterMode[] modes) {
+        table.put(operation, new NamesAndModes(names, modes));
     }
 
     /**
      * Used to return the name of the n-th parameter of the specified
-     * operation.  
+     * operation.  Use -1 to get the return type name
      * Returns null if problems occur or the parameter is not known.
      */
     public String getParameterName(String operationName, int n) {
-        String[] names = (String[]) table.get(operationName);
-        if (names == null ||
-            names.length <= n+1) {
+        NamesAndModes value = (NamesAndModes) table.get(operationName);
+        if (value == null ||
+            value.names == null ||
+            value.names.length <= n+1) {
             return null;
         }
-        return (String) (names[n+1]);
+        return value.names[n+1];
+    }
+
+    /**
+     * Used to return the mode of the n-th parameter of the specified
+     * operation.  Use -1 to get the return mode.
+     * Returns null if problems occur or the parameter is not known.
+     */
+    public ParameterMode getParameterMode(String operationName, int n) {
+        NamesAndModes value = (NamesAndModes) table.get(operationName);
+        if (value == null ||
+            value.modes == null ||
+            value.modes.length <= n+1) {
+            return null;
+        }
+        return value.modes[n+1];
     }
 }

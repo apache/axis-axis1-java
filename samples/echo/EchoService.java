@@ -60,6 +60,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.axis.encoding.Hex;
+import javax.xml.rpc.ParameterMode;
 
 /**
  * Test implementation of the echo interop service.  Original description of
@@ -86,6 +87,16 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
         init();
         return skel.getParameterName(opName, i);
     }
+
+    public ParameterMode getParameterMode(String opName, int i) {
+        return skel.getParameterMode(opName, i);
+    }
+
+    public static ParameterMode getParameterModeStatic(String opName, int i) {
+        init();
+        return skel.getParameterMode(opName, i);
+    }
+
     protected static void init() {
         if (skel != null) 
             return;
@@ -94,79 +105,140 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new String[] {
                      "return",
                      "inputString"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoStringArray",
                  new String[] {
                      "return",
                      "inputStringArray"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoInteger",
                  new String[] {
                      "return",
                      "inputInteger"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoIntegerArray",
                  new String[] {
                      "return",
                      "inputIntegerArray"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoFloat",
                  new String[] {
                      "return",
                      "inputFloat"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoFloatArray",
                  new String[] {
                      "return",
                      "inputFloatArray"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoStruct",
                  new String[] {
                      "return",
                      "inputStruct"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoStructArray",
                  new String[] {
                      "return",
                      "inputStructArray"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoVoid",
                  new String[] {
-                 });
+                 },
+                 new ParameterMode[] {});
         skel.add("echoBase64",
                  new String[] {
                      "return",
                      "inputBase64"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoHexBinary",
                  new String[] {
                      "return",
                      "inputHexBinary"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoDate",
                  new String[] {
                      "return",
                      "inputDate"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoDecimal",
                  new String[] {
                      "return",
                      "inputDecimal"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoBoolean",
                  new String[] {
                      "return",
                      "inputBoolean"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoMap",
                  new String[] {
                      "return",
                      "inputMap"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoMapArray",
                  new String[] {
                      "return",
                      "inputMapArray"
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoStructAsSimpleTypes",
                  new String[] {
@@ -175,6 +247,13 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  "outputString",
                  "outputInteger",
                  "outputFloat",
+                 },
+                 new ParameterMode[] {
+                     null,
+                     ParameterMode.PARAM_MODE_IN,                     
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_OUT,
                  });
         skel.add("echoSimpleTypesAsStruct",
                  new String[] {
@@ -182,21 +261,39 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  "inputString",
                  "inputInteger",
                  "inputFloat",
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN,                     
+                     ParameterMode.PARAM_MODE_IN,                     
+                     ParameterMode.PARAM_MODE_IN,                     
                  });
         skel.add("echo2DStringArray",
                  new String[] {
                  "return",
                  "input2DStringArray",
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoNestedStruct",
                  new String[] {
                  "return",
                  "inputStruct",
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
         skel.add("echoNestedArray",
                  new String[] {
                  "return",
                  "inputStruct",
+                 },
+                 new ParameterMode[] {
+                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.PARAM_MODE_IN                     
                  });
     }
     

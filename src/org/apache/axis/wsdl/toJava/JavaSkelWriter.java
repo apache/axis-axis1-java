@@ -135,7 +135,7 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("        init();");
         pw.println("    }");
 
-        // Initialize operation parameter names
+        // Initialize operation parameter names & modes
         pw.println("    public String getParameterName(String opName, int i) {");
         pw.println("        return skel.getParameterName(opName, i);");
         pw.println("    }");
@@ -143,6 +143,15 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("    public static String getParameterNameStatic(String opName, int i) {");
         pw.println("        init();");
         pw.println("        return skel.getParameterName(opName, i);");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public javax.xml.rpc.ParameterMode getParameterMode(String opName, int i) {");
+        pw.println("        return skel.getParameterMode(opName, i);");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public static javax.xml.rpc.ParameterMode getParameterModeStatic(String opName, int i) {");
+        pw.println("        init();");
+        pw.println("        return skel.getParameterMode(opName, i);");
         pw.println("    }");
         pw.println();
         // Initialize operation parameter names
@@ -162,13 +171,30 @@ public class JavaSkelWriter extends JavaWriter {
                 pw.println("        skel.add(\"" + opName + "\",");
                 pw.println("                 new String[] {");
                 if (parameters.returnType != null) {
-                    pw.println("                 \"" + parameters.returnName + "\",");
+                    pw.println("                   \"" + parameters.returnName + "\",");
                 } else {
-                    pw.println("                 null,");
+                    pw.println("                   null,");
                 }
                 for (int j=0; j < parameters.list.size(); j++) {
                     Parameter p = (Parameter) parameters.list.get(j);
-                    pw.println("                 \"" + p.name + "\",");
+                    pw.println("                   \"" + p.name + "\",");
+                }
+                pw.println("                 },"); 
+                pw.println("                 new javax.xml.rpc.ParameterMode[] {");
+                if (parameters.returnType != null) {
+                    pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_OUT,");
+                } else {
+                    pw.println("                   null,");
+                }
+                for (int j=0; j < parameters.list.size(); j++) {
+                    Parameter p = (Parameter) parameters.list.get(j);
+                    if (p.mode == Parameter.IN)
+                        pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_IN,");
+                    else if (p.mode == Parameter.OUT) 
+                        pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT,");
+                    else
+                        pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_OUT,");
+
                 }
                 pw.println("                 });");                
             }       

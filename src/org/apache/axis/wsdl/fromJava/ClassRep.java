@@ -69,6 +69,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.HashMap;
+
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.Skeleton;
+import javax.xml.rpc.ParameterMode;
 
 /**
  * ClassRep is the representation of a class used inside the Java2WSDL
@@ -282,16 +287,18 @@ public class ClassRep {
                 int mod = m[i].getModifiers();
                 if (Modifier.isPublic(mod)) {
                     String methodName = m[i].getName();
-                    // Ignore the getParameterName methods from the Skeleton class
+                    // Ignore the getParameterName/getParameterMode methods from the Skeleton class
                     if (((methodName.equals("getParameterName") ||
-                            methodName.equals("getParameterNameStatic")) &&
-                            (Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
+                          methodName.equals("getParameterNameStatic") ||
+                          methodName.equals("getParameterMode") ||
+                          methodName.equals("getParameterModeStatic")) &&
+                         (Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
                         continue;  // skip it
                     }
-                    short[] modes = getParameterModes(m[i]);
                     Class[] types = getParameterTypes(m[i]);
-                    _methods.add(new MethodRep(m[i], types, modes,
-                                               getParameterNames(m[i], implClass, types)));
+                    String[] names = getParameterNames(m[i], implClass);
+                    ParameterMode[] modes = getParameterModes(m[i], implClass);
+                    _methods.add(new MethodRep(m[i], types, modes, names));
                 }
             }
             
@@ -394,27 +401,8 @@ public class ClassRep {
     }
 
     /**
-     * Get the list of parameter modes for the specified method.
-     * This implementation assumes IN unless the type is a holder class
-     * @param method is the Method.                          
-     * @return array of parameter modes.                                      
-     */ 
-    protected short[] getParameterModes(Method method) {
-        short[] modes = new short[method.getParameterTypes().length];
-        for (int i=0; i < method.getParameterTypes().length; i++) {
-            Class type = method.getParameterTypes()[i];
-            if (JavaUtils.getHolderValueType(type) != null) {
-                modes[i] = ParamRep.INOUT;
-            } else {
-                modes[i] = ParamRep.IN;
-            }
-        }
-        return modes;
-    }
-
-    /**
      * Get the list of parameter names for the specified method.
-     * This implementation uses Skeleton.getParameterNames or javap to get the parameter names
+     * This implementation uses Skeleton.getParameterNames or bcel to get the parameter names
      * from the class file.  If parameter names are not available 
      * for the method (perhaps the method is in an interface), the
      * corresponding method in the implClass is queried.
@@ -424,7 +412,7 @@ public class ClassRep {
      * @param types  are the parameter types after converting Holders.
      * @return array of Strings which represent the return name followed by parameter names
      */ 
-    protected String[] getParameterNames(Method method, Class implClass, Class[] types) {
+    protected String[] getParameterNames(Method method, Class implClass) {
         String[] paramNames = null;
         
         paramNames = getParameterNamesFromSkeleton(method);
@@ -432,12 +420,9 @@ public class ClassRep {
             return paramNames;
         }
         
-        paramNames = getParameterNames(method); 
+        paramNames = getParameterNamesFromDebugInfo(method); 
         
-        // If failed, try getting a method of the impl class
-        // It is possible that the impl class is a skeleton, thus the
-        // method may have a different signature (no Holders).  This is
-        // why the method search is done with two parameter lists.
+        // If failed, try getting a method of the impl class.
         if (paramNames == null && implClass != null) {
             Method m = null;
             try {
@@ -448,22 +433,12 @@ public class ClassRep {
                     m = implClass.getMethod(method.getName(), method.getParameterTypes());
                 } catch (Exception e) {}
             }
-            if (m == null) { 
-                try {
-                    m = implClass.getDeclaredMethod(method.getName(), types);
-                } catch (Exception e) {}
-            }
-            if (m == null) { 
-                try {
-                    m = implClass.getMethod(method.getName(), types);
-                } catch (Exception e) {}
-            }
             if (m != null) {
                 paramNames = getParameterNamesFromSkeleton(m);
                 if (paramNames != null) {
                     return paramNames;
                 }
-                paramNames = getParameterNames(m); 
+                paramNames = getParameterNamesFromDebugInfo(m); 
             }
         }            
 
@@ -507,6 +482,168 @@ public class ClassRep {
         }
         return paramNames;
     }
+
+    /**
+     * get Parameter Names using bcel
+     * @param method
+     * @return list of names or null
+     */
+    public String[] getParameterNamesFromDebugInfo(java.lang.reflect.Method method) {
+        Class c = method.getDeclaringClass();
+        int numParams = method.getParameterTypes().length;
+
+        // Don't worry about it if there are no params.
+        if (numParams == 0)
+            return null;
+
+        // Try to make a tt-bytecode
+        BCMethod bmeth = null;
+        BCClass bclass = null;
+        try {
+            bclass = new BCClass(c);
+        } catch (IOException e) {
+            return null;  // no dice
+        }
+
+        // Obtain the exact method we're interested in.
+        bmeth = bclass.getMethod(method.getName(), method.getParameterTypes());
+
+        if (bmeth == null)
+            return null;
+
+        // Get the Code object, which contains the local variable table.
+        Code code = bmeth.getCode();
+        if (code == null)
+            return null;
+
+        LocalVariableTableAttribute attr = 
+                (LocalVariableTableAttribute)code.getAttribute(Constants.ATTR_LOCALS);
+
+        if (attr == null)
+            return null;
+
+        // OK, found it.  Now scan through the local variables and record
+        // the names in the right indices.
+        LocalVariable [] vars = attr.getLocalVariables();
+
+        String [] argNames = new String[numParams + 1];
+        argNames[0] = null; // don't know return name
+
+        // NOTE: we scan through all the variables here, because I have been
+        // told that jikes sometimes produces unpredictable ordering of the
+        // local variable table.
+        for (int j = 0; j < vars.length; j++) {
+            LocalVariable var = vars[j];
+            if (var.getIndex() <= numParams) {
+                if (var.getName().equals("this"))
+                    continue;
+                argNames[var.getIndex()] = var.getName();
+            }
+        }
+        return argNames;
+    }
+
+    /**
+     * Get the list of return/parameter modes for the specified method.
+     * This implementation uses Skeleton.getParameterModes to get the modes
+     * If parameter modes are not available 
+     * for the method (perhaps the method is in an interface), the
+     * corresponding method in the implClass is queried.
+     * @param method is the Method to search.                
+     * @param implClass  If the first search fails, the corresponding  
+     *                   Method in this class is searched.           
+     * @param types  are the parameter types after converting Holders.
+     * @return array of Strings which represent the return mode followed by parameter modes
+     */ 
+    protected ParameterMode[] getParameterModes(Method method, Class implClass) {
+        ParameterMode[] paramModes = null;
+        
+        paramModes = getParameterModesFromSkeleton(method);
+        if (paramModes != null) {
+            return paramModes;
+        }
+                
+        // If failed, try getting a method of the impl class
+        if (paramModes == null && implClass != null) {
+            Method m = null;
+            try {
+                m = implClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+            } catch (Exception e) {}
+            if (m == null) { 
+                try {
+                    m = implClass.getMethod(method.getName(), method.getParameterTypes());
+                } catch (Exception e) {}
+            }
+            if (m != null) {
+                paramModes = getParameterModesFromSkeleton(m);
+            }
+        }            
+
+        if (paramModes == null) {
+            paramModes = getParameterModes(method);
+        }
+        return paramModes;
+    }
+
+
+    /**
+     * Get the list of return/parameter modes for the specified method.
+     * This implementation uses Skeleton.getParameterModes to get the parameter modes
+     * from the class file.  If parameter modes are not available, returns null. 
+     * @param method is the Method to search.                
+     * @return array of Strings which represent the return mode followed by parameter modes
+     */ 
+    protected ParameterMode[] getParameterModesFromSkeleton(Method method) {
+        ParameterMode[] paramModes = null;
+        Class cls = method.getDeclaringClass();
+        Class skel = Skeleton.class;
+        if (!cls.isInterface() && skel.isAssignableFrom(cls)) {
+            try {
+                // Use the getParameterModeStatic method so that we don't have to new up 
+                // an object.
+                Method getParameterMode = cls.getMethod("getParameterModeStatic",
+                                                         new Class [] {String.class, int.class});
+                Skeleton skelObj = null;
+                if (getParameterMode == null) {
+                    // Fall back to getting new instance
+                    skelObj = (Skeleton) cls.newInstance();
+                    getParameterMode = cls.getMethod("getParameterMode",
+                                                     new Class [] {String.class, int.class});
+                }
+
+                int numModes = method.getParameterTypes().length + 1; // Parms + return
+                paramModes = new ParameterMode[numModes];
+                for (int i=0; i < numModes; i++) {
+                    paramModes[i] = (ParameterMode) getParameterMode.invoke(skelObj, 
+                                                                     new Object[] {method.getName(), 
+                                                                                   new Integer(i-1)});
+                }
+            } catch (Exception e) {
+            }
+        }
+        return paramModes;
+    }
+
+    /**
+     * Get the list of return/parameter modes for the specified method.
+     * This default implementation assumes IN unless the type is a holder class
+     * @param method is the Method.                          
+     * @return array of parameter modes.                                      
+     */ 
+    protected ParameterMode[] getParameterModes(Method method) {
+        ParameterMode[] modes = new ParameterMode[method.getParameterTypes().length+1];
+        modes[0] = ParameterMode.PARAM_MODE_OUT;
+        for (int i=0; i < method.getParameterTypes().length; i++) {
+            Class type = method.getParameterTypes()[i];
+            if (JavaUtils.getHolderValueType(type) != null) {
+                modes[i+1] = ParameterMode.PARAM_MODE_INOUT;
+            } else {
+                modes[i+1] = ParameterMode.PARAM_MODE_IN;
+            }
+        }
+        return modes;
+    }
+
 
     /**
      * Determines if the Property in the class has been compliant accessors. If so returns true,
@@ -588,57 +725,4 @@ public class ClassRep {
         }
         return true;
     }
-    
-    public String[] getParameterNames(java.lang.reflect.Method method) {
-        Class c = method.getDeclaringClass();
-        int numParams = method.getParameterTypes().length;
-
-        // Don't worry about it if there are no params.
-        if (numParams == 0)
-            return null;
-
-        // Try to make a tt-bytecode
-        BCMethod bmeth = null;
-        BCClass bclass = null;
-        try {
-            bclass = new BCClass(c);
-        } catch (IOException e) {
-            return null;  // no dice
-        }
-
-        // Obtain the exact method we're interested in.
-        bmeth = bclass.getMethod(method.getName(), method.getParameterTypes());
-
-        if (bmeth == null)
-            return null;
-
-        // Get the Code object, which contains the local variable table.
-        Code code = bmeth.getCode();
-        LocalVariableTableAttribute attr =
-                (LocalVariableTableAttribute)code.getAttribute(Constants.ATTR_LOCALS);
-
-        if (attr == null)
-            return null;
-
-        // OK, found it.  Now scan through the local variables and record
-        // the names in the right indices.
-        LocalVariable [] vars = attr.getLocalVariables();
-
-        String [] argNames = new String[numParams + 1];
-        argNames[0] = null; // don't know return name
-
-        // NOTE: we scan through all the variables here, because I have been
-        // told that jikes sometimes produces unpredictable ordering of the
-        // local variable table.
-        for (int j = 0; j < vars.length; j++) {
-            LocalVariable var = vars[j];
-            if (var.getIndex() <= numParams) {
-                if (var.getName().equals("this"))
-                    continue;
-                argNames[var.getIndex()] = var.getName();
-            }
-        }
-        return argNames;
-    }
-
 };
