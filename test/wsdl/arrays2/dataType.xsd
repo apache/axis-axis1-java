@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<xsd:schema 
+    targetNamespace="http://www.xyz.net/schemas/arraytest/data/1.0"
+    xmlns:innerdata="http://www.xyz.net/schemas/arraytest/innerdata/1.0"
+    xmlns:data="http://www.xyz.net/schemas/arraytest/data/1.0"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:import namespace="http://www.xyz.net/schemas/arraytest/innerdata/1.0"
+        schemaLocation="innerDataType.xsd" />
+
+
+    <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+    <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+
+
+    <xsd:complexType name="dataType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Struct containing string array and custom object array.
+            </xsd:documentation>
+        </xsd:annotation>     
+        <xsd:sequence>
+            <xsd:element name="innerData" type="innerdata:innerDataArrType" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

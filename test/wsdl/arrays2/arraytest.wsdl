@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<definitions  
+    xmlns:arraytest="http://www.xyz.net/webservices/arraytest/1.0"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:data="http://www.xyz.net/schemas/arraytest/data/1.0"
+    xmlns:innerdata="http://www.xyz.net/schemas/arraytest/innerdata/1.0"
+    targetNamespace="http://www.xyz.net/webservices/arraytest/1.0">
+  
+    <types   
+        xmlns:s="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://schemas.xmlsoap.org/wsdl/">
+   
+        <xsd:schema    
+            targetNamespace="http://www.xyz.net/webservices/arraytest/1.0"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"                    
+            >
+    
+            <xsd:import namespace="http://www.xyz.net/schemas/arraytest/data/1.0"
+                schemaLocation="dataType.xsd" />
+            <xsd:import namespace="http://www.xyz.net/schemas/arraytest/innerdata/1.0"
+                schemaLocation="innerDataType.xsd" />
+
+            <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+
+            <xsd:complexType name="dataRequestType">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">
+                        Input parameters.
+                    </xsd:documentation>
+                </xsd:annotation>     
+                <xsd:sequence>
+                    <xsd:element name="input" 
+                        type="s:string" />
+                </xsd:sequence>
+            </xsd:complexType>
+   
+        </xsd:schema>
+
+    </types>
+
+
+    <message name="DataRequestMessage">
+        <part type="arraytest:dataRequestType" name="dataRequest">
+        </part>
+    </message>
+
+    <message name="DataResponseMessage">
+        <part type="data:dataType" name="dataResponse">
+        </part>
+    </message>
+
+    <portType name="ArrayTestPort">
+        <operation name="getDataOperation">
+            <input message="arraytest:DataRequestMessage">
+            </input>
+            <output message="arraytest:DataResponseMessage">
+            </output>
+        </operation>
+    </portType>
+
+    <binding type="arraytest:ArrayTestPort" name="ArrayTestBinding">
+        <soap:binding 
+            style="rpc"
+            transport="http://schemas.xmlsoap.org/soap/http">
+        </soap:binding>
+        <operation name="getDataOperation">
+            <input>
+                <soap:body use="encoded"></soap:body>
+            </input>
+            <output>
+                <soap:body use="encoded"></soap:body>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="ArrayTestService">
+        <port    name="ArrayTestPort" binding="arraytest:ArrayTestBinding">
+        <soap:address location="https://pilot.xyz.net/webservices/ArrayTestService">
+        </soap:address>
+        </port>
+    </service>
+    
+</definitions>

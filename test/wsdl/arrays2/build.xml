@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/arrays2" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+
+<target name="clean">
+    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+    <delete dir="${build.dir}/classes/${componentName}"/>
+    <delete dir="${build.dir}/work/${componentName}"/>
+</target>
+
+<target name="copy" depends="setenv"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compiling test.wsdl.arrays2"/>
+    <!-- ArrayTest Test -->
+    <wsdl2java url="${axis.home}/test/wsdl/arrays2/arraytest.wsdl"
+               output="${axis.home}/build/work"
+               deployscope="session"
+               serverSide="no"
+               skeletonDeploy="yes"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="http://www.xyz.net/webservices/arraytest/1.0" package="test.wsdl.arrays2"/>
+        <mapping namespace="http://www.xyz.net/schemas/arraytest/data/1.0" package="test.wsdl.arrays2.data"/>
+        <mapping namespace="http://www.xyz.net/schemas/arraytest/innerdata/1.0" package="test.wsdl.arrays2.data.inner"/>
+    </wsdl2java>
+
+    <copy todir="${build.dir}/work/test/wsdl/arrays2" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/arrays2">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/arrays2/**/*.java" />
+    </javac>
+
+</target>
+
+<target name="run" >
+  <antcall target="execute-Component-noServer" />
+</target>
+
+</project>
