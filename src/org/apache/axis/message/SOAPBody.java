@@ -195,24 +195,6 @@ public class SOAPBody extends MessageElement
                                             localPart);
     }
 
-    protected MessageElement findElement(Vector vec, String namespace,
-                                         String localPart)
-    {
-        if (vec.isEmpty())
-            return null;
-     
-        QName qname = new QName(namespace, localPart);
-        Enumeration e = vec.elements();
-        MessageElement element;
-        while (e.hasMoreElements()) {
-            element = (MessageElement)e.nextElement();
-            if (element.getQName().equals(qname))
-                return element;
-        }
-        
-        return null;
-    }
-
     // JAXM methods
 
     public javax.xml.soap.SOAPBodyElement addBodyElement(Name name)
