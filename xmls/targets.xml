@@ -81,18 +81,6 @@
       classname="org.apache.log4j.Category"
       classpathref="classpath"/>
 
-    <available property="tt-bytecode.present"
-      classname="com.techtrader.modules.tools.bytecode.BCClass"
-      classpathref="classpath"/>
-
-    <available property="serp.present"
-      classname="serp.bytecode.Project"
-      classpathref="classpath"/>
-
-    <available property="bcel.present"
-      classname="org.apache.bcel.classfile.JavaClass"
-      classpathref="classpath"/>
-
     <available property="activation.present"
       classname="javax.activation.DataHandler"
       classpathref="classpath"/>
@@ -164,7 +152,6 @@
     <echo message="commons-logging.present=${commons-logging.present}" />
     <echo message="commons-discovery.present=${commons-discovery.present}" />
     <echo message="log4j.present=${log4j.present}" />
-    <echo message="tt-bytecode.present=${tt-bytecode.present}" />
     <echo message="activation.present=${activation.present}" />
     <echo message=""/>
     <echo message="--- Optional Libraries ---" />
