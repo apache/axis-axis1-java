@@ -86,7 +86,9 @@ public final class ClassUtils {
      * @return class loader
      */
     public static ClassLoader getClassLoader(String className) {
-        if (className == null) return null;
+        if (className == null) {
+            return null;
+        }
         return (ClassLoader) classloaders.get(className);
     }
 
@@ -115,9 +117,9 @@ public final class ClassUtils {
     /**
      * Use this method instead of Class.forName (String className, boolean init, ClassLoader loader)
      *
-     * @param className Class name
+     * @param _className Class name
      * @param init initialize the class
-     * @param loader class loader
+     * @param _loader class loader
      * @return java class
      *
      * @throws ClassNotFoundException if the class is not found
@@ -158,7 +160,7 @@ public final class ClassUtils {
     /**
      * Loads the class from the context class loader and then falls back to Class.forName
      *
-     * @param className Class name
+     * @param _className Class name
      * @return java class
      * @throws ClassNotFoundException if the class is not found
      */
@@ -214,6 +216,19 @@ public final class ClassUtils {
         }
     }
 
+    /**
+     * Get an input stream from a named resource.
+     * Tries
+     * <ol>
+     * <li>the classloader that loaded "clazz" first,
+     * <li>the system classloader
+     * <li>the class "clazz" itself
+     * </ol>
+     * @todo we do not look at the context classloader: why is that? 
+     * @param clazz class to use in the lookups
+     * @param resource resource string to look for
+     * @return input stream if found, or null
+     */
     public static InputStream getResourceAsStream(Class clazz, String resource) {
         InputStream myInputStream = null;
 
