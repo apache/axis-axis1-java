@@ -10,7 +10,13 @@ public class PackageTests extends junit.framework.TestCase {
 
     public static junit.framework.Test suite() throws Exception {
         junit.framework.TestSuite suite = new junit.framework.TestSuite();
-        suite.addTestSuite(test.saaj.TestAttachment.class);
+        // Attachments service test.
+        try{
+          if( null != org.apache.axis.utils.ClassUtils.forName("javax.activation.DataHandler") &&
+              null != org.apache.axis.utils.ClassUtils.forName("javax.mail.internet.MimeMultipart")){
+                suite.addTestSuite(test.saaj.TestAttachment.class);
+          }
+        }catch( Throwable t){;}
         return suite;
     }
 }
