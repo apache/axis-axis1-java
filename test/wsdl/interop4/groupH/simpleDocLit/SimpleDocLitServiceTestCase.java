@@ -32,7 +32,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
     public void test1SimpleDocLitPortEchoEmptyFault() throws Exception {
         SimpleDocLitPortType binding;
         try {
-            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort();
+            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -55,7 +55,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
     public void test2SimpleDocLitPortEchoStringFault() throws Exception {
         SimpleDocLitPortType binding;
         try {
-            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort();
+            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -79,7 +79,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
     public void test3SimpleDocLitPortEchoIntArrayFault() throws Exception {
         SimpleDocLitPortType binding;
         try {
-            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort();
+            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -108,7 +108,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
     public void test4SimpleDocLitPortEchoMultipleFaults1() throws Exception {
         SimpleDocLitPortType binding;
         try {
-            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort();
+            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -154,7 +154,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
     public void test5SimpleDocLitPortEchoMultipleFaults2() throws Exception {
         SimpleDocLitPortType binding;
         try {
-            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort();
+            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -203,7 +203,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
     public void test6SimpleDocLitPortEchoMultipleFaults3() throws Exception {
         SimpleDocLitPortType binding;
         try {
-            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort();
+            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -242,7 +242,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
     public void test7SimpleDocLitPortEchoMultipleFaults4() throws Exception {
         SimpleDocLitPortType binding;
         try {
-            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort();
+            binding = new SimpleDocLitServiceLocator().getSimpleDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

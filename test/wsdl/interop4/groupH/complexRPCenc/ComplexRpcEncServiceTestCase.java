@@ -32,7 +32,7 @@ public class ComplexRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test1ComplexRpcEncPortEchoSOAPStructFault() throws Exception {
         test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort();
+            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -62,7 +62,7 @@ public class ComplexRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test2ComplexRpcEncPortEchoBaseStructFault() throws Exception {
         test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort();
+            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -87,7 +87,7 @@ public class ComplexRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test3ComplexRpcEncPortEchoExtendedStructFault() throws Exception {
         test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort();
+            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -118,7 +118,7 @@ public class ComplexRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test4ComplexRpcEncPortEchoMultipleFaults1() throws Exception {
         test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort();
+            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -158,7 +158,7 @@ public class ComplexRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test5ComplexRpcEncPortEchoMultipleFaults2() throws Exception {
         test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort();
+            binding = new test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncServiceLocator().getComplexRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

@@ -32,7 +32,7 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
     public void test1ComplexDocLitPortEchoSOAPStructFault() throws Exception {
         ComplexDocLitPortType binding;
         try {
-            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -61,7 +61,7 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
     public void test2ComplexDocLitPortEchoBaseStructFault() throws Exception {
         ComplexDocLitPortType binding;
         try {
-            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -90,7 +90,7 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
     public void test3ComplexDocLitPortEchoExtendedStructFault() throws Exception {
         ComplexDocLitPortType binding;
         try {
-            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -127,7 +127,7 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
     public void test4ComplexDocLitPortEchoMultipleFaults1() throws Exception {
         ComplexDocLitPortType binding;
         try {
-            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -179,7 +179,7 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
     public void test5ComplexDocLitPortEchoMultipleFaults2() throws Exception {
         ComplexDocLitPortType binding;
         try {
-            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
