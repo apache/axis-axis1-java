@@ -76,7 +76,7 @@ import org.apache.axis.i18n.Messages;
  * @since   JDK1.2.2
  */
 public abstract class UUIDGenFactory {
-    private static final String defaultUUIDGenClassName = "org.apache.axis.ime.internal.util.uuid.SimpleUUIDGen";
+    private static final String defaultUUIDGenClassName = "org.apache.axis.components.uuid.SimpleUUIDGen";
 
     /**
      * getInstance

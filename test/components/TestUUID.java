@@ -60,31 +60,37 @@
  * 
  */
 
-package org.apache.axis.components.uuid;
+package test.components;
 
-public class TestUUID {
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.axis.components.uuid.UUIDGen;
+import org.apache.axis.components.uuid.UUIDGenFactory;
 
+public class TestUUID extends TestCase {
 
-    /***************************************************************************/
-    /***************************** TEST DRIVER *********************************/
-    /***************************************************************************/
+    public TestUUID(String name) {
+        super(name);
+    }
 
+    public static Test suite() {
+        return new TestSuite(TestUUID.class);
+    }
 
-    // test driver
-    public static void main(String argc[]) {
+    public void testUUID() {
         long startTime = 0;
         long endTime = 0;
         UUIDGen uuidgen = null;
 
         uuidgen = UUIDGenFactory.getUUIDGen(null);
-//    uuidgen = UUIDGenFactory.getUUIDGen("org.juddi.uuidgen.SimpleUUIDGen");
         startTime = System.currentTimeMillis();
-        for (int i = 1; i <= 50; ++i) {
+        for (int i = 1; i <= 10; ++i) {
             String u = uuidgen.nextUUID();
             System.out.println(i + ":  " + u);
         }
         endTime = System.currentTimeMillis();
-        System.out.println("SimpleJavaUUIDGen took " + (endTime - startTime) + " milliseconds");
+        System.out.println("UUIDGen took " + (endTime - startTime) + " milliseconds");
 
         UUIDGenFactory.destroyUUIDGen(uuidgen);
     }
