@@ -229,8 +229,7 @@ public class TypeMappingRegistry implements Serializer {
         String prefix = context.
                            getPrefixForURI(Constants.URI_CURRENT_SCHEMA_XSI,
                                            "xsi");
-        
-        
+
         attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI,
                            "type",
                            prefix + ":type",
