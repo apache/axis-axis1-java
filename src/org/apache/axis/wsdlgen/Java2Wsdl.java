@@ -76,9 +76,10 @@ public class Java2Wsdl {
     protected static final int PACKAGE_OPT = 'p';
     protected static final int NAMESPACE_OPT = 'n';
     protected static final int NAMESPACE_IMPL_OPT = 'N';
+    protected static final int SERVICE_NAME_OPT = 's';
     protected static final int LOCATION_OPT = 'l';
     protected static final int LOCATION_IMPORT_OPT = 'L';
-    protected static final int CLASSDIR_OPT = 'c';
+//    protected static final int CLASSDIR_OPT = 'c';
     protected static final int METHODS_ALLOWED_OPT = 'm';
 
     /**
@@ -111,6 +112,10 @@ public class Java2Wsdl {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_OPT,
                 "service location"),
+        new CLOptionDescriptor("service name",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                SERVICE_NAME_OPT,
+                "service name"),
         new CLOptionDescriptor("locationImport",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_IMPORT_OPT,
@@ -119,10 +124,12 @@ public class Java2Wsdl {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_ALLOWED_OPT,
                 "space seperated list of methods to export"),
-        new CLOptionDescriptor("classDir",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                CLASSDIR_OPT,
-                "classes directory"),
+//        there is no implementation for a class loader
+//        look at todo in Emitter
+//        new CLOptionDescriptor("classDir",
+//                CLOptionDescriptor.ARGUMENT_REQUIRED,
+//                CLASSDIR_OPT,
+//                "classes directory"),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
@@ -182,10 +189,10 @@ public class Java2Wsdl {
                         printUsage();
                         break;
 
-                    case CLASSDIR_OPT:
-                        classDir = option.getArgument();
-                        break;
-
+//                    case CLASSDIR_OPT:
+//                        classDir = option.getArgument();
+//                        break;
+//
                     case OUTPUT_OPT:
                         wsdlFilename = option.getArgument();
                         break;
@@ -206,6 +213,10 @@ public class Java2Wsdl {
 
                     case NAMESPACE_IMPL_OPT:
                         emitter.setImplNamespace(option.getArgument());
+                        break;
+
+                    case SERVICE_NAME_OPT:
+                        emitter.setServiceName(option.getArgument());
                         break;
 
                     case LOCATION_OPT:
