@@ -509,8 +509,10 @@ public class AxisServlet extends HttpServlet {
             if ( "".equals(tmp) )
                 tmp = req.getContextPath(); // Is this right?
 
-            if ( tmp != null )
-                msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
+            if ( tmp != null ) {
+                msgContext.setUseSOAPAction( true );
+                msgContext.setSOAPActionURI( tmp );
+            }
 
             // Create a Session wrapper for the HTTP session.
             // These can/should be pooled at some point.  (Sam is Watching! :-)
