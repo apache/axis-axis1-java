@@ -73,18 +73,10 @@ public class WSDDTypeMapping extends WSDDElement {
         return getElement().getAttribute("encodingStyle");
     }
     
-    public String getNamespaceURI() {
-        return getElement().getAttribute("namespaceURI");
-    }
-    
-    public String getLocalPart() {
-        return getElement().getAttribute("localPart");
-    }
-    
     public QName getQName() {
-        return new QName(getNamespaceURI(), getLocalPart());
+        return new QName(getElement().getAttribute("qName"), getElement());
     }
-    
+        
     public Class getLanguageSpecificType() throws ClassNotFoundException {
         String type = getElement().getAttribute("languageSpecificType");
         return Class.forName(type);

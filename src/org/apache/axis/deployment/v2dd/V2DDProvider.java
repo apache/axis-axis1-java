@@ -52,60 +52,86 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
+package org.apache.axis.deployment.v2dd;
 
+import java.util.StringTokenizer;
+import java.util.Hashtable;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.apache.axis.Chain;
-import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.deployment.v2dd.providers.*;
 
-/**
- * WSDD chain element
- * 
- * @author James Snell
- */
-public class WSDDChain extends WSDDHandler implements DeployableItem { 
-    
-    public WSDDChain(Element e) throws WSDDException { super(e, "chain"); }
-    
-    
-    public WSDDHandler[] getHandlers() {
-        WSDDElement[] w = createArray("handler", WSDDHandler.class);
-        WSDDHandler[] h = new WSDDHandler[w.length];
-        System.arraycopy(w,0,h,0,w.length);
-        return h;
+public class V2DDProvider extends V2DDElement { 
+
+    private static Hashtable providers;
+    static {
+        providers = new Hashtable();   
+        providers.put("java", V2DDJavaProvider.class);
+        providers.put("script", V2DDScriptProvider.class);
+        providers.put("com", V2DDComProvider.class);
     }
-    
-    
-    public WSDDHandler getHandler(String name) {
-        WSDDHandler[] h = getHandlers();
-        for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name))
-                return h[n];
+    public static V2DDProvider getProvider(String type, Element e) {
+        try {
+            Class _class = (Class)providers.get(type);
+            if (_class == null) {
+                return new V2DDProvider(e);
+            }
+            Class[] argTypes = {Element.class};
+            Object[] args = {e};
+            return (V2DDProvider)_class.getConstructor(argTypes).newInstance(args);
+        } catch (Exception ex) {
+            return null;
         }
-        return null;
+    }    
+    
+    LockableHashtable options;
+    
+    public V2DDProvider(Element e) {
+        super(e);
     }
-    
-    
+
     public String getType() {
-        String type = super.getType();
-        if (type.equals(""))
-            type = "java:org.apache.axis.SimpleChain";
-        return type;
+        return element.getAttribute("type");
     }
     
-    /**
-     * Creates a new instance of this Chain 
-     */
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
-        Handler h = super.newInstance(registry);
-        Chain c = (Chain)h;
-        WSDDHandler[] handlers = getHandlers();
-        for (int n = 0; n < handlers.length; n++) {
-            c.addHandler(handlers[n].newInstance(registry));
+    public String getScope() {
+        return element.getAttribute("scope");
+    }
+    
+    public String[] getMethods() {
+        String list = element.getAttribute("methods");
+        StringTokenizer st = new StringTokenizer(list, " ");
+        String[] methods = new String[st.countTokens()];
+        int n = 0;
+        while(st.hasMoreTokens()) {
+            methods[n++] = st.nextToken();
         }
-        return c;
+        return methods;
+    }
+    
+    public V2DDOption[] getOptions() {
+        NodeList nl = element.getElementsByTagNameNS(V2DDConstants.V2DD_NS, "option");
+        V2DDOption[] opts = new V2DDOption[nl.getLength()];
+        for (int n = 0; n < opts.length; n++) {
+            Element e = (Element)nl.item(n);
+            V2DDOption option = (V2DDOption)getChild(e);
+            if (option == null) {
+                option = new V2DDOption(e);
+                addChild(e,option);
+            }
+            opts[n] = option;
+        }
+        return opts;
+    }
+    
+    public LockableHashtable getOptionsTable() {
+        if (options == null) {
+            options = new LockableHashtable();
+            V2DDOption[] opts = getOptions();
+            for (int n = 0; n < opts.length; n++) {
+                options.put(opts[n].getKey(), opts[n].getValue(), true);
+            }
+        } 
+        return options;
     }
 }

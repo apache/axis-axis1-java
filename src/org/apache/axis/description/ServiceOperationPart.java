@@ -52,60 +52,12 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.apache.axis.Chain;
-import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeployableItem;
+package org.apache.axis.description;
 
 /**
- * WSDD chain element
- * 
- * @author James Snell
+ * This are proposed interfaces for Service Description. I imagine
+ * that we'll use this interface in a simple WSDL implementation.
  */
-public class WSDDChain extends WSDDHandler implements DeployableItem { 
-    
-    public WSDDChain(Element e) throws WSDDException { super(e, "chain"); }
-    
-    
-    public WSDDHandler[] getHandlers() {
-        WSDDElement[] w = createArray("handler", WSDDHandler.class);
-        WSDDHandler[] h = new WSDDHandler[w.length];
-        System.arraycopy(w,0,h,0,w.length);
-        return h;
-    }
-    
-    
-    public WSDDHandler getHandler(String name) {
-        WSDDHandler[] h = getHandlers();
-        for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name))
-                return h[n];
-        }
-        return null;
-    }
-    
-    
-    public String getType() {
-        String type = super.getType();
-        if (type.equals(""))
-            type = "java:org.apache.axis.SimpleChain";
-        return type;
-    }
-    
-    /**
-     * Creates a new instance of this Chain 
-     */
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
-        Handler h = super.newInstance(registry);
-        Chain c = (Chain)h;
-        WSDDHandler[] handlers = getHandlers();
-        for (int n = 0; n < handlers.length; n++) {
-            c.addHandler(handlers[n].newInstance(registry));
-        }
-        return c;
-    }
+public interface ServiceOperationPart {  
+    public String getName();
 }

@@ -52,60 +52,43 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
+package org.apache.axis.deployment.v2dd;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.apache.axis.Chain;
+import java.io.Serializable;
 import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.utils.QName;
 
 /**
- * WSDD chain element
- * 
- * @author James Snell
+ * This is the class that actually bridges the gap between
+ * SOAP 2.x and Axis.  An instance of this class is stored
+ * within the registry and a new handler is created that 
+ * represents the SOAP 2.x service when the newInstance
+ * method is called.
  */
-public class WSDDChain extends WSDDHandler implements DeployableItem { 
+public class V2DDDeployableItem implements DeployableItem, Serializable { 
+
+    V2DDService service;
+    QName qname;
     
-    public WSDDChain(Element e) throws WSDDException { super(e, "chain"); }
-    
-    
-    public WSDDHandler[] getHandlers() {
-        WSDDElement[] w = createArray("handler", WSDDHandler.class);
-        WSDDHandler[] h = new WSDDHandler[w.length];
-        System.arraycopy(w,0,h,0,w.length);
-        return h;
+    public V2DDDeployableItem(V2DDService service) {        
+        this.service = service;
     }
     
-    
-    public WSDDHandler getHandler(String name) {
-        WSDDHandler[] h = getHandlers();
-        for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name))
-                return h[n];
+    public QName getQName() {
+        if (qname == null) {
+            qname = new QName(null, service.getID());
         }
+        return qname;
+    }
+
+    public Handler newInstance(DeploymentRegistry registry) {
+        
+        // we would create an instance of the SOAP v2.x
+        // compatible handler here using the service
+        // definition to configure the instance
+        
         return null;
-    }
-    
-    
-    public String getType() {
-        String type = super.getType();
-        if (type.equals(""))
-            type = "java:org.apache.axis.SimpleChain";
-        return type;
-    }
-    
-    /**
-     * Creates a new instance of this Chain 
-     */
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
-        Handler h = super.newInstance(registry);
-        Chain c = (Chain)h;
-        WSDDHandler[] handlers = getHandlers();
-        for (int n = 0; n < handlers.length; n++) {
-            c.addHandler(handlers[n].newInstance(registry));
-        }
-        return c;
     }
 }

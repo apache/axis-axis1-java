@@ -1,0 +1,38 @@
+The org.apache.axis.deployment package is still experimental
+and has not yet been completely plugged into the rest of the
+Axis code base.  
+
+To plug this code into Axis, changes need to be made to the
+AxisServer and AxisServlet classes in the areas that deal with
+locating and instantiating services for invocation.  
+
+The SimpleDeploymentManager is the default deployment registry.
+
+
+
+NOTE: This package supercedes the code provided for in the 
+org.apache.axis.registries and org.apache.axis.suppliers 
+package.  When this code is finally plugged into everything else, 
+both packages will go away.
+
+
+org.apache.axis.deployment.wsdd -
+   This is an implementation of the new WSDD Schema that will
+   be the primary method of deploying services and defining
+   chains/flows of handlers within Axis.
+
+org.apache.axis.deployment.v2dd -
+   This is an implementation the the Apache SOAP v2.x Deployment
+   Descriptor.  This package allows developers to use their 
+   existing SOAP deployment packages with Axis without requiring
+   the deployment descriptor to be upgraded to the new WSDD
+   schema.  It's not quite finished yet tough
+   
+org.apache.axis.deployment.wsml -
+   This will be an implementation of the Web Services Mapping
+   Language schema that is used by the Microsoft SOAP Toolkit
+   Version 2.  The goal is to support the migration of COM
+   based services to Axis from Microsoft SOAP Toolkit Beta 2
+   without forcing the developers to convert their WSML files
+   to WSDD.  (WSML is the Microsoft SOAP Toolkit equivalent
+   to a deployment descriptor).

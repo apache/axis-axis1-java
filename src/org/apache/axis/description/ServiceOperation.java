@@ -52,37 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment;
+package org.apache.axis.description;
 
-import org.apache.axis.deployment.wsdd.*;   // Axis Deployment Descriptor
-import org.apache.axis.deployment.v2dd.*;   // SOAP v2.x Deployment Descriptor
+import org.apache.axis.utils.QName;
 
 /**
- * The DeploymentManager interface is used to deploy or remove
- * handlers, chains, transports, services and type mappings.
- * 
- * The interface is designed to work with Axis WSDD Documents
- * as well as SOAP 2.x Deployment Descriptors for backwards 
- * compatibility.
- * 
- * @author James Snell
+ * This are proposed interfaces for Service Description. I imagine
+ * that we'll use this interface in a simple WSDL implementation.
  */
-public interface DeploymentManager { 
-    
-    /** Deploy an Axis WSDD Document */
-    public void deploy(WSDDDocument wsdd) throws Exception;
-    /** Deploy a SOAP 2.x Deployment Descriptor Document */
-    public void deploy(DeploymentDescriptor dd) throws Exception;
-    /** Remove the named handler */
-    public void removeHandler(String name);
-    /** Remove the named chain */
-    public void removeChain(String name);
-    /** Remove the named transport */
-    public void removeTransport(String name);
-    /** Remove the named service */
-    public void removeService(String name);
-    /** Remove the named encoding style type mapping registry
-     * (individual type mappings can be removed through the
-     * TypeMappingRegistry interface itself */
-    public void removeTypeMappingRegistry(String encodingStyle);
+public interface ServiceOperation {     
+    public QName getQName();
+    public ServiceOperationPart[] getParts();
+    public ServiceOperationPart getPart(String name);    
 }

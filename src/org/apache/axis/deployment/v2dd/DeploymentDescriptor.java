@@ -54,10 +54,56 @@
  */
 package org.apache.axis.deployment.v2dd;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.apache.axis.deployment.DeploymentDocument;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
+
 /**
- * This will be an implementation of a SOAP v2.x Deployment Descriptor 
- * object model.
+ * Apache SOAP v2.x Deployment Descriptor Support classes
+ * 
+ * The way this is intended to work is simple: load a v2.x 
+ * deployment descriptor, and this object model (via the
+ * V2DDDeployableItem class will convert the Service definition
+ * into something that Axis can handle. 
+ * 
+ * This will be one of the core migration pieces to move
+ * from SOAP v2.x to Axis, and is designed to allow people
+ * to make the move using their currently existing 
+ * deployment files.  
+ * 
  */
-public class DeploymentDescriptor
-{
+public class DeploymentDescriptor extends DeploymentDocument { 
+
+    protected Document d;
+    protected V2DDService service;
+    
+    public DeploymentDescriptor() {}
+    
+    public DeploymentDescriptor(Document d) {
+        this.d = d;
+    }
+    
+    public DeploymentDescriptor(Element e) {
+        this.d = e.getOwnerDocument();
+    }
+
+    public V2DDService getService() {
+        if (service == null) {
+            service = new V2DDService(d.getDocumentElement());
+        }
+        return service;
+    }
+    
+    /**
+     * Deploy this document to the given registry
+     */
+    public void deploy(DeploymentRegistry registry) throws DeploymentException {
+        if (service == null) {
+            throw new DeploymentException("No Service has been defined");
+        }
+        V2DDDeployableItem item = new V2DDDeployableItem(service);
+        registry.deployItem(item);
+    }
 }

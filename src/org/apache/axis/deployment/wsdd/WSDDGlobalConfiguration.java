@@ -56,6 +56,7 @@ package org.apache.axis.deployment.wsdd;
 
 import org.w3c.dom.Element; 
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
 
@@ -90,6 +91,33 @@ public class WSDDGlobalConfiguration extends WSDDDeployableItem {
             return (WSDDRequestFlow)e[0];
         }
         return null;
+    }
+    
+    public WSDDProvider getProvider() throws Exception {
+        NodeList nl = element.getElementsByTagNameNS(WSDDConstants.WSDD_NS, "provider");
+        Element e = (Element)nl.item(0);
+        Node ex = null;
+        ex = e.getFirstChild();
+        while (ex != null) {
+            if (ex.getNodeType() == Element.ELEMENT_NODE)
+                if (ex.getLocalName().equals("provider")) break;
+            ex = ex.getNextSibling();
+        }
+        if (ex == null) {
+            return null;
+        } else {
+            if (hasChild(e)) {
+                return (WSDDProvider)getChild(e);
+            } else {
+                String exuri = ex.getNamespaceURI();
+                Class c = WSDDProvider.getProviderClass(exuri);
+                Class[] cs = {Element.class};
+                Object[] p = {e};
+                WSDDElement w = (WSDDElement)c.getConstructor(cs).newInstance(p);
+                addChild(e,w);
+                return (WSDDProvider)w;
+            }
+        }
     }
     
     public WSDDResponseFlow getResponseFlow() {

@@ -66,6 +66,8 @@ import org.apache.axis.Handler;
 import org.apache.axis.Chain;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDDeployableItem;
 import org.apache.axis.utils.QName;
 
 /**
@@ -77,19 +79,60 @@ import org.apache.axis.utils.QName;
  */
 public abstract class DeploymentRegistry implements Serializable { 
     
-    /** retrieve an instance of the named handler */
-    public abstract Handler       getHandler(String name) throws Exception;
-    /** retrieve an instance of the named chain */
-    public abstract Chain         getChain(String name) throws Exception;
-    /** retrieve an instance of the named transport (all transports 
-     * are modeled as TargetedChains.  The pivot handler is the 
-     * Axis Engine instance that is being invoked */
-    public abstract TargetedChain getTransport(String name) throws Exception;
-    /** retrieve an instance of the named service (a service is 
-     * modeled as a TargetedChain) */
-    public abstract TargetedChain getService(String name) throws Exception;
-    /** retrieve an instance of the named mapping registry */
-    public abstract TypeMappingRegistry getTypeMappingRegistry(String encodingStyle) throws Exception;
+    /** 
+     * retrieve the global configuration for the axis engine 
+     */
+    public abstract WSDDGlobalConfiguration getGlobalConfiguration() throws DeploymentException;
+        
+    /** 
+     * retrieve an instance of the named handler
+     */
+    public abstract Handler getDeployedItem(String name) throws DeploymentException;
+    
+    /** 
+     * retrieve an instance of the named handler 
+     */
+    public abstract Handler getDeployedItem(QName qname) throws DeploymentException;
+    
+    /** 
+     * retrieve an instance of the named mapping registry 
+     */
+    public abstract TypeMappingRegistry getTypeMappingRegistry(String encodingStyle) throws DeploymentException;
+
+    /** 
+     * add the given type mapping
+     */
+    public abstract void addTypeMappingRegistry(String encodingStyle, TypeMappingRegistry tmr) throws DeploymentException;
+    
+    /** 
+     * remove the given type mapping 
+     */
+    public abstract void removeTypeMappingRegistry(String encodingStyle) throws DeploymentException;
+    
+    /** 
+     * Deploy an Axis WSDD Document 
+     */
+    public abstract void deploy(DeploymentDocument deployment) throws DeploymentException;
+    
+    /** 
+     * deploy the given item 
+     */
+    public abstract void deployItem(DeployableItem item) throws DeploymentException;
+    
+    /** 
+     * remove the given item 
+     */
+    public abstract void removeDeployedItem(String name) throws DeploymentException;
+    
+    /** 
+     * remove the given item 
+     */
+    public abstract void removeDeployedItem(QName qname) throws DeploymentException;
+    
+    /** 
+     * set the global configuration for the axis engine 
+     */
+    public abstract void setGlobalConfiguration(WSDDGlobalConfiguration global);
     
     /**
      * Save the registry to the given filepath

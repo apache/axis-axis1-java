@@ -69,7 +69,9 @@ public abstract class WSDDFlow extends WSDDDeployableItem {
     public WSDDFlow(Element e, String n) throws WSDDException {super(e,n);}
     
     public WSDDHandler[] getHandlers() {
-        WSDDElement[] e = createArray("handler", "chain", WSDDHandler.class, WSDDChain.class);
+        String[] names = {"handler", "chain"};
+        Class[] types = {WSDDHandler.class, WSDDChain.class};
+        WSDDElement[] e = createArray(names, types);
         WSDDHandler[] h = new WSDDHandler[e.length];
         System.arraycopy(e,0,h,0,e.length);
         return h;

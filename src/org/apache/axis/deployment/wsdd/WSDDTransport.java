@@ -59,8 +59,9 @@ import org.apache.axis.Handler;
 import org.apache.axis.Chain;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeployableItem;
 
-public class WSDDTransport extends WSDDDeployableItem { 
+public class WSDDTransport extends WSDDDeployableItem implements DeployableItem { 
     
     public WSDDTransport(Element e) throws WSDDException { super(e, "transport"); }
     

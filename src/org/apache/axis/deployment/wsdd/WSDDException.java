@@ -54,7 +54,9 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-public class WSDDException extends Exception {  
+import org.apache.axis.deployment.DeploymentException;
+
+public class WSDDException extends DeploymentException {  
     public WSDDException() { super(); }
     public WSDDException(String msg) { super(msg); }
     public WSDDException(Exception e) {

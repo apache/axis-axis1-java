@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.w3c.dom.Element; 
+import org.apache.axis.utils.QName;
 
 public class WSDDOperation extends WSDDElement { 
     
@@ -64,12 +65,8 @@ public class WSDDOperation extends WSDDElement {
         return getElement().getAttribute("name");
     }
     
-    public String getAlias() {
-        return getElement().getAttribute("alias");
-    }
-    
-    public String getNamespaceURI() {
-        return getElement().getAttribute("namespaceURI");
+    public QName getQName() {
+        return new QName(getElement().getAttribute("qName"), getElement());
     }
     
 }

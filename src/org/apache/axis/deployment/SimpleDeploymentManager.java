@@ -56,36 +56,25 @@ package org.apache.axis.deployment;
 
 import java.util.Hashtable;
 import org.apache.axis.deployment.wsdd.*;
-import org.apache.axis.deployment.v2dd.*;
-import org.apache.axis.utils.QName;
 import org.apache.axis.Handler;
-import org.apache.axis.Chain;
-import org.apache.axis.TargetedChain;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.Constants;
+import org.apache.axis.utils.QName;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 /**
- * This is a simple implementation of the DeploymentManager
- * and DeploymentRegistry interfaces.
+ * This is a simple implementation of the DeploymentRegistry class
  * 
  * @author James Snell
  */
-public class SimpleDeploymentManager extends DeploymentRegistry implements DeploymentManager { 
+public class SimpleDeploymentManager extends DeploymentRegistry { 
    
-    Hashtable handlers;
-    Hashtable chains;
-    Hashtable transports;
-    Hashtable services;
+    WSDDGlobalConfiguration globalConfig;
+    Hashtable items;
     Hashtable mappings;
     
     public SimpleDeploymentManager() {
-        handlers = new Hashtable();
-        chains = new Hashtable();
-        transports = new Hashtable();
-        services = new Hashtable();
+        items = new Hashtable();
         mappings = new Hashtable();
         mappings.put(Constants.URI_SOAP_ENC, new SOAPTypeMappingRegistry());
     }
@@ -93,126 +82,77 @@ public class SimpleDeploymentManager extends DeploymentRegistry implements Deplo
     /**
      * Deploy a SOAP v2.x deployment descriptor
      */
-    public void deploy(DeploymentDescriptor dd) throws Exception {
-        // this will eventually support SOAP v2.x deployment descriptors
+    public void deploy(DeploymentDocument deployment) throws DeploymentException {
+        deployment.deploy(this);
     }
     
     /**
-     * Deploy an Axis WSDD document.  This isn't a complete
-     * implementation but it is enough to get started with.
+     * return the global configuration
      */
-    public void deploy(WSDDDocument wsdd) throws Exception {
-        WSDDDeployment dep = wsdd.getDeployment();
-        WSDDHandler[] ha = dep.getHandlers();
-        WSDDChain[] ca = dep.getChains();
-        WSDDTransport[] ta = dep.getTransports();
-        WSDDService[] sa = dep.getServices();
-        WSDDTypeMapping[] tm = dep.getTypeMappings();
-        
-        // deploy type mappings
-        for (int n = 0; n < tm.length; n++) {
-            WSDDTypeMapping t = tm[n];
-            String encodingStyle = t.getEncodingStyle();
-            TypeMappingRegistry tmr = (TypeMappingRegistry)mappings.get(encodingStyle);
-            if (tmr == null) tmr = new TypeMappingRegistry();
-            Serializer s = (Serializer)t.getSerializer().newInstance();
-            Deserializer d = (Deserializer)t.getDeserializer().newInstance();
-            // !!! FIXME - new serializer/deserializer system!
-            //tmr.addSerializer(t.getLanguageSpecificType(), s);
-            //tmr.addDeserializer(t.getQName(), d);
-        }
-        
-        // deploy handlers
-        for (int n = 0; n < ha.length; n++) {
-            WSDDHandler h = ha[n];
-            handlers.put(h.getName(), h);
-        }        
-        
-        // deploy chains
-        for (int n = 0; n < ca.length; n++) {
-            WSDDChain c = ca[n];
-            chains.put(c.getName(), c);
-        }        
-        
-        // deploy transports
-        for (int n = 0; n < ta.length; n++) {
-            WSDDTransport t = ta[n];
-            transports.put(t.getName(), t);
-        }        
-        
-        // deploy services
-        for (int n = 0; n < sa.length; n++) {
-            WSDDService s = sa[n];
-            services.put(s.getName(), s);
+    public WSDDGlobalConfiguration getGlobalConfiguration() throws DeploymentException {
+        return globalConfig;
+    }
+    
+    /**
+     * Set the global configuration
+     */
+    public void setGlobalConfiguration(WSDDGlobalConfiguration global) {
+        globalConfig = global;
+    }
+    
+    /**
+     * Deploy the given WSDD Deployable Item
+     */
+    public void deployItem(DeployableItem item) throws DeploymentException {
+        items.put(item.getQName().toString(), item);
+    }
+
+    /**
+     * Return an instance of the deployed item
+     */
+    public Handler getDeployedItem(QName qname) throws DeploymentException {
+        return getDeployedItem(qname.toString());
+    }
+    
+    /**
+     * Return an instance of the deployed item
+     */
+    public Handler getDeployedItem(String name) throws DeploymentException {
+        try {
+            DeployableItem item = (DeployableItem)items.get(name);
+            return item.newInstance(this);
+        } catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
         }
     }
-   
-    /**
-     * return the named handler
+    
+    /** 
+     * remove the given item
      */
-    public Handler getHandler(String name) throws Exception {
-        WSDDHandler h = (WSDDHandler)handlers.get(name); 
-        return h.newInstance(this);
+    public void removeDeployedItem(String name) throws DeploymentException {
+        items.remove(name);
     }
     
     /**
-     * return the named chain
+     * remove the given item
      */
-    public Chain getChain(String name) throws Exception {
-        WSDDChain c = (WSDDChain)chains.get(name);
-        return (Chain)c.newInstance(this);
-    }
-    
-    /**
-     * return the named transport
-     */
-    public TargetedChain getTransport(String name) throws Exception {
-        WSDDTransport t = (WSDDTransport)transports.get(name);
-        return (TargetedChain)t.newInstance(this);
-    }
-    
-    /**
-     * return the named service
-     */
-    public TargetedChain getService(String name) throws Exception {
-        WSDDService s = (WSDDService)services.get(name);
-        return (TargetedChain)s.newInstance(this);
+    public void removeDeployedItem(QName qname) throws DeploymentException {
+        removeDeployedItem(qname.toString());
     }
     
     /**
      * return the named mapping registry
      */
-    public TypeMappingRegistry getTypeMappingRegistry(String encodingStyle) throws Exception {
+    public TypeMappingRegistry getTypeMappingRegistry(String encodingStyle) throws DeploymentException {
         TypeMappingRegistry tmr = (TypeMappingRegistry)mappings.get(encodingStyle);
         return tmr;
     }
     
     /**
-     * remove the named handler
+     * adds a new mapping registry
      */
-    public void removeHandler(String name) {
-        handlers.remove(name);
-    }
-    
-    /**
-     * remove the named chain
-     */
-    public void removeChain(String name) {
-        chains.remove(name);
-    }
-    
-    /**
-     * remove the named transport
-     */
-    public void removeTransport(String name) {
-        transports.remove(name);
-    }
-    
-    /**
-     * remove the named service
-     */
-    public void removeService(String name) {
-        services.remove(name);
+    public void addTypeMappingRegistry(String encodingStyle, TypeMappingRegistry tmr) {
+        mappings.put(encodingStyle, tmr);
     }
     
     /**

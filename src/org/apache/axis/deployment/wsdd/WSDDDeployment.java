@@ -69,6 +69,10 @@ public class WSDDDeployment extends WSDDElement {
         return getElement().getAttribute("name");
     }
     
+    public String getTargetNamespace() {
+        return getElement().getAttribute("targetNamespace");
+    }
+    
     public WSDDGlobalConfiguration getGlobalConfiguration() {
         WSDDElement[] e = createArray("globalConfiguration", WSDDGlobalConfiguration.class);
         WSDDGlobalConfiguration[] g = new WSDDGlobalConfiguration[e.length];
