@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions
+   xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:s="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:s0="http://tempuri.org/"
+   targetNamespace="http://tempuri.org/"
+   xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" 
+       xmlns:tns="http://tempuri.org/"
+       targetNamespace="http://tempuri.org/">
+
+      <s:import namespace="http://www.w3.org/2001/XMLSchema" />
+
+   <xsd:complexType name="BaseFaultType">
+      <xsd:sequence>
+            <xsd:element name="description" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="FaultType">
+        <xsd:complexContent>
+            <xsd:extension base="s0:BaseFaultType">
+                <xsd:sequence>
+                    <xsd:element name="command" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="StagingFaultType">
+        <xsd:complexContent>
+            <xsd:extension base="s0:FaultType">
+                <xsd:sequence>
+                    <xsd:element name="attribute" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+       <xsd:element name="SetResourceProperties">
+         <xsd:complexType>
+           <xsd:choice minOccurs="0" maxOccurs="unbounded">
+             <xsd:element name="a" type="xsd:string"/>
+             <xsd:element name="b" type="xsd:int"/>
+             <xsd:element name="c" type="xsd:dateTime"/>
+           </xsd:choice>
+         </xsd:complexType>
+       </xsd:element>
+
+    <xsd:complexType name="FaultPropertyType">
+        <xsd:choice>
+            <xsd:element name="fault1" type="s0:FaultType"/>
+            <xsd:element name="fault2" type="s0:StagingFaultType"/>
+            <xsd:element ref="tns:SetResourceProperties"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+      <s:element name="Record1">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="elem" type="s0:FaultPropertyType"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <s:element name="Record2">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="elem" type="s0:FaultPropertyType"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+    </s:schema>
+  </types>
+
+  <message name="Record1SoapIn">
+    <part name="parameters" element="s0:Record1" />
+  </message>
+  <message name="Record2SoapOut">
+    <part name="parameters" element="s0:Record2" />
+  </message>
+
+  <portType name="ChoiceServiceSoap">
+    <operation name="get">
+      <input message="s0:Record1SoapIn" />
+      <output message="s0:Record2SoapOut" />
+    </operation>
+  </portType>
+
+  <binding name="ChoiceServiceSoap" type="s0:ChoiceServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="get">
+      <soap:operation soapAction="http://tempuri.org/get" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <service name="ChoiceService">
+    <port name="ChoiceServiceSoap" binding="s0:ChoiceServiceSoap">
+      <soap:address location="http://localhost:8080/axis/services/ChoiceServiceSoap" />
+    </port>
+  </service>
+</definitions>
