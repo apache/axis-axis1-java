@@ -68,6 +68,8 @@ import test.wsdl.types.comprehensive_types.Time;
 import test.wsdl.types.comprehensive_types.StringParameter;
 import test.wsdl.types.comprehensive_types2.A;
 import test.wsdl.types.comprehensive_types2.B;
+import test.wsdl.types.comprehensive_types2.SimpleAnyURIType;
+import test.wsdl.types.comprehensive_types2.holders.SimpleAnyURITypeHolder;
 
 import test.wsdl.types.comprehensive_service.TypeTest;
 import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
@@ -719,6 +721,18 @@ public class VerifyTestCase extends junit.framework.TestCase {
             }
             URIHolder ch = new URIHolder(sendValue);
             URI actual = binding.methodAnyURI(sendValue, ch);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("methodAnyURI Exception caught: " + re );
+        }
+        
+        try {
+            SimpleAnyURIType sendValue = null;
+            try {
+                sendValue = new SimpleAnyURIType("urn:this-is-a-simple-test");
+            } catch (Exception e) {
+            }
+            SimpleAnyURITypeHolder ch = new SimpleAnyURITypeHolder(sendValue);
+            SimpleAnyURIType actual = binding.methodSimpleAnyURI(sendValue, ch);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodAnyURI Exception caught: " + re );
         }

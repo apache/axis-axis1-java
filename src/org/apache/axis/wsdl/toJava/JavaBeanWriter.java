@@ -413,12 +413,24 @@ public class JavaBeanWriter extends JavaClassWriter {
             pw.println("    public " + className + "(java.lang.String value) {");
             // Make sure we wrap base types with its Object type
             String wrapper = JavaUtils.getWrapper(simpleValueType);
+
             if (wrapper != null) {
                 pw.println("        this.value = new " + wrapper +
                            "(value)." + simpleValueType + "Value();");
             } else {
-                pw.println("        this.value = new " +
-                           simpleValueType + "(value);");
+                String indent = "        ";
+                if (simpleValueType.equals("org.apache.axis.types.URI")) {
+                    pw.println("        try {");
+                    pw.println("            this.value = new org.apache.axis.types.URI(value);");
+                    pw.println("        }");
+                    pw.println("        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
+                    pw.println("            this.value = new org.apache.axis.types.URI();");
+                    pw.println("       }");
+                }
+                else {
+                    pw.println("        this.value = new " +
+                               simpleValueType + "(value);");
+                }
             }
             pw.println("    }");
             pw.println();
