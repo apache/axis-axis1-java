@@ -54,9 +54,10 @@
 
 package org.apache.axis.handlers;
 
+import java.util.Hashtable;
 import org.apache.axis.*;
 import org.apache.axis.utils.QName;
-import java.util.Hashtable;
+import org.apache.axis.utils.Debug;
 
 /** <code>BasicHandler</code> is a utility class which implements simple
  * property setting/getting behavior, and stubs out a lot of the Handler
@@ -82,6 +83,8 @@ public abstract class BasicHandler implements Handler {
 
     public void undo(MessageContext msgContext)
     {
+      Debug.Print( 1, "Enter: " + this.getClass().getName() + "::undo" );
+      Debug.Print( 1, "Exit: " + this.getClass().getName() + "::undo" );
     }
     
     public boolean canHandleBlock(QName qname)

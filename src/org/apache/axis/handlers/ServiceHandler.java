@@ -48,9 +48,7 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.ibm.com.  For more
+ * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
@@ -62,6 +60,7 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
+import org.apache.axis.handlers.* ;
 
 /**
  * This class is needed so that we have some place to store service specific
@@ -72,8 +71,7 @@ import org.apache.axis.message.* ;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class ServiceHandler implements Handler {
-  protected Hashtable  options ;
+public class ServiceHandler extends BasicHandler {
   protected Handler    handler ;
 
   public void init() {
@@ -97,24 +95,6 @@ public class ServiceHandler implements Handler {
 
   public boolean canHandleBlock(QName qname) {
     return( handler.canHandleBlock(qname) );
-  }
-
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  public Hashtable getOptions() {
-    return( options );
-  }
-
-  public void setOptions(Hashtable opts) {
-    options = opts ;
   }
 
   public void setHandler(Handler h) {

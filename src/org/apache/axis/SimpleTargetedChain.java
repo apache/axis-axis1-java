@@ -48,9 +48,7 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.ibm.com.  For more
+ * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
@@ -60,16 +58,16 @@ package org.apache.axis ;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.handlers.* ;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class SimpleTargetedChain implements Handler {
+public class SimpleTargetedChain extends BasicHandler {
   protected Chain      inputChain ;
   protected Handler    pivotHandler ;
   protected Chain      outputChain ;
-  protected Hashtable  options ;
 
   public void init() { 
     if ( inputChain   != null )   inputChain.init();
@@ -130,33 +128,6 @@ public class SimpleTargetedChain implements Handler {
     return( (inputChain==null)   ? false : inputChain.canHandleBlock(qname) ||
             (pivotHandler==null) ? false : pivotHandler.canHandleBlock(qname) ||
             (outputChain==null)  ? false : outputChain.canHandleBlock(qname) );
-  }
-
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions() {
-    return( options );
-  }
-
-  public void setOptions(Hashtable opts) {
-    options = opts ;
   }
 
   public Chain getInputChain() { return( inputChain ); }

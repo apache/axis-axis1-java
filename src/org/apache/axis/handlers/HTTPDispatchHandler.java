@@ -48,9 +48,7 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.ibm.com.  For more
+ * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
@@ -74,15 +72,7 @@ import org.apache.axis.encoding.Base64 ;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class HTTPDispatchHandler implements Handler {
-  protected Hashtable  options ;
-
-  public void init() {
-  }
-
-  public void cleanup() {
-  }
-
+public class HTTPDispatchHandler extends BasicHandler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     Debug.Print( 1, "Enter: HTTPDispatchHandler::invoke" );
     /* Find the service we're invoking so we can grab it's options */
@@ -204,39 +194,5 @@ public class HTTPDispatchHandler implements Handler {
       throw (AxisFault) e ;
     } 
     Debug.Print( 1, "Exit: HTTPDispatchHandler::invoke" );
-  }
-
-  public void undo(MessageContext msgContext) { 
-  }
-
-  public boolean canHandleBlock(QName qname) {
-    return( false );
-  }
-
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions() {
-    return( options );
-  }
-
-  public void setOptions(Hashtable opts) {
-    options = opts ;
   }
 };
