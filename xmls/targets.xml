@@ -1,3 +1,15 @@
+   <!-- ===================================================================
+         This is basically the <ant /> task, except that it forks
+        =================================================================== -->
+   <target name="my-forking-ant">
+     <echo message="My Forking Ant"/>
+     <java classname="org.apache.tools.ant.Main" fork="yes" dir="${dir}">
+       <classpath refid="classpath"/>
+       <arg line="-buildfile ${file} ${target}"/>
+     </java>
+   </target>
+
+
   <!-- ===================================================================
     This is an accessory function to echo out fileNames 
        =================================================================== --> 

@@ -96,4 +96,4 @@ them.
 <property name="http.proxyPassword" value=""/>
 
 <property name="javac.fork" value="no"/>
-<property name="foreach.fork" value="yes"/>
+<property name="foreach.fork" value="no"/>
