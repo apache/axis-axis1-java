@@ -32,6 +32,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Port {
     
@@ -69,12 +70,18 @@ public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Port {
                                 simpleNS + " should be: " + namespace);
         }
 
-        Node nameNode = body.getFirstChild();
-        String nameNS = nameNode.getNamespaceURI();
-        if (nameNS != null ) {
-            throw new AxisFault("Namespace of name element incorrect: " + 
-                                nameNS + " should be: NULL");
+        NodeList list = body.getChildNodes();
+        for(int i=0;i<list.getLength();i++) {
+            Node node = list.item(i);
+            if(node.getNodeType() == Node.TEXT_NODE)
+                continue;
+            String nameNS = node.getNamespaceURI();
+            if (!nameNS.equals("urn:qualifyTest")) {
+                throw new AxisFault("Namespace of name element incorrect: " + 
+                                    nameNS + " should be: urn:qualifyTest");
+            }
         }
+        
         // Return a response (which the client will validate)
         return "Hello there: " + name;
     }
