@@ -61,6 +61,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
@@ -84,6 +85,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * The SOAPPart provides access to the root part of the Message which
@@ -138,6 +140,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     // These two fields are used for caching in getAsString and getAsBytes
     private String currentMessageAsString = null;
     private byte[] currentMessageAsBytes = null;
+    private org.apache.axis.message.SOAPEnvelope currentMessageAsEnvelope= null;
 
     /**
      * Message object this part is tied to. Used for serialization settings.
@@ -184,12 +187,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             log.debug("Exit: SOAPPart ctor()");
         }
     }
-    /* This could be rather costly with attachments.
-
-    public Object getOriginalMessage() {
-        return originalMessage;
-    }
-    */
 
 
     /**
@@ -296,12 +293,19 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         return currentMessage;
     }
 
+    private void setCurrentMessage(Object currMsg, int form) {
+      currentMessageAsString = null; //Get rid of any cached stuff this is new.
+      currentMessageAsBytes = null;
+      currentMessageAsEnvelope= null;
+      setCurrentForm(currMsg, form);
+    }
     /**
      * Set the current contents of this Part.
      * The method name is historical.
      * TODO: rename this for clarity to something more like setContents???
      */
-    private void setCurrentMessage(Object currMsg, int form) {
+    private void setCurrentForm(Object currMsg, int form) {
+        log.debug("setCurrentForm(" + currMsg + ", " + form);
         if (log.isDebugEnabled()) {
             String msgStr;
             if (currMsg instanceof String) {
@@ -314,6 +318,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         }
         currentMessage = currMsg ;
         currentForm = form ;
+        if(currentForm == FORM_SOAPENVELOPE)
+          currentMessageAsEnvelope= (org.apache.axis.message.SOAPEnvelope )currMsg;
     }
 
     /**
@@ -355,7 +361,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                     currentMessage instanceof org.apache.axis.transport.http.SocketInputStream )    
                     inp.close(); 
                 }  
-                setCurrentMessage( buf, FORM_BYTES );
+                setCurrentForm( buf, FORM_BYTES );
                 log.debug("Exit: SOAPPart::getAsBytes");
                 return (byte[])currentMessage;
             }
@@ -395,10 +401,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Save this message in case it is requested later in getAsString
             currentMessageAsString = (String) currentMessage;
             try{
-                setCurrentMessage( ((String)currentMessage).getBytes("UTF-8"),
+                setCurrentForm( ((String)currentMessage).getBytes("UTF-8"),
                FORM_BYTES );
             }catch(UnsupportedEncodingException ue){
-               setCurrentMessage( ((String)currentMessage).getBytes(),
+               setCurrentForm( ((String)currentMessage).getBytes(),
                                FORM_BYTES );
             }
             currentMessageAsBytes = (byte[]) currentMessage;
@@ -446,10 +452,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Save this message in case it is requested later in getAsBytes
             currentMessageAsBytes = (byte[]) currentMessage;
             try{
-                setCurrentMessage( new String((byte[]) currentMessage,"UTF-8"),
+                setCurrentForm( new String((byte[]) currentMessage,"UTF-8"),
                                    FORM_STRING );
             }catch(UnsupportedEncodingException ue){
-                setCurrentMessage( new String((byte[]) currentMessage),
+                setCurrentForm( new String((byte[]) currentMessage),
                                    FORM_STRING );
             }
             currentMessageAsString = (String) currentMessage;
@@ -468,7 +474,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 log.error(Messages.getMessage("exception00"), e);
                 return null;
             }
-            setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
+            setCurrentForm(writer.getBuffer().toString(), FORM_STRING);
             if (log.isDebugEnabled()) {
                 log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
             }
@@ -483,7 +489,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
             }
-            setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
+            setCurrentForm(writer.getBuffer().toString(), FORM_STRING);
             if (log.isDebugEnabled()) {
                 log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
             }
@@ -511,20 +517,24 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if ( currentForm == FORM_SOAPENVELOPE )
             return (SOAPEnvelope)currentMessage;
 
+
         if (currentForm == FORM_BODYINSTREAM) {
             InputStreamBody bodyEl =
                              new InputStreamBody((InputStream)currentMessage);
             SOAPEnvelope env = new SOAPEnvelope();
             env.addBodyElement(bodyEl);
-            setCurrentMessage(env, FORM_SOAPENVELOPE);
+            setCurrentForm(env, FORM_SOAPENVELOPE);
             return env;
         }
 
         InputSource is;
+            log.debug("yup533");
 
         if ( currentForm == FORM_INPUTSTREAM ) {
             is = new InputSource( (InputStream) currentMessage );
         } else {
+            log.debug("yup637");
+
             is = new InputSource(new StringReader(getAsString()));
         }
         DeserializationContext dser = new DeserializationContextImpl(is,
@@ -541,7 +551,25 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             throw AxisFault.makeFault(real);
         }
 
-        setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
+        SOAPEnvelope nse= dser.getEnvelope(); 
+        if(currentMessageAsEnvelope != null){
+          //Need to synchronize back processed header info.
+          Vector newHeaders= nse.getHeaders();
+          Vector oldHeaders= currentMessageAsEnvelope.getHeaders();
+          if( null != newHeaders && null != oldHeaders){
+           Iterator ohi= oldHeaders.iterator();
+           Iterator nhi= newHeaders.iterator();
+           while( ohi.hasNext() && nhi.hasNext()){
+             SOAPHeaderElement nhe= (SOAPHeaderElement)nhi.next(); 
+             SOAPHeaderElement ohe= (SOAPHeaderElement)ohi.next(); 
+
+             if(ohe.isProcessed()) nhe.setProcessed(true);
+           }  
+          }
+          
+        }
+
+        setCurrentForm(nse, FORM_SOAPENVELOPE);
 
         log.debug("Exit: SOAPPart::getAsSOAPEnvelope");
         return (SOAPEnvelope)currentMessage;
