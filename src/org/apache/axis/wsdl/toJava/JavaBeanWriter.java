@@ -418,7 +418,6 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("        this.value = new " + wrapper +
                            "(value)." + simpleValueType + "Value();");
             } else {
-                String indent = "        ";
                 if (simpleValueType.equals("org.apache.axis.types.URI")) {
                     pw.println("        try {");
                     pw.println("            this.value = new org.apache.axis.types.URI(value);");
