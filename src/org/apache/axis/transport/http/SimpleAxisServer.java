@@ -158,10 +158,11 @@ public class SimpleAxisServer {
                     is.setContentLength(contentLength);
 
                     // set up request
+                    String soapActionString = soapAction.toString();
                     requestMsg.setCurrentMessage(is, "InputStream");
-                    msgContext.setTargetService(soapAction.toString());
+                    msgContext.setTargetService(soapActionString);
                     msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, 
-                                           soapAction.toString());
+                                           soapActionString);
 
                     // invoke the Axis engine
                     engine.invoke(msgContext);
@@ -282,10 +283,10 @@ public class SimpleAxisServer {
                         break;
                     }
                 } else if (c==actionHeader[actionMatch]) {
-                    soapAction.delete(0,soapAction.length());
                     lenMatch=0;
                     actionMatch++;
                     if (actionMatch == actionLen) {
+                        soapAction.delete(0,soapAction.length());
                         while ((++i<n) && (buf[i]!='"') && (buf[i]!='9')) {
                             soapAction.append((char)(buf[i] & 0x7f));
                         }
