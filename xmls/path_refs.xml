@@ -2,9 +2,9 @@
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${junit.jar}"/>
-    <pathelement location="${excalibur.jar}"/>
     <pathelement location="${j2ee.jar}"/>
     <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jimi.jar}"/>
     <pathelement location="${tools.jar}"/>
     <fileset dir="${lib.dir}">
         <include name="*.jar"/>
