@@ -405,4 +405,29 @@ public abstract class AxisEngine extends BasicHandler
     public static String getGlobalProperty(String property) {
         return System.getProperty(property);
     }
-};
+
+    protected void invokeJAXRPCHandlers(MessageContext context){
+        org.apache.axis.client.Service service = (org.apache.axis.client.Service) context.getProperty(org.apache.axis.client.Call.JAXRPC_SERVICE);
+        if(service == null)
+            return;
+
+        QName operationName = (QName) context.getProperty(org.apache.axis.client.Call.JAXRPC_PORTTYPE_NAME);
+        if(operationName == null)
+            return;
+
+        javax.xml.rpc.handler.HandlerRegistry registry = service.getHandlerRegistry();
+        if(registry == null)
+            return;
+
+        java.util.List chain = registry.getHandlerChain(operationName);
+        if(chain == null || chain.isEmpty())
+            return;
+
+        org.apache.axis.handlers.HandlerChainImpl impl = new org.apache.axis.handlers.HandlerChainImpl(chain);
+        if(!context.getPastPivot())
+            impl.handleRequest(context);
+        else
+            impl.handleResponse(context);
+        impl.destroy();
+    }
+}

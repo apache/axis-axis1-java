@@ -905,6 +905,13 @@
         <mapping namespace="http://echo.services" package="test.wsdl.echo"/>
         <mapping namespace="http://types.echo.services" package="test.wsdl.echo"/>
     </wsdl2java>
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
     
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
