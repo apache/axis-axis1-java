@@ -55,6 +55,11 @@
 
 package javax.xml.rpc.namespace;
 
+import org.apache.axis.Constants;
+import org.w3c.dom.Element;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Node;
+
 /**
  * QName class represents a qualified name based on "Namespaces in XML" specification. A QName is represented as: 
  * QName ::= (Prefix ':') ? LocalPart 
@@ -80,6 +85,7 @@ public class QName {
      * @param localPart - Local part of the QName
      */
     public QName(String localPart) {
+        setNamespaceURI("");
         setLocalPart(localPart);
     }
     
@@ -218,7 +224,22 @@ public class QName {
 
             if (i < 0) {
                 setLocalPart(qName);
-                setNamespaceURI(null);
+                // Find default namespace
+                while (element != null) {
+                    Attr attr =
+                        element.getAttributeNodeNS(Constants.NS_URI_XMLNS,
+                                "xmlns");
+                    if (attr != null) {
+                        setNamespaceURI(attr.getValue());
+                        return;
+                    }
+                    Node n = element.getParentNode();
+                    if (! (n instanceof Element))
+                        break;
+                    element  = (Element)n;
+                }
+                // didn't find a namespace
+                setNamespaceURI("");
             } else {
                 String prefix = qName.substring(0, i);
                 String local  = qName.substring(i + 1);
