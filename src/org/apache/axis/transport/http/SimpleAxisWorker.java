@@ -786,7 +786,7 @@ public class SimpleAxisWorker implements Runnable {
         try {
             address = InetAddress.getLocalHost();
             //force a best effort reverse DNS lookup
-            hostname = address.getCanonicalHostName();
+            hostname = address.getHostName();
             if (hostname == null || hostname.length() == 0) {
                 hostname = address.toString();
             }
