@@ -140,7 +140,7 @@ public class SymbolTable {
     private BaseTypeMapping btm = null;
 
     // should we attempt to treat document/literal WSDL as "rpc-style"
-    private boolean dotNet = true;
+    private boolean wrapped = false;
     
     /**
      * Construct a symbol table with the given Namespaces.
@@ -283,17 +283,17 @@ public class SymbolTable {
     }
 
     /**
-     * Are we trying to treat document/literal in an "rpc-style" manner.
+     * Are we wrapping literal soap body elements.
      */ 
-    public boolean isDotNet() {
-        return dotNet;
+    public boolean isWrapped() {
+        return wrapped;
     }
 
     /**
-     * Turn on/off .NET strategy for literal soap body's.
+     * Turn on/off element wrapping for literal soap body's.
      */ 
-    public void setDotNet(boolean dotNet) {
-        this.dotNet = dotNet;
+    public void setWrapped(boolean wrapped) {
+        this.wrapped = wrapped;
     }
 
     /**
@@ -570,8 +570,6 @@ public class SymbolTable {
                 te.setSimpleType(true);
             }
             else if (isXSD && localPart.equals("attribute")) {
-                // we can no longer do .NET stuff and treat document as rpc style
-                this.dotNet = false;
                 // Create symbol table entry for attribute type
                 QName refQName = Utils.getNodeTypeRefQName(node, "type");
                 if (refQName != null) {
@@ -1064,18 +1062,23 @@ public class SymbolTable {
             Part part = (Part) i.next();
             QName elementName = part.getElementName();
             QName typeName = part.getTypeName();
+            String partName = part.getName();
+
+            // Hack alert - Try to sense "wrapped" document literal mode
+            if (literal && !i.hasNext() && partName.equals("parameters"))
+                wrapped = true;
             
-            if (!literal || !dotNet) {
+            if (!literal || !wrapped) {
                 // not doing literal use, add this type or element name
                 if (typeName != null) {
                     v.add(getType(typeName));
-                    v.add(part.getName());
+                    v.add(partName);
                 } else if (elementName != null) {
                     // Just an FYI: The WSDL spec says that for use=encoded
                     // that parts reference an abstract type using the type attr
                     // but we kinda do the right thing here, so let it go.
                     v.add(getElement(elementName));
-                    v.add(part.getName());
+                    v.add(partName);
                 }
                 continue;   // next part
             }
@@ -1094,7 +1097,7 @@ public class SymbolTable {
                 // node = getTypeEntry(typeName, false).getNode();
                 throw new IOException(
                         JavaUtils.getMessage("literalTypePart00", 
-                                             new String[] {part.getName(), 
+                                             new String[] {partName, 
                                                            opName,  
                                                            bindingName}));
             }
@@ -1122,10 +1125,10 @@ public class SymbolTable {
                 // XXX - This should be a SOAPElement/SOAPBodyElement
                 if (typeName != null) {
                     v.add(getType(typeName));
-                    v.add(part.getName());
+                    v.add(partName);
                 } else if (elementName != null) {
                     v.add(getElement(elementName));
-                    v.add(part.getName());
+                    v.add(partName);
                 }
             }
         } // while
@@ -1333,7 +1336,7 @@ public class SymbolTable {
     private void setTypeReferences(TypeEntry entry, Document doc,
             boolean literal) {
 
-        if (dotNet) {
+        if (wrapped) {
             // If this type is ONLY referenced from a literal usage in a binding,
             // then isOnlyLiteralReferenced should return true.
             if (!entry.isReferenced() && literal) {
