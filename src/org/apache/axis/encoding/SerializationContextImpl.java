@@ -733,7 +733,7 @@ public class SerializationContextImpl implements SerializationContext
             if (attributes != null && 0 < attributes.getLength())
                 attrs.setAttributes(attributes);
             attrs.addAttribute("", Constants.ATTR_HREF, "href",
-                               "CDATA", "#" + id);
+                               "CDATA", '#' + id);
 
             startElement(elemQName, attrs);
             endElement();
@@ -795,7 +795,7 @@ public class SerializationContextImpl implements SerializationContext
             encodingStyle = soapConstants.getEncodingURI();
         }
         String encStyle = getPrefixForURI(soapConstants.getEnvelopeURI()) +
-                                          ":" + Constants.ATTR_ENCODING_STYLE;
+                                          ':' + Constants.ATTR_ENCODING_STYLE;
         attrs.addAttribute(soapConstants.getEnvelopeURI(),
                            Constants.ATTR_ENCODING_STYLE,
                            encStyle,
@@ -857,21 +857,21 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         if (writingStartTag) {
-            writer.write(">");
-            if (pretty) writer.write("\n");
+            writer.write('>');
+            if (pretty) writer.write('\n');
             indent++;
         }
 
         if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
         String elementQName = qName2String(qName, true);
-        writer.write("<");
+        writer.write('<');
 
         writer.write(elementQName);
 
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
                 String qname = attributes.getQName(i);
-                writer.write(" ");
+                writer.write(' ');
 
                 String prefix = "";
                 String uri = attributes.getURI(i);
@@ -889,7 +889,7 @@ public class SerializationContextImpl implements SerializationContext
                         }
                     }
                     if (prefix.length() > 0) {
-                        qname = prefix + ":" + attributes.getLocalName(i);
+                        qname = prefix + ':' + attributes.getLocalName(i);
                     } else {
                         qname = attributes.getLocalName(i);
                     }
@@ -906,21 +906,21 @@ public class SerializationContextImpl implements SerializationContext
                 writer.write(qname);
                 writer.write("=\"");
                 writer.write(XMLUtils.xmlEncodeString(attributes.getValue(i)));
-                writer.write("\"");
+                writer.write('"');
             }
         }
 
         for (Mapping map=nsStack.topOfFrame(); map!=null; map=nsStack.next()) {
             StringBuffer sb = new StringBuffer("xmlns");
             if (map.getPrefix().length() > 0) {
-                sb.append(":");
+                sb.append(':');
                 sb.append(map.getPrefix());
             }
             if ((vecQNames==null) || (vecQNames.indexOf(sb.toString())==-1)) {
-                writer.write(" ");
+                writer.write(' ');
                 sb.append("=\"");
                 sb.append(map.getNamespaceURI());
-                sb.append("\"");
+                sb.append('"');
                 writer.write(sb.toString());
             }
         }
@@ -930,7 +930,6 @@ public class SerializationContextImpl implements SerializationContext
         elementStack.push(elementQName);
         nsStack.push();
 
-        writer.flush();
         onlyXML=true;
     }
 
@@ -951,7 +950,7 @@ public class SerializationContextImpl implements SerializationContext
 
         if (writingStartTag) {
             writer.write("/>");
-            if (pretty) writer.write("\n");
+            if (pretty) writer.write('\n');
             writingStartTag = false;
             return;
         }
@@ -964,7 +963,6 @@ public class SerializationContextImpl implements SerializationContext
         writer.write(elementQName);
         writer.write('>');
         if (pretty) if (indent>0) writer.write('\n');
-        writer.flush();
         onlyXML=true;
     }
 
@@ -979,11 +977,10 @@ public class SerializationContextImpl implements SerializationContext
         throws IOException
     {
         if (writingStartTag) {
-            writer.write(">");
+            writer.write('>');
             writingStartTag = false;
         }
         writeSafeString(String.valueOf(p1,p2,p3));
-        writer.flush();
         onlyXML=false;
     }
 
@@ -995,11 +992,10 @@ public class SerializationContextImpl implements SerializationContext
         throws IOException
     {
         if (writingStartTag) {
-            writer.write(">");
+            writer.write('>');
             writingStartTag = false;
         }
         writer.write(string);
-        writer.flush();
         onlyXML=false;
     }
 

@@ -539,7 +539,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void addObjectById(String id, Object obj)
     {
         // The resolver uses the href syntax as the key.
-        String idStr = "#" + id;
+        String idStr = '#' + id;
         if ((idMap == null) || (id == null))
             return ;
         
@@ -596,7 +596,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (localIDs == null)
             localIDs = new LocalIDResolver();
         
-        String absID = "#" + id;
+        String absID = '#' + id;
         
         localIDs.addReferencedObject(absID, elem);
         
@@ -868,7 +868,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         SOAPHandler nextHandler = null;
 
         String prefix = "";
-        int idx = qName.indexOf(":");
+        int idx = qName.indexOf(':');
         if (idx > 0)
             prefix = qName.substring(0, idx);
 
