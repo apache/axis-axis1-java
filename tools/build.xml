@@ -52,12 +52,13 @@ Copyright:
       location="${tools.build.dir}/${componentName}" />
     <echo message="Removing ${dir.to.clean}" />
     <delete dir="${dir.to.clean}" />
-    <delete file="${build.lib}/axis-ant.jar"/>
+    <delete file="${build.lib}/axis-ant.jar" failonerror="false"/>
 </target>
 
 <target name="copy" depends="setenv"/>
 
-<target name="compile" depends="copy" unless="axis-ant.present">
+<target name="compile" depends="copy" unless="axis-ant.present"
+  description="compile everthing and make the JARs">
   <echo message="Compiling tools.*"/>
   <mkdir dir="${tools.build.dir}"/>
     <!-- build my ForEach task -->
@@ -101,7 +102,7 @@ Copyright:
   </jar>
 </target>
 
-<target name="test" unless="axis-ant.present">
+<target name="test" unless="axis-ant.present" description="tests">
    <ant antfile="${tools.dir}/test.xml" /> 
 </target>
 

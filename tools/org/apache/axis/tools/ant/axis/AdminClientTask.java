@@ -56,6 +56,7 @@ package org.apache.axis.tools.ant.axis;
 
 import org.apache.tools.ant.*;
 import org.apache.axis.client.AdminClient;
+import org.apache.axis.AxisFault;
 
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -280,22 +281,34 @@ public class AdminClientTask extends Task {
         }
 
         //now create a client and invoke it
+        AdminClient admin = new AdminClient();
+        String result = null;
         try {
-            AdminClient admin = new AdminClient();
-            String result = admin.process(args);
-
+            result = admin.process(args);
             if (result != null) {
                 log(result);
             } else {
-                String text = "Something seems to have gone wrong";
-                if (failOnError) {
-                    throw new BuildException(text);
-                } else {
-                    log(text, Project.MSG_ERR);
-                }
+                logOrThrow(getTaskName() + " got a null response");
             }
+        } catch (AxisFault fault) {
+            log(fault.dumpToString(), Project.MSG_ERR);
+            logOrThrow(getTaskName()
+                    +" failed with  "
+                    + fault.getFaultCode().toString()
+                    + " "+ fault.getFaultString());
+        } catch(BuildException e) {
+            throw e;
         } catch (Exception e) {
-            throw new BuildException("While calling the AdminClient", e);
+            throw new BuildException("Exception in "+getTaskName(),e);
+        }
+
+    }
+
+    private void logOrThrow(String text) throws BuildException {
+        if (failOnError) {
+            throw new BuildException(text);
+        } else {
+            log(text, Project.MSG_ERR);
         }
     }
 
