@@ -106,9 +106,6 @@ public abstract class JavaProvider extends BasicProvider
 
     public static final String OPTION_CLASSNAME = "className";
     public static final String OPTION_ALLOWEDMETHODS = "allowedMethods";
-    public static final String OPTION_IS_STATIC = "isStatic";
-    public static final String OPTION_CLASSPATH = "classPath";
-
     public static final String OPTION_SCOPE = "scope";
 
     /**
