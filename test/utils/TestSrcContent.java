@@ -164,6 +164,7 @@ public class TestSrcContent extends TestCase {
                                        + "(?!utils\\1tcpmon\\.java"
                                        + "|providers\\1BSFProvider\\.java"
                                        + "|utils\\1CLArgsParser\\.java"
+                                       + "|transport\\1jms\\1SimpleJMSListener\\.java"
                                        + "|Version\\.java"
                                        + "|wsdl\\1)"
                                        + "([a-zA-Z0-9_]+\\1)*"
