@@ -34,7 +34,7 @@ public class TestOptions extends TestCase
         String[] fake_args = { "-w tiger" };
         Options ops = new Options(fake_args); 
         String result = ops.isValueSet('w');
-        assertEquals("tiger", result);
+        assertEquals("Result was: " + result + ", not tiger", "tiger", result);
     }   
 
 }
