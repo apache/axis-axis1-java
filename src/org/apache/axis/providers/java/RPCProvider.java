@@ -183,7 +183,9 @@ public class RPCProvider extends JavaProvider {
         try {
             args = body.getParams();
         } catch (SAXException e) {
-            throw e.getException();
+            if(e.getException() != null)
+                throw e.getException();
+            throw e;
         }
         int numArgs = args.size();
         
