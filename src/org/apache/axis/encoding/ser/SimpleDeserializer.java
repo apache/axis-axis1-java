@@ -355,7 +355,7 @@ public class SimpleDeserializer extends DeserializerImpl {
             String fieldName = attributes.getLocalName(i);
             
             if(typeDesc != null) {
-                typeDesc.getFieldNameForAttribute(attrQName);
+                fieldName = typeDesc.getFieldNameForAttribute(attrQName);
                 if (fieldName == null)
                     continue;
             }
