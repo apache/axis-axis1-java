@@ -119,11 +119,11 @@ public class Serp implements Extractor {
             return null;
 
         // Get the Code object, which contains the local variable table.
-        Code code = bmeth.getCode(true);
+        Code code = bmeth.getCode(false);
         if (code == null)
             return null;
 
-        LocalVariableTable table = code.getLocalVariableTable(true);
+        LocalVariableTable table = code.getLocalVariableTable(false);
 
         if (table == null)
             return null;
@@ -141,9 +141,9 @@ public class Serp implements Extractor {
         for (int j = 0; j < vars.length; j++) {
             LocalVariable var = vars[j];
             if (! var.getName().equals("this")) {
-                if(temp.size() < var.getTypeIndex() + 1)
-                    temp.setSize(var.getTypeIndex() + 1);
-                temp.setElementAt(var.getName(), var.getTypeIndex());
+                if(temp.size() < var.getLocal() + 1)
+                    temp.setSize(var.getLocal() + 1);
+                temp.setElementAt(var.getName(), var.getLocal());
             }
         }
         int k = 0;
