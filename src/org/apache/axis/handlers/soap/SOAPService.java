@@ -444,8 +444,8 @@ public class SOAPService extends SimpleTargetedChain
                     result = handlerImpl.handleRequest(msgContext);
                 }
                 catch (SOAPFaultException e) {
-                    handlerImpl.handleFault(msgContext);
                     msgContext.setPastPivot(true);
+                    handlerImpl.handleFault(msgContext);
                     return;
                 }
             }
