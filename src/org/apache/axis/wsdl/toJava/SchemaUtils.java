@@ -163,33 +163,18 @@ public class SchemaUtils {
             }
             if (groupNode != null) {
 
-                // Process each of the element nodes under the group node
+                // Process each of the choice or element nodes under the sequence/all node
                 Vector v = new Vector();
                 NodeList elements = groupNode.getChildNodes();
                 for (int i=0; i < elements.getLength(); i++) {
                     QName elementKind = Utils.getNodeQName(elements.item(i));
                     if (elementKind != null &&
-                        elementKind.getLocalPart().equals("element") &&
                         Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
-
-                        // Get the name and type qnames.
-                        // The name of the element is the local part of the name's qname.
-                        // The type qname is used to locate the TypeEntry, which is then
-                        // used to retrieve the proper java name of the type.
-                        Node elementNode = elements.item(i);
-                        QName nodeName = Utils.getNodeNameQName(elementNode);
-                        BooleanHolder forElement = new BooleanHolder();
-                        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
-                        if (nodeType == null) { // The element may use an anonymous type
-                            nodeType = nodeName;
-                            forElement.value = false;
-                        }
-
-                        TypeEntry type = (TypeEntry) symbolTable.getTypeEntry(nodeType, 
-                                                                              forElement.value);
-                        if (type != null) {
-                            v.add(type);
-                            v.add(nodeName.getLocalPart());
+                        if ( elementKind.getLocalPart().equals("element")) {
+                            v.addAll(processChildElementNode(elements.item(i), symbolTable));
+                        } else if (elementKind.getLocalPart().equals("choice")) {
+                            Vector choiceElems = processChoiceNode(elements.item(i), symbolTable);
+                            v.addAll(choiceElems);
                         }
                     }
                 }
@@ -197,6 +182,132 @@ public class SchemaUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * and child element names underneath a Choice Node
+     */
+    private static Vector processChoiceNode(Node choiceNode, SymbolTable symbolTable) {
+        Vector v = new Vector();
+        NodeList children = choiceNode.getChildNodes();
+        for (int j = 0; j < children.getLength(); j++) {
+            QName subNodeKind = Utils.getNodeQName(children.item(j));
+            if (subNodeKind != null &&
+                Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
+                if (subNodeKind.getLocalPart().equals("choice")) {
+                    v.addAll(processChoiceNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("sequence")) {
+                    v.addAll(processSequenceNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("group")) {
+                    v.addAll(processGroupNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("element")) {
+                    v.addAll(processChildElementNode(children.item(j), symbolTable));
+                }
+            }
+        }
+        return v;
+    }
+
+    /**
+     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * and child element names underneath a Sequence Node
+     */
+    private static Vector processSequenceNode(Node sequenceNode, SymbolTable symbolTable) {
+        Vector v = new Vector();
+        NodeList children = sequenceNode.getChildNodes();
+        for (int j = 0; j < children.getLength(); j++) {
+            QName subNodeKind = Utils.getNodeQName(children.item(j));
+            if (subNodeKind != null &&
+                Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
+                if (subNodeKind.getLocalPart().equals("choice")) {
+                    v.addAll(processChoiceNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("sequence")) {
+                    v.addAll(processSequenceNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("group")) {
+                    v.addAll(processGroupNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("element")) {
+                    v.addAll(processChildElementNode(children.item(j), symbolTable));
+                }
+            }
+        }
+        return v;
+    }
+
+    /**
+     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * and child element names underneath a group node.
+     * (Currently the code only supports a defined group it does not
+     * support a group that references a previously defined group)
+     */
+    private static Vector processGroupNode(Node groupNode, SymbolTable symbolTable) {
+        Vector v = new Vector();
+        NodeList children = groupNode.getChildNodes();
+        for (int j = 0; j < children.getLength(); j++) {
+            QName subNodeKind = Utils.getNodeQName(children.item(j));
+            if (subNodeKind != null &&
+                Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
+                if (subNodeKind.getLocalPart().equals("choice")) {
+                    v.addAll(processChoiceNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("sequence")) {
+                    v.addAll(processSequenceNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("all")) {
+                    v.addAll(processAllNode(children.item(j), symbolTable));
+                }
+            }
+        }
+        return v;
+    }
+
+    /**
+     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * and child element names underneath an all node.
+     */
+    private static Vector processAllNode(Node allNode, SymbolTable symbolTable) {
+        Vector v = new Vector();
+        NodeList children = allNode.getChildNodes();
+        for (int j = 0; j < children.getLength(); j++) {
+            QName subNodeKind = Utils.getNodeQName(children.item(j));
+            if (subNodeKind != null &&
+                Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
+                if (subNodeKind.getLocalPart().equals("element")) {
+                    v.addAll(processChildElementNode(children.item(j), symbolTable));
+                }
+            }
+        }
+        return v;
+    }
+
+
+    /**
+     * Invoked by getComplexElementTypesAndNames to get the child element type
+     * and child element name for a child element node.
+     *
+     * If the specified node represents a supported JAX-RPC child element,
+     * a Vector is returned which contains the child element type and
+     * child element name.  The 0th index is the element types (TypeEntry) and
+     * the 1st index is the corresponding name (Strings).
+     */
+    private static Vector processChildElementNode(Node elementNode, SymbolTable symbolTable) {
+        Vector v = new Vector();
+        // Get the name and type qnames.
+        // The name of the element is the local part of the name's qname.
+        // The type qname is used to locate the TypeEntry, which is then
+        // used to retrieve the proper java name of the type.
+        QName nodeName = Utils.getNodeNameQName(elementNode);
+        BooleanHolder forElement = new BooleanHolder();
+        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
+        if (nodeType == null) { // The element may use an anonymous type
+             nodeType = nodeName;
+             forElement.value = false;
+        }
+
+        TypeEntry type = (TypeEntry) symbolTable.getTypeEntry(nodeType, forElement.value);
+        if (type != null) {
+            v.add(type);
+            v.add(nodeName.getLocalPart());
+        }
+        return v;
     }
 
     /**
