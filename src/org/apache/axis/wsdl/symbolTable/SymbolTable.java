@@ -621,16 +621,21 @@ public class SymbolTable {
 
                     // Check for a undefined XSD Schema Type and throw
                     // an unsupported message instead of undefined
-                    if (SchemaUtils.isSimpleSchemaType(entry.getQName())) {
+                    if (SchemaUtils.isSimpleSchemaType(qn)) {
                         throw new IOException(
                                 Messages.getMessage(
                                         "unsupportedSchemaType00", qn.getLocalPart()));
                     }
 
+                    if(Constants.isSchemaXSD(qn.getNamespaceURI())) {
+                        if(qn.getLocalPart().equals("simpleRestrictionModel")) {
+                            continue;   
+                        }
+                    }
                     // last case, its some other undefined thing
                     throw new IOException(
                             Messages.getMessage(
-                                    "undefined00", entry.getQName().toString()));
+                                    "undefined00", qn.toString()));
                 }    // if undefined
                 else if (entry instanceof UndefinedElement) {
                     throw new IOException(
