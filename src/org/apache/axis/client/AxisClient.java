@@ -62,7 +62,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.log4j.Category;
 
 /**
@@ -101,15 +100,12 @@ public class AxisClient extends AxisEngine
         String  hName = null ;
         Handler h     = null ;
 
-        HandlerRegistry hr = getHandlerRegistry();
-        HandlerRegistry sr = getServiceRegistry();
-
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             category.debug( "EngineHandler: " + hName );
 
             if ( hName != null ) {
-                h = hr.find( hName );
+                h = getHandler( hName );
                 if ( h != null )
                     h.invoke(msgContext);
                 else
@@ -140,7 +136,7 @@ public class AxisClient extends AxisEngine
                 /* Process the Service Specific Request Chain */
                 /**********************************************/
                 hName =  msgContext.getTargetService();
-                if ( hName != null && (h = sr.find( hName )) != null ) {
+                if ( hName != null && (h = getService( hName )) != null ) {
                     if ( h instanceof SimpleTargetedChain ) {
                         service = (SimpleTargetedChain) h ;
                         h = service.getRequestHandler();
@@ -151,7 +147,7 @@ public class AxisClient extends AxisEngine
                 /* Process the Global Request Chain */
                 /**********************************/
                 hName = Constants.GLOBAL_REQUEST ;
-                if ( hName != null  && (h = hr.find( hName )) != null )
+                if ( hName != null  && (h = getHandler( hName )) != null )
                     h.invoke(msgContext);
 
                 /** Process the Transport Specific stuff
@@ -161,16 +157,15 @@ public class AxisClient extends AxisEngine
                  * this is the pivot point in the Transport chain.
                  */
                 hName = msgContext.getTransportName();
-                HandlerRegistry tr = getTransportRegistry();
-                if ( hName != null && (h = tr.find( hName )) != null )
+                if ( hName != null && (h = getTransport( hName )) != null )
                     h.invoke(msgContext);
                 else
-                    msgContext.setPastPivot(true);
+                    throw new AxisFault("No client transport named '" + hName + "' found!");
 
                 /* Process the Global Response Chain */
                 /***********************************/
                 hName = Constants.GLOBAL_RECEIVE ;
-                if ( hName != null && (h = hr.find( hName )) != null )
+                if ( hName != null && (h = getHandler( hName )) != null )
                     h.invoke(msgContext);
 
                 if ( service != null ) {

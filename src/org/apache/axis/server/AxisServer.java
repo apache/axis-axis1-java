@@ -65,7 +65,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.FileProvider;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.log4j.Category;
 /**
@@ -124,7 +123,7 @@ public class AxisServer extends AxisEngine
      */
     public synchronized AxisEngine getClientEngine () {
         if (clientEngine == null) {
-            clientEngine = new AxisClient(new FileProvider("client-config.xml")); // !!!!
+            clientEngine = new AxisClient(new FileProvider(Constants.CLIENT_CONFIG_FILE)); // !!!!
         }
         return clientEngine;
     }
@@ -145,16 +144,10 @@ public class AxisServer extends AxisEngine
         String  hName = null ;
         Handler h     = null ;
 
-        /* Do some prep-work.  Get the registries and put them in the */
-        /* msgContext so they can be used by later handlers.          */
-        /**************************************************************/
-        HandlerRegistry hr = getHandlerRegistry();
-        HandlerRegistry sr = getServiceRegistry();
-
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if ( hName != null ) {
-                if ( hr == null || (h = hr.find(hName)) == null ) {
+                if ( (h = getHandler(hName)) == null ) {
                     AxisClassLoader cl = msgContext.getClassLoader();
                     try {
                         category.debug( "Trying to load class: " + hName );
@@ -210,7 +203,6 @@ public class AxisServer extends AxisEngine
                 /* Process the Transport Specific Request Chain */
                 /**********************************************/
                 hName = msgContext.getTransportName();
-                HandlerRegistry tr = getTransportRegistry();
                 SimpleTargetedChain transportChain = null;
 
                 if (category.isInfoEnabled())
@@ -218,7 +210,7 @@ public class AxisServer extends AxisEngine
                                   hName +
                                   "'");
 
-                if ( hName != null && (h = tr.find( hName )) != null ) {
+                if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
                         h = transportChain.getRequestHandler();
@@ -230,7 +222,7 @@ public class AxisServer extends AxisEngine
                 /* Process the Global Request Chain */
                 /**********************************/
                 hName = Constants.GLOBAL_REQUEST ;
-                if ( hName != null  && (h = hr.find( hName )) != null )
+                if ( hName != null  && (h = getHandler( hName )) != null )
                     h.invoke(msgContext);
 
                 /**
@@ -261,7 +253,7 @@ public class AxisServer extends AxisEngine
                 /* Process the Global Response Chain */
                 /***********************************/
                 hName = Constants.GLOBAL_RECEIVE ;
-                if ( hName != null && (h = hr.find( hName )) != null )
+                if ( hName != null && (h = getHandler( hName )) != null )
                     h.invoke(msgContext);
 
                 /* Process the Transport Specific Response Chain */
@@ -296,16 +288,10 @@ public class AxisServer extends AxisEngine
         String  hName = null ;
         Handler h     = null ;
 
-        /* Do some prep-work.  Get the registries and put them in the */
-        /* msgContext so they can be used by later handlers.          */
-        /**************************************************************/
-        HandlerRegistry hr = getHandlerRegistry();
-        HandlerRegistry sr = getServiceRegistry();
-
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if ( hName != null ) {
-                if ( hr == null || (h = hr.find(hName)) == null ) {
+                if ( (h = getHandler(hName)) == null ) {
                     AxisClassLoader cl = msgContext.getClassLoader();
                     try {
                         category.debug( "Trying to load class: " + hName );
@@ -358,14 +344,13 @@ public class AxisServer extends AxisEngine
                 /* Process the Transport Specific Request Chain */
                 /**********************************************/
                 hName = msgContext.getTransportName();
-                HandlerRegistry tr = getTransportRegistry();
                 SimpleTargetedChain transportChain = null;
 
                 if (category.isInfoEnabled())
                     category.info("AxisServer.editWSDL: Transport = '" +
                                   hName +
                                   "'");
-                if ( hName != null && (h = tr.find( hName )) != null ) {
+                if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
                         h = transportChain.getRequestHandler();
@@ -377,7 +362,7 @@ public class AxisServer extends AxisEngine
                 /* Process the Global Request Chain */
                 /**********************************/
                 hName = Constants.GLOBAL_REQUEST ;
-                if ( hName != null  && (h = hr.find( hName )) != null )
+                if ( hName != null  && (h = getHandler( hName )) != null )
                     h.generateWSDL(msgContext);
 
                 /**
@@ -410,7 +395,7 @@ public class AxisServer extends AxisEngine
                 /* Process the Global Response Chain */
                 /***********************************/
                 hName = Constants.GLOBAL_RECEIVE ;
-                if ( hName != null && (h = hr.find( hName )) != null )
+                if ( hName != null && (h = getHandler( hName )) != null )
                     h.generateWSDL(msgContext);
 
                 /* Process the Transport Specific Response Chain */

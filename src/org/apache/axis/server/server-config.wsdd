@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment name="defaultClientConfig"
+            xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:handler="http://xml.apache.org/axis/wsdd/providers/handler">
+
+ <handler type="java:org.apache.axis.providers.java.RPCProvider" name="RPCDispatcher"/>
+ <handler type="java:org.apache.axis.handlers.http.URLMapper" name="URLMapper"/>
+ <handler type="java:org.apache.axis.providers.java.MsgProvider" name="MsgDispatcher"/>
+ <handler type="java:org.apache.axis.transport.local.LocalResponder" name="LocalResponder"/>
+ <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" name="Authenticate"/>
+
+ <chain name="global.request">
+  <handler type="java:org.apache.axis.handlers.JWSHandler"/>
+ </chain>
+
+ <service name="AdminService">
+  <provider type="java:org.apache.axis.providers.java.MsgProvider" >
+   <java:provider className="org.apache.axis.utils.Admin"/>
+  </provider>
+  <parameter name="methodName" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+ </service>
+ <service name="JWSProcessor">
+  <provider type="java:org.apache.axis.handlers.JWSProcessor">
+   <handler:provider type="java:org.apache.axis.handlers.JWSProcessor"/>
+  </provider>
+ </service>
+ <service name="EchoService">
+  <provider type="java:org.apache.axis.handlers.EchoHandler">
+   <handler:provider type="java:org.apache.axis.handlers.EchoHandler"/>
+  </provider>
+ </service>
+
+</deployment>

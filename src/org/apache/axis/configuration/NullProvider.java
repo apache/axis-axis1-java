@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -52,17 +52,24 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.description;
 
-import javax.xml.rpc.namespace.QName;
+package org.apache.axis.configuration;
+
+import org.apache.axis.AxisEngine;
+import org.apache.axis.ConfigurationProvider;
 
 /**
- * This are proposed interfaces for Service Description. I imagine
- * that we'll use this interface in a simple WSDL implementation.
+ * A do-nothing ConfigurationProvider
+ *
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public interface ServiceBinding {     
-    public QName getQName();
-    public ServiceOperation[] getOperations();
-    public ServiceOperation getOperation(String name);
-    public ServiceOperation getOperation(QName qname);
+public class NullProvider implements ConfigurationProvider
+{
+    public void configureEngine(AxisEngine engine) throws Exception
+    {
+    }
+
+    public void writeEngineConfig(AxisEngine engine) throws Exception
+    {
+    }
 }

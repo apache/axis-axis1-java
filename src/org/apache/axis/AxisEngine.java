@@ -55,6 +55,11 @@
 
 package org.apache.axis;
 
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.deployment.simple.SimpleHandler;
+import org.apache.axis.deployment.wsdd.*;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaProvider;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.Serializer;
@@ -92,18 +97,8 @@ public abstract class AxisEngine extends BasicHandler
     /** Our go-to guy for configuration... */
     protected ConfigurationProvider configProvider;
 
-    /** The handler registry this Engine uses. */
-    protected HandlerRegistry _handlerRegistry = new SupplierRegistry();
-
-    /** The service registry this Engine uses. */
-    protected HandlerRegistry _serviceRegistry = new SupplierRegistry();
-
-    /** A map of protocol names to "client" (sender) transports  */
-    protected SupplierRegistry transportRegistry = new SupplierRegistry();
-
-    /** This Engine's global type mappings     */
-    protected TypeMappingRegistry _typeMappingRegistry =
-                                                 new TypeMappingRegistry();
+    protected DeploymentRegistry myRegistry =
+            new SimpleWsddDeploymentManager();
 
     /** Has the user changed the password yet? */
     protected boolean _hasSafePassword = false;
@@ -144,14 +139,15 @@ public abstract class AxisEngine extends BasicHandler
     public void init() {
         category.debug("Enter: AxisEngine::init" );
 
-        _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
+        getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
         try {
             configProvider.configureEngine(this);
         } catch (Exception e) {
-            // !!! throw new EngineConfigException();
+            e.printStackTrace();
+            throw new NullPointerException("Problem deploying!");
         }
-
+        
         category.debug("Exit: AxisEngine::init" );
     }
 
@@ -231,40 +227,47 @@ public abstract class AxisEngine extends BasicHandler
     {
         this.shouldSaveConfig = shouldSaveConfig;
     }
-
-    public HandlerRegistry getHandlerRegistry()
+    
+    /**
+     * (should throw more specific exceptions)
+     */ 
+    public Handler getHandler(String name) throws AxisFault
     {
-        return _handlerRegistry;
+        return myRegistry.getHandler(new QName(null, name));
+    }
+    
+    /**
+     * (should throw more specific exceptions)
+     */ 
+    public Handler getService(String name) throws AxisFault
+    {
+        return myRegistry.getService(new QName(null, name));
+    }
+    
+    public Handler getTransport(String name) throws AxisFault
+    {
+        return myRegistry.getTransport(new QName(null, name));
     }
 
-    public void setHandlerRegistry(HandlerRegistry registry)
+    public DeploymentRegistry getDeploymentRegistry()
     {
-        _handlerRegistry = registry;
+        return myRegistry;
     }
-
-    public HandlerRegistry getServiceRegistry()
-    {
-        return _serviceRegistry;
-    }
-
-    public void setServiceRegistry(HandlerRegistry registry)
-    {
-        _serviceRegistry = registry;
-    }
-
-    public SupplierRegistry getTransportRegistry()
-    {
-        return transportRegistry;
-    }
-
-    public void setTransportRegistry(SupplierRegistry registry)
-    {
-        transportRegistry = registry;
-    }
-
+    
     public TypeMappingRegistry getTypeMappingRegistry()
     {
-        return _typeMappingRegistry;
+        TypeMappingRegistry tmr = null;
+        try {
+            tmr = myRegistry.getTypeMappingRegistry("");
+            if (tmr == null) {
+                tmr = new TypeMappingRegistry();
+                myRegistry.addTypeMappingRegistry("", tmr);
+            }
+        } catch (DeploymentException e) {
+            category.error(e);
+        }
+        
+        return tmr;
     }
 
     /*********************************************************************
@@ -300,11 +303,11 @@ public abstract class AxisEngine extends BasicHandler
         category.info("Registering type mapping " + qName + " -> " +
                        cls.getName());
         if (deserFactory != null)
-            _typeMappingRegistry.addDeserializerFactory(qName,
+            getTypeMappingRegistry().addDeserializerFactory(qName,
                                                         cls,
                                                         deserFactory);
         if (serializer != null)
-            _typeMappingRegistry.addSerializer(cls, qName, serializer);
+            getTypeMappingRegistry().addSerializer(cls, qName, serializer);
     }
 
     /**
@@ -312,70 +315,89 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void unregisterTypeMapping(QName qName, Class cls)
     {
-        _typeMappingRegistry.removeDeserializer(qName);
-        _typeMappingRegistry.removeSerializer(cls);
+        getTypeMappingRegistry().removeDeserializer(qName);
+        getTypeMappingRegistry().removeSerializer(cls);
     }
 
+    public void deployWSDD(WSDDDocument doc) throws DeploymentException
+    {
+        myRegistry.deploy(doc);
+    }
+    
     /**
      * Deploy a Handler into our handler registry
      */
     public void deployHandler(String key, Handler handler)
+        throws DeploymentException
     {
         handler.setName(key);
-        getHandlerRegistry().add(key, handler);
+        WSDDDocument doc = (WSDDDocument)myRegistry.getConfigDocument();
+        WSDDHandler newHandler = doc.getDeployment().createHandler();
+        newHandler.setName(key);
+        newHandler.setType("java:" + handler.getClass().getName());
+        myRegistry.deployHandler(newHandler);
     }
 
     /**
      * Undeploy (remove) a Handler from the handler registry
      */
     public void undeployHandler(String key)
+        throws DeploymentException
     {
-        getHandlerRegistry().remove(key);
+        myRegistry.removeDeployedItem(new QName("", key));
     }
 
     /**
      * Deploy a Service into our service registry
      */
     public void deployService(String key, SOAPService service)
+        throws DeploymentException
     {
         category.info("Deploying service '" + key + "' into " + this);
         service.setName(key);
         service.setEngine(this);
+        
+        WSDDDocument doc = (WSDDDocument)myRegistry.getConfigDocument();
+        WSDDService newService = doc.getDeployment().createService();
+        newService.setName(key);
+        newService.setOptionsHashtable(service.getOptions());
+        WSDDProvider provider = newService.createProvider(WSDDJavaProvider.class);
+        provider.setAttribute("type", "java:" + service.getPivotHandler().getClass().getName());
+        provider.setProviderAttribute("className", (String)service.getOption("className"));
+        
+        myRegistry.deployHandler(newService);
 
-        getServiceRegistry().add(key, service);
+        myRegistry.deployService(new SimpleHandler(new QName(null, key),
+                                                   service));
     }
 
     /**
      * Undeploy (remove) a Service from the handler registry
      */
     public void undeployService(String key)
+        throws DeploymentException
     {
-        getServiceRegistry().remove(key);
+        myRegistry.removeDeployedItem(new QName("", key));
     }
 
     /**
-     * Deploy a (client) Transport
+     * Deploy a Transport
      */
     public void deployTransport(String key, Handler transport)
+        throws DeploymentException
     {
         transport.setName(key);
-        transportRegistry.add(key, transport);
-    }
-
-    /**
-     * Deploy a (client) Transport
-     */
-    public void deployTransport(String key, Supplier supplier)
-    {
-        transportRegistry.add(key, supplier);
+        myRegistry.deployTransport(new SimpleHandler(new QName("", transport.getName()),
+                                                     transport));
     }
 
     /**
      * Undeploy (remove) a client Transport
      */
     public void undeployTransport(String key)
+        throws DeploymentException
     {
-        transportRegistry.remove(key);
+        myRegistry.removeDeployedItem(new QName("", key));
     }
 
     /**

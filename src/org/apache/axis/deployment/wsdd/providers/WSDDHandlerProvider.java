@@ -52,79 +52,95 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.v2dd;
+package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
-import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.v2dd.providers.V2DDComProvider;
-import org.apache.axis.deployment.v2dd.providers.V2DDScriptProvider;
-import org.apache.axis.providers.BSFProvider;
-import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.providers.ComProvider;
-import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.wsdd.WSDDException;
+import org.apache.axis.deployment.wsdd.WSDDProvider;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import javax.xml.rpc.namespace.QName;
-import java.io.Serializable;
 
 /**
- * This is the class that actually bridges the gap between
- * SOAP 2.x and Axis.  An instance of this class is stored
- * within the registry and a new handler is created that
- * represents the SOAP 2.x service when the newInstance
- * method is called.
+ * This is a simple provider for using Handler-based services which don't
+ * need further configuration (such as Java classes, etc).
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class V2DDDeployableItem implements DeployableItem, Serializable {
-
-    V2DDService service;
-    QName qname;
-    
-    public V2DDDeployableItem(V2DDService service) {
-        this.service = service;
+public class WSDDHandlerProvider
+    extends WSDDProvider
+{
+    /**
+     *
+     * Wrap an extant DOM element in WSDD
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDHandlerProvider(Element e)
+        throws WSDDException
+    {
+        super(e);
     }
-    
-    public QName getQName() {
-        if (qname == null) {
-            qname = new QName(null, service.getID());
-        }
-        return qname;
+
+    /**
+     *
+     * Create a new DOM element and wrap in WSDD
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDHandlerProvider(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n);
+
+		Element specificProvider =
+			d.createElementNS(WSDDConstants.WSDD_HANDLER, "handler:provider");
+		getElement().appendChild(specificProvider);
     }
 
-    public Handler getInstance(DeploymentRegistry registry) {
-        
-        // we would create an instance of the SOAP v2.x
-        // compatible handler here using the service
-        // definition to configure the instance
-        
-        try {
-            SimpleTargetedChain stc = new SimpleTargetedChain();
-            
-            V2DDProvider prov = service.getProvider();
-            String[] methods = prov.getMethods();
+	protected Element getProviderElement()
+		throws WSDDException
+	{
+		Element prov =
+		    (Element) getElement()
+		        .getElementsByTagNameNS(WSDDConstants.WSDD_HANDLER, "provider")
+		        .item(0);
 
-            BasicProvider provider = null;
-            
-            if (prov instanceof V2DDComProvider) provider = new ComProvider();
-            if (prov instanceof V2DDScriptProvider) provider = new BSFProvider();
-            
-            // ROBJ 911 -- this will need to be fixed now that JavaProvider really
-            // exists!  But I am not sure of the intended semantics here.  Nor am
-            // I sure whether any test code exists for this...?!?!
-            if (provider == null) provider = new RPCProvider();
-               
-            provider.setOptions(prov.getOptionsTable());
-            prov.newInstance(provider);
-            
-            for (int n = 0; n < methods.length; n++) {
-                provider.addOperation(methods[n],
-                                      new QName(V2DDConstants.V2DD_NS,
-                                                methods[n]));
-            }
-            
-            return provider;
-        } catch (Exception e) {
-            return null;
+		if (prov == null) {
+		    throw new WSDDException(
+		        "The Handler Provider requires the presence of a handler:provider element in the WSDD");
+		}
+
+		return prov;
+	}
+
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public Handler newProviderInstance(DeploymentRegistry registry)
+        throws Exception
+    {
+        Class _class = getJavaClass();
+
+        if (_class == null) {
+            throw new DeploymentException("No class specified!");
         }
+        
+        if (!(Handler.class.isAssignableFrom(_class))) {
+            throw new DeploymentException("Class " + _class.getName() +
+                " is not a Handler!");
+        }
+
+        return (Handler)_class.newInstance();
     }
 }

@@ -67,5 +67,5 @@ public interface Supplier extends Serializable
      * argument to this method to allow for individual Suppliers being a bit
      * more sharable.
      */
-    public Handler getHandler();
+    public Handler getHandler() throws AxisFault;
 }

@@ -88,9 +88,7 @@ public abstract class WSDDElement
     public WSDDElement(Document doc, Node parent, String name)
         throws WSDDException
     {
-
         element = doc.createElementNS(WSDDConstants.WSDD_NS, name);
-
         validateCandidateElement(element, name);
         parent.appendChild(element);
     }
@@ -388,6 +386,13 @@ public abstract class WSDDElement
         }
 
         children.put(w.getElement(), w);
+        
+        Document doc = element.getOwnerDocument();
+        if (w.getElement().getOwnerDocument().equals(doc))
+            return;
+        
+        Node newEl = element.getOwnerDocument().importNode(w.getElement(), true);
+        element.appendChild(newEl);
     }
 
     /**

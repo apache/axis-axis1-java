@@ -65,7 +65,7 @@ public class WSMLDeployableItem implements DeployableItem {
         return null;
     }
 
-    public Handler newInstance(org.apache.axis.deployment.DeploymentRegistry registry) {
+    public Handler getInstance(org.apache.axis.deployment.DeploymentRegistry registry) {
         return null;
     }
 }

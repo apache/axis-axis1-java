@@ -10,7 +10,6 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
 
 import java.util.Vector;
@@ -36,8 +35,6 @@ public class TestRPC extends TestCase {
         "</soap:Envelope>\n";
 
     private AxisServer engine = new AxisServer();
-    private HandlerRegistry hr;
-    private HandlerRegistry sr;
     private Handler RPCDispatcher;
 
     private String SOAPAction = "urn:reverse";
@@ -45,9 +42,11 @@ public class TestRPC extends TestCase {
     public TestRPC(String name) {
         super(name);
         engine.init();
-        hr = (HandlerRegistry) engine.getHandlerRegistry();
-        sr = (HandlerRegistry) engine.getServiceRegistry();
-        RPCDispatcher = hr.find("RPCDispatcher");
+        try {
+            RPCDispatcher = engine.getHandler("RPCDispatcher");
+        } catch (AxisFault fault) {
+            // ???
+        }
         // Debug.setDebugLevel(5);
     }
 
@@ -108,7 +107,7 @@ public class TestRPC extends TestCase {
         SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "reverseString");
-        sr.add(SOAPAction, reverse);
+        engine.deployService(SOAPAction, reverse);
 
         // invoke the service and verify the result
         assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
@@ -122,7 +121,7 @@ public class TestRPC extends TestCase {
         SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "reverseData");
-        sr.add(SOAPAction, reverse);
+        engine.deployService(SOAPAction, reverse);
 
         // invoke the service and verify the result
         Data input    = new Data(5, "abc", 3);
@@ -138,7 +137,7 @@ public class TestRPC extends TestCase {
         SOAPService tgtSvc = new SOAPService(RPCDispatcher);
         tgtSvc.addOption("className", "test.RPCDispatch.Service");
         tgtSvc.addOption("methodName", "targetService");
-        sr.add(SOAPAction, tgtSvc);
+        engine.deployService(SOAPAction, tgtSvc);
 
         // invoke the service and verify the result
         assertEquals("SOAP Action did not equal the targetService.", SOAPAction, rpc("targetService", new Object[] {}));
@@ -152,7 +151,7 @@ public class TestRPC extends TestCase {
         SOAPService echoInt = new SOAPService(RPCDispatcher);
         echoInt.addOption("className", "test.RPCDispatch.Service");
         echoInt.addOption("methodName", "echoInt");
-        sr.add(SOAPAction, echoInt);
+        engine.deployService(SOAPAction, echoInt);
 
         // invoke the service and verify the result
         assertNull("The result was not null as expected.", rpc("echoInt", new Object[] {null}));

@@ -63,7 +63,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Admin;
@@ -128,7 +127,7 @@ public class AxisServlet extends HttpServlet {
             // (so the config files can't get snooped by a browser)
             FileProvider provider =
                     new FileProvider(getServletContext().getRealPath("/WEB-INF"),
-                                     "server-config.xml");
+                                     Constants.SERVER_CONFIG_FILE);
 
             getServletContext().setAttribute("AxisEngine", new AxisServer(provider));
         }
@@ -142,7 +141,6 @@ public class AxisServlet extends HttpServlet {
 
         ServletContext context = getServletConfig().getServletContext();
         MessageContext msgContext = new MessageContext(engine);
-        HandlerRegistry hr = engine.getHandlerRegistry();
         PrintWriter writer = res.getWriter();
 
         msgContext.setProperty(Constants.MC_HOME_DIR, context.getRealPath("/"));

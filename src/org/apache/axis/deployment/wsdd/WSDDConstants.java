@@ -65,6 +65,9 @@ public class WSDDConstants
     /** XXX */
     public final static String WSDD_JAVA =
         "http://xml.apache.org/axis/wsdd/providers/java";
+    
+    public final static String WSDD_HANDLER =
+        "http://xml.apache.org/axis/wsdd/providers/handler";
 
     /** XXX */
     public final static String WSDD_COM =

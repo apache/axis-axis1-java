@@ -119,7 +119,8 @@ public class GetQuote1 {
 
       /* Get symbol and invoke the service */
       /*************************************/
-      Object result = call.invoke( new Object[] { symbol = args[0] } );
+        Object result = call.invoke( new Object[] { symbol = args[0] } );
+        result = call.invoke( new Object[] { symbol = args[0] } );
 
       return( ((Float) result).floatValue() );
     }

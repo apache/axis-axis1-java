@@ -57,6 +57,9 @@ package org.apache.axis.deployment.wsml;
 
 import org.apache.axis.deployment.DeploymentDocument;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.deployment.DeployableItem;
+import org.w3c.dom.Document;
 
 /**
  * This will eventually be an implementation of the
@@ -76,5 +79,13 @@ public class ServiceMapping implements DeploymentDocument {
     
     public void deploy(DeploymentRegistry registry) {
         
+    }
+
+    public Document getDOMDocument() throws DeploymentException {
+        return null;
+    }
+    
+    public void importItem(DeployableItem item) throws DeploymentException {
+        throw new DeploymentException("ImportItem not implemented!");
     }
 }

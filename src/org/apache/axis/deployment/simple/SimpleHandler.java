@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -52,16 +52,49 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.description;
+
+package org.apache.axis.deployment.simple;
+
+import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.Handler;
 
 import javax.xml.rpc.namespace.QName;
 
 /**
- * This are proposed interfaces for Service Description. I imagine
- * that we'll use this interface in a simple WSDL implementation.
+ * SimpleHandler is just a holder for pre-made Handlers
+ * (just like SimpleSupplier) which follows our DeployableItem interface.
+ * 
+ * This is used for dealing with processing old-style XML config (see
+ * Admin.java for usages).
+ *
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public interface ServiceOperation {     
-    public QName getQName();
-    public ServiceOperationPart[] getParts();
-    public ServiceOperationPart getPart(String name);    
+public class SimpleHandler implements DeployableItem {
+    QName qName;
+    Handler handler;
+    
+    public SimpleHandler(QName qName, Handler handler)
+    {
+        this.qName = qName;
+        this.handler = handler;
+    }
+    /**
+     *
+     * @return XXX
+     */
+    public QName getQName() {
+        return qName;
+    }
+
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public Handler getInstance(DeploymentRegistry registry)
+            throws Exception {
+        return handler;
+    }
 }

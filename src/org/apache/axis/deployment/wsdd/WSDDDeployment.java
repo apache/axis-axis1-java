@@ -65,6 +65,7 @@ import org.w3c.dom.Element;
  */
 public class WSDDDeployment
     extends WSDDElement
+    implements WSDDTypeMappingContainer
 {
 
     /**
@@ -288,7 +289,7 @@ public class WSDDDeployment
     {
         removeChild(victim);
     }
-
+    
     /**
      *
      * @return XXX

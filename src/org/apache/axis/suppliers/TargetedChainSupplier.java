@@ -60,6 +60,8 @@ import org.apache.axis.Handler;
 import org.apache.axis.SimpleChain;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.Supplier;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.log4j.Category;
 
@@ -81,7 +83,7 @@ public class TargetedChainSupplier implements Supplier
     Vector _requestNames;
     Vector _responseNames;
     String _pivotName;
-    HandlerRegistry _registry;
+    AxisEngine _engine;
     
     SimpleTargetedChain _chain = null;
     
@@ -90,17 +92,18 @@ public class TargetedChainSupplier implements Supplier
                                  Vector responseNames,
                                  String pivotName,
                                  Hashtable options,
-                                 HandlerRegistry registry)
+                                 AxisEngine engine)
     {
         _myName = myName;
         _requestNames = requestNames;
         _responseNames = responseNames;
         _pivotName = pivotName;
         _options = options;
-        _registry = registry;
+        _engine = engine;
     }
     
     private void addHandlersToChain(Vector names, Chain chain)
+        throws AxisFault
     {
         if (names == null)
             return;
@@ -108,7 +111,7 @@ public class TargetedChainSupplier implements Supplier
         Enumeration e = names.elements();
         while (e.hasMoreElements()) {
             String hName = (String)e.nextElement();
-            Handler h = _registry.find(hName);
+            Handler h = _engine.getHandler(hName);
             chain.addHandler(h);
         }
     }
@@ -118,7 +121,7 @@ public class TargetedChainSupplier implements Supplier
         return new SimpleTargetedChain();
     }
     
-    public Handler getHandler()
+    public Handler getHandler() throws AxisFault
     {
         if (_chain == null) {
             if (category.isDebugEnabled())
@@ -132,7 +135,7 @@ public class TargetedChainSupplier implements Supplier
             
             if (_requestNames != null && !_requestNames.isEmpty()) {
                 if (_requestNames.size() == 1) {
-                    h = _registry.find((String)_requestNames.elementAt(0));
+                    h = _engine.getHandler((String)_requestNames.elementAt(0));
                     c.setRequestHandler(h);
                 } else {
                     Chain chain = new SimpleChain();
@@ -141,12 +144,12 @@ public class TargetedChainSupplier implements Supplier
                 }
             }
             
-            h = _registry.find(_pivotName);
+            h = _engine.getHandler(_pivotName);
             c.setPivotHandler(h);
 
             if (_responseNames != null && !_responseNames.isEmpty()) {
                 if (_responseNames.size() == 1) {
-                    h = _registry.find((String)_responseNames.elementAt(0));
+                    h = _engine.getHandler((String)_responseNames.elementAt(0));
                     c.setResponseHandler(h);
                 } else {
                     Chain chain = new SimpleChain();

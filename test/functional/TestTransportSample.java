@@ -57,7 +57,7 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.utils.Admin;
+import org.apache.axis.client.AdminClient;
 import org.apache.log4j.Category;
 import samples.transport.FileTest;
 
@@ -72,8 +72,8 @@ public class TestTransportSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "server", "samples/transport/deploy.xml" };
-        Admin.main(args);
+        String[] args = { "-llocal:", "samples/transport/deploy.xml" };
+        AdminClient.main(args);
     }
     
     /* NOT RECOMMENDED -- this calls out to xmltoday.com which is flaky.

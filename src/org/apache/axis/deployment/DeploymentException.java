@@ -54,11 +54,13 @@
  */
 package org.apache.axis.deployment;
 
+import org.apache.axis.AxisFault;
+
 /**
  *
  */
 public class DeploymentException
-    extends Exception
+    extends AxisFault
 {
 
     /**

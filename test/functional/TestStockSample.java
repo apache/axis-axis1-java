@@ -89,7 +89,7 @@ public class TestStockSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/stock/deploy.xml" };
+        String[] args = { "samples/stock/deploy.wsdd" };
         AdminClient.main(args);
     }
     

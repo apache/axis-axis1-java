@@ -121,7 +121,7 @@ public class WSDDHandler
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler newInstance(DeploymentRegistry registry)
+    public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
         return makeNewInstance(registry);

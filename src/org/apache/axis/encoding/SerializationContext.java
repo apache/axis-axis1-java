@@ -266,6 +266,7 @@ public class SerializationContext
         if (Number.class.isAssignableFrom(type)) return true;
         if (Boolean.class.isAssignableFrom(type)) return true;
         if (Date.class.isAssignableFrom(type)) return true;
+        if (Element.class.isAssignableFrom(type)) return true;
         if (type.isPrimitive()) return true;
         return false;
     }

@@ -1,6 +1,7 @@
 package samples.transport ;
 
 import org.apache.axis.AxisEngine;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Transport;
@@ -37,15 +38,9 @@ public class FileTest {
         AxisEngine engine = call.getEngine();
 
         // Manually deploy file sender and file transport for this example
-        engine.deployHandler("FileSender", new FileSender());
-        engine.deployTransport("FileTransport",
-                               new TransportSupplier("FileTransport",
-                                                     null,
-                                                     null,
-                                                     "FileSender",
-                                                     null,
-                                                     engine.getHandlerRegistry())
-                                );
+        SimpleTargetedChain c = new SimpleTargetedChain();
+        c.setPivotHandler(new FileSender());
+        engine.deployTransport("FileTransport", c);
 
         call.setOperationName( "getQuote" );
         call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );

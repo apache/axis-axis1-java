@@ -60,24 +60,26 @@ import javax.xml.rpc.namespace.QName;
 
 
 /**
- * Interface representing an item that is deployable into the
+ * Interface representing a Handler-derived object that is deployable into the
  * Axis Deployment Registry
  */
 public interface DeployableItem
 {
-
     /**
-     *
-     * @return XXX
+     * Get the QName of this item
+     * 
+     * @return the QName of this item
      */
     public QName getQName();
 
     /**
+     * Obtain an instance of this item.
      *
-     * @param registry XXX
-     * @return XXX
-     * @throws Exception XXX
+     * @param registry the DeploymentRegistry to use for any further lookups
+     *                 which may occur as a part of this operation
+     * @return a Handler which is assumedly the correct type
+     * @throws Exception (!!! probably should be more specific)
      */
-    public Handler newInstance(DeploymentRegistry registry)
+    public Handler getInstance(DeploymentRegistry registry)
         throws Exception;
 }

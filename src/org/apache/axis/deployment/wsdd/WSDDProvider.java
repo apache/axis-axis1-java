@@ -59,6 +59,7 @@ import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -90,6 +91,7 @@ public abstract class WSDDProvider
         providers.put(WSDDConstants.WSDD_JAVA, WSDDJavaProvider.class);
         providers.put(WSDDConstants.WSDD_COM, WSDDComProvider.class);
         providers.put(WSDDConstants.WSDD_BSF, WSDDBsfProvider.class);
+        providers.put(WSDDConstants.WSDD_HANDLER, WSDDHandlerProvider.class);
     }
 
     /**
@@ -243,7 +245,7 @@ public abstract class WSDDProvider
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler newInstance(DeploymentRegistry registry)
+    public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
         return newProviderInstance(registry);

@@ -8,9 +8,7 @@
 <!-- This file will be replaced by WSDD once it's ready         -->
 
 <m:deploy xmlns:m="AdminService">
-  <chain   name="bid"     flow="RPCDispatcher" />
-
-  <service name="http://www.soapinterop.org/Bid" pivot="bid" >
+  <service name="http://www.soapinterop.org/Bid" pivot="RPCDispatcher" >
     <option name="className" value="samples.bidbuy.BidService" />
     <option name="methodName" value="RequestForQuote SimpleBuy Buy Ping" />
   </service>
@@ -23,9 +21,7 @@
 
   <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
-  <chain   name="registry"  flow="RPCDispatcher" />
-
-  <service name="http://www.soapinterop.org/Registry" pivot="registry" >
+  <service name="http://www.soapinterop.org/Registry" pivot="RPCDispatcher" >
    <option name="className" value="samples.bidbuy.RegistryService" />
    <option name="methodName" value="Register Unregister Lookup LookupAsString"/>
   </service>

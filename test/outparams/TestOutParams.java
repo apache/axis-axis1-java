@@ -10,7 +10,6 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
@@ -41,14 +40,9 @@ public class TestOutParams extends TestCase {
     private Call client = new Call();
     private AxisServer server = new AxisServer();
 
-    private HandlerRegistry hr;
-    private HandlerRegistry sr;
-
     public TestOutParams(String name) {
         super(name);
         server.init();
-        hr = (HandlerRegistry) server.getHandlerRegistry();
-        sr = (HandlerRegistry) server.getServiceRegistry();
     }
 
     /**
@@ -61,7 +55,7 @@ public class TestOutParams extends TestCase {
         // ??? Do we need to register the handler?
 
         SOAPService service = new SOAPService(h);
-        sr.add(serviceURN, service);
+        server.deployService(serviceURN, service);
 
         // Make sure the local transport uses the server we just configured
         client.setTransport(new LocalTransport(server));

@@ -54,6 +54,8 @@
  */
 package org.apache.axis.deployment;
 
+import org.w3c.dom.Document;
+
 /**
  * Represents a deployment descriptor document of some sort
  */
@@ -67,4 +69,8 @@ public interface DeploymentDocument
      */
     void deploy(DeploymentRegistry registry)
         throws DeploymentException;
+    
+    void importItem(DeployableItem item) throws DeploymentException;
+    
+    Document getDOMDocument() throws DeploymentException;
 }

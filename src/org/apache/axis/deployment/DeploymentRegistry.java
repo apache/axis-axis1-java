@@ -56,7 +56,9 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
@@ -78,7 +80,9 @@ import java.io.Serializable;
 public abstract class DeploymentRegistry
     implements Serializable
 {
-
+    public abstract DeploymentDocument getConfigDocument()
+        throws DeploymentException;
+    
     /**
      * retrieve the global configuration for the axis engine
      * @return XXX
@@ -93,7 +97,25 @@ public abstract class DeploymentRegistry
      * @return XXX
      * @throws DeploymentException XXX
      */
-    public abstract Handler getDeployedItem(QName qname)
+    public abstract Handler getHandler(QName qname)
+        throws DeploymentException;
+
+    /**
+     * retrieve an instance of the named handler
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract Handler getService(QName qname)
+        throws DeploymentException;
+
+    /**
+     * retrieve an instance of the named transport
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract Handler getTransport(QName qname)
         throws DeploymentException;
 
     /**
@@ -138,6 +160,30 @@ public abstract class DeploymentRegistry
      * @throws DeploymentException XXX
      */
     public abstract void deployItem(DeployableItem item)
+        throws DeploymentException;
+
+    /**
+     * deploy the given item
+     * @param item XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void deployService(DeployableItem item)
+        throws DeploymentException;
+
+    /**
+     * deploy the given item
+     * @param item XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void deployHandler(DeployableItem item)
+        throws DeploymentException;
+
+    /**
+     * deploy the given item
+     * @param item XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void deployTransport(DeployableItem item)
         throws DeploymentException;
 
     /**
