@@ -17,6 +17,7 @@ public class PackageTests extends TestCase {
         TestSuite suite = new TestSuite();
 
         suite.addTestSuite(TestRPC.class);
+        suite.addTestSuite(TestSerializedRPC.class);
 
         return suite;
     }
