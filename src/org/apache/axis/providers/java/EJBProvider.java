@@ -73,7 +73,7 @@ import java.lang.reflect.Method;
  *
  * @author Carl Woolf (cwoolf@macromedia.com)
  */
-public class EJBProvider extends RPCProvider 
+public class EJBProvider extends RPCProvider
 {
     private static final String beanNameOption = "beanJndiName";
     private static final String allowedMethodsOption = "allowedMethods";
@@ -105,6 +105,22 @@ public class EJBProvider extends RPCProvider
                                                    serviceHandler);
             String password = (String)getStrOption(jndiPassword,
                                                    serviceHandler);
+
+            if (null == username)
+            {
+                username =
+                    msgContext.getStrProp( MessageContext.USERID );
+                password =
+                    msgContext.getStrProp( MessageContext.PASSWORD );
+            }
+            if (null == username)
+            {
+                throw new IllegalArgumentException("Null user in EJBProvider");
+            }
+
+            if (password == null)
+                password = "";
+
             String factoryClass = (String)getStrOption(jndiContextClass,
                                                        serviceHandler);
             String contextUrl = (String)getStrOption(jndiURL,
@@ -142,10 +158,10 @@ public class EJBProvider extends RPCProvider
         Class homeClass = home.getClass();
         Class params[] = new Class[0];
         Method createMethod = homeClass.getMethod("create", params);
-        
+
         Object args[] = new Object[0];
         Object result = createMethod.invoke(home, args);
-        
+
         return result;
     }
 
@@ -177,7 +193,7 @@ public class EJBProvider extends RPCProvider
     {
         return allowedMethodsOption;
     }
-    
+
     /**
      * Get a String option by looking first in the service options,
      * and then at the Handler's options.  This allows defaults to be
