@@ -57,9 +57,9 @@ package javax.xml.rpc.holders;
 /**
  * Class DoubleHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class DoubleHolder implements java.io.Serializable {
+public final class DoubleHolder implements Holder {
 
     /** Field _value           */
     public double value;

@@ -59,9 +59,9 @@ import java.util.Calendar;
 /**
  * Class CalendarHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class CalendarHolder implements java.io.Serializable {
+public final class CalendarHolder implements Holder {
 
     /** Field _value           */
     public Calendar value;

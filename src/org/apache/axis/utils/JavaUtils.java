@@ -463,8 +463,18 @@ public class JavaUtils
      * @return class of held type or null
      */
     public static Class getHolderValueType(Class type) {
-        if (type.getName() != null &&
-            type.getName().endsWith("Holder")) {
+        if (type != null) {
+            Class[] intf = type.getInterfaces();
+            boolean isHolder = false;
+            for (int i=0; i<intf.length; i++) {
+                if (intf[i] == javax.xml.rpc.holders.Holder.class) {
+                    isHolder = true;
+                }
+            }
+            if (isHolder == false) {
+                return null;
+            }
+
             // Holder is supposed to have a public value field.
             java.lang.reflect.Field field;
             try {
@@ -485,6 +495,9 @@ public class JavaUtils
      * @return value object 
      */
     public static Object getHolderValue(Object holder) throws HolderException {
+        if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
+            throw new HolderException();
+        }            
         try {
             Field valueField = holder.getClass().getField("value");
             return valueField.get(holder);
@@ -499,6 +512,9 @@ public class JavaUtils
      * @param value is the object value 
      */
     public static void setHolderValue(Object holder, Object value) throws HolderException {
+        if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
+            throw new HolderException();
+        }            
         try {
             Field valueField = holder.getClass().getField("value");
             if (valueField.getType().isPrimitive()) {

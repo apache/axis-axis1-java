@@ -87,7 +87,7 @@ public class JavaHolderWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         String holderType = Utils.getJavaLocalName(type.getName());
-        pw.println("public final class " + className + " implements java.io.Serializable {");
+        pw.println("public final class " + className + " implements javax.xml.rpc.holders.Holder {");
         pw.println("    public " + holderType + " value;");
         pw.println();
         pw.println("    public " + className + "() {");

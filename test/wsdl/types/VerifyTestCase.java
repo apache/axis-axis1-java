@@ -11,21 +11,21 @@ import javax.xml.rpc.JAXRPCException;
 
 import javax.xml.rpc.holders.BigDecimalHolder;
 import javax.xml.rpc.holders.BigIntegerHolder;
-import javax.xml.rpc.holders.BooleanClassHolder;
+import javax.xml.rpc.holders.BooleanWrapperHolder;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.ByteArrayHolder;
-import javax.xml.rpc.holders.ByteClassArrayHolder;
+import javax.xml.rpc.holders.ByteWrapperArrayHolder;
 import javax.xml.rpc.holders.ByteHolder;
 import javax.xml.rpc.holders.DateHolder;
-import javax.xml.rpc.holders.DoubleClassHolder;
+import javax.xml.rpc.holders.DoubleWrapperHolder;
 import javax.xml.rpc.holders.DoubleHolder;
-import javax.xml.rpc.holders.FloatClassHolder;
+import javax.xml.rpc.holders.FloatWrapperHolder;
 import javax.xml.rpc.holders.FloatHolder;
-import javax.xml.rpc.holders.IntegerClassHolder;
+import javax.xml.rpc.holders.IntegerWrapperHolder;
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.LongHolder;
 import javax.xml.rpc.holders.QNameHolder;
-import javax.xml.rpc.holders.ShortClassHolder;
+import javax.xml.rpc.holders.ShortWrapperHolder;
 import javax.xml.rpc.holders.ShortHolder;
 import javax.xml.rpc.holders.StringHolder;
 
@@ -97,13 +97,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new ByteArrayHolder(new byte[]{(byte) 8}),
                     new ByteArrayHolder(new byte[]{(byte) 9}),
                     new StringHolder("ho hi"),
-                    new BooleanClassHolder(new Boolean(true)),
-                    new FloatClassHolder(new Float(10)),
-                    new DoubleClassHolder(new Double(11)),
+                    new BooleanWrapperHolder(new Boolean(true)),
+                    new FloatWrapperHolder(new Float(10)),
+                    new DoubleWrapperHolder(new Double(11)),
                     new BigDecimalHolder(new java.math.BigDecimal(12)),
-                    new IntegerClassHolder(new Integer(13)),
-                    new ShortClassHolder(new Short((short) 14)),
-                    new ByteClassArrayHolder(new Byte[]{new Byte((byte) 15)}));
+                    new IntegerWrapperHolder(new Integer(13)),
+                    new ShortWrapperHolder(new Short((short) 14)),
+                    new ByteWrapperArrayHolder(new Byte[]{new Byte((byte) 15)}));
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -124,13 +124,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new ByteArrayHolder(),
                     new ByteArrayHolder(),
                     new StringHolder(),
-                    new BooleanClassHolder(),
-                    new FloatClassHolder(),
-                    new DoubleClassHolder(),
+                    new BooleanWrapperHolder(),
+                    new FloatWrapperHolder(),
+                    new DoubleWrapperHolder(),
                     new BigDecimalHolder(),
-                    new IntegerClassHolder(),
-                    new ShortClassHolder(),
-                    new ByteClassArrayHolder());
+                    new IntegerWrapperHolder(),
+                    new ShortWrapperHolder(),
+                    new ByteWrapperArrayHolder());
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -266,7 +266,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
-            binding.anyInout(new javax.xml.rpc.holders.ObjectClassHolder(new java.lang.String("yo ho ho")));
+            binding.anyInout(new javax.xml.rpc.holders.ObjectHolder(new java.lang.String("yo ho ho")));
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -413,21 +413,21 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         try {
             java.lang.Boolean sendValue = new java.lang.Boolean(true);
-            BooleanClassHolder bh = new BooleanClassHolder(sendValue);
+            BooleanWrapperHolder bh = new BooleanWrapperHolder(sendValue);
             java.lang.Boolean actual = binding.methodSoapBoolean(sendValue, bh);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
             java.lang.Float sendValue = new java.lang.Float(93049.0394F);
-            FloatClassHolder fh = new FloatClassHolder(sendValue);
+            FloatWrapperHolder fh = new FloatWrapperHolder(sendValue);
             java.lang.Float actual = binding.methodSoapFloat(sendValue, fh);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
             java.lang.Double sendValue = new java.lang.Double(193049.0394D);
-            DoubleClassHolder dh = new DoubleClassHolder(sendValue);
+            DoubleWrapperHolder dh = new DoubleWrapperHolder(sendValue);
             java.lang.Double actual = binding.methodSoapDouble(sendValue, dh);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
@@ -441,14 +441,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         try {
             java.lang.Integer sendValue = new java.lang.Integer(94);
-            IntegerClassHolder ich = new IntegerClassHolder(sendValue);
+            IntegerWrapperHolder ich = new IntegerWrapperHolder(sendValue);
             java.lang.Integer actual = binding.methodSoapInt(sendValue, ich);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
             java.lang.Short sendValue = new java.lang.Short((short) 5);
-            ShortClassHolder sch = new ShortClassHolder(sendValue);
+            ShortWrapperHolder sch = new ShortWrapperHolder(sendValue);
             java.lang.Short actual = binding.methodSoapShort(sendValue, sch);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
@@ -456,7 +456,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
 // Comment out for now because causes compile errors
 //        try {
 //            Byte[] sendValue = {new java.lang.Byte((byte) 10), new java.lang.Byte((byte) 9)};
-//            ByteClassArrayHolder bach = new ByteClassArrayHolder(sendValue);
+//            ByteWrapperArrayHolder bach = new ByteWrapperArrayHolder(sendValue);
 //            Byte[] actual = binding.methodSoapBase64(sendValue, bach);
 //        } catch (java.rmi.RemoteException re) {
 //            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );

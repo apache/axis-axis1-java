@@ -57,9 +57,9 @@ package javax.xml.rpc.holders;
 /**
  * Class FloatHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class FloatHolder implements java.io.Serializable {
+public final class FloatHolder implements Holder {
 
     /** Field _value           */
     public float value;

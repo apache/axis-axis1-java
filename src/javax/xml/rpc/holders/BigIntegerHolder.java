@@ -59,9 +59,9 @@ import java.math.BigInteger;
 /**
  * Class BigIntegerHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class BigIntegerHolder implements java.io.Serializable {
+public final class BigIntegerHolder implements Holder {
 
     /** Field _value           */
     public BigInteger value;

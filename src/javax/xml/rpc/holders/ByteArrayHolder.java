@@ -57,9 +57,9 @@ package javax.xml.rpc.holders;
 /**
  * Class ByteArrayHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class ByteArrayHolder implements java.io.Serializable {
+public final class ByteArrayHolder implements Holder {
 
     /** Field _value           */
     public byte[] value;
