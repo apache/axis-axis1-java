@@ -329,13 +329,9 @@ public class Message {
       is = new InputSource(new StringReader(getAsString()));
     }
     
-    // ThreadedSAXAdapter parser = 
-    //    new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
     if (msgContext == null)
         msgContext = new MessageContext();
-    SAXAdapter parser = 
-        new SAXAdapter(new org.apache.xerces.parsers.SAXParser(), is, 
-                       msgContext);
+    SAXAdapter parser = new SAXAdapter(is, msgContext);
     SOAPEnvelope env = parser.getEnvelope();
     env.setMessageType(messageType);
     

@@ -8,7 +8,6 @@ import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
 import org.xml.sax.InputSource;
-import org.apache.xerces.parsers.SAXParser;
 import java.io.*;
 import java.util.*;
 
