@@ -380,8 +380,11 @@ public class AdminClient
             } else {
                 System.exit(1);
             }
+	} catch (AxisFault ae) {
+            System.err.println(Messages.getMessage("exception00") + " " + ae.dumpToDisplayString());
+            System.exit(1);
         } catch (Exception e) {
-            System.err.println(Messages.getMessage("exception00") + ": " + e);
+            System.err.println(Messages.getMessage("exception00") + " " + e.getMessage());
             System.exit(1);
         }
     }
