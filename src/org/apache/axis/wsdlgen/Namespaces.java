@@ -77,6 +77,21 @@ public class Namespaces extends HashMap {
      * Get the namespaace for the given package  If there is no entry in the HashMap for
      * this namespace, create one.
      * @param key String representing packagename
+     * @return the namespace either created or existing
+     */
+    public String getCreate(String key) {
+        Object value = super.get(key);
+        if (value == null) {
+            value = makeNamespace((String) key);
+            put(key, value, null);
+        }
+        return (String) value;
+    }
+
+    /**
+     * Get the namespaace for the given package  If there is no entry in the HashMap for
+     * this namespace, create one.
+     * @param key String representing packagename
      * @param prefix the prefix to use for the generated namespace
      * @return the namespace either created or existing
      */
@@ -101,18 +116,18 @@ public class Namespaces extends HashMap {
     public Object put(Object key, Object value, String prefix) {
         if (prefix != null)
             namespacePrefixMap.put(value, prefix);
+        else
+            getCreatePrefix((String)value);
         return super.put(key, value);
     }
 
     /**
-     * clears existing entries. adds an entry to the packagename/namespace HashMap
+     * adds an entry to the packagename/namespace HashMap
      * for each of the entry in the map.  In addition, also add an entries in the
      * auxillary namespace/prefix HashMap
      * @param map packageName/namespace map
      */
     public void putAll(Map map) {
-        super.clear();
-        namespacePrefixMap.clear();
         Iterator i = map.keySet().iterator();
         while (i.hasNext()) {
             Object key = i.next();
@@ -140,6 +155,21 @@ public class Namespaces extends HashMap {
      */
     public void putPrefix(String namespace, String prefix) {
         namespacePrefixMap.put(namespace, prefix);
+    }
+
+    /**
+     * adds an entry to the namespace / prefix HashMap
+     * for each of the entry in the map.
+     *
+     * @param map packageName/namespace map
+     */
+    public void putAllPrefix(Map map) {
+        Iterator i = namespacePrefixMap.keySet().iterator();
+        while (i.hasNext()) {
+            Object key = i.next();
+            String prefix = (String) map.get(key);
+            put(key, prefix);
+        }
     }
 
     /**

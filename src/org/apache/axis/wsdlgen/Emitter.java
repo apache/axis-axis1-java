@@ -88,6 +88,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
@@ -106,12 +107,17 @@ public class Emitter {
     private String serviceName = null;
     private String description;
     private TypeMappingRegistry reg;
+    private Namespaces namespaces;
 
     private Definition def;
     private Document doc;
     private String clsName;
     private ArrayList encodingList;
-    private Namespaces namespaceMap;
+    private Types types;
+
+    public Emitter () {
+      namespaces = new Namespaces();
+    }
 
     /**
      * Generates a WSDL document for a given <code>Class</code> and
@@ -193,6 +199,7 @@ public class Emitter {
      */
     public void emit(Class cls, String allowedMethods, String filename) throws Exception {
         Document doc = emit(cls, allowedMethods);
+        types.insertTypesFragment(doc);
         XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename)));
     }
 
@@ -237,19 +244,18 @@ public class Emitter {
         if (targetNamespace == null)
             targetNamespace = Namespaces.makeNamespace(cls.getName());
 
-        namespaceMap = new Namespaces();
-        namespaceMap.put(cls.getName(), targetNamespace, "tns");
+        namespaces.put(cls.getName(), targetNamespace, "tns");
 
+        writeDefinitions();
+        types = new Types(def, reg, namespaces, targetNamespace);
         Binding binding = writeBinding();
         writePortType(binding);
         writeService(binding);
-        return doc;
+        return WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
     }
 
     private void writeDefinitions() throws Exception {
         def = WSDLFactory.newInstance().newDefinition();
-        doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
-
         def.setTargetNamespace(targetNamespace);
 
         def.addNamespace("tns", targetNamespace);
@@ -292,7 +298,7 @@ public class Emitter {
         service.addPort(port);
     }
 
-    private void writePortType(Binding binding) {
+    private void writePortType(Binding binding) throws Exception{
 
         PortType portType = def.createPortType();
         portType.setUndefined(false);
@@ -316,7 +322,7 @@ public class Emitter {
         binding.setPortType(portType);
     }
 
-    private void writeMessages(Operation oper, Method method) {
+    private void writeMessages(Operation oper, Method method) throws Exception{
         Input input = def.createInput();
 
         Message msg = writeRequestMessage(method);
@@ -367,7 +373,7 @@ public class Emitter {
         binding.addBindingOperation(bindingOper);
     }
 
-    private Message writeRequestMessage(Method method)
+    private Message writeRequestMessage(Method method) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -392,7 +398,7 @@ public class Emitter {
         return msg;
     }
 
-    private Message writeResponseMessage(Method method)
+    private Message writeResponseMessage(Method method) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -408,31 +414,17 @@ public class Emitter {
         return msg;
     }
 
-    private void writePartToMessage(Message msg, String name, Class param)
+    public void writePartToMessage(Message msg, String name, Class param) throws Exception
     {
         Part part = def.createPart();
-        QName qName = reg.getTypeQName(param);
-        if (qName == null) {
-            qName = new QName("java", param.getName());
+        javax.wsdl.QName typeQName = types.writePartType(param);
+        if (typeQName != null) {
+            part.setTypeName(typeQName);
+            part.setName(name);
         }
-        String pref = def.getPrefix(qName.getNamespaceURI());
-        if (pref == null) {
-            int i = 1;
-            while (def.getNamespace("ns" + i) != null) {
-                i++;
-            }
-            def.addNamespace("ns" + i, qName.getNamespaceURI());
-        }
-
-        javax.wsdl.QName typeQName =
-                new javax.wsdl.QName(qName.getNamespaceURI(),
-                                     qName.getLocalPart());
-
-        part.setTypeName(typeQName);
-        part.setName(name);
-
         msg.addPart(part);
     }
+
     /*
      * Return a message QName which has not already been defined in the WSDL
      */
@@ -500,6 +492,23 @@ public class Emitter {
      */
     public void setTargetNamespace(String targetNamespace) {
         this.targetNamespace = targetNamespace;
+    }
+
+    /**
+     * get the packagename to namespace map
+     * @return <code>Map</code>
+     */
+    public Map getNamespaceMap() {
+        return namespaces;
+    }
+
+    /**
+     * Set the packagename to namespace map with the given map
+     * @param map packagename/namespace <code>Map</code>
+     */
+    public void setNamespaceMap(Map map) {
+        if ((map != null) && (map.isEmpty()))
+            namespaces.putAll(map);
     }
 
     /**
