@@ -30,23 +30,22 @@
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
                output="build/work"
                testcase="no">
-        <mapping namespace="http://soapinterop.org/" package="soap.interop"/>
+        <mapping namespace="http://soapinterop.org/" package="interop.test"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="interop.test"/>
     </wsdl2java>
-    <!--
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl"
                output="build/work"
                testcase="no">
-        <mapping namespace="http://soapinterop.org/" package="soap.interopB"/>
+        <mapping namespace="http://soapinterop.org/" package="interop.testb"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="interop.testb"/>
     </wsdl2java>
-    <wsdl2java url="http://www.whitemesa.net/wsdl/std/InteropTestC.wsdl"
-               output="build/work"
-               testcase="no">
-        <mapping namespace="*" package="org.soapinterop.echoheadersvc">
-    </wsdl2java>
+    <!--
     <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
                output="build/work"
-               testcase="no">
-        <mapping namespace="http://soapinterop.org/" package="org.soapinterop.echoheadersvc"/>
+               testcase="no"
+               noimports="no">
+        <mapping namespace="http://soapinterop.org/" package="interop.echoheadersvc"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="interop.echoheadersvc"/>
     </wsdl2java>
     -->
   </target>

@@ -1400,7 +1400,7 @@ public class Emitter {
      */
     private void writeService(Service service) throws IOException {
         QName serviceQName = service.getQName();
-        String serviceName = xmlNameToJava(serviceQName.getLocalPart());
+        String serviceName = Utils.capitalize(xmlNameToJava(serviceQName.getLocalPart()));
         PrintWriter servicePW = printWriter(serviceQName, null, "java", "Generating service class:  ");
 
         TestCaseEmitter testFactory = null;
