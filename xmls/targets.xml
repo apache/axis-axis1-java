@@ -2,7 +2,7 @@
         <basename property="fileName" file="${file}"/>
         <dirname property="dirName" file="${file}"/>
         <echo message="Dir: ${dirName} File: ${fileName}"/>
-        <ant antfile="${file}" target="compile" />
+        <ant antfile="${file}" target="run" />
   </target>
 
   <target name="buildThem">
