@@ -93,21 +93,11 @@ public class SimpleAxisServer {
     private static final String AXIS_ENGINE = "AxisEngine" ;
 
     /**
-     * Server process.
-     * @parms args[1] port number (default is 8080)
+     * Process SOAP requests.  Terminates upon IOException on 
+     * ServerSocket.accept.
+     * @param ss ServerSocket to listen to
      */
-    public static void main(String args[]) {
-
-        // Create the server socket
-        ServerSocket ss;
-
-        try {
-            int port = (args.length==0)? 8080 : Integer.parseInt(args[0]);
-            ss = new ServerSocket(port);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+    public void run(ServerSocket ss) {
 
         // create an Axis server
         AxisServer engine = new AxisServer();
@@ -146,7 +136,11 @@ public class SimpleAxisServer {
             msgContext.setProperty(MessageContext.TRANS_INPUT, transportInName);
             msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
 	    try {
-	        socket = ss.accept();
+                try {
+	            socket = ss.accept();
+                } catch (IOException ioe) {
+                    break;
+                }
 
                 // assume the best
                 byte[] status = OK;
@@ -230,9 +224,9 @@ public class SimpleAxisServer {
     private static final byte actionHeader[] = "soapaction: \"".getBytes();
     private static final int actionLen = actionHeader.length;
 
-    // static buffer for IO - note: not reentrant
-    private final static int BUFSIZ = 4096;
-    private static byte buf[] = new byte[BUFSIZ];
+    // simple buffer per server
+    private final int BUFSIZ = 4096;
+    private byte buf[] = new byte[BUFSIZ];
 
     /**
      * Read a single line from the input stream
@@ -241,7 +235,7 @@ public class SimpleAxisServer {
      * @param off       starting offset into the byte array
      * @param len       maximum number of bytes to read
      */
-    private static int readLine(InputStream is, byte[] b, int off, int len) 
+    private int readLine(InputStream is, byte[] b, int off, int len) 
         throws IOException 
     {
         int count = 0, c;
@@ -261,7 +255,7 @@ public class SimpleAxisServer {
      * @param soapAction StringBuffer to return the soapAction into
      * @return Content-Length
      */
-    private static int parseHeaders(InputStream is, StringBuffer soapAction)
+    private int parseHeaders(InputStream is, StringBuffer soapAction)
       throws IOException 
     {
         int n;
@@ -308,7 +302,7 @@ public class SimpleAxisServer {
      * @param out       OutputStream to be written to
      * @param value     Integer value to be written.
      */
-    private static void putInt(OutputStream out, int value)
+    private void putInt(OutputStream out, int value)
         throws IOException
     {
         int len = 0;
@@ -337,4 +331,24 @@ public class SimpleAxisServer {
         // write the result
         out.write(buf, offset, len);
     }
+
+    /**
+     * Server process.
+     * @parms args[1] port number (default is 8080)
+     */
+    public static void main(String args[]) {
+
+        SimpleAxisServer sas = new SimpleAxisServer();
+
+        try {
+            int port = (args.length==0)? 8080 : Integer.parseInt(args[0]);
+            ServerSocket ss = new ServerSocket(port);
+            sas.run(ss);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+     }
+
 }
