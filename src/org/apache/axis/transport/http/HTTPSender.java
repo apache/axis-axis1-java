@@ -356,7 +356,7 @@ public class HTTPSender extends BasicHandler {
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_USER_AGENT)   //Tell who we are.
                 .append( ": ")
-                .append(Constants.AXIS_VERSION)
+                .append(Messages.getMessage("axisUserAgent"))
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_HOST)  //used for virtual connections
                 .append(": ")
