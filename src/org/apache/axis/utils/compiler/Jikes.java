@@ -132,26 +132,26 @@ public class Jikes extends AbstractCompiler
      * @return A string array containing compilation arguments
      */
     protected String[] toStringArray(List arguments) {
-      int i;
+        int i;
 
-      for (i = 0; i < arguments.size(); i++) {
-        String arg = (String) arguments.get(i);
-        if (arg.equals("-sourcepath")) {
-          // Remove -sourcepath option. Jikes does not understand that.
-          arguments.remove(i);
-          arguments.remove(i);
-          break;
+        for (i = 0; i < arguments.size(); i++) {
+            String arg = (String) arguments.get(i);
+            if (arg.equals("-sourcepath")) {
+                // Remove -sourcepath option. Jikes does not understand that.
+                arguments.remove(i);
+                arguments.remove(i);
+                break;
+            }
         }
-      }
 
-      String[] args = new String[arguments.size() + 1];
-      for (i = 0; i < arguments.size(); i++) {
-        args[i] = (String) arguments.get(i);
-      }
+        String[] args = new String[arguments.size() + 1];
+        for (i = 0; i < arguments.size(); i++) {
+            args[i] = (String) arguments.get(i);
+        }
 
-      args[i] = file;
+        args[i] = file;
 
-      return args;
+        return args;
     }
 
     /**
@@ -290,6 +290,6 @@ public class Jikes extends AbstractCompiler
     }
 
     public String toString() {
-        return "IBM Jikes Compiler";
+        return JavaUtils.getMessage("ibmJikes");
     }
 }

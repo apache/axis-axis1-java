@@ -198,8 +198,8 @@ public class FileProvider implements EngineConfiguration {
             }
 
             if (myInputStream == null) {
-                throw new ConfigurationException("No engine configuration " +
-                                                 "file - aborting!");
+                throw new ConfigurationException(
+                        JavaUtils.getMessage("noConfigFile"));
             }
 
             WSDDDocument doc = new WSDDDocument(XMLUtils.

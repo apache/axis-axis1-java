@@ -284,7 +284,7 @@ public class RB {
         }
 
         if (msg == null) {
-            throw new MissingResourceException("Can't find resource key \"" + key +
+            throw new MissingResourceException("Cannot find resource key \"" + key +
                                                "\" in base name " + basePropertyFileName,
                                                basePropertyFileName, key);
         }
@@ -322,7 +322,7 @@ public class RB {
             p = merge(p, loadProperties(basePropertyFileName, loader));
 
             if (p == null) {
-                throw new MissingResourceException("Can't find resource for base name " +
+                throw new MissingResourceException("Cannot find resource for base name " +
                                                    basePropertyFileName, basePropertyFileName, "");
             }
 

@@ -86,7 +86,7 @@ public class CompilerFactory {
                     log.error(JavaUtils.getMessage("exception00"), e);
                 }
             }
-            log.debug("Using default compiler Javac");
+            log.debug(JavaUtils.getMessage("defaultCompiler"));
             Compiler compiler = new Javac();
             return compiler;
         }

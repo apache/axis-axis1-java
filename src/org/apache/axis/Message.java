@@ -232,8 +232,8 @@ public class Message {
             }
         }
 
-        log.debug("Attachment support is enabled" + 
-                       attachmentSupportEnabled);
+        log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
+                attachmentSupportEnabled);
         return attachmentSupportEnabled;
     }
 

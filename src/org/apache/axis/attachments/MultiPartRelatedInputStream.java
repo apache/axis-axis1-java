@@ -58,6 +58,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.attachments.ManagedMemoryDataSource;
 import javax.activation.DataHandler;
 import org.apache.axis.Part;
+import org.apache.axis.utils.JavaUtils;
 import javax.mail.internet.MimeUtility;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,8 +133,9 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
                 if (!(found = java.util.Arrays.equals(boundaryMarker[current & 0x1], boundary))) {
                     System.arraycopy(boundaryMarker[current & 0x1], 1, boundaryMarker[(current + 1) & 0x1], 0, boundaryMarker[0].length - 1);
                     if ( is.read(boundaryMarker[(current + 1) & 0x1], boundaryMarker[0].length - 1, 1) < 1) {
-                        throw new org.apache.axis.AxisFault( "Error in MIME data stream start boundary not found expected:\"" +
-                                new String(boundary) );
+                        throw new org.apache.axis.AxisFault(
+                                JavaUtils.getMessage("mimeErrorNoBoundary",
+                                new String(boundary)));
                     }
                 }
             }
@@ -216,7 +218,8 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
             while ( null != boundaryDelimitedStream &&  rootPartContentId != null && !rootPartContentId.equals( contentId) );
 
             if (boundaryDelimitedStream  == null ) {
-                throw new org.apache.axis.AxisFault( "Root part containing SOAP envelope not found.  contentId=" + rootPartContentId);
+                throw new org.apache.axis.AxisFault(
+                        JavaUtils.getMessage("noRoot", rootPartContentId));
             }
 
             soapStreamBDS= boundaryDelimitedStream;
@@ -227,13 +230,16 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
         //Read from the input stream all attachments prior to the root part.
         }
         catch (javax.mail.internet.ParseException e) {
-            throw new org.apache.axis.AxisFault( "Error in parsing mime data stream " + e.getMessage());
+            throw new org.apache.axis.AxisFault(
+                    JavaUtils.getMessage("mimeErrorParsing", e.getMessage()));
         }
         catch ( java.io.IOException e) {
-            throw new org.apache.axis.AxisFault( "Error in reading data stream " + e.getMessage());
+            throw new org.apache.axis.AxisFault(
+                    JavaUtils.getMessage("readError", e.getMessage()));
         }
         catch ( javax.mail.MessagingException e) {
-            throw new org.apache.axis.AxisFault( "Error in reading data stream " + e.getMessage());
+            throw new org.apache.axis.AxisFault(
+                    JavaUtils.getMessage("readError", e.getMessage()));
         }
     }
 
@@ -247,7 +253,9 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
         if ( null == ret) {
             ret = readTillFound(id);
         }
-        log.debug("getAttachmentByReference(\"" + id + "\") returns" + (ret == null? "null" : ret.toString()));
+        log.debug(JavaUtils.getMessage("return02",
+                "getAttachmentByReference(\"" + id + "\"",
+                (ret == null ? "null" : ret.toString())));
         return ret;
     }
 
@@ -395,11 +403,17 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
      */
 
     public int read(byte[] b, int off, int len) throws java.io.IOException {
-        if (closed) throw new java.io.IOException("Stream closed.");
-        if (eos) return -1;
+        if (closed) {
+            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+        }
+        if (eos) {
+            return -1;
+        }
         int read = soapStream.read(b, off, len);
 
-        if (read < 0) eos = true;
+        if (read < 0) {
+            eos = true;
+        }
         return read;
     }
 
@@ -408,11 +422,16 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
     }
 
     public int read() throws java.io.IOException {
-        if (closed) throw new java.io.IOException("Stream closed.");
-        if (eos) return -1;
+        if (closed) {
+            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+        }
+        if (eos) {
+            return -1;
+        }
         int ret = soapStream.read();
-
-        if ( ret < 0) eos = true;
+        if (ret < 0) {
+            eos = true;
+        }
         return ret;
     }
 

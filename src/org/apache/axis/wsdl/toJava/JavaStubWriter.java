@@ -193,16 +193,17 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("                call.setProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0) {
-            pw.println("            // All the type mapping information is registered");
-            pw.println("            // when the first call is made.");
-            pw.println("            // The type mapping information is actually registered in");
-            pw.println("            // the TypeMappingRegistry of the service, which");
-            pw.println("            // is the reason why registration is only needed for the first call.");
+            pw.println("            // " + JavaUtils.getMessage("typeMap00"));
+            pw.println("            // " + JavaUtils.getMessage("typeMap01"));
+            pw.println("            // " + JavaUtils.getMessage("typeMap02"));
+            pw.println("            // " + JavaUtils.getMessage("typeMap03"));
+            pw.println("            // " + JavaUtils.getMessage("typeMap04"));
             pw.println("            if (firstCall()) {");
             
             // Hack alert - we need to establish the encoding style before we register type mappings due
             // to the fact that TypeMappings key off of encoding style
-            pw.println("                // must set encoding style before registering serializers");
+            pw.println("                // "
+                    + JavaUtils.getMessage("mustSetStyle"));
             if (bEntry.hasLiteral()) {
                 pw.println("                call.setEncodingStyle(null);");
             } else {

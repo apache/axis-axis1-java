@@ -131,8 +131,10 @@ public class MimeUtils
                 javax.activation.FileDataSource fdh = (javax.activation.FileDataSource) ds;
                 java.io.File df = fdh.getFile();
 
-                if (!df.exists())
-                    throw new RuntimeException( "File for dataHandler does not exist" + df.getAbsolutePath());
+                if (!df.exists()) {
+                    throw new RuntimeException(
+                            JavaUtils.getMessage("noFile", df.getAbsolutePath()));
+                }
                 dataSize = df.length();
             }
             else {

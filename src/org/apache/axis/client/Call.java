@@ -1337,8 +1337,10 @@ public class Call implements javax.xml.rpc.Call {
         if(null != attachmentParts && !attachmentParts.isEmpty()){ 
             try{
             org.apache.axis.attachments.Attachments attachments= msg.getAttachments();
-            if(null == attachments)
-              throw new RuntimeException("No support for attachments");
+            if(null == attachments) {
+              throw new RuntimeException(
+                      JavaUtils.getMessage("noAttachments"));
+            }
 
             attachments.setAttachmentParts(attachmentParts);
             }catch(org.apache.axis.AxisFault ex){
@@ -1737,7 +1739,8 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("TargetService:" + msgContext.getTargetService());
+            log.debug(JavaUtils.getMessage("targetService",
+                    msgContext.getTargetService()));
         }
 
         // set up transport if there is one
@@ -1756,7 +1759,7 @@ public class Call implements javax.xml.rpc.Call {
                 reqEnv.output(ctx);
                 writer.close();
             } catch (Exception e) {
-                log.debug("Exception caught while printing request message", e);
+                log.debug(JavaUtils.getMessage("exceptionPrinting"), e);
             } finally {
                 log.debug(writer.getBuffer().toString());
             }

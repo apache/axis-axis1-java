@@ -62,6 +62,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.Part;
 import org.apache.axis.SOAPPart;
+import org.apache.axis.utils.JavaUtils;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
@@ -201,10 +202,9 @@ public class AttachmentsImpl implements Attachments {
             throws org.apache.axis.AxisFault {
                 mergeinAttachments();
         if (!(datahandler instanceof javax.activation.DataHandler)) {
-            throw new org.apache.axis.AxisFault("Unsupported attachment type \"" + 
-                                                datahandler.getClass().getName() +
-                                                "\" only supporting \"" + 
-                                                javax.activation.DataHandler.class.getName() + "\".");
+            throw new org.apache.axis.AxisFault(JavaUtils.getMessage(
+                    "unsupportedAttach", datahandler.getClass().getName(),
+                    javax.activation.DataHandler.class.getName()));
         }
         Part ret = new AttachmentPart((javax.activation.DataHandler)datahandler);
         addAttachmentPart(ret);
@@ -287,12 +287,11 @@ public class AttachmentsImpl implements Attachments {
      * Sets the root part of this multipart block
      */
     public void setRootPart(Part newRoot){
-                try{
-                        this.soapPart=(SOAPPart)newRoot;
-                }catch(ClassCastException e){
-                        throw new ClassCastException("This attachment implementation "+
-                                  "accepts only SOAPPart objects as root part.");
-                }
+        try {
+            this.soapPart=(SOAPPart)newRoot;
+        } catch(ClassCastException e) {
+            throw new ClassCastException(JavaUtils.getMessage("onlySOAPParts"));
+        }
     }
 
 

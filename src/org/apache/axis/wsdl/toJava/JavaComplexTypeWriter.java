@@ -248,7 +248,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
 
         if (attributes != null || elementMappings != null) {
             boolean wroteFieldType = false;
-            pw.println("    // Type metadata");
+            pw.println("    // " + JavaUtils.getMessage("typeMeta"));
             pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
             pw.println("        new org.apache.axis.description.TypeDesc();");
             pw.println();
@@ -299,7 +299,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
             pw.println();
 
             pw.println("    /**");
-            pw.println("     * Return type metadata object");
+            pw.println("     * " + JavaUtils.getMessage("returnTypeMeta"));
             pw.println("     */");
             pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
             pw.println("        return typeDesc;");
@@ -311,12 +311,12 @@ public class JavaComplexTypeWriter extends JavaWriter {
         // constructor
         if (type.isSimpleType() && valueType != null) {
             // emit contructors and toString().
-            pw.println("    // Simple Types must have a string constructor");
+            pw.println("    // " + JavaUtils.getMessage("needStringCtor"));
             pw.println("    public " + className + "(java.lang.String value) {");
             pw.println("        this.value = new " + valueType + "(value);");
             pw.println("    }");
             pw.println();            
-            pw.println("    // Simple Types must have a toString for serializing the value");
+            pw.println("    // " + JavaUtils.getMessage("needToString"));
             pw.println("    public String toString() {");
             pw.println("        return value.toString();");
             pw.println("    }");
