@@ -54,6 +54,8 @@
  */
 package org.apache.axis;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
  * @author Russell Butek (butek@us.ibm.com)
  */
@@ -61,6 +63,6 @@ public class NoEndPointException extends AxisFault
 {
     public NoEndPointException ()
     {
-        super("Server.NoEndpoint", "No endpoint", null, null);
+        super("Server.NoEndpoint", JavaUtils.getMessage("noEndpoint"), null, null);
     } // ctor
 } // class NoEndPointException

@@ -126,13 +126,12 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
         this.ss = ss;
         this.maxCached = maxCached;
         if (null != contentType && contentType.length() != 0 ) this.contentType = contentType;
-        if ( maxCached < MAX_MEMORY_DISK_CACHED)
-            throw  new IllegalArgumentException(" maxcached value is bad: " +
-                                                                   maxCached);
-
-                                                                   
-        if ( log.isDebugEnabled()){
-          debugEnabled= true; //Logging should be initialized by time;
+        if ( maxCached < MAX_MEMORY_DISK_CACHED) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("badMaxCached", "" + maxCached));
+        }
+        if (log.isDebugEnabled()) {
+            debugEnabled= true; //Logging should be initialized by time;
         }
 
         //for now read all in to disk.
@@ -225,7 +224,9 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
 
     protected synchronized  void  write( byte[] data, int length)
       throws java.io.IOException {
-        if (closed) throw new java.io.IOException("Stream closed stream.");
+        if (closed) {
+            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+        }
         int writesz = length;
         int byteswritten = 0;
 
@@ -310,7 +311,8 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
        java.util.LinkedList ml=memorybuflist;
        memorybuflist =null;
 
-       log.debug("flushToDisk maximum cached " + maxCached +", total memory " +  totalsz + "." );
+       log.debug(JavaUtils.getMessage(
+               "maxCached", "" + maxCached, "" +  totalsz));
 
        if( ml != null){
            if (null == cachediskstream) { //Need to create a disk cache
@@ -319,7 +321,8 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
                     String attdir= mc == null ? null :  mc.getStrProp(MessageContext.ATTACHMENTS_DIR );
                     diskCacheFile = java.io.File.createTempFile("Axis", "axis",
                        attdir== null ? null : new File( attdir)); 
-                    log.debug("Disk cache file name \"" + diskCacheFile .getAbsolutePath()+ "\".");
+                    log.debug(JavaUtils.getMessage(
+                            "diskCache", diskCacheFile.getAbsolutePath()));
                     cachediskstream = new java.io.BufferedOutputStream(
                          new java.io.FileOutputStream(diskCacheFile));
                     int listsz = ml.size();
@@ -404,18 +407,28 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
 
 
         protected Instream() throws java.io.IOException{
-             if(deleted) throw new java.io.IOException("Resource has been deleted.");
+            if (deleted) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("resourceDeleted"));
+            }
             readers.put( this, null);
         }
 
         public int available() throws java.io.IOException {
 
-            if(deleted) throw new java.io.IOException("Resource has been deleted.");
-            if(readClosed) throw new java.io.IOException("Stream is closed.");
-
+            if (deleted) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("resourceDeleted"));
+            }
+            if (readClosed) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("streamClosed"));
+            }
             int ret= totalsz - bread;
 
-            if(debugEnabled) is_log.debug("available()= "+ ret + ".");
+            if (debugEnabled) {
+                is_log.debug("available() = " + ret + ".");
+            }
 
             return ret;
         }
@@ -437,7 +450,9 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
          * Not supported.
          */
         public boolean markSupported() {
-            if(debugEnabled) is_log.debug("markSupported()= "+ false + ".");
+            if (debugEnabled) {
+                is_log.debug("markSupported() = " + false + ".");
+            }
             return false;
         }
 
@@ -445,15 +460,19 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
          * Not supported.
          */
         public void mark(int readlimit){
-            if(debugEnabled) is_log.debug("mark()");
+            if (debugEnabled) {
+                is_log.debug("mark()");
+            }
         }
 
         /**
          * Not supported.
          */
         public void reset() throws java.io.IOException {
-            if(debugEnabled) is_log.debug("reset()");
-            throw new java.io.IOException("Reset and mark not supported!");
+            if (debugEnabled) {
+                is_log.debug("reset()");
+            }
+            throw new java.io.IOException(JavaUtils.getMessage("noResetMark"));
         }
 
         /**
@@ -463,11 +482,18 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
 
         public long skip(long skipped) throws java.io.IOException {
 
-            if(debugEnabled) is_log.debug("skip(" +skipped+ ").");
+            if (debugEnabled) {
+                is_log.debug("skip(" + skipped + ").");
+            }
 
-            if(deleted) throw new java.io.IOException("Resource has been deleted.");
-            if(readClosed) throw new java.io.IOException("Stream is closed.");
-
+            if (deleted) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("resourceDeleted"));
+            }
+            if (readClosed) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("streamClosed"));
+            }
             if ( skipped < 1) return 0; //nothing to skip.
 
 
@@ -500,7 +526,9 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
                 bread += skipped;
             }
 
-            if(debugEnabled) is_log.debug("skipped " +skipped+ ".");
+            if (debugEnabled) {
+                is_log.debug("skipped " + skipped + ".");
+            }
             return skipped;
         }
 
@@ -512,27 +540,47 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
          */
 
         public int read(byte[] b, int off, int len) throws java.io.IOException {
-            if(debugEnabled) is_log.debug(hashCode() + "read(" + off + ", " + len +")");
-            if(deleted) throw new java.io.IOException("Resource has been deleted.");
-            if(readClosed) throw new java.io.IOException("Stream is closed.");
-            if (b == null) throw new InternalException(
-                 "input buffer is null");
-            if (off < 0)  throw new IndexOutOfBoundsException
-                ("Offset is negative: " + off);
-            if (len < 0)  throw new IndexOutOfBoundsException("Length: " + len);
-            if (len + off > b.length) throw new IndexOutOfBoundsException(
-                     "Write beyond buffer");
-            if (len == 0) return 0;
+            if (debugEnabled) {
+                is_log.debug(this.hashCode() + " read(" + off + ", " + len +")");
+            }
+            if (deleted) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("resourceDeleted"));
+            }
+            if (readClosed) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("streamClosed"));
+            }
+            if (b == null) {
+                throw new InternalException(JavaUtils.getMessage("nullInput"));
+            }
+            if (off < 0)  {
+                throw new IndexOutOfBoundsException(
+                        JavaUtils.getMessage("negOffset", "" + off));
+            }
+            if (len < 0) {
+                throw new IndexOutOfBoundsException(
+                        JavaUtils.getMessage("length", "" + len));
+            }
+            if (len + off > b.length) {
+                throw new IndexOutOfBoundsException(
+                        JavaUtils.getMessage("writeBeyond"));
+            }
+            if (len == 0) {
+                return 0;
+            }
 
             int bwritten = 0;
 
             synchronized(ManagedMemoryDataSource.this){
-                if ( bread == totalsz) return -1;
+                if (bread == totalsz) {
+                    return -1;
+                }
                 java.util.List ml = memorybuflist;
-                 len = Math.min(len, totalsz - bread); //Only return the number of bytes in the data store that is left.
-                 if(debugEnabled) is_log.debug("len= " + len);                 
-
-
+                len = Math.min(len, totalsz - bread); //Only return the number of bytes in the data store that is left.
+                if (debugEnabled) {
+                    is_log.debug("len = " + len);
+                }
                 if ( ml != null) {
                     if ( null == currentBuf ) { //Get the buffer we need to read from.
                         currentBuf = (byte[]) ml.get(currentIndex);
@@ -556,31 +604,49 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
                     while ( bwritten < len);
                 }
 
-                    if (bwritten == 0 && null != diskCacheFile) {
-                    if(debugEnabled) is_log.debug("reading from disk" + len);                 
-                    if (null == fin ) { //we are now reading from disk.
-                    if(debugEnabled) is_log.debug("open bread=" + diskCacheFile.getCanonicalPath());                 
-                    if(debugEnabled) is_log.debug("open bread=" + bread);                 
+                if (bwritten == 0 && null != diskCacheFile) {
+                    if (debugEnabled) {
+                        is_log.debug(JavaUtils.getMessage("reading", "" + len));
+                    }
+                    if (null == fin) { //we are now reading from disk.
+                        if (debugEnabled) {
+                            is_log.debug(JavaUtils.getMessage("openBread",
+                                    diskCacheFile.getCanonicalPath()));
+                        }
+                        if (debugEnabled) {
+                            is_log.debug(JavaUtils.getMessage("openBread",
+                                    "" + bread));
+                        }                 
                         fin = new java.io.FileInputStream( diskCacheFile);
-                        if(bread >0) fin.skip(bread); //Skip what we've read so far.
+                        if (bread >0) {
+                            fin.skip(bread); //Skip what we've read so far.
+                        }
                     }
 
-                    if(cachediskstream  != null){
-                        if(debugEnabled) is_log.debug("flushing");                 
+                    if (cachediskstream != null) {
+                        if (debugEnabled) {
+                            is_log.debug(JavaUtils.getMessage("flushing"));
+                        }                 
                         cachediskstream.flush();  
                     }
 
-                   if(debugEnabled){ is_log.debug("flushing");                 
-                       is_log.debug("len=" + len);                 
-                       is_log.debug("off=" + off);                 
-                       is_log.debug("b.length=" + b.length);                 
-                    }
-                    bwritten = fin.read(b, off, len);
+                   if (debugEnabled) {
+                       is_log.debug(JavaUtils.getMessage("flushing"));
+                       is_log.debug("len=" + len);
+                       is_log.debug("off=" + off);
+                       is_log.debug("b.length=" + b.length);
+                   }
+                   bwritten = fin.read(b, off, len);
                 }
-                if ( bwritten > 0) bread += bwritten;
+                if (bwritten > 0) {
+                    bread += bwritten;
+                }
             }
 
-            if(debugEnabled) is_log.debug( hashCode() +"read " + bwritten);
+            if (debugEnabled) {
+                is_log.debug(this.hashCode()
+                        + JavaUtils.getMessage("read", "" + bwritten));
+            }
             return bwritten;
         }
 

@@ -104,17 +104,21 @@ public abstract class Part
      */
     public void addMimeHeader (String header, String value) {
 
-        if(null == header) throw new IllegalArgumentException
-            ("Header may not be null!");
+        if(null == header) {
+            throw new IllegalArgumentException(JavaUtils.getMessage("headerNotNull"));
+        }
 
-        header= header.trim();    
+        header = header.trim();
 
-        if(header.length() == 0)
-            throw new IllegalArgumentException ("Header may not be empty!");
+        if(header.length() == 0) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("headerNotEmpty"));
+        }
 
-        if(null == value) throw new IllegalArgumentException
-            ("Header value may not be null!");
-
+        if(null == value) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("headerValueNotNull"));
+        }
         headers.put(header.toLowerCase(), value);
     }
 

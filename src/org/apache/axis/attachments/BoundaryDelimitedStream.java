@@ -55,6 +55,8 @@
 
 package org.apache.axis.attachments;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -88,8 +90,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
 
     static int streamCount= 0; //number of streams produced.
     protected synchronized static int newStreamNo(){
-
-     log.debug("New boundary stream no:" + (streamCount +1));
+     log.debug(JavaUtils.getMessage("streamNo", "" + (streamCount + 1)));
         return ++streamCount;
     }
     protected int streamNo=-1; //Keeps track of stream
@@ -173,13 +174,20 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
 
     public synchronized int read(byte[] b, final int off, final int len)
                                                 throws java.io.IOException {
-        if (closed) throw new java.io.IOException("Stream closed.");
-        if (eos) return -1;
+        if (closed) {
+            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+        }
+        if (eos) {
+            return -1;
+        }
 
         if (readbuf == null) { //Allocate the buffer.
             readbuf = new byte[Math.max(len, readbufsz ) ];
             readBufEnd = is.read(readbuf);
-            if( readBufEnd < 0) throw new java.io.IOException( "End of stream encountered before final boundary marker."); 
+            if( readBufEnd < 0) {
+                throw new java.io.IOException(
+                        JavaUtils.getMessage("eosBeforeMarker"));
+            }
             readBufPos = 0;
                                                        //Finds the boundary pos.
             boundaryPos = boundaryPosition( readbuf, 0, readBufEnd);
@@ -200,7 +208,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
             }
             if (readBufPos == boundaryPos) {
                 eos = true; //hit the boundary so it the end of the stream.
-                log.debug("Boundary stream no:" + streamNo + " is at end of stream");
+                log.debug(JavaUtils.getMessage("atEOS", "" + streamNo));
             }
             else if ( bwritten < len) { //need to get more data.
                 byte[]dstbuf = readbuf;
@@ -213,7 +221,10 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
                 //Read in the new data.
                 int readcnt = is.read(dstbuf, movecnt, dstbuf.length - movecnt);
                 
-                if( readcnt < 0) throw new java.io.IOException( "End of stream encountered before final boundary marker."); 
+                if( readcnt < 0) {
+                    throw new java.io.IOException(
+                            JavaUtils.getMessage("eosBeforeMarker"));
+                }
 
                 readBufEnd = readcnt + movecnt;
                 readbuf = dstbuf;
@@ -233,13 +244,8 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
                 byte tb[] = new byte[bwritten];
 
                 System.arraycopy(b, off, tb, 0, bwritten);
-                log.debug("Read " + bwritten +
-                " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
-                new String(tb) + "\"");
-                
-//    log.debug("Read " + bwritten +
-//              " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
-//              new String(tb) + "\"");
+                log.debug(JavaUtils.getMessage("readBStream", new String[]
+                        {"" + bwritten, "" + streamNo, new String(tb)}));
             }
         }
 
@@ -274,7 +280,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
      */
     public synchronized void close() throws java.io.IOException {
         if (closed) return;
-        log.debug("Boundary stream no:" + streamNo + " is closed");
+        log.debug(JavaUtils.getMessage("bStreamClosed", "" + streamNo));
         closed = true; //mark it closed.
         if (!eos) { //We need get this off the stream.
                                 //Easy way to flush through the stream;

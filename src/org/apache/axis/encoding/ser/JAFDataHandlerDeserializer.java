@@ -123,8 +123,8 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl implements Dese
                                     Attributes attributes,
                                     DeserializationContext context)
         throws SAXException {
-        throw new SAXException( "The element \"" + namespace + ":" + localName + "\" is an attachment"+
-          " with sub elements which is not supported." );
+        throw new SAXException(JavaUtils.getMessage(
+                "noSubElements", namespace + ":" + localName));
 
 
     }

@@ -91,10 +91,13 @@ public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
 
     public JAFDataHandlerDeserializerFactory(Class javaType, QName xmlType) {
         super(JAFDataHandlerDeserializer.class, false, xmlType, javaType); 
-        log.debug("Enter JAFDataHandlerDeserializerFactory ("+javaType+", "+xmlType+")");
+        log.debug(JavaUtils.getMessage("enter00",
+                "JAFDataHandlerDeserializerFactory(" + javaType + ", "
+                + xmlType + ")"));
     }
     public JAFDataHandlerDeserializerFactory() {
         super(JAFDataHandlerDeserializer.class, false); 
-        log.debug("Enter JAFDataHandlerDeserializerFactory ()" );
+        log.debug(JavaUtils.getMessage("enter00",
+                "JAFDataHandlerDeserializerFactory()"));
     }
 }

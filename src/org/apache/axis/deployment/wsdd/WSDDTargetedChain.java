@@ -59,6 +59,7 @@ import org.apache.axis.TargetedChain;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.deployment.DeploymentRegistry;
@@ -164,8 +165,8 @@ public abstract class WSDDTargetedChain
      */
     public void setType(String type) throws WSDDException
     {
-        throw new WSDDException(getElementName().getLocalPart() +
-                                " disallows setting of Type");
+        throw new WSDDException(JavaUtils.getMessage(
+                "noTypeSetting", getElementName().getLocalPart()));
     }
     
     public QName getPivotQName()
