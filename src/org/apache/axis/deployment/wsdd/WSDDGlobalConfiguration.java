@@ -20,10 +20,13 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -36,6 +39,7 @@ public class WSDDGlobalConfiguration
 {
     private WSDDRequestFlow requestFlow;
     private WSDDResponseFlow responseFlow;
+    private ArrayList roles = new ArrayList();
 
     /**
      * Default constructor
@@ -60,6 +64,12 @@ public class WSDDGlobalConfiguration
         Element respEl = getChildElement(e, ELEM_WSDD_RESPFLOW);
         if (respEl != null && respEl.getElementsByTagName("*").getLength()>0) {
             responseFlow = new WSDDResponseFlow(respEl);
+        }
+
+        Element [] roleElements = getChildElements(e, ELEM_WSDD_ROLE);
+        for (int i = 0; i < roleElements.length; i++) {
+            String role = XMLUtils.getChildCharacterData(roleElements[i]);
+            roles.add(role);
         }
     }
     
@@ -145,6 +155,8 @@ public class WSDDGlobalConfiguration
         throw new WSDDException(Messages.getMessage("noTypeOnGlobalConfig00"));
     }
 
+
+
     /**
      *
      * @param registry XXX
@@ -175,6 +187,10 @@ public class WSDDGlobalConfiguration
             requestFlow.deployToRegistry(registry);
         if (responseFlow != null)
             responseFlow.deployToRegistry(registry);
+    }
+
+    public List getRoles() {
+        return (List)roles.clone();
     }
 }
 

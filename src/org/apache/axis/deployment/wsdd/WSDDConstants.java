@@ -102,6 +102,7 @@ public class WSDDConstants
     public static final String ELEM_WSDD_JAXRPC_ROLE = "role";
     public static final String ELEM_WSDD_JAXRPC_HEADER = "header";
     public static final String ELEM_WSDD_FAULT = "fault";
+    public static final String ELEM_WSDD_ROLE = "role";
 
     public static final QName QNAME_PARAM = new QName(URI_WSDD, ELEM_WSDD_PARAM);
     public static final QName QNAME_DOC = new QName(URI_WSDD, ELEM_WSDD_DOC);

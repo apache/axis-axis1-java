@@ -27,6 +27,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import javax.xml.namespace.QName;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A do-nothing ConfigurationProvider
@@ -84,6 +85,16 @@ public class NullProvider implements EngineConfiguration
      * Get an enumeration of the services deployed to this engine
      */
     public Iterator getDeployedServices() throws ConfigurationException {
+        return null;
+    }
+
+    /**
+     * Get a list of roles that this engine plays globally.  Services
+     * within the engine configuration may also add additional roles.
+     *
+     * @return a <code>List</code> of the roles for this engine
+     */
+    public List getRoles() {
         return null;
     }
 }

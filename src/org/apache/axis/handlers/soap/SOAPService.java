@@ -59,6 +59,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -167,7 +168,18 @@ public class SOAPService extends SimpleTargetedChain
         return acts;
     }
     
-    
+    public List getRoles() {
+        return getActors();
+    }
+
+    /**
+     * Set the service-specific role list
+     *
+     * @param roles a List of Strings, each containing a role URI
+     */
+    public void setRoles(List roles) {
+        actors = new ArrayList(roles);
+    }
 
     /**
      * MustUnderstandChecker is used to inject SOAP semantics just before

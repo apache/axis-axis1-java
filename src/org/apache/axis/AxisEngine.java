@@ -349,9 +349,6 @@ public abstract class AxisEngine extends BasicHandler
         return config.getGlobalResponse();
     }
 
-    // fixme: this exposes the /actual/ actorsURIs array - do we intend this?
-    //   if so, then we need to document this so that people don't change this
-    //   by accident but have the chance to change a copy
     // fixme: publishing this as ArrayList prevents us moving to another
     //   List impl later
     /**
@@ -362,7 +359,7 @@ public abstract class AxisEngine extends BasicHandler
      */
     public ArrayList getActorURIs()
     {
-        return actorURIs;
+        return (ArrayList)actorURIs.clone();
     }
 
     /**
@@ -469,6 +466,10 @@ public abstract class AxisEngine extends BasicHandler
             setOptions(globalOptions);
 
         normaliseOptions(this);
+
+        // fixme: If we change actorURIs to List, this copy constructor can
+        //        go away...
+        actorURIs = new ArrayList(config.getRoles());
     }
 
     /**

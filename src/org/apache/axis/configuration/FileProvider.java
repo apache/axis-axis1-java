@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -284,5 +285,15 @@ public class FileProvider implements WSDDEngineConfiguration {
      */
     public Iterator getDeployedServices() throws ConfigurationException {
         return deployment.getDeployedServices();
+    }
+
+    /**
+     * Get a list of roles that this engine plays globally.  Services
+     * within the engine configuration may also add additional roles.
+     *
+     * @return a <code>List</code> of the roles for this engine
+     */
+    public List getRoles() {
+        return deployment.getRoles();
     }
 }
