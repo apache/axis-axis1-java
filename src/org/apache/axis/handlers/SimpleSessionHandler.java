@@ -61,7 +61,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 
@@ -192,8 +192,8 @@ public class SimpleSessionHandler extends BasicHandler
             if (msg == null)
                 return;
             SOAPEnvelope env = msg.getSOAPEnvelope();
-            SOAPHeader header = env.getHeaderByName(SESSION_NS,
-                                                    SESSION_LOCALPART);
+            SOAPHeaderElement header = env.getHeaderByName(SESSION_NS,
+                                                           SESSION_LOCALPART);
             if (header == null)
                 return;
             
@@ -219,9 +219,9 @@ public class SimpleSessionHandler extends BasicHandler
                 throw new AxisFault(JavaUtils.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPEnvelope();
-            SOAPHeader header = new SOAPHeader(SESSION_NS,
-                                               SESSION_LOCALPART,
-                                               id);
+            SOAPHeaderElement header = new SOAPHeaderElement(SESSION_NS,
+                                                             SESSION_LOCALPART,
+                                                             id);
             env.addHeader(header);
         }
     }
@@ -242,9 +242,9 @@ public class SimpleSessionHandler extends BasicHandler
             if (msg == null)
                 return;
             SOAPEnvelope env = msg.getSOAPEnvelope();
-            SOAPHeader header = new SOAPHeader(SESSION_NS,
-                                               SESSION_LOCALPART,
-                                               id);
+            SOAPHeaderElement header = new SOAPHeaderElement(SESSION_NS,
+                                                             SESSION_LOCALPART,
+                                                             id);
             env.addHeader(header);
         } else {
             // Request.  Set up the session if we find the header.
@@ -253,8 +253,8 @@ public class SimpleSessionHandler extends BasicHandler
                 throw new AxisFault(JavaUtils.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPEnvelope();
-            SOAPHeader header = env.getHeaderByName(SESSION_NS,
-                                                    SESSION_LOCALPART);
+            SOAPHeaderElement header = env.getHeaderByName(SESSION_NS,
+                                                           SESSION_LOCALPART);
             Long id;
             
             if (header != null) {

@@ -60,7 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
@@ -81,8 +81,8 @@ public class DebugHandler extends BasicHandler {
             Message       msg = msgContext.getRequestMessage();
 
             SOAPEnvelope message = (SOAPEnvelope)msg.getSOAPEnvelope();
-            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG,
-                                                        "Debug");
+            SOAPHeaderElement header = message.
+                getHeaderByName(Constants.URI_DEBUG, "Debug");
 
             if (header != null) {
                 Integer i = ((Integer)header

@@ -61,7 +61,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -100,9 +100,9 @@ public class echoHeaderStringHandler extends BasicHandler
             if (msg == null)
                 return;
             SOAPEnvelope env = msg.getSOAPEnvelope();
-            SOAPHeader header = new SOAPHeader(HEADER_NS,
-                                               HEADER_RESNAME,
-                                               strVal);
+            SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS,
+                                                             HEADER_RESNAME,
+                                                             strVal);
             env.addHeader(header);
         } else {
             // Request. look for the header
@@ -111,8 +111,8 @@ public class echoHeaderStringHandler extends BasicHandler
                 throw new AxisFault(JavaUtils.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPEnvelope();
-            SOAPHeader header = env.getHeaderByName(HEADER_NS,
-                                                    HEADER_REQNAME);
+            SOAPHeaderElement header = env.getHeaderByName(HEADER_NS,
+                                                           HEADER_REQNAME);
             
             if (header != null) {
                 // seems Axis has already ignored any headers not tageted

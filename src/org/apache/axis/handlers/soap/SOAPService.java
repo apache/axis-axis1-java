@@ -71,7 +71,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
@@ -145,8 +145,9 @@ public class SOAPService extends SimpleTargetedChain
             Vector misunderstoodHeaders = null;
             Enumeration enum = headers.elements();
             while (enum.hasMoreElements()) {
-                SOAPHeader header = (SOAPHeader)enum.nextElement();
-                if (header.isMustUnderstand() && !header.isProcessed()) {
+                SOAPHeaderElement header = (SOAPHeaderElement)enum.
+                                               nextElement();
+                if (header.getMustUnderstand() && !header.isProcessed()) {
                     if (misunderstoodHeaders == null)
                         misunderstoodHeaders = new Vector();
                     misunderstoodHeaders.addElement(header);
@@ -168,12 +169,13 @@ public class SOAPService extends SimpleTargetedChain
                     env = respMsg.getSOAPEnvelope();
                     enum = misunderstoodHeaders.elements();
                     while (enum.hasMoreElements()) {
-                        SOAPHeader badHeader = (SOAPHeader)enum.nextElement();
+                        SOAPHeaderElement badHeader = (SOAPHeaderElement)enum.
+                                                          nextElement();
                         QName badQName = new QName(badHeader.getNamespaceURI(),
                                                    badHeader.getName());
-                        SOAPHeader newHeader = new SOAPHeader(
-                                                              Constants.URI_SOAP12_FAULT_NS,
-                                                              Constants.ELEM_MISUNDERSTOOD);
+                        SOAPHeaderElement newHeader = new 
+                            SOAPHeaderElement(Constants.URI_SOAP12_FAULT_NS,
+                                              Constants.ELEM_MISUNDERSTOOD);
                         newHeader.addAttribute(null,
                                                Constants.ATTR_QNAME,
                                                badQName);

@@ -76,7 +76,7 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.attachments.AttachmentPart;
@@ -1185,7 +1185,7 @@ public class Call implements javax.xml.rpc.Call {
             env = new SOAPEnvelope();
 
             for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
-                env.addHeader((SOAPHeader)myHeaders.get(i));
+                env.addHeader((SOAPHeaderElement)myHeaders.get(i));
 
             if ( !(params[0] instanceof SOAPEnvelope) )
                 for ( i = 0 ; i < params.length ; i++ )
@@ -1259,7 +1259,7 @@ public class Call implements javax.xml.rpc.Call {
             int     i ;
 
             for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
-                env.addHeader((SOAPHeader)myHeaders.get(i));
+                env.addHeader((SOAPHeaderElement)myHeaders.get(i));
 
             msg = new Message( env );
             setRequestMessage( msg );
@@ -1502,9 +1502,9 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Note: Not part of JAX-RPC specification.
      *
-     * @param header a SOAPHeader to be inserted into messages
+     * @param header a SOAPHeaderElement to be inserted into messages
      */
-    public void addHeader(SOAPHeader header)
+    public void addHeader(SOAPHeaderElement header)
     {
         if (myHeaders == null) {
             myHeaders = new Vector();
@@ -1695,7 +1695,7 @@ public class Call implements javax.xml.rpc.Call {
         // If we have headers to insert, do so now.
         if (myHeaders != null) {
             for (int i = 0; i < myHeaders.size(); i++) {
-                reqEnv.addHeader((SOAPHeader)myHeaders.get(i));
+                reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
             }
         }
 

@@ -66,7 +66,7 @@ import org.xml.sax.SAXException;
 
 public class HeaderBuilder extends SOAPHandler
 {
-    private SOAPHeader header;
+    private SOAPHeaderElement header;
     private SOAPEnvelope envelope;
     
     HeaderBuilder(SOAPEnvelope envelope)
@@ -81,8 +81,8 @@ public class HeaderBuilder extends SOAPHandler
                                     DeserializationContext context)
         throws SAXException
     {
-        header = new SOAPHeader(namespace, localName, prefix,
-                                attributes, context);
+        header = new SOAPHeaderElement(namespace, localName, prefix,
+                                       attributes, context);
         
         SOAPHandler handler = new SOAPHandler();
         handler.myElement = header;
