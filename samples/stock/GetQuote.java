@@ -79,16 +79,19 @@ public class GetQuote {
                   "http://schemas.xmlsoap.org/soap/envelope/\" " +
                   "xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\"" + 
                   " xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-                  "<SOAP-ENV:Body>\n" +
-                  "<m:getQuote xmlns:m=\"urn:xmltoday-delayed-quotes\">" ;
-    String msg2 = "</m:getQuote>" +
-                  "</SOAP-ENV:Body>\n" +
+                  "<SOAP-ENV:Body>\n" ;
+    String head = "<m:getQuote xmlns:m=\"urn:xmltoday-delayed-quotes\">\n" +
+                  "<symbol>" ;
+    String tail = "</symbol>\n</m:getQuote>\n" ;
+    String msg2 = "</SOAP-ENV:Body>\n" +
                   "</SOAP-ENV:Envelope>" ;
 
     try {
       String  host   = "localhost" ;
       int     port   = 8080 ;
-      String  symbol = null ;
+      boolean atLeastOne = false ;
+
+      msg = msg1 ;
 
       for ( int i = 0 ; i < args.length ; i++ ) {
         if ( args[i].charAt(0) == '-' ) {
@@ -104,16 +107,17 @@ public class GetQuote {
                      System.exit(1);
           }
         }
-        else
-          symbol = args[i] ;
+        else {
+          atLeastOne = true ;
+          msg += head + args[i] + tail ;
+        }
       }
+      msg += msg2 ;
 
-      if ( symbol == null ) {
+      if ( !atLeastOne ) {
         System.err.println( "Usage: GetQuote <symbol>" );
         System.exit(1);
       }
-
-      msg = msg1 + "<symbol>" + symbol + "</symbol>" + msg2 ;
 
       String         cl = "Content-Length: " + msg.length() + "\n\n" ;
       Socket         sock = new Socket( host, port );
