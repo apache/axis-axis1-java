@@ -70,6 +70,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)
@@ -236,43 +237,6 @@ public class TypeMappingRegistry implements Serializer {
                            "CDATA", context.qName2String(type));
         return attrs;
     }
-
-    /**
-     * Utility method to help us find an appropriate Serializer.
-     *
-     */ 
-    private Serializer findSerializer(Class cls)
-    {
-        if ((cls == null) || (cls == Object.class))
-            return null;
-      
-        // If we find one for this class itself, use it.
-        Serializer ser = getSerializer(cls);
-        if (ser != null)
-            return ser;
-        
-        // Search implemented interfaces
-        if (!cls.isInterface()) {
-            Class [] interfaces = cls.getInterfaces();
-            // Walk the interface list WITHOUT checking parents
-            for (int i = 0 ; i < interfaces.length ; i++ ) { 
-                ser = getSerializer(interfaces[i]);
-                if (ser != null)
-                    return ser;
-            }
-            
-            // and if that didn't work, check all the parents (and their
-            // parents...)
-            for (int i = 0 ; i < interfaces.length ; i++ ) { 
-                ser = findSerializer(interfaces[i].getSuperclass());
-                if (ser != null)
-                    return ser;
-            }            
-        }
-        
-        // Search up the inheritance tree from here
-        return findSerializer(cls.getSuperclass());
-    }
     
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
@@ -280,9 +244,31 @@ public class TypeMappingRegistry implements Serializer {
     {
         if (value != null) {
             Serializer  ser     = null ;
-            Class       _class  = null ;
+            Class       _class  = value.getClass();
 
-            ser = findSerializer( _class = value.getClass() );
+            // Use an ArrayList and remove(0) because it MUST be 
+            // first-in-first-out
+            ArrayList  classes = null;
+            
+            while( _class != null ) {
+                if ( (ser = getSerializer(_class)) != null ) break ;
+                if ( classes == null ) classes = new ArrayList();
+                Class[] ifaces = _class.getInterfaces();
+                for (int i = 0 ; i < ifaces.length ; i++ ) 
+                    classes.add( ifaces[i] );
+                _class = _class.getSuperclass();
+                
+                // Add any non-null (and non-Object) class.  We skip
+                // the Object class because if we reach that then
+                // there's an error and this error message return 
+                // here is better than the one returned by the
+                // ObjSerializer.
+                if ( _class != null &&
+                        !_class.getName().equals("java.lang.Object")) 
+                    classes.add( _class );
+                
+                _class = (Class) classes.remove( 0 );
+            }
 
             if ( ser != null ) {
                 QName type = getTypeQName(_class);
