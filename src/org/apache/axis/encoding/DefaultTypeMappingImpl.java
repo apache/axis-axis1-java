@@ -258,21 +258,21 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // XSD_DATE is the current one, which is why it is
         // registered after the other two
         myRegister(Constants.XSD_DATE2,      java.util.Calendar.class,
-                   new DateSerializerFactory(java.util.Calendar.class,
+                   new CalendarSerializerFactory(java.util.Calendar.class,
                                              Constants.XSD_DATE2),
-                   new DateDeserializerFactory(java.util.Calendar.class,
+                   new CalendarDeserializerFactory(java.util.Calendar.class,
                                                Constants.XSD_DATE2),
                    true);
         myRegister(Constants.XSD_DATE3,      java.util.Calendar.class,
-                   new DateSerializerFactory(java.util.Calendar.class,
+                   new CalendarSerializerFactory(java.util.Calendar.class,
                                              Constants.XSD_DATE3),
-                   new DateDeserializerFactory(java.util.Calendar.class,
+                   new CalendarDeserializerFactory(java.util.Calendar.class,
                                                Constants.XSD_DATE3),
                    true);
         myRegister(Constants.XSD_DATE1,       java.util.Calendar.class,
-                   new DateSerializerFactory(java.util.Calendar.class,
+                   new DateSerializerFactory(java.util.Date.class,
                                              Constants.XSD_DATE1),
-                   new DateDeserializerFactory(java.util.Calendar.class,
+                   new DateDeserializerFactory(java.util.Date.class,
                                                Constants.XSD_DATE1),
                    true);
         myRegister(Constants.XSD_DATE,       java.util.Calendar.class,
