@@ -65,6 +65,7 @@ import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
@@ -90,6 +91,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.QNameHolder;
 import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.io.Writer;
@@ -845,7 +847,7 @@ public class SerializationContextImpl implements SerializationContext
                 forceSer = mri.value;
 
                 // Now serialize the value.
-                // The sendType parameter is set to true for interop purposes.
+                // The sendType parameter is defaulted for interop purposes.
                 // Some of the remote services do not know how to
                 // ascertain the type in these circumstances (though Axis does).
                 serialize(multirefQName, attrs, mri.value,
@@ -1199,17 +1201,28 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             // Try getting a serializer for the prefered xmlType
-            Serializer ser = getSerializer(javaType, xmlType);
+            QNameHolder actualXMLType = new QNameHolder();
+            Serializer ser = getSerializer(javaType, xmlType, 
+                                           actualXMLType);
 
             if ( ser != null ) {
-                // Send the xmlType if indicated.
-                QName actualType = ((TypeMappingImpl)tm).getXMLType(javaType,
-                                                               xmlType);
-                
-                if (shouldSendType || (xmlType != null &&
-                                        (!actualType.equals(xmlType))))
-                    attributes = setTypeAttribute(attributes, actualType);
-                
+                // Send the xmlType if indicated or if
+                // the actual xmlType is different than the 
+                // prefered xmlType
+                if (shouldSendType || 
+                    (xmlType != null && 
+                     actualXMLType.value != null &&
+                     (!xmlType.equals(actualXMLType.value)))) {
+                    attributes = setTypeAttribute(attributes, 
+                                                  actualXMLType.value);
+                }
+
+                // -----------------
+                // NOTE: I have seen doc/lit tests that use
+                // the type name as the element name in multi-ref cases
+                // (for example <soapenc:Array ... >)
+                // In such cases the xsi:type is not passed along.
+                // -----------------
                 // The multiref QName is our own fake name.
                 // It may be beneficial to set the name to the
                 // type name, but I didn't see any improvements
@@ -1264,20 +1277,26 @@ public class SerializationContextImpl implements SerializationContext
      * getSerializer
      * Attempts to get a serializer for the indicated javaType and xmlType.
      * @param javaType is the type of the object
-     * @param xmlType is the preferred qname type.
+     * @param preferXmlType is the preferred qname type.
+     * @param actualXmlType is set to a QNameHolder or null.  
+     *                     If a QNameHolder, the actual xmlType is returned.
      * @return found class/serializer or null
      **/
-    private Serializer getSerializer(Class javaType, QName xmlType) {
+    private Serializer getSerializer(Class javaType, QName preferXMLType, 
+                                     QNameHolder actualXMLType) {
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
+        if (actualXMLType != null) {
+            actualXMLType.value = null;
+        }
 
         while (javaType != null) {
-            serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
+            serFactory = (SerializerFactory) tm.getSerializer(javaType, preferXMLType);
             if (serFactory != null)
                 break;
 
             // Walk my interfaces...
-            serFactory = getSerializerFactoryFromInterface(javaType, xmlType, tm);
+            serFactory = getSerializerFactoryFromInterface(javaType, preferXMLType, tm);
             
             // Finally, head to my superclass
             if (serFactory != null)
@@ -1290,13 +1309,28 @@ public class SerializationContextImpl implements SerializationContext
         Serializer ser = null;
         if ( serFactory != null ) {
             ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
+            
+            if (actualXMLType != null) {
+                // Get the actual qname xmlType from the factory.
+                // If not found via the factory, fall back to a less
+                // performant solution.
+                if (serFactory instanceof BaseSerializerFactory) {
+                    actualXMLType.value = 
+                        ((BaseSerializerFactory) serFactory).getXMLType();
+                }
+                if (actualXMLType.value == null) {
+                    actualXMLType.value = 
+                        ((TypeMappingImpl) tm).getXMLType(javaType, 
+                                                          preferXMLType);
+                }
+            }
         }
 
         return ser;
     }
 
     public String getValueAsString(Object value, QName xmlType) throws IOException {
-        Serializer ser = getSerializer(value.getClass(), xmlType);
+        Serializer ser = getSerializer(value.getClass(), xmlType, null);
         if (!(ser instanceof SimpleValueSerializer)) {
             throw new IOException(
                     Messages.getMessage("needSimpleValueSer",

@@ -314,9 +314,9 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         );
         myRegister(Constants.XSD_DAY, org.apache.axis.types.Day.class,
                    new SimplePrimitiveSerializerFactory(org.apache.axis.types.Day.class,
-                                             Constants.XSD_YEARMONTH),
+                                             Constants.XSD_DAY),
                    new SimpleDeserializerFactory(org.apache.axis.types.Day.class,
-                                             Constants.XSD_YEARMONTH)
+                                             Constants.XSD_DAY)
         );
         myRegister(Constants.XSD_MONTHDAY, org.apache.axis.types.MonthDay.class,
                    new SimplePrimitiveSerializerFactory(org.apache.axis.types.MonthDay.class,
