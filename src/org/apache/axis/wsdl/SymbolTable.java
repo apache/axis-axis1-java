@@ -139,10 +139,50 @@ public class SymbolTable {
      * appropriately for each entry.
      */
     protected void add(Definition def, Document doc) throws IOException {
+        checkForUndefined(def);
         populate(def, doc);
         setReferences(def, doc);
     } // add
 
+    /**
+     * Scan the Definition for undefined objects and throw an error.
+     */ 
+    private void checkForUndefined(Definition def) throws IOException {
+        if (def != null) {
+            // Bindings
+            Iterator ib = def.getBindings().values().iterator();
+            while (ib.hasNext()) {
+                Binding binding = (Binding) ib.next();
+                if (binding.isUndefined()) {
+                    throw new IOException(
+                            JavaUtils.getMessage("emitFailtUndefinedBinding01",
+                                    binding.getQName().getLocalPart()));
+                }
+            }
+
+            // portTypes
+            Iterator ip = def.getPortTypes().values().iterator();
+            while (ip.hasNext()) {
+                PortType portType = (PortType) ip.next();
+                if (portType.isUndefined()) {
+                    throw new IOException(
+                            JavaUtils.getMessage("emitFailtUndefinedPort01",
+                                    portType.getQName().getLocalPart()));
+                }
+            }
+            
+            // Messages
+            Iterator i = def.getMessages().values().iterator();
+            while (i.hasNext()) {
+                Message message = (Message) i.next();
+                if (message.isUndefined()) {
+                    throw new IOException(
+                            JavaUtils.getMessage("emitFailtUndefinedMessage01",
+                                    message.getQName().getLocalPart()));
+                }
+            }
+        }
+    }
     /**
      * Add the given Definition and Document information to the symbol table (including imported
      * symbols), populating it with SymTabEntries for each of the top-level symbols.
