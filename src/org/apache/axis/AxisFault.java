@@ -661,7 +661,11 @@ public class AxisFault extends java.rmi.RemoteException {
      */
     public void output(SerializationContext context) throws Exception {
 
-        SOAPEnvelope envelope = new SOAPEnvelope();
+        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
+        if (context.getMessageContext() != null)
+            soapConstants = context.getMessageContext().getSOAPConstants();
+
+        SOAPEnvelope envelope = new SOAPEnvelope(soapConstants);
 
         SOAPFault fault = new SOAPFault(this);
         envelope.addBodyElement(fault);

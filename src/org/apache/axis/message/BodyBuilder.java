@@ -60,6 +60,7 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
@@ -93,12 +94,33 @@ public class BodyBuilder extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
-        super.startElement(namespace, localName, prefix, attributes, context);
+        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
+        if (context.getMessageContext() != null)
+            soapConstants = context.getMessageContext().getSOAPConstants();
+
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
+            attributes.getValue(Constants.URI_SOAP12_ENV, Constants.ATTR_ENCODING_STYLE) != null) {
+
+            AxisFault fault = new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                null, Messages.getMessage("noEncodingStyleAttrAppear", "Body"), null, null, null);
+
+            throw new SAXException(fault);
+        }
+
+        // make a new body element
         if (!context.isDoneParsing()) {
+            if (!context.isProcessingRef()) {
+                if (myElement == null) {
+                    myElement = new SOAPBody(namespace, localName, prefix,
+                                        attributes, context, envelope.getSOAPConstants());
+                }
+                context.pushNewElement(myElement);
+            }
             envelope.setBody((SOAPBody)myElement);
         }
     }
 
+    // FIX: do we need this method ?
     public MessageElement makeNewElement(String namespace, String localName,
                                          String prefix, Attributes attributes,
                                          DeserializationContext context) {

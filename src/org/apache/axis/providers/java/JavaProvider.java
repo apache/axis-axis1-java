@@ -79,6 +79,8 @@ import org.w3c.dom.Document;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.server.ServiceLifecycle;
+import org.xml.sax.SAXException;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -326,8 +328,13 @@ public abstract class JavaProvider extends BasicProvider
             SOAPEnvelope   reqEnv  = reqMsg.getSOAPEnvelope();
 
             processMessage(msgContext, reqEnv, resEnv, serviceObject);
-        }
-        catch( Exception exp ) {
+        } catch( SAXException exp ) {
+            entLog.debug( Messages.getMessage("toAxisFault00"), exp);
+            Exception real = exp.getException();
+            if (real == null)
+                real = exp;
+            throw AxisFault.makeFault(real);
+        } catch( Exception exp ) {
             entLog.debug( Messages.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
         } finally {

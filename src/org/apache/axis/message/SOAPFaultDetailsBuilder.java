@@ -54,6 +54,7 @@
  */
 package org.apache.axis.message;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.FaultDesc;
@@ -64,6 +65,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.soap.SOAPConstants;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -82,6 +84,28 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
     
     public SOAPFaultDetailsBuilder(SOAPFaultBuilder builder) {
         this.builder = builder;
+    }
+
+
+    public void startElement(String namespace, String localName,
+                             String prefix, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException
+    {
+        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
+        if (context.getMessageContext() != null)
+            soapConstants = context.getMessageContext().getSOAPConstants();
+
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
+            attributes.getValue(Constants.URI_SOAP12_ENV, Constants.ATTR_ENCODING_STYLE) != null) {
+
+            AxisFault fault = new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                null, Messages.getMessage("noEncodingStyleAttrAppear", "Detail"), null, null, null);
+
+            throw new SAXException(fault);
+        }
+
+        super.startElement(namespace, localName, prefix, attributes, context);
     }
 
     public SOAPHandler onStartChild(String namespace,

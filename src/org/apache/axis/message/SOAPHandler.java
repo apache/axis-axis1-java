@@ -59,7 +59,12 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.Messages;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -88,6 +93,30 @@ public class SOAPHandler extends DefaultHandler
                              DeserializationContext context)
         throws SAXException
     {
+        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
+        if (context.getMessageContext() != null)
+            soapConstants = context.getMessageContext().getSOAPConstants();
+
+
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+            String encodingStyle = attributes.getValue(Constants.URI_SOAP12_ENV,
+                                Constants.ATTR_ENCODING_STYLE);
+
+            if (encodingStyle != null && !encodingStyle.equals("")
+                && !encodingStyle.equals(Constants.URI_SOAP12_NOENC)
+                && !Constants.isSOAP_ENC(encodingStyle)) {
+                TypeMappingRegistry tmr = context.getTypeMappingRegistry();
+                // TODO: both soap encoding style is registered ?
+                if (tmr.getTypeMapping(encodingStyle) == tmr.getDefaultTypeMapping()) {
+                    AxisFault fault = new AxisFault(Constants.FAULT_SOAP12_DATAENCODINGUNKNOWN,
+                        null, Messages.getMessage("invalidEncodingStyle"), null, null, null);
+
+                    throw new SAXException(fault);
+                }
+            }
+        }
+
+
         // By default, make a new element
         if (!context.isDoneParsing() && !context.isProcessingRef()) {
             if (myElement == null) {

@@ -56,6 +56,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
@@ -68,6 +69,7 @@ import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -158,6 +160,8 @@ public class RPCElement extends SOAPBodyElement
         // Figure out if we should be looking for out params or in params
         // (i.e. is this message a response?)
         Message msg = msgContext.getCurrentMessage();
+        SOAPConstants soapConstants = msgContext.getSOAPConstants();
+
         boolean isResponse = ((msg != null) &&
                               Message.RESPONSE.equals(msg.getMessageType()));
 
@@ -275,8 +279,13 @@ public class RPCElement extends SOAPBodyElement
             if (savedException != null) {
                 throw savedException;
             } else if (!msgContext.isClient()) {
-                throw new SAXException(
-                    Messages.getMessage("noSuchOperation", name));
+                QName faultCode = new QName(Constants.FAULT_SERVER_USER);
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
+                    faultCode = Constants.FAULT_SOAP12_SENDER;
+                AxisFault fault = new AxisFault(faultCode,
+                    null, Messages.getMessage("noSuchOperation", name), null, null, null);
+
+                throw new SAXException(fault);
             }
         }
 

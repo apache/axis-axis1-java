@@ -62,6 +62,10 @@ package org.apache.axis.message;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.Constants;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.AxisFault;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -84,6 +88,19 @@ public class HeaderBuilder extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
+        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
+        if (context.getMessageContext() != null)
+            soapConstants = context.getMessageContext().getSOAPConstants();
+
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
+            attributes.getValue(Constants.URI_SOAP12_ENV, Constants.ATTR_ENCODING_STYLE) != null) {
+
+            AxisFault fault = new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                null, Messages.getMessage("noEncodingStyleAttrAppear", "Header"), null, null, null);
+
+            throw new SAXException(fault);
+        }
+
         if (!context.isDoneParsing()) {
             if (myElement == null) {
                 myElement = new SOAPHeader(namespace, localName, prefix,

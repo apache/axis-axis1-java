@@ -492,7 +492,7 @@ public class Constants {
     public static final QName FAULT_SOAP12_VERSIONMISMATCH =
                                   new QName(URI_SOAP12_ENV, "VersionMismatch");
 
-    public static final QName FAULT_SOAP12_DATAENCODINGUNKNOW =
+    public static final QName FAULT_SOAP12_DATAENCODINGUNKNOWN =
                                   new QName(URI_SOAP12_ENV, "DataEncodingUnknow");
 
     public static final QName FAULT_SOAP12_SENDER =

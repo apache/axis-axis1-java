@@ -1,6 +1,7 @@
 package test.soap12;
 
 import junit.framework.TestCase;
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -8,6 +9,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.Messages;
 
 import java.util.Vector;
 
@@ -94,5 +96,22 @@ public class TestHrefs extends TestCase {
                         BODYT;
         deserialize(result, "abc", 0);
     }
+
+    public void testIDANDHREF() throws Exception {
+        String result = HEAD +
+                        HEADERT +
+                        "<result root=\"0\" ref=\"#1\" id=\"1\" xsi:type=\"xsd:string\">abc</result>" +
+                        BODYT;
+        try {
+            deserialize(result, "abc", 0);
+        } catch (AxisFault af) {
+            assertTrue(af.getFaultString().indexOf(Messages.getMessage("noIDandHREFonSameElement")) != -1 &&
+                               Constants.FAULT_SOAP12_SENDER.equals(af.getFaultCode()));
+            return;
+        }
+        fail("Didn't got the expected fault");
+
+    }
+
 
 }
