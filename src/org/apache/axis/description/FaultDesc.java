@@ -65,6 +65,7 @@ import java.util.ArrayList;
  * @author Tom Jordahl (tomj@apache.org)
  */
 public class FaultDesc {
+    private String name;
     private QName qname;
     private ArrayList parameters;
     private String className;
@@ -81,14 +82,12 @@ public class FaultDesc {
 
     public String getName()
     {
-        if (qname != null)
-            return qname.getLocalPart();
-        return null;
+        return name;
     }
 
     public void setName(String name)
     {
-        qname = new QName("", name);
+        this.name = name;
     }
 
     public ArrayList getParameters() {

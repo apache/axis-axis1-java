@@ -111,7 +111,12 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
             FaultDesc faultDesc = op.getFaultByQName(qn);
             if (faultDesc != null) {
                 // Set the class
-                builder.setFaultClass(faultDesc.getClass());
+                try {
+                    Class faultClass = ClassUtils.forName(faultDesc.getClassName());
+                    builder.setFaultClass(faultClass);
+                } catch (ClassNotFoundException e) {
+                    // Just create an AxisFault, no custom exception
+                }
                 builder.setWaiting(true);
                 // register callback for the data, use the xmlType from fault info
                 Deserializer dser = null;
