@@ -59,7 +59,7 @@ import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.AttributeDesc;
 import org.apache.axis.description.ElementDesc;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * @author Glen Daniels (gdaniels@apache.org)

@@ -54,7 +54,7 @@
  */
 package javax.xml.rpc.handler;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 // Referenced classes of package javax.xml.rpc.handler:
 // Handler, MessageContext, HandlerInfo

@@ -66,7 +66,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.Service;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;

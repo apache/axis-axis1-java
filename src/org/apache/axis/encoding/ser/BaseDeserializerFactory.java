@@ -59,8 +59,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

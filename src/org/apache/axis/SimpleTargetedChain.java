@@ -64,7 +64,8 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.util.Enumeration;
 
 /**

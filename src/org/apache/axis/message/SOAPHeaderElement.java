@@ -64,7 +64,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 
 /** 

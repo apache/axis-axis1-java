@@ -54,7 +54,7 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  *

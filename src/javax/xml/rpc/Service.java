@@ -56,9 +56,9 @@ package javax.xml.rpc;
 
 
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.handler.HandlerRegistry;
-import javax.xml.rpc.namespace.QName;
 
 
 /**

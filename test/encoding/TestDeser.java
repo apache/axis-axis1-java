@@ -16,7 +16,7 @@ import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;

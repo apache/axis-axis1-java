@@ -58,7 +58,7 @@ package samples.userguide.example1;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 public class TestClient
 {

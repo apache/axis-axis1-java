@@ -59,7 +59,7 @@ import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SimpleType;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * A simple type with attributes for testing

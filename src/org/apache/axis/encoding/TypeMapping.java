@@ -56,8 +56,8 @@
 
 package org.apache.axis.encoding;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.encoding.SerializerFactory;
 import javax.xml.rpc.encoding.DeserializerFactory;
 

@@ -82,7 +82,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.io.Writer;

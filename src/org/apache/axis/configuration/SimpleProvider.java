@@ -64,7 +64,8 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Iterator;

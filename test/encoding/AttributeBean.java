@@ -60,7 +60,7 @@ import org.apache.axis.description.ElementDesc;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * Simple Java Bean with fields that should be serialized as attributes

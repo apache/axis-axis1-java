@@ -71,7 +71,7 @@ import org.apache.axis.utils.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

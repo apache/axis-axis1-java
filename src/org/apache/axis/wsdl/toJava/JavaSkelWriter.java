@@ -72,7 +72,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Element;

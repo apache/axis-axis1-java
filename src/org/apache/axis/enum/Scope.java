@@ -1,6 +1,6 @@
 package org.apache.axis.enum;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;

@@ -550,12 +550,12 @@ public class Utils {
      * Given the WSDL4J QName (javax.wsdl.QName), return the JAX-RPC
      * QName (javax.xml.rpc.namespace.QName).
      */
-    public static javax.xml.rpc.namespace.QName getAxisQName(QName qname)
+    public static javax.xml.namespace.QName getAxisQName(QName qname)
     {
         if (qname == null) {
             return null;
         }
-        return new javax.xml.rpc.namespace.QName(qname.getNamespaceURI(),
+        return new javax.xml.namespace.QName(qname.getNamespaceURI(),
                                                  qname.getLocalPart());
     }
 
@@ -563,7 +563,7 @@ public class Utils {
      * Given the JAX-RPC QName (javax.xml.rpc.namespace.QName), return
      * the WSDL4J QName (javax.wsdl.QName).
      */
-    public static QName getWSDLQName(javax.xml.rpc.namespace.QName qname)
+    public static QName getWSDLQName(javax.xml.namespace.QName qname)
     {
         if (qname == null) {
             return null;

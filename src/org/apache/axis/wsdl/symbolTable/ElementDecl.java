@@ -54,7 +54,7 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * Simple utility struct for holding element declarations.

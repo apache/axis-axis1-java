@@ -59,7 +59,7 @@ package org.apache.axis.encoding;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;

@@ -55,7 +55,7 @@
 
 package org.apache.axis.description;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * FieldDescs are metadata objects which control the mapping of a given

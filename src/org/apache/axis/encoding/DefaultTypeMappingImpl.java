@@ -58,8 +58,8 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ser.*;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.namespace.QName;
 import java.util.List;
 
 /**
@@ -209,10 +209,10 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Map QNAME to the jax rpc QName class
         myRegister(Constants.XSD_QNAME,
-              javax.xml.rpc.namespace.QName.class,
-              new QNameSerializerFactory(javax.xml.rpc.namespace.QName.class,
+              javax.xml.namespace.QName.class,
+              new QNameSerializerFactory(javax.xml.namespace.QName.class,
                                         Constants.XSD_QNAME),
-              new QNameDeserializerFactory(javax.xml.rpc.namespace.QName.class,
+              new QNameDeserializerFactory(javax.xml.namespace.QName.class,
                                         Constants.XSD_QNAME),
                    true);
 

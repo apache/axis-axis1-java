@@ -73,7 +73,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.servlet.http.HttpServletResponse;
 
 /**

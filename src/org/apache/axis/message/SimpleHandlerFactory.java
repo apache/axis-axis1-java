@@ -64,7 +64,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.util.HashMap;
 
 public class SimpleHandlerFactory implements HandlerFactory

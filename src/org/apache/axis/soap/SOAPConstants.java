@@ -54,7 +54,7 @@
  */
 package org.apache.axis.soap;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * An interface definining SOAP constants.  This allows various parts of the

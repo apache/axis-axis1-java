@@ -81,8 +81,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.apache.axis.AxisFault;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
-import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 import java.io.IOException;

@@ -56,7 +56,8 @@
 package org.apache.axis;
 
 import org.xml.sax.Attributes;
-import javax.xml.rpc.namespace.QName;
+
+import javax.xml.namespace.QName;
 
 public class Constants {
     // Some common Constants that should be used in local handler options

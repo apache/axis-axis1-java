@@ -65,7 +65,8 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collection;

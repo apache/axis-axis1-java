@@ -63,7 +63,7 @@ import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceFactory;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * This version of GetInfo is a near-duplicate of the GetInfo class in

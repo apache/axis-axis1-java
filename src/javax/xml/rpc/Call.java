@@ -58,7 +58,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * The javax.xml.rpc.Call interface provides support for dynamic

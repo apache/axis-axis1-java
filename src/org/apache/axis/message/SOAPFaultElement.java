@@ -61,7 +61,8 @@ import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.IOException;
 
 /** A Fault body element.

@@ -72,9 +72,9 @@ import javax.naming.StringRefAddr;
 
 import javax.naming.spi.ObjectFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
 
-import javax.xml.rpc.namespace.QName;
 
 import java.lang.reflect.Constructor;
 

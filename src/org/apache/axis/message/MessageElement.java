@@ -81,7 +81,8 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.Name;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;

@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package javax.xml.rpc.namespace;
+package javax.xml.rpc;
 
 /**
  * Class NamespaceConstants

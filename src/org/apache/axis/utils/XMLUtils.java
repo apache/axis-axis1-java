@@ -72,12 +72,12 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import sun.misc.BASE64Encoder;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.rpc.namespace.QName;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;

@@ -62,7 +62,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -232,7 +232,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     pw.println("        field.setFieldName(\"" + fieldName + "\");");
                     if (!fieldName.equals(attrName)) {
                         pw.print("        field.setXmlName(");
-                        pw.print("new javax.xml.rpc.namespace.QName(null, \"");
+                        pw.print("new javax.xml.namespace.QName(null, \"");
                         pw.println(attrName + "\"));");
                     }
                     pw.println("        typeDesc.addFieldDesc(field);");
@@ -252,7 +252,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     }
                     pw.println("field = new org.apache.axis.description.ElementDesc();");
                     pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    pw.print(  "        field.setXmlName(new javax.xml.rpc.namespace.QName(\"");
+                    pw.print(  "        field.setXmlName(new javax.xml.namespace.QName(\"");
                     pw.println(xmlName.getNamespaceURI() + "\", \"" +
                                xmlName.getLocalPart() + "\"));");
                     if (elem.getMinOccursIs0()) {
@@ -294,7 +294,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         pw.println("    public static org.apache.axis.encoding.Serializer getSerializer(");
         pw.println("           String mechType, ");
         pw.println("           Class _javaType,  ");
-        pw.println("           javax.xml.rpc.namespace.QName _xmlType) {");
+        pw.println("           javax.xml.namespace.QName _xmlType) {");
         pw.println("        return ");
         pw.println("          new " + ser +"(");
         pw.println("            _javaType, _xmlType, " + typeDesc + ");");
@@ -321,7 +321,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         pw.println("    public static org.apache.axis.encoding.Deserializer getDeserializer(");
         pw.println("           String mechType, ");
         pw.println("           Class _javaType,  ");
-        pw.println("           javax.xml.rpc.namespace.QName _xmlType) {");
+        pw.println("           javax.xml.namespace.QName _xmlType) {");
         pw.println("        return ");
         pw.println("          new " + dser + "(");
         pw.println("            _javaType, _xmlType, " + typeDesc + ");");

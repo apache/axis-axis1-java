@@ -54,7 +54,7 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.Method;

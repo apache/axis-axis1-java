@@ -59,7 +59,7 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.utils.Options;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 public class Client
 {

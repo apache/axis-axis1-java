@@ -223,8 +223,8 @@ public class JavaStubWriter extends JavaClassWriter {
             
             pw.println("                    for (int i = 0; i < cachedSerFactories.size(); ++i) {");
             pw.println("                        Class cls = (Class) cachedSerClasses.get(i);");
-            pw.println("                        javax.xml.rpc.namespace.QName qName =");
-            pw.println("                                (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
+            pw.println("                        javax.xml.namespace.QName qName =");
+            pw.println("                                (javax.xml.namespace.QName) cachedSerQNames.get(i);");
             pw.println("                        Class sf = (Class)");
             pw.println("                                 cachedSerFactories.get(i);");
             pw.println("                        Class df = (Class)");
@@ -399,7 +399,7 @@ public class JavaStubWriter extends JavaClassWriter {
         
         if ( firstSer ) {
             pw.println("            Class cls;" );
-            pw.println("            javax.xml.rpc.namespace.QName qName;" );
+            pw.println("            javax.xml.namespace.QName qName;" );
             pw.println("            Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
             pw.println("            Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
             pw.println("            Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;");
@@ -413,7 +413,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
         QName qname = type.getQName();
 
-        pw.println("            qName = new javax.xml.rpc.namespace.QName(\""
+        pw.println("            qName = new javax.xml.namespace.QName(\""
                    + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
                    + "\");");
         pw.println("            cachedSerQNames.add(qName);");
@@ -485,12 +485,12 @@ public class JavaStubWriter extends JavaClassWriter {
                 javaType = "";
             }
 
-            String typeString = "new javax.xml.rpc.namespace.QName(\"" +
+            String typeString = "new javax.xml.namespace.QName(\"" +
                     qn.getNamespaceURI() + "\", \"" +
                     qn.getLocalPart() + "\")";
             QName paramQName = p.getQName();
             String qnName = "p" + i + "QName";
-            pw.println("        javax.xml.rpc.namespace.QName " + qnName + " = new javax.xml.rpc.namespace.QName(\"" +
+            pw.println("        javax.xml.namespace.QName " + qnName + " = new javax.xml.namespace.QName(\"" +
                     paramQName.getNamespaceURI() + "\", \"" +
                     paramQName.getLocalPart() + "\");");
             if (p.getMode() == Parameter.IN) {
@@ -520,7 +520,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
             }
  
-            String outputType = "new javax.xml.rpc.namespace.QName(\"" +
+            String outputType = "new javax.xml.namespace.QName(\"" +
                 qn.getNamespaceURI() + "\", \"" +
                 qn.getLocalPart() + "\")";
             pw.println("        call.setReturnType(" + 
@@ -567,9 +567,9 @@ public class JavaStubWriter extends JavaClassWriter {
             Map partsMap = operation.getOperation().getInput().getMessage().getParts();
             Part p = (Part)partsMap.values().iterator().next();
             QName q = p.getElementName();
-            pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
+            pw.println("        call.setOperationName(new javax.xml.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
         } else {
-            javax.xml.rpc.namespace.QName elementQName = Utils.getAxisQName(
+            javax.xml.namespace.QName elementQName = Utils.getAxisQName(
                     Utils.getOperationQName(operation));
             if (elementQName != null) {
                 pw.println("        call.setOperationName(" +

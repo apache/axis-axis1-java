@@ -65,7 +65,8 @@ import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.encoding.*;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.util.Vector;
 import java.util.Iterator;
 import java.io.IOException;

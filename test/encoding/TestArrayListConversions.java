@@ -11,7 +11,7 @@ import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.description.ServiceDesc;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;

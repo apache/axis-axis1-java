@@ -5,10 +5,6 @@
 
 package test.wsdl.extensibility;
 
-import java.util.Calendar;
-import javax.xml.rpc.namespace.QName;
-
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.Message;
@@ -33,7 +29,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.StringReader;

@@ -55,8 +55,8 @@
 
 package javax.xml.rpc.encoding;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.namespace.QName;
 
 /**
  * The javax.xml.rpc.encoding.TypeMapping is the base interface for 

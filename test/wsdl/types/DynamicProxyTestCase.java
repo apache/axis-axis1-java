@@ -42,7 +42,7 @@ import javax.xml.rpc.holders.ShortHolder;
 import javax.xml.rpc.holders.ShortWrapperHolder;
 import javax.xml.rpc.holders.StringHolder;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;

@@ -159,7 +159,7 @@ public class SchemaUtils {
                         Vector v = new Vector();
                         ElementDecl elem = new ElementDecl();
                         elem.setType(symbolTable.getTypeEntry(extendsType, false));
-                        elem.setName(new javax.xml.rpc.namespace.QName("", "value"));
+                        elem.setName(new javax.xml.namespace.QName("", "value"));
                         v.add(elem);
                         return v;
                     }
@@ -200,7 +200,7 @@ public class SchemaUtils {
                     Vector v = new Vector();
                     ElementDecl elem = new ElementDecl();
                     elem.setType(simpleType);
-                    elem.setName(new javax.xml.rpc.namespace.QName("", "value"));
+                    elem.setName(new javax.xml.namespace.QName("", "value"));
                     v.add(elem);
                     return v;
                 }

@@ -60,7 +60,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * The <code>javax.xml.rpc.handler.HandlerInfo</code> represents

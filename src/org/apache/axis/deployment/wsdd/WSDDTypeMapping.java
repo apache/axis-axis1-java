@@ -62,7 +62,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.IOException;
 
 

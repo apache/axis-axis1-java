@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package javax.xml.rpc.namespace;
+package javax.xml.namespace;
 
 /**
  * QName class represents a qualified name based on "Namespaces in XML"

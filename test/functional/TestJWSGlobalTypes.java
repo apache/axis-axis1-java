@@ -66,7 +66,7 @@ import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.utils.Options;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 
 public class TestJWSGlobalTypes extends TestCase {
