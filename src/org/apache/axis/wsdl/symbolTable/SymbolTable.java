@@ -1232,7 +1232,6 @@ public class SymbolTable {
                             if (SchemaUtils.isSimpleTypeOrSimpleContent(node)) {
                                 te.setSimpleType(true);
                             }
-
                             symbolTablePut(te);
                         }
                     }

@@ -524,26 +524,28 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
             if (Utils.getEnumerationBaseAndValues(te.getNode(), symbolTable) == null
                     &&SchemaUtils.getContainedAttributeTypes(te.getNode(), symbolTable) == null) {
-                if (base.isSimpleType()) {
-                    // Case 1:
-                    // <simpleType name="mySimpleStringType">
-                    //   <restriction base="xs:string">
-                    //   </restriction>
-                    // </simpleType>
-                    te.setSimpleType(true);
-                    te.setName(base.getName());
-                    te.setRefType(base);
-                }
-
-                if (base.isBaseType()) {
-                    // Case 2:
-                    // <simpleType name="FooString">
-                    //   <restriction base="foo:mySimpleStringType">
-                    //   </restriction>
-                    // </simpleType>
-                    te.setBaseType(true);
-                    te.setName(base.getName());
-                    te.setRefType(base);
+                if(!SchemaUtils.isSimpleTypeWithUnion(te.getNode())) {
+                    if (base.isSimpleType()) {
+                        // Case 1:
+                        // <simpleType name="mySimpleStringType">
+                        //   <restriction base="xs:string">
+                        //   </restriction>
+                        // </simpleType>
+                        te.setSimpleType(true);
+                        te.setName(base.getName());
+                        te.setRefType(base);
+                    }
+    
+                    if (base.isBaseType()) {
+                        // Case 2:
+                        // <simpleType name="FooString">
+                        //   <restriction base="foo:mySimpleStringType">
+                        //   </restriction>
+                        // </simpleType>
+                        te.setBaseType(true);
+                        te.setName(base.getName());
+                        te.setRefType(base);
+                    }
                 }
             }
 
