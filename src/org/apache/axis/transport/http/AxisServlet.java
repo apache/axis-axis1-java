@@ -60,7 +60,11 @@ import org.w3c.dom.Element;
  *
  * @author Doug Davis (dug@us.ibm.com)
  * @author Steve Loughran
- * xdoclet tags are not active yet; keep web.xml in sync
+ * xdoclet tags are not active yet; keep web.xml in sync.
+ * To change the location of the services, change url-pattern in web.xml and
+ * set parameter axis.servicesPath in server-config.wsdd. For more information see
+ * <a href="http://ws.apache.org/axis/java/reference.html">Axis Reference Guide</a>.
+ *
  * @web.servlet name="AxisServlet"  display-name="Apache-Axis Servlet"
  * @web.servlet-mapping url-pattern="/servlet/AxisServlet"
  * @web.servlet-mapping url-pattern="*.jws"
@@ -98,12 +102,18 @@ public class AxisServlet extends AxisServletBase {
     public static final String INIT_PROPERTY_DISABLE_SERVICES_LIST =
             "axis.disableServiceList";
 
+    // Location of the services as defined by the servlet-mapping in web.xml
+    public static final String INIT_PROPERTY_SERVICES_PATH =
+            "axis.servicesPath";
+
     // These have default values.
     private String transportName;
 
     private Handler transport;
 
     private ServletSecurityProvider securityProvider = null;
+
+    private String servicesPath;
 
     /**
      * cache of logging debug option; only evaluated at init time.
@@ -167,6 +177,9 @@ public class AxisServlet extends AxisServletBase {
         // Should we list services?
         disableServicesList = JavaUtils.isTrue(getOption(context,
                 INIT_PROPERTY_DISABLE_SERVICES_LIST, "false"));
+
+        servicesPath = getOption(context, INIT_PROPERTY_SERVICES_PATH,
+                                 "/services/");
 
         /**
          * There are DEFINATE problems here if
@@ -475,7 +488,7 @@ public class AxisServlet extends AxisServletBase {
         }
         // baseURL may change if <endpointURL> tag is used for
         // custom deployment at a different location
-        String defaultBaseURL = getWebappBase(request) + "/services/";
+        String defaultBaseURL = getWebappBase(request) + servicesPath;
         writer.println("<ul>");
         while (i.hasNext()) {
             ServiceDesc sd = (ServiceDesc) i.next();

@@ -755,6 +755,7 @@ the options that we currently document, though there may be more
 <pre>
 &lt;globalConfiguration&gt;
     &lt;parameter name="adminPassword" value="admin"/&gt;
+    &lt;parameter name="axis.servicesPath" value="/services/"/&gt;
     &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;
     &lt;parameter name="sendMultiRefs" value="true"/&gt;
     &lt;parameter name="sendXsiTypes" value="true"/&gt;
@@ -793,6 +794,12 @@ widely avaialable. </td>
 default, which enables the list of services by the AxisServlet when a GET
 request is performed on the servlet root.</td>
     </tr>
+    <tr>
+      <td><b>axis.servicesPath</b></td>
+      <td>Path to the Axis servlet. This should be the same as the services 
+      servlet-mapping defined in web.xml. Used for displaying
+      the list of services. Default is "/services/".</td>
+    </tr>>
     <tr>
       <td><b>axis.Compiler</b></td>
       <td>Compiler adapter classname for JWS compilation. Default is <tt>org.apache.axis.components.compiler.Javac</tt>;
