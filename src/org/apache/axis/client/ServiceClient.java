@@ -292,6 +292,14 @@ public class ServiceClient {
     }
 
     /**
+     * Returns the URL of the transport
+     */
+    public String getURL() {
+      if ( transport == null ) return( null );
+      return( transport.getUrl() );
+    }
+
+    /**
      * Set the name of the transport chain to use.
      */
     public void setTransportName(String name) {
@@ -344,6 +352,15 @@ public class ServiceClient {
     public Object get (String name) {
         return (name == null || myProperties == null) ? null :
                                                         myProperties.get(name);
+    }
+
+    /**
+     * Removes the named property
+     * @param name the property name to remove
+     */
+    public void remove(String name) {
+        if ( name == null || myProperties == null ) return ;
+        myProperties.remove( name );
     }
 
     /**

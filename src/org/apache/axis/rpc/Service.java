@@ -4,7 +4,7 @@
 // package javax.xml.rpc ;
 package org.apache.axis.rpc ;
 
-import org.apache.axis.utils.QName ;
+import org.apache.axis.rpc.namespace.QName ;
 
 public interface Service 
       extends java.io.Serializable, javax.naming.Referenceable {

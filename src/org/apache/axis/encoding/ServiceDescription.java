@@ -137,6 +137,12 @@ public class ServiceDescription
     {
         outputParams.addElement(new Param(name, type));
     }
+
+    public void removeAllParams()
+    {
+        inputParams.clear();
+        outputParams.clear();
+    }
     
     public void setOutputType(QName type)
     {
