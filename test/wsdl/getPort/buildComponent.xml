@@ -4,6 +4,7 @@
         <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
@@ -11,10 +12,14 @@
 
 <project default="compile">
 
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/getPort" />
+
         &properties;
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
+        &targets;
 
 <target name="clean"/>
 
@@ -43,7 +48,14 @@
 
 <target name="deploy"/>
 
-<target name="run"  depends="compile" />
+<target name="run"  depends="setenv" >
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="component-junit-functional"
+      stopTarget="stop-functional-test-http-server" />
+</target>
 
 <target name="undeploy"/>
 
