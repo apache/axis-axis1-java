@@ -79,7 +79,9 @@ public class RPCProvider extends JavaProvider {
         Vector bodies = reqEnv.getBodyElements();
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("bodyElems00", "" + bodies.size()));
-            log.debug(Messages.getMessage("bodyIs00", "" + bodies.get(0)));
+            if(bodies.size()>0){
+                log.debug(Messages.getMessage("bodyIs00", "" + bodies.get(0)));
+            }
         }
 
         RPCElement body = null;
