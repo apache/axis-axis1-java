@@ -63,6 +63,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.Binding;
 import javax.wsdl.PortType;
 import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingFault;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -154,12 +155,12 @@ public class WsdlAttributes {
     private class OperationAttr {
         private int inputBodyType;
         private int outputBodyType;
-        private int faultBodyType;
+        private HashMap faultBodyTypeMap;
 
-        public OperationAttr(int inputBodyType, int outputBodyType, int faultBodyType) {
+        public OperationAttr(int inputBodyType, int outputBodyType, HashMap faultBodyTypeMap) {
             this.inputBodyType = inputBodyType;
             this.outputBodyType = outputBodyType;
-            this.faultBodyType = faultBodyType;
+            this.faultBodyTypeMap = faultBodyTypeMap;
         }
 
         public int getInputBodyType() {
@@ -170,8 +171,8 @@ public class WsdlAttributes {
             return outputBodyType;
         }
 
-        public int getFaultBodyType() {
-            return faultBodyType;
+        public HashMap getFaultBodyTypeMap() {
+            return faultBodyTypeMap;
         }
     }
 
@@ -219,10 +220,7 @@ public class WsdlAttributes {
                     bindingType = TYPE_SOAP;
                     SOAPBinding sb = (SOAPBinding) obj;
                     String style = sb.getStyle();
-                    if (style.equalsIgnoreCase("rpc")) {
-                        bindingStyle = STYLE_RPC;
-                    }
-                    else if (style.equalsIgnoreCase("document")) {
+                    if (style.equalsIgnoreCase("document")) {
                         bindingStyle = STYLE_DOCUMENT;
                     }
                 }
@@ -248,7 +246,6 @@ public class WsdlAttributes {
             // Check the Binding Operations for use="literal"
             int inputBodyType = USE_ENCODED;
             int outputBodyType = USE_ENCODED;
-            int faultBodyType = USE_ENCODED;
             List bindList = binding.getBindingOperations();
             for (Iterator opIterator = bindList.iterator(); opIterator.hasNext();) {
                 BindingOperation bindOp = (BindingOperation) opIterator.next();
@@ -262,9 +259,7 @@ public class WsdlAttributes {
                         if (use.equalsIgnoreCase("literal")) {
                             inputBodyType = USE_LITERAL;
                         }
-                        else {
-                            inputBodyType = USE_ENCODED;
-                        }
+                        break;
                     }
                 }
                 // output
@@ -274,35 +269,41 @@ public class WsdlAttributes {
                     if (obj instanceof SOAPBody) {
                         String use = ((SOAPBody) obj).getUse();
                         if (use.equalsIgnoreCase("literal")) {
-                            if (use.equalsIgnoreCase("literal")) {
-                                outputBodyType = USE_LITERAL;
-                            }
-                            else {
-                                outputBodyType = USE_ENCODED;
-                            }
+                            outputBodyType = USE_LITERAL;
                         }
+                        break;
                     }
                 }
-                // fault
-                Iterator faultIter = bindOp.getBindingOutput().getExtensibilityElements().iterator();
-                for (; faultIter.hasNext();) {
-                    Object obj = faultIter.next();
-                    if (obj instanceof SOAPBody) {
-                        String use = ((SOAPBody) obj).getUse();
-                        if (use.equalsIgnoreCase("literal")) {
+
+                // faults
+                HashMap faultMap = new HashMap();
+                Iterator faultMapIter = bindOp.getBindingFaults().values().iterator();
+                for (; faultMapIter.hasNext(); ) {
+                    BindingFault bFault = (BindingFault)faultMapIter.next();
+
+                    // Set default entry for this fault
+                    String faultName = bFault.getName();
+                    int faultBodyType = USE_ENCODED;
+
+                    Iterator faultIter =
+                            ((BindingFault)faultMapIter.next()).getExtensibilityElements().iterator();
+                    for (; faultIter.hasNext();) {
+                        Object obj = faultIter.next();
+                        if (obj instanceof SOAPBody) {
+                            String use = ((SOAPBody) obj).getUse();
                             if (use.equalsIgnoreCase("literal")) {
                                 faultBodyType = USE_LITERAL;
                             }
-                            else {
-                                faultBodyType = USE_ENCODED;
-                            }
+                            break;
                         }
                     }
+                    // Add this fault name and bodyType to the map
+                    faultMap.put(faultName, new Integer(faultBodyType));
                 }
                 // Associate the portType operation that goes with this binding
                 // with the body types.
                 attributes.put(bindOp.getOperation(),
-                        new OperationAttr(inputBodyType, outputBodyType, faultBodyType));
+                        new OperationAttr(inputBodyType, outputBodyType, faultMap));
 
             } // binding operations
         } // bindings
@@ -337,19 +338,20 @@ public class WsdlAttributes {
             // XXX - we may not have seen all operations
             return USE_ENCODED;
         }
-        return attr.getInputBodyType();
+        return attr.getOutputBodyType();
     }
 
     /**
      * Return body type of operation: literal or encoded
      */
-    public int getFaultBodyType(Operation operation) {
+    public int getFaultBodyType(Operation operation, String faultName) {
         OperationAttr attr = (OperationAttr) attributes.get(operation);
         if (attr == null) {
             // XXX - we may not have seen all operations
             return USE_ENCODED;
         }
-        return attr.getInputBodyType();
+        HashMap m = attr.getFaultBodyTypeMap();
+        return ((Integer) m.get(faultName)).intValue();
     }
 
     /**
@@ -369,8 +371,8 @@ public class WsdlAttributes {
      */
     public int getBindingType(Binding binding) {
         BindingAttr attr = (BindingAttr) attributes.get(binding);
-        // defensive code, as we should have seen all bindings
         if (attr == null) {
+            // defensive code, as we should have seen all bindings
             return TYPE_SOAP;
         }
         return attr.getType();
