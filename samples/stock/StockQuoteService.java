@@ -77,6 +77,8 @@ public class StockQuoteService {
     // http://www.xmltoday.com/examples/stockquote/. The IP addr 
     // below came from the host that the above form posts to ..
 
+    if ( symbol.equals("XXX") ) return( (float) 55.25 );
+
     URL          url = new URL( "http://www.xmltoday.com/examples/" +
                                 "stockquote/getxmlquote.vep?s="+symbol );
 

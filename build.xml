@@ -183,6 +183,15 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
+  <!-- Compiles the test tool(s)                                           -->
+  <!-- =================================================================== -->
+  <target name="testtools" depends="compile">
+    <javac srcdir="." destdir="${build.dir}" debug="${debug}">
+      <include name="test/**/*.java" />
+    </javac>
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
   <target name="javadocs" depends="prepare">
