@@ -164,7 +164,10 @@ public class Constants {
     //////////////////////////////////////////////////////////////////////////
     public static final String URI_DEBUG = "http://xml.apache.org/axis/debug";
 
+    // MessageContext param for the engine's path
     public static final String MC_REALPATH = "realpath";
+    // MessageContext param for the IP of the calling client
+    public static final String MC_REMOTE_ADDR = "remoteaddr";
 
     /** The global input/out chains */
     public static final String GLOBAL_REQUEST        = "global.request" ;
