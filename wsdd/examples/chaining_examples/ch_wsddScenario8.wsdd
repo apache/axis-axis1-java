@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario8" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<documentation>
+    		The type is not needed either, as it reflects the default choice.
+    		This is an example of a deployment of a transport sender chain.
+    		Need to think through how this relates to the output of a transport listener chain in HTTP case.
+    		Need to think through if it makes sense to have anything other than an output chain here.
+ 	 </documentation>
+	<transport name="xml.apache.axis.httpTransportSender">
+		<requestFlow>
+			<documentation>These handlers are run before message is sent the transport sender.</documentation>
+			<handler name="outputHandler1" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">Http transport sender outputHandler1</parameter>
+			</handler>
+			<handler name="outputHandler2" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">Http transport sender outputHandler1</parameter>
+			</handler>
+		</requestFlow>
+	</transport>
+</deployment>

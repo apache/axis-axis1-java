@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<deployment 	name="MIMETest" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<documentation>
+    		MIME Example
+    	</documentation>
+	<service name="MIMETest_Service">
+		<provider type="java:org.apache.axis.handlers.providers.MIMEProvider">
+			<operation name="sendFile"/>
+			<operation name="loopFile"/>
+			<operation name="getFileVector"/>
+			<operation name="loopFileVector"/>
+			<operation name="getFileArray"/>
+			<operation name="loopFileArray"/>
+			<operation name="listAttachments"/>
+			<java:provider className="samples.mime.MimeTest" isStatic="false" />
+		</provider>
+	</service>
+</deployment>

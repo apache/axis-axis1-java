@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario7" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<documentation>
+    		This is an example of a deployment of a transport listener chain.
+  	</documentation>
+	<transport name="xml.apache.axis.httpTransportListener" >
+		<requestFlow>
+			<documentation>
+				These handlers are run as the message is presented to the engine, before routing.
+    			</documentation>
+			<handler name="inputHandler1" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">Http transport inputHandler1</parameter>
+			</handler>
+			<handler name="inputHandler2" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">Http transport inputHandler2</parameter>
+			</handler>
+		</requestFlow>
+		<responseFlow>
+			<documentation>
+				These handlers are run before control is returned to the transport listener.
+			</documentation>
+			<handler name="outputHandler1" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">Http transport outputHandler1</parameter>
+			</handler>
+			<handler name="outputHandler2" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">Http transport outputHandler1</parameter>
+			</handler>
+		</responseFlow>
+	</transport>
+</deployment>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario4" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<documentation>
+	 	A simple serviceDeployment descriptor is used to describe the service.
+    		The type is not needed either, as it reflects the default choice (simpleTargetedChain).
+    
+    		This defines a simple input chain of 2 handlers, a simple output chain of 2 handlers.
+    		This shows use of parm to configure options on inputHandler2.
+    		This shows the appearance of multiple fault flows, and hence will generate a faultable handler
+    		around the invocation of the simpleTargetedChain representing the service.  	
+	</documentation>
+	<service name="wsddScenario4-service1">
+		<requestFlow>
+			<documentation>
+				The input chain does not need to define type, as this is default
+	    			when more than one handler is specified within the flow
+   			 </documentation>
+			<handler name="inputHandler1" type="java:samples.handlers.testHandler1"/>
+			<handler name="inputHandler2" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">inputHandler2</parameter>
+			</handler>
+		</requestFlow>
+		<provider>
+			<java:provider className="samples.wsdd.wsddScenario4"/>
+		</provider>
+		<responseFlow>
+			<documentation>
+				The even though no type is specified, the default chain type is taken
+      				because more than one handler is specified
+   			 </documentation>
+			<handler name="outputHandler1" type="java:samples.handlers.testHandler2"/>
+			<handler name="outputHandler2" type="java:samples.handlers.testHandler2"/>
+		</responseFlow>
+		<faultFlow type="java:samples.handlers.testFaultableHandler">
+			<documentation>
+				The appearance of one or more fault flows will generate a faultableHandler
+       			wrappered around the serviceHandler.  The kind of faultableHandler is given by the
+       			type attr.  This is the fault processing that is run for all faults. 
+    			</documentation>
+			<handler name="faultHandler1" type="java:samples.handlers.testHandler3">
+				<parameter name="parm1" value="default fault handler1"/>
+			</handler>
+			<handler name="faultHandler2" type="java:samples.handlers.testHandler4">
+				<parameter name="parm1" value="default fault handler2"/>
+			</handler>
+		</faultFlow>
+		<faultFlow name="Client.*">
+			<documentation src="urn:unused">
+				The appearance of one or more fault flows will generate a faultableHandler
+       			wrappered around the serviceHandler.  These faults will be run when a client fault
+       			is thrown.
+    			</documentation>
+			<handler name="faultHandlerC1" type="java:samples.handlers.testHandler3">
+				<parameter name="parm1" value="client fault handler1"/>
+			</handler>
+			<handler name="faultHandlerC2" type="java:samples.handlers.testHandler4">
+				<parameter name="parm1" value="client fault handler2"/>
+			</handler>
+		</faultFlow>
+		<faultFlow name="Server.*">
+			<documentation>
+				The appearance of one or more fault flows will generate a faultableHandler
+       			wrappered around the serviceHandler.  These faults will be run when a server fault
+       			is thrown.
+    			</documentation>
+			<handler name="faultHandlerS1" type="java:samples.handlers.testHandler3">
+				<parameter name="parm1" value="server fault handler1"/>
+			</handler>
+			<handler name="faultHandlerS2" type="java:samples.handlers.testHandler4">
+				<parameter name="parm1" value="server fault handler2"/>
+			</handler>
+		</faultFlow>
+	</service>
+</deployment>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario6" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:tns="this-wsdd"
+				targetNamespace="this-wsdd"
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<documentation>
+    		A simple serviceDeployment descriptor is used to describe the service.
+    		The type is not needed either, as it reflects the default choice (simpleTargetedChain).
+  
+    		This is an example of an internal reusable defined within use and
+    		reused in same service.
+ 	</documentation>
+	<service name="wsddScenario6-service1">
+		<requestFlow>
+			<documentation>This chain starts a timer.</documentation>
+			<handler name="Timer1" type="java:org.apache.axis.handlers.Timer">
+				<parameter name="operation" value="start"/>
+			</handler>
+		</requestFlow>	
+		<provider>
+			<java:provider className="samples.wsdd.wsddScenario6"/>
+		</provider>
+		<responseFlow>
+			<documentation>This chain stops the same timer that the input chain started.</documentation>
+			<handler type="tns:Timer1">
+				<parameter name="operation" value="stop"/>
+			</handler>
+		</responseFlow>
+	</service>
+</deployment>
