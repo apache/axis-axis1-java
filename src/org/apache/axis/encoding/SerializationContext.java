@@ -228,6 +228,14 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
     public String qName2String(QName qName);
 
     /**
+     * Convert attribute QName to a string of the form <prefix>:<localpart>
+     * There are some special rules for attributes
+     * @param QName
+     * @return prefixed qname representation for serialization.
+     */
+    public String attributeQName2String(QName qName);
+
+    /**
      * Get the QName associated with the specified class.
      * @param Class of an object requiring serialization.
      * @return appropriate QName associated with the class.

@@ -67,6 +67,8 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import org.w3c.dom.Node;
 
+import javax.xml.namespace.QName;
+
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
  */
@@ -203,8 +205,9 @@ public class JavaBeanWriter extends JavaClassWriter {
         if (attributes != null) {
             for (int i = 0; i < attributes.size(); i += 2) {
                 String typeName = ((TypeEntry) attributes.get(i)).getName();
+                QName xmlName = (QName) attributes.get(i + 1);
                 String variableName = 
-                    Utils.xmlNameToJava((String) attributes.get(i + 1));
+                    Utils.xmlNameToJava(xmlName.getLocalPart());
                 names.add(typeName);
                 names.add(variableName);
                 if (type.isSimpleType() &&
@@ -327,8 +330,8 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (attributes != null) {
                 for (int j=0; j<attributes.size(); j+=2) {
                     paramTypes.add(((TypeEntry) attributes.get(j)).getName());
-                    paramNames.add(mangle +
-                        Utils.xmlNameToJava((String) attributes.get(j + 1)));
+                    String name = ((QName)attributes.get(j + 1)).getLocalPart();
+                    paramNames.add(mangle + Utils.xmlNameToJava(name));
                 }
             }
             // Process the elements

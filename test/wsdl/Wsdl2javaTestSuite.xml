@@ -884,11 +884,20 @@
     <wsdl2java url="test/wsdl/qualify/qualifytest.wsdl"
                output="build/work"
                serverSide="yes"
-               testcase="yes">
+               testcase="no">
         <mapping namespace="urn:qualifyTest" package="test.wsdl.qualify"/>
     </wsdl2java>
 
-    <!-- This tests element qualification.  -->
+    <!-- test for qualified or unqualified attributes -->
+    <wsdl2java url="test/wsdl/qualify2/attribute-qualify.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+        <mapping namespace="urn:attributeQualify" package="test.wsdl.qualify2"/>
+    </wsdl2java>
+    
+    
+    <!-- This tests Bug 9642 -  Java Date not deserialize properly.  -->
     <wsdl2java url="test/wsdl/ram/ram.wsdl"
                output="build/work"
                serverSide="yes"
@@ -912,6 +921,8 @@
                serverSide="yes"
                testcase="no">
     </wsdl2java>
+    
+    
     
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->

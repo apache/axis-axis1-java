@@ -140,7 +140,10 @@ public abstract class JavaWriter implements Generator {
         }
         registerFile(file);
         if (emitter.isVerbose()) {
-            System.out.println(verboseMessage(file));
+            String msg = verboseMessage(file);
+            if (msg != null) {
+                System.out.println(msg);
+            }
         }
         PrintWriter pw = getPrintWriter(file);
         writeFileHeader(pw);

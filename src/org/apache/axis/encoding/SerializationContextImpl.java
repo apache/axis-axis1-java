@@ -325,7 +325,7 @@ public class SerializationContextImpl implements SerializationContext
      */
     public String getPrefixForURI(String uri)
     {
-        return getPrefixForURI(uri, null);
+        return getPrefixForURI(uri, null, false);
     }
 
     /**
@@ -336,16 +336,22 @@ public class SerializationContextImpl implements SerializationContext
      */
     public String getPrefixForURI(String uri, String defaultPrefix)
     {
+        return getPrefixForURI(uri, defaultPrefix, false);
+    }
+    public String getPrefixForURI(String uri, String defaultPrefix, boolean attribute)
+    {
         if ((uri == null) || (uri.equals("")))
             return null;
 
-        String prefix = nsStack.getPrefix(uri);
+        // If we're looking for an attribute prefix, we shouldn't use the 
+        // "" prefix, but always register/find one.
+        String prefix = nsStack.getPrefix(uri, attribute);
 
         if (prefix == null && uri.equals(soapConstants.getEncodingURI())) {
             prefix = Constants.NS_PREFIX_SOAP_ENC;
             registerPrefixForURI(prefix, uri);
         }
-
+        
         if (prefix == null) {
             if (defaultPrefix == null) {
                 prefix = "ns" + lastPrefixIndex++;
@@ -422,6 +428,29 @@ public class SerializationContextImpl implements SerializationContext
     {
         return qName2String(qName, false);
     }
+
+    /**
+     * Convert attribute QName to a string of the form <prefix>:<localpart>
+     * There are slightly different rules for attributes:
+     *  - There is no default namespace
+     *  - any attribute in a namespace must have a prefix
+     * 
+     * @param QName
+     * @return prefixed qname representation for serialization.
+     */
+    public String attributeQName2String(QName qName) {
+        String prefix = null;
+
+        if (! qName.getNamespaceURI().equals("")) {
+            prefix = getPrefixForURI(qName.getNamespaceURI(), null, true);
+        }
+
+        String ret = (((prefix != null) && (!prefix.equals(""))) ?
+                      prefix + ":" : "") +
+           qName.getLocalPart();
+        return ret;
+    }
+
     /**
      * Get the QName associated with the specified class.
      * @param cls Class of an object requiring serialization.
@@ -759,7 +788,7 @@ public class SerializationContextImpl implements SerializationContext
                         if (idx > -1) {
                             prefix = qname.substring(0, idx);
                             prefix = getPrefixForURI(uri,
-                                                     prefix);
+                                                     prefix, true);
                         }
                     }
                     if (!prefix.equals("")) {
