@@ -222,11 +222,12 @@ public class MethodCache {
         try {
             method = clazz.getMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e1) {
-            try {
-                Class helper = ClassUtils.forName(className + "_Helper");
-                method = helper.getMethod(methodName, parameterTypes);
-            } catch (ClassNotFoundException e2) {
-                method = null;
+            if (!clazz.isPrimitive() && !className.startsWith("java.") && !className.startsWith("javax.")) {
+                try {
+                    Class helper = ClassUtils.forName(className + "_Helper");
+                    method = helper.getMethod(methodName, parameterTypes);
+                } catch (ClassNotFoundException e2) {
+                }
             }
         }
 
