@@ -66,6 +66,8 @@ import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageContextListener;
 import org.apache.axis.ime.MessageExchangeLifecycle;
 import org.apache.axis.ime.internal.util.uuid.UUIDGenFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 import java.util.Map;
 
@@ -74,6 +76,9 @@ import java.util.Map;
  */
 public class MessageExchangeImpl
         implements MessageExchange, MessageExchangeLifecycle {
+
+    protected static Log log =
+        LogFactory.getLog(MessageExchangeImpl.class.getName());
 
     public static final long NO_TIMEOUT = -1;
     public static final long DEFAULT_TIMEOUT = 1000 * 30;
@@ -103,6 +108,9 @@ public class MessageExchangeImpl
             MessageContext context,
             MessageContextListener listener)
             throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::send");
+        }
         MessageExchangeCorrelator correlator =
                 (MessageExchangeCorrelator) context.getProperty(
                         MessageExchangeConstants.MESSAGE_CORRELATOR_PROPERTY);
@@ -127,6 +135,9 @@ public class MessageExchangeImpl
                 context,
                 faultListener,
                 statusListener));
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::send");
+        }
         return correlator;
     }
 
@@ -163,6 +174,9 @@ public class MessageExchangeImpl
             MessageExchangeCorrelator correlator,
             long timeout) 
             throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::receive");
+        }
         holder = new Holder();
         Listener listener = new Listener(holder);
         setMessageExchangeFaultListener(listener);
@@ -174,6 +188,9 @@ public class MessageExchangeImpl
               holder.waitForNotify();
         } catch (InterruptedException ie) {
             throw AxisFault.makeFault(ie);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::receive");
         }
         if (holder.context != null) {
             return holder.context;
@@ -200,12 +217,19 @@ public class MessageExchangeImpl
             MessageExchangeCorrelator correlator,
             MessageContextListener listener) 
             throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::receive");
+        }
         provider.processReceive(
             MessageExchangeReceiveContext.newInstance(
                 correlator,
                 listener,
                 faultListener,
                 statusListener));
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::receive");
+        }
+
     }
 
     /**
@@ -224,6 +248,9 @@ public class MessageExchangeImpl
             MessageContext context,
             long timeout)
             throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::sendAndReceive");
+        }
         holder = new Holder();
         Listener listener = new Listener(holder);
         setMessageExchangeFaultListener(listener);
@@ -235,6 +262,9 @@ public class MessageExchangeImpl
               holder.waitForNotify();
         } catch (InterruptedException ie) {
             throw AxisFault.makeFault(ie);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::sendAndReceive");
         }
         if (holder.context != null) {
             return holder.context;
@@ -436,7 +466,13 @@ public class MessageExchangeImpl
      */
     public void awaitShutdown()
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::awaitShutdown");
+        }
         provider.awaitShutdown();
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::awaitShutdown");
+        }
     }
 
     /**
@@ -444,7 +480,13 @@ public class MessageExchangeImpl
      */
     public void cleanup()
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::cleanup");
+        }
         provider.cleanup();
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::cleanup");
+        }
     }
 
     /**
@@ -452,28 +494,52 @@ public class MessageExchangeImpl
      */
     public void awaitShutdown(long timeout)
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::awaitShutdown");
+        }
         provider.awaitShutdown(timeout);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::awaitShutdown");
+        }
     }
 
     /**
      * @see org.apache.axis.ime.MessageExchangeLifecycle#init()
      */
     public void init() {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::init");
+        }
         provider.init();
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::init");
+        }
     }
 
     /**
      * @see org.apache.axis.ime.MessageExchangeLifecycle#shutdown()
      */
     public void shutdown() {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::shutdown");
+        }
         provider.shutdown();
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::shutdown");
+        }        
     }
 
     /**
      * @see org.apache.axis.ime.MessageExchangeLifecycle#shutdown(boolean)
      */
     public void shutdown(boolean force) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeImpl::shutdown");
+        }
         provider.shutdown(force);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeImpl::shutdown");
+        }
     }
 
 }

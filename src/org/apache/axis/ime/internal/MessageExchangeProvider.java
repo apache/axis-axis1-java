@@ -67,6 +67,8 @@ import org.apache.axis.ime.MessageExchangeFaultListener;
 import org.apache.axis.ime.internal.util.WorkerPool;
 import org.apache.axis.ime.internal.util.KeyedBuffer;
 import org.apache.axis.ime.internal.util.NonPersistentKeyedBuffer;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 import java.util.Map;
 
@@ -75,6 +77,9 @@ import java.util.Map;
  */
 public abstract class MessageExchangeProvider
         implements MessageExchangeFactory {
+
+    protected static Log log =
+        LogFactory.getLog(MessageExchangeProvider.class.getName());
 
     public static final long SELECT_TIMEOUT = 1000 * 30;
     public static final long DEFAULT_THREAD_COUNT = 5;
@@ -117,7 +122,13 @@ public abstract class MessageExchangeProvider
             
     public void cleanup()
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeProvider::cleanup");
+        }
         WORKERS.cleanup();
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeProvider::cleanup");
+        }
     }  
 
     public void init() {
@@ -125,6 +136,9 @@ public abstract class MessageExchangeProvider
     }
 
     public void init(long THREAD_COUNT) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeProvider::init");
+        }
         if (initialized)
             throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
         for (int n = 0; n < THREAD_COUNT; n++) {
@@ -132,20 +146,35 @@ public abstract class MessageExchangeProvider
             WORKERS.addWorker(new MessageReceiver(WORKERS, RECEIVE, getReceivedMessageDispatchPolicy(), getReceiveHandler()));
         }
         initialized = true;
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeProvider::init");
+        }
     }
     
     public void processReceive(
             MessageExchangeReceiveContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeProvider::processReceive");
+        }
         RECEIVE_REQUESTS.put(
             context.getMessageExchangeCorrelator(),
             context);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeProvider::processReceive");
+        }
     }
     
     public void processSend(
             MessageExchangeSendContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeProvider::processSend");
+        }
         SEND.put(
             context.getMessageExchangeCorrelator(),
             context);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeProvider::processSend");
+        }
     }
 
     public void shutdown() {
@@ -153,21 +182,39 @@ public abstract class MessageExchangeProvider
     }
 
     public void shutdown(boolean force) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeProvider::shutdown");
+        }
         if (!force) {
             WORKERS.safeShutdown();
         } else {
             WORKERS.shutdown();
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeProvider::shutdown");
+        }
     }
 
     public void awaitShutdown()
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeProvider::awaitShutdown");
+        }
         WORKERS.awaitShutdown();
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeProvider::awaitShutdown");
+        }
     }
 
     public void awaitShutdown(long shutdown)
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeProvider::awaitShutdown");
+        }
         WORKERS.awaitShutdown(shutdown);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeProvider::awaitShutdown");
+        }
     }
 
 
@@ -175,6 +222,9 @@ public abstract class MessageExchangeProvider
   // -- Worker Classes --- //
     public static class MessageReceiver 
             implements Runnable {
+        
+        protected static Log log =
+            LogFactory.getLog(MessageReceiver.class.getName());
         
         protected WorkerPool pool;
         protected KeyedBuffer channel;
@@ -196,6 +246,9 @@ public abstract class MessageExchangeProvider
          * @see java.lang.Runnable#run()
          */
         public void run() {
+            if (log.isDebugEnabled()) {
+                log.debug("Enter: MessageExchangeProvider.MessageReceiver::run");
+            }
             try {
                 while (!pool.isShuttingDown()) {
                     MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
@@ -206,13 +259,12 @@ public abstract class MessageExchangeProvider
                     }
                 }
             } catch (Throwable t) {
-                // kill the thread if any type of exception occurs.
-                // don't worry, we'll create another one to replace it
-                // if we're not currently in the process of shutting down.
-                // once I get the logging function plugged in, we'll
-                // log whatever errors do occur
+                log.error(Messages.getMessage("fault00"), t);
             } finally {
                 pool.workerDone(this);
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: MessageExchangeProvider.MesageReceiver::run");
+                }
             }
         }
     
@@ -222,6 +274,9 @@ public abstract class MessageExchangeProvider
 
     public static class MessageSender 
             implements Runnable {
+
+        protected static Log log =
+            LogFactory.getLog(MessageReceiver.class.getName());
     
         protected WorkerPool pool;
         protected KeyedBuffer channel;
@@ -243,6 +298,9 @@ public abstract class MessageExchangeProvider
          * @see java.lang.Runnable#run()
          */
         public void run() {
+            if (log.isDebugEnabled()) {
+                log.debug("Enter: MessageExchangeProvider.MessageSender::run");
+            }
             try {
                 while (!pool.isShuttingDown()) {
                     MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
@@ -253,13 +311,12 @@ public abstract class MessageExchangeProvider
                     }
                 }
             } catch (Throwable t) {
-                // kill the thread if any type of exception occurs.
-                // don't worry, we'll create another one to replace it
-                // if we're not currently in the process of shutting down.
-                // once I get the logging function plugged in, we'll
-                // log whatever errors do occur
+                log.error(Messages.getMessage("fault00"), t);
             } finally {
                 pool.workerDone(this);
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: MessageExchangeProvider.MessageSender::run");
+                }
             }
         }
     
