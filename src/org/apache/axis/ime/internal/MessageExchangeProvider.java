@@ -64,10 +64,10 @@ import org.apache.axis.ime.MessageExchangeEventListener;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeFactory;
 import org.apache.axis.ime.event.MessageSendEvent;
-import org.apache.axis.ime.internal.util.WorkerPool;
 import org.apache.axis.ime.internal.util.KeyedBuffer;
 import org.apache.axis.ime.internal.util.NonPersistentKeyedBuffer;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.threadpool.ThreadPool;
 import org.apache.commons.logging.Log;
 
 import java.util.Map;
@@ -85,7 +85,7 @@ public abstract class MessageExchangeProvider
     public static final long SELECT_TIMEOUT = 1000 * 30;
     public static final long DEFAULT_THREAD_COUNT = 5;
 
-    protected final WorkerPool WORKERS = new WorkerPool();
+    protected final ThreadPool WORKERS = new ThreadPool();
     protected final KeyedBuffer SEND = new NonPersistentKeyedBuffer(WORKERS);
     protected final KeyedBuffer RECEIVE = new NonPersistentKeyedBuffer(WORKERS);
     protected final KeyedBuffer RECEIVE_REQUESTS = new NonPersistentKeyedBuffer(WORKERS);
@@ -237,13 +237,13 @@ public abstract class MessageExchangeProvider
         protected static Log log =
             LogFactory.getLog(MessageReceiver.class.getName());
         
-        protected WorkerPool pool;
+        protected ThreadPool pool;
         protected KeyedBuffer channel;
         protected ReceivedMessageDispatchPolicy policy;
         protected Handler handler;
     
         protected MessageReceiver(
-                WorkerPool pool,
+                ThreadPool pool,
                 KeyedBuffer channel,
                 ReceivedMessageDispatchPolicy policy,
                 Handler handler) {
@@ -272,7 +272,7 @@ public abstract class MessageExchangeProvider
             } catch (Throwable t) {
                 log.error(Messages.getMessage("fault00"), t);
             } finally {
-                pool.workerDone(this);
+                pool.workerDone(this,true);
                 if (log.isDebugEnabled()) {
                     log.debug("Exit: MessageExchangeProvider.MesageReceiver::run");
                 }
@@ -289,13 +289,13 @@ public abstract class MessageExchangeProvider
         protected static Log log =
             LogFactory.getLog(MessageReceiver.class.getName());
     
-        protected WorkerPool pool;
+        protected ThreadPool pool;
         protected KeyedBuffer channel;
         protected MessageExchangeEventListener listener;
         protected Handler handler;
     
         protected MessageSender(
-                WorkerPool pool,
+                ThreadPool pool,
                 KeyedBuffer channel,
                 MessageExchangeEventListener listener,
                 Handler handler) {
@@ -329,7 +329,7 @@ public abstract class MessageExchangeProvider
             } catch (Throwable t) {
                 log.error(Messages.getMessage("fault00"), t);
             } finally {
-                pool.workerDone(this);
+                pool.workerDone(this,true);
                 if (log.isDebugEnabled()) {
                     log.debug("Exit: MessageExchangeProvider.MessageSender::run");
                 }

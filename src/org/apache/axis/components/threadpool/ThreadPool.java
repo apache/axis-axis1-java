@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.ime.internal.util;
+package org.apache.axis.components.threadpool;
 
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.components.logger.LogFactory;
@@ -66,10 +66,10 @@ import java.util.Map;
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public class WorkerPool {
+public class ThreadPool {
 
     protected static Log log =
-        LogFactory.getLog(WorkerPool.class.getName());
+        LogFactory.getLog(ThreadPool.class.getName());
 
     public static final long MAX_THREADS = 100;
     
@@ -80,7 +80,7 @@ public class WorkerPool {
     public void cleanup()
         throws InterruptedException {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::cleanup");
+            log.debug("Enter: ThreadPool::cleanup");
         }
         if (!isShutdown()) {
           safeShutdown();
@@ -91,7 +91,7 @@ public class WorkerPool {
           _shutdown = false;
         }
         if (log.isDebugEnabled()) {
-            log.debug("Exit: WorkerPool::cleanup");
+            log.debug("Exit: ThreadPool::cleanup");
         }
     }
 
@@ -128,7 +128,7 @@ public class WorkerPool {
     public void addWorker(
             Runnable worker) {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::addWorker");
+            log.debug("Enter: ThreadPool::addWorker");
         }
         if (_shutdown ||
             threadcount == MAX_THREADS)
@@ -138,7 +138,7 @@ public class WorkerPool {
         threadcount++;
         thread.start();
         if (log.isDebugEnabled()) {
-            log.debug("Exit: WorkerPool::addWorker");
+            log.debug("Exit: ThreadPool::addWorker");
         }
     }
 
@@ -147,7 +147,7 @@ public class WorkerPool {
      */
     public void interruptAll() {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::interruptAll");
+            log.debug("Enter: ThreadPool::interruptAll");
         }
         synchronized (threads) {
             for (Iterator i = threads.values().iterator(); i.hasNext();) {
@@ -156,7 +156,7 @@ public class WorkerPool {
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("Exit: WorkerPool::interruptAll");
+            log.debug("Exit: ThreadPool::interruptAll");
         }
     }
 
@@ -165,14 +165,14 @@ public class WorkerPool {
      */
     public void shutdown() {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::shutdown");
+            log.debug("Enter: ThreadPool::shutdown");
         }
         synchronized (this) {
             _shutdown = true;
         }
         interruptAll();
         if (log.isDebugEnabled()) {
-            log.debug("Exit: WorkerPool::shutdown");
+            log.debug("Exit: ThreadPool::shutdown");
         }
     }
 
@@ -181,13 +181,13 @@ public class WorkerPool {
      */
     public void safeShutdown() {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::safeShutdown");
+            log.debug("Enter: ThreadPool::safeShutdown");
         }
         synchronized (this) {
             _shutdown = true;
         }
         if (log.isDebugEnabled()) {
-            log.debug("Exit: WorkerPool::safeShutdown");
+            log.debug("Exit: ThreadPool::safeShutdown");
         }
     }
 
@@ -197,14 +197,14 @@ public class WorkerPool {
     public synchronized void awaitShutdown()
             throws InterruptedException {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::awaitShutdown");
+            log.debug("Enter: ThreadPool::awaitShutdown");
         }
         if (!_shutdown)
             throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
         while (threadcount > 0)
             wait();
         if (log.isDebugEnabled()) {
-            log.debug("Exit: WorkerPool::awaitShutdown");
+            log.debug("Exit: ThreadPool::awaitShutdown");
         }
     }
 
@@ -214,20 +214,20 @@ public class WorkerPool {
     public synchronized boolean awaitShutdown(long timeout)
             throws InterruptedException {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::awaitShutdown");
+            log.debug("Enter: ThreadPool::awaitShutdown");
         }
         if (!_shutdown)
             throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
         if (threadcount == 0) {
             if (log.isDebugEnabled()) {
-                log.debug("Exit: WorkerPool::awaitShutdown");
+                log.debug("Exit: ThreadPool::awaitShutdown");
             }
             return true;
         }
         long waittime = timeout;
         if (waittime <= 0) {
             if (log.isDebugEnabled()) {
-                log.debug("Exit: WorkerPool::awaitShutdown");
+                log.debug("Exit: ThreadPool::awaitShutdown");
             }
             return false;
         }
@@ -236,14 +236,14 @@ public class WorkerPool {
             wait(waittime);
             if (threadcount == 0) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Exit: WorkerPool::awaitShutdown");
+                    log.debug("Exit: ThreadPool::awaitShutdown");
                 }
                 return true;
             }
             waittime = timeout - System.currentTimeMillis();
             if (waittime <= 0) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Exit: WorkerPool::awaitShutdown");
+                    log.debug("Exit: ThreadPool::awaitShutdown");
                 }
                 return false;
             }
@@ -254,21 +254,22 @@ public class WorkerPool {
      * Used by MessageWorkers to notify the pool that it is done
      */
     public void workerDone(
-            Runnable worker) {
+            Runnable worker, 
+            boolean restart) {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: WorkerPool::workerDone");
+            log.debug("Enter: ThreadPool::workerDone");
         }
         synchronized(this) {
             threads.remove(worker);
             if (--threadcount == 0 && _shutdown) {
                 notifyAll();
             }
-            if (!_shutdown) {
+            if (!_shutdown && restart) {
                 addWorker(worker);
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("Exit: WorkerPool::workerDone");
+            log.debug("Exit: ThreadPool::workerDone");
         }        
     }
 }
