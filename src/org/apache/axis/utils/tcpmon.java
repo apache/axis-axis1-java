@@ -1869,12 +1869,6 @@ public class tcpmon extends JFrame {
         this(listenPort, targetHost, targetPort, false);
     }
 
-    public void setInputPort(int port) {
-    }
-
-    public void setOutputHostPort(char hostName, int port) {
-    }
-
     /**
      * set up the L&F
      */
