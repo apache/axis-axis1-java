@@ -85,14 +85,22 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Definition;
+import javax.wsdl.Input;
+import javax.wsdl.Operation;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
-import java.beans.IntrospectionException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1142,9 +1150,6 @@ public class Call implements javax.xml.rpc.Call {
             /******************************************************/
             env = new SOAPEnvelope();
 
-            for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
-                env.addHeader((SOAPHeaderElement)myHeaders.get(i));
-
             if ( !(params[0] instanceof SOAPEnvelope) )
                 for ( i = 0 ; i < params.length ; i++ )
                     env.addBodyElement( (SOAPBodyElement) params[i] );
@@ -1215,9 +1220,6 @@ public class Call implements javax.xml.rpc.Call {
         try {
             Message msg = null ;
             int     i ;
-
-            for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
-                env.addHeader((SOAPHeaderElement)myHeaders.get(i));
 
             msg = new Message( env );
             setRequestMessage( msg );
@@ -1669,13 +1671,6 @@ public class Call implements javax.xml.rpc.Call {
         outParams = new HashMap();
         outParamsList = new ArrayList();
 
-        // If we have headers to insert, do so now.
-        if (myHeaders != null) {
-            for (int i = 0; i < myHeaders.size(); i++) {
-                reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
-            }
-        }
-
         // Set both the envelope and the RPCElement encoding styles
         try {
             body.setEncodingStyle(encodingStyle);
@@ -1851,6 +1846,11 @@ public class Call implements javax.xml.rpc.Call {
                 // No direct config, so try the namespace of the first body.
                 reqMsg = msgContext.getRequestMessage();
                 reqEnv = reqMsg.getSOAPEnvelope();
+
+                // If we have headers to insert, do so now.
+                for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
+                    reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
+
                 SOAPBodyElement body = reqEnv.getFirstBody();
 
                 // Does this make any sense to anyone?  If not, we should remove it.
