@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2002,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -87,32 +87,31 @@ public class Wsdl2javaAntTask extends Task
     private boolean noWrapped = false;
     private String factory = null;
     private HashMap namespaceMap = new HashMap();
-    private String output = "." ;
+    private String output = ".";
     private String protocolHandlerPkgs = "";
     private String deployScope = "";
     private String url = "";
     private String typeMappingVersion = TypeMappingVersionEnum.DEFAULT_VERSION;
     private long timeout = 45000;
-    private File  namespaceMappingFile=null;
+    private File namespaceMappingFile = null;
     private MappingSet mappings = new MappingSet();
-    private String username=null;
-    private String password=null;
-    private Path classpath=null;
+    private String username = null;
+    private String password = null;
+    private Path classpath = null;
     private List nsIncludes = new ArrayList();
     private List nsExcludes = new ArrayList();
     private List properties = new ArrayList();
-    
 
 
     /**
      * do we print a stack trace when something goes wrong?
      */
-    private boolean printStackTraceOnFailure=true;
+    private boolean printStackTraceOnFailure = true;
     /**
      * what action to take when there was a failure and the source was some
      * URL
      */
-    private boolean failOnNetworkErrors=false;
+    private boolean failOnNetworkErrors = false;
 
     public Wsdl2javaAntTask() {
     }
@@ -123,14 +122,14 @@ public class Wsdl2javaAntTask extends Task
      */
     protected void validate()
             throws BuildException {
-        if(url==null || url.length()==0) {
+        if (url == null || url.length() == 0) {
             throw new BuildException("No url specified");
         }
-        if(timeout<-1) {
+        if (timeout < -1) {
             throw new BuildException("negative timeout supplied");
         }
-        File outdir=new File(output);
-        if(!outdir.isDirectory() || !outdir.exists()) {
+        File outdir = new File(output);
+        if (!outdir.isDirectory() || !outdir.exists()) {
             throw new BuildException("output directory is not valid");
         }
 
@@ -164,7 +163,7 @@ public class Wsdl2javaAntTask extends Task
         log("\ttimeout:" + timeout, logLevel);
         log("\tfailOnNetworkErrors:" + failOnNetworkErrors, logLevel);
         log("\tprintStackTraceOnFailure:" + printStackTraceOnFailure, logLevel);
-        log("\tnamespaceMappingFile:"+namespaceMappingFile, logLevel);
+        log("\tnamespaceMappingFile:" + namespaceMappingFile, logLevel);
         log("\tusername:" + username, logLevel);
         log("\t:password" + password, logLevel);
         log("\t:noWrapped" + noWrapped, logLevel);
@@ -179,7 +178,7 @@ public class Wsdl2javaAntTask extends Task
     public void execute() throws BuildException {
         //before we get any further, if the user didnt spec a namespace mapping
         //file, we load in the default
-     
+
         traceParams(Project.MSG_VERBOSE);
         validate();
         try {
@@ -190,8 +189,8 @@ public class Wsdl2javaAntTask extends Task
             Scope scope = Scope.getScope(deployScope, null);
             if (scope != null) {
                 emitter.setScope(scope);
-            } else if (deployScope.length()==0
-                    ||  "none".equalsIgnoreCase(deployScope)) {
+            } else if (deployScope.length() == 0
+                    || "none".equalsIgnoreCase(deployScope)) {
                 /* leave default (null, or not-explicit) */;
             } else {
                 log("Unrecognized scope:  " + deployScope + ".  Ignoring it.", Project.MSG_VERBOSE);
@@ -204,10 +203,6 @@ public class Wsdl2javaAntTask extends Task
             }
             emitter.setTestCaseWanted(testCase);
             emitter.setHelperWanted(helperGen);
-//            if (factorySpec != null) {
-//                emitter.setFactorySpec(factorySpec);
-//            }
-//            else 
             if (factory != null) {
                 emitter.setFactory(factory);
             }
@@ -223,12 +218,12 @@ public class Wsdl2javaAntTask extends Task
             emitter.setDebug(debug);
             emitter.setTypeMappingVersion(typeMappingVersion);
             emitter.setNowrap(noWrapped);
-	        if (namespaceMappingFile != null) {
-	            emitter.setNStoPkg(namespaceMappingFile.toString());
-	        }    
+            if (namespaceMappingFile != null) {
+                emitter.setNStoPkg(namespaceMappingFile.toString());
+            }
             emitter.setTimeout(timeout);
 
-            Authenticator.setDefault(new DefaultAuthenticator(username,password));
+            Authenticator.setDefault(new DefaultAuthenticator(username, password));
             if (classpath != null) {
                 AntClassLoader cl = new AntClassLoader(
                         getClass().getClassLoader(),
@@ -239,7 +234,7 @@ public class Wsdl2javaAntTask extends Task
                         Project.MSG_VERBOSE);
                 ClassUtils.setDefaultClassLoader(cl);
             }
-            
+
             log("WSDL2Java " + url, Project.MSG_INFO);
             try {
                 emitter.run(url);
@@ -248,14 +243,14 @@ public class Wsdl2javaAntTask extends Task
                     // What we have is either a network error or invalid XML -
                     // the latter most likely an HTML error page.  This makes
                     // it impossible to continue with the test, so we stop here
-                    if(!failOnNetworkErrors) {
+                    if (!failOnNetworkErrors) {
                         // test mode, issue a warning, and return without
                         //reporting a fatal error.
                         log(e.toString(), Project.MSG_WARN);
                         return;
                     } else {
                         //in 'consumer' mode, bail out with the URL
-                        throw new BuildException("Could not build "+url,e);
+                        throw new BuildException("Could not build " + url, e);
                     }
                 } else {
                     throw e;
@@ -266,11 +261,11 @@ public class Wsdl2javaAntTask extends Task
             //mistaken for a throwable.
             throw b;
         } catch (Throwable t) {
-            if(printStackTraceOnFailure) {
+            if (printStackTraceOnFailure) {
                 traceParams(Project.MSG_INFO);
                 t.printStackTrace();
             }
-            throw new BuildException("Error while processing WSDL in Wsdl2javaAntTask for "+url,t);
+            throw new BuildException("Error while processing WSDL in Wsdl2javaAntTask for " + url, t);
         }
 
     }
@@ -361,7 +356,7 @@ public class Wsdl2javaAntTask extends Task
         if (currentPkgs == null)
             newPkgs = handlerPkgs;
         else
-            // append to the existing list
+        // append to the existing list
             newPkgs = currentPkgs + "|" + handlerPkgs;
 
         System.setProperty("java.protocol.handler.pkgs", newPkgs);
@@ -449,7 +444,7 @@ public class Wsdl2javaAntTask extends Task
 
     }
     */
-    
+
     /**
      * should the task fail the build if there is a network error?
      * optional: defaults to false
@@ -490,31 +485,31 @@ public class Wsdl2javaAntTask extends Task
     /**
      * Set the noWrapped flag.
      * @param noWrapped
-     */ 
+     */
     public void setNoWrapped(boolean noWrapped) {
-      this.noWrapped = noWrapped;
+        this.noWrapped = noWrapped;
     }
 
     /**
      * set the classpath
      * @return
-     */ 
+     */
     public Path createClasspath() {
         if (classpath == null) {
             classpath = new Path(project);
         }
         return classpath.createPath();
     }
-    
+
     /** Adds an additional namespace to the list to be included
      * in source code generation.
-     */    
+     */
     public NamespaceSelector createNsInclude() {
         NamespaceSelector selector = new NamespaceSelector();
         nsIncludes.add(selector);
         return selector;
     }
-    
+
     /** Adds an additional namespace to the list to be excluded
      * from source code generation.
      */
@@ -523,8 +518,8 @@ public class Wsdl2javaAntTask extends Task
         nsExcludes.add(selector);
         return selector;
     }
-    
-    /** Adds a property name/value pair for specialized 
+
+    /** Adds a property name/value pair for specialized
      * JavaGeneratorFactories.
      */
     public FactoryProperty createProperty() {
@@ -532,25 +527,25 @@ public class Wsdl2javaAntTask extends Task
         properties.add(property);
         return property;
     }
-    
+
     /** This factory method makes it easier to extend this Ant task
      * with a custom Emitter, if necessary.
      */
     protected Emitter createEmitter() {
         return new Emitter();
     }
-        
+
     protected NamespaceSelector createSelector() {
         return new NamespaceSelector();
     }
-    
-    private void traceSystemSetting(String setting,int logLevel) {
-        String value=System.getProperty(setting);
-        log("\t"+setting+"=" + value, logLevel);
+
+    private void traceSystemSetting(String setting, int logLevel) {
+        String value = System.getProperty(setting);
+        log("\t" + setting + "=" + value, logLevel);
     }
 
     private void traceNetworkSettings(int logLevel) {
-        traceSystemSetting("http.proxyHost",logLevel);
+        traceSystemSetting("http.proxyHost", logLevel);
         traceSystemSetting("http.proxyPort", logLevel);
         traceSystemSetting("http.proxyUser", logLevel);
         traceSystemSetting("http.proxyPassword", logLevel);
