@@ -60,6 +60,8 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Handler;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
@@ -78,8 +80,12 @@ public class RPCElement extends SOAPBodyElement
     protected boolean needDeser = false;
     protected boolean elementIsFirstParam = false;
 
-    public RPCElement(String namespace, String localName, String prefix,
-                      Attributes attributes, DeserializationContext context)
+    public RPCElement(String namespace,
+                      String localName,
+                      String prefix,
+                      Attributes attributes,
+                      DeserializationContext context,
+                      OperationDesc operation)
     {
         super(namespace, localName, prefix, attributes, context);
 
@@ -88,22 +94,13 @@ public class RPCElement extends SOAPBodyElement
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
 
-        // IF we're doc/literal... we can't count on the element name
-        // being the method name.
-        SOAPService service = context.getMessageContext().getService();
-        if (service != null && service.getStyle() == SOAPService.STYLE_DOCUMENT) {
-            // So see if we can map it using metadata
-            QName qname = new QName(namespace, localName);
-            String methodName = service.getMethodForElementName(qname);
-            if (methodName != null) {
-                this.name = methodName;
+        if (operation != null) {
+            this.name = operation.getName();
 
-                // OK, now that we've found a match, we need to note that
-                // we should start at this level when deserializing
-                // "parameters"
-                elementIsFirstParam = true;
-
-            }
+            // IF we're doc/literal... we can't count on the element name
+            // being the method name.
+            elementIsFirstParam = (operation.getStyle() ==
+                                   ServiceDesc.STYLE_DOCUMENT);
         }
     }
     
@@ -199,8 +196,14 @@ public class RPCElement extends SOAPBodyElement
             }
         }
 
-        context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
-        context.setCurElement(this);
+        if (elementIsFirstParam) {
+            context.pushElementHandler(new RPCHandler(this));
+            context.setCurElement(null);
+        } else {
+            context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
+            context.setCurElement(this);
+        }
+
         publishToHandler((org.xml.sax.ContentHandler)context);
     }
     
@@ -239,25 +242,29 @@ public class RPCElement extends SOAPBodyElement
 
     protected void outputImpl(SerializationContext context) throws Exception
     {
-        // Set default namespace if appropriate (to avoid prefix mappings
-        // in literal style).  Do this only if there is no encodingStyle.
-        if (encodingStyle.equals("")) {
-            context.registerPrefixForURI("", getNamespaceURI());
-        }
         MessageContext msgContext = context.getMessageContext();
         boolean isRPC = true;
-        if (msgContext != null) {
-            if ((msgContext.getOperationStyle() != SOAPService.STYLE_RPC) &&
-                ! msgContext.isPropertyTrue("wrapped"))
+        if (msgContext != null &&
+                (msgContext.getOperationStyle() != ServiceDesc.STYLE_RPC) &&
+                ! msgContext.isPropertyTrue("wrapped")) {
                 isRPC = false;
         }
 
         if (isRPC) {
-            context.startElement(new QName(namespaceURI,name), attributes);        
+            // Set default namespace if appropriate (to avoid prefix mappings
+            // in literal style).  Do this only if there is no encodingStyle.
+            if (encodingStyle.equals("")) {
+                context.registerPrefixForURI("", getNamespaceURI());
+            }
+            context.startElement(new QName(namespaceURI,name), attributes);
         }
         
         for (int i = 0; i < params.size(); i++) {
-            ((RPCParam)params.elementAt(i)).serialize(context);
+            RPCParam param = (RPCParam)params.elementAt(i);
+            if (!isRPC && encodingStyle.equals("")) {
+                context.registerPrefixForURI("", param.getQName().getNamespaceURI());
+            }
+            param.serialize(context);
         }
         
         if (isRPC) {

@@ -61,6 +61,8 @@ import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.*;
 import org.apache.axis.*;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
@@ -84,7 +86,6 @@ public class WSDDService
     extends WSDDTargetedChain
     implements WSDDTypeMappingContainer
 {
-    public static final QName elMapQName = new QName("", "elementMapping");
     public TypeMappingRegistry tmr = null;
 
     private Vector faultFlows = new Vector();
@@ -94,13 +95,10 @@ public class WSDDService
     /** Which namespaces should auto-dispatch to this service? */
     private Vector namespaces = new Vector();
 
-    /** List of QName -> method mappings for doc/lit dispatching */
-    private HashMap qName2MethodMap = null;
-
     private String descriptionURL;
 
     /** Style - document or RPC (the default) */
-    private int style = SOAPService.STYLE_RPC;
+    private int style = ServiceDesc.STYLE_RPC;
 
     private SOAPService cachedService = null;
 
@@ -109,6 +107,8 @@ public class WSDDService
      * pivot (see getInstance() below)
      */
     private QName providerQName;
+
+    ServiceDesc desc = new ServiceDesc();
 
     /**
      * Default constructor
@@ -127,9 +127,15 @@ public class WSDDService
     {
         super(e);
 
+        String modeStr = e.getAttribute("style");
+        if (modeStr != null && !modeStr.equals("")) {
+            desc.setStyle(MessageContext.getStyleFromString(modeStr));
+        }
+
         Element [] operationElements = getChildElements(e, "operation");
         for (int i = 0; i < operationElements.length; i++) {
-            WSDDOperation operation = new WSDDOperation(operationElements[i]);
+            WSDDOperation operation = new WSDDOperation(operationElements[i],
+                                                        desc);
             operations.add(operation);
         }
 
@@ -158,24 +164,6 @@ public class WSDDService
         if (typeStr != null && !typeStr.equals(""))
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
 
-        String modeStr = e.getAttribute("style");
-        if (modeStr != null && modeStr.equals("document")) {
-            style = SOAPService.STYLE_DOCUMENT;
-
-            Element [] mappingElements = getChildElements(e, "elementMapping");
-            if (mappingElements.length > 0 && qName2MethodMap == null) {
-                qName2MethodMap = new HashMap();
-            }
-            for (int i = 0; i < mappingElements.length; i++) {
-                // Register a mapping from an Element QName to a particular
-                // method so we can dispatch for doc/lit services.
-                Element el = mappingElements[i];
-                String elString = el.getAttribute("element");
-                QName elQName = XMLUtils.getQNameFromString(elString, el);
-                String methodName = el.getAttribute("method");
-                qName2MethodMap.put(elQName, methodName);
-            }
-        }
     }
 
     /**
@@ -226,6 +214,10 @@ public class WSDDService
      */
     public int getStyle() {
         return style;
+    }
+
+    public ServiceDesc getServiceDesc() {
+        return desc;
     }
 
     /**
@@ -345,13 +337,13 @@ public class WSDDService
             }
         }
 
-        service.setElementMap(qName2MethodMap);
-
         for (Iterator i = operations.iterator(); i.hasNext();) {
-            WSDDOperation operation = (WSDDOperation) i.next();
-            service.addOperationDesc(operation.getName(),
-                                     operation.getOperationDesc());
+            OperationDesc operationDesc =
+                    ((WSDDOperation) i.next()).getOperationDesc();
+            desc.addOperationDesc(operationDesc);
         }
+
+        service.setServiceDescription(desc);
 
         cachedService = service;
         return service;
@@ -371,7 +363,7 @@ public class WSDDService
             // use the style of the service to map doc/lit or rpc/enc
             String encodingStyle = mapping.getEncodingStyle();
             if (encodingStyle == null) {
-                if (style == SOAPService.STYLE_RPC)
+                if (style == ServiceDesc.STYLE_RPC)
                     encodingStyle =Constants.URI_CURRENT_SOAP_ENC;
                 else
                     encodingStyle = "";  // literal
@@ -431,7 +423,7 @@ public class WSDDService
             attrs.addAttribute("", "provider", "provider",
                                "CDATA", context.qName2String(providerQName));
         }
-        if (style == SOAPService.STYLE_DOCUMENT) {
+        if (style == ServiceDesc.STYLE_DOCUMENT) {
             attrs.addAttribute("", "style", "style", "CDATA", "document");
         }
 
@@ -444,25 +436,6 @@ public class WSDDService
         writeFlowsToContext(context);
         writeParamsToContext(context);
 
-        if (style == SOAPService.STYLE_DOCUMENT && qName2MethodMap != null) {
-            Set qnames = qName2MethodMap.keySet();
-            if (qnames != null) {
-                Iterator i = qnames.iterator();
-                while (i.hasNext()) {
-                    QName elQName = (QName)i.next();
-                    String methodName = (String)qName2MethodMap.get(elQName);
-                    String elemName = context.qName2String(elQName);
-                    attrs = new AttributesImpl();
-                    attrs.addAttribute("", "method", "method",
-                                       "CDATA", methodName);
-                    attrs.addAttribute("", "element", "element",
-                                       "CDATA", elemName);
-
-                    context.startElement(elMapQName, attrs);
-                    context.endElement();
-                }
-            }
-        }
 
         for (int i=0; i < typeMappings.size(); i++) {
             ((WSDDTypeMapping) typeMappings.elementAt(i)).writeToContext(context);

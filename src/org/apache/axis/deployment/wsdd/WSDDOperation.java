@@ -59,11 +59,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  *
@@ -71,27 +75,39 @@ import java.io.IOException;
 public class WSDDOperation
     extends WSDDElement
 {
-    /** The operation name (String, or QName?) */
-    private String name;
-
-    /** The return QName (if it should be different from <method>Result) */
-    private QName returnQName;
+    /** Holds all our actual data */
+    OperationDesc desc = new OperationDesc();
 
     /**
      *
      * @param e (Element) XXX
      * @throws WSDDException XXX
      */
-    public WSDDOperation(Element e)
+    public WSDDOperation(Element e, ServiceDesc parent)
         throws WSDDException
     {
         super(e);
 
-        name = e.getAttribute("name");
+        desc.setName(e.getAttribute("name"));
 
         String retQNameStr = e.getAttribute("returnQName");
         if (retQNameStr != null && !retQNameStr.equals(""))
-            returnQName = XMLUtils.getQNameFromString(retQNameStr, e);
+            desc.setReturnQName(XMLUtils.getQNameFromString(retQNameStr, e));
+
+        if (parent.getStyle() == ServiceDesc.STYLE_DOCUMENT) {
+            Element [] mappingElements = getChildElements(e, "elementMapping");
+            if (mappingElements.length > 1) {
+                // Can only have one for now
+                throw new WSDDException(JavaUtils.getMessage("onlyOneMapping"));
+            }
+
+            // Register a mapping from an Element QName to a particular
+            // method so we can dispatch for doc/lit services.
+            Element el = mappingElements[0];
+            String elString = el.getAttribute("qname");
+            QName elQName = XMLUtils.getQNameFromString(elString, el);
+            desc.setElementQName(elQName);
+        }
     }
 
     /**
@@ -101,16 +117,26 @@ public class WSDDOperation
             throws IOException {
         AttributesImpl attrs = new AttributesImpl();
 
-        if (returnQName != null) {
+        if (desc.getReturnQName() != null) {
             attrs.addAttribute("", "returnQName", "returnQName",
-                               "CDATA", context.qName2String(returnQName));
+                               "CDATA",
+                               context.qName2String(desc.getReturnQName()));
         }
 
-        if (name != null) {
-            attrs.addAttribute("", "name", "name", "CDATA", name);
+        if (desc.getName() != null) {
+            attrs.addAttribute("", "name", "name", "CDATA", desc.getName());
         }
 
         context.startElement(getElementName(), attrs);
+
+        if (desc.getElementQName() != null) {
+            attrs = new AttributesImpl();
+            attrs.addAttribute("", "qname", "qname", "CDATA",
+                               context.qName2String(desc.getElementQName()));
+            context.startElement(WSDDConstants.ELEMENTMAP_QNAME, attrs);
+            context.endElement();
+        }
+
         context.endElement();
     }
 
@@ -118,27 +144,8 @@ public class WSDDOperation
         return WSDDConstants.OPERATION_QNAME;
     }
 
-    public QName getReturnQName() {
-        return returnQName;
-    }
-
-    public void setReturnQName(QName returnQName) {
-        this.returnQName = returnQName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public OperationDesc getOperationDesc()
     {
-        OperationDesc desc = new OperationDesc();
-        desc.setName(name);
-        desc.setReturnQName(returnQName);
         return desc;
     }
 }

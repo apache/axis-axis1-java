@@ -132,10 +132,7 @@ public class JavaUndeployWriter extends JavaWriter {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
 
-        boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
-
-        pw.println("  <service name=\"" + serviceName + "\">");
-        pw.println("  </service>");
+        pw.println("  <service name=\"" + serviceName + "\"/>");
     } //writeDeployPort
 
 } // class JavaUndeployWriter

@@ -59,10 +59,13 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.Parameter;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.server.ParamList;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
@@ -100,6 +103,10 @@ public class RPCProvider extends JavaProvider
                 "RPCProvider.processMessage()"));
         }
 
+        SOAPService service = msgContext.getService();
+        ServiceDesc serviceDesc = service.getServiceDescription();
+        OperationDesc operation = msgContext.getOperation();
+
         Vector          bodies = reqEnv.getBodyElements();
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("bodyElems00", "" + bodies.size()));
@@ -110,10 +117,22 @@ public class RPCProvider extends JavaProvider
         /* RPC call.                                                      */
         /******************************************************************/
         for ( int bNum = 0 ; bNum < bodies.size() ; bNum++ ) {
-            if (!(bodies.get(bNum) instanceof RPCElement))
-                continue;
-            
-            RPCElement   body  = (RPCElement) bodies.get( bNum );
+            RPCElement   body;
+
+            if (!(bodies.get(bNum) instanceof RPCElement)) {
+                SOAPBodyElement bodyEl = (SOAPBodyElement)bodies.get(bNum);
+                if (operation != null) {
+                    Parameter param = operation.getParameter(bNum);
+                    Object val = bodyEl.getValueAsType(param.getTypeQName());
+                    body = new RPCElement("",
+                                          operation.getName(),
+                                          new Object [] { val });
+                } else {
+                    continue;
+                }
+            } else {
+                body = (RPCElement) bodies.get( bNum );
+            }
 
             String       mName      = body.getMethodName();
             Vector       args       = body.getParams();
@@ -294,7 +313,7 @@ public class RPCProvider extends JavaProvider
             resBody.setPrefix( body.getPrefix() );
             resBody.setNamespaceURI( body.getNamespaceURI() );
             resBody.setEncodingStyle(msgContext.getEncodingStyle());
-            SOAPService service = msgContext.getService();
+
             if ( objRes != null ) {
                 // In the old skeleton a param list was returned, which 
                 // contained the RPC params.  Preserve this for now.
@@ -311,12 +330,12 @@ public class RPCProvider extends JavaProvider
                     }
                 }
                 else {
-                    QName returnQName = getReturnQName(service, mName);
+                    QName returnQName = getReturnQName(serviceDesc, mName);
                     RPCParam param = new RPCParam(returnQName, objRes);
                     resBody.addParam(param);
                 }
             } else if (method[m].getReturnType() != Void.TYPE) {
-                QName returnQName = getReturnQName(service, mName);
+                QName returnQName = getReturnQName(serviceDesc, mName);
                 RPCParam param = new RPCParam(returnQName, objRes);
                 resBody.addParam(param);
             }
@@ -388,7 +407,7 @@ public class RPCProvider extends JavaProvider
         return parmName;
     }
 
-    protected QName getReturnQName(SOAPService service, String methodName)
+    protected QName getReturnQName(ServiceDesc service, String methodName)
     {
         QName ret = null;
 
