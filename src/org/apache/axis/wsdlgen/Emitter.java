@@ -107,8 +107,8 @@ public class Emitter {
     private String implNS;
     private String locationUrl;
     private String importUrl;
-    private String serviceUrn;
-    private String serviceName = null;
+    private String serviceName;
+    private String targetService = null;
     private String description;
     private TypeMappingRegistry reg;
     private Namespaces namespaces;
@@ -232,6 +232,12 @@ public class Emitter {
         if (encodingList == null) {
             clsName = cls.getName();
             clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
+
+            if (getServiceName() == null) {
+                String name = cls.getName();
+                name = name.substring(name.lastIndexOf('.') + 1);
+                setServiceName(name);
+            }
             
             encodingList = new ArrayList();
             encodingList.add(Constants.URI_SOAP_ENC);
@@ -425,7 +431,10 @@ public class Emitter {
 
         SOAPBody soapBody = new SOAPBody();
         soapBody.setUse("encoded");
-        soapBody.setNamespaceURI(serviceName);
+        if (targetService == null)
+            soapBody.setNamespaceURI(intfNS);
+        else
+            soapBody.setNamespaceURI(targetService);
         soapBody.setEncodingStyles(encodingList);
 
         bindingInput.addExtensibilityElement(soapBody);
@@ -671,32 +680,32 @@ public class Emitter {
      * Returns the String representation of the service URN
      * @return String representation of the service URN
      */
-    public String getServiceUrn() {
-        return serviceUrn;
+    public String getServiceName() {
+        return serviceName;
     }
 
     /**
      * Set the String representation of the service URN
      * @param serviceUrn the String representation of the service URN
      */
-    public void setServiceUrn(String serviceUrn) {
-        this.serviceUrn = serviceUrn;
-    }
-
-    /**
-     * Returns the service name
-     * @return the service name
-     */
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    /**
-     * Set the service name
-     * @param serviceName the service name
-     */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    /**
+     * Returns the target service name
+     * @return the target service name
+     */
+    public String getTargetService() {
+        return targetService;
+    }
+
+    /**
+     * Set the target service name
+     * @param targetService the target service name
+     */
+    public void setTargetService(String targetService) {
+        this.targetService = targetService;
     }
 
     /**
@@ -771,10 +780,10 @@ public class Emitter {
 
         emitter.setServiceUrn(serviceUrn);
         emitter.setDescription(description);
-        String serviceName = msgContext.getTargetService();
-        if ((serviceName == null) || ("JWSProcessor".equals(serviceName)))
-            serviceName = "";
-        emitter.setServiceName(serviceName);
+        String targetService = msgContext.getTargetService();
+        if ((targetService == null) || ("JWSProcessor".equals(targetService)))
+            targetService = "";
+        emitter.setTargetService(targetService);
         emitter.setReg(msgContext.getTypeMappingRegistry());
         Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(emitter.emit());
         return doc;
