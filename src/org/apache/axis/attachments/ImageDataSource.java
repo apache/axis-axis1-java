@@ -76,7 +76,6 @@ public class ImageDataSource implements DataSource {
     private final String name;
     private final String contentType;
     private byte[] data;
-    private ByteArrayInputStream is;
     private ByteArrayOutputStream os;
 
     public ImageDataSource(String name, Image data) {

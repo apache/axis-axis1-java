@@ -72,7 +72,6 @@ public class SourceDataSource implements DataSource {
     private final String name;
     private final String contentType;
     private byte[] data;
-    private ByteArrayInputStream is;
     private ByteArrayOutputStream os;
 
     public SourceDataSource(String name, StreamSource data) {

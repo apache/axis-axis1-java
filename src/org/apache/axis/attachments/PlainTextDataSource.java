@@ -66,7 +66,6 @@ public class PlainTextDataSource implements DataSource {
 
     private final String name;
     private byte[] data;
-    private ByteArrayInputStream is;
     private ByteArrayOutputStream os;
 
     public PlainTextDataSource(String name, String data) {
