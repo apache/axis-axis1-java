@@ -414,7 +414,9 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         if ((uri != null) && (prefix != null)) {
-            nsStack.add(uri, prefix);
+            if (uri.length()>0 || prefix.length()>0) {
+                nsStack.add(uri, prefix);
+            }
         }
     }
 
