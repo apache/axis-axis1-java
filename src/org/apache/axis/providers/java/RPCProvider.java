@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.providers.java ;
+package org.apache.axis.providers.java;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
@@ -95,12 +95,11 @@ import java.util.ArrayList;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class RPCProvider extends JavaProvider
-{
+public class RPCProvider extends JavaProvider {
     protected static Log log =
-        LogFactory.getLog(RPCProvider.class.getName());
+            LogFactory.getLog(RPCProvider.class.getName());
 
-   /**
+    /**
      * Process the current message.
      * Result in resEnv.
      *
@@ -109,12 +108,11 @@ public class RPCProvider extends JavaProvider
      * @param resEnv the response envelope
      * @param obj the service object itself
      */
-    public void processMessage (MessageContext msgContext,
-                                SOAPEnvelope reqEnv,
-                                SOAPEnvelope resEnv,
-                                Object obj)
-        throws Exception
-    {
+    public void processMessage(MessageContext msgContext,
+                               SOAPEnvelope reqEnv,
+                               SOAPEnvelope resEnv,
+                               Object obj)
+            throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Enter: RPCProvider.processMessage()");
         }
@@ -123,43 +121,43 @@ public class RPCProvider extends JavaProvider
         ServiceDesc serviceDesc = service.getServiceDescription();
         OperationDesc operation = msgContext.getOperation();
 
-        Vector          bodies = reqEnv.getBodyElements();
+        Vector bodies = reqEnv.getBodyElements();
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("bodyElems00", "" + bodies.size()));
             log.debug(Messages.getMessage("bodyIs00", "" + bodies.get(0)));
         }
 
-        RPCElement   body = null;
+        RPCElement body = null;
 
         // Find the first "root" body element, which is the RPC call.
-        for ( int bNum = 0 ; body == null && bNum < bodies.size() ; bNum++ ) {
+        for (int bNum = 0; body == null && bNum < bodies.size(); bNum++) {
             // If this is a regular old SOAPBodyElement, and it's a root,
             // we're probably a non-wrapped doc/lit service.  In this case,
             // we deserialize the element, and create an RPCElement "wrapper"
             // around it which points to the correct method.
             // FIXME : There should be a cleaner way to do this...
             if (!(bodies.get(bNum) instanceof RPCElement)) {
-                SOAPBodyElement bodyEl = (SOAPBodyElement)bodies.get(bNum);
+                SOAPBodyElement bodyEl = (SOAPBodyElement) bodies.get(bNum);
                 // igors: better check if bodyEl.getID() != null
                 // to make sure this loop does not step on SOAP-ENC objects
                 // that follow the parameters! FIXME?
                 if (bodyEl.isRoot() && operation != null && bodyEl.getID() == null) {
                     ParameterDesc param = operation.getParameter(bNum);
                     // at least do not step on non-existent parameters!
-                    if(param != null) {
+                    if (param != null) {
                         Object val = bodyEl.getValueAsType(param.getTypeQName());
                         body = new RPCElement("",
-                                              operation.getName(),
-                                              new Object [] { val });
+                                operation.getName(),
+                                new Object[]{val});
                     }
                 }
             } else {
-                body = (RPCElement) bodies.get( bNum );
+                body = (RPCElement) bodies.get(bNum);
             }
         }
 
-       // special case code for a document style operation with no
-       // arguments (which is a strange thing to have, but whatever)
+        // special case code for a document style operation with no
+        // arguments (which is a strange thing to have, but whatever)
         if (body == null) {
             // throw an error if this isn't a document style service
             if (!(serviceDesc.getStyle().equals(Style.DOCUMENT))) {
@@ -197,18 +195,18 @@ public class RPCProvider extends JavaProvider
 
         if (operation == null) {
             QName qname = new QName(body.getNamespaceURI(),
-                                    body.getName());
+                    body.getName());
             operation = serviceDesc.getOperationByElementQName(qname);
         }
 
         if (operation == null) {
             throw new AxisFault(Messages.getMessage("noSuchOperation",
-                                                     methodName));
+                    methodName));
         }
 
         // Create the array we'll use to hold the actual parameter
         // values.  We know how big to make it from the metadata.
-        Object[]     argValues  =  new Object [operation.getNumParams()];
+        Object[] argValues = new Object[operation.getNumParams()];
 
         // A place to keep track of the out params (INOUTs and OUTs)
         ArrayList outs = new ArrayList();
@@ -218,8 +216,8 @@ public class RPCProvider extends JavaProvider
         // Make sure we respect parameter ordering if we know about it
         // from metadata, and handle whatever conversions are necessary
         // (values -> Holders, etc)
-        for ( int i = 0 ; i < numArgs ; i++ ) {
-            RPCParam rpcParam = (RPCParam)args.get(i);
+        for (int i = 0; i < numArgs; i++) {
+            RPCParam rpcParam = (RPCParam) args.get(i);
             Object value = rpcParam.getValue();
 
             // first check the type on the paramter
@@ -235,7 +233,7 @@ public class RPCProvider extends JavaProvider
 
                 // Convert the value into the expected type in the signature
                 value = JavaUtils.convert(value,
-                                          sigType);
+                        sigType);
 
                 rpcParam.setValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT) {
@@ -246,43 +244,43 @@ public class RPCProvider extends JavaProvider
             // Put the value (possibly converted) in the argument array
             // make sure to use the parameter order if we have it
             if (paramDesc == null || paramDesc.getOrder() == -1) {
-                argValues[i]  = value;
+                argValues[i] = value;
             } else {
                 argValues[paramDesc.getOrder()] = value;
             }
 
             if (log.isDebugEnabled()) {
                 log.debug("  " + Messages.getMessage("value00",
-                                                      "" + argValues[i]) );
+                        "" + argValues[i]));
             }
         }
 
         // See if any subclasses want a crack at faulting on a bad operation
         // FIXME : Does this make sense here???
-        String allowedMethods = (String)service.getOption("allowedMethods");
+        String allowedMethods = (String) service.getOption("allowedMethods");
         checkMethodName(msgContext, allowedMethods, operation.getName());
 
-       // Now create any out holders we need to pass in
+        // Now create any out holders we need to pass in
         if (numArgs < argValues.length) {
             ArrayList outParams = operation.getOutParams();
             for (int i = 0; i < outParams.size(); i++) {
-                ParameterDesc param = (ParameterDesc)outParams.get(i);
+                ParameterDesc param = (ParameterDesc) outParams.get(i);
                 Class holderClass = param.getJavaType();
 
                 if (holderClass != null &&
-                    Holder.class.isAssignableFrom(holderClass)) {
+                        Holder.class.isAssignableFrom(holderClass)) {
                     argValues[numArgs + i] = holderClass.newInstance();
                     // Store an RPCParam in the outs collection so we
                     // have an easy and consistent way to write these
                     // back to the client below
                     RPCParam p = new RPCParam(param.getQName(),
-                                              argValues[numArgs + i]);
+                            argValues[numArgs + i]);
                     p.setParamDesc(param);
                     outs.add(p);
                 } else {
                     throw new AxisFault(Messages.getMessage("badOutParameter00",
-                                                             "" + param.getQName(),
-                                                             operation.getName()));
+                            "" + param.getQName(),
+                            operation.getName()));
                 }
             }
         }
@@ -291,39 +289,39 @@ public class RPCProvider extends JavaProvider
         Object objRes = null;
         try {
             objRes = invokeMethod(msgContext,
-                                 operation.getMethod(),
-                                 obj, argValues);
+                    operation.getMethod(),
+                    obj, argValues);
         } catch (IllegalArgumentException e) {
             String methodSig = operation.getMethod().toString();
             String argClasses = "";
-            for (int i=0; i < argValues.length; i++) {
+            for (int i = 0; i < argValues.length; i++) {
                 if (argValues[i] == null) {
                     argClasses += "null";
                 } else {
                     argClasses += argValues[i].getClass().getName();
                 }
-                if (i+1 < argValues.length) {
+                if (i + 1 < argValues.length) {
                     argClasses += ",";
                 }
             }
             log.info(Messages.getMessage("dispatchIAE00",
-                                          new String[] {methodSig, argClasses}),
-                     e);
+                    new String[]{methodSig, argClasses}),
+                    e);
             throw new AxisFault(Messages.getMessage("dispatchIAE00",
-                                          new String[] {methodSig, argClasses}),
-                                e);
+                    new String[]{methodSig, argClasses}),
+                    e);
         }
 
         /* Now put the result in the result SOAPEnvelope */
         /*************************************************/
         RPCElement resBody = new RPCElement(methodName + "Response");
-        resBody.setPrefix( body.getPrefix() );
-        resBody.setNamespaceURI( body.getNamespaceURI() );
+        resBody.setPrefix(body.getPrefix());
+        resBody.setNamespaceURI(body.getNamespaceURI());
         resBody.setEncodingStyle(msgContext.getEncodingStyle());
 
         try {
             // Return first
-            if ( operation.getMethod().getReturnType() != Void.TYPE ) {
+            if (operation.getMethod().getReturnType() != Void.TYPE) {
                 QName returnQName = operation.getReturnQName();
                 if (returnQName == null) {
                     returnQName = new QName("", methodName + "Return");
@@ -331,8 +329,7 @@ public class RPCProvider extends JavaProvider
 
                 // For SOAP 1.2, add a result
                 if (msgContext.getSOAPConstants() ==
-                        SOAPConstants.SOAP12_CONSTANTS)
-                {
+                        SOAPConstants.SOAP12_CONSTANTS) {
                     returnQName = Constants.QNAME_RPC_RESULT;
                 }
 
@@ -340,7 +337,7 @@ public class RPCProvider extends JavaProvider
                 param.setParamDesc(operation.getReturnParamDesc());
                 if (!operation.isReturnHeader()) {
                     resBody.addParam(param);
-                } else { 
+                } else {
                     resEnv.addHeader(new RPCHeaderParam(param));
                 }
 
@@ -351,7 +348,7 @@ public class RPCProvider extends JavaProvider
                 for (Iterator i = outs.iterator(); i.hasNext();) {
                     // We know this has a holder, so just unwrap the value
                     RPCParam param = (RPCParam) i.next();
-                    Holder holder = (Holder)param.getValue();
+                    Holder holder = (Holder) param.getValue();
                     Object value = JavaUtils.getHolderValue(holder);
                     ParameterDesc paramDesc = param.getParamDesc();
 
@@ -380,8 +377,7 @@ public class RPCProvider extends JavaProvider
     protected Object invokeMethod(MessageContext msgContext,
                                   Method method, Object obj,
                                   Object[] argValues)
-        throws Exception
-    {
+            throws Exception {
         return (method.invoke(obj, argValues));
     }
 
@@ -394,8 +390,7 @@ public class RPCProvider extends JavaProvider
     protected void checkMethodName(MessageContext msgContext,
                                    String allowedMethods,
                                    String methodName)
-        throws Exception
-    {
+            throws Exception {
         // Our version doesn't need to do anything, though inherited
         // ones might.
     }
