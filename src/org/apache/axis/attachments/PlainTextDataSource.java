@@ -72,7 +72,7 @@ public class PlainTextDataSource implements DataSource {
 
     public PlainTextDataSource(String name, String data) {
         this.name = name;
-        this.data = data.getBytes();
+        this.data = data == null ? null : data.getBytes();
         os = new ByteArrayOutputStream();
     } // ctor
 
@@ -88,7 +88,7 @@ public class PlainTextDataSource implements DataSource {
         if (os.size() != 0) {
             data = os.toByteArray();
         }
-        return new ByteArrayInputStream(data);
+        return new ByteArrayInputStream(data == null ? new byte[0] : data);
     } // getInputStream
 
     public OutputStream getOutputStream() throws IOException {

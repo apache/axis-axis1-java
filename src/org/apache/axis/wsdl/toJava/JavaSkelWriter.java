@@ -180,14 +180,21 @@ public class JavaSkelWriter extends JavaClassWriter {
                     // Get the QNames representing the parameter name and type
                     QName paramName = p.getQName();
                     QName paramType = Utils.getXSIType(p.getType());
+                    String mimeType = p.getMIMEType();
+                    if (mimeType == null) {
+                        mimeType = "null";
+                    }
+                    else {
+                        mimeType = '"' + mimeType + '"';
+                    }
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
                         Utils.getNewQName(paramName) +
                         ", " + modeStr + ", " +
                         Utils.getNewQName(paramType) +
                         ", " +
-                        p.getType().getName() + ".class" 
-                        + "), ");
+                        p.getType().getName() + ".class" +
+                        ", " + mimeType + "), ");
                 }
 
                 pw.println("        };");
@@ -208,6 +215,11 @@ public class JavaSkelWriter extends JavaClassWriter {
                 if (retType != null) {
                     pw.println("        _oper.setReturnType(" +
                                Utils.getNewQName(retType) + ");");            
+                }
+
+                // Is the return type a MIME type?
+                if (parameters.returnMIMEType != null) {
+                    pw.println("        _oper.getReturnParamDesc().setMIMEType(\"" + parameters.returnMIMEType + "\");");
                 }
 
                 // If we need to know the QName (if we have a namespace or

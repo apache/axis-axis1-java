@@ -223,7 +223,6 @@ public class RPCProvider extends JavaProvider
         for ( int i = 0 ; i < numArgs ; i++ ) {
             RPCParam rpcParam = (RPCParam)args.get(i);
             Object value = rpcParam.getValue();
-            boolean mimeType = value instanceof AttachmentPart;
             ParameterDesc paramDesc = rpcParam.getParamDesc();
             if (paramDesc != null && paramDesc.getJavaType() != null) {
 
@@ -235,10 +234,6 @@ public class RPCProvider extends JavaProvider
                                           sigType);
                 rpcParam.setValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT) {
-                    if (mimeType) {
-                        rpcParam.getParamDesc().setTypeQName(
-                                new QName("", "DataHandler"));
-                    }
                     outs.add(rpcParam);
                 }
             }
@@ -330,6 +325,13 @@ public class RPCProvider extends JavaProvider
                 resBody.addParam(result);
             }
 
+            String mimeType = operation.getReturnParamDesc().getMIMEType();
+            if (mimeType != null) {
+                if (mimeType.equals("text/plain")) {
+                    objRes = new DataHandler(new PlainTextDataSource(
+                            "ret", (String) objRes));
+                }
+            }
             RPCParam param = new RPCParam(returnQName, objRes);
             param.setParamDesc(operation.getReturnParamDesc());
             resBody.addParam(param);
@@ -343,11 +345,10 @@ public class RPCProvider extends JavaProvider
                 Holder holder = (Holder)param.getValue();
                 Object value = JavaUtils.getHolderValue(holder);
                 ParameterDesc paramDesc = param.getParamDesc();
-                boolean mimeType = paramDesc == null ? false :
-                        new QName("", "DataHandler").equals(
-                            paramDesc.getTypeQName());
-                if (mimeType) {
-                    if (value instanceof String) {
+                String mimeType = paramDesc == null ? null :
+                        paramDesc.getMIMEType();
+                if (mimeType != null) {
+                    if (mimeType.equals("text/plain")) {
                         value = new DataHandler(
                                 new PlainTextDataSource("out", (String) value));
                     }

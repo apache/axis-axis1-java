@@ -94,6 +94,8 @@ public class ParameterDesc implements Serializable {
     private int order = -1;
     /** Indicates if this ParameterDesc represents a return or normal parameter **/
     private boolean isReturn = false;
+    /** MIME type for this parameter, if there is one */
+    private String mimeType = null;
 
     public ParameterDesc() {
     }
@@ -118,10 +120,12 @@ public class ParameterDesc implements Serializable {
      * @param mode IN, OUT, INOUT
      * @param typeQName the parameter's XML type QName
      * @param javaType the parameter's javaType
+     * @param mimeType the parameter's MIME type, if any
      */
-    public ParameterDesc(QName name, byte mode, QName typeQName, Class javaType) {
+    public ParameterDesc(QName name, byte mode, QName typeQName, Class javaType, String mimeType) {
         this(name,mode,typeQName);
         this.javaType = javaType;
+        this.mimeType = mimeType;
     }
 
     public String toString() {
@@ -255,6 +259,20 @@ public class ParameterDesc implements Serializable {
      */
     public void setIsReturn(boolean value) {
         isReturn = value; 
+    }
+
+    /**
+     * Get the MIME type of this parameter.
+     */
+    public String getMIMEType() {
+        return mimeType;
+    }
+
+    /**
+     * Set the MIME type of this parameter.
+     */
+    public void setMIMEType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
     private void writeObject(ObjectOutputStream out)
