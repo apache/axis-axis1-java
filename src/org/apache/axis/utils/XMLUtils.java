@@ -38,6 +38,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -81,6 +82,7 @@ public class XMLUtils {
     private static DocumentBuilderFactory dbf = getDOMFactory();
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
+    private static DefaultHandler doNothingContentHandler = new DefaultHandler();
 
     private static String EMPTY = "";
     private static ByteArrayInputStream bais = new ByteArrayInputStream(EMPTY.getBytes());
@@ -233,10 +235,10 @@ public class XMLUtils {
         try{
             XMLReader xmlReader= parser.getXMLReader();
             if(null != xmlReader){
-//                xmlReader.setContentHandler(doNothingContentHandler);
-//                xmlReader.setDTDHandler(doNothingContentHandler);
-//                xmlReader.setEntityResolver(doNothingContentHandler);
-//                xmlReader.setErrorHandler(doNothingContentHandler);
+                xmlReader.setContentHandler(doNothingContentHandler);
+                xmlReader.setDTDHandler(doNothingContentHandler);
+                xmlReader.setEntityResolver(doNothingContentHandler);
+                xmlReader.setErrorHandler(doNothingContentHandler);
                 synchronized (XMLUtils.class ) {
                     saxParsers.push(parser);
                 }
