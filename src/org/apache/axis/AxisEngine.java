@@ -67,6 +67,7 @@ import org.apache.axis.InternalException;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.providers.java.MsgProvider;
 import org.apache.log4j.Category;
@@ -112,7 +113,8 @@ public abstract class AxisEngine extends BasicHandler
     /** Should we save the engine config each time we modify it? */
     protected boolean shouldSaveConfig = false;
 
-    //protected SupplierRegistry listenerRegistry = new SupplierRegistry();
+    /** Java class cache */
+    protected ClassCache classCache = new ClassCache();
 
     /**
      * This engine's Session.  This Session supports "application scope"
@@ -374,5 +376,9 @@ public abstract class AxisEngine extends BasicHandler
      */
     public Session getApplicationSession () {
         return session;
+    }
+
+    public ClassCache getClassCache() {
+        return classCache;
     }
 };

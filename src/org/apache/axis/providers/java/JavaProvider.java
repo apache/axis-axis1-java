@@ -63,9 +63,9 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
+import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.Constants;
@@ -300,7 +300,7 @@ public abstract class JavaProvider extends BasicProvider {
         }
 
         try {
-            AxisClassLoader cl     = msgContext.getClassLoader();
+            ClassLoader cl     = msgContext.getClassLoader();
             Class           cls    = jc.getJavaClass();
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String urn = (String)msgContext.getTargetService();
@@ -350,8 +350,9 @@ public abstract class JavaProvider extends BasicProvider {
                                              String clsName)
         throws Exception
     {
-        AxisClassLoader cl     = msgContext.getClassLoader();
-        JavaClass       jc     = cl.lookup(clsName);
+        ClassLoader cl     = msgContext.getClassLoader();
+        ClassCache cache   = msgContext.getAxisEngine().getClassCache();
+        JavaClass       jc     = cache.lookup(clsName, cl);
 
         return jc.getJavaClass().newInstance();
     }

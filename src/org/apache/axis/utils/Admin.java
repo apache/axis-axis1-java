@@ -271,7 +271,7 @@ public class Admin {
 
         try {
             String            action = rootName;
-            AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
+            ClassLoader   cl     = msgContext.getClassLoader();
 
             if ( !action.equals("clientdeploy") && !action.equals("deploy") &&
                  !action.equals("undeploy") &&
@@ -570,7 +570,7 @@ public class Admin {
                                        WSDDDeployment deployment)
         throws Exception
     {
-        AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
+        ClassLoader   cl     = AxisClassLoader.getClassLoader();
         String   name    = elem.getAttribute( "name" );
 
         WSDDHandler handler;

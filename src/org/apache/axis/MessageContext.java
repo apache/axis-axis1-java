@@ -59,7 +59,6 @@ import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
-import org.apache.axis.utils.AxisClassLoader;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
@@ -121,7 +120,7 @@ public class MessageContext {
     /**
      * The default classloader that this service should use
      */
-    private AxisClassLoader  classLoader ;
+    private ClassLoader  classLoader ;
     
     /**
      * The AxisEngine which this context is involved with
@@ -375,13 +374,13 @@ public class MessageContext {
         return timeout;
     }
     
-    public AxisClassLoader getClassLoader() {
+    public ClassLoader getClassLoader() {
         if ( classLoader == null )
-            classLoader = AxisClassLoader.getClassLoader();
+            classLoader = Thread.currentThread().getContextClassLoader();
         return( classLoader );
     }
 
-    public void setClassLoader(AxisClassLoader cl ) {
+    public void setClassLoader(ClassLoader cl ) {
         classLoader = cl ;
     }
 

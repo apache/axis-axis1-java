@@ -64,7 +64,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
-import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
@@ -186,7 +185,7 @@ public class AxisServer extends AxisEngine
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if ( hName != null ) {
                 if ( (h = getHandler(hName)) == null ) {
-                    AxisClassLoader cl = msgContext.getClassLoader();
+                    ClassLoader cl = msgContext.getClassLoader();
                     try {
                         category.debug( JavaUtils.getMessage("tryingLoad00", hName) );
                         Class cls = cl.loadClass( hName );
@@ -339,7 +338,7 @@ public class AxisServer extends AxisEngine
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if ( hName != null ) {
                 if ( (h = getHandler(hName)) == null ) {
-                    AxisClassLoader cl = msgContext.getClassLoader();
+                    ClassLoader cl = msgContext.getClassLoader();
                     try {
                         category.debug( JavaUtils.getMessage("tryingLoad00", hName) );
                         Class cls = cl.loadClass( hName );

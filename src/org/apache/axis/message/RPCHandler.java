@@ -70,9 +70,9 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.FieldTarget;
-import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
+import org.apache.axis.utils.cache.ClassCache;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -106,9 +106,10 @@ public class RPCHandler extends SOAPHandler
         String  clsName    = (String) service.getOption( "className" );
 
         try {
-            AxisClassLoader cl     = msgContext.getClassLoader();
-            JavaClass       jc     = cl.lookup(clsName);
-            Class           cls    = jc.getJavaClass();
+            ClassLoader cl       = msgContext.getClassLoader();
+            ClassCache cache     = msgContext.getAxisEngine().getClassCache();
+            JavaClass       jc   = cache.lookup(clsName, cl);
+            Class           cls  = jc.getJavaClass();
             
             if (category.isDebugEnabled()) {
                 category.debug(JavaUtils.getMessage(

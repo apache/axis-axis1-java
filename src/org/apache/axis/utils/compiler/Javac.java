@@ -55,7 +55,6 @@
 
 package org.apache.axis.utils.compiler;
 
-import org.apache.axis.utils.AxisClassLoader;
 import org.apache.log4j.Category;
 
 import java.io.BufferedReader;
@@ -90,7 +89,7 @@ public class Javac extends AbstractCompiler {
   public Javac() {
 
     // Use reflection to be able to build on all JDKs
-    AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
+    ClassLoader   cl     = Thread.currentThread().getContextClassLoader();
     try {
         cl.loadClass(MODERN_CLASS);
         modern = true;
