@@ -34,6 +34,7 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
+import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.utils.ClassUtils;
@@ -2541,6 +2542,27 @@ public class Emitter {
         this.defaultTM = defaultTM;
     }
 
+    /**
+     * Method setTypeMappingVersion
+     * 
+     * @param typeMappingVersion 
+     */
+    public void setTypeMappingVersion(String typeMappingVersion) {
+        if(defaultTM == null) {
+            if (typeMappingVersion.equals("1.0")) {
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
+            } else if (typeMappingVersion.equals("1.1")) {
+                defaultTM=DefaultTypeMappingImpl.getSingleton();
+            } else if (typeMappingVersion.equals("1.2")) {
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else if (typeMappingVersion.equals("1.3")) {
+                defaultTM=DefaultJAXRPC11TypeMappingImpl.createWithDelegate();
+            } else {
+                throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
+            }
+            setDefaultTypeMapping(defaultTM);
+        }
+    }
     /**
      * getStyle
      * 

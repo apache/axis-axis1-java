@@ -82,7 +82,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      */
     public static synchronized TypeMapping getSingleton() {
         if (tm == null) {
-            tm = new DefaultTypeMappingImpl();
+            if(AxisEngine.jaxrpc11Compliance) {
+                tm = new DefaultJAXRPC11TypeMappingImpl();
+            } else {
+                tm = new DefaultTypeMappingImpl();
+            }
         }
         return tm;
     }
@@ -552,59 +556,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
-        if (AxisEngine.jaxrpc11Compliance) {
-            // Table 4-1 of the JAXRPC 1.1 spec
-            myRegisterSimple(Constants.XSD_UNSIGNEDINT, long.class);    
-            myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, int.class);    
-            myRegisterSimple(Constants.XSD_UNSIGNEDBYTE, short.class);   
-            myRegister(Constants.XSD_DATETIME,       java.util.Calendar.class,
-                       new DateSerializerFactory(java.util.Calendar.class,
-                                                 Constants.XSD_DATE),
-                       new DateDeserializerFactory(java.util.Calendar.class,
-                                                   Constants.XSD_DATE)
-            );
-            myRegister(Constants.XSD_DATE,       java.util.Calendar.class,
-                       new DateSerializerFactory(java.util.Calendar.class,
-                                                 Constants.XSD_DATE),
-                       new DateDeserializerFactory(java.util.Calendar.class,
-                                                   Constants.XSD_DATE)
-            );
-            myRegister(Constants.XSD_TIME,       java.util.Calendar.class,
-                       new DateSerializerFactory(java.util.Calendar.class,
-                                                 Constants.XSD_TIME),
-                       new DateDeserializerFactory(java.util.Calendar.class,
-                                                   Constants.XSD_TIME)
-            );
-            try {
-                myRegisterSimple(Constants.XSD_ANYURI, Class.forName("java.net.URI"));
-            } 
-            catch (ClassNotFoundException e) {
-                myRegisterSimple(Constants.XSD_ANYURI, java.lang.String.class);
-            }
-            
-            // Table 4-2 of JAXRPC 1.1 spec
-            myRegisterSimple(Constants.XSD_DURATION, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_YEARMONTH, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_YEAR, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_MONTHDAY, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_DAY, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_MONTH, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_NORMALIZEDSTRING, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_TOKEN, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_LANGUAGE, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_NAME, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_NCNAME, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_ID, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_NMTOKEN, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_NMTOKENS, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_STRING, java.lang.String.class);
-            myRegisterSimple(Constants.XSD_NONPOSITIVEINTEGER, java.math.BigInteger.class);
-            myRegisterSimple(Constants.XSD_NEGATIVEINTEGER, java.math.BigInteger.class);
-            myRegisterSimple(Constants.XSD_NONNEGATIVEINTEGER, java.math.BigInteger.class);
-            myRegisterSimple(Constants.XSD_UNSIGNEDLONG, java.math.BigInteger.class);
-            myRegisterSimple(Constants.XSD_POSITIVEINTEGER, java.math.BigInteger.class);
-        }
-
         // Need this at the default TypeMapping level so that we can correctly
         // obtain the ArraySerializer when in doc/lit mode and only have a
         // Java class available (no XML type metadata) - see TypeMappingImpl

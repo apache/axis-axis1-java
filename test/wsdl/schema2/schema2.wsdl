@@ -1,0 +1,334 @@
+<wsdl:definitions xmlns:impl="urn:schema2.wsdl.test" xmlns:intf="urn:schema2.wsdl.test" 
+                  xmlns:tns1="urn:schema2.wsdl.test" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:schema2.wsdl.test">
+    <wsdl:types>
+        <schema elementFormDefault="qualified" targetNamespace="urn:schema2.wsdl.test" xmlns="http://www.w3.org/2001/XMLSchema">
+            <element name="languageElem" type="xsd:language"/>
+            <element name="languageElem1" type="xsd:language"/>
+            <element name="tokenElem" type="xsd:token"/>
+            <element name="tokenElem1" type="xsd:token"/>
+            <element name="nameElem" type="xsd:Name"/>
+            <element name="nameElem1" type="xsd:Name"/>
+            <element name="NCNameElem" type="xsd:NCName"/>
+            <element name="NCNameElem1" type="xsd:NCName"/>
+            <element name="IDElem" type="xsd:ID"/>
+            <element name="IDElem1" type="xsd:ID"/>
+            <element name="UnsignedShort" type="xsd:unsignedShort"/>
+            <element name="UnsignedShort1" type="xsd:unsignedShort"/>
+            <element name="UnsignedInt" type="xsd:unsignedInt"/>
+            <element name="UnsignedInt1" type="xsd:unsignedInt"/>
+            <element name="UnsignedByte" type="xsd:unsignedByte"/>
+            <element name="UnsignedByte1" type="xsd:unsignedByte"/>
+            <element name="UnsignedLong" type="xsd:unsignedLong"/>
+            <element name="UnsignedLong1" type="xsd:unsignedLong"/>
+            <element name="NonPositiveInteger" type="xsd:nonPositiveInteger"/>
+            <element name="NonPositiveInteger1" type="xsd:nonPositiveInteger"/>
+            <element name="NonNegativeInteger" type="xsd:nonNegativeInteger"/>
+            <element name="NonNegativeInteger1" type="xsd:nonNegativeInteger"/>
+            <element name="PositiveInteger" type="xsd:positiveInteger"/>
+            <element name="PositiveInteger1" type="xsd:positiveInteger"/>
+            <element name="NegativeInteger" type="xsd:negativeInteger"/>
+            <element name="NegativeInteger1" type="xsd:negativeInteger"/>
+            <element name="Time" type="xsd:time"/>
+            <element name="Time1" type="xsd:time"/>
+            <element name="Date" type="xsd:date"/>
+            <element name="Date1" type="xsd:date"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="echoDateTestRequest">
+        <wsdl:part name="Date" element="tns1:Date"/>
+    </wsdl:message>
+    <wsdl:message name="echoPositiveIntegerTestResponse">
+        <wsdl:part name="PositiveInteger" element="tns1:PositiveInteger1"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedLongTestRequest">
+        <wsdl:part name="UnsignedLong" element="tns1:UnsignedLong"/>
+    </wsdl:message>
+    <wsdl:message name="echoNonNegativeIntegerTestResponse">
+        <wsdl:part name="NonNegativeInteger" element="tns1:NonNegativeInteger1"/>
+    </wsdl:message>
+    <wsdl:message name="echoTokenTypeTestRequest">
+        <wsdl:part name="tokenElem" element="tns1:tokenElem"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedByteTestResponse">
+        <wsdl:part name="UnsignedByte" element="tns1:UnsignedByte1"/>
+    </wsdl:message>
+    <wsdl:message name="echoNonPositiveIntegerTestRequest">
+        <wsdl:part name="NonPositiveInteger" element="tns1:NonPositiveInteger"/>
+    </wsdl:message>
+    <wsdl:message name="echoNegativeIntegerTestResponse">
+        <wsdl:part name="NegativeInteger" element="tns1:NegativeInteger1"/>
+    </wsdl:message>
+    <wsdl:message name="echoTokenTypeTestResponse">
+        <wsdl:part name="tokenElem" element="tns1:tokenElem1"/>
+    </wsdl:message>
+    <wsdl:message name="echoIDTypeTestRequest">
+        <wsdl:part name="IDElem" element="tns1:IDElem"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedIntTestResponse">
+        <wsdl:part name="UnsignedInt" element="tns1:UnsignedInt1"/>
+    </wsdl:message>
+    <wsdl:message name="echoDateTestResponse">
+        <wsdl:part name="Date" element="tns1:Date1"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedShortTestResponse">
+        <wsdl:part name="UnsignedShort" element="tns1:UnsignedShort1"/>
+    </wsdl:message>
+    <wsdl:message name="echoTimeTestRequest">
+        <wsdl:part name="Time" element="tns1:Time"/>
+    </wsdl:message>
+    <wsdl:message name="echoNameTypeTestResponse">
+        <wsdl:part name="nameElem" element="tns1:nameElem1"/>
+    </wsdl:message>
+    <wsdl:message name="echoNonNegativeIntegerTestRequest">
+        <wsdl:part name="NonNegativeInteger" element="tns1:NonNegativeInteger"/>
+    </wsdl:message>
+    <wsdl:message name="echoNCNameTypeTestRequest">
+        <wsdl:part name="NCNameElem" element="tns1:NCNameElem"/>
+    </wsdl:message>
+    <wsdl:message name="echoNegativeIntegerTestRequest">
+        <wsdl:part name="NegativeInteger" element="tns1:NegativeInteger"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedLongTestResponse">
+        <wsdl:part name="UnsignedLong" element="tns1:UnsignedLong1"/>
+    </wsdl:message>
+    <wsdl:message name="echoLanguageTypeTestRequest">
+        <wsdl:part name="languageElem" element="tns1:languageElem"/>
+    </wsdl:message>
+    <wsdl:message name="echoNonPositiveIntegerTestResponse">
+        <wsdl:part name="NonPositiveInteger" element="tns1:NonPositiveInteger1"/>
+    </wsdl:message>
+    <wsdl:message name="echoTimeTestResponse">
+        <wsdl:part name="Time" element="tns1:Time1"/>
+    </wsdl:message>
+    <wsdl:message name="echoIDTypeTestResponse">
+        <wsdl:part name="IDElem" element="tns1:IDElem1"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedIntTestRequest">
+        <wsdl:part name="UnsignedInt" element="tns1:UnsignedInt"/>
+    </wsdl:message>
+    <wsdl:message name="echoNCNameTypeTestResponse">
+        <wsdl:part name="NCNameElem" element="tns1:NCNameElem1"/>
+    </wsdl:message>
+    <wsdl:message name="echoNameTypeTestRequest">
+        <wsdl:part name="nameElem" element="tns1:nameElem"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedByteTestRequest">
+        <wsdl:part name="UnsignedByte" element="tns1:UnsignedByte"/>
+    </wsdl:message>
+    <wsdl:message name="echoLanguageTypeTestResponse">
+        <wsdl:part name="languageElem" element="tns1:languageElem1"/>
+    </wsdl:message>
+    <wsdl:message name="echoUnsignedShortTestRequest">
+        <wsdl:part name="UnsignedShort" element="tns1:UnsignedShort"/>
+    </wsdl:message>
+    <wsdl:message name="echoPositiveIntegerTestRequest">
+        <wsdl:part name="PositiveInteger" element="tns1:PositiveInteger"/>
+    </wsdl:message>
+    <wsdl:portType name="Schema2Test">
+        <wsdl:operation name="echoLanguageTypeTest" parameterOrder="languageElem">
+            <wsdl:input name="echoLanguageTypeTestRequest" message="impl:echoLanguageTypeTestRequest"/>
+            <wsdl:output name="echoLanguageTypeTestResponse" message="impl:echoLanguageTypeTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoTokenTypeTest" parameterOrder="tokenElem">
+            <wsdl:input name="echoTokenTypeTestRequest" message="impl:echoTokenTypeTestRequest"/>
+            <wsdl:output name="echoTokenTypeTestResponse" message="impl:echoTokenTypeTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoNameTypeTest" parameterOrder="nameElem">
+            <wsdl:input name="echoNameTypeTestRequest" message="impl:echoNameTypeTestRequest"/>
+            <wsdl:output name="echoNameTypeTestResponse" message="impl:echoNameTypeTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoNCNameTypeTest" parameterOrder="NCNameElem">
+            <wsdl:input name="echoNCNameTypeTestRequest" message="impl:echoNCNameTypeTestRequest"/>
+            <wsdl:output name="echoNCNameTypeTestResponse" message="impl:echoNCNameTypeTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoIDTypeTest" parameterOrder="IDElem">
+            <wsdl:input name="echoIDTypeTestRequest" message="impl:echoIDTypeTestRequest"/>
+            <wsdl:output name="echoIDTypeTestResponse" message="impl:echoIDTypeTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedShortTest" parameterOrder="UnsignedShort">
+            <wsdl:input name="echoUnsignedShortTestRequest" message="impl:echoUnsignedShortTestRequest"/>
+            <wsdl:output name="echoUnsignedShortTestResponse" message="impl:echoUnsignedShortTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedIntTest" parameterOrder="UnsignedInt">
+            <wsdl:input name="echoUnsignedIntTestRequest" message="impl:echoUnsignedIntTestRequest"/>
+            <wsdl:output name="echoUnsignedIntTestResponse" message="impl:echoUnsignedIntTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedByteTest" parameterOrder="UnsignedByte">
+            <wsdl:input name="echoUnsignedByteTestRequest" message="impl:echoUnsignedByteTestRequest"/>
+            <wsdl:output name="echoUnsignedByteTestResponse" message="impl:echoUnsignedByteTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedLongTest" parameterOrder="UnsignedLong">
+            <wsdl:input name="echoUnsignedLongTestRequest" message="impl:echoUnsignedLongTestRequest"/>
+            <wsdl:output name="echoUnsignedLongTestResponse" message="impl:echoUnsignedLongTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoNonPositiveIntegerTest" parameterOrder="NonPositiveInteger">
+            <wsdl:input name="echoNonPositiveIntegerTestRequest" message="impl:echoNonPositiveIntegerTestRequest"/>
+            <wsdl:output name="echoNonPositiveIntegerTestResponse" message="impl:echoNonPositiveIntegerTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoNonNegativeIntegerTest" parameterOrder="NonNegativeInteger">
+            <wsdl:input name="echoNonNegativeIntegerTestRequest" message="impl:echoNonNegativeIntegerTestRequest"/>
+            <wsdl:output name="echoNonNegativeIntegerTestResponse" message="impl:echoNonNegativeIntegerTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoPositiveIntegerTest" parameterOrder="PositiveInteger">
+            <wsdl:input name="echoPositiveIntegerTestRequest" message="impl:echoPositiveIntegerTestRequest"/>
+            <wsdl:output name="echoPositiveIntegerTestResponse" message="impl:echoPositiveIntegerTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoNegativeIntegerTest" parameterOrder="NegativeInteger">
+            <wsdl:input name="echoNegativeIntegerTestRequest" message="impl:echoNegativeIntegerTestRequest"/>
+            <wsdl:output name="echoNegativeIntegerTestResponse" message="impl:echoNegativeIntegerTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoTimeTest" parameterOrder="Time">
+            <wsdl:input name="echoTimeTestRequest" message="impl:echoTimeTestRequest"/>
+            <wsdl:output name="echoTimeTestResponse" message="impl:echoTimeTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoDateTest" parameterOrder="Date">
+            <wsdl:input name="echoDateTestRequest" message="impl:echoDateTestRequest"/>
+            <wsdl:output name="echoDateTestResponse" message="impl:echoDateTestResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="Schema2ServiceSoapBinding" type="impl:Schema2Test">
+        <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="echoLanguageTypeTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoTokenTypeTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoNameTypeTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoNCNameTypeTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoIDTypeTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedShortTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedIntTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedByteTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoUnsignedLongTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoNonPositiveIntegerTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoNonNegativeIntegerTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoPositiveIntegerTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoNegativeIntegerTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoTimeTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoDateTest">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Schema2Service">
+        <wsdl:port name="Schema2Service" binding="impl:Schema2ServiceSoapBinding">
+            <wsdlsoap:address location="http://srida01l:8080/axis/services/Schema2Service"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

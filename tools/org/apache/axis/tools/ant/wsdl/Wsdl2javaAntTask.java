@@ -86,7 +86,6 @@ public class Wsdl2javaAntTask extends Task
     private boolean all = false;
     private boolean helperGen = false;
     private boolean noWrapped = false;
-    //private boolean jaxrpc11mappings = false;
     private boolean allowInvalidURL = false;
     private String factory = null;
     private HashMap namespaceMap = new HashMap();
@@ -180,7 +179,6 @@ public class Wsdl2javaAntTask extends Task
         log("\tusername:" + username, logLevel);
         log("\t:password" + password, logLevel);
         log("\t:noWrapped" + noWrapped, logLevel);
-        //log("\t:jaxrpc11mappings" + jaxrpc11mappings, logLevel);
         log("\t:allowInvalidURL" + allowInvalidURL, logLevel);
 		log("\t:implementationClassName" + implementationClassName, logLevel);
         log("\t:classpath" + classpath, logLevel);
@@ -235,7 +233,6 @@ public class Wsdl2javaAntTask extends Task
             emitter.setQuiet(quiet);
             emitter.setTypeMappingVersion(typeMappingVersion);
             emitter.setNowrap(noWrapped);
-            //emitter.setUseJaxRPC11Mappings(jaxrpc11mappings);
             emitter.setAllowInvalidURL(allowInvalidURL);
             if (namespaceMappingFile != null) {
                 emitter.setNStoPkg(namespaceMappingFile.toString());
@@ -526,15 +523,6 @@ public class Wsdl2javaAntTask extends Task
     public void setNoWrapped(boolean noWrapped) {
         this.noWrapped = noWrapped;
     }
-
-    /**
-     * Set the jaxrpc11mappings flag.
-     */
-/*
-    public void setJaxrpc11mappings(boolean b) {
-        this.jaxrpc11mappings = b;
-    }
-*/
 
     /**
      * Set the allowInvalidURL flag.

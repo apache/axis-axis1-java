@@ -15,12 +15,8 @@
  */
 package org.apache.axis.tools.ant.wsdl;
 
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -33,10 +29,10 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Iterator;
+import java.util.StringTokenizer;
 
 /*
  * Important. we autogenerate the ant task docs from this.
@@ -86,8 +82,6 @@ public class Java2WsdlAntTask extends Task
     private Path classpath = null;
     private String soapAction = null;
     private List complexTypes = new LinkedList();
-    private TypeMappingImpl tmi;
-    private TypeMapping defaultTM;    
 
     /**
      * trace out parameters
@@ -193,22 +187,13 @@ public class Java2WsdlAntTask extends Task
                 emitter.setExtraClasses(extraClasses);
             }
 
-            if (typeMappingVersion.equals("1.0")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
-            } else if (typeMappingVersion.equals("1.1")) {
-                defaultTM=DefaultTypeMappingImpl.getSingleton();
-            } else if (typeMappingVersion.equals("1.2")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-            } else {
-                throw new BuildException(Messages.getMessage("j2wBadTypeMapping00"));
-            }
-            emitter.setDefaultTypeMapping(defaultTM);
+            emitter.setTypeMappingVersion(typeMappingVersion);
             // Create TypeMapping and register complex types
-            tmi = new TypeMappingImpl(defaultTM);
+            TypeMappingImpl tmi = new TypeMappingImpl(emitter.getDefaultTypeMapping());
             Iterator i = complexTypes.iterator();
             while (i.hasNext()) {
-                ( (ComplexType)i.next()).register(tmi);
-             }
+                ((ComplexType) i.next()).register(tmi);
+            }
             emitter.setTypeMapping(tmi);
             
             if (style != null) {
@@ -231,7 +216,7 @@ public class Java2WsdlAntTask extends Task
             emitter.setImportUrl(locationImport);
             emitter.setUseInheritedMethods(useInheritedMethods);
             if(serviceElementName!=null) {
-                emitter.setServiceElementName( serviceElementName);
+                emitter.setServiceElementName(serviceElementName);
             }
             if(methods!=null) {
                 emitter.setAllowedMethods(methods);

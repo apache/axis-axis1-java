@@ -17,6 +17,7 @@ package org.apache.axis.wsdl;
 
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
@@ -410,16 +411,10 @@ public class Java2WSDL {
             case TYPEMAPPING_OPT:
                 value = option.getArgument();
 
-                if (value.equals("1.0")) {
-                    emitter.setDefaultTypeMapping(DefaultSOAPEncodingTypeMappingImpl.create());
-                } else if (value.equals("1.1")) {
-                    emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
-                } else if (value.equals("1.2")) {
-                    emitter.setDefaultTypeMapping(DefaultSOAPEncodingTypeMappingImpl.createWithDelegate());
-                } else {
-                    System.out.println(
-                            Messages.getMessage("j2wBadTypeMapping00"));
-
+                try {
+                    emitter.setTypeMappingVersion(value);
+                } catch (Exception e) {
+                    System.out.println(Messages.getMessage("j2wBadTypeMapping00"));
                     status = false;
                 }
                 break;

@@ -90,9 +90,6 @@ public class WSDL2Java extends WSDL2 {
 	/** Field IMPL_CLASS_OPT */
 	protected static final int IMPL_CLASS_OPT = 'c';
 
-    /** Field JARPC11_OPT */
-    //protected static final int JAXRPC11_OPT = 'j';
-
     /** Field ALLOW_INVALID_URL_OPT */
     protected static final int ALLOW_INVALID_URL_OPT = 'u';
 
@@ -180,10 +177,6 @@ public class WSDL2Java extends WSDL2 {
 						CLOptionDescriptor.ARGUMENT_REQUIRED,
 						IMPL_CLASS_OPT,
 						Messages.getMessage("implementationClassName")),
-/*
-                new CLOptionDescriptor("jaxrpc", CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                        JAXRPC11_OPT, Messages.getMessage("optionJaxrpc")),
-*/
                 new CLOptionDescriptor("allowInvalidURL", CLOptionDescriptor.ARGUMENT_DISALLOWED,
                         ALLOW_INVALID_URL_OPT, Messages.getMessage("optionAllowInvalidURL"))
                 };
@@ -289,6 +282,8 @@ public class WSDL2Java extends WSDL2 {
                         emitter.setTypeMappingVersion("1.1");
                 } else if (tmValue.equals("1.2")) {
                     emitter.setTypeMappingVersion("1.2");
+                } else if (tmValue.equals("1.3")) {
+                    emitter.setTypeMappingVersion("1.3");
                 } else {
                     System.out.println(
                             Messages.getMessage("badTypeMappingOption00"));
@@ -323,12 +318,6 @@ public class WSDL2Java extends WSDL2 {
 			case IMPL_CLASS_OPT:
 				emitter.setImplementationClassName(option.getArgument());
 				break;
-
-/*
-            case JAXRPC11_OPT:
-                emitter.setUseJaxRPC11Mappings(true);
-                break;
-*/
 
             case ALLOW_INVALID_URL_OPT:
                 emitter.setAllowInvalidURL(true);

@@ -18,6 +18,7 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.enum.Use;
 import org.apache.axis.i18n.Messages;
@@ -92,9 +93,6 @@ public class Emitter extends Parser {
     private boolean bBuildFileGeneration = false;
 
     private boolean typeCollisionProtection = true;
-
-    /** Use JAX-RPC 1.1 type mappings */
-    //private boolean useJaxRPC11Mappings = false;
 
     /** Check if URL endpoints are valid or not */
     private boolean allowInvalidURL = false;
@@ -425,33 +423,6 @@ public class Emitter extends Parser {
         this.defaultTM = defaultTM;
     }
     
-    /**
-     * <B>WARNING: NOT IMPLEMENTED</B>
-     * <p>
-     * Turn on the JAX-RPC 1.1 type mappings, which maps
-     * various XML Schema types to java types (string, BigInteger, Calendar, etc).
-     * <p>
-     * Axis has custom types (in org.apache.axis.types) that are used by default.
-     */
-/*
-    public void setUseJaxRPC11Mappings(boolean b) {
-        useJaxRPC11Mappings = b;
-    }
-*/
-
-    /**
-     * <B>WARNING: NOT IMPLEMENTED</B>
-     * <p>
-     * Will this emitter use the JAX-RPC 1.1 type mappings for
-     * the types that aren't directly mappable to Java.
-     * @return TRUE if we are using the JAX-RPC 1.1 mappings.
-     */
-/*
-    public boolean getUseJaxRPC11Mappings() {
-        return useJaxRPC11Mappings;
-    }
-*/
-
     /**
      * Sets the <code>WriterFactory Class</code> to use
      * 
@@ -790,6 +761,8 @@ public class Emitter extends Parser {
                 defaultTM=DefaultTypeMappingImpl.getSingleton();
             } else if (typeMappingVersion.equals("1.2")) {
                 defaultTM=DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else if (typeMappingVersion.equals("1.3")) {
+                defaultTM=DefaultJAXRPC11TypeMappingImpl.createWithDelegate();
             } else {
                 throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
             }
