@@ -84,9 +84,11 @@ public class JavaUtils
      * @param destClass the actual class we want
      */
     public static Object convert(Object arg, Class destClass)
-    {
-        category.debug( getMessage("convert00",
+    {  
+        if (category.isDebugEnabled()) {
+            category.debug( getMessage("convert00",
                 arg.getClass().getName(), destClass.getName()));
+        }
         
         if (!(arg instanceof List))
             return arg;

@@ -110,7 +110,11 @@ public class SimpleSecurityProvider implements SecurityProvider {
                         String userID = st.nextToken();
                         String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-                        category.debug( JavaUtils.getMessage("fromFile00", userID, passwd) );
+                        if (category.isDebugEnabled()) {
+                            category.debug( JavaUtils.getMessage("fromFile00", 
+                                userID, passwd) );
+                        }
+
                         users.put(userID, passwd);
                     }
                 }
