@@ -783,15 +783,9 @@ public class Emitter {
         if (intf != null) {
             setCls(intf);
 
-            // There is no way right now to reflect on the skeleton to find
-            // the implementation (and there might never be a way).  
-            // Try to find an implementation and then use the skeleton as a last
-            // resort (the skeleton won't always work due to signature differences).
+            // Try to find an implementation or skeleton to use for the impl class.
             if (implCls == null) {
-                setImplCls(cls.getName().substring(0,cls.getName().indexOf("Skeleton")) + "Impl");
-                if (implCls == null) {
-                    setImplCls(cls);  // Use skeleton as implementation class
-                }
+                setImplCls(cls);
             }
         }
         else
