@@ -125,6 +125,8 @@ public class HTTPTransport extends Transport
         mc.setTransportName(transportName);
         
         // !!! Not sure about this
-        mc.setTargetService( (String)mc.getProperty(ACTION) );
+        if (mc.getTargetService() == null) {
+            mc.setTargetService( (String)mc.getProperty(ACTION) );
+        }
     }
 }
