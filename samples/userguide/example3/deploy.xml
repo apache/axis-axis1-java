@@ -1,6 +1,0 @@
-<admin:deploy xmlns:admin="AdminService">
- <service name="MyService" pivot="RPCDispatcher">
-  <option name="className" value="samples.userguide.example3.MyService"/>
-  <option name="methodName" value="*"/>
- </service>
-</admin:deploy>
