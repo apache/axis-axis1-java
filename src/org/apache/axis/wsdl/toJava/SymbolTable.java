@@ -407,17 +407,14 @@ public class SymbolTable {
         if (doc != null) {
             populateTypes(doc);
 
-            // If def == null, then WSDL4J doesn't provide any import logic
-            // for this xml file.  Recurse on Document imports rather than
-            // Definition imports.
-            if (def == null && addImports) {
-                // Recurse through children nodes, looking for imports
+            if (addImports) {
+                // Add the symbols from any xsd:import'ed documents.
                 lookForImports(context, doc);
             }
         }
         if (def != null) {
             if (addImports) {
-                // Add the symbols from the imported WSDL documents
+                // Add the symbols from the wsdl:import'ed WSDL documents
                 Map imports = def.getImports();
                 Object[] importKeys = imports.keySet().toArray();
                 for (int i = 0; i < importKeys.length; ++i) {
@@ -489,7 +486,7 @@ public class SymbolTable {
         return url;
     } // getURL
     /**
-     * Recursively find all import objects and call populate for each one.
+     * Recursively find all xsd:import'ed objects and call populate for each one.
      */
     private void lookForImports(URL context, Node node) throws IOException {
         NodeList children = node.getChildNodes();

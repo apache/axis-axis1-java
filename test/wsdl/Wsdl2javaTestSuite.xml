@@ -340,6 +340,16 @@
         <mapping namespace="urn:messages.import.test" package="test.import2.messages"/>
     </wsdl2java>
 
+    <!-- Import Test 3:  all namespace->package mappings from the -->
+    <!--                 command line.  Make sure an xsd:import   -->
+    <!--                 statement inside a schema inside a type  -->
+    <!--                 works properly.                          -->
+    <wsdl2java url="test/wsdl/_import/ImportMessagesXSDImport.wsdl"
+               output="build/work"
+               noimports="no">
+        <mapping namespace="urn:types.import.test" package="test.import.test3"/>
+    </wsdl2java>
+
     <!-- InOut Sample -->
     <wsdl2java url="test/wsdl/inout/inout.wsdl"
                output="build/work"
