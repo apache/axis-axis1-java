@@ -35,6 +35,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 import java.io.IOException;
+import java.io.File;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -224,7 +225,7 @@ public class SimpleAxisServer implements Runnable {
      */
     public void run() {
         log.info(Messages.getMessage("start00", "SimpleAxisServer",
-                new Integer(getServerSocket().getLocalPort()).toString()));
+                new Integer(getServerSocket().getLocalPort()).toString(),getCurrentDirectory()));
 
         // Accept and process requests from the socket
         while (!stopped) {
@@ -246,6 +247,14 @@ public class SimpleAxisServer implements Runnable {
             }
         }
         log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
+    }
+
+    /**
+     * Gets the current directory
+     * @return current directory
+     */ 
+    private String getCurrentDirectory() {
+        return System.getProperty("user.dir");
     }
 
     /**
