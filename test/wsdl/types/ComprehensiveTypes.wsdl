@@ -612,7 +612,11 @@
       <input message="tns:enum"/>
       <output message="tns:enum"/>
     </operation>
-    <operation name="enumOut">
+    <operation name="enumOut" parameterOrder="enum">
+      <input message="tns:empty"/>
+      <output message="tns:enum"/>
+    </operation>
+    <operation name="enumReturn">
       <input message="tns:empty"/>
       <output message="tns:enum"/>
     </operation>
@@ -624,7 +628,11 @@
       <input message="tns:array"/>
       <output message="tns:array"/>
     </operation>
-    <operation name="arrayOut">
+    <operation name="arrayOut" parameterOrder="array">
+      <input message="tns:empty"/>
+      <output message="tns:array"/>
+    </operation>
+    <operation name="arrayReturn">
       <input message="tns:empty"/>
       <output message="tns:array"/>
     </operation>
@@ -637,7 +645,11 @@
       <input message="tns:arrayM"/>
       <output message="tns:arrayM"/>
     </operation>
-    <operation name="arrayMOut">
+    <operation name="arrayMOut" parameterOrder="arrayM">
+      <input message="tns:emptyM"/>
+      <output message="tns:arrayM"/>
+    </operation>
+    <operation name="arrayMReturn">
       <input message="tns:emptyM"/>
       <output message="tns:arrayM"/>
     </operation>
@@ -650,7 +662,11 @@
       <input message="tns:complexAll"/>
       <output message="tns:complexAll"/>
     </operation>
-    <operation name="complexAllOut">
+    <operation name="complexAllOut" parameterOrder="complexAll">
+      <input message="tns:empty"/>
+      <output message="tns:complexAll"/>
+    </operation>
+    <operation name="complexAllReturn">
       <input message="tns:empty"/>
       <output message="tns:complexAll"/>
     </operation>
@@ -662,7 +678,11 @@
       <input message="tns:complexSequence"/>
       <output message="tns:complexSequence"/>
     </operation>
-    <operation name="complexSequenceOut">
+    <operation name="complexSequenceOut" parameterOrder="complexSequence">
+      <input message="tns:empty"/>
+      <output message="tns:complexSequence"/>
+    </operation>
+    <operation name="complexSequenceReturn">
       <input message="tns:empty"/>
       <output message="tns:complexSequence"/>
     </operation>
@@ -674,7 +694,11 @@
       <input message="tns:elemWComplex"/>
       <output message="tns:elemWComplex"/>
     </operation>
-    <operation name="elemWComplexOut">
+    <operation name="elemWComplexOut" parameterOrder="elemWComplex">
+      <input message="tns:empty"/>
+      <output message="tns:elemWComplex"/>
+    </operation>
+    <operation name="elemWComplexReturn">
       <input message="tns:empty"/>
       <output message="tns:elemWComplex"/>
     </operation>
@@ -686,7 +710,11 @@
       <input message="tns:complexWComplex"/>
       <output message="tns:complexWComplex"/>
     </operation>
-    <operation name="complexWComplexOut">
+    <operation name="complexWComplexOut" parameterOrder="complexWComplex">
+      <input message="tns:empty"/>
+      <output message="tns:complexWComplex"/>
+    </operation>
+    <operation name="complexWComplexReturn">
       <input message="tns:empty"/>
       <output message="tns:complexWComplex"/>
     </operation>
@@ -698,7 +726,11 @@
       <input message="tns:any"/>
       <output message="tns:any"/>
     </operation>
-    <operation name="anyOut">
+    <operation name="anyOut" parameterOrder="any">
+      <input message="tns:empty"/>
+      <output message="tns:any"/>
+    </operation>
+    <operation name="anyReturn">
       <input message="tns:empty"/>
       <output message="tns:any"/>
     </operation>
@@ -710,7 +742,11 @@
       <input message="tns:animal"/>
       <output message="tns:animal"/>
     </operation>
-    <operation name="animalOut">
+    <operation name="animalOut" parameterOrder="animal">
+      <input message="tns:empty"/>
+      <output message="tns:animal"/>
+    </operation>
+    <operation name="animalReturn">
       <input message="tns:empty"/>
       <output message="tns:animal"/>
     </operation>
@@ -722,11 +758,15 @@
       <input message="tns:cat"/>
       <output message="tns:cat"/>
     </operation>
-    <operation name="catOut">
+    <operation name="catOut" parameterOrder="cat">
       <input message="tns:empty"/>
       <output message="tns:cat"/>
     </operation>
-        <operation name="methodBoolean">
+    <operation name="catReturn">
+      <input message="tns:empty"/>
+      <output message="tns:cat"/>
+    </operation>
+    <operation name="methodBoolean">
       <input message="tns:inputBoolean"/>
       <output message="tns:outputBoolean"/>
     </operation>
@@ -917,6 +957,21 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+    <operation name="enumReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
     <operation name="arrayIn">
       <soap:operation soapAction=""/>
       <input>
@@ -948,6 +1003,21 @@
       </output>
     </operation>
     <operation name="arrayOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="arrayReturn">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
@@ -1008,6 +1078,21 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+    <operation name="arrayMReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
 
     <operation name="complexAllIn">
       <soap:operation soapAction=""/>
@@ -1040,6 +1125,21 @@
       </output>
     </operation>
     <operation name="complexAllOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexAllReturn">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
@@ -1099,6 +1199,21 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+    <operation name="complexSequenceReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
     <operation name="elemWComplexIn">
       <soap:operation soapAction=""/>
       <input>
@@ -1130,6 +1245,21 @@
       </output>
     </operation>
     <operation name="elemWComplexOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="elemWComplexReturn">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
@@ -1189,6 +1319,21 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+    <operation name="complexWComplexReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
     <operation name="anyIn">
       <soap:operation soapAction=""/>
       <input>
@@ -1220,6 +1365,21 @@
       </output>
     </operation>
     <operation name="anyOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="anyReturn">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
@@ -1279,6 +1439,21 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+    <operation name="animalReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
     <operation name="catIn">
       <soap:operation soapAction=""/>
       <input>
@@ -1324,7 +1499,22 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
-        <operation name="methodBoolean">
+    <operation name="catReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodBoolean">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
