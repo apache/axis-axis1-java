@@ -128,9 +128,12 @@ public class JavaTestCaseWriter extends JavaWriter {
             }
 
             String portName = Utils.xmlNameToJavaClass(p.getName());
+            PortType portType = binding.getPortType();
+            PortTypeEntry ptEntry =
+                    symbolTable.getPortTypeEntry(portType.getQName());
 
             writeComment(pw, p.getDocumentationElement());
-            writeServiceTestCode(portName, binding, bEntry);
+            writeServiceTestCode(portName, portType, ptEntry, binding, bEntry);
         }
         finish();
     } // writeFileBody
@@ -142,47 +145,10 @@ public class JavaTestCaseWriter extends JavaWriter {
         pw.close();
     } // finish
 
-    public final void writeServiceTestCode(
-            String portName, Binding binding, BindingEntry bEntry)
-            throws IOException {
-        PortType portType = binding.getPortType();
-        PortTypeEntry ptEntry =
-                symbolTable.getPortTypeEntry(portType.getQName());
-
-        // If there is not literal use, the interface name is the portType name.
-        // Otherwise it is the binding name.
-        String bindingType = bEntry.hasLiteral() ?
-                bEntry.getName() : ptEntry.getName();
-
-        pw.println();
-        pw.println("    public void test" + portName + "() {");
-        pw.print("        ");
-        pw.print(bindingType);
-        pw.println(" binding;");
-        pw.println("        try {");
-        pw.print("            binding = new ");
-        pw.print(this.className.substring(0, this.className.length() - "TestCase".length()));
-        pw.print("().get");
-        pw.print(portName);
-        pw.println("();");
-        pw.println("        }");
-        pw.println("        catch (javax.xml.rpc.JAXRPCException jre) {");
-        pw.print("            ");
-        pw.println("throw new junit.framework.AssertionFailedError(\"JAX-RPC Exception caught: \" + jre);");
-        pw.println("        }");
-
-        pw.println("        assertTrue(\"" +
-                JavaUtils.getMessage("null00", "binding") +
-                "\", binding != null);");
-
-        this.writePortTestCode(portType, bEntry);
-
-        pw.println("    }");
-    } // writeServiceTestCode
-
-    private final void writePortTestCode(PortType port, BindingEntry bEntry) throws IOException {
-        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(port.getQName());
-        Iterator ops = port.getOperations().iterator();
+    private final void writeServiceTestCode(
+            String portName, PortType portType, PortTypeEntry ptEntry,
+            Binding binding, BindingEntry bEntry) throws IOException {
+        Iterator ops = portType.getOperations().iterator();
         while (ops.hasNext()) {
             Operation op = (Operation) ops.next();
             OperationType type = op.getStyle();
@@ -195,6 +161,16 @@ public class JavaTestCaseWriter extends JavaWriter {
                 pw.println("    " + params.signature);
                 continue;
             }
+
+            String javaOpName = Utils.xmlNameToJavaClass(op.getName());
+            String testMethodName = "test" + portName + javaOpName;
+            pw.println("    public void " + testMethodName + "() {");
+
+            // If there is not literal use, the interface name is the portType name.
+            // Otherwise it is the binding name.
+            String bindingType = bEntry.hasLiteral() ?
+                    bEntry.getName() : ptEntry.getName();
+            writeBindingAssignment(bindingType, portName);
 
             pw.println("        try {");
             if (params.returnType != null) {
@@ -313,7 +289,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                 while (i.hasNext()) {
                     count++;
                     Fault f = (Fault) i.next();
-                    String namespace = port.getQName().getNamespaceURI();
+                    String namespace = portType.getQName().getNamespaceURI();
                     pw.print("        catch (");
                     pw.print(Utils.getFullExceptionName(
                             f, symbolTable, namespace));
@@ -327,7 +303,28 @@ public class JavaTestCaseWriter extends JavaWriter {
             pw.print("            ");
             pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re);");
             pw.println("        }");
+            pw.println("    }");
+            pw.println();
         }
-    } // writePortTestCode
+    } // writeServiceTestCode
+
+    public final void writeBindingAssignment(
+            String bindingType, String portName) throws IOException {
+        pw.println("        " + bindingType + " binding;");
+        pw.println("        try {");
+        pw.print("            binding = new ");
+        pw.print(this.className.substring(
+                0, this.className.length() - "TestCase".length()));
+        pw.println("().get" + portName + "();");
+        pw.println("        }");
+        pw.println("        catch (javax.xml.rpc.JAXRPCException jre) {");
+        pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC Exception caught: \" + jre);");
+        pw.println("        }");
+
+        pw.println("        assertTrue(\"" +
+                JavaUtils.getMessage("null00", "binding") +
+                "\", binding != null);");
+        pw.println();
+    } // writeBindingAssignment
 
 } // class JavaTestCasepw
