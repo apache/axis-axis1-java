@@ -643,8 +643,10 @@ public class Emitter {
         if (bMessageContext) {
             skelSig = skelSig + "org.apache.axis.MessageContext ctx";
             axisSig = axisSig + "org.apache.axis.MessageContext ctx";
-            if (parms.list.size() > 0) {
+            if ((parms.inputs + parms.inouts) > 0) {
                 skelSig = skelSig + ", ";
+            }
+            if (parms.list.size() > 0) {
                 axisSig = axisSig + ", ";
             }
         }
@@ -1138,7 +1140,7 @@ public class Emitter {
                 call = call + p.name + "Holder";
         }
         call = call + ")";
-        pw.print(wrapPrimitiveType(parms.returnType, call) + ";");
+        pw.println(wrapPrimitiveType(parms.returnType, call) + ";");
 
         // Handle the outputs, if there are any.
         if (parms.inouts + parms.outputs > 0) {
