@@ -70,7 +70,9 @@ public class Constants {
   // (A hierarchical namespace is strongly suggested 
   //  in order to lower the chance for conflicts)
   //////////////////////////////////////////////////////////////////////////
-  public static String MC_SVC_HANDLER = "service.handler" ;   // Handler
+  public static String MC_SVC_HANDLER   = "service.handler" ;   // Handler
+  
+  public static String MC_TARGET        = "service.target";
 
   public static String MC_HTTP_STATUS_CODE    = "transport.http.statusCode" ;    
                                                               // Integer
@@ -123,4 +125,8 @@ public class Constants {
   // Misc Strings
   //////////////////////////////////////////////////////////////////////////
   public static String URI_DEBUG = "http://xml.apache.org/axis/debug" ;
+  
+  /** For demonstration purposes only... --Glen
+   */
+  public static String SERVLET_TARGET = "AxisServlet";
 }

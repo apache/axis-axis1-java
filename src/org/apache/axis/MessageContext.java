@@ -65,63 +65,70 @@ import org.apache.axis.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class MessageContext {
-  /**
-   * Just a placeholder until we figure out how many messages we'll actually
-   * be passing around.
-   */
-  private Message inMessage ;
+    /**
+     * Just a placeholder until we figure out how many messages we'll actually
+     * be passing around.
+     */
+    private Message inMessage ;
 
-  /**
-   * Just a placeholder until we figure out how many messages we'll actually
-   * be passing around.
-   */
-  private Message outMessage ;
+    /**
+     * Just a placeholder until we figure out how many messages we'll actually
+     * be passing around.
+     */
+    private Message outMessage ;
 
-  /**
-   * 
-   */
-  private Hashtable bag ;
+    /**
+     * 
+     */
+    private Hashtable bag ;
 
-  public MessageContext() {}
+    public MessageContext() {}
 
-  public MessageContext( Message inMsg ) {
-    setIncomingMessage( inMsg );
-  }
+    public MessageContext( Message inMsg ) {
+        setIncomingMessage( inMsg );
+    }
 
-  /**
-   * Placeholder.
-   */
-  public Message getIncomingMessage() { 
-    return inMessage ; 
-  };
+    /**
+     * Placeholder.
+     */
+    public Message getIncomingMessage() { 
+        return inMessage ; 
+    };
 
-  /**
-   * Placeholder.
-   */
-  public void setIncomingMessage(Message inMsg) { 
-    inMessage = inMsg ; 
-  };
+    /**
+     * Placeholder.
+     */
+    public void setIncomingMessage(Message inMsg) { 
+        inMessage = inMsg ; 
+    };
 
-  /**
-   * Placeholder.
-   */
-  public Message getOutgoingMessage() { return outMessage ; }
+    /**
+     * Placeholder.
+     */
+    public Message getOutgoingMessage() { return outMessage ; }
 
-  /**
-   * Placeholder.
-   */
-  public void setOutgoingMessage(Message inMsg) { 
-    outMessage = inMsg ;
-  };
+    /**
+     * Placeholder.
+     */
+    public void setOutgoingMessage(Message inMsg) { 
+        outMessage = inMsg ;
+    };
 
-  public Object getProperty(String propName) {
-    if ( bag == null ) return( null );
-    return( bag.get(propName) );
-  }
+    public Object getProperty(String propName) {
+        if ( bag == null ) return( null );
+        return( bag.get(propName) );
+    }
 
-  public void setProperty(String propName, Object propValue) {
-    if ( bag == null ) bag = new Hashtable() ;
-    bag.put( propName, propValue );
-  }
+    public void setProperty(String propName, Object propValue) {
+        if ( bag == null ) bag = new Hashtable() ;
+        bag.put( propName, propValue );
+    }
+    
+    public void clearProperty(String propName)
+    {
+        if (bag != null) {
+            bag.remove(propName);
+        }
+    }
 
 };
