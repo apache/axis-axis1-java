@@ -1163,8 +1163,8 @@ public class DynamicProxyTestCase extends TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            javax.xml.rpc.namespace.QName value = null;
-            value = binding.methodQName(new javax.xml.rpc.namespace.QName("http://double-double", "toil-and-trouble"), new QNameHolder(new javax.xml.rpc.namespace.QName("http://double-double", "toil-and-trouble")));
+            javax.xml.namespace.QName value = null;
+            value = binding.methodQName(new javax.xml.namespace.QName("http://double-double", "toil-and-trouble"), new QNameHolder(new javax.xml.namespace.QName("http://double-double", "toil-and-trouble")));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);

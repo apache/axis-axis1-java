@@ -267,8 +267,6 @@ public class DeserializerImpl extends SOAPHandler
         }
     }
     
-    private int startIdx = 0;
-    private int endIdx = -1;
     protected boolean isHref = false;
     protected boolean isNil  = false;  // xsd:nil attribute is set to true
     protected String id = null;  // Set to the id of the element
@@ -449,8 +447,6 @@ public class DeserializerImpl extends SOAPHandler
                     throw new SAXException(
                                            JavaUtils.getMessage("noDeser00", "" + type));
                 }
-            } else {
-                startIdx = context.getCurrentRecordPos();
             }
         }
     }
@@ -536,8 +532,7 @@ public class DeserializerImpl extends SOAPHandler
         if (this.getClass().equals(DeserializerImpl.class) &&
             targets != null &&
             !targets.isEmpty()) {
-            endIdx = context.getCurrentRecordPos();
-            
+
             StringWriter writer = new StringWriter();
             SerializationContextImpl serContext = 
                         new SerializationContextImpl(writer,

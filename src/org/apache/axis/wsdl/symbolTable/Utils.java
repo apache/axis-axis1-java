@@ -548,7 +548,7 @@ public class Utils {
 
     /**
      * Given the WSDL4J QName (javax.wsdl.QName), return the JAX-RPC
-     * QName (javax.xml.rpc.namespace.QName).
+     * QName (javax.xml.namespace.QName).
      */
     public static javax.xml.namespace.QName getAxisQName(QName qname)
     {
@@ -560,7 +560,7 @@ public class Utils {
     }
 
     /**
-     * Given the JAX-RPC QName (javax.xml.rpc.namespace.QName), return
+     * Given the JAX-RPC QName (javax.xml.namespace.QName), return
      * the WSDL4J QName (javax.wsdl.QName).
      */
     public static QName getWSDLQName(javax.xml.namespace.QName qname)

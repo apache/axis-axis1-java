@@ -152,12 +152,16 @@ public class ArrayDeserializer extends DeserializerImpl
         QName typeQName = context.getTypeFromAttributes(namespace,
                                                         localName,
                                                         attributes);
-        if (typeQName != null && 
+        if (typeQName == null) {
+            typeQName = getDefaultType();
+        }
+
+        if (typeQName != null &&
             Constants.equals(Constants.SOAP_ARRAY, typeQName)) {
             typeQName = null;
         }
 
-        // Now get the arrayType value 
+        // Now get the arrayType value
         QName arrayTypeValue = context.getQNameFromString(
                       Constants.getValue(attributes,
                                          Constants.URIS_SOAP_ENC,
