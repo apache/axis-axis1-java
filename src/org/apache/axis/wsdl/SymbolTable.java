@@ -70,6 +70,7 @@ import javax.wsdl.BindingFault;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
+import javax.wsdl.Import;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
@@ -84,6 +85,7 @@ import com.ibm.wsdl.extensions.soap.SOAPBinding;
 import com.ibm.wsdl.extensions.soap.SOAPBody;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -104,6 +106,9 @@ public class SymbolTable {
     // Mapping from Namespace to Java Package
     private Namespaces namespaces;
 
+    // Should the contents of imported files be added to the symbol table?
+    private boolean addImports;
+
     // The actual symbol table.  This symbolTable contains entries of the form
     // <key, value> where key is of type QName and value is of type Vector.  The
     // Vector's elements are all of the objects that have the given QName.  This
@@ -121,8 +126,9 @@ public class SymbolTable {
     /**
      * Construct a symbol table with the given Namespaces.
      */
-    public SymbolTable(Namespaces namespaces) {
+    public SymbolTable(Namespaces namespaces, boolean addImports) {
         this.namespaces = namespaces;
+        this.addImports = addImports;
     } // ctor
 
     /**
@@ -134,6 +140,19 @@ public class SymbolTable {
             populateTypes(doc);
         }
         if (def != null) {
+            if (addImports) {
+                // Add the symbols from the imported WSDL documents
+                Map imports = def.getImports();
+                Object[] importKeys = imports.keySet().toArray();
+                for (int i = 0; i < importKeys.length; ++i) {
+                    Vector v = (Vector) imports.get(importKeys[i]);
+                    for (int j = 0; j < v.size(); ++j) {
+                        Import imp = (Import) v.get(j);
+                        add(imp.getDefinition(),
+                            XMLUtils.newDocument(imp.getLocationURI()));
+                    }
+                }
+            }
             populateMessages(def);
             populatePortTypes(def);
             populateBindings(def);
