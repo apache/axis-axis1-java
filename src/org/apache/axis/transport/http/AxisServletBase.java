@@ -231,10 +231,15 @@ public class AxisServletBase extends HttpServlet {
 
     /**
      * put the engine back in to the context.
-     * @param context
-     * @param engine
+     * @param context servlet context to use
+     * @param engine reference to the engine. If null, the engine is removed
      */
     private static void storeEngine(ServletContext context, AxisServer engine) {
+        if (engine == null) {
+            context.removeAttribute(ATTR_AXIS_ENGINE);
+        } else {
+            context.setAttribute(ATTR_AXIS_ENGINE, engine);
+        }
         context.setAttribute(ATTR_AXIS_ENGINE, engine);
     }
 
