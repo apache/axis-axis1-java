@@ -481,9 +481,13 @@ public class DimeBodyPart {
                 }
                 while (bytesread > -1);
 
-                //Leave the stream open for future reading
-                // and reset the stream pointer to the first byte
-                in.reset();            
+                if (in.markSupported()) {
+                    //Leave the stream open for future reading
+                    // and reset the stream pointer to the first byte
+                    in.reset();            
+                } else {
+                    in.close();                    
+                }
             }
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
