@@ -119,7 +119,7 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
       //this.add( "SOAPServer"   , new SOAPServerHandler() );
       this.add( "MsgDispatcher", new MsgProvider() );
       this.add( "RPCDispatcher", new RPCProvider() );
-      this.add( "HTTPSender"   , new HTTPDispatchHandler() );
+      this.add( "HTTPSender"   , new HTTPSender() );
       this.add( "HTTPAction"   , new HTTPActionHandler() );
       this.add( "HTTPAuth"     , new HTTPAuthHandler() );
       this.add( "JWSHandler"   , new JWSHandler() );
@@ -130,16 +130,16 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
       c = new SimpleChain();
       c.addHandler( this.find( "JWSHandler" ) );
       c.addHandler( this.find( "debug" ) );
-      this.add( "global.input", c );
+      this.add( "global.request", c );
 
       c = new SimpleChain();
       c.addHandler( this.find( "HTTPAuth" ) );
       c.addHandler( this.find( "HTTPAction" ) );
-      this.add( "HTTP.input", c );
+      this.add( "HTTP.request", c );
 
     }
     else {
-      this.add( "HTTPSender",  new HTTPDispatchHandler() );
+      this.add( "HTTPSender",  new HTTPSender() );
       this.add( "LocalSender", new LocalDispatchHandler() );
     }
 

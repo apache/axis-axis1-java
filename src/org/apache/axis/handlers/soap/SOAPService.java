@@ -62,7 +62,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
- * invocation.  It has an input chain, an output chain, and a pivot-point,
+ * invocation.  It has an request chain, an response chain, and a pivot-point,
  * and handles the SOAP semantics when invoke()d.
  * 
  * @author Glen Daniels (gdaniels@macromedia.com) 
@@ -110,12 +110,12 @@ public class SOAPService extends SimpleTargetedChain
         
         //msgContext.setServiceHandler( this );
         
-        Handler h = getInputChain() ;
+        Handler h = getRequestChain() ;
         if ( h != null ) {
-            Debug.Print( 2, "Invoking input chain" );
+            Debug.Print( 2, "Invoking request chain" );
             h.invoke(msgContext);
         } else {
-            Debug.Print( 3, "No input chain" );
+            Debug.Print( 3, "No request chain" );
         }
 
         // Do SOAP semantics here
@@ -129,12 +129,12 @@ public class SOAPService extends SimpleTargetedChain
             Debug.Print( 3, "No service/pivot" );
         }
         
-        h = getOutputChain();
+        h = getResponseChain();
         if ( h != null ) {
-            Debug.Print( 2, "Invoking output chain" );
+            Debug.Print( 2, "Invoking response chain" );
             h.invoke(msgContext);
         } else {
-            Debug.Print( 3, "No output chain" );
+            Debug.Print( 3, "No response chain" );
         }
 
         Debug.Print( 1, "Exit : SOAPService::invoke" );

@@ -67,30 +67,30 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SimpleTargetedChain extends BasicHandler implements TargetedChain  {
-  protected Chain      inputChain ;
+  protected Chain      requestChain ;
   protected Handler    pivotHandler ;
-  protected Chain      outputChain ;
+  protected Chain      responseChain ;
 
   public void init() { 
-    if ( inputChain   != null )   inputChain.init();
+    if ( requestChain   != null )   requestChain.init();
     if ( pivotHandler != null ) pivotHandler.init();
-    if ( outputChain  != null )  outputChain.init();
+    if ( responseChain  != null )  responseChain.init();
   }
 
   public void cleanup() {
-    if ( inputChain   != null )   inputChain.cleanup();
+    if ( requestChain   != null )   requestChain.cleanup();
     if ( pivotHandler != null ) pivotHandler.cleanup();
-    if ( outputChain  != null )  outputChain.cleanup();
+    if ( responseChain  != null )  responseChain.cleanup();
   }
 
   /**
-   * Invoke the input chain, pivot handler and output chain.  If there's
+   * Invoke the request chain, pivot handler and response chain.  If there's
    * a fault we need to make sure that we undo any completed handler
    * that has been successfully invoked and then rethrow the fault.
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
     Debug.Print( 1, "Enter: SimpleTargetedChain::invoke" );
-    if ( inputChain != null ) inputChain.invoke( msgContext );
+    if ( requestChain != null ) requestChain.invoke( msgContext );
     try {
       if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
     }
@@ -98,18 +98,18 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
       Debug.Print( 1, e );
       if ( !(e instanceof AxisFault ) )
         e = new AxisFault( e );
-      if ( inputChain != null ) inputChain.undo( msgContext );
+      if ( requestChain != null ) requestChain.undo( msgContext );
       throw (AxisFault) e ;
     }
     try {
-      if ( outputChain != null )  outputChain.invoke( msgContext );
+      if ( responseChain != null )  responseChain.invoke( msgContext );
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
       if ( !(e instanceof AxisFault ) )
         e = new AxisFault( e );
       if ( pivotHandler != null ) pivotHandler.undo( msgContext );
-      if ( inputChain   != null )   inputChain.undo( msgContext );
+      if ( requestChain   != null )   requestChain.undo( msgContext );
       throw (AxisFault) e ;
     }
     Debug.Print( 1, "Exit: SimpleTargetedChain::invoke" );
@@ -120,34 +120,34 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
    */
   public void undo(MessageContext msgContext) {
     Debug.Print( 1, "Enter: SimpleTargetedChain::undo" );
-    if ( outputChain   != null )   outputChain.undo( msgContext );
+    if ( responseChain   != null )   responseChain.undo( msgContext );
     if ( pivotHandler  != null )  pivotHandler.undo( msgContext );
-    if ( inputChain    != null )    inputChain.undo( msgContext );
+    if ( requestChain    != null )    requestChain.undo( msgContext );
     Debug.Print( 1, "Exit: SimpleTargetedChain::undo" );
   }
 
   public boolean canHandleBlock(QName qname) {
-    return( (inputChain==null)   ? false : inputChain.canHandleBlock(qname) ||
+    return( (requestChain==null)   ? false : requestChain.canHandleBlock(qname) ||
             (pivotHandler==null) ? false : pivotHandler.canHandleBlock(qname) ||
-            (outputChain==null)  ? false : outputChain.canHandleBlock(qname) );
+            (responseChain==null)  ? false : responseChain.canHandleBlock(qname) );
   }
 
-  public Chain getInputChain() { return( inputChain ); }
+  public Chain getRequestChain() { return( requestChain ); }
 
-  public void setInputChain(Chain inChain) { inputChain = inChain ; }
+  public void setRequestChain(Chain reqChain) { requestChain = reqChain ; }
 
   public Handler getPivotHandler() { return( pivotHandler ); }
 
   public void setPivotHandler(Handler handler) { pivotHandler = handler ; }
 
-  public Chain getOutputChain() { return( outputChain ); }
+  public Chain getResponseChain() { return( responseChain ); }
 
-  public void setOutputChain(Chain outChain) { outputChain = outChain ; }
+  public void setResponseChain(Chain respChain) { responseChain = respChain ; }
   
   public void clear() {
-    inputChain = null ;
+    requestChain = null ;
     pivotHandler = null ;
-    outputChain = null ;
+    responseChain = null ;
   }
 
   public Element getDeploymentData() {
@@ -158,8 +158,8 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
     Document  doc  = XMLUtils.newDocument();
     Element   root = doc.createElement( "chain" );
 
-    if ( inputChain != null ) {
-      Handler[]  handlers = inputChain.getHandlers();
+    if ( requestChain != null ) {
+      Handler[]  handlers = requestChain.getHandlers();
       str = new StringBuffer();
       for ( int i = 0 ; i < handlers.length ; i++ ) {
         h = (Handler) handlers[i];
@@ -171,8 +171,8 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
     if ( pivotHandler != null ) {
       root.setAttribute( "pivot", pivotHandler.getClass().getName() );
     }
-    if ( outputChain != null ) {
-      Handler[]  handlers = inputChain.getHandlers();
+    if ( responseChain != null ) {
+      Handler[]  handlers = requestChain.getHandlers();
       str = new StringBuffer();
       for ( int i = 0 ; i < handlers.length ; i++ ) {
         h = (Handler) handlers[i];

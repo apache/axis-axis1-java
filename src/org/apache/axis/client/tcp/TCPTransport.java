@@ -64,7 +64,7 @@ import org.apache.axis.client.Transport;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.ServiceClient;
 import org.apache.axis.client.http.HTTPTransport; // UGLY!!!!!
-import org.apache.axis.transport.tcp.TCPDispatchHandler;
+import org.apache.axis.transport.tcp.TCPSender;
 import org.apache.axis.handlers.tcp.TCPActionHandler;
 
 /**
@@ -102,14 +102,14 @@ public class TCPTransport extends Transport
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: TCPTransport::init" );
         
-        // add the TCPDispatchHandler
+        // add the TCPSender
         HandlerRegistry hr = engine.getHandlerRegistry();
-        hr.add("TCPSender", new TCPDispatchHandler());
+        hr.add("TCPSender", new TCPSender());
         hr.add("TCPAction", new TCPActionHandler());
         
         SimpleChain c = new SimpleChain();
         c.addHandler( hr.find( "TCPAction" ) );
-        hr.add( "TCP.input", c );
+        hr.add( "TCP.request", c );
     }
     
     /**
@@ -124,11 +124,11 @@ public class TCPTransport extends Transport
     public void initMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
     {
         HandlerRegistry sr = engine.getServiceRegistry();
-        if ( sr == null || sr.find("TCP.input") == null )
-            mc.setProperty( MessageContext.TRANS_INPUT, "TCPSender" );
+        if ( sr == null || sr.find("TCP.request") == null )
+            mc.setProperty( MessageContext.TRANS_REQUEST, "TCPSender" );
         else
-            mc.setProperty( MessageContext.TRANS_INPUT, "TCP.input" );
-        mc.setProperty(MessageContext.TRANS_OUTPUT, "TCP.output" );
+            mc.setProperty( MessageContext.TRANS_REQUEST, "TCP.request" );
+        mc.setProperty(MessageContext.TRANS_RESPONSE, "TCP.response" );
     }
         
     

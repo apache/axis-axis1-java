@@ -175,15 +175,15 @@ public class AxisServer extends AxisEngine
           // This really should be in a handler - but we need to discuss it
           // first - to make sure that's what we want.
               /* Now we do the 'real' work.  The flow is basically:         */
-              /*   Transport Specific Input Handler/Chain                   */
-              /*   Global Input Handler/Chain                               */
+              /*   Transport Specific Request Handler/Chain                   */
+              /*   Global Request Handler/Chain                               */
               /*   Protocol Specific-Handler(ie. SOAP, XP)                  */
               /*     ie. For SOAP Handler:                                  */
-              /*           - Service Specific Input Handler/Chain           */
+              /*           - Service Specific Request Handler/Chain           */
               /*           - SOAP Semantic Checks                           */
-              /*           - Service Specific Output Handler/Chain          */
-              /*   Global Output Handler/Chain                              */
-              /*   Transport Specific Output Handler/Chain                  */
+              /*           - Service Specific Response Handler/Chain          */
+              /*   Global Response Handler/Chain                              */
+              /*   Transport Specific Response Handler/Chain                  */
               /**************************************************************/
   
               // When do we call init/cleanup??
@@ -206,15 +206,15 @@ public class AxisServer extends AxisEngine
 
               */
               
-              /* Process the Transport Specific Input Chain */
+              /* Process the Transport Specific Request Chain */
               /**********************************************/
-              hName = msgContext.getStrProp(MessageContext.TRANS_INPUT);
+              hName = msgContext.getStrProp(MessageContext.TRANS_REQUEST);
               if ( hName != null && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
       
-              /* Process the Global Input Chain */
+              /* Process the Global Request Chain */
               /**********************************/
-              hName = Constants.GLOBAL_INPUT ;
+              hName = Constants.GLOBAL_REQUEST ;
               if ( hName != null  && (h = hr.find( hName )) != null )
                   h.invoke(msgContext);
       
@@ -233,15 +233,15 @@ public class AxisServer extends AxisEngine
                                       "target service to invoke!",
                                       null, null );
       
-              /* Process the Global Output Chain */
+              /* Process the Global Response Chain */
               /***********************************/
-              hName = Constants.GLOBAL_OUTPUT ;
+              hName = Constants.GLOBAL_RECEIVE ;
               if ( hName != null && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
       
-              /* Process the Transport Specific Output Chain */
+              /* Process the Transport Specific Response Chain */
               /***********************************************/
-              hName = msgContext.getStrProp(MessageContext.TRANS_OUTPUT);
+              hName = msgContext.getStrProp(MessageContext.TRANS_RESPONSE);
               if ( hName != null  && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
           }

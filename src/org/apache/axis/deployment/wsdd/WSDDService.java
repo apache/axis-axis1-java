@@ -170,10 +170,10 @@ public class WSDDService extends WSDDDeployableItem implements DeployableItem {
             WSDDFlow request = getRequestFlow();
             WSDDFlow response = getResponseFlow();
             if (request != null)
-                c.setInputChain((Chain)request.newInstance(registry));
+                c.setRequestChain((Chain)request.newInstance(registry));
             c.setPivotHandler(getProvider().newInstance(registry));
             if (response != null)
-                c.setOutputChain((Chain)response.newInstance(registry));
+                c.setResponseChain((Chain)response.newInstance(registry));
             return c;
         } catch (Exception e) {
             return null;

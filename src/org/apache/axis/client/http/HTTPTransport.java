@@ -104,23 +104,23 @@ public class HTTPTransport extends Transport
         throws AxisFault
     {
         HandlerRegistry sr = engine.getServiceRegistry();
-        if ( sr == null || sr.find("HTTP.input") == null )
-            mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
+        if ( sr == null || sr.find("HTTP.request") == null )
+            mc.setProperty( MessageContext.TRANS_REQUEST, "HTTPSender" );
         else
-            mc.setProperty( MessageContext.TRANS_INPUT, "HTTP.input" );
+            mc.setProperty( MessageContext.TRANS_REQUEST, "HTTP.request" );
         
-        mc.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
+        mc.setProperty(MessageContext.TRANS_RESPONSE, "HTTP.response" );
         
-        /* If there is Input Transport Chain then default to HTTP. */
+        /* If there is Request Transport Chain then default to HTTP. */
         /* In order for the client to override the transport chain */
-        /* they should just set the TRANS_INPUT/OUTPUT fields in   */
+        /* they should just set the TRANS_REQUEST/RESPONSE fields in   */
         /* the msgContext.                                         */
         /***********************************************************/
-        if ( mc.getProperty( MessageContext.TRANS_INPUT ) == null )
-            mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
+        if ( mc.getProperty( MessageContext.TRANS_REQUEST ) == null )
+            mc.setProperty( MessageContext.TRANS_REQUEST, "HTTPSender" );
         
-        if ( mc.getProperty( MessageContext.TRANS_OUTPUT ) == null )
-            mc.setProperty( MessageContext.TRANS_OUTPUT, "HTTP.output" );
+        if ( mc.getProperty( MessageContext.TRANS_RESPONSE ) == null )
+            mc.setProperty( MessageContext.TRANS_RESPONSE, "HTTP.response" );
     }
         
     /**

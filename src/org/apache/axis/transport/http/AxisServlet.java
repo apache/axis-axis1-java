@@ -68,32 +68,32 @@ import org.apache.axis.utils.* ;
  */
 public class AxisServlet extends HttpServlet {
   // These have default values.
-  private String transportInName = "HTTP.input";
-  private String transportOutName = "HTTP.output";
+  private String transportReqName = "HTTP.request";
+  private String transportRespName = "HTTP.response";
 
   private static final String AXIS_ENGINE = "AxisEngine" ;
 
   public void init() {
-      String param = getInitParameter("transport.input");
+      String param = getInitParameter("transport.request");
       ServletContext context = getServletConfig().getServletContext();
       
       if (param == null)
-          param = context.getInitParameter("transport.input");
+          param = context.getInitParameter("transport.request");
       if (param != null)
-          transportInName = param;
+          transportReqName = param;
       
-      param = getInitParameter("transport.output");
+      param = getInitParameter("transport.response");
       if (param == null)
-          param = context.getInitParameter("transport.output");
+          param = context.getInitParameter("transport.response");
       if (param != null)
-          transportOutName = param;
+          transportRespName = param;
   }
 
   public void doGet(HttpServletRequest req, HttpServletResponse res)
                 throws ServletException, IOException {
     res.setContentType("text/html");
     res.getWriter().println( "In doGet" );
-    res.getWriter().println(" Input = " + transportInName);
+    res.getWriter().println(" Request = " + transportReqName);
   }
 
   public void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -129,10 +129,10 @@ public class AxisServlet extends HttpServlet {
     /**********************************************************/
     msgContext.setRequestMessage( msg );
 
-    /* Set the Transport Specific Input/Output chains IDs */
+    /* Set the Transport Specific Request/Response chains IDs */
     /******************************************************/
-    msgContext.setProperty(MessageContext.TRANS_INPUT , transportInName );
-    msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName );
+    msgContext.setProperty(MessageContext.TRANS_REQUEST , transportReqName );
+    msgContext.setProperty(MessageContext.TRANS_RESPONSE, transportRespName );
 
     /* Save some HTTP specific info in the bag in case a handler needs it */
     /**********************************************************************/

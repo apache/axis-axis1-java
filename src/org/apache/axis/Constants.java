@@ -139,8 +139,8 @@ public class Constants {
   public static String MC_REALPATH = "realpath";
 
   /** The global input/out chains */
-  public static String GLOBAL_INPUT        = "global.input" ;
-  public static String GLOBAL_OUTPUT       = "global.output" ;
+  public static String GLOBAL_REQUEST        = "global.request" ;
+  public static String GLOBAL_RECEIVE       = "global.response" ;
   
   public static String JWSPROCESSOR_TARGET = "JWSProcessor" ;
 

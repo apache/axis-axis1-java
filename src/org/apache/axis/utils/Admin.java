@@ -308,7 +308,7 @@ public class Admin {
             st = new StringTokenizer( input, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
               if ( c == null )
-                cc.setInputChain( c = new SimpleChain() );
+                cc.setRequestChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -324,7 +324,7 @@ public class Admin {
             c  = null ;
             while ( st.hasMoreElements() ) {
               if ( c == null )
-                cc.setOutputChain( c = new SimpleChain() );
+                cc.setResponseChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -363,7 +363,7 @@ public class Admin {
             c  = null ;
             while ( st.hasMoreElements() ) {
               if ( c == null )
-                service.setInputChain( c = new SimpleChain() );
+                service.setRequestChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -385,7 +385,7 @@ public class Admin {
             c  = null ;
             while ( st.hasMoreElements() ) {
               if ( c == null )
-                service.setOutputChain( c = new SimpleChain() );
+                service.setResponseChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
