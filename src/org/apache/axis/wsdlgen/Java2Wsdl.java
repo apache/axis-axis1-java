@@ -202,11 +202,11 @@ public class Java2Wsdl {
 //
                     case OUTPUT_WSDL_MODE_OPT:
                         String modeArg = option.getArgument();
-                        if ("All".equals(modeArg))
+                        if ("All".equalsIgnoreCase(modeArg))
                             mode = Emitter.MODE_ALL;
-                        else if ("Interface".equals(modeArg))
+                        else if ("Interface".equalsIgnoreCase(modeArg))
                             mode = Emitter.MODE_INTERFACE;
-                        else if ("Implementation".equals(modeArg))
+                        else if ("Implementation".equalsIgnoreCase(modeArg))
                             mode = Emitter.MODE_IMPLEMENTATION;
                         else {
                             mode = Emitter.MODE_ALL; 
