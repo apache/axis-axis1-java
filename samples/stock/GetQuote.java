@@ -64,7 +64,7 @@ import org.apache.axis.Constants ;
 import org.apache.axis.client.Service ;
 import org.apache.axis.client.Transport ;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.rpc.Call ;
+import org.apache.axis.client.Call ;
 import org.apache.axis.encoding.XMLType ;
 
 import org.apache.axis.utils.Options ;
@@ -90,11 +90,11 @@ public class GetQuote {
       symbol = args[0] ;
 
       Service  service = new Service();
-      Call     call    = service.createCall();
+      Call     call    = (Call) service.createCall();
 
       call.setTargetEndpointAddress( new URL(opts.getURL()) );
       call.setOperationName( "getQuote" );
-      call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+      call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
       call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
       call.setReturnType( XMLType.XSD_FLOAT );
 

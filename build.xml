@@ -343,6 +343,11 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
+  <!-- Build/Test EVERYTHING from scratch!                                 -->
+  <!-- =================================================================== -->
+  <target name="all" depends="dist, functional-tests"/>
+
+  <!-- =================================================================== -->
   <!-- Creates the binary distribution                                     -->
   <!-- =================================================================== -->
   <target name="dist" depends="compile, junit, samples, javadocs" >

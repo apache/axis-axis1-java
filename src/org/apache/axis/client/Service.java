@@ -375,7 +375,8 @@ public class Service implements org.apache.axis.rpc.Service {
                 SOAPBody sBody  = (SOAPBody) obj ;
                 String   tmp     = sBody.getNamespaceURI();
                 if ( tmp != null )
-                    call.setProperty( Constants.NAMESPACE, tmp );
+                    call.setProperty( org.apache.axis.client.Call.NAMESPACE, 
+                                      tmp );
                 list = sBody.getEncodingStyles();
                 if ( list != null && list.size() > 0 )
                     call.setEncodingStyle( (String) list.get(0) );
