@@ -61,6 +61,7 @@ import java.util.TimeZone;
 
 import java.math.BigInteger;
 import java.math.BigDecimal;
+import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
 
@@ -143,6 +144,25 @@ public class RoundtripTestServiceTestCase extends TestCase {
                          201.25F,
                          lastTradePrice,
                          FLOAT_DELTA);
+            // Make sure static field dontMapToWSDL is not mapped.
+            try {
+                Method m = (StockInvestment.class).
+                    getDeclaredMethod("getDontMapToWSDL", 
+                                      new Class[] {});
+                fail("Should not map static member dontMapToWSDL");
+            } catch (NoSuchMethodException e) {
+                // Cool the method should not be in the class
+            }
+
+            // Make sure private field avgYearlyReturn is not mapped.
+            try {
+                Method m = (StockInvestment.class).
+                    getDeclaredMethod("getAvgYearlyReturn", 
+                                      new Class[] {});
+                fail("Should not map private member avgYearlyReturn");
+            } catch (NoSuchMethodException e) {
+                // Cool the method should not be in the class
+            }
         } catch (RemoteException re) {
             fail("Remote Exception caught: " + re);
         }

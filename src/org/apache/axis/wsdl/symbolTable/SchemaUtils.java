@@ -408,6 +408,29 @@ public class SchemaUtils {
     }
 
     /**
+     * Returns the WSDL2Java QName for the anonymous type of the attribute
+     * or null.
+     */
+    public static QName getAttributeAnonQName(Node node) {
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("attribute") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            for (int j = 0; j < children.getLength(); j++) {
+                QName kind = Utils.getNodeQName(children.item(j));
+                if (kind != null &&
+                    (kind.getLocalPart().equals("complexType") ||
+                     kind.getLocalPart().equals("simpleType")) &&
+                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
+                    return Utils.getNodeNameQName(children.item(j));
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * If the specified node is a simple type or contains simpleContent, return true
      */
     public static boolean isSimpleTypeOrSimpleContent(Node node) {
@@ -1025,8 +1048,19 @@ public class SchemaUtils {
                 
                 // type
                 QName typeAttr = Utils.getNodeTypeRefQName(child, "type");
+                if (typeAttr == null) {
+                    // Could be defined as an anonymous type
+                    typeAttr = getAttributeAnonQName(child);
+                }
+
+                // Get the corresponding TypeEntry
                 TypeEntry type = symbolTable.getTypeEntry(typeAttr, false);
-                // name
+
+                // Need to add code here to get the qualified or unqualified
+                // name.  Similar to the code around line 350 for elenments.
+                // Rich Scheuerle
+
+                // Now get the name.
                 QName name = Utils.getNodeNameQName(child);
                 // add type and name to vector, skip it if we couldn't parse it
                 // XXX - this may need to be revisited.

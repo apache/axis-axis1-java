@@ -270,11 +270,12 @@ public class SimpleSerializer implements Serializer {
                         //  write attribute element
                         Class fieldType = propertyDescriptor[i].getType();
 
-                        // Attribute must be a simple type.
-                        if (!types.isSimpleSchemaType(fieldType))
+                        // Attribute must be a simple type, enum or SimpleType
+                        if (!types.isAcceptableAsAttribute(fieldType)) {
                             throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00",
                                     propName,
                                     fieldType.getName()));
+                        }
 
                         // write attribute element
                         // TODO the attribute name needs to be preserved from the XML
@@ -291,11 +292,11 @@ public class SimpleSerializer implements Serializer {
 
             BeanPropertyDescriptor bpd = propertyDescriptor[i];
             Class type = bpd.getType();
-            // Attribute must extend a simple type.
-            if (!types.isSimpleSchemaType(type))
+            // Attribute must extend a simple type, enum or SimpleType
+            if (!types.isAcceptableAsAttribute(type)) {
                 throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType01", 
                         type.getName()));
-            
+            }            
             base = types.writeType(type);
             extension.setAttribute("base", base);
         }

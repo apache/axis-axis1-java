@@ -357,11 +357,11 @@ public class BeanSerializer implements Serializer, Serializable {
                                 Element where) throws Exception {
 
         // Attribute must be a simple type.
-        if (!types.isSimpleSchemaType(fieldType))
+        if (!types.isAcceptableAsAttribute(fieldType)) {
             throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00",
                                                      fieldName,
                                                      fieldType.getName()));
-
+        }
         String elementType = types.writeType(fieldType);
         Element elem = types.createAttributeElement(fieldName,
                                            elementType,

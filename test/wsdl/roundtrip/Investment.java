@@ -67,9 +67,10 @@ package test.wsdl.roundtrip;
  */
 public abstract class Investment implements java.io.Serializable {
 
+    public static int dontMapToWSDL;  // This should not be mapped to the WSDL
     public String name;
     private int id;
-    private double avgYearlyReturn;
+    private double avgYearlyReturn;   // This should not be mapped to the WSDL
 
     public Investment() {
 
