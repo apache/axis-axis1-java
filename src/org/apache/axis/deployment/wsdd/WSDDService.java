@@ -117,7 +117,13 @@ public class WSDDService
             WSDDTypeMapping typeMapping = new WSDDTypeMapping(typeMappings[i]);
             addTypeMapping(typeMapping);
         }
-        
+
+        Element [] beanMappings = getChildElements(e, "beanMapping");
+        for (int i = 0; i < beanMappings.length; i++) {
+            WSDDBeanMapping beanMapping = new WSDDBeanMapping(beanMappings[i]);
+            addTypeMapping(beanMapping);
+        }
+
         String typeStr = e.getAttribute("provider");
         if (typeStr != null && !typeStr.equals(""))
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
@@ -224,9 +230,12 @@ public class WSDDService
         if (response != null) {
             service.setResponseHandler(response.getInstance(registry));
         }
-        
-        service.setTypeMappingRegistry(tmr);
-        
+
+        if (tmr != null) {
+            service.setTypeMappingRegistry(tmr);
+            tmr.setParent(registry.getTypeMappingRegistry(""));
+        }
+
         WSDDFaultFlow [] faultFlows = getFaultFlows();
         if (faultFlows != null && faultFlows.length > 0) {
             FaultableHandler wrapper = new FaultableHandler(service);
@@ -293,6 +302,11 @@ public class WSDDService
         context.startElement(WSDDConstants.SERVICE_QNAME, attrs);
         writeFlowsToContext(context);
         writeParamsToContext(context);
+
+        if (tmr != null) {
+            tmr.dumpToSerializationContext(context);
+        }
+
         context.endElement();
     }
     

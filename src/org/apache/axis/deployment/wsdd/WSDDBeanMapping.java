@@ -54,14 +54,12 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.Handler;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.encoding.SerializationContext;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
@@ -69,58 +67,41 @@ import java.io.IOException;
 
 
 /**
+ * A <code>WSDDBeanMapping</code> is simply a <code>WSDDTypeMapping</code>
+ * which has preset values for the serializer and deserializer attributes.
  *
+ * This enables the following slightly simplified syntax when expressing
+ * a bean mapping:
+ *
+ * &lt;beanMapping qname="prefix:local" languageSpecificType="java:class"/&gt;
+ *
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class WSDDHandler
-    extends WSDDDeployableItem
+public class WSDDBeanMapping
+    extends WSDDTypeMapping
 {
     /**
      * Default constructor
+     * 
      */ 
-    public WSDDHandler()
+    public WSDDBeanMapping()
     {
     }
     
-    /**
-     *
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDHandler(Element e)
+    public WSDDBeanMapping(Element e)
         throws WSDDException
     {
-        super(e);
-        /*
-        if (type == null && (this.getClass() == WSDDHandler.class)) {
-            throw new WSDDException("Must include type attribute for Handlers");
-        }
-        */
+        super(e, true);
+        
+        serializer = "org.apache.axis.encoding.BeanSerializer";
+        deserializer = "org.apache.axis.encoding.BeanSerializer$BeanSerFactory";
     }
 
-    protected QName getElementName()
-    {
-        return WSDDConstants.HANDLER_QNAME;
+    protected QName getElementName() {
+        return WSDDConstants.BEANMAPPING_QNAME;
     }
 
-    public void writeToContext(SerializationContext context)
-        throws IOException
-    {
-        AttributesImpl attrs = new AttributesImpl();
-        QName name = getQName();
-        if (name != null) {
-            attrs.addAttribute("", "name", "name",
-                               "CDATA", context.qName2String(name));
-        }
-        attrs.addAttribute("", "type", "type",
-                           "CDATA", context.qName2String(getType()));
-        context.startElement(new QName(WSDDConstants.WSDD_NS, "handler"),
-                             attrs);
-        writeParamsToContext(context);
-        context.endElement();
-    }
-
-    public void deployToRegistry(DeploymentRegistry registry)
-            throws DeploymentException {
-        registry.deployHandler(this);
-    }
 }
+
+
+

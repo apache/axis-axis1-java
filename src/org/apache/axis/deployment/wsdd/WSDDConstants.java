@@ -111,4 +111,6 @@ public class WSDDConstants
                                                        "globalConfiguration");
     public static final QName TYPE_QNAME = new QName(WSDD_NS,
                                                      "typeMapping");
+    public static final QName BEANMAPPING_QNAME = new QName(WSDD_NS,
+                                                     "beanMapping");
 }

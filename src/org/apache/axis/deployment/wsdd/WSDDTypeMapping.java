@@ -72,12 +72,12 @@ import java.io.IOException;
 public class WSDDTypeMapping
     extends WSDDElement
 {
-    private QName qname;
-    private String serializer;
-    private String deserializer;
-    private QName typeQName;
-    private String ref;
-    private String encodingStyle;
+    protected QName qname;
+    protected String serializer;
+    protected String deserializer;
+    protected QName typeQName;
+    protected String ref;
+    protected String encodingStyle;
     
     /**
      * Default constructor
@@ -95,16 +95,27 @@ public class WSDDTypeMapping
     public WSDDTypeMapping(Element e)
         throws WSDDException
     {
-        super(e);
+        this(e, true);
         
         serializer = e.getAttribute("serializer");
         deserializer = e.getAttribute("deserializer");
-        
+    }
+
+    /**
+     * Constructor for use only by ourselves and our subclasses.
+     *
+     * Differentiated by an extra (unused) boolean argument
+     */
+    protected WSDDTypeMapping(Element e, boolean b)
+        throws WSDDException
+    {
+        super(e);
+
         String qnameStr = e.getAttribute("qname");
         qname = XMLUtils.getQNameFromString(qnameStr, e);
-        
+
         String typeStr = e.getAttribute("languageSpecificType");
-        typeQName = XMLUtils.getQNameFromString(typeStr, e);        
+        typeQName = XMLUtils.getQNameFromString(typeStr, e);
     }
 
     /**
