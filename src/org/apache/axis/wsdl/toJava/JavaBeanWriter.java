@@ -703,8 +703,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("        }");
                 pw.println(
                         "        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
-                pw.println("            " + returnString
-                        + " new org.apache.axis.types.URI();");
+                pw.println(
+                        "            throw new java.lang.RuntimeException(mue.toString());");
                 pw.println("       }");
             } else if (simpleValueType.equals("java.util.Date")) {
                 pw.println("        try {");
