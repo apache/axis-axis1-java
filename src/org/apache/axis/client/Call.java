@@ -1663,15 +1663,6 @@ public class Call implements javax.xml.rpc.Call {
     }
     
     /**
-     * Old version of above
-     * 
-     * @deprecated replaced with setOption()
-     */
-    public void addOption(String name, Object value) {
-        setOption(name, value);
-    }
-
-    /**
      * Invoke this Call with its established MessageContext
      * (perhaps because you called this.setRequestMessage())
      *
