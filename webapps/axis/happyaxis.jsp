@@ -357,6 +357,12 @@
             "Axis will not work",
             "http://jakarta.apache.org/commons/logging.html");
 
+    needed+=needClass(out, "org.apache.log4j.Layout",
+            "log4j-1.2.4.jar",
+            "Log4j",
+            "Axis may not work",
+            "http://jakarta.apache.org/log4j");
+
     //should we search for a javax.wsdl file here, to hint that it needs
     //to go into an approved directory? because we dont seem to need to do that.
     needed+=needClass(out, "com.ibm.wsdl.factory.WSDLFactoryImpl",
