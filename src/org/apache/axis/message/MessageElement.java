@@ -432,6 +432,7 @@ public class MessageElement
             msgContext = MessageContext.getCurrentContext();
         }
         serializeContext = new SerializationContextImpl(writer, msgContext);
+        serializeContext.setSendDecl(false);
         output(serializeContext);
         writer.close();
 

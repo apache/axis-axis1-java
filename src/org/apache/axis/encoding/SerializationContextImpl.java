@@ -141,19 +141,19 @@ public class SerializationContextImpl implements SerializationContext
 
     /**
      * These three variables are necessary to process multi-level object graphs for multi-ref
-     * serialization. 
-     * While writing out nested multi-ref objects (via outputMultiRef), we 
+     * serialization.
+     * While writing out nested multi-ref objects (via outputMultiRef), we
      * will fill the secondLevelObjects vector with any new objects encountered.
      * The outputMultiRefsFlag indicates whether we are currently within the
-     * outputMultiRef() method (so that serialization() knows to update the 
+     * outputMultiRef() method (so that serialization() knows to update the
      * secondLevelObjects vector).
      * The forceSer variable is the trigger to force actual serialization of the indicated object.
      */
     private HashSet secondLevelObjects = null;
     private Object forceSer = null;
     private boolean outputMultiRefsFlag = false;
-    
-    /** 
+
+    /**
      * Construct SerializationContextImpl with associated writer
      * @param writer java.io.Writer
      */
@@ -161,9 +161,9 @@ public class SerializationContextImpl implements SerializationContext
     {
         this.writer = writer;
     }
-    
-    
-    /** 
+
+
+    /**
      * Construct SerializationContextImpl with associated writer and MessageContext
      * @param writer java.io.Writer
      * @param msgContext is the MessageContext
@@ -180,14 +180,14 @@ public class SerializationContextImpl implements SerializationContext
                                                   AxisEngine.PROP_XML_DECL);
             if (shouldSendDecl != null)
                 sendXMLDecl = shouldSendDecl.booleanValue();
-            
-            Boolean shouldSendMultiRefs = 
+
+            Boolean shouldSendMultiRefs =
                   (Boolean)msgContext.getProperty(AxisEngine.PROP_DOMULTIREFS);
-            
+
             if (shouldSendMultiRefs == null)
                 shouldSendMultiRefs =
                         (Boolean)engine.getOption(AxisEngine.PROP_DOMULTIREFS);
-            
+
             if (shouldSendMultiRefs != null)
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
 
@@ -196,7 +196,7 @@ public class SerializationContextImpl implements SerializationContext
             // Only turn this off is the user tells us to
             if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ))
                 sendXSIType = false ;
-            
+
             Boolean opt = (Boolean)engine.getOption(AxisEngine.PROP_SEND_XSI);
             if ((opt != null) && (opt.equals(Boolean.FALSE))) {
                 sendXSIType = false;
@@ -219,10 +219,10 @@ public class SerializationContextImpl implements SerializationContext
     public void setPretty(boolean pretty) {
         this.pretty = pretty;
     }
-    
+
     /**
      * Set whether we are doing multirefs
-     */ 
+     */
     public void setDoMultiRefs (boolean shouldDo)
     {
         doMultiRefs = shouldDo;
@@ -231,7 +231,7 @@ public class SerializationContextImpl implements SerializationContext
     /**
      * Set whether or not we should write XML declarations.
      * @param sendDecl true/false
-     */ 
+     */
     public void setSendDecl(boolean sendDecl)
     {
         sendXMLDecl = sendDecl;
@@ -240,7 +240,7 @@ public class SerializationContextImpl implements SerializationContext
     /**
      * Get whether or not to write xsi:type attributes.
      * @return true/false
-     */ 
+     */
     public boolean shouldSendXSIType() {
         return sendXSIType;
     }
@@ -248,21 +248,22 @@ public class SerializationContextImpl implements SerializationContext
     /**
      * Get the TypeMapping we're using.
      * @return TypeMapping or null
-     */ 
+     */
     public TypeMapping getTypeMapping()
     {
+        // Always allow the default mappings
         if (msgContext == null)
-            return null;
-        
+            return DefaultTypeMappingImpl.create();
+
         return (TypeMapping) msgContext.getTypeMappingRegistry().getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
     }
 
     /**
      * Get the TypeMappingRegistry we're using.
      * @return TypeMapping or null
-     */ 
+     */
     public TypeMappingRegistry getTypeMappingRegistry() {
-        if (msgContext == null) 
+        if (msgContext == null)
             return null;
         return (TypeMappingRegistry) msgContext.getTypeMappingRegistry();
     }
@@ -275,18 +276,18 @@ public class SerializationContextImpl implements SerializationContext
      * "ns<num>".
      * @param uri is the namespace uri
      * @return prefix
-     */ 
+     */
     public String getPrefixForURI(String uri)
     {
         return getPrefixForURI(uri, null);
     }
-    
+
     /**
      * Get a prefix for the given namespace URI.  If one has already been
      * defined in this serialization, use that.  Otherwise, map the passed
      * default prefix to the URI, and return that.  If a null default prefix
      * is passed, use one of the form "ns<num>"
-     */ 
+     */
     public String getPrefixForURI(String uri, String defaultPrefix)
     {
         if ((uri == null) || (uri.equals("")))
@@ -329,7 +330,7 @@ public class SerializationContextImpl implements SerializationContext
 
     /**
      * Return the current message
-     */ 
+     */
     public Message getCurrentMessage()
     {
         if (msgContext == null)
@@ -369,7 +370,7 @@ public class SerializationContextImpl implements SerializationContext
     /**
      * Indicates whether the object should be interpretted as a primitive
      * for the purposes of multi-ref processing.  A primitive value
-     * is serialized directly instead of using id/href pairs.  Thus 
+     * is serialized directly instead of using id/href pairs.  Thus
      * primitive serialization/deserialization is slightly faster.
      * @param value to be serialized
      * @param javaType is the "real" java type of value.  Used to distinguish
@@ -387,7 +388,7 @@ public class SerializationContextImpl implements SerializationContext
         if (Hex.class.isAssignableFrom(javaType)) return true;
         if (Element.class.isAssignableFrom(javaType)) return true;
         if (byte[].class.isAssignableFrom(javaType)) return true;
-        
+
         // There has been discussion as to whether arrays themselves should
         // be regarded as multi-ref.
         // Here are the three options:
@@ -397,9 +398,9 @@ public class SerializationContextImpl implements SerializationContext
         //   2) Arrays are not full-fledged Objects and therefore should
         //      always be passed as single ref (note the elements of the array
         //      may be multi-ref'd.) (Pro:  This seems reasonable, if a user
-        //      wants multi-referencing put the array in a container.  Also 
+        //      wants multi-referencing put the array in a container.  Also
         //      is more interop compatible.  Con: Not like java serialization.)
-        //   3) Arrays of primitives should be single ref, and arrays of 
+        //   3) Arrays of primitives should be single ref, and arrays of
         //      non-primitives should be multi-ref.  (Pro: Takes care of the
         //      looping case.  Con: Seems like an obtuse rule.)
         //
@@ -409,7 +410,7 @@ public class SerializationContextImpl implements SerializationContext
         // Note that java.lang wrapper classes (i.e. java.lang.Integer) are
         // not primitives unless the corresponding type is an xsd type.
         // (If the wrapper maps to a soap encoded primitive, it can be nillable
-        // and multi-ref'd).  
+        // and multi-ref'd).
         QName qName = getQNameForClass(javaType);
         if (qName != null && Constants.isSchemaXSD(qName.getNamespaceURI())) {
             if (qName.equals(Constants.XSD_BOOLEAN) ||
@@ -421,7 +422,7 @@ public class SerializationContextImpl implements SerializationContext
                 qName.equals(Constants.XSD_BYTE) ||
                 qName.equals(Constants.XSD_STRING) ||
                 qName.equals(Constants.XSD_INTEGER) ||
-                qName.equals(Constants.XSD_DECIMAL)) { 
+                qName.equals(Constants.XSD_DECIMAL)) {
                 return true;
             }
         }
@@ -430,7 +431,7 @@ public class SerializationContextImpl implements SerializationContext
     }
 
     /**
-     * Serialize the indicated value as an element named qName.  The attributes object are 
+     * Serialize the indicated value as an element named qName.  The attributes object are
      * additional attributes that will be serialized with the qName.  The value
      * could be serialized directly or could be serialized as an href (with the
      * actual serialize taking place later)
@@ -438,7 +439,7 @@ public class SerializationContextImpl implements SerializationContext
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param javaType is the "real" type of the value.  For primitives, the value is the
-     * associated java.lang class.  So the javaType is needed to know that the value 
+     * associated java.lang class.  So the javaType is needed to know that the value
      * is really a wrapped primitive.
      */
     public void serialize(QName qName, Attributes attributes, Object value, Class javaType)
@@ -471,7 +472,7 @@ public class SerializationContextImpl implements SerializationContext
 
              //Allow an the attachment to do its own serialization.
               serializeActual(qName, attributes, value, javaType);
-              
+
               //No need to add to mulitRefs. Attachment data stream handled by
               // the message;
               return;
@@ -480,7 +481,7 @@ public class SerializationContextImpl implements SerializationContext
 
         // If multi-reference is enabled and this object value is not a primitive
         // and we are not forcing serialization of the object, then generate
-        // an element href (and store the object for subsequent outputMultiRef 
+        // an element href (and store the object for subsequent outputMultiRef
         // processing.
         if (doMultiRefs && (value != forceSer) && !isPrimitive(value, javaType)) {
             if (multiRefIndex == -1)
@@ -545,7 +546,7 @@ public class SerializationContextImpl implements SerializationContext
         // explicitly state that this attribute is not a root
         String prefix = getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
         String root = prefix + ":root";
-        attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT, root, 
+        attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT, root,
                            "CDATA", "0");
 
         Iterator i = ((HashMap)multiRefValues.clone()).keySet().iterator();
@@ -556,8 +557,8 @@ public class SerializationContextImpl implements SerializationContext
                 attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
                                    id);
                 forceSer = val;
-                // Now serialize the value.  Note that it is safe to 
-                // set the javaType argument using value.getClass() because 
+                // Now serialize the value.  Note that it is safe to
+                // set the javaType argument using value.getClass() because
                 // values that represent primitives will never get to this point
                 // because they cannot be multi-ref'ed
                 serialize(multirefQName, attrs, val, val.getClass());
@@ -743,7 +744,7 @@ public class SerializationContextImpl implements SerializationContext
         writeString(XMLUtils.xmlEncodeString(string));
     }
 
-    /** 
+    /**
      * Output a DOM representation to a SerializationContext
      * @param el is a DOM Element
      */
@@ -802,11 +803,11 @@ public class SerializationContextImpl implements SerializationContext
      * java type
      * @param javaType is Class for a type to serialize
      * @return Serializer
-     */ 
+     */
     public final Serializer getSerializerForJavaType(Class javaType) {
         SerializerFactory dserF = null;
         Serializer dser = null;
-        try { 
+        try {
             dserF = (SerializerFactory) getTypeMapping().getSerializer(javaType);
         } catch (JAXRPCException e) {
         }
@@ -832,11 +833,11 @@ public class SerializationContextImpl implements SerializationContext
              (attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
                                 "type") != -1)))
             return attributes;
-        
+
         AttributesImpl attrs = new AttributesImpl();
         if (attributes != null)
             attrs.setAttributes(attributes);
-        
+
         String prefix = getPrefixForURI(Constants.URI_CURRENT_SCHEMA_XSI,
                                            "xsi");
 
@@ -846,15 +847,15 @@ public class SerializationContextImpl implements SerializationContext
                            "CDATA", qName2String(type));
         return attrs;
     }
-    
+
     /**
      * Invoked to do the actual serialization of the qName (called by serialize above).
-     * additional attributes that will be serialized with the qName. 
+     * additional attributes that will be serialized with the qName.
      * @param qName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param javaType is the "real" type of the value.  For primitives, the value is the
-     * associated java.lang class.  So the javaType is needed to know that the value 
+     * associated java.lang class.  So the javaType is needed to know that the value
      * is really a wrapped primitive.
      */
     public void serializeActual(QName name, Attributes attributes, Object value, Class javaType)
@@ -862,7 +863,7 @@ public class SerializationContextImpl implements SerializationContext
     {
         if (value != null) {
             TypeMapping tm = getTypeMapping();
-            
+
             if (tm == null) {
                 throw new IOException(JavaUtils.getMessage("noSerializer00",
                                                            value.getClass().getName(), "" + this));
@@ -874,7 +875,7 @@ public class SerializationContextImpl implements SerializationContext
                 attributes = setTypeAttribute(attributes, type);
 
                 // The multiref QName is our own fake name.
-                // It may be beneficial to set the name to the 
+                // It may be beneficial to set the name to the
                 // type name, but I didn't see any improvements
                 // in the interop tests.
                 //if (name.equals(multirefQName) && type != null)
@@ -895,7 +896,7 @@ public class SerializationContextImpl implements SerializationContext
     }
     /**
      * getSerializer
-     * Attempts to get a serializer for the indicated type. Failure to 
+     * Attempts to get a serializer for the indicated type. Failure to
      * find a serializer causes the code to look backwards through the
      * inheritance list.  Continued failured results in an attempt to find
      * a serializer for the type of the value.
@@ -907,43 +908,43 @@ public class SerializationContextImpl implements SerializationContext
         Class_Serializer pair = null;
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
-        
-        // Classes is a list of the inherited interfaces to 
+
+        // Classes is a list of the inherited interfaces to
         // check
         ArrayList  classes = null;
         boolean firstPass = true;
-        
+
         // Search for a class that has a serializer factory
-        Class _class  = javaType;  
+        Class _class  = javaType;
         while( _class != null ) {
             try {
                 serFactory = (SerializerFactory) tm.getSerializer(_class);
             } catch(JAXRPCException e) {
                 // For now continue if JAXRPCException
             }
-            if (serFactory  != null) { 
+            if (serFactory  != null) {
                 break ;
             }
             if ( classes == null ) {
                 classes = new ArrayList();
             }
             Class[] ifaces = _class.getInterfaces();
-            for (int i = 0 ; i < ifaces.length ; i++ ) { 
+            for (int i = 0 ; i < ifaces.length ; i++ ) {
                 classes.add( ifaces[i] );
             }
             _class = _class.getSuperclass();
-            
+
             // Add any non-null (and non-Object) class.  We skip
             // the Object class because if we reach that then
-            // there's an error and this error message return 
+            // there's an error and this error message return
             // here is better than the one returned by the
             // ObjSerializer.
             if ( _class != null &&
                  !_class.getName().equals("java.lang.Object")) {
                 classes.add( _class );
             }
-            
-            _class = (!classes.isEmpty()) ? 
+
+            _class = (!classes.isEmpty()) ?
                 (Class) classes.remove( 0 ) :
                 null;
 
@@ -957,7 +958,7 @@ public class SerializationContextImpl implements SerializationContext
                 _class = value.getClass();
             }
         }
-        
+
         // Using the serialization factory, create a serializer and
         // serialize the value.
         Serializer ser = null;
@@ -972,7 +973,7 @@ public class SerializationContextImpl implements SerializationContext
             pair.ser = ser;
             pair.javaType = _class;
         }
-        return pair; 
+        return pair;
     }
 
 }
