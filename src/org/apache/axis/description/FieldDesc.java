@@ -17,6 +17,7 @@
 package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
  * FieldDescs are metadata objects which control the mapping of a given
@@ -24,7 +25,7 @@ import javax.xml.namespace.QName;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class FieldDesc {
+public class FieldDesc implements Serializable {
     /** The name of the Java field in question */
     private String fieldName;
     /** The XML QName this field maps to */

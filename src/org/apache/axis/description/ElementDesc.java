@@ -16,6 +16,7 @@
 package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
  * An AttributeDesc is a FieldDesc for an Java field mapping to an
@@ -23,7 +24,7 @@ import javax.xml.namespace.QName;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class ElementDesc extends FieldDesc {
+public class ElementDesc extends FieldDesc implements Serializable {
     /** The minOccurs value from the schema */
     private int minOccurs = 1;
     /** The maxOccurs value from the schema */

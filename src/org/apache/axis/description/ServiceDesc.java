@@ -15,14 +15,14 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 
 import javax.xml.namespace.QName;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface ServiceDesc {
     /**

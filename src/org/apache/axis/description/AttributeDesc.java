@@ -16,6 +16,7 @@
 package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
  * An AttributeDesc is a FieldDesc for an Java field mapping to an
@@ -23,7 +24,7 @@ import javax.xml.namespace.QName;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class AttributeDesc extends FieldDesc {
+public class AttributeDesc extends FieldDesc implements Serializable {
     public AttributeDesc() {
         super(false);
     }
