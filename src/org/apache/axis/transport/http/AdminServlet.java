@@ -95,8 +95,8 @@ public class AdminServlet extends HttpServlet {
         }
 
         str += "Server is " + (server.isRunning() ? "running" : "stopped");
-        str += "<p><a href=\"?cmd=start\">start server</a>";
-        str += "<p><a href=\"?cmd=stop\">stop server</a>";
+        str += "<p><a href=\"AdminServlet?cmd=start\">start server</a>";
+        str += "<p><a href=\"AdminServlet?cmd=stop\">stop server</a>";
         res.getWriter().println( str );
     }
 }
