@@ -67,8 +67,6 @@ import test.wsdl.multiref.holders.NodeHolder;
 /** Test the multiref sample code.
  */
 public class MultiRefTestCase extends TestCase {
-    static Log log =
-            LogFactory.getLog(MultiRefTestCase.class.getName());
 
     public MultiRefTestCase(String name) {
         super(name);
@@ -81,9 +79,7 @@ public class MultiRefTestCase extends TestCase {
 
     public void testMultiRefService () throws Exception {
         try {
-            log.info("Testing multiref sample.");
             doTest();
-            log.info("Test complete.");
         }
         catch( Exception e ) {
             e.printStackTrace();

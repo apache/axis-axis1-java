@@ -9,7 +9,11 @@ package test.wsdl.ram;
 
 public class RamSoapBindingImpl implements Ram{
     public Response[] validate(RamData[] in0) throws java.rmi.RemoteException {
-        System.out.println("Date:" + in0[0].getCreditCard().getExpires());
+        java.util.Date inDate = in0[0].getCreditCard().getExpires();
+        java.util.Date now = new java.util.Date();
+        if (!inDate.before(now)) {
+            throw new java.rmi.RemoteException("Time check failed.  Expires date = " + inDate + ", current time = " + now);
+        }
         Response[] response = new Response[1];
         response[0] = new Response();
         response[0].setAccountingDate(new java.util.Date());

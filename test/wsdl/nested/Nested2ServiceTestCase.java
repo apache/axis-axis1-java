@@ -35,9 +35,7 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
                                rETURN);
             PE_ADDRESS address = pE_ADDRESS.value;
             RETURN ret = rETURN.value;
-            System.out.println("NAME:" + address.getNAME());
             assertTrue("NAME is wrong", address.getNAME().equals("Becker Berlin"));
-            System.out.println("LOGMSGNO:" + ret.getLOG_MSG_NO());
             assertTrue("LOGMSGNO is wrong", ret.getLOG_MSG_NO().equals("123456"));
         }
         catch (java.rmi.RemoteException re) {

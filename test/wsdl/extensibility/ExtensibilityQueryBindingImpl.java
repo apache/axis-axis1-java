@@ -49,8 +49,9 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
         if (obj instanceof BookType) {
             BookType bookQuery = (BookType) obj;
             String subject = bookQuery.getSubject();
-            System.out.println("ExtensibilityQueryBindingImpl: Found book subject query " + subject);
-  
+            if (!"all".equals(subject)) {
+                throw new RemoteException("ExtensibilityQueryBindingImpl: Book subject query should be all, instead was " + subject);
+            }
             QueryResultElement resultElement = new QueryResultElement();
             ResultListType resultList = new ResultListType();
             resultElement.setResultList(resultList);

@@ -49,7 +49,9 @@ public class RamServiceTestCase extends junit.framework.TestCase {
             input[0].setSalePostingReferenceText("SPRT");
 
             Response[] output = binding.validate(input);
-            System.out.println("Accounting Date:" + output[0].getAccountingDate());
+            java.util.Date resDate = output[0].getAccountingDate();
+            java.util.Date now = new java.util.Date();
+            assertTrue("Time check failed.  Result date = " + resDate + ", current time = " + now, resDate.before(now));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
