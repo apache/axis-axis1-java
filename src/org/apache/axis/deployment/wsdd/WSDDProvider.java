@@ -62,6 +62,7 @@ import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaEJBProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -93,6 +94,7 @@ public abstract class WSDDProvider
         providers.put(WSDDConstants.JAVARPC_PROVIDER, new WSDDJavaRPCProvider());
         providers.put(WSDDConstants.JAVAMSG_PROVIDER, new WSDDJavaMsgProvider());
         providers.put(WSDDConstants.HANDLER_PROVIDER, new WSDDHandlerProvider());
+        providers.put(WSDDConstants.EJB_PROVIDER, new WSDDJavaEJBProvider());
     }
 
     /**
