@@ -21,6 +21,7 @@ public class PackageTests
         suite.addTest(TestQName.suite());
         suite.addTest(TestQFault.suite());
         suite.addTest(TestXMLUtils.suite());
+        suite.addTest(TestMessages.suite());
 
         return suite;
     }
