@@ -412,24 +412,30 @@ public class MessageElement
 
     public Document getAsDocument() throws Exception
     {
-        SerializationContext serializeContext = null;
-        StringWriter writer = new StringWriter();
-        if(context != null)
-        {
-            MessageContext msgContext = context.getMessageContext();
-            serializeContext = new SerializationContextImpl(writer, msgContext);
-        } else {
-            serializeContext = new SerializationContextImpl(writer);
-        }
-        output(serializeContext);
-        writer.close();
+        String elementString = getAsString();
 
-        Reader reader = new StringReader(writer.getBuffer().toString());
+        Reader reader = new StringReader(elementString);
         Document doc = XMLUtils.newDocument(new InputSource(reader));
         if (doc == null)
             throw new Exception(
-                    JavaUtils.getMessage("noDoc00", writer.getBuffer().toString()));
+                    JavaUtils.getMessage("noDoc00", elementString));
         return doc;
+    }
+
+    private String getAsString() throws Exception {
+        SerializationContext serializeContext = null;
+        StringWriter writer = new StringWriter();
+        MessageContext msgContext;
+        if (context != null) {
+            msgContext = context.getMessageContext();
+        } else {
+            msgContext = MessageContext.getCurrentContext();
+        }
+        serializeContext = new SerializationContextImpl(writer, msgContext);
+        output(serializeContext);
+        writer.close();
+
+        return writer.getBuffer().toString();
     }
 
     public Element getAsDOM() throws Exception
@@ -503,12 +509,7 @@ public class MessageElement
 
     public String toString() {
         try {
-            StringWriter  writer = new StringWriter();
-            SerializationContext serContext = new SerializationContextImpl(writer, 
-                                                                           null);
-            serContext.setSendDecl(false);
-            this.output(serContext);
-            return( writer.toString() );
+            return getAsString();
         }
         catch( Exception exp ) {
             exp.printStackTrace();
