@@ -10,6 +10,7 @@ package test.wsdl.extensibility;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.Text;
 import org.apache.axis.utils.Options;
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
@@ -69,6 +70,78 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             assertTrue(queryResult.length == 2); 
             isValid(queryResult[0], "Computer Science", "The Grid"); 
             isValid(queryResult[1], "English", "The Oxford Dictionary"); 
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new junit.framework.AssertionFailedError("Exception caught: " + e);
+        }
+    }
+
+    public void testMixedQuery() {
+        ExtensibilityQueryPortType binding;
+        try {
+            ExtensibilityQueryLocator locator = new ExtensibilityQueryLocator();
+            binding = locator.getExtensibilityQueryPort();
+            deployServer();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        } 
+        catch (Exception e) {
+            throw new junit.framework.AssertionFailedError("Binding initialization Exception caught: " + e);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+        ExtensibilityType expression = new ExtensibilityType(); 
+
+        MessageElement [] elements = new MessageElement[4];
+
+            elements[0] = new Text("123");
+        elements[1] = new Text("  456");
+        
+            BookType book = new BookType();
+            book.setSubject("all");
+            QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
+            elements[2] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
+
+        elements[3] = new Text("789");
+
+            expression.set_any(elements);
+
+            // call the operation
+            ExtensibilityType any = binding.mixedQuery(expression);
+
+        if (any == null) {
+        throw new Exception("No output returned");
+        }
+
+        // validate results
+            MessageElement [] anyContent = any.get_any();
+
+        if (anyContent == null) {
+        throw new Exception("No any");
+        }
+        if (anyContent.length != 2) {
+        throw new Exception("Expected: 2 got: " + 
+                    anyContent.length + " element");
+        }
+
+        Object obj = anyContent[0].getObjectValue(BookType.class);
+        BookType bookQuery = (BookType)obj;
+        String subject = bookQuery.getSubject();
+        if (!"gotAll".equals(subject)) {
+        throw new Exception("Book subject query reply should be gotAll, instead was " + subject);
+        }
+
+        String expected = "ABCD";
+        String received = anyContent[1].toString();
+
+        if (!expected.equals(received)) {
+        throw new Exception("Expected: " + expected + 
+                    " received: " + received);
+        }
+        
         }
         catch (Exception e) {
             e.printStackTrace();
