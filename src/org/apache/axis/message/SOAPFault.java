@@ -33,7 +33,6 @@ import javax.xml.soap.DetailEntry;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Iterator;

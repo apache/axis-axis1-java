@@ -23,7 +23,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Mapping;
