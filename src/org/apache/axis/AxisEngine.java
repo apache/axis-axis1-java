@@ -62,8 +62,7 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.handlers.soap.* ;
 import org.apache.axis.registries.* ;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.*;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -81,6 +80,10 @@ public abstract class AxisEngine extends BasicHandler
     /** The service registry this Engine uses. */
     protected HandlerRegistry _serviceRegistry;
     protected String serviceRegFilename;
+    
+    /** This Engine's global type mappings     */
+    protected TypeMappingRegistry _typeMappingRegistry =
+                                     new SOAPTypeMappingRegistry();
     
     protected Properties props = new Properties();
     
@@ -172,7 +175,7 @@ public abstract class AxisEngine extends BasicHandler
         // Load the registry of deployed types
         TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
         tmr.setParent(new SOAPTypeMappingRegistry());
-        addOption( Constants.TYPEMAP_REGISTRY, tmr );
+        _typeMappingRegistry = tmr;
         
         /** ??? Why are we doing this??
          */
@@ -201,5 +204,74 @@ public abstract class AxisEngine extends BasicHandler
     public void setServiceRegistry(HandlerRegistry registry)
     {
         _serviceRegistry = registry;
-    }    
+    }
+    
+    public TypeMappingRegistry getTypeMappingRegistry()
+    {
+        return _typeMappingRegistry;
+    }
+    
+    /*********************************************************************
+     * Administration and management APIs
+     * 
+     * These can get called by various admin adapters, such as JMX MBeans,
+     * our own Admin client, web applications, etc...
+     * 
+     *********************************************************************
+     */
+    
+    /**
+     * Register a new global type mapping
+     */
+    public void registerTypeMapping(QName qName,
+                                    Class cls,
+                                    DeserializerFactory deserFactory,
+                                    Serializer serializer)
+    {
+        if (deserFactory != null)
+            _typeMappingRegistry.addDeserializerFactory(qName, cls, deserFactory);
+        if (serializer != null)
+            _typeMappingRegistry.addSerializer(cls, qName, serializer);
+    }
+        
+    /**
+     * Unregister a global type mapping
+     */
+    public void unregisterTypeMapping(QName qName, Class cls)
+    {
+        _typeMappingRegistry.removeDeserializer(qName);
+        _typeMappingRegistry.removeSerializer(cls);
+    }
+    
+    /**
+     * Deploy a Handler into our handler registry
+     */
+    public void deployHandler(String key, Handler handler)
+    {
+        getHandlerRegistry().add(key, handler);
+    }
+    
+    /**
+     * Undeploy (remove) a Handler from the handler registry
+     */
+    public void undeployHandler(String key)
+    {
+        getHandlerRegistry().remove(key);
+    }
+
+    /**
+     * Deploy a Service into our service registry
+     */
+    public void deployService(String key, SOAPService service)
+    {
+        getHandlerRegistry().add(key, service);
+    }
+    
+    /**
+     * Undeploy (remove) a Service from the handler registry
+     */
+    public void undeployService(String key)
+    {
+        getHandlerRegistry().remove(key);
+    }
 };
