@@ -20,6 +20,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
@@ -73,6 +74,14 @@ public class MustUnderstandChecker extends BasicHandler {
         while (enumeration.hasMoreElements()) {
             SOAPHeaderElement header = (SOAPHeaderElement) enumeration.
                     nextElement();
+            
+            // Ignore header, if it is a parameter to the operation 
+            if(msgContext != null && msgContext.getOperation() != null) {
+                OperationDesc oper = msgContext.getOperation();
+                if(oper.getParamByQName(header.getQName())!=null) {
+                    continue;
+                }                    
+            }
             if (header.getMustUnderstand() && !header.isProcessed()) {
                 if (misunderstoodHeaders == null)
                     misunderstoodHeaders = new Vector();
