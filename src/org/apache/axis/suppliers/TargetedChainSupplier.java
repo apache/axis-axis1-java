@@ -130,7 +130,7 @@ public class TargetedChainSupplier implements Supplier
             c.setOptions(_options);
             c.setName(_myName);
             
-            if (!_requestNames.isEmpty()) {
+            if (_requestNames != null && !_requestNames.isEmpty()) {
                 if (_requestNames.size() == 1) {
                     h = _registry.find((String)_requestNames.elementAt(0));
                     c.setRequestHandler(h);
@@ -144,7 +144,7 @@ public class TargetedChainSupplier implements Supplier
             h = _registry.find(_pivotName);
             c.setPivotHandler(h);
 
-            if (!_responseNames.isEmpty()) {
+            if (_responseNames != null && !_responseNames.isEmpty()) {
                 if (_responseNames.size() == 1) {
                     h = _registry.find((String)_responseNames.elementAt(0));
                     c.setResponseHandler(h);

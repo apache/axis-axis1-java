@@ -908,6 +908,7 @@ public class Admin {
             engine = new AxisClient(new FileProvider("client-config.xml"));
         else
             engine = new AxisServer(new FileProvider("server-config.xml"));
+        engine.setShouldSaveConfig(true);
         engine.init();
         MessageContext msgContext = new MessageContext(engine);
 

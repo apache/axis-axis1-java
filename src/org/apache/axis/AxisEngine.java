@@ -226,6 +226,11 @@ public abstract class AxisEngine extends BasicHandler
         saveConfiguration();
     }
 
+    public void setShouldSaveConfig(boolean shouldSaveConfig)
+    {
+        this.shouldSaveConfig = shouldSaveConfig;
+    }
+
     public HandlerRegistry getHandlerRegistry()
     {
         return _handlerRegistry;
