@@ -149,8 +149,7 @@ public abstract class WSDDDeployableItem
             }
         }
 
-        if (parameters == null)
-            parameters = new LockableHashtable();
+        parameters = new LockableHashtable();
         
         // Load up our params
         Element [] paramElements = getChildElements(e, ELEM_WSDD_PARAM);
