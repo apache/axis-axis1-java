@@ -280,7 +280,7 @@ public class SerializationContextImpl implements SerializationContext
     {
         // Always allow the default mappings
         if (msgContext == null)
-            return DefaultTypeMappingImpl.create();
+            return DefaultTypeMappingImpl.getSingleton();
 
         String encodingStyle = msgContext.getEncodingStyle();
         if (encodingStyle == null)

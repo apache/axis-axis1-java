@@ -144,27 +144,8 @@ public class RPCElement extends SOAPBodyElement
 
         // Obtain our possible operations
         if (service != null) {
-            ServiceDesc serviceDesc = service.getServiceDescription();
-            
-            if (serviceDesc.getImplClass() == null) {
-                String clsName = (String)service.getOption("className");
-                
-                if (clsName != null) {
-                    ClassLoader cl       = msgContext.getClassLoader();
-                    ClassCache cache     = msgContext.getAxisEngine().
-                            getClassCache();
-                    JavaClass       jc   = null;
-                    try {
-                        jc = cache.lookup(clsName, cl);
-                    } catch (ClassNotFoundException e) {
-                        throw new SAXException(e);
-                    }
-                    TypeMapping tm = msgContext.getTypeMapping();
-                    serviceDesc.setTypeMapping(tm);
-                    serviceDesc.setImplClass(jc.getJavaClass());
-                }
-            }
-            
+            ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
+
             // If we've got a service description now, we want to use
             // the matching operations in there.
             QName qname = new QName(namespaceURI, name);

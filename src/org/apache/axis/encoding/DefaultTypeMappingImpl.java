@@ -56,38 +56,10 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.ser.*;
 
-import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.apache.axis.encoding.ser.ArraySerializerFactory;
-import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.ser.CalendarSerializerFactory;
-import org.apache.axis.encoding.ser.CalendarDeserializerFactory;
-import org.apache.axis.encoding.ser.DateSerializerFactory;
-import org.apache.axis.encoding.ser.DateDeserializerFactory;
-import org.apache.axis.encoding.ser.Base64SerializerFactory;
-import org.apache.axis.encoding.ser.Base64DeserializerFactory;
-import org.apache.axis.encoding.ser.MapSerializerFactory;
-import org.apache.axis.encoding.ser.MapDeserializerFactory;
-import org.apache.axis.encoding.ser.HexSerializerFactory;
-import org.apache.axis.encoding.ser.HexDeserializerFactory;
-import org.apache.axis.encoding.ser.ElementSerializerFactory;
-import org.apache.axis.encoding.ser.ElementDeserializerFactory;
-import org.apache.axis.encoding.ser.QNameSerializerFactory;
-import org.apache.axis.encoding.ser.QNameDeserializerFactory;
-import org.apache.axis.encoding.ser.VectorDeserializerFactory;
-import org.apache.axis.encoding.ser.VectorSerializerFactory;
-import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
-import org.apache.axis.encoding.ser.SimplePrimitiveSerializerFactory;
-import org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory;
-import java.util.Vector;
-import java.util.Hashtable;
+import javax.xml.rpc.namespace.QName;
 import java.util.List;
 
 /**
@@ -116,10 +88,11 @@ import java.util.List;
 public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     private static DefaultTypeMappingImpl tm = null;
+
     /**
-     * Construct TypeMapping
+     * Obtain the singleton default typemapping.
      */
-    public static TypeMapping create() {
+    public static synchronized TypeMapping getSingleton() {
         if (tm == null) {
             tm = new DefaultTypeMappingImpl();
         }
@@ -336,13 +309,23 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      * @param sf is the ser factory (if null, the simple factory is used)
      * @param df is the deser factory (if null, the simple factory is used)
      * @param primitive indicates whether serializers can be shared
-     * @param onlyDeserFactory indicates if only deserialization is desired.
      */
     protected void myRegister(QName xmlType, Class javaType,
                               SerializerFactory sf, DeserializerFactory df,
                               boolean primitive) {
         myRegister(xmlType, javaType, sf, df, primitive, false);
     }
+
+    /**
+     * Construct TypeMapping for all the [xmlType, javaType] for all of the
+     * known xmlType namespaces
+     * @param xmlType is the QName type
+     * @param javaType is the java type
+     * @param sf is the ser factory (if null, the simple factory is used)
+     * @param df is the deser factory (if null, the simple factory is used)
+     * @param primitive indicates whether serializers can be shared
+     * @param onlyDeserFactory indicates if only deserialization is desired.
+     */
     protected void myRegister(QName xmlType, Class javaType,
                               SerializerFactory sf, DeserializerFactory df,
                               boolean primitive, boolean onlyDeserFactory) {

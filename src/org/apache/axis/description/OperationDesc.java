@@ -119,7 +119,7 @@ public class OperationDesc {
         this.name = name;
         this.returnQName = returnQName;
         for (int i = 0; i < parameters.length; i++) {
-            this.parameters.add(parameters[i]);
+            addParameter(parameters[i]);
         }
     }
 

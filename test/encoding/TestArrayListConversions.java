@@ -8,6 +8,8 @@ import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.description.ServiceDesc;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Iterator;
@@ -19,6 +21,7 @@ public class TestArrayListConversions extends TestCase {
     private static final String SERVICE_NAME = "TestArrayConversions";
 
     private AxisServer server;
+    private LocalTransport transport;
 
     public TestArrayListConversions() {
         super("service");
@@ -26,7 +29,6 @@ public class TestArrayListConversions extends TestCase {
 
     public TestArrayListConversions(String name) {
         super(name);
-        init();
     }
 
     private static boolean equals(List list, Object obj) {
@@ -47,11 +49,16 @@ public class TestArrayListConversions extends TestCase {
         return true;
     }
 
-    public void init() {
+    protected void setUp() throws Exception {
         try {
             SimpleProvider provider = new SimpleProvider();
             server = new AxisServer(provider);
+            transport = new LocalTransport(server);
+
             SOAPService service = new SOAPService(new RPCProvider());
+            ServiceDesc desc = service.getInitializedServiceDesc(null);
+            desc.setDefaultNamespace(SERVICE_NAME);
+
             service.setOption("className", "test.encoding.TestArrayListConversions");
             service.setOption("allowedMethods", "*");
 
@@ -64,7 +71,7 @@ public class TestArrayListConversions extends TestCase {
 
     public void testVectorConversion() throws Exception {
         Call call = new Call(new Service());
-        call.setTransport(new LocalTransport(server));
+        call.setTransport(transport);
 
         Vector v = new Vector();
         v.addElement("Hi there!");
@@ -76,7 +83,7 @@ public class TestArrayListConversions extends TestCase {
 
     public void testLinkedListConversion() throws Exception {
         Call call = new Call(new Service());
-        call.setTransport(new LocalTransport(server));
+        call.setTransport(transport);
 
         LinkedList l = new LinkedList();
         l.add("Linked list item #1");
@@ -90,7 +97,7 @@ public class TestArrayListConversions extends TestCase {
 
     public void testArrayConversion() throws Exception {
         Call call = new Call(new Service());
-        call.setTransport(new LocalTransport(server));
+        call.setTransport(transport);
 
         Vector v = new Vector();
         v.addElement("Hi there!");
@@ -108,7 +115,7 @@ public class TestArrayListConversions extends TestCase {
      */
     public void testReturnAsVector() throws Exception {
         Call call = new Call(new Service());
-        call.setTransport(new LocalTransport(server));
+        call.setTransport(transport);
 
         LinkedList l = new LinkedList();
         l.add("Linked list item #1");

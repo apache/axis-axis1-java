@@ -183,12 +183,6 @@ public class MessageContext {
     /** Our SOAP namespaces and such - defaults to SOAP 1.1 */
     private SOAPConstants soapConstants = new SOAP11Constants();
 
-    /**
-     * Are we using SOAP encoding?  Default is true for RPC services,
-     * should be set to false for document/literal.
-     */
-    private boolean isEncoded = true;
-
     private OperationDesc currentOperation = null;
     public OperationDesc getOperation()
     {
@@ -221,7 +215,7 @@ public class MessageContext {
                 return null;
         }
 
-        ServiceDesc desc = serviceHandler.getServiceDescription();
+        ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
 
         if (desc != null) {
             currentOperation = desc.getOperationByElementQName(qname);
@@ -393,7 +387,7 @@ public class MessageContext {
      * Set the response message, and make sure that message is associated
      * with this MessageContext.
      *
-     * @param reqMsg the new response Message.
+     * @param respMsg the new response Message.
      */
     public void setResponseMessage(Message respMsg) {
         responseMessage = respMsg ;

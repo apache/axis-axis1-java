@@ -742,7 +742,7 @@ public class WSDL2Java {
         if (typeMappingVersion.equals("1.1")) {
             writerFactory.setBaseTypeMapping(
                     new BaseTypeMapping() {
-                        final TypeMapping defaultTM = DefaultTypeMappingImpl.create();
+                        final TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
                         public String getBaseName(QName qNameIn) {
                             javax.xml.rpc.namespace.QName qName =
                                 new javax.xml.rpc.namespace.QName(

@@ -122,7 +122,7 @@ public class Java2WsdlAntTask extends Task
                 emitter.setStopClasses(stopClasses);
 
             if (tm.equals("1.1")) {
-                emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.create());
+                emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
             } else {
                 emitter.setDefaultTypeMapping(DefaultSOAP12TypeMappingImpl.create());
             }

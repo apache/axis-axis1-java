@@ -25,9 +25,6 @@ import java.io.Writer;
  * as expected.
  */
 public class TestXsiType extends TestCase {
-
-    private String header;
-    private String footer;
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer server = new AxisServer(provider);
     

@@ -60,10 +60,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.wsdl.Skeleton;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Field;
@@ -83,9 +80,6 @@ public class ServiceDesc {
     public static final int STYLE_WRAPPED = 2;
     public static final int STYLE_MESSAGE = 3;
 
-    /** This becomes true once we've added some operations */
-    private boolean hasOperationData = false;
-
     /** The name of this service */
     private String name = null;
 
@@ -99,9 +93,6 @@ public class ServiceDesc {
     /** Style */
     private int style = STYLE_RPC;
 
-    /** Implementation class name */
-    private String className = null;
-
     /** Implementation class */
     private Class implClass = null;
 
@@ -109,7 +100,7 @@ public class ServiceDesc {
     private ArrayList operations = new ArrayList();
 
     /** A collection of namespaces which will map to this service */
-    private ArrayList namespaceMappings = null;
+    private List namespaceMappings = null;
 
     /**
      * Where does our WSDL document live?  If this is non-null, the "?WSDL"
@@ -127,19 +118,26 @@ public class ServiceDesc {
      * a Fault to provide OperationDescs via WSDD.
      */
     private boolean isSkeletonClass = false;
-    /** Cached copy of the skeleton "getParameterDescStatic" method */
+
+    /** Cached copy of the skeleton "getOperationDescByName" method */
     private Method skelMethod = null;
 
-    /** Classes at which we should stop looking up the inheritance chain */
+    /** Classes at which we should stop looking up the inheritance chain
+     *  when introspecting
+     */
     private ArrayList stopClasses = null;
 
     /** Lookup caches */
     private HashMap name2OperationsMap = null;
     private HashMap qname2OperationMap = null;
     private HashMap method2OperationMap = new HashMap();
+
+    /** Method names for which we have completed any introspection necessary */
     private ArrayList completedNames = new ArrayList();
 
+    /** Our typemapping for resolving Java<->XML type issues */
     private TypeMapping tm = null;
+    private boolean haveAllSkeletonMethods = false;
 
     /**
      * Default constructor
@@ -190,6 +188,10 @@ public class ServiceDesc {
     }
 
     public void setImplClass(Class implClass) {
+        if (this.implClass != null)
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("implAlreadySet"));
+
         this.implClass = implClass;
         if (Skeleton.class.isAssignableFrom(implClass)) {
             isSkeletonClass = true;
@@ -198,7 +200,32 @@ public class ServiceDesc {
     }
 
     private void loadSkeletonOperations() {
+        Method method = null;
+        try {
+            method = implClass.getDeclaredMethod("getOperationDescs",
+                                                 new Class [] {});
+        } catch (NoSuchMethodException e) {
+        } catch (SecurityException e) {
+        }
+        if (method == null) {
+            // FIXME : Throw an error?
+            return;
+        }
 
+        try {
+            Collection opers = (Collection)method.invoke(implClass, null);
+            for (Iterator i = opers.iterator(); i.hasNext();) {
+                OperationDesc skelDesc = (OperationDesc)i.next();
+                addOperationDesc(skelDesc);
+            }
+        } catch (IllegalAccessException e) {
+            return;
+        } catch (IllegalArgumentException e) {
+            return;
+        } catch (InvocationTargetException e) {
+            return;
+        }
+        haveAllSkeletonMethods = true;
     }
 
     public TypeMapping getTypeMapping() {
@@ -302,32 +329,13 @@ public class ServiceDesc {
      */
     public OperationDesc getOperationByElementQName(QName qname)
     {
-        // If we're an RPC service, we ignore the namespace... should fix
-        // this later!
-        if (style == STYLE_RPC) {
-            return getOperationByName(qname.getLocalPart());
-        }
-
-        // If we're MESSAGE style, we should only have a single operation,
-        // to which we'll pass any XML we receive.
-        if (style == STYLE_MESSAGE) {
-            return (OperationDesc)operations.get(0);
-        }
-
-        // If we're DOCUMENT style, we look in our mapping of QNames ->
-        // operations instead.  But first, let's make sure we've initialized
-        // said mapping....
-        initQNameMap();
-        
-        ArrayList overloads = (ArrayList)qname2OperationMap.get(qname);
-        if (overloads == null)
-            return null;
-        
-        OperationDesc oper = (OperationDesc)overloads.get(0);
-        getSyncedOperationsForName(implClass, oper.getName());
+        OperationDesc [] overloads = getOperationsByQName(qname);
 
         // Return the first one....
-        return oper;
+        if ((overloads != null) && overloads.length > 0)
+            return overloads[0];
+
+        return null;
     }
     
     /**
@@ -336,12 +344,6 @@ public class ServiceDesc {
      */ 
     public OperationDesc [] getOperationsByQName(QName qname)
     {
-        // If we're an RPC service, we ignore the namespace... should fix
-        // this later!
-        if (style == STYLE_RPC) {
-            return getOperationsByName(qname.getLocalPart());
-        }
-
         // If we're MESSAGE style, we should only have a single operation,
         // to which we'll pass any XML we receive.
         if (style == STYLE_MESSAGE) {
@@ -355,9 +357,15 @@ public class ServiceDesc {
 
         ArrayList overloads = (ArrayList)qname2OperationMap.get(qname);
 
-        if (overloads == null)
-            return null;
-        
+        if (overloads == null) {
+            if ((style == STYLE_RPC) && (name2OperationsMap != null)) {
+                // Try ignoring the namespace....?
+                overloads = (ArrayList)name2OperationsMap.get(qname.getLocalPart());
+            }
+            if (overloads == null)
+                return null;
+        }
+
         getSyncedOperationsForName(implClass,
                                    ((OperationDesc)overloads.get(0)).getName());
         
@@ -367,6 +375,8 @@ public class ServiceDesc {
 
     private synchronized void initQNameMap() {
         if (qname2OperationMap == null) {
+            loadServiceDescByIntrospection();
+
             qname2OperationMap = new HashMap();
             for (Iterator i = operations.iterator(); i.hasNext();) {
                 OperationDesc operationDesc = (OperationDesc) i.next();
@@ -549,15 +559,15 @@ public class ServiceDesc {
         // If we're a skeleton class, make sure we don't already have any
         // OperationDescs for this name (as that might cause conflicts),
         // then load them up from the Skeleton class.
-        if (isSkeletonClass) {
+        if (isSkeletonClass && !haveAllSkeletonMethods) {
             // FIXME : Check for existing ones and fault if found
 
             if (skelMethod == null) {
                 // Grab metadata from the Skeleton for parameter info
                 try {
                     skelMethod = implClass.getDeclaredMethod(
-                                            "getOperationDescsByName",
-                                            new Class [] { int.class });
+                                            "getOperationDescByName",
+                                            new Class [] { String.class });
                 } catch (NoSuchMethodException e) {
                 } catch (SecurityException e) {
                 }
@@ -567,13 +577,11 @@ public class ServiceDesc {
                 }
             }
             try {
-                OperationDesc [] skelDescs =
-                        (OperationDesc [])skelMethod.invoke(implClass,
-                                            new Object [] { methodName });
-                for (int i = 0; i < skelDescs.length; i++) {
-                    OperationDesc operationDesc = skelDescs[i];
-                    addOperationDesc(operationDesc);
-                }
+                OperationDesc skelDesc =
+                        (OperationDesc)skelMethod.invoke(implClass,
+                                new Object [] { methodName });
+                if (skelDesc != null)
+                    addOperationDesc(skelDesc);
             } catch (IllegalAccessException e) {
                 return;
             } catch (IllegalArgumentException e) {
@@ -658,6 +666,12 @@ public class ServiceDesc {
         // Make an OperationDesc, fill in common stuff
         OperationDesc operation = new OperationDesc();
         operation.setName(method.getName());
+        if (namespaceMappings != null && !namespaceMappings.isEmpty()) {
+            // If we have a default namespace mapping, require callers to
+            // use that namespace.
+            String defaultNS = (String)namespaceMappings.get(0);
+            operation.setElementQName(new QName(defaultNS, method.getName()));
+        }
         operation.setMethod(method);
         Class retClass = method.getReturnType();
         operation.setReturnClass(retClass);
@@ -721,5 +735,15 @@ public class ServiceDesc {
 
         addOperationDesc(operation);
         method2OperationMap.put(method, operation);
+    }
+
+    public void setNamespaceMappings(List namespaces) {
+        namespaceMappings = namespaces;
+    }
+
+    public void setDefaultNamespace(String namespace) {
+        if (namespaceMappings == null)
+            namespaceMappings = new ArrayList();
+        namespaceMappings.add(0, namespace);
     }
 }

@@ -54,27 +54,32 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.apache.axis.*;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.Constants;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
-import org.apache.axis.encoding.*;
-
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Element;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.ArrayList;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 /**
@@ -98,7 +103,8 @@ public class WSDDDeployment
     
     /** Mapping of namespaces -> services */
     private HashMap namespaceToServices = new HashMap();
-    
+    private AxisEngine engine;
+
     void addHandler(WSDDHandler handler)
     {
         handlers.put(handler.getQName(), handler);
@@ -142,10 +148,10 @@ public class WSDDDeployment
     }
 
     /**
-     * Put a WSDDHandler into this deployment, replacing any other
-     * WSDDHandler which might already be present with the same QName.
+     * Put a WSDDService into this deployment, replacing any other
+     * WSDDService which might already be present with the same QName.
      *
-     * @param handler a WSDDHandler to insert in this deployment
+     * @param service a WSDDHandler to insert in this deployment
      */
     public void deployService(WSDDService service)
     {
@@ -480,9 +486,10 @@ public class WSDDDeployment
         
         return null;
     }
+
     public void configureEngine(AxisEngine engine)
             throws ConfigurationException {
-
+        this.engine = engine;
     }
 
     public void writeEngineConfig(AxisEngine engine) throws ConfigurationException {
@@ -562,5 +569,9 @@ public class WSDDDeployment
     public void removeNamespaceMapping(String namespace)
     {
         namespaceToServices.remove(namespace);
+    }
+
+    public AxisEngine getEngine() {
+        return engine;
     }
 }
