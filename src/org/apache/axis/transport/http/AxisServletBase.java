@@ -267,7 +267,7 @@ public class AxisServletBase extends HttpServlet {
      * @param servlet
      * @return
      */
-    private static Map getEngineEnvironment(HttpServlet servlet) {
+    protected static Map getEngineEnvironment(HttpServlet servlet) {
         Map environment = new HashMap();
 
         String attdir= servlet.getInitParameter(AxisEngine.ENV_ATTACHMENT_DIR);
