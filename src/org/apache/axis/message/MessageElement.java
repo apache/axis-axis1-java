@@ -71,6 +71,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -121,11 +122,12 @@ public class MessageElement implements SOAPElement
 
     // ...or as DOM
     protected Element elementRep = null;
+    protected Text textRep = null;
 
     protected MessageElement parent = null;
 
     public ArrayList namespaces = null;
-    
+
     /** Our encoding style, if any */
     protected String encodingStyle = null;
 
@@ -163,6 +165,13 @@ public class MessageElement implements SOAPElement
         name = elem.getLocalName();
     }
 
+    MessageElement(Text text)
+    {
+        textRep = text;
+        namespaceURI = text.getNamespaceURI();
+        name = text.getLocalName();
+    }
+
     public MessageElement(String namespace, String localPart, String qName,
                    Attributes attributes, DeserializationContext context)
     {
@@ -190,11 +199,11 @@ public class MessageElement implements SOAPElement
             this.attributes = new AttributesImpl();
         } else {
             this.attributes = new AttributesImpl(attributes);
-            
+
             typeQName = context.getTypeFromAttributes(namespace,
-                                                      localPart, 
+                                                      localPart,
                                                       attributes);
-            
+
             String rootVal = attributes.getValue(Constants.NS_URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT);
             if (rootVal != null)
                 _isRoot = rootVal.equals("1");
@@ -249,9 +258,9 @@ public class MessageElement implements SOAPElement
 
     public boolean isRoot() { return _isRoot; }
     public String getID() { return id; }
-    
+
     public String getHref() { return href; }
-    
+
     public Attributes getAttributes() { return attributes; }
 
     /**
@@ -299,10 +308,10 @@ public class MessageElement implements SOAPElement
     public SAX2EventRecorder getRecorder() { return recorder; }
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
 
-    /** 
+    /**
      * Get the encoding style.  If ours is null, walk up the hierarchy
      * and use our parent's.  Default if we're the root is "".
-     * 
+     *
      * @return the currently in-scope encoding style
      */
     public String getEncodingStyle() {
@@ -313,12 +322,12 @@ public class MessageElement implements SOAPElement
         }
         return encodingStyle;
     }
-    
-    /** 
+
+    /**
      * Set the encoding style.  Calling this means you are absolutely
      * setting it to SOMETHING valid.  The semantics of a null value,
      * as above in getEncodingStyle() are to just use the parent's value,
-     * but null here means set to "". 
+     * but null here means set to "".
      */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
         if (encodingStyle == null) encodingStyle = "";
@@ -333,13 +342,13 @@ public class MessageElement implements SOAPElement
 
     private MessageElement getParent() { return parent; }
     private void setParent(MessageElement parent) throws SOAPException
-    { 
+    {
         this.parent = parent;
         if (parent != null) {
             parent.addChild(this);
         }
     }
-    
+
     private ArrayList children = null;
 
     /**
@@ -370,12 +379,12 @@ public class MessageElement implements SOAPElement
             children.remove(i);
         }
     }
-     
+
     public ArrayList getChildren()
     {
         return children;
     }
-    
+
     public void setContentsIndex(int index)
     {
         startContentsIndex = index;
@@ -473,9 +482,15 @@ public class MessageElement implements SOAPElement
             log.error(JavaUtils.getMessage("xmlPresent"), exc);
             throw exc;
         }
+        if (textRep != null) {
+            SOAPException exc = new SOAPException(JavaUtils.
+                                                  getMessage("xmlPresent"));
+            log.error(JavaUtils.getMessage("xmlPresent"), exc);
+            throw exc;
+        }
         this.objectValue = newValue;
     }
-    
+
     public Object getValueAsType(QName type) throws Exception
     {
         if (context == null)
@@ -520,12 +535,12 @@ public class MessageElement implements SOAPElement
         attributes.addAttribute(namespace, localName, "", "CDATA",
                                 value);
     }
-    
+
     /**
      * Set an attribute, adding the attribute if it isn't already present
      * in this element, and changing the value if it is.  Passing null as the
      * value will cause any pre-existing attribute by this name to go away.
-     */ 
+     */
     public void setAttribute(String namespace, String localName,
                              String value)
     {
@@ -656,11 +671,11 @@ public class MessageElement implements SOAPElement
             }
             qNameAttrs = null;
         }
-        
+
         /**
          * Write the encoding style attribute IF it's different from
          * whatever encoding style is in scope....
-         */ 
+         */
         if (encodingStyle != null) {
             MessageContext mc = context.getMessageContext();
             SOAPConstants soapConstants = (mc != null) ?
@@ -668,7 +683,7 @@ public class MessageElement implements SOAPElement
                                             SOAPConstants.SOAP11_CONSTANTS;
             if (parent == null) {
                 // don't emit an encoding style if its "" (literal)
-                if (!encodingStyle.equals("")) { 
+                if (!encodingStyle.equals("")) {
                     setAttribute(soapConstants.getEnvelopeURI(),
                                  Constants.ATTR_ENCODING_STYLE,
                                  encodingStyle);
@@ -691,6 +706,14 @@ public class MessageElement implements SOAPElement
             boolean oldPretty = context.getPretty();
             context.setPretty(false);
             context.writeDOMElement(elementRep);
+            context.setPretty(oldPretty);
+            return;
+        }
+
+        if (textRep != null) {
+            boolean oldPretty = context.getPretty();
+            context.setPretty(false);
+            context.writeSafeString(((Text)textRep).getData());
             context.setPretty(oldPretty);
             return;
         }
@@ -818,8 +841,14 @@ public class MessageElement implements SOAPElement
     /**
      * Text nodes are not supported.
      */
-    public SOAPElement addTextNode(String text) throws SOAPException {
-        throw new SOAPException("Text nodes not supported"); 
+    public SOAPElement addTextNode(String s) throws SOAPException {
+        org.apache.axis.message.Text text = new org.apache.axis.message.Text(s);
+        try {
+            addChild((MessageElement)text);
+            return text;
+        } catch (ClassCastException e) {
+            throw new SOAPException(e);
+        }
     }
 
     public SOAPElement addAttribute(Name name, String value)

@@ -70,7 +70,6 @@ public class SOAPConnectionFactoryImpl extends javax.xml.soap.SOAPConnectionFact
      *     creating the <CODE>SOAPConnection</CODE> object.
      */
     public SOAPConnection createConnection() throws SOAPException {
-        //TODO:Flesh this out.
-        return null;
+        return new SOAPConnectionImpl();
     }
 }

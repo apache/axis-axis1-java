@@ -60,6 +60,9 @@ import javax.xml.soap.SOAPMessage;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.Message;
+
 /**
  * Message Factory implementation
  *
@@ -85,8 +88,9 @@ public class MessageFactoryImpl extends javax.xml.soap.MessageFactory {
      * @throws  SOAPException if a SOAP error occurs
      */
     public SOAPMessage createMessage() throws SOAPException {
-        //TODO:Flesh this out.
-        return null;
+        Message message = new Message(new SOAPEnvelope());
+        message.setMessageType(Message.REQUEST);
+        return message;
     }
 
     /**

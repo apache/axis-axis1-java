@@ -692,8 +692,12 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @throws  SOAPException if there is a SOAP error
      */
     public javax.xml.soap.SOAPEnvelope getEnvelope() throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        javax.xml.soap.SOAPEnvelope env = null;
+        try {
+            env = getAsSOAPEnvelope();
+        } catch (AxisFault af) {
+        }
+        return env;
     }
 }
 

@@ -24,6 +24,9 @@ public class FunctionalTests extends TestCase
 
         // Test the JAX-RPC compliance samples
         suite.addTestSuite(TestJAXRPCSamples.class);
+
+        // Test the JAXM compliance samples
+        suite.addTestSuite(TestJAXMSamples.class);
         
         // stock sample test
         // run this BEFORE ALL OTHER TESTS to minimize confusion;
