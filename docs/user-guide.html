@@ -42,6 +42,7 @@ Table of Contents</h3>
   </ul>
   <li> <a href="#published interfaces">Published Interfaces</a></li>
   <li> <a href="#tcpmon">Appendix : Using TCPMon</a></li>
+  <li> <a href="#soapmon">Appendix : Using SOAP Monitor</a></li>
   <li> <a href="#Glossary">Glossary</a></li>
 </ul>
 
@@ -228,7 +229,7 @@ one String.
 <p>The String argument is automatically serialized into XML, and the server
 responds with an identical String, which we deserialize and print.</p>
 <p><i>Note: to actually watch the XML flowing back and forth between a
-SOAP client and server, you can use the included tcpmon tool. See the <a href="#tcpmon">appendix</a>
+SOAP client and server, you can use the included <a href="#tcpmon">tcpmon</a> tool or <a href="#soapmon">SOAP monitor</a> tool. See the appendix
 for an overview.</i></p>
 <h3>Naming Parameters</h3>
 In the above example, you can see that Axis automatically names the XML-encoded 
@@ -1353,6 +1354,35 @@ or choose to save to a file for later viewing.
   for testing the effects of different XML on SOAP servers. Note that you may 
   need to change the content-length HTTP header value before resending an edited 
   request. 
+
+<h2> <a NAME="soapmon"></a>Appendix: Using the SOAP Monitor </h2>
+Web service developers often have the need to see the SOAP messages
+being used to invoke web services along with the results of those
+messages.  The goal of the SOAP Monitor utility is to provide 
+a way for these developers to monitor the SOAP messages being used 
+without requiring any special configuration or restarting of the 
+server.
+<p>
+In this utility, a handler has been written and added to the global 
+handler chain.  As SOAP requests and responses are received, the SOAP 
+message information is forwarded to a SOAP monitor service where it 
+can be displayed using a web browser interface.
+<p>
+The SOAP message information is accessed with a web browser by going
+to http://localhost:&lt;port&gt;/axis/SOAPMonitor (where
+&lt;port&gt; is the port number where the application server is
+running).
+<p>
+The SOAP message information is displayed through a web browser
+by using an applet that opens a socket connection to the SOAP
+monitor service.  This applet requires a Java plug-in 1.3 or 
+higher to be installed in your browser.  If you do not have a
+correct plug-in, the browser should prompt you to install one.
+<p>
+The port used by the SOAP monitor service to comminicate with
+applets is configurable.  Edit the web.xml file for the AXIS
+web application to change the port to be used.
+
 <a NAME="Glossary">
 <h2>Glossary</h2></a>
 
