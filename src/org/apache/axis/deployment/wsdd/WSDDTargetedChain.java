@@ -91,11 +91,11 @@ public abstract class WSDDTargetedChain
     {
         super(e);
         Element reqEl = getChildElement(e, ELEM_WSDD_REQFLOW);
-        if (reqEl != null) {
+        if (reqEl != null && reqEl.getElementsByTagName("*").getLength()>0) {
             requestFlow = new WSDDRequestFlow(reqEl);
         }
         Element respEl = getChildElement(e, ELEM_WSDD_RESPFLOW);
-        if (respEl != null) {
+        if (respEl != null && respEl.getElementsByTagName("*").getLength()>0) {
             responseFlow = new WSDDResponseFlow(respEl);
         }
         
