@@ -143,6 +143,8 @@ public class Constants {
                                 "http://schemas.xmlsoap.org/soap/encoding/" ;
     public static final String URI_SOAP12_ENC =
                                    "http://www.w3.org/2002/06/soap-encoding";
+    public static final String URI_SOAP12_NOENC =
+                     "http://www.w3.org/2002/06/soap-envelope/encoding/none";
     public static final String URI_DEFAULT_SOAP_ENC = 
         DEFAULT_SOAP_VERSION.getEncodingURI();
 
