@@ -238,6 +238,8 @@ public class SOAPEnvelope {
     root = doc.createElementNS(tmpEnvURI,tmpEnvPre+":"+Constants.ELEM_ENVELOPE);
     root.setAttribute( "xmlns:" + Constants.NSPREFIX_SOAP_ENV,
                                   Constants.URI_SOAP_ENV );
+    root.setAttribute( "xmlns:" + Constants.NSPREFIX_SCHEMA_XSI,
+                                  Constants.URI_SCHEMA_XSI );
                     
     root.setAttributeNS( tmpEnvURI, tmpEnvPre+":"+Constants.ATTR_ENCODING_STYLE,
                          tmpEnc );

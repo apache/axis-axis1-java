@@ -133,7 +133,12 @@ public class RPCArg {
     }
     else 
       root = doc.createElement( name );
-    root.appendChild( doc.createTextNode( value ) );
+    if ( value == null ) {
+      root.setAttribute( "xsi:type", "string" );
+      root.setAttribute( "xsi:null", "1" );
+    }
+    else
+      root.appendChild( doc.createTextNode( value ) );
     return( root );
   }
 };
