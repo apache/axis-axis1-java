@@ -58,19 +58,20 @@ package test.functional;
 import junit.framework.TestCase;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.client.AdminClient;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import samples.jaxrpc.GetInfo;
 import samples.jaxrpc.GetQuote1;
 
+
 /**
  * Test the JAX-RPC compliance samples.
  */
 public class TestJAXRPCSamples extends TestCase {
-    static Log log = AxisInternalServices.getLog(TestJAXRPCSamples.class.getName());
+    static Log log = LogFactory.getLog(TestJAXRPCSamples.class.getName());
 
     public TestJAXRPCSamples(String name) {
         super(name);

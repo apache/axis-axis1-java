@@ -62,7 +62,7 @@ Copyright:
     <echo message="Starting test http server."/>
     <java classname="org.apache.axis.transport.http.SimpleAxisServer" fork="yes" dir="./build">
         <!-- Uncomment this to use Jikes instead of Javac for compiling JWS Files
-        <jvmarg value="-Daxis.Compiler=org.apache.axis.utils.compiler.Jikes"/>
+        <jvmarg value="-Daxis.Compiler=org.apache.axis.components.compiler.Jikes"/>
         -->
         <jvmarg value="-Daxis.wsdlgen.intfnamespace=http://localhost:${test.functional.ServicePort}"/>
         <jvmarg value="-Daxis.wsdlgen.serv.loc.url=http://localhost:${test.functional.ServicePort}"/>

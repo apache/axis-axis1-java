@@ -58,8 +58,10 @@ package test.functional;
 import samples.jaxm.DelayedStockQuote;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import samples.jaxm.UddiPing;
 import samples.jaxm.SOAPFaultTest;
 
@@ -69,7 +71,7 @@ import java.net.ConnectException;
  * Test the JAX-RPC compliance samples.
  */
 public class TestJAXMSamples extends TestCase {
-    static Log log = AxisInternalServices.getLog(TestJAXMSamples.class.getName());
+    static Log log = LogFactory.getLog(TestJAXMSamples.class.getName());
 
     public TestJAXMSamples(String name) {
         super(name);

@@ -56,13 +56,15 @@
 package samples.security;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.utils.Constants;
 import org.apache.xpath.CachedXPathAPI;
@@ -74,7 +76,7 @@ import java.io.PrintWriter;
 
 public class LogHandler extends BasicHandler {
     static Log log =
-        AxisInternalServices.getLog(LogHandler.class.getName());
+        LogFactory.getLog(LogHandler.class.getName());
 
     static {
         org.apache.xml.security.Init.init();

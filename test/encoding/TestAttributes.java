@@ -1,7 +1,6 @@
 package test.encoding;
 
 import junit.framework.TestCase;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -18,6 +17,8 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -34,7 +35,7 @@ import java.util.Vector;
  */
 public class TestAttributes extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestAttributes.class.getName());
+            LogFactory.getLog(TestAttributes.class.getName());
 
     public static final String myNS = "urn:myNS";
 

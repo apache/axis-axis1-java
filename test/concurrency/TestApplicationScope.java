@@ -57,7 +57,6 @@ package test.concurrency;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.configuration.BasicServerConfig;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.providers.java.RPCProvider;
@@ -67,7 +66,10 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 
 /**
  * Test the "application" scope option - lots of threads call the same service
@@ -78,7 +80,7 @@ import org.apache.commons.logging.Log;
  */
 public class TestApplicationScope extends TestCase {
     protected static Log log =
-        AxisInternalServices.getLog(TestApplicationScope.class.getName());
+        LogFactory.getLog(TestApplicationScope.class.getName());
 
     private BasicServerConfig config;
     private AxisServer server;

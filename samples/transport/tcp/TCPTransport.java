@@ -56,10 +56,11 @@
 package samples.transport.tcp;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Transport;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.net.URL;
@@ -73,7 +74,7 @@ import java.net.URL;
 public class TCPTransport extends Transport
 {
     static Log log =
-            AxisInternalServices.getLog(TCPTransport.class.getName());
+            LogFactory.getLog(TCPTransport.class.getName());
 
     private String host;
     private String port;

@@ -55,7 +55,6 @@
 
 package samples.echo;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.handlers.BasicHandler;
@@ -64,7 +63,10 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 
 /** This handler processes the SOAP header "echoMeString" defined in the 
  *  SOAPBuilder Round2C interop tests.
@@ -77,7 +79,7 @@ import org.apache.commons.logging.Log;
 public class echoHeaderStringHandler extends BasicHandler
 {
     static Log log =
-            AxisInternalServices.getLog(echoHeaderStringHandler.class.getName());
+            LogFactory.getLog(echoHeaderStringHandler.class.getName());
 
     public static final String ECHOHEADER_STRING_ID = "echoHeaderStringHandler.id";
     public static final String HEADER_NS = "http://soapinterop.org/echoheader/";
