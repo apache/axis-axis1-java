@@ -55,7 +55,6 @@
 
 package javax.xml.rpc.handler.soap;
 
-import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.handler.MessageContext;
 import javax.xml.soap.SOAPMessage;
 
