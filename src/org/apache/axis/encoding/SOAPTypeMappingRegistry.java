@@ -147,7 +147,6 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     }
     
     public SOAPTypeMappingRegistry() {
-    System.out.println(XSD_DATE);
         SOAPEncoding se = new SOAPEncoding();
         addSerializer(java.lang.String.class, XSD_STRING, se);
         addSerializer(java.lang.Boolean.class, XSD_BOOLEAN, se);
