@@ -80,6 +80,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler; 
 import org.xml.sax.helpers.DefaultHandler;
 import org.apache.axis.AxisFault;
 import org.apache.axis.soap.SOAPConstants;
@@ -98,7 +99,7 @@ import java.util.HashMap;
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 
-public class DeserializationContextImpl extends DefaultHandler implements DeserializationContext
+public class DeserializationContextImpl extends DefaultHandler implements LexicalHandler, DeserializationContext
 {
     protected static Log log =
             LogFactory.getLog(DeserializationContextImpl.class.getName());
@@ -227,6 +228,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (inputSource != null) {
             SAXParser parser = XMLUtils.getSAXParser();
             try {
+                if (this instanceof LexicalHandler)
+                    parser.setProperty("http://xml.org/sax/properties/lexical-handler", this);
                 parser.parse(inputSource, this);
 
                 // only release the parser for reuse if there wasn't an
@@ -994,6 +997,52 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             }
             return idMap.get(href);
         }
+    }
+    
+    public void startDTD(java.lang.String name,
+                     java.lang.String publicId,
+                     java.lang.String systemId)
+              throws SAXException
+    {
+        recorder.startDTD(name, publicId, systemId);
+    }
+    
+    public void endDTD()
+            throws SAXException
+    {
+        recorder.endDTD();
+    }
+    
+    public void startEntity(java.lang.String name)
+                 throws SAXException
+    {
+        recorder.startEntity(name);
+    }
+    
+    public void endEntity(java.lang.String name)
+               throws SAXException
+    {
+        recorder.endEntity(name);
+    }
+    
+    public void startCDATA()
+                throws SAXException
+    {
+        recorder.startCDATA();
+    }
+    
+    public void endCDATA()
+              throws SAXException
+    {
+        recorder.endCDATA();
+    }
+    
+    public void comment(char[] ch,
+                    int start,
+                    int length)
+             throws SAXException
+    {
+        recorder.comment(ch, start, length);
     }
 }
 

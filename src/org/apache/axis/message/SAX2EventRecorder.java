@@ -57,6 +57,7 @@ package org.apache.axis.message;
 import org.apache.axis.encoding.DeserializationContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 
 import java.util.ArrayList;
 
@@ -84,6 +85,15 @@ public class SAX2EventRecorder {
     // that the current element is moving down the stack...
     private static final Integer STATE_NEWELEMENT = new Integer(11);
 
+    // Lexical handler events...
+    private static final Integer STATE_START_DTD = new Integer(12);
+    private static final Integer STATE_END_DTD = new Integer(13);
+    private static final Integer STATE_START_ENTITY = new Integer(14);
+    private static final Integer STATE_END_ENTITY = new Integer(15);
+    private static final Integer STATE_START_CDATA = new Integer(16);
+    private static final Integer STATE_END_CDATA = new Integer(17);
+    private static final Integer STATE_COMMENT = new Integer(18);
+    
     org.xml.sax.Locator locator;
     objArrayVector events = new objArrayVector();
     
@@ -131,6 +141,32 @@ public class SAX2EventRecorder {
         return events.add(STATE_SKIPPED_ENTITY, p1, Z,Z,Z);
     }
     
+    public void startDTD(java.lang.String name,
+                     java.lang.String publicId,
+                     java.lang.String systemId) {
+        events.add(STATE_START_DTD, name, publicId, systemId, Z);
+    }
+    public void endDTD() {
+        events.add(STATE_END_DTD, Z, Z, Z, Z);
+    }
+    public void startEntity(java.lang.String name) {
+        events.add(STATE_START_ENTITY, name, Z, Z, Z);
+    }
+    public void endEntity(java.lang.String name) {
+        events.add(STATE_END_ENTITY, name, Z, Z, Z);
+    }
+    public void startCDATA() {
+        events.add(STATE_START_CDATA, Z, Z, Z, Z);
+    }
+    public void endCDATA() {
+        events.add(STATE_END_CDATA, Z, Z, Z, Z);
+    }
+    public void comment(char[] ch,
+                    int start,
+                    int length) {
+        events.add(STATE_COMMENT, new String(ch, start, length), Z, Z, Z);
+    }
+    
     public int newElement(MessageElement elem) {
         return events.add(STATE_NEWELEMENT, elem, Z,Z,Z);
     }
@@ -152,6 +188,12 @@ public class SAX2EventRecorder {
             stop < start) {
             return; // should throw an error here
         }        
+        
+        LexicalHandler lexicalHandler = null;
+        if (handler instanceof LexicalHandler) {
+            lexicalHandler = (LexicalHandler) handler;
+        }
+        
         for (int n = start; n <= stop; n++) {
             Object event = events.get(n,0);
             if (event == STATE_START_ELEMENT) {
@@ -196,6 +238,29 @@ public class SAX2EventRecorder {
             } else if (event == STATE_END_PREFIX_MAPPING) {
                 handler.endPrefixMapping((String)events.get(n, 1));
                 
+            } else if (event == STATE_START_DTD && lexicalHandler != null) {
+                lexicalHandler.startDTD((String)events.get(n,1), 
+                                   (String)events.get(n,2),
+                                   (String)events.get(n,3));
+            } else if (event == STATE_END_DTD && lexicalHandler != null) {
+                lexicalHandler.endDTD();
+            
+            } else if (event == STATE_START_ENTITY && lexicalHandler != null) {
+                lexicalHandler.startEntity((String)events.get(n,1));
+            
+            } else if (event == STATE_END_ENTITY && lexicalHandler != null) {
+                lexicalHandler.endEntity((String)events.get(n,1));
+            
+            } else if (event == STATE_START_CDATA && lexicalHandler != null) {
+                lexicalHandler.startCDATA();
+            
+            } else if (event == STATE_END_CDATA && lexicalHandler != null) {
+                lexicalHandler.endCDATA();
+            
+            } else if (event == STATE_COMMENT && lexicalHandler != null) {
+                char chars[] = ((String)(events.get(n,1))).toCharArray();
+                lexicalHandler.comment(chars, 0, chars.length);             
+            
             } else if (event == STATE_NEWELEMENT) {
                 if (handler instanceof DeserializationContext) {
                     DeserializationContext context =
