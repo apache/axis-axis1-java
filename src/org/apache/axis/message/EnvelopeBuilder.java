@@ -14,6 +14,7 @@ import org.apache.axis.encoding.DeserializationContext;
 public class EnvelopeBuilder extends SOAPHandler
 {
     private MessageElement element;
+    private SOAPEnvelope envelope;
     
     private boolean gotHeader = false;
     private boolean gotBody = false;
@@ -22,6 +23,18 @@ public class EnvelopeBuilder extends SOAPHandler
                                                        Constants.ELEM_HEADER);
     private static final QName bodyQName = new QName(Constants.URI_SOAP_ENV,
                                                        Constants.ELEM_BODY);
+    
+    public EnvelopeBuilder(String messageType)
+    {
+        envelope = new SOAPEnvelope(false);
+        envelope.setMessageType(messageType);
+        myElement = envelope;
+    }
+    
+    public SOAPEnvelope getEnvelope()
+    {
+        return envelope;
+    }
     
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
@@ -40,8 +53,10 @@ public class EnvelopeBuilder extends SOAPHandler
         if (idx > 0)
             prefix = qName.substring(0, idx);
 
-        context.getEnvelope().setPrefix(prefix);
-        context.getEnvelope().setNamespaceURI(namespace);
+        envelope.setPrefix(prefix);
+        envelope.setNamespaceURI(namespace);
+        envelope.setNSMappings(context.getCurrentNSMappings());
+        context.pushNewElement(envelope);
     }
     
     public SOAPHandler onStartChild(String namespace,
@@ -57,7 +72,7 @@ public class EnvelopeBuilder extends SOAPHandler
                 throw new SAXException("Only one Header element allowed!");
             
             gotHeader = true;
-            return new HeaderBuilder();
+            return new HeaderBuilder(envelope);
         }
         
         if (thisQName.equals(bodyQName)) {
@@ -65,18 +80,20 @@ public class EnvelopeBuilder extends SOAPHandler
                 throw new SAXException("Only one Body element allowed!");
             
             gotBody = true;
-            return new BodyBuilder();
+            return new BodyBuilder(envelope);
         }
         
         if (!gotBody)
             throw new SAXException("No custom elements allowed at top level "+
                                    "until after the <Body>");
 
+        /*
         element = new MessageElement(namespace, localName, prefix,
                                      attributes, context);
         
         if (element.getFixupDeserializer() != null)
             return element.getFixupDeserializer();
+        */
         
         return null;
     }
@@ -85,8 +102,7 @@ public class EnvelopeBuilder extends SOAPHandler
                            DeserializationContext context)
     {
         if (element != null) {
-            element.setEndIndex(context.getCurrentRecordPos());
-            context.getEnvelope().addTrailer(element);
+            envelope.addTrailer(element);
         }
     }
 
@@ -95,6 +111,6 @@ public class EnvelopeBuilder extends SOAPHandler
         throws SAXException
     {
         // Envelope isn't dirty yet by default...
-        context.getEnvelope().setDirty(false);
+        envelope.setDirty(false);
     }
 }

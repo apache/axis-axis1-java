@@ -59,8 +59,6 @@ public class TestRPC extends TestCase {
 
         // Create the message context
         MessageContext msgContext = new MessageContext(engine);
-        DeserializationContext deserContext =
-            new DeserializationContext(msgContext, ServiceDescription.REQUEST);
 
         // Set the dispatch either by SOAPAction or methodNS
         String methodNS = null;
@@ -69,11 +67,8 @@ public class TestRPC extends TestCase {
         // Construct the soap request
         SOAPEnvelope envelope = new SOAPEnvelope();
         msgContext.setRequestMessage(new Message(envelope));
-        RPCElement body = new RPCElement(methodNS, method, "", null, deserContext);
+        RPCElement body = new RPCElement(methodNS, method, parms);
         envelope.addBodyElement(body);
-        for (int i=0; i<parms.length; i++) {
-            body.addParam(new RPCParam("arg"+i, parms[i]));
-        }
 
         // Invoke the Axis engine
         try {

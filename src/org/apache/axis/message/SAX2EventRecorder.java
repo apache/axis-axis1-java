@@ -1,8 +1,10 @@
 package org.apache.axis.message;
 
+import java.util.ArrayList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+import org.apache.axis.encoding.DeserializationContext;
 
 /**
  * This class records SAX2 Events and allows
@@ -21,6 +23,10 @@ public class SAX2EventRecorder {
     private static final byte STATE_IGNORABLE_WHITESPACE = 8;
     private static final byte STATE_PROCESSING_INSTRUCTION = 9;
     private static final byte STATE_SKIPPED_ENTITY = 10;
+    
+    // This is a "custom" event which tells DeserializationContexts
+    // that the current element is moving down the stack...
+    private static final byte STATE_NEWELEMENT = 11;
 
     org.xml.sax.Locator locator;
     intArrayVector events = new intArrayVector();
@@ -85,6 +91,18 @@ public class SAX2EventRecorder {
         return events.add(STATE_SKIPPED_ENTITY, st.addSymbol(p1), 0,0,0);
     }
     
+    public int newElement(MessageElement elem)
+    {
+        return events.add(STATE_NEWELEMENT, addElement(elem), 0, 0, 0);
+    }
+    
+    ArrayList elements = new ArrayList();
+    private int addElement(MessageElement elem)
+    {
+        elements.add(elem);
+        return elements.size() - 1;
+    }
+    
     public void replay(ContentHandler handler) throws SAXException {
         replay(0, events.getLength() - 1, handler);
     }
@@ -147,6 +165,14 @@ public class SAX2EventRecorder {
                 break;
             case STATE_SKIPPED_ENTITY:
                 handler.skippedEntity(st.getSymbol(events.get(n,1)));
+                break;
+            case STATE_NEWELEMENT:
+                if (handler instanceof DeserializationContext) {
+                    DeserializationContext context =
+                              (DeserializationContext)handler;
+                    context.setCurElement(
+                              (MessageElement)elements.get(events.get(n,1)));
+                }
                 break;
             }
         }

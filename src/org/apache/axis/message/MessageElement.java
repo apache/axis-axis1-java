@@ -68,6 +68,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.Debug;
+import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
 import java.util.*;
@@ -98,16 +99,20 @@ public class MessageElement
     // Some message representations - as recorded SAX events...
     protected SAX2EventRecorder recorder = null;
     protected int startEventIndex = 0;
+    protected int startContentsIndex = 0;
     protected int endEventIndex = -1;
     
     // ...or as DOM
     protected Element elementRep = null;
     
+    protected MessageElement parent = null;
+    // Do we need links to our children too?
+    
     public ArrayList namespaces = null;
 
     /** No-arg constructor for building messages?
      */
-    MessageElement()
+    public MessageElement()
     {
     }
     
@@ -124,7 +129,7 @@ public class MessageElement
         name = elem.getTagName();
     }
     
-    MessageElement(String namespace, String localPart, String qName,
+    public MessageElement(String namespace, String localPart, String qName,
                    Attributes attributes, DeserializationContext context)
     {
         if (DEBUG_LOG) {
@@ -142,6 +147,9 @@ public class MessageElement
         
         this.context = context;
         this.startEventIndex = context.getStartOfMappingsPos();
+        
+        setNSMappings(context.getCurrentNSMappings());
+        
         this.recorder = context.getRecorder();
 
         if (attributes == null) {
@@ -206,6 +214,68 @@ public class MessageElement
     
     public SAX2EventRecorder getRecorder() { return recorder; }
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
+    
+    public MessageElement getParent() { return parent; }
+    public void setParent(MessageElement parent) { this.parent = parent; }
+    
+    public void setContentsIndex(int index)
+    {
+        startContentsIndex = index;
+    }
+    
+    public void setNSMappings(ArrayList namespaces)
+    {
+        this.namespaces = namespaces;
+    }
+
+    public String getPrefix(String namespaceURI) {
+        if ((namespaceURI == null) || (namespaceURI.equals("")))
+            return null;
+        
+        if (href != null) {
+            return getRealElement().getPrefix(namespaceURI);
+        }
+        
+        if (namespaces != null) {
+            for (int i = 0; i < namespaces.size(); i++) {
+                Mapping map = (Mapping)namespaces.get(i);
+                if (map.getNamespaceURI().equals(namespaceURI))
+                    return map.getPrefix();
+            }
+        }
+        
+        if (parent != null)
+            return parent.getPrefix(namespaceURI);
+        
+        return null;
+    }
+    
+    public String getNamespaceURI(String prefix) {
+        if (prefix == null)
+            prefix = "";
+        
+        if (href != null) {
+            return getRealElement().getNamespaceURI(prefix);
+        }
+        
+        if (namespaces != null) {
+            for (int i = 0; i < namespaces.size(); i++) {
+                Mapping map = (Mapping)namespaces.get(i);
+                if (map.getPrefix().equals(prefix)) {
+                    return map.getNamespaceURI();
+                }
+            }
+        }
+        
+        if (parent != null)
+            return parent.getNamespaceURI(prefix);
+
+        if (DEBUG_LOG) {
+            System.err.println(this + " didn't find prefix '" + prefix + "'");
+        }
+
+        return null;
+    }
     
     public Object getValueAsType(QName type) throws Exception
     {
@@ -298,7 +368,7 @@ public class MessageElement
         if (recorder == null)
             throw new SAXException("No event recorder inside element");
         
-        recorder.replay(startEventIndex+1, endEventIndex-1, handler);
+        recorder.replay(startContentsIndex, endEventIndex-1, handler);
     }
     
     /** This is the public output() method, which will always simply use

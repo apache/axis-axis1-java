@@ -117,24 +117,38 @@ public class DeserializationContext extends DefaultHandler
     
     protected HandlerFactory initialFactory;
     
-    protected boolean doneParsing = false;
+    public boolean doneParsing = false;
     protected InputSource inputSource = null;
         
-    public DeserializationContext(MessageContext ctx, String messageType)
+    public DeserializationContext(MessageContext ctx, EnvelopeBuilder initialHandler)
     {
         msgContext = ctx;
         
-        envelope = new SOAPEnvelope();
+        envelope = initialHandler.getEnvelope();
         envelope.setRecorder(recorder);
-        envelope.setMessageType(messageType);
         
-        pushElementHandler(new EnvelopeHandler(new EnvelopeBuilder()));
+        pushElementHandler(new EnvelopeHandler(initialHandler));
+    }
+    
+    MessageElement curElement;
+    
+    public void setCurElement(MessageElement el)
+    {
+        curElement = el;
     }
     
     public DeserializationContext(InputSource is, MessageContext ctx, 
                                   String messageType)
     {
-        this(ctx, messageType);
+        EnvelopeBuilder builder = new EnvelopeBuilder(messageType);
+        
+        msgContext = ctx;
+        
+        envelope = builder.getEnvelope();
+        envelope.setRecorder(recorder);
+        
+        pushElementHandler(new EnvelopeHandler(builder));
+
         inputSource = is;
     }
     
@@ -166,10 +180,18 @@ public class DeserializationContext extends DefaultHandler
         return recorder;
     }
     
+    public ArrayList getCurrentNSMappings()
+    {
+        return (ArrayList)namespaces.peek().clone();
+    }
+    
     /** Grab a namespace prefix
      */
     public String getNamespaceURI(String prefix)
     {
+        if (curElement != null)
+            return curElement.getNamespaceURI(prefix);
+
         return namespaces.getNamespaceURI(prefix);
     }
     
@@ -189,7 +211,7 @@ public class DeserializationContext extends DefaultHandler
         //System.out.println("namespace = " + nsURI);
         
         if (nsURI == null)
-            return null;  // ???
+            return null;
         
         return new QName(nsURI, qNameStr.substring(i + 1));
     }
@@ -312,10 +334,20 @@ public class DeserializationContext extends DefaultHandler
     public int getStartOfMappingsPos()
     {
         if (startOfMappingsPos == -1) {
-            return getCurrentRecordPos();
+            return getCurrentRecordPos() + 1;
         }
         
         return startOfMappingsPos;
+    }
+    
+    public void pushNewElement(MessageElement elem)
+    {
+        if (recorder != null) {
+            recorder.newElement(elem);
+        }
+        
+        elem.setParent(curElement);
+        curElement = elem;
     }
     
     /****************************************************************
@@ -384,6 +416,8 @@ public class DeserializationContext extends DefaultHandler
         }
         if (recorder != null)
             recorder.endDocument();
+        
+        doneParsing = true;
     }
     
     /** Record the current set of prefix mappings in the nsMappings table.
@@ -485,12 +519,6 @@ public class DeserializationContext extends DefaultHandler
                            localName + "]");
         }
         
-        namespaces.push();
-        
-        if (recorder != null)
-            recorder.startElement(namespace, localName, qName,
-                                  attributes);
-        
         String prefix = "";
         int idx = qName.indexOf(":");
         if (idx > 0)
@@ -504,13 +532,23 @@ public class DeserializationContext extends DefaultHandler
                                                        this);
         }
         
-        if (nextHandler == null)
-            nextHandler = nullHandler;
+        if (nextHandler == null) {
+            nextHandler = new SOAPHandler();
+        }
         
         pushElementHandler(nextHandler);
-        
+
         nextHandler.startElement(namespace, localName, qName,
                                  attributes, this);
+        
+        if (recorder != null) {
+            recorder.startElement(namespace, localName, qName,
+                                  attributes);
+            if (!doneParsing)
+                curElement.setContentsIndex(recorder.getLength());
+        }
+        
+        namespaces.push();
         
         startOfMappingsPos = -1;
     }
@@ -541,6 +579,9 @@ public class DeserializationContext extends DefaultHandler
             
         } catch (SAXException e) {
             e.printStackTrace();
+        } finally {
+            if (curElement != null)
+                curElement = curElement.getParent();
         }
     }
 }

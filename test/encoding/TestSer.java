@@ -17,6 +17,12 @@ public class TestSer extends TestCase {
 
     public static final String myNS = "urn:myNS";
     
+    public static void main(String [] args) throws Exception
+    {
+        TestSer tester = new TestSer("TestSer");
+        tester.testData();
+    }
+    
     public TestSer(String name) {
         super(name);
     }
@@ -45,6 +51,10 @@ public class TestSer extends TestCase {
         msg.output(context);
         
         String msgString = stringWriter.toString();
+        
+        System.out.println("---");
+        System.out.println(msgString);
+        System.out.println("---");
         
         StringReader reader = new StringReader(msgString);
         

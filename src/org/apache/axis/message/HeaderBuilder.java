@@ -12,6 +12,12 @@ import org.apache.axis.encoding.DeserializationContext;
 public class HeaderBuilder extends SOAPHandler
 {
     private SOAPHeader header;
+    private SOAPEnvelope envelope;
+    
+    HeaderBuilder(SOAPEnvelope envelope)
+    {
+        this.envelope = envelope;
+    }
     
     public SOAPHandler onStartChild(String namespace,
                                     String localName,
@@ -22,14 +28,16 @@ public class HeaderBuilder extends SOAPHandler
     {
         header = new SOAPHeader(namespace, localName, prefix,
                                 attributes, context);
-        return null;
+        
+        SOAPHandler handler = new SOAPHandler();
+        handler.myElement = header;
+
+        return handler;
     }
     
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {
-        header.setEndIndex(context.getCurrentRecordPos());
-       
-        context.envelope.addHeader(header);
+        envelope.addHeader(header);
     }
 }

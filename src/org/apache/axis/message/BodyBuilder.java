@@ -20,6 +20,13 @@ public class BodyBuilder extends SOAPHandler
     boolean gotRPCElement = false;
     boolean isRPCElement = false;
     
+    private SOAPEnvelope envelope;
+    
+    BodyBuilder(SOAPEnvelope envelope)
+    {
+        this.envelope = envelope;
+    }
+    
     public SOAPHandler onStartChild(String namespace,
                                      String localName,
                                      String prefix,
@@ -71,13 +78,18 @@ public class BodyBuilder extends SOAPHandler
             gotRPCElement = true;
             element = new RPCElement(namespace, localName, prefix,
                                      attributes, context);
-            handler = new RPCHandler((RPCElement)element);
+            //handler = new RPCHandler((RPCElement)element);
         } else {
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
             if (element.getFixupDeserializer() != null)
                 handler = element.getFixupDeserializer();
         }
+
+        if (handler == null)
+            handler = new SOAPHandler();
+        
+        handler.myElement = element;
         
         if (DEBUG_LOG) {
             System.err.println("Out BodyBuilder.onStartChild()");
@@ -93,8 +105,7 @@ public class BodyBuilder extends SOAPHandler
         }
         
         if (element != null) {
-            element.setEndIndex(context.getCurrentRecordPos());
-            context.envelope.addBodyElement(element);
+            envelope.addBodyElement(element);
             element = null;
         }
 
