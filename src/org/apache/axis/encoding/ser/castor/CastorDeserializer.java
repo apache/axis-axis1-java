@@ -98,15 +98,10 @@ public class CastorDeserializer
 
         try {
             MessageElement msgElem = context.getCurElement();
-            if (msgElem != null) {
-                ArrayList children = msgElem.getChildren();
-                if (children != null) {
-                    msgElem = (MessageElement) children.get(0);
-                    if (msgElem != null) {
-                        // Unmarshall the nested XML element into a castor object of type 'javaType'
-                        value = Unmarshaller.unmarshal(javaType, msgElem.getAsDOM());
-                    }
-                }
+            if (msgElem != null)
+            {
+                // Unmarshall the nested XML element into a castor object of type 'javaType'
+                value = Unmarshaller.unmarshal(javaType, msgElem.getAsDOM());
             }
         } catch (MarshalException me) {
             log.error(Messages.getMessage("castorMarshalException00"), me);
