@@ -100,6 +100,8 @@ public class QName {
      * @param namespaceURI
      */
     public void setNamespaceURI(String namespaceURI) {
+        if (namespaceURI == null)
+            namespaceURI = "";
         this.namespaceURI = namespaceURI;
     }
 
