@@ -30,7 +30,10 @@
       </xsd:all>
     </xsd:complexType>
 
-    <xsd:element name="SameForTypeAndElement" ref="xsd1:SameForTypeAndElement"/>
+    <!-- This is clearly bad wsdl since the ref= is refering to itself!  -->
+    <!-- <xsd:element name="SameForTypeAndElement" ref="xsd1:SameForTypeAndElement"/> -->
+    <!-- Changed to use type= -->
+    <xsd:element name="SameForTypeAndElement" type="xsd1:SameForTypeAndElement"/>
 
   </xsd:schema>
 </types>

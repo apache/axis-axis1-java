@@ -176,11 +176,15 @@ public class SchemaUtils {
                         Node elementNode = elements.item(i);
                         QName nodeName = Utils.getNodeNameQName(elementNode);
                         QName nodeType = Utils.getNodeTypeRefQName(elementNode);
+                        boolean typeAttr = false;
+                        if (Utils.getNodeTypeRefQName(elementNode, "type") != null)
+                            typeAttr = true;
                         if (nodeType == null) { // The element may use an anonymous type
                             nodeType = nodeName;
+                            typeAttr = true;
                         }
 
-                        Type Type = (Type) symbolTable.getTypeEntry(nodeType);
+                        Type Type = (Type) symbolTable.getTypeEntry(nodeType, !typeAttr);
                         if (Type != null) {
                             v.add(Type);
                             v.add(nodeName.getLocalPart());
