@@ -20,12 +20,12 @@
                output="build/work" 
                testcase="no">
     </wsdl2java>
-    <!--
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl" 
                package="org.soapinteropB" 
                output="build/work" 
                testcase="no">
     </wsdl2java>
+    <!--
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTestC.wsdl"
                package="org.soapinteropC" 
                output="build/work" 

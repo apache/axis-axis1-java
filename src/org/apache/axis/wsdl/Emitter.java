@@ -1431,7 +1431,7 @@ public class Emitter {
         }
 
         // Call the real implementation
-        if (parms.outputs == 0)
+        if ( "void".equals(parms.returnType) )
             pw.print("        ");
         else
             pw.print("        Object ret = ");
@@ -1478,7 +1478,7 @@ public class Emitter {
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
                 pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
-                if (parms.outputs > 0)
+                if (!"void".equals(parms.returnType))
                     pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
