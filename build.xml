@@ -559,7 +559,12 @@ Copyright:
       <fileset dir="${webapp}"/>
     </copy>
     <copy todir="${build.webapp}/WEB-INF/lib">
-      <fileset dir="${build.lib}"/>
+      <fileset dir="${lib.dir}">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${build.lib}">
+        <include name="*.jar"/>
+      </fileset>
     </copy>
     <copy todir="${build.webapp}/samples">
       <fileset dir="./samples"/>
