@@ -1102,7 +1102,8 @@ public class JavaServiceDesc implements ServiceDesc {
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             if (Modifier.isPublic(method.getModifiers()) &&
-                    method.getName().equals(methodName)) {
+                method.getName().equals(methodName) &&
+                !isServiceLifeCycleMethod(implClass, method)) {
                 createOperationForMethod(method);
             }
         }
