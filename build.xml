@@ -332,6 +332,10 @@ Copyright:
 
   <!-- All tests -->
   <target name="all-tests" depends="junit, functional-tests">
+    <tstamp>
+        <format property="tests-end-time" pattern="HH:mm:ss 'on' MM/dd/yyyy" locale="en"/>
+    </tstamp>
+    <echo>target all-tests of ${ant.project.name} finished at ${tests-end-time}</echo>
   </target>
 
   <!-- =================================================================== -->
