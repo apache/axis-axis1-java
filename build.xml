@@ -73,7 +73,7 @@ Copyright:
 
     <property name="webapps" value="./webapps"/>
 
-    <property name="dist.dir" value="./axis-2_0"/>
+    <property name="dist.dir" value="./axis-1_0"/>
   </target>
 
   <!-- =================================================================== -->
