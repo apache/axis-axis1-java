@@ -69,39 +69,36 @@ public interface TypeMappingRegistry extends java.io.Serializable {
 
     /**
      * The method register adds a TypeMapping instance for a specific 
-     * encoding style or XML schema namespace to the 
-     * type mapping registry.
+     * web service namespace.                        
      *
-     * @param mapping - TypeMapping for a specific encoding style or XML schema namespace
-     * @param namespaceURIs - Encoding styles or XML schema namespaces specified as an URI.
-     * An example is 
-     * "http://schemas.xmlsoap.org/soap/encoding/"
+     * @param mapping - TypeMapping for specific type namespaces
+     * @param namespaceURIs - Web service namespace
      *
      * @throws JAXRPCException - If there is any error in the registration
      * of the TypeMapping for the specified namespace URI
      * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
      */
-    public void registry(TypeMapping mapping, String[] namespaceURIs)
+    public void register(TypeMapping mapping, String[] namespaceURIs)
         throws JAXRPCException;
 
     /**
      * The method register adds a default TypeMapping instance.  If a specific
      * TypeMapping is not found, the default TypeMapping is used.  
      *
-     * @param mapping - TypeMapping for a specific encoding style or XML schema namespace
+     * @param mapping - TypeMapping for specific type namespaces
      *
      * @throws JAXRPCException - If there is any error in the registration
      * of the TypeMapping for the specified namespace URI
      * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
      */
-    public void registryDefault(TypeMapping mapping)
+    public void registerDefault(TypeMapping mapping)
         throws JAXRPCException;
 
     /**
-     * Gets the TypeMapping for the namespace.  If not found, the default TypeMapping 
+     * Gets the TypeMapping for the Web Service namespace.  If not found, the default TypeMapping 
      * is returned.
      *
-     * @param namespaceURI - The namespace URI of a type
+     * @param namespaceURI - The namespace URI of a Web Service
      * @return The registered TypeMapping (which may be the default TypeMapping) or null.
      */
     public TypeMapping getTypeMapping(String namespaceURI);
@@ -110,7 +107,7 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      * Removes the TypeMapping for the namespace.
      *
      * @param namespaceURI - The namespace URI of a type
-     * @return The registered TypeMapping (which may be the default TypeMapping) or null.
+     * @return The registered TypeMapping or null.
      */
     public TypeMapping removeTypeMapping(String namespaceURI);
 
@@ -133,7 +130,7 @@ public interface TypeMappingRegistry extends java.io.Serializable {
     /**
      * Removes all registered TypeMappings from the registery                   
      */
-    public TypeMapping clear(String namespaceURI);
+    public void clear(String namespaceURI);
 
 }
 
