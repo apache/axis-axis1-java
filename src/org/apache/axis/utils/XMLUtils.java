@@ -57,6 +57,7 @@ package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
 import org.w3c.dom.Attr;
+import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
