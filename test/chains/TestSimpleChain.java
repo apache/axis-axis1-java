@@ -65,7 +65,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 
 import org.apache.log4j.Category;
-import org.apache.log4j.Level;
+import org.apache.log4j.Priority;
 
 public class TestSimpleChain extends TestCase
 {
@@ -111,8 +111,8 @@ public class TestSimpleChain extends TestCase
             // while testing, disable noise
             Category category = Category.getInstance(
                 org.apache.axis.InternalException.class.getName());
-            Level oldLevel = category.getLevel();
-            category.setLevel(Level.OFF);
+            Priority oldPriority = category.getPriority();
+            category.setPriority(Priority.OFF);
 
             try {
                 Handler h2 = new TestHandler();
@@ -122,7 +122,7 @@ public class TestSimpleChain extends TestCase
                 // Correct behaviour. Exact exception isn't critical
             }
 
-            category.setLevel(oldLevel);
+            category.setPriority(oldPriority);
         } catch (AxisFault af) {
             assertTrue("Unexpected exception", false);
         }
