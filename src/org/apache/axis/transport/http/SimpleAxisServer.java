@@ -115,7 +115,7 @@ public class SimpleAxisServer implements Runnable {
     public static int sessionIndex = 0;
 
     // Configuration provider
-    private static FileProvider provider = new FileProvider("server-config.xml");
+    private static FileProvider provider = new FileProvider(Constants.SERVER_CONFIG_FILE);
 
     // Another example of configuration (AdminService only) might look like this...
     //private static XMLStringProvider provider = new XMLStringProvider("<engineConfig><handlers><handler name=\"MsgDispatcher\" class=\"org.apache.axis.providers.java.MsgProvider\"/></handlers><services><service name=\"AdminService\" pivot=\"MsgDispatcher\"><option name=\"className\" value=\"org.apache.axis.utils.Admin\"/><option name=\"methodName\" value=\"AdminService\"/><option name=\"enableRemoteAdmin\" value=\"false\"/></service></services></engineConfig>");
@@ -175,7 +175,7 @@ public class SimpleAxisServer implements Runnable {
 
         // create an Axis server
         AxisServer engine = getAxisServer();
-        engine.init();
+        //engine.init();
 
         // create and initialize a message context
         MessageContext msgContext = new MessageContext(engine);

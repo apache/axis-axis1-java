@@ -169,17 +169,17 @@ public class WSDDChain
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler newInstance(DeploymentRegistry registry)
+    public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
 
         try {
-            Handler       h        = super.newInstance(registry);
+            Handler       h        = super.getInstance(registry);
             Chain         c        = (Chain) h;
             WSDDHandler[] handlers = getHandlers();
 
             for (int n = 0; n < handlers.length; n++) {
-                c.addHandler(handlers[n].newInstance(registry));
+                c.addHandler(handlers[n].getInstance(registry));
             }
 
             return c;

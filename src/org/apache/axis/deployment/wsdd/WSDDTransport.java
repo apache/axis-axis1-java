@@ -56,7 +56,10 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,6 +73,8 @@ import javax.xml.rpc.namespace.QName;
 public class WSDDTransport
     extends WSDDDeployableItem
 {
+    public static final QName DEFAULT_QNAME =
+            new QName(WSDDConstants.WSDD_JAVA, "org.apache.axis.SimpleTargetedChain");
 
     /**
      *
@@ -218,14 +223,15 @@ public class WSDDTransport
         removeChild(victim);
     }
 
-
-    /**
-     *
-     * @return XXX
-     */
     public QName getType()
     {
-        return null;
+        QName type = super.getType();
+
+        if (type == null) {
+            type = DEFAULT_QNAME;
+        }
+
+        return type;
     }
 
     /**
@@ -255,33 +261,36 @@ public class WSDDTransport
 
     /**
      *
-     * @param registry XXX
-     * @return XXX
-     * @throws Exception XXX
-     */
-    public Handler newInstance(DeploymentRegistry registry)
-        throws Exception
-    {
-        return newInstance(null, registry);
-    }
-
-    /**
-     *
      * @param pivot XXX
      * @param registry XXX
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler newInstance(Handler pivot, DeploymentRegistry registry)
+    public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
-
         Handler       h = super.makeNewInstance(registry);
         TargetedChain c = (TargetedChain) h;
 
-        c.setRequestHandler(getRequestFlow().newInstance(registry));
+            WSDDFlow req = getRequestFlow();
+            if (req != null)
+                c.setRequestHandler(req.getInstance(registry));
+        
+        Handler pivot = null;
+        QName pivotName = XMLUtils.getQNameFromString(getAttribute("pivot"), getElement());
+        if (pivotName != null) {
+            if (WSDDConstants.WSDD_JAVA.equals(pivotName.getNamespaceURI())) {
+                pivot = (Handler)Class.forName(pivotName.getLocalPart()).newInstance();
+            } else {
+                pivot = registry.getHandler(pivotName);
+            }
+        }
+        
         c.setPivotHandler(pivot);
-        c.setResponseHandler(getResponseFlow().newInstance(registry));
+
+        WSDDFlow resp = getResponseFlow();
+        if (resp != null)
+            c.setResponseHandler(getResponseFlow().getInstance(registry));
 
         return c;
     }

@@ -5,7 +5,6 @@ import org.apache.axis.Handler;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
@@ -54,8 +53,7 @@ public class TestArrayListConversions extends TestCase {
     try {
       Service ss = new Service();
       AxisServer server = new AxisServer();
-      HandlerRegistry hr = (HandlerRegistry) server.getHandlerRegistry();
-      Handler disp = hr.find("RPCDispatcher");    
+      Handler disp = server.getHandler("RPCDispatcher");    
       SOAPService service = new SOAPService(disp);
       service.addOption("className", "test.encoding.TestArrayListConversions");
       service.addOption("methodName", "*");

@@ -56,7 +56,7 @@
 package org.apache.axis.suppliers;
 
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.server.Transport;
 
 import java.util.Hashtable;
@@ -73,10 +73,10 @@ public class TransportSupplier extends TargetedChainSupplier
                              Vector responseNames,
                              String pivotName,
                              Hashtable options,
-                             HandlerRegistry registry)
+                             AxisEngine engine)
     {
         super(myName, requestNames, responseNames, pivotName,
-              options, registry);
+              options, engine);
     }
     
     public SimpleTargetedChain getNewChain()

@@ -156,6 +156,7 @@ public class AdminClient
         StringBuffer sb = new StringBuffer();
 
         Options opts = new Options( args );
+        opts.setDefaultURL("http://localhost:8080/axis/services/AdminService");
 
         if (opts.isFlagSet('d') > 0) {
             // Set log4j properties... !!!

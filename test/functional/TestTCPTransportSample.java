@@ -61,7 +61,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.utils.Admin;
 import org.apache.log4j.Category;
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
@@ -76,11 +75,6 @@ public class TestTCPTransportSample extends TestCase {
 
     public TestTCPTransportSample(String name) {
         super(name);
-    }
-
-    public void doTransportDeploy() throws Exception {
-        String[] args = { "client", "samples/transport/tcp/deploy.xml" };
-        Admin.main(args);
     }
 
     public void doTestDeploy () throws Exception {
@@ -131,10 +125,6 @@ public class TestTCPTransportSample extends TestCase {
     public void testTCPTransportSample () throws Exception {
         try {
             category.info("Testing TCP transport.");
-
-            category.info("Deploying TCP client transport...");
-            doTransportDeploy();
-            category.info("OK!");
 
             category.info("Testing deployment...");
             doTestDeploy();

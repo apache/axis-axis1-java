@@ -57,6 +57,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.configuration.NullProvider;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
@@ -436,12 +437,12 @@ public class MessageElement
     public String toString() {
         try {
             StringWriter  writer = new StringWriter();
-            SerializationContext context = null ;
-            AxisClient     tmpEngine = new AxisClient(null);
+            SerializationContext serContext = null ;
+            AxisClient     tmpEngine = new AxisClient(new NullProvider());
             tmpEngine.addOption(tmpEngine.PROP_XML_DECL, new Boolean(false));
             MessageContext msgContext = new MessageContext(tmpEngine);
-            context = new SerializationContext(writer, msgContext);
-            this.output(context);
+            serContext = new SerializationContext(writer, msgContext);
+            this.output(serContext);
             return( writer.toString() );
         }
         catch( Exception exp ) {

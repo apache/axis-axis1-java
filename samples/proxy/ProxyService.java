@@ -59,10 +59,12 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.w3c.dom.Document;
 import samples.transport.tcp.TCPTransport;
+import samples.transport.tcp.TCPSender;
 
 /**
  * Proxy sample.  Relays message on to hardcoded URL.
@@ -91,6 +93,10 @@ public class ProxyService {
             Service service = new Service();
             Call    call = (Call) service.createCall();
             call.setEngine( msgContext.getAxisEngine().getClientEngine() );
+
+            SimpleTargetedChain c = new SimpleTargetedChain();
+            c.setPivotHandler(new TCPSender());
+	    call.getEngine().deployTransport("tcp", c);
     
             // add TCP for proxy testing
             call.addTransportPackage("samples.transport");

@@ -57,6 +57,7 @@ package org.apache.axis.deployment.v2dd;
 import org.apache.axis.deployment.DeploymentDocument;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeployableItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -89,6 +90,10 @@ public class DeploymentDescriptor implements DeploymentDocument {
         this.d = e.getOwnerDocument();
     }
 
+    public Document getDOMDocument() throws DeploymentException {
+        return d;
+    }
+
     public V2DDService getService() {
         if (service == null) {
             service = new V2DDService(d.getDocumentElement());
@@ -105,5 +110,9 @@ public class DeploymentDescriptor implements DeploymentDocument {
         }
         V2DDDeployableItem item = new V2DDDeployableItem(service);
         registry.deployItem(item);
+    }
+
+    public void importItem(DeployableItem item) throws DeploymentException {
+        throw new DeploymentException("ImportItem not implemented!");
     }
 }

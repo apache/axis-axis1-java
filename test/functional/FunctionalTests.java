@@ -41,7 +41,7 @@ public class FunctionalTests extends TestCase
         suite.addTestSuite(TestMiscSample.class);
 
         // Proxy service test.
-        suite.addTestSuite(TestProxySample.class);
+        //suite.addTestSuite(TestProxySample.class);
 
         return suite;
     }

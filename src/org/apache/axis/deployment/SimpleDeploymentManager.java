@@ -57,8 +57,11 @@ package org.apache.axis.deployment;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDDocument;
+import org.apache.axis.deployment.wsdd.WSDDHandler;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
@@ -68,46 +71,63 @@ import java.util.Hashtable;
  * This is a simple implementation of the DeploymentRegistry class
  *
  * @author James Snell
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class SimpleDeploymentManager
     extends DeploymentRegistry
 {
-
-    /** XXX */
+    /** Our global configuration */
     WSDDGlobalConfiguration globalConfig;
 
-    /** XXX */
-    Hashtable items;
+    /** Storage for our handlers */
+    Hashtable handlers = new Hashtable();
+    Hashtable services = new Hashtable();
+    Hashtable transports = new Hashtable();
 
-    /** XXX */
+    /** Storage for our TypeMappingRegistries */
     Hashtable mappings;
+    
+    /** The deployment document we're rooted off of.
+     * This will be updated as new items are deployed into the registry.
+     */
+    DeploymentDocument doc = null;
 
     /**
-     *
+     * Constructor - sets up a default encoding style
      */
     public SimpleDeploymentManager()
     {
-
-        items    = new Hashtable();
         mappings = new Hashtable();
 
         mappings.put(Constants.URI_SOAP_ENC, new SOAPTypeMappingRegistry());
     }
 
     /**
-     * Deploy a SOAP v2.x deployment descriptor
-     * @param deployment XXX
-     * @throws DeploymentException XXX
+     * Deploy a deployment document into this registry.
+     * 
+     * @param deployment the DeploymentDocument we'll operate on
+     * @throws DeploymentException if there was a problem
      */
     public void deploy(DeploymentDocument deployment)
         throws DeploymentException
     {
+        if (doc == null)
+            doc = deployment;
         deployment.deploy(this);
     }
 
     /**
-     * return the global configuration
-     * @return XXX
+     * Obtain our "root" deployment document.
+     */ 
+    public DeploymentDocument getConfigDocument()
+            throws DeploymentException {
+        return doc;
+    }
+
+    /**
+     * Return the global configuration
+     * 
+     * @return our global configuration
      * @throws DeploymentException XXX
      */
     public WSDDGlobalConfiguration getGlobalConfiguration()
@@ -133,7 +153,47 @@ public class SimpleDeploymentManager
     public void deployItem(DeployableItem item)
         throws DeploymentException
     {
-        items.put(item.getQName(), item);
+        QName qn = item.getQName();
+        handlers.put(qn, item);
+    }
+
+    /**
+     * Deploy the given WSDD Deployable Item
+     * @param item XXX
+     * @throws DeploymentException XXX
+     */
+    public void deployHandler(DeployableItem item)
+        throws DeploymentException
+    {
+        if (doc == null) doc = new WSDDDocument();
+        handlers.put(item.getQName(), item);
+        doc.importItem(item);
+    }
+
+    /**
+     * Deploy the given WSDD Deployable Item
+     * @param item XXX
+     * @throws DeploymentException XXX
+     */
+    public void deployService(DeployableItem item)
+        throws DeploymentException
+    {
+        if (doc == null) doc = new WSDDDocument();
+        services.put(item.getQName(), item);
+        doc.importItem(item);
+    }
+
+    /**
+     * Deploy the given WSDD Transport
+     * @param item XXX
+     * @throws DeploymentException XXX
+     */
+    public void deployTransport(DeployableItem item)
+        throws DeploymentException
+    {
+        if (doc == null) doc = new WSDDDocument();
+        transports.put(item.getQName(), item);
+        doc.importItem(item);
     }
 
     /**
@@ -142,13 +202,60 @@ public class SimpleDeploymentManager
      * @return XXX
      * @throws DeploymentException XXX
      */
-    public Handler getDeployedItem(QName qname)
+    public Handler getHandler(QName qname)
         throws DeploymentException
     {
         try {
-            DeployableItem item = (DeployableItem) items.get(qname);
+            DeployableItem item = (DeployableItem)handlers.get(qname);
+            
+            if (item == null)
+                return null;
 
-            return item.newInstance(this);
+            return item.getInstance(this);
+        }
+        catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
+        }
+    }
+
+    /**
+     * Return an instance of the deployed service
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public Handler getService(QName qname)
+        throws DeploymentException
+    {
+        try {
+            DeployableItem item = (DeployableItem)services.get(qname);
+            
+            if (item == null)
+                return null;
+
+            return item.getInstance(this);
+        }
+        catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
+        }
+    }
+
+    /**
+     * Return an instance of the deployed transport
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public Handler getTransport(QName qname)
+        throws DeploymentException
+    {
+        try {
+            DeployableItem item = (DeployableItem)transports.get(qname);
+            
+            if (item == null)
+                return null;
+
+            return item.getInstance(this);
         }
         catch (Exception e) {
             throw new DeploymentException(e.getMessage());
@@ -163,7 +270,7 @@ public class SimpleDeploymentManager
     public void removeDeployedItem(QName qname)
         throws DeploymentException
     {
-        items.remove(qname);
+        handlers.remove(qname);
     }
 
 

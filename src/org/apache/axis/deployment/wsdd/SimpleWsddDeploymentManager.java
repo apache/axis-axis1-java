@@ -66,16 +66,8 @@ import javax.xml.rpc.namespace.QName;
 public class SimpleWsddDeploymentManager
     extends SimpleDeploymentManager
 {
-
-    /**
-     * Return the RAW deployed item
-     * @param qname XXX
-     * @return XXX
-     * @throws DeploymentException XXX
-     */
-    public WSDDDeployableItem getDeployedWsddItem(QName qname)
-        throws DeploymentException
+    public WSDDDeployment getDeployment()
     {
-        return getDeployedWsddItem(qname);
+        return null;
     }
 }

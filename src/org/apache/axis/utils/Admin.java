@@ -62,13 +62,17 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleChain;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.providers.java.MsgProvider;
+import org.apache.axis.deployment.wsdd.*;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaProvider;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.FileProvider;
-import org.apache.axis.encoding.BeanSerializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.*;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.server.AxisServer;
@@ -84,6 +88,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -136,32 +141,32 @@ public class Admin {
      * @param root the Element containing the service configuration
      * @param service the SOAPService we're working with.
      */
-    private static void registerTypeMappings(Element root, SOAPService service)
+    private static void registerTypeMappings(Element root, WSDDService service)
         throws Exception
     {
-        TypeMappingRegistry reg = service.getTypeMappingRegistry();
         NodeList list = root.getElementsByTagName("beanMappings");
         for (int i = 0; list != null && i < list.getLength(); i++) {
             Element el = (Element)list.item(i);
-            registerTypes(el, reg, true);
+            registerTypes(el, service, true, null);
         }
 
         list = root.getElementsByTagName("typeMappings");
         for (int i = 0; list != null && i < list.getLength(); i++) {
             Element el = (Element)list.item(i);
-            registerTypes(el, reg, false);
+            registerTypes(el, service, false, null);
         }
     }
 
     private static void registerTypes(Element root,
-                                      TypeMappingRegistry map,
-                                      boolean isBean)
+                                      WSDDTypeMappingContainer container,
+                                      boolean isBean,
+                                      DeploymentRegistry registry)
         throws Exception
     {
         NodeList list = root.getChildNodes();
         for (int i = 0; (list != null) && (i < list.getLength()); i++) {
             if (!(list.item(i) instanceof Element)) continue;
-            registerTypeMapping((Element)list.item(i), map, isBean);
+            registerTypeMapping((Element)list.item(i), container, isBean, registry);
         }
     }
 
@@ -189,6 +194,14 @@ public class Admin {
         throws Exception
     {
         Element el = doc.getDocumentElement();
+        String namespace = el.getNamespaceURI();
+        
+        // If this is WSDD, process it correctly.
+        if (namespace != null && namespace.equals(WSDDConstants.WSDD_NS)) {
+            processWSDD(engine, el);
+            return;
+        }
+        
         if (!el.getTagName().equals("engineConfig"))
             throw new Exception("Wanted 'engineConfig' element, got '" +
                 el.getTagName() + "'");
@@ -204,14 +217,8 @@ public class Admin {
 
         nl = el.getElementsByTagName("typeMappings");
         deploy(nl, engine);
-        /*
-        if (nl.getLength() > 0)
-        registerTypes((Element)nl.item(0),
-        engine.getTypeMappingRegistry(),
-        false);
-        */
-
-        engine.saveConfiguration();
+        
+        //engine.saveConfiguration();
     }
 
     private static final int
@@ -249,6 +256,9 @@ public class Admin {
      */
     static void deploy(NodeList nl, AxisEngine engine) throws Exception
     {
+        WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
+        WSDDDeployment dep = wd.getDeployment();
+        
         int lenI = nl.getLength();
         for (int i = 0; i < lenI; i++) {
             Element el = (Element)nl.item(i);
@@ -275,7 +285,7 @@ public class Admin {
                     registerTransport(item, engine);
                     break;
                 case TYPE_TYPEMAPPING:
-                    registerTypeMapping(item, engine.getTypeMappingRegistry(), false);
+                    registerTypeMapping(item, dep, false, null);
                     break;
                 case TYPE_UNKNOWN:
                     // ignore it
@@ -285,6 +295,25 @@ public class Admin {
                 }
             }
         }
+    }
+    
+    protected static Document processWSDD(AxisEngine engine, Element root)
+        throws AxisFault
+    {
+        Document doc = null ;
+
+        try {
+            WSDDDocument wsddDoc = new WSDDDocument(root);
+            engine.getDeploymentRegistry().deploy(wsddDoc);
+        } catch (DeploymentException e) {
+            throw new AxisFault(e);
+        }
+        
+        doc = XMLUtils.newDocument();
+        doc.appendChild( root = doc.createElementNS("", "Admin" ) );
+        root.appendChild( doc.createTextNode( "Done processing" ) );
+        
+        return doc;
     }
 
     /**
@@ -298,14 +327,67 @@ public class Admin {
     public Document process(MessageContext msgContext, Element root)
         throws AxisFault
     {
+        // Check security FIRST.
+        
+        /** Might do something like this once security is a little more
+         * integrated.
+        if (!engine.hasSafePassword() &&
+            !action.equals("passwd"))
+            throw new AxisFault("Server.MustSetPassword",
+          "You must change the admin password before administering Axis!",
+                                 null, null);
+         */
+
+        /** For now, though - make sure we can only admin from our own
+         * IP, unless the remoteAdmin option is set.
+         */
+        Handler serviceHandler = msgContext.getServiceHandler();
+        if (serviceHandler != null) {
+            String remoteAdmin = (String)serviceHandler.
+                                        getOption("enableRemoteAdmin");
+            if ((remoteAdmin == null) ||
+                !remoteAdmin.equals("true")) {
+                String remoteIP =
+                        msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
+                if (remoteIP != null) {
+                    if (!remoteIP.equals("127.0.0.1")) {
+                        try {
+                            InetAddress myAddr = InetAddress.getLocalHost();
+                            InetAddress remoteAddr =
+                                    InetAddress.getByName(remoteIP);
+                            
+                            if (!myAddr.equals(remoteAddr))
+                                throw new AxisFault("Server.Unauthorized",
+                                   "Remote admin access is not allowed! ",
+                                   null, null);
+                        } catch (UnknownHostException e) {
+                            throw new AxisFault("Server.UnknownHost",
+                                "Unknown host - couldn't verify admin access",
+                                null, null);
+                        }
+                    }
+                }
+            }
+        }
+        
+        String rootNS = root.getNamespaceURI();
+        String rootName = root.getLocalName();
+        AxisEngine engine = msgContext.getAxisEngine();
+        
+        // If this is WSDD, process it correctly.
+        if (rootNS.equals(WSDDConstants.WSDD_NS)) {
+            return processWSDD(engine, root);
+        }
+
+        // Not WSDD, use old code.
+        // 
+        // NOTE : THIS CODE IS DEPRECATED AND WILL DISAPPEAR BY
+        //        BETA 1.  YOU SHOULD SWITCH TO WSDD.
+        //
         Document doc = null ;
 
-        AxisEngine engine = msgContext.getAxisEngine();
-        HandlerRegistry hr = engine.getHandlerRegistry();
-        HandlerRegistry sr = engine.getServiceRegistry();
-
         try {
-            String            action = root.getLocalName();
+            String            action = rootName;
             AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
 
             if ( !action.equals("clientdeploy") && !action.equals("deploy") &&
@@ -318,40 +400,6 @@ public class Admin {
                     "'list', 'passwd', or 'quit'",
                     null, null );
 
-            /** Might do something like this once security is a little more
-             * integrated.
-            if (!engine.hasSafePassword() &&
-                !action.equals("passwd"))
-                throw new AxisFault("Server.MustSetPassword",
-              "You must change the admin password before administering Axis!",
-                                     null, null);
-             */
-
-            /** For now, though - make sure we can only admin from our own
-             * IP, unless the remoteAdmin option is set.
-             */
-            Handler serviceHandler = msgContext.getServiceHandler();
-            if (serviceHandler != null) {
-                String remoteAdmin = (String)serviceHandler.
-                                            getOption("enableRemoteAdmin");
-                if ((remoteAdmin == null) ||
-                    !remoteAdmin.equals("true")) {
-                    String remoteIP =
-                            msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
-                    if (remoteIP != null) {
-                        if (!remoteIP.equals("127.0.0.1")) {
-                            InetAddress myAddr = InetAddress.getLocalHost();
-                            InetAddress remoteAddr =
-                                            InetAddress.getByName(remoteIP);
-
-                            if (!myAddr.equals(remoteAddr))
-                                throw new AxisFault("Server.Unauthorized",
-                                    "Remote admin access is not allowed! ",
-                                    null, null);
-                        }
-                    }
-                }
-            }
 
             if (action.equals("passwd")) {
                 String newPassword = root.getFirstChild().getNodeValue();
@@ -383,6 +431,9 @@ public class Admin {
                 // set engine to client engine
                 engine = engine.getClientEngine();
             }
+            
+            WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
+            WSDDDeployment dep = wd.getDeployment();
 
             NodeList list = root.getChildNodes();
             for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
@@ -409,7 +460,7 @@ public class Admin {
                             null, null );
                     continue ;
                 }
-
+                
                 if ( type.equals( "handler" ) ) {
                     registerHandler(elem, engine);
                 }
@@ -426,17 +477,16 @@ public class Admin {
                 // A streamlined means of deploying both a serializer and a deserializer
                 // for a bean at the same time.
                 else if ( type.equals( "beanMappings" ) ) {
-                    TypeMappingRegistry engineTypeMap = engine.getTypeMappingRegistry();
-                    registerTypes(elem, engineTypeMap, true);
+                    registerTypes(elem, dep, true, engine.getDeploymentRegistry());
                 }
                 else if (type.equals("typeMappings")) {
-                    TypeMappingRegistry engineTypeMap = engine.getTypeMappingRegistry();
-                    registerTypes(elem, engineTypeMap, false);
+                    registerTypes(elem, dep, false, engine.getDeploymentRegistry());
                 } else
                     throw new AxisFault( "Admin.error",
                         "Unknown type to " + action + ": " + type,
                         null, null );
             }
+            
             engine.saveConfiguration();
 
             doc = XMLUtils.newDocument();
@@ -463,29 +513,33 @@ public class Admin {
     public static Document listConfig(AxisEngine engine)
         throws AxisFault
     {
-        Document doc = XMLUtils.newDocument();
-
-        Element tmpEl = doc.createElementNS("", "engineConfig");
-        doc.appendChild(tmpEl);
-
-        Element el = doc.createElementNS("", "handlers");
-        list(el, engine.getHandlerRegistry());
-        tmpEl.appendChild(el);
-
-        el = doc.createElementNS("", "services");
-        list(el, engine.getServiceRegistry());
-        tmpEl.appendChild(el);
-
-        el = doc.createElementNS("", "transports");
-        list(el, engine.getTransportRegistry());
-        tmpEl.appendChild(el);
-
-        category.debug( "Outputting registry");
-        el = doc.createElementNS("", "typeMappings");
-        engine.getTypeMappingRegistry().dumpToElement(el);
-        tmpEl.appendChild(el);
-
-        return( doc );
+        return engine.
+                getDeploymentRegistry().
+                getConfigDocument().
+                getDOMDocument();
+//        Document doc = XMLUtils.newDocument();
+//
+//        Element tmpEl = doc.createElementNS("", "engineConfig");
+//        doc.appendChild(tmpEl);
+//
+//        Element el = doc.createElementNS("", "handlers");
+//        list(el, engine.getHandlerRegistry());
+//        tmpEl.appendChild(el);
+//
+//        el = doc.createElementNS("", "services");
+//        list(el, engine.getServiceRegistry());
+//        tmpEl.appendChild(el);
+//
+//        el = doc.createElementNS("", "transports");
+//        list(el, engine.getTransportRegistry());
+//        tmpEl.appendChild(el);
+//
+//        category.debug( "Outputting registry");
+//        el = doc.createElementNS("", "typeMappings");
+//        engine.getTypeMappingRegistry().dumpToElement(el);
+//        tmpEl.appendChild(el);
+//
+//        return( doc );
     }
 
     /**
@@ -536,7 +590,6 @@ public class Admin {
     {
         Handler tmpH = null;
         String hName;
-        SupplierRegistry hr = (SupplierRegistry)engine.getHandlerRegistry();
 
         String   name    = elem.getAttribute( "name" );
         String   flow    = elem.getAttribute( "flow" );
@@ -555,54 +608,24 @@ public class Admin {
             category.info( "Deploying chain: " + name );
             Vector names = new Vector();
 
+            getOptions( elem, options );
+            
+            WSDDDocument wsddDoc = (WSDDDocument)engine.
+                    getDeploymentRegistry().getConfigDocument();
+            
+            WSDDChain chain = wsddDoc.getDeployment().createChain();
+            chain.setName(name);
+            chain.setOptionsHashtable(options);
+
             StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
-                names.addElement(st.nextToken());
-            }
-            getOptions( elem, options );
-
-            SimpleChainSupplier supp = new SimpleChainSupplier(name,
-                                                               names,
-                                                               options,
-                                                               hr);
-
-            hr.add(name, supp);
-        }
-        else {
-            category.info( "Deploying chain: " + name );
-
-            if ((request == null) &&
-                (response == null) &&
-                (pivot == null))
-                throw new AxisFault("No request/response/pivot for chain '" + name + "'!");
-
-            StringTokenizer      st = null ;
-            Vector reqNames = new Vector();
-            Vector respNames = new Vector();
-
-            if (request != null) {
-                st = new StringTokenizer( request, " \t\n\r\f," );
-                while ( st.hasMoreElements() ) {
-                    reqNames.addElement(st.nextToken());
-                }
+                String handlerName = st.nextToken();
+                WSDDHandler handler = chain.createHandler();
+                //handler.setName(handlerName);
+                handler.setType(handlerName);
             }
 
-            if (response != null) {
-                st = new StringTokenizer( response, " \t\n\r\f," );
-                while ( st.hasMoreElements() ) {
-                    respNames.addElement(st.nextToken());
-                }
-            }
-
-            getOptions( elem, options );
-
-            TargetedChainSupplier supp = new TargetedChainSupplier(name,
-                                                                   reqNames,
-                                                                   respNames,
-                                                                   pivot,
-                                                                   options,
-                                                                   hr);
-            hr.add(name,supp);
+            engine.getDeploymentRegistry().deployHandler(chain);
         }
     }
 
@@ -615,9 +638,6 @@ public class Admin {
     public static void registerService(Element elem, AxisEngine engine)
         throws AxisFault
     {
-        HandlerRegistry hr = engine.getHandlerRegistry();
-        HandlerRegistry sr = engine.getServiceRegistry();
-
         String   name    = elem.getAttribute( "name" );
         String   request   = elem.getAttribute( "request" );
         String   pivot   = elem.getAttribute( "pivot" );
@@ -632,69 +652,65 @@ public class Admin {
         String            hName = null ;
         Handler            tmpH = null ;
         StringTokenizer      st = null ;
-        SOAPService     service = null ;
-        Chain                c  = null ;
 
         if ( pivot == null && request == null && response == null )
             throw new AxisFault( "Admin.error",
                 "Services must use targeted chains",
                 null, null );
 
-        service = (SOAPService) sr.find( name );
-
-        if ( service == null ) service = new SOAPService();
-        else              service.clear();
-
+        WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
+        WSDDService serv = wd.getDeployment().createService();
+        
+        serv.setName(name);
+        
         if ( request != null && !"".equals(request) ) {
             st = new StringTokenizer( request, " \t\n\r\f," );
-            c  = null ;
+            WSDDRequestFlow req = serv.createRequestFlow();
+            WSDDChain chain = req.createChain();
             while ( st.hasMoreElements() ) {
-                if ( c == null )
-                    service.setRequestHandler( c = new SimpleChain() );
                 hName = st.nextToken();
-                tmpH = hr.find( hName );
-                if ( tmpH == null )
-                    throw new AxisFault( "Admin.error",
-                        "Unknown handler: " + hName,
-                        null, null );
-                c.addHandler( tmpH );
+                WSDDHandler h = chain.createHandler();
+                h.setType(hName);
             }
         }
 
-        if ( pivot != null && !"".equals(pivot) ) {
-            tmpH = hr.find(pivot);
-            if (tmpH == null)
-                throw new AxisFault("Deploying service " + name +
-                    ": couldn't find pivot Handler '" + pivot + "'");
+        Hashtable opts = new Hashtable();
+        getOptions( elem, opts );
+        serv.setOptionsHashtable(opts);
+        
+        Handler pivotHandler = engine.getHandler(pivot);
+        if (pivotHandler == null)
+            throw new AxisFault("No pivot handler '" + pivot + "' found!");
+        Class pivotClass = pivotHandler.getClass();
+        if ((pivotClass != RPCProvider.class) &&
+            (pivotClass != MsgProvider.class)) {
+            throw new AxisFault("Only RPCDispatcher or MsgDispatcher are allowed as service pivots! (you specified '" + pivot + "')");
+        }
 
-            service.setPivotHandler( tmpH );
+        if ( pivot != null && !"".equals(pivot) ) {
+            WSDDProvider provider = serv.createProvider(WSDDJavaProvider.class);
+            provider.setAttribute("type", pivot);
+            provider.setProviderAttribute("className", (String)opts.get("className"));
         }
 
         if ( response != null && !"".equals(response) ) {
             st = new StringTokenizer( response, " \t\n\r\f," );
-            c  = null ;
+            WSDDResponseFlow resp = serv.createResponseFlow();
+            WSDDChain chain = resp.createChain();
             while ( st.hasMoreElements() ) {
-                if ( c == null )
-                    service.setResponseHandler( c = new SimpleChain() );
                 hName = st.nextToken();
-                tmpH = hr.find( hName );
-                if ( tmpH == null )
-                    throw new AxisFault( "Admin.error",
-                        "Unknown handler: " + hName,
-                        null, null );
-                c.addHandler( tmpH );
+                WSDDHandler h = chain.createHandler();
+                h.setType(hName);
             }
         }
 
-        getOptions( elem, service );
-
         try {
-            registerTypeMappings(elem, service);
+            registerTypeMappings(elem, serv);
         } catch (Exception e) {
             throw new AxisFault(e);
         }
 
-        engine.deployService( name, service );
+        engine.getDeploymentRegistry().deployService(serv);
     }
 
     /**
@@ -706,8 +722,6 @@ public class Admin {
     public static void registerHandler(Element elem, AxisEngine engine)
         throws AxisFault
     {
-        HandlerRegistry hr = engine.getHandlerRegistry();
-
         try {
             AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
             String   name    = elem.getAttribute( "name" );
@@ -719,7 +733,7 @@ public class Admin {
             if ( cls != null && cls.equals("") ) cls = null ;
             category.info( "Deploying handler: " + name );
 
-            h = hr.find( name );
+            h = engine.getHandler( name );
             if ( h == null ) h = (Handler) cl.loadClass(cls).newInstance();
             getOptions( elem, h );
             engine.deployHandler( name, h );
@@ -757,30 +771,35 @@ public class Admin {
         Vector reqNames = new Vector();
         Vector respNames = new Vector();
 
+        WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
+        WSDDTransport transport = wd.getDeployment().createTransport();
+        
+        transport.setName(name);
+
         if (request != null) {
+            WSDDRequestFlow req = transport.createRequestFlow();
+            WSDDChain chain = req.createChain();
             st = new StringTokenizer( request, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
-                reqNames.addElement(st.nextToken());
+                WSDDHandler h = chain.createHandler();
+                h.setType(st.nextToken());
             }
         }
 
         if (response != null) {
+            WSDDResponseFlow resp = transport.createResponseFlow();
+            WSDDChain chain = resp.createChain();
             st = new StringTokenizer( response, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
-                respNames.addElement(st.nextToken());
+                WSDDHandler h = chain.createHandler();
+                h.setType(st.nextToken());
             }
         }
 
         getOptions( elem, options );
+        transport.setOptionsHashtable(options);
 
-        HandlerRegistry hr = engine.getHandlerRegistry();
-        TargetedChainSupplier supp = new TransportSupplier(name,
-                                                           reqNames,
-                                                           respNames,
-                                                           sender,
-                                                           options,
-                                                           hr);
-        engine.deployTransport(name, supp);
+        engine.getDeploymentRegistry().deployTransport(transport);
     }
 
     /**
@@ -790,15 +809,16 @@ public class Admin {
      * @param map the TypeMappingRegistry which gets this mapping.
      */
     private static void registerTypeMapping(Element elem,
-                                            TypeMappingRegistry map,
-                                            boolean isBean)
+                                            WSDDTypeMappingContainer container,
+                                            boolean isBean,
+                                            DeploymentRegistry registry)
         throws Exception
     {
-        Serializer ser;
-        DeserializerFactory dserFactory;
-
+        WSDDTypeMapping mapping = container.createTypeMapping();
+        
         // Retrieve classname attribute
         String classname = elem.getAttribute("classname");
+        
         if ((classname == null) || classname.equals(""))
             throw new AxisFault("Server.Admin.error",
                 "No classname attribute in type mapping",
@@ -816,6 +836,8 @@ public class Admin {
             throw new AxisFault( "Admin.error", e.toString(), null, null);
         }
 
+        mapping.setLanguageSpecificType(cls);
+        
         if (isBean) {
             // Resolve qname based on prefix and localpart
 
@@ -826,8 +848,9 @@ public class Admin {
             category.debug( "Registering mapping for " + qn + " -> " + classname);
 
             // register both serializers and deserializers for this bean
-            ser = new BeanSerializer(cls);
-            dserFactory = BeanSerializer.getFactory();
+            mapping.setQName(qn);
+            mapping.setSerializer(BeanSerializer.class);
+            mapping.setDeserializer(BeanSerializer.getFactory().getClass());
         } else {
             String typeName = elem.getAttribute("type");
             int idx = typeName.indexOf(':');
@@ -836,10 +859,12 @@ public class Admin {
 
             qn = new QName(XMLUtils.getNamespace(prefix, elem), localPart);
 
+            mapping.setQName(qn);
             classname = elem.getAttribute("serializer");
             category.debug( "Serializer class is " + classname);
             try {
-                ser = (Serializer)cl.loadClass(classname).newInstance();
+                cls = cl.loadClass(classname);
+                mapping.setSerializer(cls);
             } catch (Exception e) {
                 throw new AxisFault( "Admin.error",
                     "Couldn't load serializer class " + e.toString(),
@@ -848,19 +873,19 @@ public class Admin {
             classname = elem.getAttribute("deserializerFactory");
             category.debug( "DeserializerFactory class is " + classname);
             try {
-                dserFactory = (DeserializerFactory)cl.loadClass(classname).
-                                                                            newInstance();
+                cls = cl.loadClass(classname);
+                mapping.setDeserializer(cls);
             } catch (Exception e) {
                 throw new AxisFault( "Admin.error",
                     "Couldn't load deserializerFactory " +
                     e.toString(),
                     null, null);
             }
-
         }
-
-        map.addSerializer(cls, qn, ser);
-        map.addDeserializerFactory(qn, cls, dserFactory);
+        
+        if (registry != null) {
+            WSDDDocument.deployMappingToRegistry(mapping, registry);
+        }
     }
 
     public static void main(String args[]) throws Exception {
@@ -900,9 +925,9 @@ public class Admin {
 
         AxisEngine engine;
         if ( args[0].equals("client") )
-            engine = new AxisClient(new FileProvider("client-config.xml"));
+            engine = new AxisClient(new FileProvider(Constants.CLIENT_CONFIG_FILE));
         else
-            engine = new AxisServer(new FileProvider("server-config.xml"));
+            engine = new AxisServer(new FileProvider(Constants.SERVER_CONFIG_FILE));
         engine.setShouldSaveConfig(true);
         engine.init();
         MessageContext msgContext = new MessageContext(engine);

@@ -115,7 +115,7 @@ public class FaultableHandler extends BasicHandler {
                 fault = new AxisFault( e );
             }
 
-            HandlerRegistry hr = msgContext.getAxisEngine().getHandlerRegistry();
+            AxisEngine engine = msgContext.getAxisEngine();
 
             /** Index off fault code.
              *
@@ -134,7 +134,7 @@ public class FaultableHandler extends BasicHandler {
             while (enum.hasMoreElements()) {
                 String s = (String) enum.nextElement();
                 if (s.equals("fault-" + fault.getFaultCode().getLocalPart())) {
-                    faultHandler = hr.find((String)options.get(s));
+                    faultHandler = (Handler)options.get(s);
                 }
             }
 

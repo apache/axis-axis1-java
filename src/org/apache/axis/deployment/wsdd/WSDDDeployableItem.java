@@ -64,6 +64,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.xml.rpc.namespace.QName;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 
 /**
@@ -182,12 +184,31 @@ public abstract class WSDDDeployableItem
             for (int n = 0; n < ps.length; n++) {
                 WSDDParameter p = (WSDDParameter) ps[n];
 
-                // parms.put(p.getName(), p.getValue(), p.getLocked());
-                parms.put(p.getName(), "", p.getLocked());
+                parms.put(p.getName(), p.getValue(), p.getLocked());
             }
         }
 
         return parms;
+    }
+    
+    /**
+     * Convenience method for using old deployment XML with WSDD.
+     * This allows us to set the options directly after the Admin class
+     * has parsed them out of the old format.
+     */ 
+    public void setOptionsHashtable(Hashtable hashtable)
+    {
+        if (hashtable == null)
+            return;
+        
+        parms = new LockableHashtable(hashtable);
+        Iterator i = parms.keySet().iterator();
+        while (i.hasNext()) {
+            String name = (String)i.next();
+            String value = (String)parms.get(name);
+            WSDDParameter param = createParameter(name);
+            param.setValue(value);
+        }
     }
 
     /**
@@ -253,7 +274,7 @@ public abstract class WSDDDeployableItem
      * @return XXX
      * @throws Exception XXX
      */
-    abstract public Handler newInstance(DeploymentRegistry registry)
+    abstract public Handler getInstance(DeploymentRegistry registry)
         throws Exception;
 
     /**
@@ -274,7 +295,7 @@ public abstract class WSDDDeployableItem
             if (c != null) {
                 h = (Handler)createInstance(c);
             } else {
-                h = registry.getDeployedItem(getType());
+                h = registry.getHandler(getType());
             }
 
             if (h != null) {

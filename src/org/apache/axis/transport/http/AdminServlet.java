@@ -57,6 +57,7 @@ package org.apache.axis.transport.http ;
 
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.Constants;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -80,7 +81,7 @@ public class AdminServlet extends HttpServlet {
             // (so the config files can't get snooped by a browser)
             FileProvider provider =
                     new FileProvider(getServletContext().getRealPath("/WEB-INF"),
-                                     "server-config.xml");
+                                     Constants.SERVER_CONFIG_FILE);
 
             getServletContext().setAttribute("AxisEngine", new AxisServer(provider));
         }

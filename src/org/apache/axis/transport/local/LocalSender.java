@@ -83,8 +83,7 @@ public class LocalSender extends BasicHandler {
      * Allocate an embedded Axis server to process requests and initialize it.
      */
     public synchronized void init() {
-        AxisServer server = new AxisServer(new FileProvider("server-config.xml"));
-        server.init();
+        AxisServer server = new AxisServer(new FileProvider(Constants.SERVER_CONFIG_FILE));
         this.server=server;
     }
 

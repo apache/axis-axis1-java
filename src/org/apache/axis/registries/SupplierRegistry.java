@@ -57,6 +57,7 @@ package org.apache.axis.registries ;
 
 import org.apache.axis.Handler;
 import org.apache.axis.Supplier;
+import org.apache.axis.AxisFault;
 import org.apache.axis.suppliers.SimpleSupplier;
 import org.apache.log4j.Category;
 
@@ -133,7 +134,13 @@ public class SupplierRegistry implements HandlerRegistry {
                 category.debug( "Exit: SupplierRegistry::find - supplier is null" );
             return null;
         }
-        Handler h = supplier.getHandler();
+        Handler h = null;
+        try {
+            h = supplier.getHandler();
+        } catch (AxisFault fault) {
+            // ???
+        }
+        
         if (category.isDebugEnabled())
             category.debug( "Exit: SupplierRegistry::find"  );
         return h ;

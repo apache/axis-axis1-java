@@ -8,7 +8,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
 
 /** 
@@ -40,13 +39,11 @@ public class TestBody extends TestCase {
        // setup
        AxisEngine engine = new AxisServer();
        engine.init();
-       HandlerRegistry hr = engine.getHandlerRegistry();
-       HandlerRegistry sr = engine.getServiceRegistry();
        
        // register the service with the engine
-       Handler RPCDispatcher = hr.find("RPCDispatcher");
+       Handler RPCDispatcher = engine.getHandler("RPCDispatcher");
        SOAPService target = new SOAPService(RPCDispatcher);
-       sr.add(namespace, target);
+       engine.deployService(namespace, target);
 
        // create a message in context
        MessageContext msgContext = new MessageContext(engine);

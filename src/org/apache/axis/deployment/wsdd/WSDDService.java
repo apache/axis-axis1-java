@@ -56,8 +56,14 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
+import org.apache.axis.FaultableHandler;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,10 +77,13 @@ import javax.xml.rpc.namespace.QName;
  */
 public class WSDDService
     extends WSDDDeployableItem
+    implements WSDDTypeMappingContainer
 {
     public static final QName DEFAULT_QNAME =
             new QName(WSDDConstants.WSDD_JAVA,
-                      "org.apache.axis.SimpleTargetedChain");
+                      "org.apache.axis.handlers.soap.SOAPService");
+    
+    public TypeMappingRegistry tmr = null;
 
     /**
      *
@@ -130,17 +139,6 @@ public class WSDDService
     public void setServiceDescriptionURL(String sdUrl)
     {
         setAttribute("description", sdUrl);
-    }
-
-    /**
-     * Eventually need to fill this in with the code to
-     * actually return the Service Description object
-     * @return XXX
-     */
-    public ServiceDescription getServiceDescription()
-    {
-		// Nothing here yet
-        return null;
     }
 
     /**
@@ -398,30 +396,63 @@ public class WSDDService
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler newInstance(DeploymentRegistry registry)
+    public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
-
-        try {
-            Handler       h        = super.makeNewInstance(registry);
-            TargetedChain c        = (TargetedChain) h;
-            WSDDFlow      request  = getRequestFlow();
-            WSDDFlow      response = getResponseFlow();
-
-            if (request != null) {
-                c.setRequestHandler(request.newInstance(registry));
-            }
-
-            c.setPivotHandler(getProvider().newInstance(registry));
-
-            if (response != null) {
-                c.setResponseHandler(response.newInstance(registry));
-            }
-
-            return c;
+        SOAPService   service  = (SOAPService)super.makeNewInstance(registry);
+        WSDDFlow      request  = getRequestFlow();
+        WSDDFlow      response = getResponseFlow();
+        
+        if (request != null) {
+            service.setRequestHandler(request.getInstance(registry));
         }
-        catch (Exception e) {
-            return null;
+        
+        service.setPivotHandler(getProvider().getInstance(registry));
+        
+        if (response != null) {
+            service.setResponseHandler(response.getInstance(registry));
         }
+        
+        if (tmr == null) {
+            tmr = new TypeMappingRegistry();
+            tmr.setParent(registry.getTypeMappingRegistry(""));
+            
+            WSDDTypeMapping [] mappings = getTypeMappings();
+            for (int n = 0; n < mappings.length; n++) {
+                WSDDTypeMapping     mapping = mappings[n];
+                
+                Serializer          ser   = null;
+                DeserializerFactory deser = null;
+                
+                ser   = (Serializer) mapping.getSerializer().newInstance();
+                deser =
+                        (DeserializerFactory) mapping.getDeserializer()
+                        .newInstance();
+                
+                if (ser != null) {
+                    tmr.addSerializer(mapping.getLanguageSpecificType(),
+                                      mapping.getQName(), ser);
+                }
+                
+                if (deser != null) {
+                    tmr.addDeserializerFactory(mapping.getQName(), mapping
+                                                                   .getLanguageSpecificType(), deser);
+                }
+            }
+        }
+        
+        service.setTypeMappingRegistry(tmr);
+        
+        WSDDFaultFlow [] faultFlows = getFaultFlows();
+        if (faultFlows != null && faultFlows.length > 0) {
+            FaultableHandler wrapper = new FaultableHandler(service);
+            for (int i = 0; i < faultFlows.length; i++) {
+                WSDDFaultFlow flow = faultFlows[i];
+                Handler faultHandler = flow.getInstance(registry);
+                wrapper.addOption("fault-" + flow.getName(), faultHandler);
+            }
+        }
+        
+        return service;
     }
 }

@@ -371,7 +371,7 @@ public class WSDDGlobalConfiguration
      * @param registry XXX
      * @return XXX
      */
-    public Handler newInstance(DeploymentRegistry registry)
+    public Handler getInstance(DeploymentRegistry registry)
     {
         return null;
     }

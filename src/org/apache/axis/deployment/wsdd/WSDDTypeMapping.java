@@ -57,6 +57,7 @@ package org.apache.axis.deployment.wsdd;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.apache.axis.utils.XMLUtils;
 
 import javax.xml.rpc.namespace.QName;
 
@@ -160,7 +161,12 @@ public class WSDDTypeMapping
      */
     public void setQName(QName name)
     {
-        setAttribute("qName", name.toString());
+        String prefix = XMLUtils.getPrefix(name.getNamespaceURI(), getElement());
+        if (prefix == null)
+            prefix = XMLUtils.getNewPrefix(getElement().getOwnerDocument(),
+                                           name.getNamespaceURI());
+        String qstr = prefix + ":" + name.getLocalPart();
+        setAttribute("qName", qstr);
     }
 
     /**
@@ -173,8 +179,18 @@ public class WSDDTypeMapping
     {
 
         String type = getAttribute("languageSpecificType");
+        QName typeQName = XMLUtils.getQNameFromString(type, getElement());
+        if (typeQName != null) {
+            if (!WSDDConstants.WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
+                throw new ClassNotFoundException("Found languageSpecificType namespace '" +
+                    typeQName.getNamespaceURI() + "', expected '" +
+                    WSDDConstants.WSDD_JAVA + "'");
+            }
 
-        return Class.forName(type);
+            return Class.forName(typeQName.getLocalPart());
+        }
+        
+        throw new ClassNotFoundException("Couldn't locate class '" + type + "'");
     }
 
     /**
@@ -183,7 +199,9 @@ public class WSDDTypeMapping
      */
     public void setLanguageSpecificType(Class lsType)
     {
-        setAttribute("languageSpecificType", lsType.getName());
+        String type = lsType.getName();
+        String prefix = XMLUtils.getPrefix(WSDDConstants.WSDD_JAVA, getElement());
+        setAttribute("languageSpecificType", prefix + ":" + type );
     }
 
     /**
@@ -217,7 +235,6 @@ public class WSDDTypeMapping
     public Class getDeserializer()
         throws ClassNotFoundException
     {
-
         String type = getAttribute("deserializer");
 
         return Class.forName(type);

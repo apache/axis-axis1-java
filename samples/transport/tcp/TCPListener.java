@@ -60,7 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Options;
 import org.apache.log4j.Category;
@@ -155,15 +155,15 @@ public class TCPListener implements Runnable {
                 engine = new AxisServer();
                 engine.init();
                 
-                HandlerRegistry hr = engine.getHandlerRegistry();
-                HandlerRegistry sr = engine.getServiceRegistry();
-                // add the TCPSender
-                //hr.add("TCPSender", new TCPSender());
-                
                 SimpleTargetedChain c = new SimpleTargetedChain();
                 c.setPivotHandler(new TCPSender());
-                
-                engine.deployTransport(transportName, c);
+
+                try {
+                    engine.deployTransport(transportName, c);
+                } catch (DeploymentException e) {
+                    // !!! We're toast.  What to do about it?
+                    System.exit(-1);
+                }
             }
             
             /* Place the Request message in the MessagContext object - notice */

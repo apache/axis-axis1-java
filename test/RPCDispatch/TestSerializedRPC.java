@@ -39,25 +39,20 @@ public class TestSerializedRPC extends TestCase {
         "</soap:Envelope>\n";
 
     private AxisServer engine = new AxisServer();
-    private HandlerRegistry hr;
-    private HandlerRegistry sr;
     private Handler RPCDispatcher;
 
     private String SOAPAction = "urn:reverse";
 
-    public TestSerializedRPC(String name) {
+    public TestSerializedRPC(String name) throws Exception {
         super(name);
         engine.init();
-        hr = (HandlerRegistry) engine.getHandlerRegistry();
-        sr = (HandlerRegistry) engine.getServiceRegistry();
-        RPCDispatcher = hr.find("RPCDispatcher");
+        RPCDispatcher = engine.getHandler("RPCDispatcher");
         
         // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "*");
         engine.deployService(SOAPAction, reverse);
-        
     }
 
     /**
@@ -99,6 +94,7 @@ public class TestSerializedRPC extends TestCase {
 
         // Extract the response Envelope
         Message message = msgContext.getResponseMessage();
+        assertNotNull("Response message was null!", message);
         SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
         assertNotNull("SOAP envelope was null", envelope);
 

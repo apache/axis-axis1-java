@@ -8,9 +8,7 @@
 <!-- This file will be replaced by WSDD once it's ready         -->
 
 <m:deploy xmlns:m="AdminService">
-  <chain   name="echo"   flow="RPCDispatcher" />
-
-  <service name="http://soapinterop.org/" pivot="echo" >
+  <service name="http://soapinterop.org/" pivot="RPCDispatcher" >
     <option name="className" value="samples.echo.EchoService" />
     <option name="methodName" value="*" />
   </service>

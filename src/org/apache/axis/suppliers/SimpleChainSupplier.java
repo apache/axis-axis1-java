@@ -59,7 +59,7 @@ import org.apache.axis.Chain;
 import org.apache.axis.Handler;
 import org.apache.axis.SimpleChain;
 import org.apache.axis.Supplier;
-import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.AxisEngine;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
@@ -77,18 +77,18 @@ public class SimpleChainSupplier implements Supplier
     String _myName;
     Hashtable _options;
     Vector _handlerNames;
-    HandlerRegistry _registry;
+    AxisEngine _engine;
     Chain _chain = null;
     
     public SimpleChainSupplier(String myName,
                                Vector names,
                                Hashtable options,
-                               HandlerRegistry registry)
+                               AxisEngine engine)
     {
         _myName = myName;
         _handlerNames = names;
         _options = options;
-        _registry = registry;
+        _engine = engine;
     }
     
     public Handler getHandler()
@@ -103,7 +103,7 @@ public class SimpleChainSupplier implements Supplier
             c.setName(_myName);
             try {
                 for (int i = 0; i < _handlerNames.size(); i++) {
-                    Handler handler = _registry.find(
+                    Handler handler = _engine.getHandler(
                                           (String)_handlerNames.elementAt(i));
                     c.addHandler(handler);
                 }

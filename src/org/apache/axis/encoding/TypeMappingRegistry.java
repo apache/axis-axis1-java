@@ -136,6 +136,9 @@ public class TypeMappingRegistry implements Serializer {
                               QName qName,
                               Serializer serializer) {
         if (s == null) s = new Hashtable();
+        if (serializer instanceof BeanSerializer) {
+            ((BeanSerializer)serializer).setCls(_class);
+        }
         s.put(_class, new SerializerDescriptor(qName, serializer));
     }
     
@@ -209,7 +212,8 @@ public class TypeMappingRegistry implements Serializer {
     public Attributes setTypeAttribute(Attributes attributes, QName type,
                                        SerializationContext context)
     {
-        if (!context.shouldSendXSIType() ||
+        if (type == null ||
+            !context.shouldSendXSIType() ||
             ((attributes != null) &&
              (attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
                                 "type") != -1)))
@@ -237,15 +241,36 @@ public class TypeMappingRegistry implements Serializer {
     {
         if (value != null) {
             Class _class = value.getClass();
-            Serializer ser = getSerializer(_class);
-            if (ser != null) {
-                QName type = getTypeQName(_class);
-                attributes = setTypeAttribute(attributes, type, context);
-                ser.serialize(name, attributes, value, context);
-            } else {
-                throw new IOException("No serializer found for class " + _class.getName() +
-                                      " in registry " + this);
+            
+            // Find a Serializer for this class, walking up the inheritance
+            // hierarchy and implemented interfaces list.
+            while (_class != null) {
+                Serializer ser = getSerializer(_class);
+                if (ser != null) {
+                    QName type = getTypeQName(_class);
+                    attributes = setTypeAttribute(attributes, type, context);
+                    ser.serialize(name, attributes, value, context);
+                    return;
+                }
+
+                Class [] ifaces = _class.getInterfaces();
+                for (int i = 0; i < ifaces.length; i++) {
+                    Class iface = ifaces[i];
+                    ser = getSerializer(iface);
+                    if (ser != null) {
+                        QName type = getTypeQName(iface);
+                        attributes = setTypeAttribute(attributes, type, context);
+                        ser.serialize(name, attributes, value, context);
+                        return;
+                    }
+                }
+                
+                _class = _class.getSuperclass();
             }
+            
+            throw new IOException("No serializer found for class " +
+                                  value.getClass().getName() +
+                                  " in registry " + this);
         }
         // !!! Write out a generic null, or get type info from somewhere else?
     }

@@ -57,10 +57,13 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.deployment.DeploymentDocument;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -72,7 +75,8 @@ public class WSDDDocument
 {
 
     /** XXX */
-    private Document d;
+    private Document doc;
+    private Element deploymentElement;
 
     /** XXX */
     private WSDDDeployment dep;
@@ -90,7 +94,8 @@ public class WSDDDocument
      */
     public WSDDDocument(Document doc)
     {
-        d = doc;
+        this.doc = doc;
+        deploymentElement = doc.getDocumentElement();
     }
 
     /**
@@ -99,7 +104,12 @@ public class WSDDDocument
      */
     public WSDDDocument(Element e)
     {
-        d = e.getOwnerDocument();
+        deploymentElement = e;
+        doc = e.getOwnerDocument();
+    }
+
+    public Document getDOMDocument() throws DeploymentException {
+        return getDocument();
     }
 
     /**
@@ -112,11 +122,9 @@ public class WSDDDocument
 
         if (null == dep) {
             try {
-                Element deploymentElement = d.getDocumentElement();
-
                 if (null == deploymentElement) {
                     // create both the DOM and WSDD deployment 'child'
-                    dep = new WSDDDeployment(d);
+                    dep = new WSDDDeployment(doc);
                 }
                 else {
                     // create the WSDD 'child' from the given DOM deployment
@@ -141,11 +149,22 @@ public class WSDDDocument
      */
     public Document getDocument()
     {
-        if (null == d) {
-            d = XMLUtils.newDocument();
+        if (null == doc) {
+            doc = XMLUtils.newDocument();
+            Element el = doc.createElementNS(WSDDConstants.WSDD_NS, "deployment");
+            el.setAttributeNS(
+                            Constants.NS_URI_XMLNS,
+                            "xmlns",
+                            WSDDConstants.WSDD_NS);
+            doc.appendChild(el);
+            try {
+                dep = new WSDDDeployment(el);
+            } catch (WSDDException e) {
+                return null;
+            }
         }
 
-        return d;
+        return doc;
     }
 
     /**
@@ -154,7 +173,7 @@ public class WSDDDocument
      */
     public void setDocument(Document document)
     {
-        d = document;
+        doc = document;
 
         dep = null;
     }
@@ -198,59 +217,79 @@ public class WSDDDocument
         WSDDTypeMapping[] mappings   = dep.getTypeMappings();
 
         for (int n = 0; n < handlers.length; n++) {
-            registry.deployItem(handlers[n]);
+            registry.deployHandler(handlers[n]);
         }
 
         for (int n = 0; n < chains.length; n++) {
-            registry.deployItem(chains[n]);
+            registry.deployHandler(chains[n]);
         }
 
         for (int n = 0; n < transports.length; n++) {
-            registry.deployItem(transports[n]);
+            registry.deployTransport(transports[n]);
         }
 
         for (int n = 0; n < services.length; n++) {
-            registry.deployItem(services[n]);
+            registry.deployService(services[n]);
         }
 
         for (int n = 0; n < mappings.length; n++) {
             WSDDTypeMapping     mapping = mappings[n];
-            TypeMappingRegistry tmr     =
-                registry.getTypeMappingRegistry(mapping.getEncodingStyle());
+            deployMappingToRegistry(mapping, registry);
+        }
+    }
 
-            if (tmr == null) {
-                tmr = new TypeMappingRegistry();
+    public static void deployMappingToRegistry(WSDDTypeMapping mapping, 
+                                               DeploymentRegistry registry) 
+            throws DeploymentException {
+        TypeMappingRegistry tmr     =
+            registry.getTypeMappingRegistry(mapping.getEncodingStyle());
 
-                registry.addTypeMappingRegistry(mapping.getEncodingStyle(),
-                                                tmr);
+        if (tmr == null) {
+            tmr = new SOAPTypeMappingRegistry();
+
+            registry.addTypeMappingRegistry(mapping.getEncodingStyle(),
+                                            tmr);
+        }
+
+        Serializer          ser   = null;
+        DeserializerFactory deser = null;
+
+        try {
+            ser   = (Serializer) mapping.getSerializer().newInstance();
+            deser =
+                (DeserializerFactory) mapping.getDeserializer()
+                    .newInstance();
+
+            if (ser != null) {
+                tmr.addSerializer(mapping.getLanguageSpecificType(),
+                                  mapping.getQName(), ser);
             }
 
-            Serializer          ser   = null;
-            DeserializerFactory deser = null;
-
-            try {
-                ser   = (Serializer) mapping.getSerializer().newInstance();
-                deser =
-                    (DeserializerFactory) mapping.getDeserializer()
-                        .newInstance();
-            }
-            catch (Exception e) {
-            }
-
-            try {
-                if (ser != null) {
-                    tmr.addSerializer(mapping.getLanguageSpecificType(),
-                                      mapping.getQName(), ser);
-                }
-
-                if (deser != null) {
-                    tmr.addDeserializerFactory(mapping.getQName(), mapping
-                        .getLanguageSpecificType(), deser);
-                }
-            }
-            catch (Exception e) {
-                throw new DeploymentException(e.getMessage());
+            if (deser != null) {
+                tmr.addDeserializerFactory(mapping.getQName(), mapping
+                    .getLanguageSpecificType(), deser);
             }
         }
+        catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
+        }
+    }
+
+    public void importItem(DeployableItem item) throws DeploymentException {
+        if (!(item instanceof WSDDElement))
+            return;
+/*
+            throw new DeploymentException("Importing non-WSDD item " +
+                                          item.getClass().getName() +
+                                          " into WSDD document!");
+*/
+        
+        WSDDElement elem = (WSDDElement)item;
+        
+        // Don't bother importing if we own it already.
+        if (elem.getElement().getOwnerDocument().equals(getDOMDocument()))
+            return;
+        
+        getDeployment().addChild((WSDDElement)item);
     }
 }
