@@ -325,7 +325,6 @@ public class ArraySerializer implements Serializer
             attributes = attrs;
         }
 
-        Boolean sendType = null;
         // For the maxOccurs case, each item is named with the QName
         // we got in the arguments.  For normal array case, we write an element with
         // that QName, and then serialize each item as <item>
@@ -336,7 +335,6 @@ public class ArraySerializer implements Serializer
             context.startElement(name, attributes);
             elementName = Constants.QNAME_LITERAL_ITEM;
             // If we are doing SOAP encoded arrays, no need to add xsi:type to the items
-            sendType = Boolean.FALSE;
         }
 
 
@@ -350,7 +348,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      sendType);  // Add xsi:type?
+                                      null);  // Respect default type config
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -360,7 +358,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      sendType);  // Add xsi:type?
+                                      null);  // Respect default type config
 
                 }
             }
@@ -369,7 +367,7 @@ public class ArraySerializer implements Serializer
             for (int index = 0; index < len; index++) {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
-                    context.serialize(elementName, null, aValue, componentQName, true, sendType);
+                    context.serialize(elementName, null, aValue, componentQName, true, null);
                 }
             }
         }
