@@ -130,7 +130,12 @@ public class LocalSender extends BasicHandler {
     }
 
     // invoke the request
-    targetServer.invoke(serverContext);
+    try {
+        targetServer.invoke(serverContext);
+    } catch (AxisFault fault) {
+        Message faultMessage = new Message(fault);
+        serverContext.setResponseMessage(faultMessage);
+    }
 
     // copy back the response, and force its format to String in order to
     // exercise the deserializers.
