@@ -395,12 +395,13 @@ public class MessageContext {
         }
     }
     
-    public void clearProperties()
+    public void reset()
     {
         if (bag != null) {
             bag.clear();
         }
         serviceHandler = null;
+        havePassedPivot = false;
     }
 
 };
