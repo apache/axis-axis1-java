@@ -7,9 +7,7 @@
 
 package test.wsdl.wrapped;
 
-import test.wsdl.wrapped.City_BBBPortType;
-import test.wsdl.wrapped.Attraction;
-import test.wsdl.wrapped.Query;
+
 
 public class City_BBBBindingImpl implements City_BBBPortType {
     public static final String OID_STRING = "Attraction@cityCF::1028:1028";

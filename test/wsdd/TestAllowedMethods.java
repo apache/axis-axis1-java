@@ -8,13 +8,13 @@
  */
 package test.wsdd;
 
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.server.AxisServer;
-import org.apache.axis.configuration.XMLStringProvider;
-import org.apache.axis.transport.local.LocalTransport;
+import junit.framework.TestCase;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import junit.framework.TestCase;
+import org.apache.axis.configuration.XMLStringProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.transport.local.LocalTransport;
 
 public class TestAllowedMethods extends TestCase {
     static final String SERVICE_NAME = "AllowedMethodService";

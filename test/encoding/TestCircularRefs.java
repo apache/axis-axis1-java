@@ -1,11 +1,10 @@
 package test.encoding;
 
+import org.apache.axis.AxisFault;
+import org.apache.axis.client.Call;
 import test.GenericLocalTest;
 
 import java.util.Vector;
-
-import org.apache.axis.client.Call;
-import org.apache.axis.AxisFault;
 
 public class TestCircularRefs extends GenericLocalTest {
     public TestCircularRefs() {

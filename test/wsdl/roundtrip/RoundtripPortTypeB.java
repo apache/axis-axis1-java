@@ -55,15 +55,6 @@
 
 package test.wsdl.roundtrip;
 
-import test.wsdl.roundtrip.Investment;
-import test.wsdl.roundtrip.BondInvestment;
-import test.wsdl.roundtrip.StockInvestment;
-import test.wsdl.roundtrip.PreferredStockInvestment;
-import test.wsdl.roundtrip.CallOptions;
-import test.wsdl.roundtrip.InvalidTickerSymbol;
-import test.wsdl.roundtrip.InvalidTradeExchange;
-import test.wsdl.roundtrip.InvalidCompanyId;
-
 import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 
 import javax.xml.rpc.holders.StringHolder;

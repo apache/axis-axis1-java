@@ -55,22 +55,22 @@
 package test.encoding;
 
 import junit.framework.TestCase;
-import org.apache.axis.Message;
 import org.apache.axis.Constants;
+import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.transport.local.LocalTransport;
-import org.apache.axis.configuration.BasicServerConfig;
-import org.apache.axis.server.AxisServer;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.configuration.BasicServerConfig;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.transport.local.LocalTransport;
 
 import javax.xml.namespace.QName;
 

@@ -1,18 +1,14 @@
 package test.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import java.text.MessageFormat;
-
-import java.util.Enumeration;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Enumeration;
+import java.util.Vector;
 
 
 /**

@@ -1,7 +1,6 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.client.AdminClient;
 import test.rpc.IF1;
 import test.rpc.IF2SOAP;
 import test.rpc.IF3SOAP;

@@ -1,27 +1,18 @@
 package test.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import java.text.MessageFormat;
-
-import java.util.Enumeration;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
 
-import org.apache.axis.utils.Messages;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * This TestCase verifies that content of the source files adheres

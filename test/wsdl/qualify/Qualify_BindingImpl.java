@@ -65,11 +65,10 @@
 
 package test.wsdl.qualify;
 
-import org.apache.axis.MessageContext;
-import org.apache.axis.Message;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.RPCElement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

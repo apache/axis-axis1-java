@@ -7,12 +7,11 @@
 
 package test.wsdl.interop4.groupi;
 
-import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPHeaderElement;
 
 import java.util.Vector;
-import java.util.Iterator;
 
 public class Round4XSDTestSoapImpl implements test.wsdl.interop4.groupi.Round4XSDTestSoap{
     public void echoVoid() throws java.rmi.RemoteException {

@@ -7,22 +7,45 @@
 
 package test.wsdl.types;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+import org.apache.axis.holders.DayHolder;
+import org.apache.axis.holders.MonthDayHolder;
+import org.apache.axis.holders.MonthHolder;
+import org.apache.axis.holders.NegativeIntegerHolder;
+import org.apache.axis.holders.NonNegativeIntegerHolder;
+import org.apache.axis.holders.NonPositiveIntegerHolder;
+import org.apache.axis.holders.PositiveIntegerHolder;
+import org.apache.axis.holders.TimeHolder;
+import org.apache.axis.holders.URIHolder;
+import org.apache.axis.holders.UnsignedByteHolder;
+import org.apache.axis.holders.UnsignedIntHolder;
+import org.apache.axis.holders.UnsignedLongHolder;
+import org.apache.axis.holders.UnsignedShortHolder;
+import org.apache.axis.holders.YearHolder;
+import org.apache.axis.holders.YearMonthHolder;
+import org.apache.axis.types.Day;
+import org.apache.axis.types.Month;
+import org.apache.axis.types.MonthDay;
+import org.apache.axis.types.NegativeInteger;
+import org.apache.axis.types.NonNegativeInteger;
+import org.apache.axis.types.NonPositiveInteger;
+import org.apache.axis.types.PositiveInteger;
+import org.apache.axis.types.Time;
+import org.apache.axis.types.URI;
+import org.apache.axis.types.UnsignedByte;
+import org.apache.axis.types.UnsignedInt;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.axis.types.UnsignedShort;
+import org.apache.axis.types.Year;
+import org.apache.axis.types.YearMonth;
+import test.wsdl.types.comprehensive_service.TypeTest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import java.rmi.RemoteException;
-
-import java.util.Calendar;
-
-import javax.xml.rpc.Call;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.ServiceFactory;
 import javax.xml.rpc.Stub;
-
 import javax.xml.rpc.holders.BigDecimalHolder;
 import javax.xml.rpc.holders.BigIntegerHolder;
 import javax.xml.rpc.holders.BooleanHolder;
@@ -34,51 +57,19 @@ import javax.xml.rpc.holders.DoubleHolder;
 import javax.xml.rpc.holders.DoubleWrapperHolder;
 import javax.xml.rpc.holders.FloatHolder;
 import javax.xml.rpc.holders.FloatWrapperHolder;
-import javax.xml.rpc.holders.IntegerWrapperHolder;
 import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.IntegerWrapperHolder;
 import javax.xml.rpc.holders.LongHolder;
 import javax.xml.rpc.holders.QNameHolder;
 import javax.xml.rpc.holders.ShortHolder;
 import javax.xml.rpc.holders.ShortWrapperHolder;
 import javax.xml.rpc.holders.StringHolder;
-
-import javax.xml.namespace.QName;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
-import test.wsdl.types.comprehensive_service.TypeTest;
-
-import org.apache.axis.types.NonNegativeInteger;
-import org.apache.axis.types.PositiveInteger;
-import org.apache.axis.types.NonPositiveInteger;
-import org.apache.axis.types.NegativeInteger;
-import org.apache.axis.types.Time;
-import org.apache.axis.types.UnsignedLong;
-import org.apache.axis.types.UnsignedInt;
-import org.apache.axis.types.UnsignedByte;
-import org.apache.axis.types.UnsignedShort;
-import org.apache.axis.types.URI;
-import org.apache.axis.types.Year;
-import org.apache.axis.types.Month;
-import org.apache.axis.types.Day;
-import org.apache.axis.types.YearMonth;
-import org.apache.axis.types.MonthDay;
-import org.apache.axis.holders.NegativeIntegerHolder;
-import org.apache.axis.holders.NonNegativeIntegerHolder;
-import org.apache.axis.holders.NonPositiveIntegerHolder;
-import org.apache.axis.holders.PositiveIntegerHolder;
-import org.apache.axis.holders.TimeHolder;
-import org.apache.axis.holders.UnsignedLongHolder;
-import org.apache.axis.holders.UnsignedShortHolder;
-import org.apache.axis.holders.UnsignedByteHolder;
-import org.apache.axis.holders.UnsignedIntHolder;
-import org.apache.axis.holders.URIHolder;
-import org.apache.axis.holders.YearHolder;
-import org.apache.axis.holders.MonthHolder;
-import org.apache.axis.holders.DayHolder;
-import org.apache.axis.holders.YearMonthHolder;
-import org.apache.axis.holders.MonthDayHolder;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.Calendar;
 
 public class DynamicProxyTestCase extends TestCase {
     public DynamicProxyTestCase(String name) {

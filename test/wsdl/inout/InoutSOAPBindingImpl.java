@@ -1,13 +1,12 @@
 package test.wsdl.inout;
 
-import javax.xml.rpc.holders.IntHolder;
-import javax.xml.rpc.holders.StringHolder;
+import org.apache.axis.holders.DateHolder;
 import test.wsdl.inout.holders.AddressHolder;
 import test.wsdl.inout.holders.PhoneHolder;
 
+import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.StringHolder;
 import java.util.Date;
-
-import org.apache.axis.holders.DateHolder;
 
 public class InoutSOAPBindingImpl implements Inout
 {

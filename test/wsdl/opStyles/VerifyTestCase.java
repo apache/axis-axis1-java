@@ -1,7 +1,6 @@
 package test.wsdl.opStyles;
 
 import java.lang.reflect.Method;
-
 import java.util.Vector;
 
 // This test makes sure that the OpStyles interface ONLY has oneway and

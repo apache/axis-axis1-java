@@ -56,18 +56,16 @@
 package test.concurrency;
 
 import junit.framework.TestCase;
-
-import org.apache.axis.configuration.BasicServerConfig;
-import org.apache.axis.server.AxisServer;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.transport.local.LocalTransport;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
-
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.configuration.BasicServerConfig;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.transport.local.LocalTransport;
 import org.apache.commons.logging.Log;
 
 

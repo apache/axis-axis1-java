@@ -57,13 +57,12 @@ package test.chains;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.apache.axis.InternalException;
-import org.apache.axis.SimpleChain;
-import org.apache.axis.Handler;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Handler;
+import org.apache.axis.InternalException;
+import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleChain;
+import org.apache.axis.handlers.BasicHandler;
 
 public class TestSimpleChain extends TestCase
 {

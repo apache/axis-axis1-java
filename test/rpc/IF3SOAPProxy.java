@@ -1,16 +1,14 @@
 
 package test.rpc;
 
-import java.util.Calendar;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.ServiceException;
-
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import java.util.Calendar;
 
 public final class IF3SOAPProxy implements IF3SOAP
 {

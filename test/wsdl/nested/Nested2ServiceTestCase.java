@@ -6,9 +6,9 @@
  */
 
 package test.wsdl.nested;
+import org.apache.axis.message.MessageElement;
 import test.wsdl.nested.holders.PE_ADDRESSHolder;
 import test.wsdl.nested.holders.RETURNHolder;
-import org.apache.axis.message.MessageElement;
 
 public class Nested2ServiceTestCase extends junit.framework.TestCase {
     public Nested2ServiceTestCase(String name) {

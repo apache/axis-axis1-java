@@ -8,7 +8,6 @@
 package test.wsdl.oneway;
 
 import java.rmi.RemoteException;
-
 import java.util.Hashtable;
 
 public class OnewayImpl implements Oneway {

@@ -54,9 +54,9 @@
  */
 package test.soap;
 
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 

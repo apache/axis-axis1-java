@@ -2,15 +2,14 @@ package test.encoding;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
 
 import javax.xml.namespace.QName;

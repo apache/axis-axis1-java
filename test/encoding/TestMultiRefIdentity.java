@@ -55,15 +55,13 @@
 
 package test.encoding;
 
-import java.io.CharArrayWriter;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.apache.axis.encoding.SerializationContextImpl;
+
+import javax.xml.namespace.QName;
+import java.io.CharArrayWriter;
 
 /**
  * @author John Gregg (john.gregg@techarch.com)

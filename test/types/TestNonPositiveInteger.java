@@ -56,7 +56,6 @@
 package test.types;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.types.NonPositiveInteger;
 
 /**

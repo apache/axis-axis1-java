@@ -55,9 +55,9 @@
 
 package test.dynamic;
 
-import samples.client.DynamicInvoker;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
+import samples.client.DynamicInvoker;
 
 import java.net.ConnectException;
 

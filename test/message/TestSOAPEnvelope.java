@@ -56,16 +56,15 @@
 package test.message;
 
 import junit.framework.TestCase;
-
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-
 import org.apache.axis.Message;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPHeaderElement;
+
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
 
 /**
  * Test SOAPEnvelope class.

@@ -56,29 +56,26 @@
 package test.message;
 
 import junit.framework.TestCase;
-
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.util.Iterator;
-
-import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.CDATASection;
 import org.w3c.dom.Text;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Iterator;
 
 /**
  * Test certain classes in the message package for java

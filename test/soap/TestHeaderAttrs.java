@@ -59,19 +59,18 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.soap.SOAPConstants;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.transport.local.LocalTransport;
-import org.apache.axis.transport.local.LocalResponder;
 import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.transport.local.LocalResponder;
+import org.apache.axis.transport.local.LocalTransport;
 
 import java.util.Random;
-
-import org.apache.axis.client.Service;
 
 /**
  * A fairly comprehensive test of MustUnderstand/Actor combinations.

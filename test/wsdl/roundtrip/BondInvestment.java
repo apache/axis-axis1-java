@@ -55,10 +55,9 @@
 
 package test.wsdl.roundtrip;
 
-import java.math.BigInteger;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
-import test.wsdl.roundtrip.CallOptions;
 import java.util.HashMap;
 
 /**

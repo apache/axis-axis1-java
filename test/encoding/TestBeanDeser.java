@@ -13,11 +13,6 @@ import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
-import java.lang.reflect.Array;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 /**

@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.BasicServerConfig;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
@@ -17,8 +18,6 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;

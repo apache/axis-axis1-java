@@ -57,10 +57,9 @@ package test.wsdl.oneway;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import java.rmi.RemoteException;
-
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.Stub;
+import java.rmi.RemoteException;
 
 /**
 * This tests various oneway operation features.

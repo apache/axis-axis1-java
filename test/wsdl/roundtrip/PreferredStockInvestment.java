@@ -55,7 +55,6 @@
 
 package test.wsdl.roundtrip;
 
-import test.wsdl.roundtrip.StockInvestment;
 import java.math.BigDecimal;
 
 /**

@@ -1,26 +1,26 @@
 package test.soap12;
 
 import junit.framework.TestCase;
-
+import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
-import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.Constants;
-import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
-
-import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import test.encoding.Data;
+import test.encoding.DataDeserFactory;
+import test.encoding.DataSerFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -28,10 +28,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-
-import test.encoding.Data;
-import test.encoding.DataSerFactory;
-import test.encoding.DataDeserFactory;
 
 /** Little serialization test with a struct.
  */

@@ -8,8 +8,8 @@
 
 package test.wsdl.faults;
 
-import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.message.MessageElement;
+import org.apache.axis.utils.XMLUtils;
 
 public class FaultServiceSoapBindingImpl implements test.wsdl.faults.FaultServicePortType {
     public float getQuote(java.lang.String tickerSymbol) throws java.rmi.RemoteException, InvalidTickerFaultMessage {

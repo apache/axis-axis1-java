@@ -5,17 +5,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import javax.xml.namespace.QName;
-
-import java.io.Serializable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.Constants;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class TestQName extends TestCase
 {

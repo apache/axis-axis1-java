@@ -55,13 +55,13 @@
 
 package test.MSGDispatch;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.AxisFault;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

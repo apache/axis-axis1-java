@@ -56,21 +56,18 @@
 package test.message;
 
 import junit.framework.TestCase;
-
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.Name;
-import javax.xml.namespace.QName;
-
-import org.apache.axis.soap.SOAPConstants;
-
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.PrefixedQName;
-import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.Message;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
+import org.apache.axis.message.EnvelopeBuilder;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.PrefixedQName;
+import org.apache.axis.soap.SOAPConstants;
 import org.xml.sax.Attributes;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
 import java.util.Iterator;
 
 /**

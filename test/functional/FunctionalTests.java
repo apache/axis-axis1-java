@@ -1,10 +1,9 @@
 package test.functional;
 
-import org.apache.axis.utils.ClassUtils;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.axis.utils.ClassUtils;
 
 /**
  * Axis's FunctionalTests test client/server interactions.
