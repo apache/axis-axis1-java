@@ -55,8 +55,11 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BaseType;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
@@ -69,6 +72,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.commons.logging.Log;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -102,6 +106,9 @@ import java.util.Vector;
  */
 public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
+    /** Field log */
+    protected static Log log = LogFactory.getLog(Utils.class.getName());
+    
     /**
      * Given a type, return the Java mapping of that type's holder.
      * 
@@ -807,7 +814,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                     SOAPBody body = (SOAPBody) elem;
 
                     ns = body.getNamespaceURI();
+                    if (bEntry.getInputBodyType(operation) == Use.ENCODED && (ns == null || ns.length() == 0)) {
+                        log.warn(Messages.getMessage("badNamespaceForOperation00",
+                                bEntry.getName(),
+                                operation.getName()));
 
+                    }
                     break;
                 } else if (elem instanceof MIMEMultipartRelated) {
                     Object part = null;
@@ -832,7 +844,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                                 SOAPBody body = (SOAPBody) part;
 
                                 ns = body.getNamespaceURI();
+                                if (bEntry.getInputBodyType(operation) == Use.ENCODED && (ns == null || ns.length() == 0)) {
+                                    log.warn(Messages.getMessage("badNamespaceForOperation00",
+                                            bEntry.getName(),
+                                            operation.getName()));
 
+                                }
                                 break;
                             } else {
                                 part = null;
