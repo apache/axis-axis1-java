@@ -253,13 +253,6 @@ public class TypeMappingImpl implements TypeMapping
                                          "badJavaType" : "badXmlType"));
         }
 
-        // At least a serializer or deserializer factory must be specified.
-        if (sf == null && dsf == null) {
-            throw new JAXRPCException(
-                    Messages.getMessage(sf == null ?
-                                         "badSerFac" : "badDeserFac"));
-        }
-
         //REMOVED_FOR_TCK
         //if (sf != null &&
         //    !(sf instanceof javax.xml.rpc.encoding.SerializerFactory)) {
@@ -278,8 +271,10 @@ public class TypeMappingImpl implements TypeMapping
         if ((sf != null) || (class2Pair.get(javaType) == null))
             class2Pair.put(javaType, pair);
 
-        pair2SF.put(pair, sf);
-        pair2DF.put(pair, dsf);
+        if (sf != null)
+            pair2SF.put(pair, sf);
+        if (dsf != null)
+            pair2DF.put(pair, dsf);
     }
 
     /**
@@ -542,8 +537,8 @@ public class TypeMappingImpl implements TypeMapping
     public QName getTypeQName(Class javaType) {
         //log.debug("getTypeQName javaType =" + javaType);
         if (javaType == null)
-        return null;
-
+            return null;
+        
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
         if (pair == null && delegate != null) {
@@ -574,6 +569,9 @@ public class TypeMappingImpl implements TypeMapping
      * @return javaType class or type
      */
     public Class getClassForQName(QName xmlType) {
+        if (xmlType == null)
+            return null;
+        
         //log.debug("getClassForQName xmlType =" + xmlType);
         Class javaType = null;
         Pair pair = (Pair) qName2Pair.get(xmlType);

@@ -98,26 +98,19 @@ public class DefaultSOAP12TypeMappingImpl extends DefaultTypeMappingImpl {
 
         // SOAP Encoded strings are treated as primitives.
         // Everything else is not.
-        myRegister(Constants.SOAP_STRING,     java.lang.String.class,  
-                   null, null, true); 
-        myRegister(Constants.SOAP_BOOLEAN,    java.lang.Boolean.class, 
-                   null, null, false);
-        myRegister(Constants.SOAP_DOUBLE,     java.lang.Double.class,
-                   null, null, false);
-        myRegister(Constants.SOAP_FLOAT,      java.lang.Float.class,
-                   null, null, false);
-        myRegister(Constants.SOAP_INT,        java.lang.Integer.class,
-                   null, null, false);
-        myRegister(Constants.SOAP_INTEGER,    java.math.BigInteger.class,
-                   null, null, false);
-        myRegister(Constants.SOAP_DECIMAL,    java.math.BigDecimal.class,
-                   null, null, false);
-        myRegister(Constants.SOAP_LONG,       java.lang.Long.class,     
-                   null, null, false);
-        myRegister(Constants.SOAP_SHORT,      java.lang.Short.class,    
-                   null, null, false);
-        myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,     
-                   null, null, false);
+        myRegisterSimple(Constants.SOAP_STRING, java.lang.String.class, true);  
+        myRegisterSimple(Constants.SOAP_BOOLEAN,
+                         java.lang.Boolean.class, false); 
+        myRegisterSimple(Constants.SOAP_DOUBLE, java.lang.Double.class, false);
+        myRegisterSimple(Constants.SOAP_FLOAT, java.lang.Float.class, false);
+        myRegisterSimple(Constants.SOAP_INT, java.lang.Integer.class, false);
+        myRegisterSimple(Constants.SOAP_INTEGER,
+                         java.math.BigInteger.class, false);
+        myRegisterSimple(Constants.SOAP_DECIMAL, java.math.BigDecimal.class,
+                         false);
+        myRegisterSimple(Constants.SOAP_LONG, java.lang.Long.class, false);
+        myRegisterSimple(Constants.SOAP_SHORT, java.lang.Short.class, false);
+        myRegisterSimple(Constants.SOAP_BYTE, java.lang.Byte.class, false);
 
         // SOAP 1.2
         // byte[] -ser-> SOAP_BASE64
@@ -127,7 +120,7 @@ public class DefaultSOAP12TypeMappingImpl extends DefaultTypeMappingImpl {
                    new Base64SerializerFactory(byte[].class,
                                                Constants.SOAP_BASE64 ),
                    new Base64DeserializerFactory(byte[].class, 
-                                                 Constants.SOAP_BASE64),
-                   true);
+                                                 Constants.SOAP_BASE64)
+        );
     }
 }
