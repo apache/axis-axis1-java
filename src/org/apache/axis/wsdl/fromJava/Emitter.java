@@ -511,11 +511,11 @@ public class Emitter {
         }
 
         if (encodingList == null) {
-            clsName = cls.getName();
-            clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
-
             // Default the portType name
             if (getPortTypeName() == null) {
+                clsName = cls.getName();
+                clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
+
                 setPortTypeName(clsName);
             }
 
@@ -570,7 +570,8 @@ public class Emitter {
                 }
             }
 
-            namespaces.put(cls.getName(), intfNS, "intf");
+            if(cls != null)
+                namespaces.put(cls.getName(), intfNS, "intf");
             namespaces.putPrefix(implNS, "impl");
         }
     }
@@ -1269,9 +1270,10 @@ public class Emitter {
             // Add the type representing the param
             // For convenience, add an element for the param
             // Write <part name=param_name type=param_type>
-            QName typeQName = 
-                types.writeTypeForPart(javaType,
-                                       param.getTypeQName());
+            QName typeQName = param.getTypeQName();
+            if(javaType != null)
+                typeQName = types.writeTypeForPart(javaType,
+                                       typeQName);
             //types.writeElementForPart(javaType, param.getTypeQName());
             if (typeQName != null) {
                 part.setName(param.getName());

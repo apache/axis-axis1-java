@@ -131,6 +131,7 @@ Copyright:
       <exclude name="**/org/apache/axis/components/jms/JMSVendorAdapterFactory.java" unless="jms.present"/>
       <exclude name="**/org/apache/axis/components/jms/JNDIVendorAdapter.java" unless="jms.present"/>
       <exclude name="**/org/apache/axis/components/jms/SonicMQVendorAdapter.java" unless="jmsAndSonicMQ.present"/>
+      <exclude name="**/org/apache/axis/components/script/BSF.java" unless="bsf.present"/>
       <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
       <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>

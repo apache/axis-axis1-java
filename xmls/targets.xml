@@ -201,6 +201,9 @@
       <available classname="org.exolab.castor.xml.MarshalException" classpathref="classpath" />
     </condition>
 
+    <condition property="bsf.present" >
+      <available classname="com.ibm.bsf.BSFManager" classpathref="classpath" />
+    </condition>
 
     <!-- look for WSDL support on the platform -->
     <condition property="wsdl.found">
