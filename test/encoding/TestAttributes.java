@@ -95,7 +95,7 @@ public class TestAttributes extends TestCase {
 
         Message message = new Message(msgString);
         message.setMessageContext(msgContext);
-        SOAPEnvelope env = message.getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope env = message.getSOAPEnvelope();
         RPCElement rpcEl = (RPCElement)env.getFirstBody();
         Vector params = rpcEl.getParams();
         assertEquals("Wrong # of params in deserialized message!",
@@ -147,7 +147,7 @@ public class TestAttributes extends TestCase {
 
         Message message = new Message(msgString);
         message.setMessageContext(msgContext);
-        SOAPEnvelope env = message.getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope env = message.getSOAPEnvelope();
         RPCElement rpcEl = (RPCElement)env.getFirstBody();
         Vector params = rpcEl.getParams();
         assertEquals("Wrong # of params in deserialized message!",

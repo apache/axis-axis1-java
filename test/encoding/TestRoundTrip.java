@@ -86,16 +86,16 @@ public class TestRoundTrip extends TestCase {
         Message message = new Message(xml1);
         message.setMessageContext(new MessageContext(server));
 
-        SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPEnvelope();
         RPCElement body = (RPCElement) envelope.getFirstBody();
         Vector arglist = body.getParams();
         Object ret1 = ((RPCParam) arglist.get(0)).getValue();
 
-        String xml2 = message.getSOAPPart().getAsString();
+        String xml2 = message.getSOAPPartAsString();
         Message message2 = new Message(xml2);
         message2.setMessageContext(new MessageContext(server));
 
-        SOAPEnvelope envelope2 = (SOAPEnvelope) message2.getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope envelope2 = (SOAPEnvelope) message2.getSOAPEnvelope();
         RPCElement body2 = (RPCElement) envelope2.getFirstBody();
         Vector arglist2 = body2.getParams();
         Object ret2 = ((RPCParam) arglist2.get(0)).getValue();

@@ -58,9 +58,9 @@ public class TestDOM extends TestCase {
        message.setMessageContext(msgContext);
 
        // Now completely round trip it
-       SOAPEnvelope envelope = message.getSOAPPart().getAsSOAPEnvelope();
+       SOAPEnvelope envelope = message.getSOAPEnvelope();
        // Element dom = message.getAsDOM();
-       String result = message.getSOAPPart().getAsString();
+       String result = message.getSOAPPartAsString();
 
        assertEquals("Request is not the same as the result.", request, result);
     }

@@ -51,9 +51,9 @@ public class TestOutputter extends TestCase {
        Message message = new Message(header + data + footer);
        message.setMessageContext(new MessageContext(server));
 
-       message.getSOAPPart().getAsSOAPEnvelope();
+       message.getSOAPEnvelope();
 
-       assertEquals(header+data+footer, message.getSOAPPart().getAsString());
+       assertEquals(header+data+footer, message.getSOAPPartAsString());
     }
 
     public void testString() throws Exception {

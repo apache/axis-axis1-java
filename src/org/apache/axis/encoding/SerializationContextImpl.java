@@ -566,7 +566,7 @@ public class SerializationContextImpl implements SerializationContext
         Message msg= getCurrentMessage();
         if(null != msg){
             //Get attachments. returns null if no attachment support.
-            Attachments attachments= getCurrentMessage().getAttachments();
+            Attachments attachments= getCurrentMessage().getAttachmentsImpl();
 
             if( null != attachments && attachments.isAttachment(value)){
                 //Attachment support and this is an object that should be treated as an attachment.

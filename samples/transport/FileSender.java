@@ -81,7 +81,7 @@ public class FileSender extends BasicHandler {
 
   public void invoke(MessageContext msgContext) throws AxisFault {
     Message  msg = msgContext.getRequestMessage();
-    byte[]   buf = (byte[]) msg.getSOAPPart().getAsBytes();
+    byte[]   buf = (byte[]) msg.getSOAPPartAsBytes();
     boolean timedOut = false;
     try {
       FileOutputStream fos = new FileOutputStream( "xml" + nextNum + ".req" );
@@ -109,7 +109,7 @@ public class FileSender extends BasicHandler {
         Thread.sleep( 100 );   // let the other side finish writing
         FileInputStream fis = new FileInputStream( "xml" + nextNum + ".res" );
         msg = new Message( fis );
-        msg.getSOAPPart().getAsBytes();  // just flush the buffer
+        msg.getSOAPPartAsBytes();  // just flush the buffer
         fis.close();
          Thread.sleep( 100 );
         (new File("xml" + nextNum + ".res")).delete();

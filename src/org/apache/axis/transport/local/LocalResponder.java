@@ -77,7 +77,7 @@ public class LocalResponder extends BasicHandler {
             log.debug("Enter: LocalResponder::invoke");
         }
 
-        msgContext.getResponseMessage().getSOAPPart().getAsString();
+        msgContext.getResponseMessage().getSOAPPartAsString();
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: LocalResponder::invoke");

@@ -122,9 +122,9 @@ public class TestApplicationScope extends TestCase {
                     String ret = (String)call.invoke("hello", null);
                     if (ret == null) {
                         MessageContext msgContext = call.getMessageContext();
-                        String respStr = msgContext.getResponseMessage().getSOAPPart().getAsString();
+                        String respStr = msgContext.getResponseMessage().getSOAPPartAsString();
 
-                        String reqStr = msgContext.getRequestMessage().getSOAPPart().getAsString();
+                        String reqStr = msgContext.getRequestMessage().getSOAPPartAsString();
                         String nullStr = "Got null response! Request message:\r\n" + reqStr + "\r\n\r\n" +
                                   "Response message:\r\n" + respStr;
                         log.fatal(nullStr);

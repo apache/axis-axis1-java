@@ -81,8 +81,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
         try {
             // log.debug("IN MD5");        
             Message  msg = msgContext.getRequestMessage();
-            org.apache.axis.SOAPPart soapPart = (org.apache.axis.SOAPPart) msg.getSOAPPart();
-            org.apache.axis.message.SOAPEnvelope env = (org.apache.axis.message.SOAPEnvelope) soapPart.getAsSOAPEnvelope();
+            org.apache.axis.message.SOAPEnvelope env = (org.apache.axis.message.SOAPEnvelope) msg.getSOAPEnvelope();
             org.apache.axis.message.SOAPBodyElement sbe = env.getFirstBody();//env.getBodyByName("ns1", "addedfile");
             org.w3c.dom.Element sbElement = sbe.getAsDOM();
             //get the first level accessor  ie parameter
@@ -92,7 +91,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
             org.w3c.dom.Element paramElement = (org.w3c.dom.Element) n;
             //Get the href associated with the attachment.
             String href = paramElement.getAttribute(org.apache.axis.Constants.ATTR_HREF);
-            org.apache.axis.Part ap = msg.getAttachments().getAttachmentByReference(href);
+            org.apache.axis.Part ap = msg.getAttachmentsImpl().getAttachmentByReference(href);
             javax.activation.DataHandler dh = org.apache.axis.attachments.AttachmentUtils.getActivationDataHandler(ap);
             org.w3c.dom.Node timeNode = paramElement.getFirstChild();
             long startTime = -1;

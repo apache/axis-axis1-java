@@ -63,6 +63,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.soap.SOAPException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -528,7 +529,11 @@ public class HTTPSender extends BasicHandler {
         header.append("\r\n");
         out.write(header.toString()
                 .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
-        reqMessage.writeContentToStream(out);
+        try {
+            reqMessage.writeTo(out);
+        } catch (SOAPException e){
+            log.error(JavaUtils.getMessage("exception00"), e);
+        }
         out.flush();
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("xmlSent00"));
@@ -695,7 +700,7 @@ public class HTTPSender extends BasicHandler {
                 }
                 log.debug("\n" + JavaUtils.getMessage("xmlRecd00"));
                 log.debug("-----------------------------------------------");
-                log.debug((String) outMsg.getSOAPPart().getAsString());
+                log.debug((String) outMsg.getSOAPPartAsString());
             }
         }
 

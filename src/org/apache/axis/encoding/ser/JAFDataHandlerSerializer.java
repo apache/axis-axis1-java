@@ -108,7 +108,7 @@ public class JAFDataHandlerSerializer implements Serializer {
     {
         DataHandler dh= (DataHandler)value;
         //Add the attachment content to the message.
-        Attachments attachments= context.getCurrentMessage().getAttachments();
+        Attachments attachments= context.getCurrentMessage().getAttachmentsImpl();
         Part attachmentPart= attachments.createAttachmentPart(dh);
         String href= attachmentPart.getContentId();
 
