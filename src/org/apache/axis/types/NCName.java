@@ -57,6 +57,7 @@ package org.apache.axis.types;
 import java.lang.Character;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLChar;
 
 /**
  * Custom class for supporting XSD data type NCName
@@ -88,22 +89,6 @@ public class NCName extends Name {
         }
     }
 
-    /**
-    * validate against definition of NCNameChar
-    * NCNameChar ::=  Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender
-    **/
-    public boolean isNameChar(Character cValue) {
-      if ( (Character.isDigit(cValue.charValue()) == true)   ||
-        (Character.isLetter(cValue.charValue()) == true) ||
-        (cValue.charValue() == '.') ||
-        (cValue.charValue() == '-') ||
-        (cValue.charValue() == '_') )
-      //TODO  CombineChar ||
-      //TODO  Extender
-          return true;
-        else
-          return false;
-    }
 
     /**
      *
@@ -114,21 +99,16 @@ public class NCName extends Name {
      */
     public boolean isValid(String stValue) {
         int scan;
-        Character cValue;
+        boolean bValid = true;
 
         for (scan=0; scan < stValue.length(); scan++) {
-          cValue = new Character(stValue.charAt(scan));
-          if (scan == 0) {
-                    // Name[0] = (Letter | '_' )
-            if ( (Character.isLetter(cValue.charValue()) != true) &&
-              (cValue.charValue() != '_') )
-                return false;
-            }
-          else
-            if (isNameChar(cValue) == false)
-              return false;
+            if (scan == 0)
+              bValid = XMLChar.isNCNameStart(stValue.charAt(scan));
+            else
+              bValid = XMLChar.isNCName(stValue.charAt(scan));
+            if (bValid == false)
+              break;
         }
-
-        return true;
+    return bValid;
     }
 }

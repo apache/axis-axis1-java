@@ -57,6 +57,7 @@ package org.apache.axis.types;
 import java.lang.Character;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLChar;
 
 /**
  * Custom class for supporting XSD data type Name
@@ -88,51 +89,26 @@ public class Name extends Token {
         }
     }
 
-    /**
-    * validate against XSD definition for NameChar
-    * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
-    */
-    public boolean isNameChar(Character cValue) {
-      if ( (Character.isDigit(cValue.charValue()) == true)   ||
-        (Character.isLetter(cValue.charValue()) == true) ||
-        (cValue.charValue() == '.') ||
-        (cValue.charValue() == '-') ||
-        (cValue.charValue() == '_') ||
-        (cValue.charValue() == ':') )
-      //TODO  CombineChar ||
-      //TODO  Extender
-          return true;
-        else
-          return false;
-    }
 
     /**
      *
      * validate the value against the xsd definition
      *   Name    ::=    (Letter | '_' | ':') ( NameChar)*
+     * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
      */
     public boolean isValid(String stValue) {
         int scan;
-        Character cValue;
-
-        // conform to Token validation
-        if (super.isValid(stValue) == false)
-          return false;
+        boolean bValid = true;
 
         for (scan=0; scan < stValue.length(); scan++) {
-              cValue = new Character(stValue.charAt(scan));
-              if (scan == 0) {
-                // Name[0] = (Letter | '_' | ':')
-                if ( (Character.isLetter(cValue.charValue()) != true) &&
-                  (cValue.charValue() != '_') &&
-                  (cValue.charValue() != ':') )
-                    return false;
-              }
-             else
-                if (isNameChar(cValue) == false)
-                    return false;
+          if (scan == 0)
+             bValid = XMLChar.isNameStart(stValue.charAt(scan));
+          else
+             bValid = XMLChar.isName(stValue.charAt(scan));
+          if (bValid == false)
+              break;
         }
 
-        return true;
+        return bValid;
     }
 }

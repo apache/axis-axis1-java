@@ -57,6 +57,7 @@ package org.apache.axis.types;
 import java.util.ArrayList;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLChar;
 
 /**
  * Custom class for supporting XSD data type NMToken
@@ -91,36 +92,17 @@ public class NMToken extends Token {
     }
 
     /**
-    * validate against definition of NameChar
-    * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
-    **/
-    public boolean isNameChar(Character cValue) {
-      if ( (Character.isDigit(cValue.charValue()) == true)   ||
-        (Character.isLetter(cValue.charValue()) == true) ||
-        (cValue.charValue() == '.') ||
-        (cValue.charValue() == '-') ||
-        (cValue.charValue() == '_') ||
-        (cValue.charValue() == ':') )
-      //TODO  CombineChar ||
-      //TODO  Extender
-          return true;
-        else
-          return false;
-    }
-
-    /**
      *
      * validate the value against the xsd definition
      * Nmtoken    ::=    (NameChar)+
+     * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
      */
     public boolean isValid(String stValue) {
         int scan;
-        Character cValue;
 
         for (scan=0; scan < stValue.length(); scan++) {
-          cValue = new Character(stValue.charAt(scan));
-          if (isNameChar(cValue) == false)
-              return false;
+          if (XMLChar.isName(stValue.charAt(scan)) == false)
+            return false;
         }
 
         return true;
