@@ -121,8 +121,13 @@ public class RPCDispatchHandler extends BasicHandler {
           argClasses = new Class[ args.size() ];
           argValues = new Object[ args.size()];
           for ( i = 0 ; i < args.size() ; i++ ) {
-            argClasses[i] = cl.loadClass("java.lang.String") ;
-            argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
+            Object arg  = ((RPCParam)args.get(i)).getValue() ;
+            if (arg == null) {
+                argClasses[i] = String.class;
+            } else {
+                argValues[i]  = arg;
+                argClasses[i] = arg.getClass();
+            }
             Debug.Print( 2, "  class: " + argClasses[i] );
             Debug.Print( 2, "  value: " + argValues[i] == null ? 
                                              "null" :

@@ -32,6 +32,12 @@ public class TypeMapper
     class IntDeserFactory implements DeserFactory {
         public BasicDeser getDeser() { return new IntDeser(); }
     }
+    class FloatDeser extends BasicDeser {
+        Object makeValue(String source) { return new Float(source); }
+    }
+    class FloatDeserFactory implements DeserFactory {
+        public BasicDeser getDeser() { return new FloatDeser(); }
+    }
     class LongDeser extends BasicDeser {
         Object makeValue(String source) { return new Long(source); }
     }
@@ -62,6 +68,7 @@ public class TypeMapper
     {
         registerDeserializer(new QName(Constants.URI_SCHEMA_XSD, "int"), new IntDeserFactory());
         registerDeserializer(new QName(Constants.URI_SCHEMA_XSD, "long"), new LongDeserFactory());
+        registerDeserializer(new QName(Constants.URI_SCHEMA_XSD, "float"), new FloatDeserFactory());
         registerDeserializer(new QName(Constants.URI_SCHEMA_XSD, "string"), new StringDeserFactory());
     }
     
