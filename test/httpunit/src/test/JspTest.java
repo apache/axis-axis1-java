@@ -69,18 +69,32 @@ public class JspTest extends HttpUnitTestBase {
     public JspTest(String name) {
         super(name);
     }
-    
 
-    public void testAxisHappy() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url+"/happyaxis.jsp");
-        assertStringInBody(request,"The core axis libraries are present");
-    }
-
+    /**
+     * base page
+     */
     public void testIndex() throws Exception {
         WebRequest request = new GetMethodWebRequest(url+"/");
         assertStringInBody(request,"Apache-Axis");
     }
 
+    /**
+     * happiness test
+     */
+    public void testAxisHappy() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url+"/happyaxis.jsp");
+        assertStringInBody(request,"The core axis libraries are present");
+    }
+
+
+    /**
+     * fingerprint
+     */
+    public void testFingerprint() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url+"/fingerprint.jsp");
+        assertStringInBody(request,"System Fingerprint");
+    }
+    
 
 }
 
