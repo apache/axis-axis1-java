@@ -7,6 +7,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.test.AxisTestBase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -24,7 +25,7 @@ import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 
-public class TestXMLUtils extends TestCase
+public class TestXMLUtils extends AxisTestBase
 {
 
     public TestXMLUtils (String name) {
@@ -64,14 +65,15 @@ public class TestXMLUtils extends TestCase
     * it unless you really want to test it.  When not connected to the Web you
     * will get an UnknownHostException.
     */
-    /*
-    public void testNewDocumentURI()
+
+    public void testNewDocumentURI() throws Exception
     {
-        String uri = "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd";
-        Document doc = XMLUtils.newDocument(uri);
-        assertNotNull("Did not get a new Document", doc);
+        if(isOnline()) {
+            String uri = "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd";
+            Document doc = XMLUtils.newDocument(uri);
+            assertNotNull("Did not get a new Document", doc);
+        }
     }
-    */
 
     public void testDocumentToString() throws Exception
     {
