@@ -90,7 +90,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
     private static Project testSuiteProject = null;
     private static List classNames = null;
     private static List fileNames = null;
-    private static final AxisClassLoader loader = new AxisClassLoader();
+    private static final AxisClassLoader loader = AxisClassLoader.getClassLoader();
 
     public Wsdl2javaTestSuite() {
         super();
@@ -239,7 +239,10 @@ public class Wsdl2javaTestSuite extends TestSuite {
             int port = opts.getPort();
             ServerSocket ss = new ServerSocket(port);
             server.setServerSocket(ss);
-            new Thread(server).start();
+            Thread serverThread = new Thread(server);
+            serverThread.setDaemon(true);
+            serverThread.setContextClassLoader(loader);
+            serverThread.start();
 
             Iterator testIterator = Wsdl2javaTestSuite.fileNames.iterator();
             while (testIterator.hasNext()) {
@@ -253,7 +256,6 @@ public class Wsdl2javaTestSuite extends TestSuite {
                     }
                 }
                 //deploy
-                System.err.println("deploy: " + deploy);
                 String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + deploy };
                 AdminClient.main(args);
             }
@@ -273,7 +275,6 @@ public class Wsdl2javaTestSuite extends TestSuite {
                     }
                 }
                 //undeploy
-                System.err.println("undeploy: " + undeploy);
                 String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + undeploy };
                 AdminClient.main(args);
             }
