@@ -57,6 +57,7 @@ package org.apache.axis ;
 
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
@@ -101,7 +102,7 @@ public class FaultableHandler extends BasicHandler {
      * and already processed it's undo logic - as needed.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: FaultableHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "FaultableHandler::invoke"));
         try {
             workHandler.invoke( msgContext );
         }
@@ -150,16 +151,16 @@ public class FaultableHandler extends BasicHandler {
                 throw (AxisFault) e ;
             }
         }
-        category.debug("Exit: FaultableHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "FaultableHandler::invoke"));
     }
 
     /**
      * Some handler later on has faulted so we need to undo our work.
      */
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: FaultableHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "FaultableHandler::undo"));
         workHandler.undo( msgContext );
-        category.debug("Exit: FaultableHandler::undo" );
+        category.debug(JavaUtils.getMessage("exit00", "FaultableHandler::undo"));
     };
 
     public boolean canHandleBlock(QName qname) {

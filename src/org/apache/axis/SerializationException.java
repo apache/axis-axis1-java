@@ -54,6 +54,8 @@
  */
 package org.apache.axis;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
  * @author Russell Butek (butek@us.ibm.com)
  */
@@ -62,6 +64,6 @@ public class SerializationException extends AxisFault
     public SerializationException (String type, Throwable t)
     {
         // This string must be internationalized.
-        super ("Exception configuring bean serialization for " + type, t);
+        super (JavaUtils.getMessage("exception00", type), t);
     } // ctor
 } // class SerializationException

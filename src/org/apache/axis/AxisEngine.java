@@ -70,6 +70,7 @@ import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
@@ -124,7 +125,7 @@ public abstract class AxisEngine extends BasicHandler
         // !!! Set up default configuration?
         init();
 
-        category.debug("Exit: AxisEngine no-arg constructor");
+        category.debug(JavaUtils.getMessage("exit01", "AxisEngine"));
     }
 
     public AxisEngine(ConfigurationProvider configProvider)
@@ -137,7 +138,7 @@ public abstract class AxisEngine extends BasicHandler
      * (re)initialize - What should really go in here???
      */
     public void init() {
-        category.debug("Enter: AxisEngine::init" );
+        category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
 
         getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
@@ -145,10 +146,10 @@ public abstract class AxisEngine extends BasicHandler
             configProvider.configureEngine(this);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new NullPointerException("Problem deploying!");
+            throw new NullPointerException(JavaUtils.getMessage("problemDeploying00"));
         }
         
-        category.debug("Exit: AxisEngine::init" );
+        category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
     }
 
     /**
@@ -206,7 +207,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             configProvider.writeEngineConfig(this);
         } catch (Exception e) {
-            System.err.println("Coudn't write engine config!");
+            System.err.println(JavaUtils.getMessage("saveConfigFail00"));
             e.printStackTrace();
         }
     }
@@ -300,8 +301,8 @@ public abstract class AxisEngine extends BasicHandler
                                     DeserializerFactory deserFactory,
                                     Serializer serializer)
     {
-        category.info("Registering type mapping " + qName + " -> " +
-                       cls.getName());
+        category.info(JavaUtils.getMessage("registerTypeMap00",
+                qName.toString(), cls.getName()));
         if (deserFactory != null)
             getTypeMappingRegistry().addDeserializerFactory(qName,
                                                         cls,
@@ -353,7 +354,7 @@ public abstract class AxisEngine extends BasicHandler
     public void deployService(String key, SOAPService service)
         throws DeploymentException
     {
-        category.info("Deploying service '" + key + "' into " + this);
+        category.info(JavaUtils.getMessage("deployService00", key, this.toString()));
         service.setName(key);
         service.setEngine(this);
         
