@@ -6,10 +6,10 @@ import java.util.Map;
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public interface ConfigurableMessageExchangeFactory
-    extends MessageExchangeFactory {
+        extends MessageExchangeFactory {
 
     public ConfigurableMessageExchange createMessageExchange(
-        Map properties,
-        String[] enabledFeatures);
+            Map properties,
+            String[] enabledFeatures);
 
 }

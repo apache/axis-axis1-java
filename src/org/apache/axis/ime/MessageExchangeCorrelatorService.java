@@ -6,10 +6,10 @@ package org.apache.axis.ime;
 public interface MessageExchangeCorrelatorService {
 
     public void put(
-        MessageExchangeCorrelator correlator,
-        MessageExchangeContext context);
-    
+            MessageExchangeCorrelator correlator,
+            MessageExchangeContext context);
+
     public MessageExchangeContext get(
-        MessageExchangeCorrelator correlator);
+            MessageExchangeCorrelator correlator);
 
 }

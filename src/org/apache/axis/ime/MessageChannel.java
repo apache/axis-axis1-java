@@ -28,14 +28,14 @@ public interface MessageChannel {
      * channel.  If one does not exist, return null
      */
     public MessageExchangeContext peek();
-  
+
     /**
      * Put a message onto the channel
      */
     public void put(
-        Object key, 
-        MessageExchangeContext context);
-  
+            Object key,
+            MessageExchangeContext context);
+
     /**
      * Cancel a message that has been put on the channel.
      * Unlike select(Object key), this method will not block
@@ -43,7 +43,7 @@ public interface MessageChannel {
      * put onto the MessageChannel.
      */
     public MessageExchangeContext cancel(
-      Object key);
+            Object key);
 
     /**
      * Select and remove all of the messages currently in
@@ -53,15 +53,15 @@ public interface MessageChannel {
      * returns (it is possible that another thread may 
      * put new MessageContexts into the channel before this
      * operation completes)
-     */  
+     */
     public MessageExchangeContext[] selectAll();
-    
+
     /**
      * Select and remove the next message in the channel
      * If a message is not available, wait indefinitely for one
      */
     public MessageExchangeContext select()
-        throws InterruptedException;
+            throws InterruptedException;
 
     /**
      * Select and remove the next message in the channel
@@ -69,16 +69,16 @@ public interface MessageChannel {
      * of time for one
      */
     public MessageExchangeContext select(
-        long timeout)
+            long timeout)
             throws InterruptedException;
-    
+
     /**
      * Select and remove a specific message in the channel
      * If the message is not available, wait indefinitely 
      * for one to be available
      */
     public MessageExchangeContext select(
-        Object key)
+            Object key)
             throws InterruptedException;
 
     /**
@@ -87,7 +87,7 @@ public interface MessageChannel {
      * amount of time for one
      */
     public MessageExchangeContext select(
-        Object key, 
-        long timeout)
-            throws InterruptedException;    
+            Object key,
+            long timeout)
+            throws InterruptedException;
 }

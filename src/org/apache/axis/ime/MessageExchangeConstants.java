@@ -11,9 +11,9 @@ public interface MessageExchangeConstants {
      * Identifies the MessageExchangeCorrelator property 
      * within the MessageContext
      */
-    public static final String MESSAGE_CORRELATOR_PROPERTY = 
-        MessageExchangeCorrelator.class.getName();
-      
+    public static final String MESSAGE_CORRELATOR_PROPERTY =
+            MessageExchangeCorrelator.class.getName();
+
     /**
      * Boolean MessageContext property that indicates whether or
      * not the MessageExchangeCorrelationService should be used.
@@ -21,13 +21,13 @@ public interface MessageExchangeConstants {
      * required)
      */
     public static final String ENABLE_CORRELATOR_SERVICE =
-        MESSAGE_CORRELATOR_PROPERTY + "::Enable";
-   
+            MESSAGE_CORRELATOR_PROPERTY + "::Enable";
+
     /**
      * Default value for the ENABLE_CORRELATOR_SERVICE
      * MessageContext property
-     */   
-    public static final Boolean ENABLE_CORRELATOR_SERVICE_DEFAULT = 
-        new Boolean(true);
-      
+     */
+    public static final Boolean ENABLE_CORRELATOR_SERVICE_DEFAULT =
+            new Boolean(true);
+
 }

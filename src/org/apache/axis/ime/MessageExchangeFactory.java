@@ -6,5 +6,5 @@ package org.apache.axis.ime;
 public interface MessageExchangeFactory {
 
     public MessageExchange createMessageExchange();
-  
+
 }

@@ -1,143 +1,200 @@
+/*
+ * The Apache Software License, Version 1.1
+ *
+ *
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Axis" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+
 package org.apache.axis.ime.internal;
 
-import java.util.Map;
-import java.util.Hashtable;
-import java.util.Iterator;
+import org.apache.axis.i18n.Messages;
 import org.apache.axis.ime.MessageChannel;
 import org.apache.axis.ime.MessageExchangeContextListener;
+
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public class MessageWorkerGroup {
 
-  protected Map threads = new Hashtable();
-  protected boolean interrupt;
-  protected long threadcount;
-  public boolean _shutdown;
+    protected Map threads = new Hashtable();
+    protected boolean interrupt;
+    protected long threadcount;
+    public boolean _shutdown;
 
-  /**
-   * Returns true if all workers have been shutdown
-   */
-  public boolean isShutdown() {
-    synchronized(this) {
-      return _shutdown && threadcount == 0;
+    /**
+     * Returns true if all workers have been shutdown
+     */
+    public boolean isShutdown() {
+        synchronized (this) {
+            return _shutdown && threadcount == 0;
+        }
     }
-  }
 
-  /**
-   * Returns true if all workers are in the process of shutting down
-   */  
-  public boolean isShuttingDown() {
-    synchronized(this) {
-      return _shutdown;
+    /**
+     * Returns true if all workers are in the process of shutting down
+     */
+    public boolean isShuttingDown() {
+        synchronized (this) {
+            return _shutdown;
+        }
     }
-  }
 
-  /**
-   * Returns the total number of currently active workers
-   */  
-  public long getWorkerCount() {
-    synchronized(this) {
-      return threadcount;
+    /**
+     * Returns the total number of currently active workers
+     */
+    public long getWorkerCount() {
+        synchronized (this) {
+            return threadcount;
+        }
     }
-  }
-  
-  /**
-   * Adds a new worker to the pool
-   */
-  public void addWorker(
-    MessageChannel channel, 
-    MessageExchangeContextListener listener) {
-      if (_shutdown)
-        throw new IllegalStateException();
-      MessageWorker worker =
-        new MessageWorker(this, channel, listener);
-      Thread thread = new Thread(worker);
-      threads.put(worker,thread);
-      threadcount++;
-      thread.start();
-  }
 
-  /**
-   * Forcefully interrupt all workers
-   */
-  public void interruptAll() {
-    synchronized(threads) {
-      for (Iterator i = threads.values().iterator(); i.hasNext();) {
-        Thread t = (Thread)i.next();
-        t.interrupt();
-      }
+    /**
+     * Adds a new worker to the pool
+     */
+    public void addWorker(
+            MessageChannel channel,
+            MessageExchangeContextListener listener) {
+        if (_shutdown)
+            throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
+        MessageWorker worker =
+                new MessageWorker(this, channel, listener);
+        Thread thread = new Thread(worker);
+        threads.put(worker, thread);
+        threadcount++;
+        thread.start();
     }
-  }
-  
-  /**
-   * Forcefully shutdown the pool
-   */
-  public void shutdown() {
-    synchronized(this) {
-      _shutdown = true;
-    }
-    interruptAll();
-  }
 
-  /**
-   * Forcefully shutdown the pool
-   */
-  public void safeShutdown() {
-    synchronized(this) {
-      _shutdown = true;
+    /**
+     * Forcefully interrupt all workers
+     */
+    public void interruptAll() {
+        synchronized (threads) {
+            for (Iterator i = threads.values().iterator(); i.hasNext();) {
+                Thread t = (Thread) i.next();
+                t.interrupt();
+            }
+        }
     }
-  }
-  
-  /**
-   * Await shutdown of the worker
-   */  
-  public synchronized void awaitShutdown()
-    throws InterruptedException {
-      if (!_shutdown)
-        throw new IllegalStateException();
-      while (threadcount > 0)
-        wait();
-  }
-  
-  /**
-   * Await shutdown of the worker
-   */
-  public synchronized boolean awaitShutdown(long timeout)
-    throws InterruptedException {
-      if (!_shutdown)
-        throw new IllegalStateException();
-      if (threadcount == 0) 
-        return true;
-      long waittime = timeout;
-      if (waittime <= 0) 
-        return false;
-      long start = System.currentTimeMillis();
-      for (;;) {
-        wait(waittime);
-        if (threadcount == 0) 
-          return true;
-        waittime = timeout - System.currentTimeMillis();
+
+    /**
+     * Forcefully shutdown the pool
+     */
+    public void shutdown() {
+        synchronized (this) {
+            _shutdown = true;
+        }
+        interruptAll();
+    }
+
+    /**
+     * Forcefully shutdown the pool
+     */
+    public void safeShutdown() {
+        synchronized (this) {
+            _shutdown = true;
+        }
+    }
+
+    /**
+     * Await shutdown of the worker
+     */
+    public synchronized void awaitShutdown()
+            throws InterruptedException {
+        if (!_shutdown)
+            throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
+        while (threadcount > 0)
+            wait();
+    }
+
+    /**
+     * Await shutdown of the worker
+     */
+    public synchronized boolean awaitShutdown(long timeout)
+            throws InterruptedException {
+        if (!_shutdown)
+            throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
+        if (threadcount == 0)
+            return true;
+        long waittime = timeout;
         if (waittime <= 0)
-          return false;
-      }
-  }
-  
-  /**
-   * Used by MessageWorkers to notify the pool that it is done
-   */
-  protected synchronized void workerDone(
-    MessageWorker worker) {
-      threads.remove(worker);
-      if (--threadcount == 0 && _shutdown) {
-        notifyAll();
-      }
-      if (!_shutdown) {
-        addWorker(
-          worker.getMessageChannel(),
-          worker.getMessageExchangeContextListener());
-      }
-  }
+            return false;
+        long start = System.currentTimeMillis();
+        for (; ;) {
+            wait(waittime);
+            if (threadcount == 0)
+                return true;
+            waittime = timeout - System.currentTimeMillis();
+            if (waittime <= 0)
+                return false;
+        }
+    }
+
+    /**
+     * Used by MessageWorkers to notify the pool that it is done
+     */
+    protected synchronized void workerDone(
+            MessageWorker worker) {
+        threads.remove(worker);
+        if (--threadcount == 0 && _shutdown) {
+            notifyAll();
+        }
+        if (!_shutdown) {
+            addWorker(
+                    worker.getMessageChannel(),
+                    worker.getMessageExchangeContextListener());
+        }
+    }
 }
 

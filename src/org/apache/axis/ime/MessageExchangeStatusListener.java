@@ -6,10 +6,10 @@ import java.io.Serializable;
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public interface MessageExchangeStatusListener
-  extends Serializable {
+        extends Serializable {
 
     public void onStatus(
-        MessageExchangeCorrelator correlator,
-        MessageExchangeStatus status);
+            MessageExchangeCorrelator correlator,
+            MessageExchangeStatus status);
 
 }

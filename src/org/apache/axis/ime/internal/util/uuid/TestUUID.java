@@ -53,31 +53,39 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.ime.internal;
-
-import org.apache.axis.i18n.Messages;
-import org.apache.axis.ime.MessageExchangeContextListener;
-
 /**
- * Serves as a base class for MessageExchangeProviders that
- * need to thread pooling only on  send message flows (as 
- * opposed to MessageExchangeProvider1 which does thread 
- * pooling on send AND receive flows)
  * 
- * @author James M Snell (jasnell@us.ibm.com)
+ *  UUIDGen adopted from the juddi project
+ *  (http://sourceforge.net/projects/juddi/)
+ * 
  */
-public abstract class MessageExchangeProvider2
-        extends MessageExchangeProvider {
 
-    protected abstract MessageExchangeContextListener createSendMessageContextListener();
+package org.apache.axis.ime.internal.util.uuid;
 
-    public void init(long THREAD_COUNT) {
-        if (initialized)
-            throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
-        for (int n = 0; n < THREAD_COUNT; n++) {
-            WORKERS.addWorker(SEND, createSendMessageContextListener());
+public class TestUUID {
+
+
+    /***************************************************************************/
+    /***************************** TEST DRIVER *********************************/
+    /***************************************************************************/
+
+
+    // test driver
+    public static void main(String argc[]) {
+        long startTime = 0;
+        long endTime = 0;
+        UUIDGen uuidgen = null;
+
+        uuidgen = UUIDGenFactory.getUUIDGen(null);
+//    uuidgen = UUIDGenFactory.getUUIDGen("org.juddi.uuidgen.SimpleUUIDGen");
+        startTime = System.currentTimeMillis();
+        for (int i = 1; i <= 50; ++i) {
+            String u = uuidgen.nextUUID();
+            System.out.println(i + ":  " + u);
         }
-        initialized = true;
-    }
+        endTime = System.currentTimeMillis();
+        System.out.println("SimpleJavaUUIDGen took " + (endTime - startTime) + " milliseconds");
 
+        UUIDGenFactory.destroyUUIDGen(uuidgen);
+    }
 }

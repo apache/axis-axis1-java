@@ -6,10 +6,10 @@ import java.io.Serializable;
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public interface MessageExchangeFaultListener
-  extends Serializable {
+        extends Serializable {
 
     public void onFault(
-        MessageExchangeCorrelator correlator,
-        Throwable exception);
+            MessageExchangeCorrelator correlator,
+            Throwable exception);
 
 }
