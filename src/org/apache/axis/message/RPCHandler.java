@@ -260,6 +260,10 @@ public class RPCHandler extends SOAPHandler
         if (dser == null) {
           if (type != null) {
               dser = context.getDeserializerForType(type);
+              if (dser == null) {
+                  throw new SAXException(JavaUtils.getMessage(
+                          "noDeser01", localName,"" + type));
+              }
               if (paramDesc != null && paramDesc.getJavaType() != null) {
                   // If we have an xsi:type, make sure it makes sense
                   // with the current paramDesc type
@@ -272,12 +276,11 @@ public class RPCHandler extends SOAPHandler
               }
           } else {
               dser = new DeserializerImpl();
+              if (dser == null) {
+                  throw new SAXException(JavaUtils.getMessage(
+                          "noDeser01", localName,"" + type));
+              }
           }
-        }
-
-        if (dser == null) {
-            throw new SAXException(JavaUtils.getMessage(
-                    "noDeser01", localName,"" + type));
         }
 
         dser.setDefaultType(type);
