@@ -1256,6 +1256,7 @@ public class Emitter {
         pw.println("        if (call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
+        pw.println("        call.removeAllParameters();");
 
         // DUG: need to set the isRPC flag in the Call object
 

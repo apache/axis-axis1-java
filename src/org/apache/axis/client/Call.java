@@ -202,7 +202,7 @@ public class Call implements org.apache.axis.rpc.Call {
      */
     public void setReturnType(XMLType type) {
         QName qn = type.getType();
-        serviceDesc.setOutputType(
+        serviceDesc.setReturnType(
             new org.apache.axis.utils.QName(qn.getNamespaceURI(),
                                             qn.getLocalPart()));
     }
@@ -211,9 +211,18 @@ public class Call implements org.apache.axis.rpc.Call {
      * Clears the list of parameters.
      */
     public void removeAllParameters() {
-        paramNames.clear();
-        paramTypes.clear();
-        paramModes.clear();
+        if (paramNames != null) {
+            paramNames.clear();
+        }
+        if (paramTypes != null) {
+            paramTypes.clear();
+        }
+        if (paramModes != null) {
+            paramModes.clear();
+        }
+        if (serviceDesc != null) {
+            serviceDesc.removeAllParams();
+        }
     }
 
     /**
