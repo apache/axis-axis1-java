@@ -58,11 +58,7 @@ package samples.transport;
 import java.util.* ;
 import org.apache.axis.* ;
 
-import org.apache.axis.handlers.* ;
-import org.apache.axis.registries.* ;
 import org.apache.axis.client.Transport;
-import org.apache.axis.client.AxisClient;
-import org.apache.axis.client.ServiceClient;
 
 /**
  * A File Transport class.
