@@ -55,6 +55,8 @@ package org.apache.axis.tools.ant.wsdl;
 
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.AntClassLoader;
@@ -68,6 +70,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Iterator;
 
 /*
  * Important. we autogenerate the ant task docs from this.
@@ -116,6 +121,9 @@ public class Java2WsdlAntTask extends Task
     private String extraClasses = null;
     private Path classpath = null;
     private String soapAction = null;
+    private List complexTypes = new LinkedList();
+    private TypeMappingImpl tmi;
+    private TypeMapping defaultTM;    
 
     /**
      * trace out parameters
@@ -221,10 +229,19 @@ public class Java2WsdlAntTask extends Task
             }
 
             if (typeMappingVersion.equals("1.1")) {
-                emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
+                defaultTM=DefaultTypeMappingImpl.getSingleton();
             } else {
-                emitter.setDefaultTypeMapping(DefaultSOAPEncodingTypeMappingImpl.create());
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
             }
+            emitter.setDefaultTypeMapping(defaultTM);
+            // Create TypeMapping and register complex types
+            tmi = new TypeMappingImpl(defaultTM);
+            Iterator i = complexTypes.iterator();
+            while (i.hasNext()) {
+                ( (ComplexType)i.next()).register(tmi);
+             }
+            emitter.setTypeMapping(tmi);
+            
             if (style != null) {
                 emitter.setStyle(style);
             }
@@ -508,4 +525,12 @@ public class Java2WsdlAntTask extends Task
 		this.soapAction = soapAction;
     }
 
+    /**
+     * Nested element for Complex Types. 
+     * Each Complex Type uses the following fields:
+     * @param ct 
+     */
+     public void addComplexType(ComplexType ct) {
+        complexTypes.add(ct);
+    }
 }
