@@ -151,29 +151,37 @@ public class ClassRep {
      * @param inhMethods if true, then the methods array will contain
      *                   methods declared and/or inherited else only
      *                   the declared methods are put in the list
+     * @param stopList An optional vector of class names which if inhMethods
+     *                    is true, will stop the inheritence search if encountered.
      * @param implClass  This is an optional parameter which is a 
      *                   class that implements or extends cls.  The
      *                   implClass is used to obtain parameter names.
      */ 
-    public ClassRep(Class cls, boolean inhMethods) {
-        init(cls, inhMethods, null);
+    public ClassRep(Class cls, boolean inhMethods, Vector stopList) {
+        init(cls, inhMethods, stopList, null);
     }
-    public ClassRep(Class cls, boolean inhMethods, Class implClass) {
-        init(cls, inhMethods, implClass);
+    public ClassRep(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
+        init(cls, inhMethods, stopList, implClass);
     }
-    protected void init(Class cls, boolean inhMethods, Class implClass) {
+    protected void init(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
         _name = cls.getName();
         _isInterface = cls.isInterface();
         _modifiers = cls.getModifiers();
-        if (cls.getSuperclass() != null &&
-            cls.getSuperclass() != Object.class) {
-            _super = new ClassRep(cls.getSuperclass(), inhMethods);
+
+        // Get our parent class, avoid Object and any class on the stop list.
+        Class superClazz = cls.getSuperclass();
+        if (superClazz != null &&
+            superClazz != Object.class &&
+            (stopList == null || !stopList.contains(superClazz.getName()))) {
+            _super = new ClassRep(superClazz, inhMethods, stopList);
         }
+        
+        // Add the interfaces
         for (int i=0; i < cls.getInterfaces().length; i++) {
-            _interfaces.add(new ClassRep(cls.getInterfaces()[i], inhMethods));
+            _interfaces.add(new ClassRep(cls.getInterfaces()[i], inhMethods, stopList));
         }
         // Add the methods
-        addMethods(cls, inhMethods, implClass);
+        addMethods(cls, inhMethods, stopList, implClass);
 
         // Add the fields
         addFields(cls);
@@ -204,28 +212,46 @@ public class ClassRep {
      * @param inhMethods if true, then the methods array will contain
      *                   methods declared and/or inherited else only
      *                   the declared methods are put in the list           
+     * @param stopList An optional vector of class names which if inhMethods
+     *                    is true, will stop the inheritence search if encountered.
      * @param implClass  This is an optional parameter which is a 
      *                   class that implements or extends cls.  The
      *                   implClass is used to obtain parameter names.            
      */ 
-    protected void addMethods(Class cls, boolean inhMethods, Class implClass) {
+    protected void addMethods(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
         // Constructs a vector of all the public methods
         Method[] m;
-        if (inhMethods)
-            m = cls.getMethods();
-        else
-            m = cls.getDeclaredMethods();
-        for (int i=0; i < m.length; i++) {
-            int mod = m[i].getModifiers();
-            if (Modifier.isPublic(mod) &&
-                // Ignore the getParameterName method from the Skeleton class
-                (!m[i].getName().equals("getParameterName") ||
-                 !(Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
-                short[] modes = getParameterModes(m[i]);
-                Class[] types = getParameterTypes(m[i]);
-                _methods.add(new MethodRep(m[i], types, modes,
-                                           getParameterNames(m[i], implClass, types)));
+        
+        // iterate up the inheritance chain and construct the list of methods
+        Class currentClass = cls;
+        while (currentClass != null &&
+                currentClass != Object.class &&
+                (stopList == null || !stopList.contains(currentClass.getName()))) {
+
+            // get the methods in this class
+            m = currentClass.getDeclaredMethods();
+
+            // add each method in this class to the list
+            for (int i=0; i < m.length; i++) {
+                int mod = m[i].getModifiers();
+                if (Modifier.isPublic(mod) &&
+                        // Ignore the getParameterName method from the Skeleton class
+                        (!m[i].getName().equals("getParameterName") ||
+                        !(Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
+                    short[] modes = getParameterModes(m[i]);
+                    Class[] types = getParameterTypes(m[i]);
+                    _methods.add(new MethodRep(m[i], types, modes,
+                                               getParameterNames(m[i], implClass, types)));
+                }
             }
+            
+            // if we don't want inherited methods, don't walk the chain
+            if (!inhMethods) {
+                break;
+            }
+            
+            // move up the inhertance chain
+            currentClass = currentClass.getSuperclass();
         }
         return;
     }

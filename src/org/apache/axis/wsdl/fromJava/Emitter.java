@@ -120,8 +120,10 @@ public class Emitter {
     private Class cls;
     private Class implCls;                 // Optional implementation class
     private Vector allowedMethods = null;  // Names of methods to consider
+    private Vector disallowedMethods = null; // Names of methods to exclude
+    private Vector stopClasses = null;// class names which halt inheritace searches
     private boolean useInheritedMethods = false;
-    private String intfNS;          
+    private String intfNS;
     private String implNS;
     private String locationUrl;
     private String importUrl;
@@ -299,7 +301,8 @@ public class Emitter {
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, tm, defaultTM, namespaces, intfNS, factory);
+        types = new Types(def, tm, defaultTM, namespaces, 
+                          intfNS, factory, stopClasses);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         writeService(def, binding);
@@ -322,7 +325,8 @@ public class Emitter {
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, tm, defaultTM, namespaces, intfNS, factory);
+        types = new Types(def, tm, defaultTM, namespaces, 
+                          intfNS, factory, stopClasses);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         return def;
@@ -531,9 +535,11 @@ public class Emitter {
         BuilderPortTypeClassRep builder = 
            factory.getBuilderPortTypeClassRep();
         ClassRep classRep = 
-           builder.build(cls, useInheritedMethods, implCls);
+           builder.build(cls, useInheritedMethods, stopClasses, implCls);
         Vector methods = 
-           builder.getResolvedMethods(classRep, allowedMethods);
+           builder.getResolvedMethods(classRep, 
+                                      allowedMethods, 
+                                      disallowedMethods);
 
         for(int i=0; i<methods.size(); i++) {
             MethodRep method = (MethodRep) methods.elementAt(i);
@@ -966,19 +972,87 @@ public class Emitter {
     
     /**
      * Set a Vector of methods to export
-     * @param allowedMethods a space separated list of methods to export
+     * @param allowedMethods a vector of methods to export
      */
     public void setAllowedMethods(Vector allowedMethods) {
         this.allowedMethods = allowedMethods;
     }
 
+    /**
+     * Indicates if the emitter will search classes for inherited methods
+     */ 
     public boolean getUseInheritedMethods() {
         return useInheritedMethods;
     }    
 
+    /**
+     * Turn on or off inherited method WSDL generation.
+     */ 
     public void setUseInheritedMethods(boolean useInheritedMethods) {
         this.useInheritedMethods = useInheritedMethods;
     }    
+
+    /**
+     * Set a list of methods NOT to export
+     * @param a vector of method name strings
+     */ 
+    public void setDisallowedMethods(Vector disallowedMethods) {
+        this.disallowedMethods = disallowedMethods;
+    }
+
+    /**
+     * Set a list of methods NOT to export
+     * @param a space separated list of method names
+     */ 
+    public void setDisallowedMethods(String text) {
+        if (text != null) {
+            StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
+            disallowedMethods = new Vector();
+            while (tokenizer.hasMoreTokens()) {
+                disallowedMethods.add(tokenizer.nextToken());
+            }
+        }
+    }
+
+    /**
+     * Return list of methods that should not be exported
+     */ 
+    public Vector getDisallowedMethods() {
+        return disallowedMethods;
+    }
+
+    /**
+     * Set a list of classes (fully qualified) that will stop the traversal
+     * of the inheritance tree if encounter in method or complex type generation
+     * 
+     * @param a vector of class name strings
+     */ 
+    public void setStopClasses(Vector stopClasses) {
+        this.stopClasses = stopClasses;
+    }
+
+    /**
+     * Set a list of classes (fully qualified) that will stop the traversal
+     * of the inheritance tree if encounter in method or complex type generation
+     * 
+     * @param a space separated list of class names
+     */ 
+    public void setStopClasses(String text) {
+        if (text != null) {
+            StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
+            stopClasses = new Vector();
+            while (tokenizer.hasMoreTokens()) {
+                stopClasses.add(tokenizer.nextToken());
+            }
+        }
+    }
+    
+    /**
+     * Return the list of classes which stop inhertance searches
+     */ 
+    public Vector getStopClasses() {
+        return stopClasses;
+    }
 
     /**
      * get the packagename to namespace map
