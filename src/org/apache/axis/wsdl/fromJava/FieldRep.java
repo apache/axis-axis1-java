@@ -63,7 +63,7 @@ import java.util.Vector;
  * user provided code to affect the emitted wsdl file.  (See ClassRep)
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public class FieldRep {
+public class FieldRep extends BaseRep {
     
     private String   _name       = "";
     private Class    _type       = void.class;                                   

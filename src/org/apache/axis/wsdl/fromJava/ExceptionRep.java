@@ -62,7 +62,7 @@ import java.util.Vector;
  * user provided code to affect the emitted wsdl file.  (See ClassRep)
  * @author Brent Ulbricht
  */
-public class ExceptionRep {
+public class ExceptionRep extends BaseRep {
     
     private String   _name       = "";
     private Vector   _parameters = null;                                   
