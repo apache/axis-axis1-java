@@ -163,7 +163,7 @@ public class InheritanceTestCase extends junit.framework.TestCase {
         // types
         // The complex types Baby_bean and Child_bean should exist
         // The type Parent_bean should NOT exist
-        NodeList typeList = doc.getElementsByTagName("types");
+        NodeList typeList = doc.getElementsByTagName("wsdl:types");
         Node typeNode = typeList.item(0);
         assertNotNull("types section of the WSDL document", typeNode);
         Element typeElem = (Element) typeNode;
