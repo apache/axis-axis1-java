@@ -216,7 +216,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
        // list of properties that are attributes instead of elements
        if (attributes != null) {
            pw.println("    // List of fields that are XML attributes");
-           pw.println("    public static java.lang.String[] _attrs = new String[] {");
+           pw.println("    private static java.lang.String[] _attrs = new String[] {");
            for (int i=0; i < attributes.size(); i+=2) {
                pw.println("        \"" + Utils.xmlNameToJava((String) attributes.get(i + 1)) + "\", ");
            }

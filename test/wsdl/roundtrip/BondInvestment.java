@@ -154,4 +154,17 @@ public class BondInvestment implements java.io.Serializable {
         return this.wrapperDouble;
     } // getWrapperDouble
 
+    // List of fields that are XML attributes
+    private static java.lang.String[] _attrs = new String[] {
+        "taxIndicator", 
+        "docType",
+        "stockBeta"
+    };
+
+    /**
+     * Return list of bean field names that are attributes
+     */
+    public static java.lang.String[] getAttributeElements() {
+        return _attrs;
+    }
 } // BondInvestment 

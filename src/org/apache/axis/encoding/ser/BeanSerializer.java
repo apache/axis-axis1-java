@@ -156,16 +156,11 @@ public class BeanSerializer implements Serializer, Serializable {
     {
         boolean isSOAP_ENC = Constants.
                 isSOAP_ENC(context.getMessageContext().getEncodingStyle());
-        if (isSOAP_ENC) {
-            // SOAP encoding doesn't allow attributes
-            context.startElement(name, attributes);
-        } else {
-            // Check for meta-data in the bean that will tell us if any of the
-            // properties are actually attributes, add those to the element
-            // attribute list
-            Attributes beanAttrs = getObjectAttributes(value, attributes);
-            context.startElement(name, beanAttrs);
-        }
+        // Check for meta-data in the bean that will tell us if any of the
+        // properties are actually attributes, add those to the element
+        // attribute list
+        Attributes beanAttrs = getObjectAttributes(value, attributes);
+        context.startElement(name, beanAttrs);
 
         try {
             // Serialize each property
@@ -173,7 +168,8 @@ public class BeanSerializer implements Serializer, Serializable {
                 String propName = propertyDescriptor[i].getName();
                 if (propName.equals("class")) 
                     continue;
-                if (!isSOAP_ENC && beanAttributeNames.contains(propName)) 
+                //if (!isSOAP_ENC && beanAttributeNames.contains(propName)) 
+                if (beanAttributeNames.contains(propName)) 
                     continue;
                 propName = format(propName, elementPropertyFormat);
 
@@ -396,7 +392,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                                      fieldType.getName()));
         
         String elementType = types.writeType(fieldType);
-        Element elem = types.createElement(fieldName,
+        Element elem = types.createAttributeElement(fieldName,
                                            elementType,
                                            false,
                                            where.getOwnerDocument());

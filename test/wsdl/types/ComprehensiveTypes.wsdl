@@ -73,20 +73,26 @@
         </xsd:complexType>
       </xsd:element>
 
+      <xsd:complexType name="time">
+        <xsd:restriction base="xsd:string">
+          <xsd:attribute name="DST" type="xsd:boolean" />
+        </xsd:restriction>
+      </xsd:complexType>
+
       <xsd:complexType name="complexWComplex">
         <xsd:sequence>
           <xsd:element name="stock_quote">
             <xsd:complexType>
+              <xsd:attribute name="symbol" type="xsd:string"/> 
               <xsd:sequence>
                 <!-- forward simple type ref -->
-                <xsd:element name="symbol" type="typens:simpleFwd"/> 
-                <xsd:element name="time" type="xsd:string"/>
-                <xsd:element name="last" type="xsd:string"/>
-                <xsd:element name="change" type="xsd:string"/>  
+                <xsd:element name="time" type="typens:time"/>
+                <xsd:element name="change" type="typens:simpleFwd"/>  
                 <xsd:element name="pctchange" type="xsd:string"/>
                 <xsd:element name="bid" type="xsd:string"/>
                 <xsd:element name="ask" type="xsd:string"/>
               </xsd:sequence>
+              <xsd:attribute name="last" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="outside" type="xsd:int"/>
