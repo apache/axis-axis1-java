@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -309,7 +310,7 @@ public class AxisServlet extends AxisServletBase {
      * @param response current response
      * @param writer open writer to response
      */
-    private void reportTroubleInGet(Exception exception, HttpServletResponse response, PrintWriter writer) {
+    private void reportTroubleInGet(Throwable exception, HttpServletResponse response, PrintWriter writer) {
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         writer.println("<h2>" +
@@ -361,7 +362,7 @@ public class AxisServlet extends AxisServletBase {
      * log any exception to our output log, at our chosen level
      * @param e what went wrong
      */
-    protected void logException(Exception e) {
+    protected void logException(Throwable e) {
         exceptionLog.info(Messages.getMessage("exception00"), e);
     }
 
@@ -1123,9 +1124,15 @@ public class AxisServlet extends AxisServletBase {
 
                               return true;
                          }
-
+                         catch (InvocationTargetException ie) {
+                             reportTroubleInGet (ie.getTargetException(), response, writer);
+                             // return true to prevent any further processing
+                             return true;
+                         }
                          catch (Exception e) {
                               reportTroubleInGet (e, response, writer);
+                             // return true to prevent any further processing
+                             return true;
                          }
                     }
                }
