@@ -185,6 +185,11 @@ public class Call implements javax.xml.rpc.Call {
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
+    // If true, the code will throw a fault if there is no
+    // response message from the server.  Otherwise, the 
+    // invoke method will return a null.
+    public static final boolean FAULT_ON_NO_RESPONSE = false;
+
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
@@ -1160,8 +1165,13 @@ public class Call implements javax.xml.rpc.Call {
             invoke();
 
             msg = msgContext.getResponseMessage();
-            if (msg == null)
+            if (msg == null) {
+              if (FAULT_ON_NO_RESPONSE) {
                 throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+              } else {
+                return null;
+              }
+            }
 
             env = msg.getSOAPEnvelope();
             return( env.getBodyElements() );
@@ -1225,8 +1235,13 @@ public class Call implements javax.xml.rpc.Call {
             setRequestMessage( msg );
             invoke();
             msg = msgContext.getResponseMessage();
-            if (msg == null)
+            if (msg == null) {
+              if (this.FAULT_ON_NO_RESPONSE) {
                 throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+              } else {
+                return null;
+              }
+            }
             return( msg.getSOAPEnvelope() );
         }
         catch( Exception exp ) {
@@ -1696,6 +1711,15 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         resMsg = msgContext.getResponseMessage();
+        
+        if (resMsg == null) {
+          if (FAULT_ON_NO_RESPONSE) {
+            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+          } else {
+            return null;
+          }
+        }
+        
         resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
         SOAPBodyElement bodyEl = resEnv.getFirstBody();
         if (bodyEl instanceof RPCElement) {
@@ -1915,8 +1939,13 @@ public class Call implements javax.xml.rpc.Call {
 
         Message resMsg = msgContext.getResponseMessage();
 
-        if (resMsg == null)
+        if (resMsg == null) {
+          if (this.FAULT_ON_NO_RESPONSE) {
             throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+          } else {
+            return;
+          }
+        }
 
         /** This must happen before deserialization...
          */
