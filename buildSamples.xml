@@ -112,7 +112,7 @@ Copyright:
     <!-- Compile the sample code -->
     <foreach target="component-compile">
         <param name="file">
-             <fileset dir="." includes="samples/**/build.xml"/>
+             <fileset dir="${axis.home}" includes="samples/**/build.xml"/>
         </param>
      </foreach>
   </target>
