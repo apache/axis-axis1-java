@@ -81,6 +81,7 @@ import test.wsdl.roundtrip.CallOptions;
 import test.wsdl.roundtrip.InvalidTickerSymbol;
 import test.wsdl.roundtrip.InvalidTradeExchange;
 import test.wsdl.roundtrip.InvalidCompanyId;
+import java.util.HashMap;
 
 import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 
@@ -280,6 +281,8 @@ public class RoundtripTestServiceTestCase extends TestCase {
             date.setTimeZone(gmt);
             date.setTime(new Date(1013441507390L));
             callOptions[1].setCallDate(date);
+            HashMap map = new HashMap();
+            map.put("Test", "Test Works");
 
             short[] shortArray = {(short) 30};
             byte[] byteArray = {(byte) 1};
@@ -288,6 +291,7 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
             BondInvestment sendValue = new BondInvestment();
 
+            sendValue.setMap(map);
             sendValue.setOptions(callOptions);
             sendValue.setOptions2(callOptions);
             sendValue.setOptions3(callOptions[0]);
@@ -318,6 +322,8 @@ public class RoundtripTestServiceTestCase extends TestCase {
             BondInvestment actual = binding.methodBondInvestmentInOut(sendValue);
             date.setTime(new Date(1013441507308L));
 
+            assertEquals("Returned map is not correct.",
+                         (String) actual.getMap().get("Test"), "Test Works");
             assertEquals("The expected and actual values did not match.",
                          date,
                          actual.getOptions()[0].getCallDate());
@@ -415,6 +421,8 @@ public class RoundtripTestServiceTestCase extends TestCase {
             TimeZone gmt = TimeZone.getTimeZone("GMT");
             date.setTimeZone(gmt);
             date.setTime(new Date(1013441507308L));
+            assertEquals("Returned map is not correct.",
+                         (String) actual.getMap().get("Test"), "Test Works");
             assertEquals("The expected and actual values did not match.",
                          date,
                          actual.getOptions()[0].getCallDate());
@@ -519,6 +527,9 @@ public class RoundtripTestServiceTestCase extends TestCase {
             date.setTimeZone(gmt);
             date.setTime(new Date(1013441507390L));
             callOptions[1].setCallDate(date);
+            HashMap map = new HashMap();
+            map.put("Test", "Test Works");
+
 
             short[] shortArray = {(short) 30};
             byte[] byteArray = {(byte) 1};
@@ -527,6 +538,7 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
             BondInvestment sendValue = new BondInvestment();
             
+            sendValue.setMap(map);
             sendValue.setOptions(callOptions);
             sendValue.setOptions2(callOptions);
             sendValue.setOptions3(callOptions[0]);

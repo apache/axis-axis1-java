@@ -59,6 +59,7 @@ import java.math.BigInteger;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import test.wsdl.roundtrip.CallOptions;
+import java.util.HashMap;
 
 /**
  * The BondInvestment class contains data members for all the
@@ -96,6 +97,7 @@ public class BondInvestment implements java.io.Serializable {
     public Object options2;
     public Object options3;
     public int id;
+    public HashMap map;
 
     public BondInvestment() {
 
@@ -196,4 +198,11 @@ public class BondInvestment implements java.io.Serializable {
         this.options = options;
     }
 
+    public HashMap getMap() {
+        return map;
+    }
+
+    public void setOptions(HashMap map) {
+        this.map = map;
+    }
 } // BondInvestment 

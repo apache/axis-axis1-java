@@ -75,6 +75,7 @@ import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 import java.rmi.RemoteException;
 
 import javax.xml.rpc.holders.StringHolder;
+import java.util.HashMap;
 
 /**
  * This class contains the implementations of the methods defined in the
@@ -136,12 +137,15 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         date.setTimeZone(gmt);
         date.setTime(new Date(1013441507328L));
         callOptions[1].setCallDate(date);
+        HashMap map = new HashMap();
+        map.put("Test", "Test Works");
 
         Short[] wrapperShortArray = {new Short((short) 33), new Short((short) 86)};
         Byte[] wrapperByteArray = {new Byte((byte) 4), new Byte((byte) 18)};
 
         BondInvestment sendValue = new BondInvestment();
-        
+
+        sendValue.setMap(map);
         sendValue.setOptions(callOptions);
         sendValue.setOptions2(callOptions);
         sendValue.setOptions3(callOptions[0]);
@@ -191,7 +195,8 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         Calendar expectedDate4 = Calendar.getInstance();
         expectedDate4.setTimeZone(gmt);
         expectedDate4.setTime(new Date(1012937861996L));
-        if ((in0.getOptions()[0].getCallDate().equals(expectedDate0)) &&
+        if ((in0.getMap().get("Test").equals("Test Works")) &&
+            (in0.getOptions()[0].getCallDate().equals(expectedDate0)) &&
             (in0.getOptions()[1].getCallDate().equals(expectedDate1)) &&
             (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(expectedDate2)) &&
             (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(expectedDate3)) &&
@@ -242,9 +247,13 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         callOptions[1].setCallDate(date);
         Short[] wrapperShortArray = {new Short((short) 33), new Short((short) 86)};
         Byte[] wrapperByteArray = {new Byte((byte) 4), new Byte((byte) 18)};
+        HashMap map = new HashMap();
+        map.put("Test", "Test Works");
+
 
         BondInvestment sendValue = new BondInvestment();
         
+        sendValue.setMap(map);
         sendValue.setOptions(callOptions);
         sendValue.setOptions2(callOptions);
         sendValue.setOptions3(callOptions[0]);
@@ -293,7 +302,8 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         Calendar expectedDate4 = Calendar.getInstance();
         expectedDate4.setTimeZone(gmt);
         expectedDate4.setTime(new Date(1012937861996L));
-        if (!((in0.getOptions()[0].getCallDate().equals(expectedDate0)) &&
+        if (!((in0.getMap().get("Test").equals("Test Works")) &&
+              (in0.getOptions()[0].getCallDate().equals(expectedDate0)) &&
               (in0.getOptions()[1].getCallDate().equals(expectedDate1)) &&
               (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(expectedDate2)) &&
               (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(expectedDate3)) &&
