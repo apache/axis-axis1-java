@@ -25,12 +25,9 @@ public class EncodingTest extends TestCase {
     }
 
     public void testEncodingFailure() throws Exception {
-        try {
-            XMLEncoderFactory.getEncoder("XYZ");
-            fail("A UnsupportedEncodingException should have been thrown.");
-        } catch (UnsupportedEncodingException expected) {
-            // expected
-        }
+        // now it should return a default encoder
+        assertTrue( XMLEncoderFactory.getEncoder("XYZ") != null );
+
         assertInvalidStringsDetected(INVALID_XML_STRING);
         //run through the first 32 chars
         for(int i=0;i<31;i++) {
