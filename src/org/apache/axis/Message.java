@@ -204,13 +204,12 @@ public class Message extends javax.xml.soap.SOAPMessage {
 
     private static boolean attachmentSupportEnabled = false;
 
-    public boolean isAttachmentSupportEnabled() {
+    private static synchronized boolean isAttachmentSupportEnabled(MessageContext mc) {
         if (checkForAttchmentSupport) {
             //aviod testing and possibly failing everytime.
             checkForAttchmentSupport = false;
             try {
                 String attachImpName= AxisEngine.DEFAULT_ATTACHMENT_IMPL;
-                MessageContext mc= getMessageContext();
                 if(null != mc){
                     AxisEngine ae= mc.getAxisEngine();
                     if(null != ae){
@@ -256,7 +255,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
         // If there is no org.apache.axis.attachments.AttachmentsImpl class,
         // it must mean activation.jar is not present and attachments are not
         // supported.
-        if (isAttachmentSupportEnabled()) {
+        if (isAttachmentSupportEnabled(getMessageContext())) {
             // Construct one, and cast to Attachments.
             // There must be exactly one constructor of AttachmentsImpl, which
             // must take an org.apache.axis.Message!
