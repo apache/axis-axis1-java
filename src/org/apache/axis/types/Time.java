@@ -192,8 +192,9 @@ public class Time implements java.io.Serializable {
         Date date;
         try {
             synchronized (zulu) {
-                date = zulu.parse(source == null ? null :
-                                    (source.substring(0,8)+".000Z") );
+                String fulltime = source == null ? null :
+                                                    (source.substring(0,8)+".000Z");
+                date = zulu.parse(fulltime);
             }
         } catch (Exception e) {
             throw new NumberFormatException(e.toString());
@@ -225,6 +226,9 @@ public class Time implements java.io.Serializable {
      * @return
      */
     public String toString() {
+        if(_value==null) {
+            return "unassigned Time";
+        }
         synchronized (zulu) {
             return zulu.format(_value.getTime());
         }
