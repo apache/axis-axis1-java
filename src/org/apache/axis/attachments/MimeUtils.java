@@ -215,6 +215,11 @@ public class MimeUtils {
 
     /**
      * This routine will the multi part type and write it out to a stream.
+     * 
+     * <p>Note that is does *NOT* pass <code>AxisProperties</code>
+     * to <code>javax.mail.Session.getInstance</code>, but instead
+     * the System properties.
+     * </p>
      * @param os is the output stream to write to.
      * @param the multipart that needs to be written to the stream.
      * @param mp
@@ -223,12 +228,12 @@ public class MimeUtils {
             java.io.OutputStream os, javax.mail.internet.MimeMultipart mp) {
 
         try {
-            AxisProperties.setProperty(
+            System.setProperty(
                     "mail.smtp.host",
                     "localhost");    // this is a bogus since we will never mail it.
 
             javax.mail.Session session =
-                    javax.mail.Session.getInstance(AxisProperties.getProperties(), null);
+                    javax.mail.Session.getInstance(System.getProperties(), null);
             javax.mail.internet.MimeMessage message =
                     new javax.mail.internet.MimeMessage(session);
 
