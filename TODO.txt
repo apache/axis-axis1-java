@@ -1,0 +1,33 @@
+                           TO DO LIST FOR AXIS
+                           -------------------
+
+Please help to maintain this file, as accuracy is critical.  Major topic
+areas are headed by section headings, and individual items are prefixed
+with "!" (needs doing) "*" (in progress) or "X" (done), followed by the
+owner (if any) in "<>" brackets.  Example:
+
+                 * <Glen> Write TO DO list
+
+MESSAGE PARSING / ENCODING
+--------------------------
+
+CLIENT API
+----------
+
+JAX-RPC COMPATIBILITY
+---------------------
+! <Doug?> Implement serializer/deserializer framework compliance
+
+PERFORMANCE
+-----------
+
+DOCUMENTATION
+-------------
+* <Glen> Architecture doc
+
+SOAP SPEC COMPLIANCE
+--------------------
+! <> Implement support for the actor attribute
+
+GENERAL / UNCATEGORIZED
+-----------------------
