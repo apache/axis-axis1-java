@@ -57,12 +57,21 @@ Code changes should comply with <a href="http://java.sun.com/docs/codeconv/html/
 Conventions for the Java Programming Language"</a></li>
 
 <li>
+When fixing a <a href="http://nagoya.apache.org/bugzilla/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&email1=&emailtype1=substring&emailassigned_to1=1&email2=&emailtype2=substring&emailreporter2=1&bugidtype=include&bug_id=&changedin=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&product=Axis&short_desc=&short_desc_type=allwordssubstr&long_desc=&long_desc_type=allwordssubstr&bug_file_loc=&bug_file_loc_type=allwordssubstr&keywords=&keywords_type=anywords&field0-0-0=noop&type0-0-0=noop&value0-0-0=&order=bugs.bug_id">
+"Axis Bugzilla Bug"</a> include the href of the 
+bug in the cvs commit message.</li>
+
+<li>
 Incompatible changes to
 <a href="user-guide.html#published interfaces">published Axis interfaces</a>
 should be avoided where possible.
 When changes are necessary, for example to maintain or improve the overall
 modularity of Axis, the
 impact on users must be considered and, preferably, documented.</li>
+
+<li>
+If you are making a big change that may affect interoperability, please 
+run the <a href="http://xml.apache.org/~rubys/echotest.pl">echotest2 round 2 interop test</a> to ensure that your change does not result in any new interop failures.  You will also need the <a href="http://xml.apache.org/~rubys/client_deploy.wsdd">client_deploy.wsdd</a>.  Here are the <a href="http://xml.apache.org/~rubys/ApacheClientInterop.html">nightly interop test results</a>.
 </ul>
 
 <h2>
@@ -458,10 +467,6 @@ the webservice.</font></li>
 <font color="#000000">Ran the Wsdl2java emitter to create java files:</font></li>
 
 <br>&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
 <p><tt><font color="#993366">java org.apache.axis.wsdl.Wsdl2java -t -s
 SequenceTest.wsdl</font></tt>
 <br>&nbsp;
@@ -474,11 +479,6 @@ directory as your wsdl file.&nbsp; (Ideally only the java files that are
 changed need to be in your directory.&nbsp; So this file is not needed,
 but please make sure to modify your &lt;wsdl2java ...> clause (described
 below) to emit a testcase.</font></li>
-
-<br>&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
 <li>
 <font color="#000000">The -s option causes the emitter to generate a *SOAPBindingImpl.java
 file.&nbsp; The java file contains empty methods for the service.&nbsp;
@@ -486,9 +486,6 @@ You probably want to fill them in with your own logic.&nbsp; Copy the *SOAPBindi
 file into the same directory as your wsdl file.&nbsp; (If no changes are
 needed in the java file, you don't need to save it.&nbsp; But you will
 need to make sure that your &lt;wsdl2java ...> clause generates a skeleton).</font></li>
-</ol>
-
-<ol>
 <li>
 <font color="#000000">Remove all of the java files that don't require modification.&nbsp;
 So you should have three files in your directory (wsdl file, *TestCase.java,
@@ -502,11 +499,7 @@ due to some additional logic that I needed.</font></li>
 controls the building of the tests.&nbsp; Locate the "wsdl-setup" target.&nbsp;
 You will see a clause that runs the Wsdl2java code:</font></li>
 
-<br>&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
+
 <br>&nbsp;
 <p><tt><font color="#993366">&lt;ant antfile="test/wsdl/Wsdl2javaTestSuite.xml"/></font></tt>
 <p><font color="#000000">Following this clause you will see some clauses
@@ -520,11 +513,7 @@ added to copy over SequenceInfo.java.</font>
 This file contains the clauses to run wsdl2java.&nbsp; Add a wsdl2java
 clause.&nbsp; Here is the one for SequenceTest:</font></li>
 
-<br>&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
+
 <br>&nbsp;
 <p><tt><font color="#663366">&nbsp;&nbsp;&nbsp; </font><font color="#993366">&lt;!--
 Sequence Test --></font></tt>
