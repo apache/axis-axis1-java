@@ -156,6 +156,7 @@ public class Java2WsdlAntTask extends Task
         log("\tmethods:" + methods, logLevel);
         log("\textraClasses:" + extraClasses, logLevel);
         log("\tsoapAction:" + soapAction, logLevel);
+        log("\t:classpath" + classpath, logLevel);
       
 }
 
@@ -179,11 +180,14 @@ public class Java2WsdlAntTask extends Task
      */
     public void execute() throws BuildException {
         if (classpath != null) {
-            AntClassLoader cl = new AntClassLoader(null, project, classpath, false);
+            AntClassLoader cl = new AntClassLoader(
+                    getClass().getClassLoader(),
+                    project,
+                    classpath,
+                    false);
             log("Using CLASSPATH " + cl.getClasspath(),
-              Project.MSG_VERBOSE);
-            ClassUtils.setClassLoader(className, cl);
-            ClassUtils.setClassLoader(implClass, cl);
+                    Project.MSG_VERBOSE);
+            ClassUtils.setDefaultClassLoader(cl);
             //add extra classes to the classpath when the classpath attr is not null
             //??why do we do this? Why don't we do this when the classpath is unset?
             if(extraClasses!=null) {

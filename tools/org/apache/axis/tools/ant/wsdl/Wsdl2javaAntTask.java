@@ -60,10 +60,13 @@ import java.util.HashMap;
 
 import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.DefaultAuthenticator;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.AntClassLoader;
+import org.apache.tools.ant.types.Path;
 
 /*
  * IMPORTANT: see Java2WsdlAntTask on how to javadoc this task and rebuild
@@ -128,6 +131,7 @@ public class Wsdl2javaAntTask extends Task
     private MappingSet mappings = new MappingSet();
     private String username=null;
     private String password=null;
+    private Path classpath=null;
 
     /**
      * do we print a stack trace when something goes wrong?
@@ -190,6 +194,7 @@ public class Wsdl2javaAntTask extends Task
         log("\tusername:" + username, logLevel);
         log("\t:password" + password, logLevel);
         log("\t:noWrapped" + noWrapped, logLevel);
+        log("\t:classpath" + classpath, logLevel);
         traceNetworkSettings(logLevel);
     }
 
@@ -243,7 +248,17 @@ public class Wsdl2javaAntTask extends Task
             emitter.setTimeout(timeout);
 
             Authenticator.setDefault(new DefaultAuthenticator(username,password));
-
+            if (classpath != null) {
+                AntClassLoader cl = new AntClassLoader(
+                        getClass().getClassLoader(),
+                        project,
+                        classpath,
+                        false);
+                log("Using CLASSPATH " + cl.getClasspath(),
+                        Project.MSG_VERBOSE);
+                ClassUtils.setDefaultClassLoader(cl);
+            }
+            
             log("WSDL2Java " + url, Project.MSG_INFO);
             try {
                 emitter.run(url);
@@ -497,6 +512,17 @@ public class Wsdl2javaAntTask extends Task
      */ 
     public void setNoWrapped(boolean noWrapped) {
       this.noWrapped = noWrapped;
+    }
+
+    /**
+     * set the classpath
+     * @return
+     */ 
+    public Path createClasspath() {
+        if (classpath == null) {
+            classpath = new Path(project);
+        }
+        return classpath.createPath();
     }
     
     private void traceSystemSetting(String setting,int logLevel) {
