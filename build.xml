@@ -266,6 +266,7 @@ Copyright:
       <exclude name="**/org/apache/axis/utils/bytecode/Serp*" unless="serp.present"/>
       <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/handler/soap/*.java" unless="attachments.present"/>
+      <exclude name="**/javax/xml/rpc/server/Servlet*.java" unless="servlet.present"/>
       <exclude name="**/*TestSuite.java" unless="junit.present"/>
     </javac>
     <copy file="${src.dir}/org/apache/axis/server/server-config.wsdd"
