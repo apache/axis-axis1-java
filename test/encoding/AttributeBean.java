@@ -68,17 +68,18 @@ import javax.xml.rpc.namespace.QName;
 public class AttributeBean extends ParentBean {
     private int age;
     private float iD;
+    public  String company;         // element without getter/setter 
     private java.lang.String name;  // attribute
     private boolean male;           // attribute
     
-    public AttributeBean() {
-    }
+    public AttributeBean() {}
     
-    public AttributeBean(int age, float iD, java.lang.String name, boolean male) {
+    public AttributeBean(int age, float iD, String name, String company, boolean male) {
         this.age = age;
         this.iD = iD;
         this.name = name;
         this.male = male;
+        this.company = company;
     }
     
     public int getAge() {
@@ -128,8 +129,14 @@ public class AttributeBean extends ParentBean {
             if (other.getName() != null) {
                 return false;
             }
+        }else if (!name.equals(other.getName())) {
+            return false;
         }
-        if (!name.equals(other.getName())) {
+        if (company == null) {
+            if (company != null) {
+                return false;
+            }
+        } else if (!company.equals(other.company)) {
             return false;
         }
         if (getParentFloat() != other.getParentFloat())

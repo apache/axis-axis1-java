@@ -69,6 +69,7 @@ public class TestAttributes extends TestCase {
         bean.setAge(35);
         bean.setID(1.15F);
         bean.setMale(true);
+        bean.company = "Majesty's Secret Service";
         bean.setName("James Bond");
 
         RPCParam arg = new RPCParam("", "struct", bean);
@@ -115,7 +116,6 @@ public class TestAttributes extends TestCase {
         Object obj = ((RPCParam)params.get(0)).getValue();
         assertTrue("Deserialized param not an AttributeBean!",
                    (obj instanceof AttributeBean));
-
         AttributeBean deserBean = (AttributeBean)obj;
         assertTrue("Deserialized bean not equal to expected values!",
                    (bean.equals(deserBean)));

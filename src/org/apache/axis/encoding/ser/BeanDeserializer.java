@@ -229,16 +229,20 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             dSer.setDefaultType(tm.getTypeQName(type));
         }
                 
-        if (propDesc.getWriteMethod().getParameterTypes().length == 1) {
-            // Success!  Register the target and deserializer.
-            collectionIndex = -1;
-            dSer.registerValueTarget(new BeanPropertyTarget(value, propDesc));
-        } else {
-            // Success! This is a collection of properties so use the index
-            collectionIndex++;
-            dSer.registerValueTarget(new BeanPropertyTarget(value, 
-                                                            propDesc, 
-                                                            collectionIndex));
+        if (propDesc.isWriteable()) {
+            if (!propDesc.isIndexed()) {
+                // Success!  Register the target and deserializer.
+                collectionIndex = -1;
+                dSer.registerValueTarget(
+                    new BeanPropertyTarget(value, propDesc));
+            } else {
+                // Success! This is a collection of properties so use the index
+                collectionIndex++;
+                dSer.registerValueTarget(
+                     new BeanPropertyTarget(value, 
+                                            propDesc, 
+                                            collectionIndex));
+        }
         }
         return (SOAPHandler)dSer;
     }
@@ -277,7 +281,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(fieldName);
             if (bpd != null) {
-                if (bpd.getWriteMethod() == null ) continue ;
+                if (!bpd.isWriteable() || bpd.isIndexed() ) continue ;
                 
                 // determine the QName for this child element
                 TypeMapping tm = context.getTypeMapping();
@@ -298,16 +302,14 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                                                  bpd.getName(), 
                                                  type.toString()));
                 
-                if (bpd.getWriteMethod().getParameterTypes().length == 1) {
-                    // Success!  Create an object from the string and set
-                    // it in the bean
-                    try {
-                        Object val = ((SimpleDeserializer)dSer).
-                                makeValue(attributes.getValue(i));
-                        bpd.getWriteMethod().invoke(value, new Object[] {val} );
-                    } catch (Exception e) {
-                        throw new SAXException(e);
-                    }
+                // Success!  Create an object from the string and set
+                // it in the bean
+                try {
+                    Object val = ((SimpleDeserializer)dSer).
+                        makeValue(attributes.getValue(i));
+                    bpd.set(value, val);
+                } catch (Exception e) {
+                    throw new SAXException(e);
                 }
                 
             } // if
