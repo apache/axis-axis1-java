@@ -105,4 +105,32 @@ Copyright:
    <ant antfile="${tools.dir}/test.xml" /> 
 </target>
 
+<property name="xdocs.dir" location="${env.ANT_HOME}/proposal/xdocs" />
+<path id="xdoclet.extra.classpath">
+  <pathelement location="${build.lib}/axis.jar"/>
+</path>
+<property name="xdoclet.extra.classpath.asprop"
+  refid="xdoclet.extra.classpath"/>
+
+<!-- probe for xdocs, which is only in CVS, not redist packages --> 
+<target name="probe-xdocs" >
+  <available property="xdocs.found" file="${xdocs.dir}/build.xml"/>
+</target>
+
+
+
+<target name="xdocs" depends="probe-xdocs"
+  description="Run xdoclet over the ant tasks to create doc pages">
+  <echo>
+    running xdocs with classpath=${xdoclet.extra.classpath.asprop}
+  </echo>  
+  <ant dir="${xdocs.dir}">
+    <property name="src.dir" location="org/apache/axis/tools/ant"/>
+    <property name="src.root" location="."/>
+    <property name="xdoclet.extra.classpath" 
+      value="${xdoclet.extra.classpath.asprop}"/>
+  </ant>
+</target>
+  
+  
 </project>

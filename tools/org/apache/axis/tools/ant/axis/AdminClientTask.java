@@ -62,7 +62,8 @@ import java.util.Iterator;
 import java.io.File;
 
 /**
- * Task to offer axis to the Axis AdminClient
+ * Task to administer a local or remote Axis server. Remember, for remote admin,
+ * the server has to be accept remote management calls.
  * @ant.task category="axis"
  */
 public class AdminClientTask extends Task {
