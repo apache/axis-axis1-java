@@ -158,25 +158,7 @@ public class RPCElement extends SOAPBodyElement
 
     protected void outputImpl(SerializationContext context) throws Exception
     {
-        if (attributes == null)
-            attributes = new AttributesImpl();
-        
-        /**
-         * Because we're an RPCElement, we can pretty well guess that
-         * we're RPC encoded.  Default to section 5 encoding.
-         * 
-         * !!! TODO : make this overridable with other encoding styles!
-         * 
-         */ 
-        String prefix = context.getPrefixForURI(Constants.URI_SOAP_ENC,
-                                                "SOAP-ENV");
-        attributes.addAttribute(Constants.URI_SOAP_ENV, 
-                                Constants.ATTR_ENCODING_STYLE,
-                                prefix + ":" + Constants.ATTR_ENCODING_STYLE,
-                                "CDATA",
-                                Constants.URI_SOAP_ENC);
-        
-        context.startElement(new QName(namespaceURI,name),attributes);
+        context.startElement(new QName(namespaceURI,name), attributes);
         for (int i = 0; i < params.size(); i++) {
             ((RPCParam)params.elementAt(i)).serialize(context);
         }
