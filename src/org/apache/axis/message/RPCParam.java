@@ -98,7 +98,13 @@ public class RPCParam
         this.qname = new QName("", name);
         this.value = value;
     }
-    
+
+    public RPCParam(QName qname, Object value)
+    {
+        this.qname = qname;
+        this.value = value;
+    }
+
     public RPCParam(String namespace, String name, Object value)
     {
         this.qname = new QName(namespace, name);
