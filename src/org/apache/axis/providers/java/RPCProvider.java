@@ -61,6 +61,7 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.utils.cache.* ;
 import org.apache.axis.message.* ;
+import org.apache.axis.server.ParamList;
 import org.apache.log4j.Category;
 
 /**
@@ -224,8 +225,22 @@ public class RPCProvider extends JavaProvider {
             resBody.setPrefix( body.getPrefix() );
             resBody.setNamespaceURI( body.getNamespaceURI() );
             if ( objRes != null ) {
-                RPCParam param = new RPCParam(mName + "Result", objRes);
-                resBody.addParam(param);
+                if (objRes instanceof ParamList) {
+                    ParamList list = (ParamList)objRes;
+                    for (int i = 0; i < list.size (); ++i) {
+                        if (list.get (i) instanceof RPCParam) {
+                            resBody.addParam ((RPCParam) list.get (i));
+                        }
+                        else {
+                            resBody.addParam (new RPCParam (mName + "Result" + i,
+                                list.get (i)));
+                        }
+                    }
+                }
+                else {
+                    RPCParam param = new RPCParam(mName + "Result", objRes);
+                    resBody.addParam(param);
+                }
             }
             resEnv.addBodyElement( resBody );
             resEnv.setEncodingStyleURI(Constants.URI_SOAP_ENC);
