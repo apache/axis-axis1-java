@@ -497,4 +497,33 @@ public class TestDeser extends TestCase {
                     "</me:SOAPStruct>",
                     s, true);
     }
+
+    // Like above without multiref
+    public void testArrayM() throws Exception {
+        samples.echo.SOAPStruct[] s = new samples.echo.SOAPStruct[]
+            {new samples.echo.SOAPStruct(1, "one",   1.1F),
+             new samples.echo.SOAPStruct(2, "two",   2.2F),
+             new samples.echo.SOAPStruct(3, "three", 3.3F)};
+        deserialize("<soapenc:Array id=\"ref-7\" soapenc:arrayType=\"me:SOAPStruct[3]\">" +
+                    "<me:SOAPStruct>" +
+                    "<varString xsi:type=\"xsd:string\">one</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">1</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">1.1</varFloat>" +
+                    "</me:SOAPStruct>" +
+
+                    "<me:SOAPStruct>" +
+                    "<varString xsi:type=\"xsd:string\">two</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">2</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">2.2</varFloat>" +
+                    "</me:SOAPStruct>" +
+
+                    "<me:SOAPStruct>" +
+                    "<varString xsi:type=\"xsd:string\">three</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">3</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">3.3</varFloat>" +
+                    "</me:SOAPStruct>" +
+
+                    "</soapenc:Array>",
+                    s, true);
+    }
 }
