@@ -1,5 +1,6 @@
 package test.inout;
 
+import test.inout.xml_soap_address_demo.*;
 import javax.xml.rpc.holders.StringHolder;
 
 public class InoutSOAPBindingImpl implements Inout
@@ -11,7 +12,9 @@ public class InoutSOAPBindingImpl implements Inout
         else
             out ="\t" + ad.getStreetNum () + " " + ad.getStreetName () + "\n\t" + ad.getCity () + ", " + ad.getState () + " " + ad.getZip () + "\n\t" + printPhone (ad.getPhoneNumber ());
         return out;
+
     }
+
 
     private String printPhone (Phone ph)
     {

@@ -61,6 +61,8 @@ import org.apache.axis.utils.Options;
 
 import java.net.URL;
 
+import samples.addr.xml_soap_address_demo.*;
+
 
 /**
  * This class shows how to use the Call object's ability to
