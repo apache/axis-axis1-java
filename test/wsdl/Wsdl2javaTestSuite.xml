@@ -112,6 +112,9 @@
         <include name="BondInvestment.java"/>
         <include name="PreferredStockInvestment.java"/>
         <include name="CallOptions.java"/>
+        <include name="InvalidTickerSymbol.java"/>
+        <include name="InvalidTradeExchange.java"/>
+        <include name="InvalidCompanyId.java"/>
       </fileset>
     </copy>
     <!-- Compile the Web Service -->

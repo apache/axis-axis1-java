@@ -64,6 +64,9 @@ import test.wsdl.roundtrip.BondInvestment;
 import test.wsdl.roundtrip.StockInvestment;
 import test.wsdl.roundtrip.PreferredStockInvestment;
 import test.wsdl.roundtrip.CallOptions;
+import test.wsdl.roundtrip.InvalidTickerSymbol;
+import test.wsdl.roundtrip.InvalidTradeExchange;
+import test.wsdl.roundtrip.InvalidCompanyId;
 
 import java.rmi.RemoteException;
 
@@ -578,5 +581,22 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         }
 
     } // methodSoapLong
+
+    public void throwInvalidTickerException() 
+        throws InvalidTickerSymbol, RemoteException {
+
+        throw new InvalidTickerSymbol("Invalid Ticker Symbol Received");
+
+    } // throwInvalidTickerSymbol
+
+    public void throwInvalidTradeExchange()
+          throws InvalidTickerSymbol,
+                 InvalidTradeExchange,
+                 InvalidCompanyId,
+                 RemoteException {
+
+        throw new InvalidTradeExchange("Invalid Trade Exchange Received");
+
+    } // throwInvalidTradeExchange
 
 } // End class RoundtripTypesTestSoapBindingImpl

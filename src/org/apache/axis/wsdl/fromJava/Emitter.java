@@ -89,6 +89,7 @@ import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
+import javax.wsdl.Fault;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.rpc.namespace.QName;
 
@@ -102,6 +103,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.HashMap;
 
 /**
  * This class emits WSDL from Java classes.  It is used by the ?WSDL 
@@ -138,6 +140,7 @@ public class Emitter {
     private TypeMapping tm = null;        // Registered type mapping
     private TypeMapping defaultTM = null; // Default TM 
     private Namespaces namespaces;
+    private Map exceptionMsg = null;
 
     private ArrayList encodingList;
     private Types types; 
@@ -153,7 +156,8 @@ public class Emitter {
      */
     public Emitter () {
       namespaces = new Namespaces();
-      factory = new DefaultFactory(); 
+      factory = new DefaultFactory();
+      exceptionMsg = new HashMap();
     }
 
     /**
@@ -597,6 +601,18 @@ public class Emitter {
 
         def.addMessage(msg);
 
+        Vector exceptions = method.getExceptions();
+        for (int i = 0; i < exceptions.size(); i++) {
+            msg = writeFaultMessage(def, (ExceptionRep) exceptions.elementAt(i));
+            Fault fault = def.createFault();
+            fault.setMessage(msg);
+            fault.setName(((ExceptionRep) exceptions.elementAt(i)).getName());
+            oper.addFault(fault);
+            if (def.getMessage(msg.getQName()) == null) {
+                def.addMessage(msg);
+            }
+        }
+
         // Set the parameter ordering using the parameter names
         Vector names = new Vector();
         for (int i=0; i<method.getParameters().size(); i++) {
@@ -737,6 +753,59 @@ public class Emitter {
             writePartToMessage(def, msg, false,parameter); 
         }
         return msg;
+    }
+
+    /** Create a Fault Message
+     *
+     * @param def  
+     * @param exception (an ExceptionRep object)       
+     * @throws Exception
+     */
+    private Message writeFaultMessage(Definition def,
+                                      ExceptionRep exception) throws Exception
+    {
+
+        String pkgAndClsName = exception.getName();
+        String clsName = pkgAndClsName.substring(pkgAndClsName.lastIndexOf('.') + 1,
+                                                 pkgAndClsName.length());
+
+        // There are inconsistencies in the JSR 101 version 0.7 specification
+        // with regards to whether the java exception class name is mapped to 
+        // the wsdl:fault name= attribute or is mapped to the wsdl:message of 
+        // the wsdl:fault message= attribute.  Currently WSDL2Java uses the
+        // latter mapping to generate the java exception class.
+        // 
+        // The following code uses the class name for both the name= attribute
+        // and the message= attribute.
+
+        exception.setName(clsName);
+
+        Message msg = (Message) exceptionMsg.get(pkgAndClsName);
+
+        if (msg == null) {
+            msg = def.createMessage();
+            javax.wsdl.QName qName = createMessageName(def, clsName, "");
+
+            msg.setQName(qName);
+            msg.setUndefined(false);
+
+            Vector parameters = exception.getParameters();
+            for (int i=0; i<parameters.size(); i++) {
+                ParamRep parameter = (ParamRep) parameters.elementAt(i);
+                // If the first param is a MessageContext, Axis will
+                // generate it for us - it shouldn't be in the WSDL.
+                if ((i == 0) && 
+                    MessageContext.class.equals(parameter.getType())) {
+                    continue;
+                }
+                writePartToMessage(def, msg, true, parameter); 
+            }
+
+            exceptionMsg.put(pkgAndClsName, msg);
+        }
+
+        return msg;
+
     }
 
     /** Create a Part
