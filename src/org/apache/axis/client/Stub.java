@@ -412,8 +412,17 @@ public abstract class Stub implements javax.xml.rpc.Stub {
             call.addAttachmentPart(attachments[i]);
         }
         clearAttachments();
-    }  
+    }
 
+    /**
+     * Provide access to the service object, through which you can get the Call
+     * that is used to process the operations.
+     * Not part of JAX-RPC
+     * @return the service object for this stub
+     */
+    public Service _getService() {
+        return service;
+    }
     /**
      * Helper method for updating headers from the response.
      *
