@@ -573,7 +573,11 @@ public class AxisServlet extends AxisServletBase {
                 log.error(JavaUtils.getMessage("exception00"), e);
                 // It's been suggested that a lack of SOAPAction
                 // should produce some other error code (in the 400s)...
-                res.setStatus(getHttpServletResponseStatus(e));
+                int status = getHttpServletResponseStatus(e);
+                if (status == HttpServletResponse.SC_UNAUTHORIZED)
+                  res.setHeader("WWW-Authenticate","Basic realm=\"AXIS\"");
+                  // TODO: less generic realm choice?
+                res.setStatus(status);
                 responseMsg = new Message(e);
             } catch (Exception e) {
                 log.error(JavaUtils.getMessage("exception00"), e);
@@ -620,9 +624,11 @@ public class AxisServlet extends AxisServletBase {
     protected int getHttpServletResponseStatus(AxisFault af) {
         // TODO: Should really be doing this with explicit AxisFault
         // subclasses... --Glen
-        return af.getFaultCode().getLocalPart().equals("Server.Unauthorized")
-                ? HttpServletResponse.SC_UNAUTHORIZED
-                : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+                return af.getFaultCode().getLocalPart().startsWith("Server.Unauth")
+                         ? HttpServletResponse.SC_UNAUTHORIZED
+                         : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+               // This will raise a 401 for both
+               // "Unauthenticated" & "Unauthorized"...
     }
 
     /**
