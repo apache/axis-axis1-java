@@ -59,6 +59,7 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.axis.AxisEngine ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.encoding.SerializationContext ;
 import org.apache.axis.message.SOAPEnvelope ;
@@ -153,6 +154,8 @@ public abstract class AdminClient {
                                     (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
                 SOAPBodyElement body = envelope.getFirstBody();
                 StringWriter writer = new StringWriter();
+                client.addOption(AxisEngine.PROP_XML_DECL, 
+                    new Boolean("false"));
                 SerializationContext ctx = new SerializationContext(writer,
                                                   client.getMessageContext());
                 body.output(ctx);
