@@ -185,6 +185,11 @@ public class MessageElement implements SOAPElement
             this.attributes = new AttributesImpl();
         } else {
             this.attributes = new AttributesImpl(attributes);
+            
+            typeQName = context.getTypeFromAttributes(namespace,
+                                                      localPart, 
+                                                      attributes);
+            
             String rootVal = attributes.getValue(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT);
             if (rootVal != null)
                 _isRoot = rootVal.equals("1");
@@ -249,23 +254,6 @@ public class MessageElement implements SOAPElement
     public void setNamespaceURI(String nsURI) { namespaceURI = nsURI; }
 
     public QName getType() {
-        if (typeQName == null) {
-            String typeStr = attributes.
-                getValue(Constants.URI_CURRENT_SCHEMA_XSI,
-                         Constants.ATTR_TYPE);
-            if (typeStr != null) {
-                int colPos = typeStr.indexOf(':');
-                if (colPos != -1) {
-                    typeQName = new QName(typeStr.substring(0, colPos),
-                                          typeStr.substring(colPos + 1));
-                } else {
-                    typeQName = new QName("", typeStr);
-                }
-            } else {
-                typeQName = new QName(getNamespaceURI(), getName());
-            }
-          }
-
         return typeQName;
     }
     public void setType(QName qName) { typeQName = qName; }
@@ -651,16 +639,11 @@ public class MessageElement implements SOAPElement
             context.registerPrefixForURI(prefix, namespaceURI);
 
         if (objectValue != null) {
-            Serializer typeSerial = context.
-                getSerializerForJavaType(objectValue.getClass());
-
-            if (typeSerial != null) {
-                typeSerial.serialize(new QName(namespaceURI, name),
-                                     attributes,
-                                     objectValue,
-                                     context);
-                return;
-            }
+            context.serialize(new QName(namespaceURI, name),
+                              attributes,
+                              objectValue,
+                              objectValue.getClass());
+            return;
         }
 
         context.startElement(new QName(namespaceURI, name), attributes);
