@@ -55,16 +55,28 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.namespace.QName;
 
 /**
  * DeserializerFactory for Bean
  *
  * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Sam Ruby <rubys@us.ibm.com>
  */
 public class BeanDeserializerFactory extends BaseDeserializerFactory {
+
+    /** Type metadata about this class for XML deserialization */
+    protected TypeDesc typeDesc = null;
+    protected Map propertyMap = null;
+
     public BeanDeserializerFactory(Class javaType, QName xmlType) {
         super(BeanDeserializer.class, xmlType, javaType);
         
@@ -73,5 +85,47 @@ public class BeanDeserializerFactory extends BaseDeserializerFactory {
         if (JavaUtils.isEnumClass(javaType)) {
             deserClass = EnumDeserializer.class;
         }
+    }
+
+   /**
+     * Get a list of the bean properties
+     */
+    public static Map getProperties(Class javaType, TypeDesc typeDesc ) {
+        Map propertyMap = null;
+
+        if (typeDesc != null) {
+            propertyMap = typeDesc.getPropertyDescriptorMap();
+        } else {
+            BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType, null);
+            propertyMap = new HashMap();
+            // loop through properties and grab the names for later
+            for (int i = 0; i < pd.length; i++) {
+                BeanPropertyDescriptor descriptor = pd[i];
+                propertyMap.put(descriptor.getName(), descriptor);
+            }
+        }
+
+        return propertyMap;
+    }
+
+   /**
+     * Optimize construction of a BeanDeserializer by caching the
+     * type descriptor and property map.
+     */
+    protected Deserializer getGeneralPurpose(String mechanismType) {
+        if (javaType == null || xmlType == null) {
+           return super.getGeneralPurpose(mechanismType);
+        }
+
+        if (deserClass == EnumSerializer.class) {
+           return super.getGeneralPurpose(mechanismType);
+        }
+
+        if (propertyMap == null && firstCall) {
+            typeDesc = TypeDesc.getTypeDescForClass(javaType);
+            propertyMap = getProperties(javaType, typeDesc);
+        }
+
+        return new BeanDeserializer(javaType, xmlType, typeDesc, propertyMap);
     }
 }
