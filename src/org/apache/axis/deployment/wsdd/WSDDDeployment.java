@@ -60,7 +60,7 @@ public class WSDDDeployment
     private HashMap handlers = new HashMap();
     private HashMap services = new HashMap();
     private HashMap transports = new HashMap();
-    private HashMap typeMappings = new HashMap();
+    private ArrayList typeMappings = new ArrayList();
     private WSDDGlobalConfiguration globalConfig = null;
     
     /** Mapping of namespaces -> services */
@@ -154,8 +154,7 @@ public class WSDDDeployment
     public void deployTypeMapping(WSDDTypeMapping typeMapping)
         throws WSDDException
     {
-        QName qname = typeMapping.getQName();
-        typeMappings.put(qname, typeMapping);
+        typeMappings.add(typeMapping);
 
         if (tmrDeployed)
             deployMapping(typeMapping);
@@ -170,8 +169,8 @@ public class WSDDDeployment
 
     /**
      * Create an element in WSDD that wraps an extant DOM element
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
+     * @param e the element to create the deployment from
+     * @throws WSDDException when problems occur deploying a service or type mapping.
      */
     public WSDDDeployment(Element e)
         throws WSDDException
@@ -270,7 +269,7 @@ public class WSDDDeployment
             service.deployToRegistry(target);
         }
 
-        i = typeMappings.values().iterator();
+        i = typeMappings.iterator();
         while (i.hasNext()) {
             WSDDTypeMapping mapping = (WSDDTypeMapping) i.next();
             target.deployTypeMapping(mapping);
@@ -355,7 +354,7 @@ public class WSDDDeployment
             transport.writeToContext(context);
         }
 
-        i = typeMappings.values().iterator();
+        i = typeMappings.iterator();
         while (i.hasNext()) {
             WSDDTypeMapping mapping = (WSDDTypeMapping)i.next();
             mapping.writeToContext(context);
@@ -366,7 +365,7 @@ public class WSDDDeployment
     /**
      * Get our global configuration
      *
-     * @return XXX
+     * @return a global configuration object
      */
     public WSDDGlobalConfiguration getGlobalConfiguration()
     {
@@ -379,12 +378,12 @@ public class WSDDDeployment
 
     /**
      *
-     * @return XXX
+     * @return an array of type mappings in this deployment
      */
     public WSDDTypeMapping[] getTypeMappings()
     {
         WSDDTypeMapping[] t = new WSDDTypeMapping[typeMappings.size()];
-        typeMappings.values().toArray(t);
+        typeMappings.toArray(t);
         return t;
     }
 
@@ -407,9 +406,10 @@ public class WSDDDeployment
     }
     
     /**
+     * Return an instance of the named handler.
      *
-     * @param name XXX
-     * @return XXX
+     * @param name the name of the handler to get
+     * @return an Axis handler with the specified QName or null of not found
      */
     public Handler getHandler(QName name) throws ConfigurationException
     {
@@ -422,9 +422,12 @@ public class WSDDDeployment
     }
 
     /**
+     * Retrieve an instance of the named transport.
      *
-     * @param name XXX
-     * @return XXX
+     * @param name the <code>QName</code> of the transport
+     * @return a <code>Handler</code> implementing the transport
+     * @throws ConfigurationException if there was an error resolving the
+     *              transport
      */
     public Handler getTransport(QName name) throws ConfigurationException
     {
@@ -437,9 +440,13 @@ public class WSDDDeployment
     }
 
     /**
+     * Retrieve an instance of the named service.
      *
-     * @param name XXX
-     * @return XXX
+     * @param name the <code>QName</code> identifying the
+     *              <code>Service</code>
+     * @return the <code>Service</code> associated with <code>qname</code>
+     * @throws ConfigurationException if there was an error resolving the
+     *              qname
      */
     public SOAPService getService(QName name) throws ConfigurationException
     {
@@ -478,7 +485,7 @@ public class WSDDDeployment
     private boolean tmrDeployed = false;
     public TypeMappingRegistry getTypeMappingRegistry() throws ConfigurationException {
         if (false == tmrDeployed) {
-            Iterator i = typeMappings.values().iterator();
+            Iterator i = typeMappings.iterator();
             while (i.hasNext()) {
                 WSDDTypeMapping mapping = (WSDDTypeMapping) i.next();
                 deployMapping(mapping);
