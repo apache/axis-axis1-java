@@ -11,13 +11,14 @@
   <handler name="URLMapper" class="org.apache.axis.handlers.http.URLMapper"/>
   <handler name="Authenticate" class="org.apache.axis.handlers.SimpleAuthenticationHandler"/>
   <handler name="Authorize" class="org.apache.axis.handlers.SimpleAuthorizationHandler"/>
+  <handler name="HTTPAuth" class="org.apache.axis.handlers.http.HTTPAuthHandler"/>
 
   <chain name="authChecks" flow="Authenticate,Authorize"/>
   <chain name="global.request" flow="JWSHandler,debug"/>
  </handlers>
 
  <transports>
-  <transport name="http" request="URLMapper"/>
+  <transport name="http" request="HTTPAuth, URLMapper"/>
   <transport name="SimpleHttp" request="URLMapper"/>
   <transport name="local" response="LocalResponder"/>
  </transports>
