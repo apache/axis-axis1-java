@@ -177,8 +177,7 @@ Serializer and deserializer refer to type names in the programming language.
 			<xsd:attribute name="name" type="xsd:NCName" use="optional"/>
 			<xsd:attribute name="ref" type="xsd:QName" use="optional"/>
 			<xsd:attribute name="encodingStyle" type="xsd:uriReference" use="optional"/>
-			<xsd:attribute name="namespaceURI" type="xsd:uriReference" use="optional"/>
-			<xsd:attribute name="localPart" type="xsd:NCName" use="optional"/>
+			<xsd:attribute name="qName" type="xsd:QName" use="optional"/>
 			<xsd:attribute name="languageSpecificType" type="xsd:QName" use="optional"/>
 			<xsd:attribute name="serializer" type="xsd:QName" use="optional"/>
 			<xsd:attribute name="deserializer" type="xsd:QName" use="optional"/>
@@ -204,15 +203,13 @@ Serializer and deserializer refer to type names in the programming language.
 		<xsd:annotation>
 			<xsd:documentation>Defines an operation exposed by the Service Provider
 
-The optional "alias" attribute allows the name of the operation to be masked.
-
-The optional "namespaceURI" attributes allows the namespace of the operation explicitly set.
+The optional qName attribute specifies the public qualified name (QName) of this operation.  The local part of the
+QName may or may not be the same as the required name attribute. 
 </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="name" type="xsd:NMTOKEN" use="required"/>
-			<xsd:attribute name="alias" type="xsd:NMTOKEN" use="optional"/>
-			<xsd:attribute name="namespaceURI" type="xsd:uriReference" use="optional"/>
+			<xsd:attribute name="qName" type="xsd:QName" use="optional"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="transport">

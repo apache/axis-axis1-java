@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment 	name="wsddScenario9" 
+				targetNamespace="urn:myService"
 				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:tns="urn:myService"
 				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
 				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
 				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
@@ -20,8 +22,8 @@
 			</handler>
 		</requestFlow>
 		<provider>
-			<operation name="op1"/>
-			<operation name="op2" alias="somethingDifferentThanOp2" namespaceURI="some-namespace-uri"/>
+			<operation name="op1" qName="tns:op1"/>
+			<operation name="op2" qName="tns:operation2" />
 			<java:provider className="samples.wsdd.wsddScenario9" isStatic="true" />
 		</provider>
 		<responseFlow>
