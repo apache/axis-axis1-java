@@ -95,7 +95,10 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
      * that has been successfully invoked and then rethrow the fault.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::invoke") );
+        }
+
         if ( requestHandler != null ) requestHandler.invoke( msgContext );
         try {
             if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
@@ -122,11 +125,17 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
                 requestHandler.undo( msgContext );
             throw (AxisFault) e ;
         }
-        category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::invoke") );
+        
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::invoke") );
+        }
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::editWSDL") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::editWSDL") );
+        }
+
         if ( requestHandler != null ) requestHandler.generateWSDL( msgContext );
         try {
             if ( pivotHandler != null ) pivotHandler.generateWSDL( msgContext );
@@ -150,18 +159,27 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
                 e = new AxisFault( e );
             throw (AxisFault) e ;
         }
-        category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::editWSDL") );
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::editWSDL") );
+        }
     }
 
     /**
      * Undo all of the work - in reverse order.
      */
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::undo") );
+        }
+
         if ( responseHandler   != null )   responseHandler.undo( msgContext );
         if ( pivotHandler  != null )  pivotHandler.undo( msgContext );
         if ( requestHandler    != null )    requestHandler.undo( msgContext );
-        category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::undo") );
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::undo") );
+        }
     }
 
     public boolean canHandleBlock(QName qname) {
@@ -199,12 +217,16 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
     }
 
     public Element getDeploymentData(Document doc) {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::getDeploymentData") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::getDeploymentData") );
+        }
 
         Element   root = doc.createElementNS("", "chain");
         fillInDeploymentData(root);
 
-        category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::getDeploymentData") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::getDeploymentData") );
+        }
         return( root );
     }
 

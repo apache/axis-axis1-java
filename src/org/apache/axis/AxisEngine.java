@@ -129,7 +129,9 @@ public abstract class AxisEngine extends BasicHandler
         // !!! Set up default configuration?
         init();
 
-        category.debug(JavaUtils.getMessage("exit01", "AxisEngine"));
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit01", "AxisEngine"));
+        }
     }
 
     public AxisEngine(ConfigurationProvider configProvider)
@@ -142,7 +144,9 @@ public abstract class AxisEngine extends BasicHandler
      * (re)initialize - What should really go in here???
      */
     public void init() {
-        category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
+        }
 
         getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
@@ -153,7 +157,9 @@ public abstract class AxisEngine extends BasicHandler
             throw new NullPointerException(JavaUtils.getMessage("problemDeploying00"));
         }
         
-        category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
+        }
     }
 
     /**
