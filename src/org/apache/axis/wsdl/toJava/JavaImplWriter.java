@@ -206,6 +206,8 @@ public class JavaImplWriter extends JavaClassWriter {
                 } else if (paramType.endsWith("[]")) {
                     pw.print("new "
                              + JavaUtils.replace(paramType, "[]", "[0]"));
+                } else if (paramType.equals("org.apache.axis.types.Time")) {
+                    pw.print("new org.apache.axis.types.Time(\"15:45:45.275Z\")");
                 } else {
                     // We have some constructed type.
                     Vector v = Utils.getEnumerationBaseAndValues(

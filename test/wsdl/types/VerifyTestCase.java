@@ -71,6 +71,15 @@ import test.wsdl.types.comprehensive_types2.B;
 
 import test.wsdl.types.comprehensive_service.TypeTest;
 import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.axis.types.UnsignedInt;
+import org.apache.axis.types.UnsignedShort;
+import org.apache.axis.types.UnsignedByte;
+import org.apache.axis.holders.TimeHolder;
+import org.apache.axis.holders.UnsignedLongHolder;
+import org.apache.axis.holders.UnsignedByteHolder;
+import org.apache.axis.holders.UnsignedShortHolder;
+import org.apache.axis.holders.UnsignedIntHolder;
 
 public class VerifyTestCase extends junit.framework.TestCase {
     public VerifyTestCase(String name) {
@@ -86,6 +95,23 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
         assertTrue("binding is null", binding != null);
+
+        // setup unsigned
+        UnsignedLong ulong = null;
+        UnsignedInt uint = null;
+        UnsignedShort ushort = null;
+        UnsignedByte ubyte = null;
+
+        try {
+            ulong = new UnsignedLong(7777);
+            uint = new UnsignedInt(777);
+            ushort = new UnsignedShort(77);
+            ubyte = new UnsignedByte(7);
+        } catch (Exception e) {
+            // possibly thrown from Unsigned constructors
+            // wont happen since we know the value are good!
+        }
+
         try {
             binding.allPrimitivesIn(
                     "hi",
@@ -109,7 +135,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new java.math.BigDecimal(7),
                     new Integer(0),
                     new Short((short) 0),
-                    new byte[]{(byte) 7});
+                    new byte[]{(byte) 7},
+                    new org.apache.axis.types.Time("12:01:30.150Z"),
+                    ulong,
+                    uint,
+                    ushort,
+                    ubyte
+            );
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -136,7 +168,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new BigDecimalHolder(new java.math.BigDecimal(12)),
                     new IntegerWrapperHolder(new Integer(13)),
                     new ShortWrapperHolder(new Short((short) 14)),
-                    new ByteArrayHolder(new byte[]{(byte) 15}));
+                    new ByteArrayHolder(new byte[]{(byte) 15}),
+                    new TimeHolder(new org.apache.axis.types.Time("12:01:30.150Z")),
+                    new UnsignedLongHolder(ulong),
+                    new UnsignedIntHolder(uint),
+                    new UnsignedShortHolder(ushort),
+                    new UnsignedByteHolder(ubyte)
+            );
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -163,7 +201,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new BigDecimalHolder(),
                     new IntegerWrapperHolder(),
                     new ShortWrapperHolder(),
-                    new ByteArrayHolder());
+                    new ByteArrayHolder(),
+                    new TimeHolder(),
+                    new UnsignedLongHolder(),
+                    new UnsignedIntHolder(),
+                    new UnsignedShortHolder(),
+                    new UnsignedByteHolder()
+            );
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -573,6 +617,58 @@ public class VerifyTestCase extends junit.framework.TestCase {
 //        } catch (java.rmi.RemoteException re) {
 //            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
 //        }
+        try {
+            org.apache.axis.types.Time sendValue = new org.apache.axis.types.Time("15:30:45.245Z");
+            TimeHolder ch = new TimeHolder(sendValue);
+            org.apache.axis.types.Time actual = binding.methodTime(sendValue, ch);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            UnsignedLong sendValue = null;
+            try {
+                sendValue = new UnsignedLong(18446744073709551600D);
+            } catch (Exception e) {
+            }
+            UnsignedLongHolder ch = new UnsignedLongHolder(sendValue);
+            UnsignedLong actual = binding.methodUnsignedLong(sendValue, ch);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            UnsignedInt sendValue = null;
+            try {
+                sendValue = new UnsignedInt(4294967200L);
+            } catch (Exception e) {
+            }
+            UnsignedIntHolder ch = new UnsignedIntHolder(sendValue);
+            UnsignedInt actual = binding.methodUnsignedInt(sendValue, ch);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            UnsignedShort sendValue = null;
+            try {
+                sendValue = new UnsignedShort(65530);
+            } catch (Exception e) {
+            }
+            UnsignedShortHolder ch = new UnsignedShortHolder(sendValue);
+            UnsignedShort actual = binding.methodUnsignedShort(sendValue, ch);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            UnsignedByte sendValue = null;
+            try {
+                sendValue = new UnsignedByte(250);
+            } catch (Exception e) {
+            }
+            UnsignedByteHolder ch = new UnsignedByteHolder(sendValue);
+            UnsignedByte actual = binding.methodUnsignedByte(sendValue, ch);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        
         try {
             String sendValue = "Sent String"; 
             StringHolder sh = new StringHolder(sendValue);

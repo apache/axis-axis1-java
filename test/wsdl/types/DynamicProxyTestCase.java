@@ -48,6 +48,16 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import test.wsdl.types.comprehensive_service.TypeTest;
+import org.apache.axis.types.Time;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.axis.types.UnsignedInt;
+import org.apache.axis.types.UnsignedByte;
+import org.apache.axis.types.UnsignedShort;
+import org.apache.axis.holders.TimeHolder;
+import org.apache.axis.holders.UnsignedLongHolder;
+import org.apache.axis.holders.UnsignedShortHolder;
+import org.apache.axis.holders.UnsignedByteHolder;
+import org.apache.axis.holders.UnsignedIntHolder;
 
 public class DynamicProxyTestCase extends TestCase {
     public DynamicProxyTestCase(String name) {
@@ -88,6 +98,10 @@ public class DynamicProxyTestCase extends TestCase {
     private void allPrimitivesIn(TypeTest binding) {
         assertTrue("binding is null", binding != null);
         try {
+            UnsignedLong ulong = new UnsignedLong(0);
+            UnsignedInt uint = new UnsignedInt(0);
+            UnsignedShort ushort = new UnsignedShort(0);
+            UnsignedByte ubyte = new UnsignedByte(0);
 
             binding.allPrimitivesIn(
                     new String(),
@@ -111,12 +125,23 @@ public class DynamicProxyTestCase extends TestCase {
                     new BigDecimal(0),
                     new Integer(0),
                     new Short((short)0),
-                    new byte[0]);
+                    new byte[0],
+                    new Time("12:01:30.150Z"),
+                    ulong,
+                    uint,
+                    ushort,
+                    ubyte
+                    );
         }
         catch (RemoteException re) {
             re.printStackTrace();
             throw new AssertionFailedError("Remote Exception caught: " + re);
         }
+        catch (Exception e) {
+            // possibly thrown from Unsigned constructors
+            // wont happen since we know the value are good!
+        }
+        
     } // allPrimitivesIn
 
     public void test1TypeTestAllPrimitivesIn() {
@@ -129,6 +154,11 @@ public class DynamicProxyTestCase extends TestCase {
     private void allPrimitivesInout(TypeTest binding) {
         assertTrue("binding is null", binding != null);
         try {
+            UnsignedLong ulong = new UnsignedLong(0);
+            UnsignedInt uint = new UnsignedInt(0);
+            UnsignedShort ushort = new UnsignedShort(0);
+            UnsignedByte ubyte = new UnsignedByte(0);
+
             binding.allPrimitivesInout(
                     new StringHolder(new String()),
                     new BigIntegerHolder(new BigInteger("0")),
@@ -152,11 +182,22 @@ public class DynamicProxyTestCase extends TestCase {
                     new BigDecimalHolder(new BigDecimal(0)),
                     new IntegerWrapperHolder(new Integer(0)),
                     new ShortWrapperHolder(new Short((short)0)),
-                    new ByteArrayHolder(new byte[0]));
+                    new ByteArrayHolder(new byte[0]),
+                    new TimeHolder(new Time("12:01:30.150Z")),
+                    new UnsignedLongHolder(ulong),
+                    new UnsignedIntHolder(uint),
+                    new UnsignedShortHolder(ushort),
+                    new UnsignedByteHolder(ubyte)
+                    
+            );
         }
         catch (RemoteException re) {
             re.printStackTrace();
             throw new AssertionFailedError("Remote Exception caught: " + re);
+        }
+        catch (Exception e) {
+            // possibly thrown from Unsigned constructors
+            // wont happen since we know the value are good!
         }
     } // allPrimitivesInout
 
@@ -194,7 +235,13 @@ public class DynamicProxyTestCase extends TestCase {
                     new BigDecimalHolder(), 
                     new IntegerWrapperHolder(), 
                     new ShortWrapperHolder(), 
-                    new ByteArrayHolder());
+                    new ByteArrayHolder(),
+                    new TimeHolder(),
+                    new UnsignedLongHolder(),
+                    new UnsignedIntHolder(),
+                    new UnsignedShortHolder(),
+                    new UnsignedByteHolder()
+            );
         }
         catch (RemoteException re) {
             throw new AssertionFailedError("Remote Exception caught: " + re);

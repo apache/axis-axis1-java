@@ -359,6 +359,11 @@
     <part name="soapInt" type="soapenc:int"/>
     <part name="soapShort" type="soapenc:short"/>
     <part name="soapBase64" type="soapenc:base64"/>
+    <part name="time" type="xsd:time"/>
+    <part name="unsignedLong" type="xsd:unsignedLong"/>
+    <part name="unsignedInt" type="xsd:unsignedInt"/>
+    <part name="unsignedShort" type="xsd:unsignedShort"/>
+    <part name="unsignedByte" type="xsd:unsignedByte"/>
   </message>
   <message name="inputBoolean">
     <part name="inBoolean" type="xsd:boolean"/>
@@ -498,6 +503,56 @@
   <message name="outputHexBinary">
     <part name="outHexBinary" type="xsd:hexBinary"/>
     <part name="hexBinary" type="xsd:hexBinary"/>
+  </message>
+
+  <message name="inputTime">
+    <part name="inTime" type="xsd:time"/>
+    <part name="time" type="xsd:time"/>
+  </message>
+
+  <message name="outputTime">
+    <part name="outTime" type="xsd:time"/>
+    <part name="time" type="xsd:time"/>
+  </message>
+
+  <message name="inputUnsignedLong">
+    <part name="inUnsignedLong" type="xsd:unsignedLong"/>
+    <part name="unsignedLong" type="xsd:unsignedLong"/>
+  </message>
+
+  <message name="outputUnsignedLong">
+    <part name="outUnsignedLong" type="xsd:unsignedLong"/>
+    <part name="unsignedLong" type="xsd:unsignedLong"/>
+  </message>
+
+  <message name="inputUnsignedInt">
+    <part name="inUnsignedInt" type="xsd:unsignedInt"/>
+    <part name="unsignedInt" type="xsd:unsignedInt"/>
+  </message>
+
+  <message name="outputUnsignedInt">
+    <part name="outUnsignedInt" type="xsd:unsignedInt"/>
+    <part name="unsignedInt" type="xsd:unsignedInt"/>
+  </message>
+
+  <message name="inputUnsignedShort">
+    <part name="inUnsignedShort" type="xsd:unsignedShort"/>
+    <part name="unsignedShort" type="xsd:unsignedShort"/>
+  </message>
+
+  <message name="outputUnsignedShort">
+    <part name="outUnsignedShort" type="xsd:unsignedShort"/>
+    <part name="unsignedShort" type="xsd:unsignedShort"/>
+  </message>
+
+  <message name="inputUnsignedByte">
+    <part name="inUnsignedByte" type="xsd:unsignedByte"/>
+    <part name="unsignedByte" type="xsd:unsignedByte"/>
+  </message>
+
+  <message name="outputUnsignedByte">
+    <part name="outUnsignedByte" type="xsd:unsignedByte"/>
+    <part name="unsignedByte" type="xsd:unsignedByte"/>
   </message>
 
   <message name="inputSoapString">
@@ -904,6 +959,26 @@
       <output message="tns:outputHexBinary"/>
     </operation>
     -->
+    <operation name="methodTime">
+      <input message="tns:inputTime"/>
+      <output message="tns:outputTime"/>
+    </operation>    
+    <operation name="methodUnsignedLong">
+      <input message="tns:inputUnsignedLong"/>
+      <output message="tns:outputUnsignedLong"/>
+    </operation>    
+    <operation name="methodUnsignedInt">
+      <input message="tns:inputUnsignedInt"/>
+      <output message="tns:outputUnsignedInt"/>
+    </operation>    
+    <operation name="methodUnsignedShort">
+      <input message="tns:inputUnsignedShort"/>
+      <output message="tns:outputUnsignedShort"/>
+    </operation>    
+    <operation name="methodUnsignedByte">
+      <input message="tns:inputUnsignedByte"/>
+      <output message="tns:outputUnsignedByte"/>
+    </operation>    
     <operation name="methodSoapString">
       <input message="tns:inputSoapString"/>
       <output message="tns:outputSoapString"/>
@@ -1938,6 +2013,81 @@
       </output>
     </operation>
     -->
+    <operation name="methodTime">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodUnsignedLong">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodUnsignedInt">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodUnsignedShort">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodUnsignedByte">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
     <operation name="methodSoapString">
       <soap:operation soapAction=""/>
       <input>
