@@ -67,6 +67,8 @@ import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * A SimpleProvider is an EngineConfiguration which contains a simple
@@ -249,4 +251,16 @@ public class SimpleProvider implements EngineConfiguration
         deployTransport(new QName(null, name), transport);
     }
 
+    /**
+     * Get an enumeration of the services deployed to this engine
+     */
+    public Iterator getDeployedServices() throws ConfigurationException {
+        ArrayList serviceDescs = new ArrayList();
+        Iterator i = services.values().iterator();
+        while (i.hasNext()) {
+            SOAPService service = (SOAPService)i.next();
+            serviceDescs.add(service.getServiceDescription());
+        }
+        return serviceDescs.iterator();
+    }
 }

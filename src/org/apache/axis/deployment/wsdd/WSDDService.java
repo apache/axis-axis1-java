@@ -130,6 +130,8 @@ public class WSDDService
     {
         super(e);
 
+        desc.setName(getQName().getLocalPart());
+
         String modeStr = e.getAttribute("style");
         if (modeStr != null && !modeStr.equals("")) {
             style = MessageContext.getStyleFromString(modeStr);
@@ -173,6 +175,18 @@ public class WSDDService
         String typeStr = e.getAttribute("provider");
         if (typeStr != null && !typeStr.equals(""))
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
+
+        String className = this.getParameter("className");
+        if (className != null) {
+            try {
+                Class cls = Class.forName(className);
+                desc.setImplClass(cls);
+                initTMR();
+                String encStyle = Constants.URI_SOAP_ENC;
+                desc.setTypeMapping((TypeMapping)tmr.getTypeMapping(encStyle));
+            } catch (Exception ex) {
+            }
+        }
 
     }
 
@@ -332,13 +346,7 @@ public class WSDDService
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
 
-        if (tmr == null) {
-            tmr = new TypeMappingRegistryImpl();
-        }
-        for (int i = 0; i < typeMappings.size(); i++) {
-            deployTypeMapping((WSDDTypeMapping)typeMappings.get(i));
-        }
-
+        initTMR();
         service.setTypeMappingRegistry(tmr);
         tmr.delegate(registry.getTypeMappingRegistry());
 
@@ -499,6 +507,17 @@ public class WSDDService
         for (int i = 0; i < namespaces.size(); i++) {
             String namespace = (String) namespaces.elementAt(i);
             registry.removeNamespaceMapping(namespace);
+        }
+        registry.removeNamespaceMapping(getQName().getLocalPart());
+    }
+
+    public void initTMR() throws WSDDException
+    {
+        if (tmr == null) {
+            tmr = new TypeMappingRegistryImpl();
+            for (int i = 0; i < typeMappings.size(); i++) {
+                deployTypeMapping((WSDDTypeMapping)typeMappings.get(i));
+            }
         }
     }
 }

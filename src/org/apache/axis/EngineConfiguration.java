@@ -61,6 +61,8 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.handlers.soap.SOAPService;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * EngineConfiguration is an interface that the Message Flow subsystem
@@ -152,4 +154,9 @@ public interface EngineConfiguration {
      * Returns the global configuration options.
      */
     public Hashtable getGlobalOptions() throws ConfigurationException;
+
+    /**
+     * Get an enumeration of the services deployed to this engine
+     */
+    public Iterator getDeployedServices() throws ConfigurationException;
 }

@@ -63,6 +63,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
@@ -79,6 +80,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A simple ConfigurationProvider that uses the Admin class to read +
@@ -309,4 +313,16 @@ public class FileProvider implements EngineConfiguration {
         return null;
     }
 
+    /**
+     * Get an enumeration of the services deployed to this engine
+     */
+    public Iterator getDeployedServices() throws ConfigurationException {
+        ArrayList serviceDescs = new ArrayList();
+        WSDDService [] services = this.deployment.getServices();
+        for (int i = 0; i < services.length; i++) {
+            WSDDService service = services[i];
+            serviceDescs.add(service.getServiceDesc());
+        }
+        return serviceDescs.iterator();
+    }
 }
