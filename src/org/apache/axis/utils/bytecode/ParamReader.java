@@ -140,23 +140,23 @@ public class ParamReader
 
     }
 
-	public void readCode() throws IOException
-	{
-		readShort(); // max stack
-		int maxLocals = readShort(); // max locals
+    public void readCode() throws IOException
+    {
+        readShort(); // max stack
+        int maxLocals = readShort(); // max locals
 
-		MethodInfo info = new MethodInfo(maxLocals);
-		if (methods != null && methodName != null)
-		{
-			methods.put(methodName, info);
-		}
+        MethodInfo info = new MethodInfo(maxLocals);
+        if (methods != null && methodName != null)
+        {
+            methods.put(methodName, info);
+        }
 
-		skipFully(readInt()); // code
-		skipFully(8 * readShort()); // exception table
-		// read the code attributes (recursive).  This is where
-		// we will find the LocalVariableTable attribute.
-		readAttributes();
-	}
+        skipFully(readInt()); // code
+        skipFully(8 * readShort()); // exception table
+        // read the code attributes (recursive).  This is where
+        // we will find the LocalVariableTable attribute.
+        readAttributes();
+    }
 
     /**
      * return the names of the declared parameters for the given method.
@@ -202,27 +202,27 @@ public class ParamReader
         }
     }
 
-	private static class MethodInfo
-	{
-		String[] names;
-		int maxLocals;
+    private static class MethodInfo
+    {
+        String[] names;
+        int maxLocals;
 
-		public MethodInfo(int maxLocals)
-		{
-			this.maxLocals = maxLocals;
-			names = new String[maxLocals];
-		}
-	}
+        public MethodInfo(int maxLocals)
+        {
+            this.maxLocals = maxLocals;
+            names = new String[maxLocals];
+        }
+    }
 
-	private MethodInfo getMethodInfo()
-	{
-		MethodInfo info = null;
-		if (methods != null && methodName != null)
-		{
-			info = (MethodInfo) methods.get(methodName);
-		}
-		return info;
-	}
+    private MethodInfo getMethodInfo()
+    {
+        MethodInfo info = null;
+        if (methods != null && methodName != null)
+        {
+            info = (MethodInfo) methods.get(methodName);
+        }
+        return info;
+    }
 
     /**
      * this is invoked when a LocalVariableTable attribute is encountered.
@@ -237,9 +237,9 @@ public class ParamReader
             int nameIndex = readShort(); // name_index
             readShort(); // descriptor_index
             int index = readShort(); // local index
-			if (info != null) {
-				info.names[index] = resolveUtf8(nameIndex);
-			}
+            if (info != null) {
+                info.names[index] = resolveUtf8(nameIndex);
+            }
         }
     }
 }
