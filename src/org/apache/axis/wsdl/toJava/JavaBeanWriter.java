@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,7 +74,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected boolean enableDefaultConstructor = true;
 
     /** Field enableFullConstructor */
-    protected boolean enableFullConstructor = true;
+    protected boolean enableFullConstructor = false;
 
     /** Field enableSimpleConstructors */
     protected boolean enableSimpleConstructors = false;
@@ -204,6 +205,8 @@ public class JavaBeanWriter extends JavaClassWriter {
         // Write Full Constructor
         if (enableFullConstructor) {
             writeFullConstructor();
+        } else {
+            writeMinimalConstructor();
         }
 
         // Write SimpleConstructors
@@ -485,6 +488,36 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println();
     }
 
+    protected void writeMinimalConstructor() {
+
+        if (isUnion() || names.size() == 0) {
+            return;
+        }
+
+        pw.println("    public " + className + "(");
+        for (int i = 0; i < names.size(); i += 2) {
+            String typeName = (String) names.get(i);
+            String variable = (String) names.get(i + 1);
+            pw.print("           " + typeName + " "
+                    + variable);
+            if (i >= names.size() - 2) {
+                pw.println(") {");
+                break;
+            } else {
+                pw.println(",");
+            }
+        }
+        for (int i = 0; i < names.size(); i += 2) {
+            String variable = (String) names.get(i + 1);
+            pw.println("           this." + variable + " = " + variable + ";");
+            if (i >= names.size() - 2) {
+                break;
+            }
+        }
+        pw.println("    }");
+        pw.println();
+    }
+    
     /**
      * Writes the full constructor.
      * Note that this class is not recommended for
