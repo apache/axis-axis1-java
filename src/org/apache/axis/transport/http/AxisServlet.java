@@ -419,7 +419,7 @@ public class AxisServlet extends AxisServletBase {
     private void writeFault(PrintWriter writer, AxisFault axisFault) {
         String localizedMessage = XMLUtils.xmlEncodeString(axisFault.getLocalizedMessage());
         writer.println("<pre>Fault - " + localizedMessage + "<br>");
-        writer.println(axisFault.dumpToString(true));
+        writer.println(axisFault.dumpToString());
         writer.println("</pre>");
     }
     

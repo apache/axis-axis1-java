@@ -303,22 +303,14 @@ public class AxisFault extends java.rmi.RemoteException {
         log.debug(dumpToString());
     }
 
-    /**
-     * turn the fault and details into a string
-     * @return stringified fault details
-     */
-    public String dumpToString() {
-        return dumpToString(true);
-    }
 
     /**
-     * turn the fault and details into a string, with or without XML escaping.
+     * turn the fault and details into a string, with XML escaping.
      * subclassers: for security (cross-site-scripting) reasons, 
      * escape everything that could contain caller-supplied data. 
-     * @param escapeText flag to control whether to XML escape everything
      * @return stringified fault details
      */
-    public String dumpToString(boolean escapeText)
+    public String dumpToString()
     {
         String details = new String();
 
@@ -345,22 +337,15 @@ public class AxisFault extends java.rmi.RemoteException {
             for (int i = 0; i < faultSubCode.size(); i++) {
                 subCodes += JavaUtils.LS
                             + (QName)faultSubCode.elementAt(i);
-
             }
         }
-        String code=faultCode.toString();
-        String errorString=faultString;
-        String actor=faultActor;
-        String node=faultNode;
+        //encode everything except details and subcodes, which are already
+        //dealt with one way or another.
+        String code= XMLUtils.xmlEncodeString(faultCode.toString());
+        String errorString= XMLUtils.xmlEncodeString(faultString);
+        String actor= XMLUtils.xmlEncodeString(faultActor);
+        String node= XMLUtils.xmlEncodeString(faultNode);
 
-        if (escapeText) {
-            //encode everything except details and subcodes, which are already
-            //dealt with one way or another.
-            code= XMLUtils.xmlEncodeString(code);
-            errorString = XMLUtils.xmlEncodeString(errorString);
-            actor= XMLUtils.xmlEncodeString(actor);
-            node = XMLUtils.xmlEncodeString(node);
-        }
 
         return "AxisFault" + JavaUtils.LS
             + " faultCode: " + code + JavaUtils.LS
