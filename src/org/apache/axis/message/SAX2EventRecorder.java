@@ -66,34 +66,30 @@ import java.util.ArrayList;
  */
 public class SAX2EventRecorder { 
     
-    private static final byte STATE_SET_DOCUMENT_LOCATOR = 0;
-    private static final byte STATE_START_DOCUMENT = 1;
-    private static final byte STATE_END_DOCUMENT = 2;
-    private static final byte STATE_START_PREFIX_MAPPING = 3;
-    private static final byte STATE_END_PREFIX_MAPPING = 4;
-    private static final byte STATE_START_ELEMENT = 5;
-    private static final byte STATE_END_ELEMENT = 6;
-    private static final byte STATE_CHARACTERS = 7;
-    private static final byte STATE_IGNORABLE_WHITESPACE = 8;
-    private static final byte STATE_PROCESSING_INSTRUCTION = 9;
-    private static final byte STATE_SKIPPED_ENTITY = 10;
+    private static final Integer Z = new Integer(0);
+
+    private static final Integer STATE_SET_DOCUMENT_LOCATOR = new Integer(0);
+    private static final Integer STATE_START_DOCUMENT = new Integer(1);
+    private static final Integer STATE_END_DOCUMENT = new Integer(2);
+    private static final Integer STATE_START_PREFIX_MAPPING = new Integer(3);
+    private static final Integer STATE_END_PREFIX_MAPPING = new Integer(4);
+    private static final Integer STATE_START_ELEMENT = new Integer(5);
+    private static final Integer STATE_END_ELEMENT = new Integer(6);
+    private static final Integer STATE_CHARACTERS = new Integer(7);
+    private static final Integer STATE_IGNORABLE_WHITESPACE = new Integer(8);
+    private static final Integer STATE_PROCESSING_INSTRUCTION = new Integer(9);
+    private static final Integer STATE_SKIPPED_ENTITY = new Integer(10);
     
     // This is a "custom" event which tells DeserializationContexts
     // that the current element is moving down the stack...
-    private static final byte STATE_NEWELEMENT = 11;
+    private static final Integer STATE_NEWELEMENT = new Integer(11);
 
     org.xml.sax.Locator locator;
-    intArrayVector events = new intArrayVector();
-    Object[] attrs = new Object[20];
-    int numattrs = 0;
-    SymbolTable st = new SymbolTable();
+    objArrayVector events = new objArrayVector();
     
     public void clear() {
         locator = null;
-        events = new intArrayVector();
-        attrs = new Object[20];
-        numattrs = 0;
-        st = new SymbolTable();
+        events = new objArrayVector();
     }
     public int getLength()
     {
@@ -102,59 +98,41 @@ public class SAX2EventRecorder {
     
     public int setDocumentLocator(org.xml.sax.Locator p1) {
         locator = p1;
-        return events.add(STATE_SET_DOCUMENT_LOCATOR, 0,0,0,0);
+        return events.add(STATE_SET_DOCUMENT_LOCATOR, Z,Z,Z,Z);
     }
     public int startDocument() {
-        return events.add(STATE_START_DOCUMENT, 0,0,0,0);
+        return events.add(STATE_START_DOCUMENT, Z,Z,Z,Z);
     }
     public int endDocument() {
-        return events.add(STATE_END_DOCUMENT, 0,0,0,0);
+        return events.add(STATE_END_DOCUMENT, Z,Z,Z,Z);
     }
     public int startPrefixMapping(String p1, String p2) {
-        return events.add(STATE_START_PREFIX_MAPPING, st.addSymbol(p1), st.addSymbol(p2), 0,0);
+        return events.add(STATE_START_PREFIX_MAPPING, p1, p2, Z,Z);
     }
     public int endPrefixMapping(String p1) {
-        return events.add(STATE_END_PREFIX_MAPPING, st.addSymbol(p1),0,0,0);
+        return events.add(STATE_END_PREFIX_MAPPING, p1,Z,Z,Z);
     }
     public int startElement(String p1, String p2, String p3, org.xml.sax.Attributes p4) {
-        if (numattrs == attrs.length) {
-            Object[] nattrs = new Object[numattrs * 2];
-            System.arraycopy(attrs, 0, nattrs, 0, numattrs);
-            attrs = nattrs;
-        }
-        
-        attrs[numattrs++] = p4;
-        return events.add(STATE_START_ELEMENT, st.addSymbol(p1), st.addSymbol(p2), st.addSymbol(p3), numattrs-1);
+        return events.add(STATE_START_ELEMENT, p1, p2, p3, p4);
     }
     public int endElement(String p1, String p2, String p3) {
-        return events.add(STATE_END_ELEMENT, st.addSymbol(p1), st.addSymbol(p2), st.addSymbol(p3),0);
+        return events.add(STATE_END_ELEMENT, p1, p2, p3, Z);
     }
     public int characters(char[] p1, int p2, int p3) {
-        /*
-        return events.add(STATE_CHARACTERS, st.addSymbol(p1, p2, p3), p2, p3, 0);
-        */
-        return events.add(STATE_CHARACTERS, st.addSymbol(p1, p2, p3), 0, p3, 0);        
+        return events.add(STATE_CHARACTERS, new String(p1, p2, p3), Z,Z,Z);
     }
     public int ignorableWhitespace(char[] p1, int p2, int p3) {
-        return events.add(STATE_IGNORABLE_WHITESPACE, st.addSymbol(p1, p2, p3), p2, p3, 0);
+        return events.add(STATE_IGNORABLE_WHITESPACE, new String(p1, p2, p3), Z,Z,Z);
     }
     public int processingInstruction(String p1, String p2) {
-        return events.add(STATE_PROCESSING_INSTRUCTION, st.addSymbol(p1), st.addSymbol(p2), 0,0);
+        return events.add(STATE_PROCESSING_INSTRUCTION, p1, p2, Z,Z);
     }
     public int skippedEntity(String p1) {
-        return events.add(STATE_SKIPPED_ENTITY, st.addSymbol(p1), 0,0,0);
+        return events.add(STATE_SKIPPED_ENTITY, p1, Z,Z,Z);
     }
     
-    public int newElement(MessageElement elem)
-    {
-        return events.add(STATE_NEWELEMENT, addElement(elem), 0, 0, 0);
-    }
-    
-    ArrayList elements = new ArrayList();
-    private int addElement(MessageElement elem)
-    {
-        elements.add(elem);
-        return elements.size() - 1;
+    public int newElement(MessageElement elem) {
+        return events.add(STATE_NEWELEMENT, elem, Z,Z,Z);
     }
     
     public void replay(ContentHandler handler) throws SAXException {
@@ -175,97 +153,83 @@ public class SAX2EventRecorder {
             return; // should throw an error here
         }        
         for (int n = start; n <= stop; n++) {
-            switch(events.get(n,0)) {
-            case STATE_SET_DOCUMENT_LOCATOR:
-                handler.setDocumentLocator(locator);
-                break;
-            case STATE_START_DOCUMENT:
-                handler.startDocument();
-                break;
-            case STATE_END_DOCUMENT:
-                handler.endDocument();
-                break;
-            case STATE_START_PREFIX_MAPPING:
-                handler.startPrefixMapping(st.getSymbol(events.get(n, 1)),
-                                           st.getSymbol(events.get(n, 2)));
-                break;
-            case STATE_END_PREFIX_MAPPING:
-                handler.endPrefixMapping(st.getSymbol(events.get(n, 1)));
-                break;
-            case STATE_START_ELEMENT:
-//                int attrIdx = events.get(n,4);
+            Object event = events.get(n,0);
+             if (event == STATE_START_ELEMENT) {
+                handler.startElement((String)events.get(n,1), 
+                                     (String)events.get(n,2),
+                                     (String)events.get(n,3),
+                                     (org.xml.sax.Attributes)events.get(n,4));
                 
-                handler.startElement(st.getSymbol(events.get(n,1)), 
-                                     st.getSymbol(events.get(n,2)),
-                                     st.getSymbol(events.get(n,3)),
-                                     (org.xml.sax.Attributes)attrs[events.get(n,4)]);
-                break;
-            case STATE_END_ELEMENT:
-                handler.endElement(st.getSymbol(events.get(n,1)), 
-                                   st.getSymbol(events.get(n,2)),
-                                   st.getSymbol(events.get(n,3)));
-                break;
-            case STATE_CHARACTERS:
-                handler.characters(st.getSymbol(events.get(n,1)).toCharArray(), 
-                                   events.get(n,2),
-                                   events.get(n,3));
-                break;
-            case STATE_IGNORABLE_WHITESPACE:
-                handler.characters(st.getSymbol(events.get(n,1)).toCharArray(), 
-                                   events.get(n,2),
-                                   events.get(n,3));
-                break;
-            case STATE_PROCESSING_INSTRUCTION:
-                handler.processingInstruction(st.getSymbol(events.get(n,1)),
-                                              st.getSymbol(events.get(n,2)));
-                break;
-            case STATE_SKIPPED_ENTITY:
-                handler.skippedEntity(st.getSymbol(events.get(n,1)));
-                break;
-            case STATE_NEWELEMENT:
+            } else if (event == STATE_END_ELEMENT) {
+                handler.endElement((String)events.get(n,1), 
+                                   (String)events.get(n,2),
+                                   (String)events.get(n,3));
+                
+            } else if (event == STATE_CHARACTERS) {
+                char chars[] = ((String)(events.get(n,1))).toCharArray();
+                handler.characters(chars, 0, chars.length);
+                
+            } else if (event == STATE_IGNORABLE_WHITESPACE) {
+                char chars[] = ((String)(events.get(n,1))).toCharArray();
+                handler.characters(chars, 0, chars.length);
+                
+            } else if (event == STATE_PROCESSING_INSTRUCTION) {
+                handler.processingInstruction((String)events.get(n,1),
+                                              (String)events.get(n,2));
+                
+            } else if (event == STATE_SKIPPED_ENTITY) {
+                handler.skippedEntity((String)events.get(n,1));
+                
+            } else if (event == STATE_SET_DOCUMENT_LOCATOR) {
+                handler.setDocumentLocator(locator);
+                
+            } else if (event == STATE_START_DOCUMENT) {
+                handler.startDocument();
+                
+            } else if (event == STATE_END_DOCUMENT) {
+                handler.endDocument();
+                
+            } else if (event == STATE_START_PREFIX_MAPPING) {
+                handler.startPrefixMapping((String)events.get(n, 1),
+                                           (String)events.get(n, 2));
+                
+            } else if (event == STATE_END_PREFIX_MAPPING) {
+                handler.endPrefixMapping((String)events.get(n, 1));
+                
+            } else if (event == STATE_NEWELEMENT) {
                 if (handler instanceof DeserializationContext) {
                     DeserializationContext context =
                               (DeserializationContext)handler;
                     context.setCurElement(
-                              (MessageElement)elements.get(events.get(n,1)));
+                              (MessageElement)(events.get(n,1)));
                 }
-                break;
             }
         }
     }
     
 /////////////////////////////////////////////
-    class intArrayVector {
+    class objArrayVector {
         private int RECORD_SIZE = 5;
         private int currentSize = 0;
-        private int[] intarray = new int[50 * RECORD_SIZE];  // default to 50 5 field records
+        private Object[] objarray = new Object[50 * RECORD_SIZE];  // default to 50 5 field records
         
-        public int add(int p1, int p2, int p3, int p4, int p5) {
-            if (currentSize == intarray.length) {
-                int[] newarray = new int[currentSize * 2];
-                System.arraycopy(intarray, 0, newarray, 0, currentSize);
-                intarray = newarray;
+        public int add(Object p1, Object p2, Object p3, Object p4, Object p5) {
+            if (currentSize == objarray.length) {
+                Object[] newarray = new Object[currentSize * 2];
+                System.arraycopy(objarray, 0, newarray, 0, currentSize);
+                objarray = newarray;
             }
             int pos = currentSize / RECORD_SIZE;
-            intarray[currentSize++] = p1;
-            intarray[currentSize++] = p2;
-            intarray[currentSize++] = p3;
-            intarray[currentSize++] = p4;
-            intarray[currentSize++] = p5;
+            objarray[currentSize++] = p1;
+            objarray[currentSize++] = p2;
+            objarray[currentSize++] = p3;
+            objarray[currentSize++] = p4;
+            objarray[currentSize++] = p5;
             return pos;
         }
 
-        public int[] get(int pos) {
-            int[] ints = {intarray[(pos * 5)], 
-                          intarray[(pos * 5)+1],
-                          intarray[(pos * 5)+2],
-                          intarray[(pos * 5)+3],
-                          intarray[(pos * 5)+4]};
-            return ints;
-        }
-        
-        public int get(int pos, int fld) {
-            return intarray[(pos * RECORD_SIZE) + fld];
+        public Object get(int pos, int fld) {
+            return objarray[(pos * RECORD_SIZE) + fld];
         }
     
         public int getLength() {
