@@ -30,8 +30,8 @@ public class TestMimeHeaders extends TestCase {
         URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/axis/services/TestMimeHeaderService");
         SOAPMessage response = con.call(message, endpoint);
         String[] responseHeader = response.getMimeHeaders().getHeader(headerName);
-        assertTrue(responseHeader != null);
-        assertEquals(1, responseHeader.length);
-        assertEquals(headerValue, responseHeader[0]);
+        assertTrue("Response header was null", responseHeader != null);
+        assertEquals("ResponseHeader.length wasn't 1", 1, responseHeader.length);
+        assertEquals("Header value didn't match", headerValue, responseHeader[0]);
     }
 }

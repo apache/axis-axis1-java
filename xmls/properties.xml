@@ -16,9 +16,9 @@
 <property name="debug" value="on" />
 <property name="nowarn" value="off" />
 
-<property name="axis.version" value="1.2alpha" />
+<property name="axis.version" value="1.2beta" />
 <!-- This should be the version # above with dots replaced by underscores -->
-<property name="axis.dirname" value="1_2alpha" />
+<property name="axis.dirname" value="1_2beta" />
 
 <property name="name" value="axis" />
 <property name="Name" value="Axis" />

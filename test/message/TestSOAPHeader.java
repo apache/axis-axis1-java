@@ -19,9 +19,11 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis.Constants;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.message.SOAPHeaderElement;
+import org.w3c.dom.Document;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -31,6 +33,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 
 /**
@@ -105,6 +108,18 @@ public class TestSOAPHeader extends TestCase {
      * Method tearDown
      */
     protected void tearDown() {
+    }
+    
+    public static final String muHeader =
+            "<foo env:mustUnderstand=\"";
+    public static final String muEnd = "\"/>";
+    
+    public void testBadMUValues() throws Exception {
+        SOAPHeaderElement header;
+        String headerText = muHeader + "true" + muEnd;
+        InputStream is = new ByteArrayInputStream(headerText.getBytes());
+        Document doc = XMLUtils.newDocument(is);
+        header = new SOAPHeaderElement(doc.getDocumentElement());
     }
 
     /**
