@@ -18,7 +18,6 @@
        (and without typing -D each time it compiles it) -->
   <property file="${user.home}/build.properties"/>
 
-  <property environment="env"/>
   <property name="ant.dir" value="${env.ANT_HOME}/lib" />
 
   <target name="compile">
