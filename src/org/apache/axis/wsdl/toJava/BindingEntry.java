@@ -85,6 +85,8 @@ public class BindingEntry extends SymTabEntry {
     private int     bindingType;
     private int     bindingStyle;
     private HashMap attributes;
+    private HashMap  parameters = new HashMap ();
+    
 
     /**
      * Construct a BindingEntry from a WSDL4J Binding object and the additional binding info:
@@ -98,6 +100,27 @@ public class BindingEntry extends SymTabEntry {
         this.bindingStyle = bindingStyle;
         this.attributes = attributes;
     } // ctor
+
+    /**
+     * Get the Parameters object for the given operation.
+     */
+    public Parameters getParameters(String operationName) {
+        return (Parameters) parameters.get(operationName);
+    } // getParameters
+
+    /**
+     * Get all of the parameters for all operations.
+     */
+    public HashMap getParameters() {
+        return parameters;
+    } // getParameters
+
+    /**
+     * Set the parameters for all operations
+     */ 
+    public void setParameters(HashMap parameters) {
+        this.parameters = parameters;
+    }
 
     /**
      * Get this entry's WSDL4J Binding object.

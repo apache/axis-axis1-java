@@ -71,6 +71,7 @@ public class JavaBindingWriter implements Writer {
     Writer stubWriter = null;
     Writer skelWriter = null;
     Writer implWriter = null;
+    Writer interfaceWriter = null;
 
     /**
      * Constructor.
@@ -79,9 +80,19 @@ public class JavaBindingWriter implements Writer {
             Emitter emitter,
             Binding binding,
             SymbolTable symbolTable) {
+
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         if (bEntry.isReferenced()) {
+            // Interface writer
+            PortTypeEntry ptEntry = 
+                    symbolTable.getPortTypeEntry(binding.getPortType().getQName());
+            interfaceWriter =
+                    new JavaInterfaceWriter(emitter, ptEntry, bEntry, symbolTable);
+            
+            // Stub writer
             stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
+
+            // Skeleton and Impl writers
             if (emitter.bEmitSkeleton) {
                 skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
@@ -106,6 +117,9 @@ public class JavaBindingWriter implements Writer {
      * Write all the binding bindnigs:  stub, skeleton, and impl.
      */
     public void write() throws IOException {
+        if (interfaceWriter != null) {
+            interfaceWriter.write();
+        }
         if (stubWriter != null) {
             stubWriter.write();
         }

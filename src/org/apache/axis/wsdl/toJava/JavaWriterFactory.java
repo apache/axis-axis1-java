@@ -118,7 +118,7 @@ public class JavaWriterFactory implements WriterFactory {
      * Return Wsdl2java's JavaPortTypeWriter object.
      */
     public Writer getWriter(PortType portType, SymbolTable symbolTable) {
-        return new JavaPortTypeWriter(emitter, portType, symbolTable);
+        return new NoopWriter();
     } // getWriter
 
     /**
@@ -361,21 +361,18 @@ public class JavaWriterFactory implements WriterFactory {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-                if (entry instanceof PortTypeEntry) {
-                    PortTypeEntry ptEntry = (PortTypeEntry) entry;
+                if (entry instanceof BindingEntry) {
+                    BindingEntry bEntry = (BindingEntry) entry;
+                    Binding binding = bEntry.getBinding();
+                    PortTypeEntry ptEntry = 
+                            symbolTable.getPortTypeEntry(binding.getPortType().getQName());
                     PortType portType = ptEntry.getPortType();
-                    // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
-                    // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
-                    // TODO: Remove this patch...
-                    // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been
-                    // notified.
-                    Iterator operations =
-                            new HashSet(portType.getOperations()).iterator();
+                    Iterator operations = portType.getOperations().iterator();
                     while(operations.hasNext()) {
                         Operation operation = (Operation) operations.next();
                         OperationType type = operation.getStyle();
                         String name = operation.getName();
-                        Parameters parameters = ptEntry.getParameters(name);
+                        Parameters parameters = bEntry.getParameters(name);
                         if (type == OperationType.SOLICIT_RESPONSE) {
                             parameters.signature = "    // " + JavaUtils.getMessage(
                                     "invalidSolResp00", name);
@@ -443,18 +440,20 @@ public class JavaWriterFactory implements WriterFactory {
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
-                if (v.get(i) instanceof PortTypeEntry) {
-
-                        // If entry is a portTypeEntry, look at all the Parameters
-                    PortTypeEntry ptEntry = (PortTypeEntry) v.get(i);
+                if (v.get(i) instanceof BindingEntry) {
+                    // If entry is a BindingEntry, look at all the Parameters
+                    // in its portType
+                    BindingEntry bEntry = (BindingEntry) v.get(i);
+                    PortTypeEntry ptEntry = 
+                            symbolTable.getPortTypeEntry(bEntry.getBinding().getPortType().getQName());
                     Iterator operations =
-                      ptEntry.getParameters().values().iterator();
+                            bEntry.getParameters().values().iterator();
                     while (operations.hasNext()) {
                         Parameters parms = (Parameters) operations.next();
                         for (int j = 0; j < parms.list.size(); ++j) {
                             Parameter p =
                                     (Parameter)parms.list.get(j);
-
+                            
                             // If the given parameter is an inout or out parameter, then
                             // set a HOLDER_IS_NEEDED flag using the dynamicVar design.
                             if (p.mode != Parameter.IN) {
