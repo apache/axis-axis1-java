@@ -2,9 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
    <title>Axis Architecture Guide</title>
-<!-- saved from url=(0022)http://internet.e-mail -->
 <style type="text/css">
 <!--
 .example { background:#ccccff }
@@ -41,6 +39,7 @@ Contents</h3>
 <br><a href="#Message Model Subsystem">Message Model Subsystem</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#SOAP message model">SOAP Message Model</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#Message elements">Message Elements</a>
+<br><a href="#Encoding Subsystem">Encoding Subsystem</a>
 <br><a href="#WSDL Subsystem">WSDL Tools Subsystem</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#WSDL2Java">WSDL2Java</a>
 <br><a href="#Sequence Diagrams">Interaction Diagrams</a>
@@ -315,6 +314,56 @@ The classes which represent SOAP messages form a hierarchy based on
 the MessageElement class which takes care of namespaces and encodings.
 The SOAPHeader class looks after the actor and mustUnderstand attributes.
 <br><img SRC="messagemodelclasses.jpg">
+
+<h2>
+<a NAME="Encoding Subsystem"></a>Encoding Subsystem</h2>
+Encoding is most easily understood from the bottom up. The basic
+requirement is to transform between values of programming language
+datatypes and their XML representations. In Axis, this means
+encoding (or 'serializing') Java objects and primitives into XML
+and decoding (or 'deserializing') XML into Java objects and primitives.
+The basic classes that implement these steps are <i>serializers</i>
+and <i>deserializers</i>.
+<br><img SRC="serclasses.jpg">
+<p>
+Particular serializers and deserializers are written to support
+a specific XML processing mechanism such as DOM or SAX.
+So <i>serializer factories</i> and <i>deserializer factories</i>
+are introduced to construct serializers and deserializers
+for a XML processing mechanism which is specified
+as a parameter.
+<br><img SRC="serfactoryclasses.jpg">
+<p>
+As is apparent from the above class diagrams, each pair of Java
+type and XML data type which needs encoding
+and decoding requires specific serializers and 
+deserializers (actually one of each per XML processing mechanism).
+So we need to maintain a mapping from a pair of Java type and XML data
+type, identified by a QName, to a serializer factory and a
+deserializer factory.
+Such a mapping is known as a <i>type mapping</i>.
+The type mapping class hierarchy is shown below. Notice how
+the default type mapping instantiates the various serializer and
+deserialiser factories.
+<br><img SRC="typemappingclasses.jpg">
+<p>
+There is one final level of indirection. How do we know
+which type mapping to use for a particular message?
+This is determined by the encoding which is specified in
+the message. A <i>type mapping registry</i> maintains
+a map from encoding name (URI) to type mapping.
+Note that the XML data type QNames are defined by the encoding.
+<br><img SRC="typemappingclasses.jpg">
+<p>
+So, in summary, to encode a Java object or primitive data value
+to a XML datatype or to decode the latter to the former,
+we need to know:
+<ul>
+<li>the Java type we are dealing with,</li>
+<li>the QName of the XML data type we want to encode it as,</li>
+<li>the XML processing mechanism we are using, and</li>
+<li>the encoding name.</li>
+<eul>
 
 <h2>
 <a NAME="WSDL Subsystem"></a>WSDL Tools Subsystem</h2>
