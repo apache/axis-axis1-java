@@ -73,33 +73,62 @@ import org.xml.sax.Attributes;
  */
 public interface SerializationContext extends javax.xml.rpc.encoding.SerializationContext {
 
-
     /**
-     * Serialize the indicated value as an element named qName.  The attributes object are 
-     * additional attributes that will be serialized with the qName.  The value
-     * could be serialized directly or could be serialized as an href (with the
-     * actual serialize taking place later)
-     * @param qName is the QName of the element
+     * Serialize the indicated value as an element with the name 
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive, the 
+     * javaType is the actual unwrapped object type.
+     * The xmlType (if specified) is the QName of the type that is used to set
+     * xsi:type.  If not specified, xsi:type is set by using the javaType to 
+     * find an appopriate xmlType from the TypeMappingRegistry.  
+     * The sendNull flag indicates whether null values should be sent over the
+     * wire (default is to send such values with xsi:nil="true").
+     * The sendType flag indicates whether the xsi:type flag should be sent 
+     * (default is true).
+     * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
-     * @param javaType is the "real" type of the value.  For primitives, the value is the
-     * associated java.lang class.  So the javaType is needed to know that the value
-     * is really a wrapped primitive.     
+     * @param javaType is the "real" type of the value.
+     * @param xmlType is the qname of the type or null. (default is null)
+     * @param sendNull determines whether to send null values. (default is true)
+     * @param sendType determines whether to set xsi:type attribute. (default is true)
      */
-    public void serialize(QName qName, Attributes attributes, Object value, Class javaType) 
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          Class javaType)
+        throws IOException;
+
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          Class javaType,
+                          QName xmlType,
+                          boolean sendNull,
+                          boolean sendType)
         throws IOException;
 
     /**
      * Invoked to do the actual serialization of the qName (called by serialize above).
-     * additional attributes that will be serialized with the qName. 
-     * @param qName is the QName of the element
+     * additional attributes that will be serialized with the qName.
+     * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param javaType is the "real" type of the value.  For primitives, the value is the
-     * associated java.lang class.  So the javaType is needed to know that the value 
+     * associated java.lang class.  So the javaType is needed to know that the value
      * is really a wrapped primitive.
+     * @param xmlType (optional) is the desired type QName.
+     * @param sendType indicates whether the xsi:type attribute should be set.
      */
-    public void serializeActual(QName qName, Attributes attributes, Object value, Class javaType)
+    public void serializeActual(QName elemQName, 
+                                Attributes attributes,
+                                Object value, 
+                                Class javaType,
+                                QName xmlType,
+                                boolean sendType)
         throws IOException;
 
     /**

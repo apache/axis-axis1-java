@@ -147,8 +147,9 @@ class TypeMappingDelegate extends TypeMappingImpl {
     }
 
    public boolean isRegistered(Class javaType, QName xmlType) {
-       if (delegate != null)
-           delegate.isRegistered(javaType, xmlType);
+       if (delegate != null) {
+           return delegate.isRegistered(javaType, xmlType);
+       }
        return false;
    }
 

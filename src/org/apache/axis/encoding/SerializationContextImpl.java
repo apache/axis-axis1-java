@@ -142,6 +142,19 @@ public class SerializationContextImpl implements SerializationContext
     private HashMap multiRefValues = null;
     private int multiRefIndex = -1;
 
+    class MultiRefItem {
+        String id;
+        Class javaType; 
+        QName xmlType;
+        boolean sendType;
+        MultiRefItem(String id, Class javaType, QName xmlType, boolean sendType) {
+            this.id = id;
+            this.javaType = javaType;
+            this.xmlType = xmlType;
+            this.sendType = sendType;
+        }
+        
+    }
     /**
      * These three variables are necessary to process multi-level object graphs for multi-ref
      * serialization.
@@ -468,51 +481,74 @@ public class SerializationContextImpl implements SerializationContext
     }
 
     /**
-     * Serialize the indicated value as an element named qName.  The attributes object are
-     * additional attributes that will be serialized with the qName.  The value
-     * could be serialized directly or could be serialized as an href (with the
-     * actual serialize taking place later)
-     * @param qName is the QName of the element
+     * Serialize the indicated value as an element with the name 
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive, the 
+     * javaType is the actual unwrapped object type.
+     * The xmlType (if specified) is the QName of the type that is used to set
+     * xsi:type.  If not specified, xsi:type is set by using the javaType to 
+     * find an appopriate xmlType from the TypeMappingRegistry.  
+     * The sendNull flag indicates whether null values should be sent over the
+     * wire (default is to send such values with xsi:nil="true").
+     * The sendType flag indicates whether the xsi:type flag should be sent 
+     * (default is true).
+     * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
-     * @param javaType is the "real" type of the value.  For primitives, the value is the
-     * associated java.lang class.  So the javaType is needed to know that the value
-     * is really a wrapped primitive.
+     * @param javaType is the "real" type of the value.
+     * @param xmlType is the qname of the type or null.
+     * @param sendNull determines whether to send null values.
+     * @param sendType determines whether to set xsi:type attribute.
      */
-    public void serialize(QName qName, Attributes attributes, Object value, Class javaType)
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          Class javaType)
+        throws IOException {
+        serialize(elemQName, attributes, value, javaType, null, true, true);
+    }
+
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          Class javaType,
+                          QName xmlType,
+                          boolean sendNull,
+                          boolean sendType)
         throws IOException
     {
         if (value == null) {
             // If the value is null, the element is
             // passed with xsi:nil="true" to indicate that no object is present.
-            //
-            // There are three approaches that could be taken...
-            // 1) (Currently Implemented) Use xsi:nil="true".
-            // 2) Emit an empty element.  (This would be deserialized incorrectly.)
-            // 3) Don't emit an element.  (This could also cause deserialization problems.)
-            AttributesImpl attrs = new AttributesImpl();
-            if (attributes != null)
-                attrs.setAttributes(attributes);
-            attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
-                               "CDATA", "true");
-            startElement(qName, attrs);
-            endElement();
+            if (sendNull) {
+                AttributesImpl attrs = new AttributesImpl();
+                if (attributes != null)
+                    attrs.setAttributes(attributes);
+                attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
+                                   "CDATA", "true");
+                startElement(elemQName, attrs);
+                endElement();
+            }
+            return;
         }
 
         Message msg= getCurrentMessage();
         if(null != msg){
             //Get attachments. returns null if no attachment support.
             Attachments attachments= getCurrentMessage().getAttachments();
-
+            
             if( null != attachments && attachments.isAttachment(value)){
-             //Attachment support and this is an object that should be treated as an attachment.
-
-             //Allow an the attachment to do its own serialization.
-              serializeActual(qName, attributes, value, javaType);
-
-              //No need to add to mulitRefs. Attachment data stream handled by
-              // the message;
-              return;
+                //Attachment support and this is an object that should be treated as an attachment.
+                
+                //Allow an the attachment to do its own serialization.
+                serializeActual(elemQName, attributes, value, javaType, xmlType, sendType);
+                
+                //No need to add to mulitRefs. Attachment data stream handled by
+                // the message;
+                return;
             }
         }
 
@@ -524,15 +560,17 @@ public class SerializationContextImpl implements SerializationContext
             if (multiRefIndex == -1)
                 multiRefValues = new HashMap();
 
-            String href = (String)multiRefValues.get(value);
-            if (href == null) {
+            String id;
+            MultiRefItem mri = (MultiRefItem)multiRefValues.get(value);
+            if (mri == null) {
                 multiRefIndex++;
-                href = "id" + multiRefIndex;
-                multiRefValues.put(value, href);
+                id = "id" + multiRefIndex;
+                mri = new MultiRefItem (id, javaType, xmlType, sendType);
+                multiRefValues.put(value, mri);
 
                 /** Problem - if we're in the middle of writing out
                  * the multi-refs and hit another level of the
-                 * object graph, we need to make sure this object
+                 * object graph, we need to make sure this object 
                  * will get written.  For now, add it to a list
                  * which we'll check each time we're done with
                  * outputMultiRefs().
@@ -542,15 +580,17 @@ public class SerializationContextImpl implements SerializationContext
                         secondLevelObjects = new HashSet();
                     secondLevelObjects.add(value);
                 }
+            } else {
+                id = mri.id;
             }
 
             AttributesImpl attrs = new AttributesImpl();
             if (attributes != null)
                 attrs.setAttributes(attributes);
             attrs.addAttribute("", Constants.ATTR_HREF, "href",
-                               "CDATA", "#" + href);
+                               "CDATA", "#" + id);
 
-            startElement(qName, attrs);
+            startElement(elemQName, attrs);
             endElement();
             return;
         }
@@ -564,7 +604,7 @@ public class SerializationContextImpl implements SerializationContext
             forceSer = null;
 
         // Actually serialize the value.  (i.e. not an href like above)
-        serializeActual(qName, attributes, value, javaType);
+        serializeActual(elemQName, attributes, value, javaType, xmlType, sendType);
     }
 
     /**
@@ -590,15 +630,19 @@ public class SerializationContextImpl implements SerializationContext
         while (i.hasNext()) {
             while (i.hasNext()) {
                 Object val = i.next();
-                String id = (String)multiRefValues.get(val);
+                MultiRefItem mri = (MultiRefItem) multiRefValues.get(val);
                 attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
-                                   id);
+                                   mri.id);
                 forceSer = val;
-                // Now serialize the value.  Note that it is safe to
-                // set the javaType argument using value.getClass() because
-                // values that represent primitives will never get to this point
-                // because they cannot be multi-ref'ed
-                serialize(multirefQName, attrs, val, val.getClass());
+
+                // Now serialize the value.
+                // The sendType parameter is set to true for interop purposes.
+                // Some of the remote services do not know how to 
+                // ascertain the type in these circumstances (though Axis does).
+                serialize(multirefQName, attrs, val, 
+                          mri.javaType, mri.xmlType, 
+                          true, 
+                          true);   // mri.sendType
             }
 
             if (secondLevelObjects != null) {
@@ -887,17 +931,21 @@ public class SerializationContextImpl implements SerializationContext
     /**
      * Invoked to do the actual serialization of the qName (called by serialize above).
      * additional attributes that will be serialized with the qName.
-     * @param qName is the QName of the element
+     * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param javaType is the "real" type of the value.  For primitives, the value is the
      * associated java.lang class.  So the javaType is needed to know that the value
      * is really a wrapped primitive.
+     * @param xmlType (optional) is the desired type QName.
+     * @param sendType indicates whether the xsi:type attribute should be set.
      */
-    public void serializeActual(QName qName,
+    public void serializeActual(QName elemQName, 
                                 Attributes attributes,
-                                Object value,
-                                Class javaType)
+                                Object value, 
+                                Class javaType,
+                                QName xmlType,
+                                boolean sendType)
         throws IOException
     {
         if (value != null) {
@@ -910,18 +958,35 @@ public class SerializationContextImpl implements SerializationContext
                                              "" + this));
             }
 
-            Class_Serializer pair = getSerializer(javaType, value);
-            if ( pair != null ) {
-                QName type = tm.getTypeQName(pair.javaType);
-                attributes = setTypeAttribute(attributes, type);
+            SerializerInfo info = null; 
+            if (xmlType != null) {
+                info = getSerializer(javaType, xmlType);
+            }
 
+            // If a serializer was not found using the preferred xmlType,
+            // try getting any serializer.
+            if (info == null) {
+                info = getSerializer(javaType, value);
+                sendType = true;  // Must send type if it does not match preferred type
+                xmlType = null;
+            }
+
+            if ( info != null ) {
+                
+                // Send the xmlType if indicated.
+                if (sendType) {
+                    if (xmlType == null) {
+                        xmlType = tm.getTypeQName(info.javaType);
+                    }
+                    attributes = setTypeAttribute(attributes, xmlType);
+                }
                 // The multiref QName is our own fake name.
                 // It may be beneficial to set the name to the
                 // type name, but I didn't see any improvements
                 // in the interop tests.
                 //if (name.equals(multirefQName) && type != null)
                 //    name = type;
-                pair.ser.serialize(qName, attributes, value, this);
+                info.ser.serialize(elemQName, attributes, value, this);
                 return;
             }
 
@@ -931,10 +996,47 @@ public class SerializationContextImpl implements SerializationContext
         // !!! Write out a generic null, or get type info from somewhere else?
     }
 
-    class Class_Serializer {
+    class SerializerInfo {
         Serializer ser;
         Class javaType;
     }
+
+    /**
+     * getSerializer
+     * Attempts to get a serializer for the indicated javaType and xmlType.
+     * @param javaType is the type of the object
+     * @param xmlType is the preferred qname type.
+     * @return found class/serializer or null
+     **/
+    private SerializerInfo getSerializer(Class javaType, QName xmlType) {
+        SerializerInfo info = null;
+        SerializerFactory  serFactory  = null ;
+        TypeMapping tm = getTypeMapping();
+
+        try {
+            if (!javaType.getName().equals("java.lang.Object") &&
+                tm.isRegistered(javaType, xmlType)) {
+                serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
+            }
+        } catch(JAXRPCException e) {}
+
+
+        // Using the serialization factory, create a serializer
+        Serializer ser = null;
+        if ( serFactory != null ) {
+            try {
+                ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
+            } catch (JAXRPCException e) {
+            }
+        }
+        if (ser != null) {
+            info = new SerializerInfo();
+            info.ser = ser;
+            info.javaType = javaType;
+        }
+        return info;
+    }
+    
     /**
      * getSerializer
      * Attempts to get a serializer for the indicated type. Failure to
@@ -945,8 +1047,8 @@ public class SerializationContextImpl implements SerializationContext
      * @param value is the object (which may have a different type due to conversions)
      * @return found class/serializer or null
      **/
-    private Class_Serializer getSerializer(Class javaType, Object value) {
-        Class_Serializer pair = null;
+    private SerializerInfo getSerializer(Class javaType, Object value) {
+        SerializerInfo info = null;
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
 
@@ -959,7 +1061,9 @@ public class SerializationContextImpl implements SerializationContext
         Class _class  = javaType;
         while( _class != null ) {
             try {
-                serFactory = (SerializerFactory) tm.getSerializer(_class);
+                if (!_class.getName().equals("java.lang.Object")) {
+                        serFactory = (SerializerFactory) tm.getSerializer(_class);
+                }
             } catch(JAXRPCException e) {
                 // For now continue if JAXRPCException
             }
@@ -976,10 +1080,7 @@ public class SerializationContextImpl implements SerializationContext
             _class = _class.getSuperclass();
 
             // Add any non-null (and non-Object) class.  We skip
-            // the Object class because if we reach that then
-            // there's an error and this error message return
-            // here is better than the one returned by the
-            // ObjSerializer.
+            // the Object class.
             if ( _class != null &&
                  !_class.getName().equals("java.lang.Object")) {
                 classes.add( _class );
@@ -1000,8 +1101,7 @@ public class SerializationContextImpl implements SerializationContext
             }
         }
 
-        // Using the serialization factory, create a serializer and
-        // serialize the value.
+        // Using the serialization factory, create a serializer
         Serializer ser = null;
         if ( serFactory != null ) {
             try {
@@ -1010,11 +1110,11 @@ public class SerializationContextImpl implements SerializationContext
             }
         }
         if (ser != null) {
-            pair = new Class_Serializer();
-            pair.ser = ser;
-            pair.javaType = _class;
+            info = new SerializerInfo();
+            info.ser = ser;
+            info.javaType = _class;
         }
-        return pair;
+        return info;
     }
 
 }

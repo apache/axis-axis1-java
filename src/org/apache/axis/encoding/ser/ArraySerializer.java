@@ -104,6 +104,7 @@ public class ArraySerializer implements Serializer
     protected static Log log =
         LogFactory.getLog(ArraySerializer.class.getName());
 
+    QName componentQName;
     /**
      * Serialize an element that is an array.
      * @param name is the element name
@@ -151,7 +152,7 @@ public class ArraySerializer implements Serializer
         }
 
 
-        QName componentQName = context.getQNameForClass(componentType);
+        componentQName = context.getQNameForClass(componentType);
         if (componentQName == null)
             throw new IOException(
                     JavaUtils.getMessage("noType00", componentType.getName()));
@@ -279,7 +280,11 @@ public class ArraySerializer implements Serializer
                 Object aValue = (list == null) ? Array.get(value, index) : list.get(index);
                 Class aClass = (aValue == null) ? null : aValue.getClass();
 
-                context.serialize(elementName, null, aValue, aClass);
+                // Serialize the element. 
+                context.serialize(elementName, null, aValue, aClass, 
+                                  componentQName, // prefered type QName
+                                  true,   // Send null values
+                                  false); // Don't send xsi:type if it matches preferred QName        
             }
         } else {
             // Serialize as a 2 dimensional array
