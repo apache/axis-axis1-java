@@ -58,6 +58,7 @@ package org.apache.axis.transport.local;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /**
@@ -71,13 +72,13 @@ public class LocalResponder extends BasicHandler {
             Category.getInstance(LocalResponder.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: LocalResponder::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "LocalResponder::invoke") );
         msgContext.getResponseMessage().getSOAPPart().getAsString();
-        category.debug("Enter: LocalResponder::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "LocalResponder::invoke") );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: LocalResponder::undo" );
-        category.debug("Exit: LocalResponder::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "LocalResponder::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "LocalResponder::undo") );
     }
 };

@@ -86,8 +86,8 @@ public class JavaUtils
      */
     public static Object convert(Object arg, Class destClass)
     {
-        category.debug( "Trying to convert " + arg.getClass().getName() +
-                       " to " + destClass.getName());
+        category.debug( getMessage("convert00",
+                arg.getClass().getName(), destClass.getName()));
         
         if (!(arg instanceof List))
             return arg;

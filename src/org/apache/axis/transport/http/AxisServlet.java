@@ -66,6 +66,7 @@ import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -192,8 +193,10 @@ public class AxisServlet extends HttpServlet {
                         XMLUtils.DocumentToWriter(doc, writer);
                     } else {
                         res.setContentType("text/html");
-                        writer.println("<h2>Axis Error</h2>");
-                        writer.println("<p>Couldn't generate WSDL!</p>");
+                        writer.println("<h2>" +
+                                JavaUtils.getMessage("error00") + "</h2>");
+                        writer.println("<p>" +
+                                JavaUtils.getMessage("noWSDL00") + "</p>");
                     }
                 } else if (listRequested) {
                     if (enableList) {
@@ -203,13 +206,17 @@ public class AxisServlet extends HttpServlet {
                             XMLUtils.DocumentToWriter(doc, writer);
                         } else {
                             res.setContentType("text/html");
-                            writer.println("<h2>Axis Error</h2>");
-                            writer.println("<p>Couldn't generate deployment list!</p>");
+                            writer.println("<h2>" +
+                                    JavaUtils.getMessage("error00") + "</h2>");
+                            writer.println("<p>" +
+                                    JavaUtils.getMessage("noDeploy00") + "</p>");
                         }
                     } else {
                         res.setContentType("text/html");
-                        writer.println("<h2>Axis Error</h2>");
-                        writer.println("<p><i>?list</i> functionality disabled.</p>");
+                        writer.println("<h2>" +
+                                JavaUtils.getMessage("error00") + "</h2>");
+                        writer.println("<p><i>?list</i>" +
+                                JavaUtils.getMessage("disabled00") + "</p>");
                     }
                 } else if (req.getParameterNames().hasMoreElements()) {
                     res.setContentType("text/html");
@@ -227,8 +234,11 @@ public class AxisServlet extends HttpServlet {
                         }
                     }
                     if (method == null) {
-                        writer.println("<h2>Axis Error : invoking via GET</h2>");
-                        writer.println("<p>No method!</p>");
+                        writer.println("<h2>" + JavaUtils.getMessage("error00") +
+                                ":  " +
+                                JavaUtils.getMessage("invokeGet00") + "</h2>");
+                        writer.println("<p>" +
+                                JavaUtils.getMessage("noMethod01") + "</p>");
                         return;
                     }
                     String body = "<" + method + ">" + args +
@@ -247,10 +257,12 @@ public class AxisServlet extends HttpServlet {
                     engine.invoke(msgContext);
                     Message respMsg = msgContext.getResponseMessage();
                     if (respMsg != null) {
-                        writer.println("<p>Got response message:</p>");
+                        writer.println("<p>" +
+                                JavaUtils.getMessage("gotResponse00") + "</p>");
                         writer.println(respMsg.getSOAPPart().getAsString());
                     } else {
-                        writer.println("<p>No response message!</p>");
+                        writer.println("<p>" +
+                                JavaUtils.getMessage("noResponse01") + "</p>");
                     }
                 } else {
                     res.setContentType("text/html");
@@ -258,19 +270,24 @@ public class AxisServlet extends HttpServlet {
                             "</h1>");
                     writer.println(configPath);
                     writer.println(
-                            "<p>Hi there, this is an Axis service!</p>");
+                            "<p>" +
+                            JavaUtils.getMessage("axisService00") + "</p>");
                     writer.println(
-                            "<i>Perhaps there'll be a form for invoking the service here...</i>");
+                            "<i>" + JavaUtils.getMessage("perhaps00") + "</i>");
                 }
             } catch (AxisFault fault) {
                 res.setContentType("text/html");
-                writer.println("<h2>Axis Error</h2>");
-                writer.println("<p>Sorry, something seems to have gone wrong... here are the details:</p>");
+                writer.println("<h2>" +
+                        JavaUtils.getMessage("error00") + "</h2>");
+                writer.println("<p>" +
+                        JavaUtils.getMessage("somethingWrong00") + "</p>");
                 writer.println("<pre>Fault - " + fault + " </pre>");
             } catch (Exception e) {
                 res.setContentType("text/html");
-                writer.println("<h2>Axis Error</h2>");
-                writer.println("<p>Sorry, something seems to have gone wrong... here are the details:</p>");
+                writer.println("<h2>" +
+                        JavaUtils.getMessage("error00") + "</h2>");
+                writer.println("<p>" +
+                        JavaUtils.getMessage("somethingWrong00") + "</p>");
                 writer.println("<pre>Exception - " + e + "<br>");
                 e.printStackTrace(res.getWriter());
                 writer.println("</pre>");
@@ -282,12 +299,10 @@ public class AxisServlet extends HttpServlet {
 
         res.setContentType("text/html");
         writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
-        writer.println( "Hi, you've reached the Axis HTTP servlet." +
-           "Normally you would be hitting this URL with a SOAP client " +
-           "rather than a browser.");
+        writer.println( JavaUtils.getMessage("reachedServlet00"));
 
-        writer.println("<p>In case you're interested, my Axis " +
-            "transport name appears to be '<b>" + transportName + "</b>'");
+        writer.println("<p>" + JavaUtils.getMessage("transportName00",
+                "<b>" + transportName + "</b>"));
         writer.println("</html>");
     }
 
@@ -306,7 +321,7 @@ public class AxisServlet extends HttpServlet {
 
         if (engine == null) {
             // !!! should return a SOAP fault...
-            throw new ServletException("Couldn't find AxisEngine!");
+            throw new ServletException(JavaUtils.getMessage("noEngine00"));
         }
 
         /* Place the Request message in the MessagContext object - notice */
@@ -361,7 +376,7 @@ public class AxisServlet extends HttpServlet {
             */
             if ( tmp == null ) {
                 throw new AxisFault( "Client.NoSOAPAction",
-                    "No SOAPAction header!",
+                    JavaUtils.getMessage("noHeader00", "SOAPAction"),
                     null, null );
             }
 
@@ -420,7 +435,7 @@ public class AxisServlet extends HttpServlet {
         /***********************************/
 
         if(null== (msg = msgContext.getResponseMessage())) {
-          String resp= "No data";
+          String resp= JavaUtils.getMessage("noData00");
           res.setContentLength( resp.getBytes().length );
           res.getWriter().print(resp);
         }else{

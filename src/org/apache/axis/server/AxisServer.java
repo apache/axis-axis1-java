@@ -66,6 +66,7 @@ import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.AxisClassLoader;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 /**
  *
@@ -133,12 +134,12 @@ public class AxisServer extends AxisEngine
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: AxisServer::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "AxisServer::invoke") );
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
-                                "This Axis server is not currently accepting requests.",
-                                null, null);
+                    JavaUtils.getMessage("serverDisabled00"),
+                    null, null);
         }
 
         String  hName = null ;
@@ -150,7 +151,7 @@ public class AxisServer extends AxisEngine
                 if ( (h = getHandler(hName)) == null ) {
                     AxisClassLoader cl = msgContext.getClassLoader();
                     try {
-                        category.debug( "Trying to load class: " + hName );
+                        category.debug( JavaUtils.getMessage("tryingLoad00", hName) );
                         Class cls = cl.loadClass( hName );
                         h = (Handler) cls.newInstance();
                     }
@@ -162,7 +163,7 @@ public class AxisServer extends AxisEngine
                     h.invoke(msgContext);
                 else
                     throw new AxisFault( "Server.error",
-                        "Can't locate handler: " + hName,
+                        JavaUtils.getMessage("noHandler00", hName),
                         null, null );
             }
             else {
@@ -181,7 +182,7 @@ public class AxisServer extends AxisEngine
                 /**************************************************************/
 
                 // When do we call init/cleanup??
-                category.debug("Calling default logic in AxisServer" );
+                category.debug(JavaUtils.getMessage("defaultLogic00") );
 
                 /*  This is what the entirety of this logic might evolve to:
 
@@ -206,9 +207,7 @@ public class AxisServer extends AxisEngine
                 SimpleTargetedChain transportChain = null;
 
                 if (category.isInfoEnabled())
-                    category.info("AxisServer.invoke: Transport = '" +
-                                  hName +
-                                  "'");
+                    category.info(JavaUtils.getMessage("transport01", hName));
 
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
@@ -243,8 +242,8 @@ public class AxisServer extends AxisEngine
                     h = msgContext.getServiceHandler();
                     if (h == null)
                         throw new AxisFault("Server.NoService",
-                            "The Axis engine couldn't find a " +
-                            "target service to invoke! targetService is "+msgContext.getTargetService(),
+                            JavaUtils.getMessage("noService04",
+                                    "" + msgContext.getTargetService()),
                             null, null );
                 }
 
@@ -270,19 +269,19 @@ public class AxisServer extends AxisEngine
             // Should we even bother catching it ?
             throw new AxisFault(e);
         }
-        category.debug("Exit: AxisServer::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "AxisServer::invoke") );
     }
 
     /**
      *
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: AxisServer::editWSDL" );
+        category.debug(JavaUtils.getMessage("enter00", "AxisServer::editWSDL") );
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
-                                "This Axis server is not currently accepting requests.",
-                                null, null);
+                    JavaUtils.getMessage("serverDisabled00"),
+                    null, null);
         }
 
         String  hName = null ;
@@ -294,14 +293,15 @@ public class AxisServer extends AxisEngine
                 if ( (h = getHandler(hName)) == null ) {
                     AxisClassLoader cl = msgContext.getClassLoader();
                     try {
-                        category.debug( "Trying to load class: " + hName );
+                        category.debug( JavaUtils.getMessage("tryingLoad00", hName) );
                         Class cls = cl.loadClass( hName );
                         h = (Handler) cls.newInstance();
                     }
                     catch( Exception e ) {
-                        throw new AxisFault( "Server.error",
-                                             "Can't locate handler: " + hName,
-                                             null, null );
+                        throw new AxisFault(
+                                "Server.error",
+                                JavaUtils.getMessage("noHandler00", hName),
+                                null, null );
                     }
                 }
                 h.generateWSDL(msgContext);
@@ -322,7 +322,7 @@ public class AxisServer extends AxisEngine
                 /**************************************************************/
 
                 // When do we call init/cleanup??
-                category.debug( "Calling default logic in AxisServer" );
+                category.debug( JavaUtils.getMessage("defaultLogic00") );
 
                 /*  This is what the entirety of this logic might evolve to:
 
@@ -347,9 +347,7 @@ public class AxisServer extends AxisEngine
                 SimpleTargetedChain transportChain = null;
 
                 if (category.isInfoEnabled())
-                    category.info("AxisServer.editWSDL: Transport = '" +
-                                  hName +
-                                  "'");
+                    category.info(JavaUtils.getMessage("transport01", hName));
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
@@ -385,9 +383,9 @@ public class AxisServer extends AxisEngine
                     }
                     if (h == null)
                         throw new AxisFault("Server.NoService",
-                            "The Axis engine couldn't find a " +
-                            "target service to generate WSDL for! targetService is "+msgContext.getTargetService(),
-                            null, null );
+                                JavaUtils.getMessage("noService04",
+                                        "" + msgContext.getTargetService()),
+                                null, null );
                 }
 
                 h.generateWSDL(msgContext);
@@ -412,11 +410,11 @@ public class AxisServer extends AxisEngine
             // Should we even bother catching it ?
             throw new AxisFault( e );
         }
-        category.debug("Exit: AxisServer::editWSDL" );
+        category.debug(JavaUtils.getMessage("exit00", "AxisServer::editWSDL") );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: AxisServer::undo" );
-        category.debug("Exit: AxisServer::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "AxisServer::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "AxisServer::undo") );
     };
 };

@@ -57,6 +57,7 @@ package org.apache.axis.transport.http ;
 
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 
 import javax.servlet.ServletException;
@@ -102,7 +103,12 @@ public class AdminServlet extends HttpServlet {
                 server.stop();
         }
 
-        str += "Server is " + (server.isRunning() ? "running" : "stopped");
+        if (server.isRunning()) {
+            str += JavaUtils.getMessage("serverRun00");
+        }
+        else {
+            str += JavaUtils.getMessage("serverStop00");
+        }
         str += "<p><a href=\"AdminServlet?cmd=start\">start server</a>";
         str += "<p><a href=\"AdminServlet?cmd=stop\">stop server</a>";
         res.getWriter().println( str );

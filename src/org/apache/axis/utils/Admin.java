@@ -179,9 +179,9 @@ public class Admin {
     public Document AdminService(MessageContext msgContext, Document xml)
         throws AxisFault
     {
-        category.debug("Enter: Admin:AdminService" );
+        category.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
         Document doc = process( msgContext, xml.getDocumentElement() );
-        category.debug("Exit: Admin:AdminService" );
+        category.debug(JavaUtils.getMessage("exit00", "Admin:AdminService") );
         return( doc );
     }
 
@@ -206,8 +206,8 @@ public class Admin {
         }
         
         if (!el.getTagName().equals("engineConfig"))
-            throw new Exception("Wanted 'engineConfig' element, got '" +
-                el.getTagName() + "'");
+            throw new Exception(
+                    JavaUtils.getMessage("noEngineConfig00", el.getTagName()));
 
         NodeList nl = el.getElementsByTagName("handlers");
         deploy(nl, engine);
@@ -294,7 +294,10 @@ public class Admin {
                     // ignore it
                     break;
                 default:
-                    throw new UnknownError("Shouldn't happen: " + type);
+                    throw new UnknownError(JavaUtils.getMessage(
+                            "never00",
+                            "org.apache.axis.utils.Admin",
+                            "type = " + type));
                 }
             }
         }
@@ -316,7 +319,7 @@ public class Admin {
         
         doc = XMLUtils.newDocument();
         doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-        root.appendChild( doc.createTextNode( "Done processing" ) );
+        root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
         
         return doc;
     }
@@ -363,11 +366,11 @@ public class Admin {
                             
                             if (!myAddr.equals(remoteAddr))
                                 throw new AxisFault("Server.Unauthorized",
-                                   "Remote admin access is not allowed! ",
+                                   JavaUtils.getMessage("noAdminAccess00"),
                                    null, null);
                         } catch (UnknownHostException e) {
                             throw new AxisFault("Server.UnknownHost",
-                                "Unknown host - couldn't verify admin access",
+                                JavaUtils.getMessage("unknownHost00"),
                                 null, null);
                         }
                     }
@@ -401,8 +404,7 @@ public class Admin {
                  !action.equals("quit") &&
                  !action.equals("passwd"))
                 throw new AxisFault( "Admin.error",
-                    "Root element must be 'clientdeploy', 'deploy', 'undeploy', " +
-                    "'list', 'passwd', or 'quit'",
+                    JavaUtils.getMessage("badRootElem00"),
                     null, null );
 
 
@@ -411,12 +413,12 @@ public class Admin {
                 engine.setAdminPassword(newPassword);
                 doc = XMLUtils.newDocument();
                 doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-                root.appendChild( doc.createTextNode( "Done processing" ) );
+                root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
                 return doc;
             }
 
             if (action.equals("quit")) {
-                System.err.println("Admin service requested to quit, quitting.");
+                System.err.println(JavaUtils.getMessage("quitRequest00"));
                 if (msgContext != null) {
                     // put a flag into message context so listener will exit after
                     // sending response
@@ -424,7 +426,7 @@ public class Admin {
                 }
                 doc = XMLUtils.newDocument();
                 doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-                root.appendChild( doc.createTextNode( "Quitting" ) );
+                root.appendChild( doc.createTextNode( JavaUtils.getMessage("quit00", "") ) );
                 return doc;
             }
 
@@ -452,16 +454,16 @@ public class Admin {
 
                 if ( action.equals( "undeploy" ) ) {
                     if ( type.equals("service") ) {
-                        category.info( "Undeploying " + type + ": " + name );
+                        category.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
                         engine.undeployService( name );
                     }
                     else if ( type.equals("handler") || type.equals("chain") ) {
-                        category.info( "Undeploying " + type + ": " + name );
+                        category.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
                         engine.undeployHandler( name );
                     }
                     else
                         throw new AxisFault( "Admin.error",
-                            "Unknown type; " + type,
+                            JavaUtils.getMessage("unknownType00", type),
                             null, null );
                     continue ;
                 }
@@ -488,7 +490,7 @@ public class Admin {
                     registerTypes(elem, dep, false, engine.getDeploymentRegistry());
                 } else
                     throw new AxisFault( "Admin.error",
-                        "Unknown type to " + action + ": " + type,
+                        JavaUtils.getMessage("unknownType01", action + ": " + type),
                         null, null );
             }
             
@@ -496,7 +498,7 @@ public class Admin {
 
             doc = XMLUtils.newDocument();
             doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-            root.appendChild( doc.createTextNode( "Done processing" ) );
+            root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
         }
         catch( Exception e ) {
             e.printStackTrace();
@@ -559,7 +561,7 @@ public class Admin {
         for( i = 0 ; names != null && i < names.length ; i++ ) {
             h = registry.find(names[i]);
             if (h == null)
-                throw new AxisFault("Server", "Couldn't find registered handler '" + names[i] + "'", null, null);
+                throw new AxisFault("Server", JavaUtils.getMessage("noHandler02", names[i]), null, null);
             elem = h.getDeploymentData(doc);
 
             if ( elem == null ) continue ;
@@ -597,7 +599,7 @@ public class Admin {
         if ("".equals(name)) name = null;
 
         if (flow != null) {
-            category.info( "Deploying chain: " + name );
+            category.info( JavaUtils.getMessage("deployChain00", name) );
             Vector names = new Vector();
 
             getOptions( elem, options );
@@ -641,14 +643,14 @@ public class Admin {
         if ( pivot  != null && pivot.equals("") )  pivot = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        category.info( "Deploying service: " + name );
+        category.info( JavaUtils.getMessage("deployService00", name) );
         String            hName = null ;
         Handler            tmpH = null ;
         StringTokenizer      st = null ;
 
         if ( pivot == null && request == null && response == null )
             throw new AxisFault( "Admin.error",
-                "Services must use targeted chains",
+                JavaUtils.getMessage("noChains00"),
                 null, null );
 
         WSDDService serv = new WSDDService();
@@ -673,7 +675,7 @@ public class Admin {
         
         Handler pivotHandler = engine.getHandler(pivot);
         if (pivotHandler == null)
-            throw new AxisFault("No pivot handler '" + pivot + "' found!");
+            throw new AxisFault(JavaUtils.getMessage("noPivot00", pivot));
         Class pivotClass = pivotHandler.getClass();
         if (pivotClass == RPCProvider.class) {
             serv.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
@@ -724,7 +726,7 @@ public class Admin {
 
             String   cls   = elem.getAttribute( "class" );
             if ( cls != null && cls.equals("") ) cls = null ;
-            category.info( "Deploying handler: " + name );
+            category.info( JavaUtils.getMessage("deployHandler00", name) );
 
             h = engine.getHandler( name );
             if ( h == null ) h = (Handler) cl.loadClass(cls).newInstance();
@@ -759,7 +761,7 @@ public class Admin {
         if ( sender  != null && sender.equals("") )  sender = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        category.info( "Deploying Transport: " + name );
+        category.info( JavaUtils.getMessage("deployTransport00", name) );
         StringTokenizer      st = null ;
         Vector reqNames = new Vector();
         Vector respNames = new Vector();
@@ -816,7 +818,7 @@ public class Admin {
         
         if ((classname == null) || classname.equals(""))
             throw new AxisFault("Server.Admin.error",
-                "No classname attribute in type mapping",
+                JavaUtils.getMessage("noClassname00"),
                 null, null);
 
         // Resolve class name
@@ -840,7 +842,7 @@ public class Admin {
             String localName    = elem.getLocalName();
             qn = new QName(namespaceURI, localName);
 
-            category.debug( "Registering mapping for " + qn + " -> " + classname);
+            category.debug( JavaUtils.getMessage("registerTypeMap00", "" + qn, classname));
 
             // register both serializers and deserializers for this bean
             mapping.setQName(qn);
@@ -856,24 +858,23 @@ public class Admin {
 
             mapping.setQName(qn);
             classname = elem.getAttribute("serializer");
-            category.debug( "Serializer class is " + classname);
+            category.debug( JavaUtils.getMessage("serializer00", classname));
             try {
                 cls = cl.loadClass(classname);
                 mapping.setSerializer(cls);
             } catch (Exception e) {
                 throw new AxisFault( "Admin.error",
-                    "Couldn't load serializer class " + e.toString(),
+                    JavaUtils.getMessage("noSerializer01", e.toString()),
                     null, null);
             }
             classname = elem.getAttribute("deserializerFactory");
-            category.debug( "DeserializerFactory class is " + classname);
+            category.debug( JavaUtils.getMessage("deserFact00", classname));
             try {
                 cls = cl.loadClass(classname);
                 mapping.setDeserializer(cls);
             } catch (Exception e) {
                 throw new AxisFault( "Admin.error",
-                    "Couldn't load deserializerFactory " +
-                    e.toString(),
+                    JavaUtils.getMessage("noDeserFact00", e.toString()),
                     null, null);
             }
         }
@@ -888,9 +889,9 @@ public class Admin {
 
         if ( args.length < 2 || !(args[0].equals("client") ||
                                   args[0].equals("server")) ) {
-            System.err.println( "Usage: Admin client|server <xml-file>\n" );
+            System.err.println( JavaUtils.getMessage("usage00", "Admin client|server <xml-file>") + "\n" );
 
-            System.err.println( "Where <xml-file> looks like:" );
+            System.err.println( JavaUtils.getMessage("where00", "<xml-file>") );
             System.err.println( "<deploy>" );
             /*
             System.err.println( "  <transport name=a request=\"a,b,c\" sender=\"s\"");
@@ -929,7 +930,7 @@ public class Admin {
 
         try {
             for ( i = 1 ; i < args.length ; i++ ) {
-                System.out.println( "Processing '" + args[i] + "'" );
+                System.out.println( JavaUtils.getMessage("process00", args[i]) );
                 Document doc = XMLUtils.newDocument( new FileInputStream( args[i] ) );
                 admin.process(msgContext, doc.getDocumentElement());
             }
@@ -940,7 +941,7 @@ public class Admin {
             throw e;
         }
         catch( Exception e ) {
-            System.err.println( "Error processing '" + args[i] + "'" );
+            System.err.println( JavaUtils.getMessage("errorProcess00", args[i]) );
             e.printStackTrace( System.err );
             //System.exit( 1 );
             throw e;
