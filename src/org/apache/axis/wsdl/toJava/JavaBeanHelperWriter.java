@@ -125,6 +125,15 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     } // getPrintWriter
 
     /**
+     * Only register the filename if the bean helper is not wrapped
+     * within a bean.
+     */
+    protected void registerFile(String file) {
+        if (wrapperPW == null)
+            super.registerFile(file);
+    } // registerFile
+
+    /**
      * Only write the file header if the bean helper is not wrapped
      * within a bean.
      */
