@@ -73,7 +73,7 @@ import java.net.URL;
 public class Main {
     static String name1 = "Purdue Boilermaker";
     static Address addr1 = new Address (1, "University Drive",
-                                        "West Lafayette", "IN", 47907,
+                                        "West Lafayette", StateType.IN, 47907,
                                         new Phone (765, "494", "4900"));
     
     private static void printAddress (Address ad) {
