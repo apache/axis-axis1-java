@@ -46,8 +46,8 @@ public class TestSerializedRPC extends TestCase {
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer engine = new AxisServer(provider);
 
-    String firstParamName = null;
-    String secondParamName = null;
+    QName firstParamName = null;
+    QName secondParamName = null;
 
     private String SOAPAction = "urn:reverse";
 
@@ -83,8 +83,8 @@ public class TestSerializedRPC extends TestCase {
         OperationDesc oper = desc.getOperationByName("concatenate");
         assertNotNull(oper);
 
-        firstParamName = oper.getParameter(0).getName();
-        secondParamName = oper.getParameter(1).getName();
+        firstParamName = oper.getParameter(0).getQName();
+        secondParamName = oper.getParameter(1).getQName();
     }
 
     /**
@@ -188,9 +188,10 @@ public class TestSerializedRPC extends TestCase {
      * Test out-of-order parameters, using the names to match
      */
     public void testOutOfOrderParams() throws Exception {
-        String body = "<" + secondParamName + ">world!</" +
-                secondParamName + "><" + firstParamName + ">Hello, </" +
-                firstParamName + ">";
+        String body = "<" + secondParamName.getLocalPart() + " xmlns=\""+ secondParamName.getNamespaceURI() + "\">world!</" +
+                      secondParamName.getLocalPart() + ">" +
+                      "<" + firstParamName.getLocalPart() + " xmlns=\""+ firstParamName.getNamespaceURI() + "\">Hello, </" + 
+                       firstParamName.getLocalPart() + ">";
         String expected = "Hello, world!";
         assertEquals("Concatenated value was wrong",
                      expected,

@@ -70,6 +70,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.bytecode.ParamNameExtractor;
 import org.apache.axis.wsdl.Skeleton;
+import org.apache.axis.wsdl.fromJava.Namespaces;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1114,6 +1115,9 @@ public class ServiceDesc {
             // If we have a default namespace mapping, require callers to
             // use that namespace.
             defaultNS = (String)namespaceMappings.get(0);
+        }
+        if(defaultNS.length() == 0) {
+            defaultNS = Namespaces.makeNamespace(method.getDeclaringClass().getName());
         }
         operation.setElementQName(new QName(defaultNS, method.getName()));
         operation.setMethod(method);
