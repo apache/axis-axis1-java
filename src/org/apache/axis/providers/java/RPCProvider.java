@@ -153,6 +153,11 @@ public class RPCProvider extends JavaProvider
                 operation = serviceDesc.getOperationByElementQName(qname);
             }
 
+            if (operation == null) {
+                throw new AxisFault(JavaUtils.getMessage("noSuchOperation",
+                                                         methodName));
+            }
+
             // Create the array we'll use to hold the actual parameter
             // values.  We know how big to make it from the metadata.
             Object[]     argValues  =  new Object [operation.getNumParams()];
