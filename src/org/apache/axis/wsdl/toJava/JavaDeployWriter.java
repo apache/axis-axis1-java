@@ -105,7 +105,6 @@ public class JavaDeployWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         writeDeployServices();
-        writeDeployTypes();
         pw.println("</deployment>");
         pw.close();
     } // writeFileBody
@@ -150,24 +149,24 @@ public class JavaDeployWriter extends JavaWriter {
             if (type.getBaseType() == null && type.isReferenced()
                 && !type.isOnlyLiteralReferenced()
                 && !(type instanceof CollectionType)) {
-                pw.println("  <typeMapping");
-                pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
-                pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');
-                pw.println("    type=\"java:" + type.getName() + '"');
+                pw.println("      <typeMapping");
+                pw.println("        xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
+                pw.println("        qname=\"ns:" + type.getQName().getLocalPart() + '"');
+                pw.println("        type=\"java:" + type.getName() + '"');
                 if (type.getName().endsWith("[]")) {
-                    pw.println("    serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"");
-                    pw.println("    deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"");
+                    pw.println("        serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"");
+                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"");
                 } else if (type.getNode() != null && 
                    SchemaUtils.getEnumerationBaseAndValues(
                      type.getNode(), emitter.getSymbolTable()) != null) {
-                    pw.println("    serializer=\"org.apache.axis.encoding.ser.EnumSerializerFactory\"");
-                    pw.println("    deserializer=\"org.apache.axis.encoding.ser.EnumDeserializerFactory\"");
+                    pw.println("        serializer=\"org.apache.axis.encoding.ser.EnumSerializerFactory\"");
+                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.EnumDeserializerFactory\"");
                 } else {
-                    pw.println("    serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");
-                    pw.println("    deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"");
+                    pw.println("        serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");
+                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"");
                 }
-                pw.println("    encodingStyle=\""+ Constants.URI_CURRENT_SOAP_ENC+"\"");
-                pw.println("  />");
+                pw.println("        encodingStyle=\""+ Constants.URI_CURRENT_SOAP_ENC+"\"");
+                pw.println("      />");
             }
         }
     } //writeDeployTypes
@@ -187,6 +186,8 @@ public class JavaDeployWriter extends JavaWriter {
                 + "\" provider=\"" + (isRPC ? prefix +":RPC" : prefix +":MSG") + "\">");
 
         writeDeployBinding(binding);
+        writeDeployTypes();
+
 
         pw.println("  </service>");
     } //writeDeployPort
