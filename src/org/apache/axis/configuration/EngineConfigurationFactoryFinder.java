@@ -61,6 +61,7 @@ import java.security.PrivilegedAction;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.discovery.DiscoverConstNames;
 import org.apache.axis.discovery.DiscoverOldNamesInManagedProperties;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
@@ -153,6 +154,12 @@ public class EngineConfigurationFactoryFinder
                         nameDiscoverers.addResourceNameDiscover(new DiscoverOldNamesInManagedProperties());
                         nameDiscoverers.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
                         nameDiscoverers.addResourceNameDiscover(new DiscoverServiceNames(loaders));
+                        nameDiscoverers.addResourceNameDiscover(new DiscoverConstNames(
+                            new String[] {
+                                "org.apache.axis.configuration.EngineConfigurationFactoryServlet",
+                                "org.apache.axis.configuration.EngineConfigurationFactoryDefault",
+                                })
+                            );
                             
                         ResourceNameIterator it = nameDiscoverers.findResourceNames(mySpi.getName());
                 
@@ -164,42 +171,18 @@ public class EngineConfigurationFactoryFinder
                         while (factory == null  &&  services.hasNext()) {
                             Class service = services.nextResourceClass().loadClass();
                 
-                            factory = newFactory(service, newFactoryParamTypes, params);
-                        }
-                
-                        if (factory == null) {
-                            String className = "org.apache.axis.configuration.EngineConfigurationFactoryServlet"; 
-                            try {
-                                ClassLoader loader = EngineConfigurationFactory.class.getClassLoader(); 
-                                Class clazz = loader.loadClass(className);
-                                Method method =
-                                    ClassUtils.findPublicStaticMethod(clazz,
-                                                                      EngineConfigurationFactory.class,
-                                                                      "newFactory",
-                                                                      newFactoryParamTypes);
-                                factory = (EngineConfigurationFactory)method.invoke(null, params);
-                            } catch (ClassNotFoundException e) {
-                            } catch (Throwable e) {
-                                log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
-                                                              className,
-                                                              requiredMethod), e);
-                            }
-                
-                            if (factory == null) {
-                                try {
-                                    // should NEVER return null.
-                                    factory = EngineConfigurationFactoryDefault.newFactory(obj);
-                                } catch (Throwable e) {
-                                    log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
-                                                                  EngineConfigurationFactoryDefault.class.getName(),
-                                                                  requiredMethod), e);
-                                }
+                            /* service == null
+                             * if class resource wasn't loadable
+                             */
+                            if (service != null) {
+                                factory = newFactory(service, newFactoryParamTypes, params);
                             }
                         }
                 
                         if (factory != null) {
-                            if(log.isDebugEnabled())
+                            if(log.isDebugEnabled()) {
                                 log.debug(Messages.getMessage("engineFactory", factory.getClass().getName()));
+                            }
                         } else {
                             log.error(Messages.getMessage("engineConfigFactoryMissing"));
                             // we should be throwing an exception here,
