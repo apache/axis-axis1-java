@@ -283,12 +283,21 @@ public class HTTPSender extends BasicHandler {
         header2.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
                 HTTPConstants.HEADER_PROTOCOL_11)
                 .append("\r\n");
+        MimeHeaders mimeHeaders = reqMessage.getMimeHeaders();
+
         if (posting) {
+        	String contentType;
+            if (mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE) != null) {
+            	contentType = mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0];
+            } else {
+            	contentType = reqMessage.getContentType(msgContext.getSOAPConstants());
+            }
             header2.append(HTTPConstants.HEADER_CONTENT_TYPE)
                     .append(": ")
-                    .append(reqMessage.getContentType(msgContext.getSOAPConstants()))
+                    .append(contentType)
                     .append("\r\n");
         }
+
         header2.append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
                 .append( ": ")
                 .append( HTTPConstants.HEADER_ACCEPT_APPL_SOAP)
@@ -338,10 +347,12 @@ public class HTTPSender extends BasicHandler {
         }
 
         // Transfer MIME headers of SOAPMessage to HTTP headers. 
-        MimeHeaders mimeHeaders = reqMessage.getMimeHeaders();
         if (mimeHeaders != null) {
             for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
                 MimeHeader mimeHeader = (MimeHeader) i.next();
+                if (mimeHeader.getName().equals(HTTPConstants.HEADER_CONTENT_TYPE)) {
+                	continue;
+                }
                 header2.append(mimeHeader.getName())
                 .append(": ")
                 .append(mimeHeader.getValue())
