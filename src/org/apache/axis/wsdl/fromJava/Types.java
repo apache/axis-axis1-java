@@ -716,7 +716,9 @@ public class Types {
             qName = getTypeQName(type);
         }
 
-        makeTypeElement(type, qName, null);
+        if(!makeTypeElement(type, qName, null)) {
+            return null;
+        }
         return getQNameString(qName);
     }
 
@@ -1246,9 +1248,10 @@ public class Types {
      *             which should either receive a type="" attribute decoration
      *             (for named types) or a child element defining an anonymous
      *             type
+     * @return true if the type was already present or was added, false if there was a problem 
      * @throws AxisFault
      */
-    private void makeTypeElement(Class type,
+    private boolean makeTypeElement(Class type,
                                  QName qName,
                                  Element containingElement) throws AxisFault {
         // Get a corresponding QName if one is not provided
@@ -1272,7 +1275,7 @@ public class Types {
         if (!addToTypesList(qName)) {
             if (containingElement != null)
                 containingElement.setAttribute("type", getQNameString(qName));
-            return;
+            return true;
         }
 
         // look up the serializer in the TypeMappingRegistry
@@ -1292,7 +1295,7 @@ public class Types {
             } else if (isBeanCompatible(type, true)) {
                 factory = new BeanSerializerFactory(type, qName);
             } else {
-                return;
+                return false;
             }
         }
 
@@ -1330,5 +1333,6 @@ public class Types {
             if (containingElement != null)
                 containingElement.setAttribute("type", getQNameString(qName));
         }
+        return true;
     }
 }
