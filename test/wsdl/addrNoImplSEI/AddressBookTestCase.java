@@ -58,9 +58,6 @@ package test.wsdl.addrNoImplSEI;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 
 /** Test the address book sample code.
  */
@@ -76,15 +73,7 @@ public class AddressBookTestCase extends TestCase {
     }
 
     public void testAddressBookService () throws Exception {
-        Logger root = Logger.getRootLogger();
-        Level origLevel = root.getEffectiveLevel();
-        root.setLevel(Level.FATAL);
-        try {
-            doTest();
-        }
-        finally {
-            root.setLevel(origLevel);
-        }
+        doTest();
     }
 }
 
