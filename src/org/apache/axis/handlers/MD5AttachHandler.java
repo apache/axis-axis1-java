@@ -60,6 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
@@ -78,6 +79,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
         try {
             // log.debug("IN MD5");        
             Message  msg = msgContext.getRequestMessage();
+            SOAPConstants soapConstants = msgContext.getSOAPConstants();
             org.apache.axis.message.SOAPEnvelope env = (org.apache.axis.message.SOAPEnvelope) msg.getSOAPEnvelope();
             org.apache.axis.message.SOAPBodyElement sbe = env.getFirstBody();//env.getBodyByName("ns1", "addedfile");
             org.w3c.dom.Element sbElement = sbe.getAsDOM();
@@ -87,7 +89,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
             for (; n != null && !(n instanceof org.w3c.dom.Element); n = n.getNextSibling());
             org.w3c.dom.Element paramElement = (org.w3c.dom.Element) n;
             //Get the href associated with the attachment.
-            String href = paramElement.getAttribute(org.apache.axis.Constants.ATTR_HREF);
+            String href = paramElement.getAttribute(soapConstants.getAttrHref());
             org.apache.axis.Part ap = msg.getAttachmentsImpl().getAttachmentByReference(href);
             javax.activation.DataHandler dh = org.apache.axis.attachments.AttachmentUtils.getActivationDataHandler(ap);
             org.w3c.dom.Node timeNode = paramElement.getFirstChild();
@@ -136,7 +138,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
             n = sbElement.getFirstChild();
             for (; n != null && !(n instanceof org.w3c.dom.Element); n = n.getNextSibling());
             paramElement = (org.w3c.dom.Element) n;
-            // paramElement.setAttribute(org.apache.axis.Constants.ATTR_HREF, respHref);
+            // paramElement.setAttribute(soapConstants.getAttrHref(), respHref);
             String MD5String = org.apache.axis.encoding.Base64.encode(md.digest());
             String senddata = " elapsedTime=" + elapsedTimeStr + " MD5=" + MD5String;
 

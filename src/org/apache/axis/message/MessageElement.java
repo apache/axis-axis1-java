@@ -237,18 +237,19 @@ public class MessageElement implements SOAPElement, Serializable
                 }
             }
 
-            href = attributes.getValue(Constants.ATTR_HREF);
-
-            // If there's an arrayType attribute, we can pretty well guess that we're an Array???
-            if (attributes.getValue(Constants.URI_DEFAULT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
-                typeQName = Constants.SOAP_ARRAY;
-
             // Set the encoding style to the attribute value.  If null,
             // we just automatically use our parent's (see getEncodingStyle)
             MessageContext mc = context.getMessageContext();
             SOAPConstants sc = (mc != null) ?
                                             mc.getSOAPConstants() :
                                             SOAPConstants.SOAP11_CONSTANTS;
+
+            href = attributes.getValue(sc.getAttrHref());
+
+            // If there's an arrayType attribute, we can pretty well guess that we're an Array???
+            if (attributes.getValue(Constants.URI_DEFAULT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
+                typeQName = Constants.SOAP_ARRAY;
+
 
             encodingStyle =
                     attributes.getValue(sc.getEncodingURI(),

@@ -745,7 +745,7 @@ public class SerializationContextImpl implements SerializationContext
             AttributesImpl attrs = new AttributesImpl();
             if (attributes != null && 0 < attributes.getLength())
                 attrs.setAttributes(attributes);
-            attrs.addAttribute("", Constants.ATTR_HREF, "href",
+            attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
                                "CDATA", '#' + id);
 
             startElement(elemQName, attrs);

@@ -67,6 +67,9 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.MessageContext;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -99,6 +102,7 @@ public class ArrayDeserializer extends DeserializerImpl
     Class arrayClass = null;
     ArrayList mDimLength = null;  // If set, array of multi-dim lengths 
     ArrayList mDimFactor = null;  // If set, array of factors for multi-dim []
+    SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
 
     /**
      * This method is invoked after startElement when the element requires
@@ -146,6 +150,11 @@ public class ArrayDeserializer extends DeserializerImpl
             log.debug("Enter: ArrayDeserializer::startElement()");
         }
 
+        MessageContext msgContext = context.getMessageContext();
+        if (msgContext != null) {
+            soapConstants = msgContext.getSOAPConstants();
+        }
+
         // Get the qname for the array type=, set it to null if
         // the generic type is used.
         QName typeQName = context.getTypeFromAttributes(namespace,
@@ -164,7 +173,7 @@ public class ArrayDeserializer extends DeserializerImpl
         QName arrayTypeValue = context.getQNameFromString(
                       Constants.getValue(attributes,
                                          Constants.URIS_SOAP_ENC,
-                                         Constants.ATTR_ARRAY_TYPE));
+                                         soapConstants.getAttrItemType()));
 
         // The first part of the arrayType expression is 
         // the default item type qname.
@@ -177,6 +186,8 @@ public class ArrayDeserializer extends DeserializerImpl
                 arrayTypeValue.getNamespaceURI();
             String arrayTypeValueLocalPart = 
                 arrayTypeValue.getLocalPart();
+
+            if (soapConstants != SOAPConstants.SOAP12_CONSTANTS) {
             int leftBracketIndex = 
                 arrayTypeValueLocalPart.lastIndexOf('[');
             int rightBracketIndex = 
@@ -209,6 +220,33 @@ public class ArrayDeserializer extends DeserializerImpl
                 defaultItemType = new QName(arrayTypeValueNamespaceURI,
                                             arrayTypeValueLocalPart);
             }
+
+            } else {
+                String arraySizeValue = attributes.getValue(soapConstants.getEncodingURI(), Constants.ATTR_ARRAY_SIZE);
+                int leftStarIndex = arraySizeValue.lastIndexOf('*');
+
+                // Skip to num if any
+                if (leftStarIndex != -1) {
+                    // "*" => ""
+                    if (leftStarIndex == 0 && arraySizeValue.length() == 1) {
+                    // "* *" => ""
+                    } else if (leftStarIndex == (arraySizeValue.length() - 1)) {
+                        innerQName = arrayTypeValue;
+                        innerDimString = arraySizeValue.substring(0, leftStarIndex - 1);
+                    // "* N" => "N"
+                    } else {
+                        dimString = arraySizeValue.substring(leftStarIndex + 2);
+                        innerQName = arrayTypeValue;
+                        innerDimString = arraySizeValue.substring(0, leftStarIndex + 1);
+                    }
+                }
+
+                if (innerDimString == null) {
+                    defaultItemType = Constants.SOAP_ARRAY12;
+                } else {
+                    defaultItemType = arrayTypeValue;
+                }
+            }
         }
 
         // If no type QName and no defaultItemType qname, use xsd:anyType
@@ -226,26 +264,37 @@ public class ArrayDeserializer extends DeserializerImpl
             // Get an array of the default item type.
             Class arrayItemClass = null;
             QName compQName = defaultItemType;
-            String dims = "[]";
+
             // Nested array, use the innermost qname
+            String dims = "[]";
             if (innerQName != null) {
                 compQName = innerQName;
+
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    int offset = 0;
+                    while ((offset = innerDimString.indexOf('*', offset)) != -1) {
+                        dims += "[]";
+                        offset ++;
+                    }
+                } else {
                 dims += innerDimString;                
             }
-            arrayItemClass = context.getTypeMapping().
-                getClassForQName(compQName);
-            if (arrayItemClass != null) {
-                try {
-                    arrayClass = ClassUtils.forName(
-                      JavaUtils.getLoadableClassName(
-                        JavaUtils.getTextClassName(arrayItemClass.getName()) +
-                        dims));
-                } catch (Exception e) {
-                    throw new SAXException(
-                       Messages.getMessage("noComponent00",  
-                                            "" + defaultItemType));
-                }
+        }
+
+        arrayItemClass = context.getTypeMapping().
+            getClassForQName(compQName);
+        if (arrayItemClass != null) {
+            try {
+                arrayClass = ClassUtils.forName(
+                  JavaUtils.getLoadableClassName(
+                    JavaUtils.getTextClassName(arrayItemClass.getName()) +
+                    dims));
+            } catch (Exception e) {
+                throw new SAXException(
+                   Messages.getMessage("noComponent00",  
+                                        "" + defaultItemType));
             }
+        }
         }
 
         if (arrayClass == null) {
@@ -260,13 +309,15 @@ public class ArrayDeserializer extends DeserializerImpl
         else {
             try
             {
-                StringTokenizer tokenizer = new StringTokenizer(dimString,
-                                                                "[],");
+                StringTokenizer tokenizer;
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    tokenizer = new StringTokenizer(dimString);
+                } else {
+                    tokenizer = new StringTokenizer(dimString, "[],");
+                }
 
                 length = Integer.parseInt(tokenizer.nextToken());
-
-                if (tokenizer.hasMoreTokens())
-                    {
+                if (tokenizer.hasMoreTokens()) {
                         // If the array is passed as a multi-dimensional array
                         // (i.e. int[2][3]) then store all of the 
                         // mult-dim lengths.
@@ -304,6 +355,10 @@ public class ArrayDeserializer extends DeserializerImpl
                                          Constants.URIS_SOAP_ENC,
                                          Constants.ATTR_OFFSET);
         if (offset != null) {
+            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                throw new SAXException(Messages.getMessage("noSparseArray"));
+            }
+
             int leftBracketIndex = offset.lastIndexOf('[');
             int rightBracketIndex = offset.lastIndexOf(']');
 
@@ -357,6 +412,10 @@ public class ArrayDeserializer extends DeserializerImpl
                                    Constants.URIS_SOAP_ENC,
                                    Constants.ATTR_POSITION);
             if (pos != null) {
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    throw new SAXException(Messages.getMessage("noSparseArray"));
+                }
+
                 int leftBracketIndex = pos.lastIndexOf('[');
                 int rightBracketIndex = pos.lastIndexOf(']');
 

@@ -162,11 +162,11 @@ public class SOAPService extends SimpleTargetedChain
     }
 
     /**
-     * SOAPRequestHandler is used to inject SOAP semantics just before
+     * SOAPResponseHandler is used to inject SOAP semantics just before
      * the pivot handler.
      */
-    private class SOAPRequestHandler extends BasicHandler {
-        public SOAPRequestHandler() {}
+    private class SOAPResponseHandler extends BasicHandler {
+        public SOAPResponseHandler() {}
 
         public void invoke(MessageContext msgContext) throws AxisFault {
             // Do SOAP semantics here
@@ -217,7 +217,7 @@ public class SOAPService extends SimpleTargetedChain
 
                         SOAPHeaderElement newHeader = new
                             SOAPHeaderElement(Constants.URI_SOAP12_FAULT,
-                                              Constants.ELEM_MISUNDERSTOOD);
+                                              Constants.ELEM_NOTUNDERSTOOD);
                         newHeader.addAttribute(null,
                                                Constants.ATTR_QNAME,
                                                badQName);
@@ -254,7 +254,7 @@ public class SOAPService extends SimpleTargetedChain
     public SOAPService(Handler reqHandler, Handler pivHandler,
                        Handler respHandler) {
         this();
-        init(reqHandler, new SOAPRequestHandler(), pivHandler, null, respHandler);
+        init(reqHandler, null, pivHandler, new SOAPResponseHandler(), respHandler);
     }
 
     public TypeMappingRegistry getTypeMappingRegistry()
@@ -267,7 +267,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService(Handler serviceHandler)
     {
-        init(null, new SOAPRequestHandler(), serviceHandler, null, null);
+        init(null, null, serviceHandler, new SOAPResponseHandler(), null);
     }
 
     /** Tell this service which engine it's deployed to.

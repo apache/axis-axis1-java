@@ -64,6 +64,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.soap.SOAPConstants;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -106,6 +107,7 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         // Look up this element in our faultMap
         // if we find a match, this element is the fault data
         MessageContext msgContext = context.getMessageContext();
+        SOAPConstants soapConstants = msgContext.getSOAPConstants();
         OperationDesc op = msgContext.getOperation();
         if (op != null) {
             FaultDesc faultDesc = op.getFaultByQName(qn);
@@ -129,7 +131,7 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
                 builder.setWaiting(true);
                 // register callback for the data, use the xmlType from fault info
                 Deserializer dser = null;
-                if (attributes.getValue("href") == null) {
+                if (attributes.getValue(soapConstants.getAttrHref()) == null) {
                     dser = context.getDeserializerForType(faultDesc.getXmlType());
                 } else {
                     dser = new DeserializerImpl();

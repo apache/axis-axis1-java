@@ -71,7 +71,10 @@ public class PackageTests
 
         suite.addTestSuite(TestDeser.class);
         suite.addTestSuite(TestHeaderAttrs.class);
-        //suite.addTestSuite(TestSer.class);
+        suite.addTestSuite(TestSer.class);
+        suite.addTestSuite(TestFault.class);
+        suite.addTestSuite(TestHrefs.class);
+        suite.addTestSuite(TestRPC.class);
 
         return suite;
     }

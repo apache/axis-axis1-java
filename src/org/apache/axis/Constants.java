@@ -406,7 +406,7 @@ public class Constants {
     public static final String ELEM_BODY     = "Body" ;
     public static final String ELEM_FAULT    = "Fault" ;
 
-    public static final String ELEM_MISUNDERSTOOD = "Misunderstood";
+    public static final String ELEM_NOTUNDERSTOOD = "NotUnderstood";
 
     public static final String ELEM_FAULT_CODE   = "faultcode" ;
     public static final String ELEM_FAULT_STRING = "faultstring" ;
@@ -428,8 +428,11 @@ public class Constants {
     public static final String ATTR_ROOT            = "root" ;
     public static final String ATTR_ID              = "id" ;
     public static final String ATTR_HREF            = "href" ;
+    public static final String ATTR_REF             = "ref" ;
     public static final String ATTR_QNAME           = "qname";
     public static final String ATTR_ARRAY_TYPE      = "arrayType";
+    public static final String ATTR_ITEM_TYPE       = "itemType";
+    public static final String ATTR_ARRAY_SIZE      = "arraySize";
     public static final String ATTR_OFFSET          = "offset";
     public static final String ATTR_POSITION        = "position";
     public static final String ATTR_TYPE            = "type";
@@ -558,6 +561,7 @@ public class Constants {
     public static final QName SOAP_INTEGER = new QName(URI_DEFAULT_SOAP_ENC, "integer");
     public static final QName SOAP_DECIMAL = new QName(URI_DEFAULT_SOAP_ENC, "decimal");
     public static final QName SOAP_ARRAY = new QName(URI_DEFAULT_SOAP_ENC, "Array");
+    public static final QName SOAP_ARRAY12 = new QName(URI_SOAP12_ENC, "Array");
 
     public static final QName SOAP_MAP = new QName(NS_URI_XMLSOAP, "Map");
     public static final QName SOAP_ELEMENT = new QName(NS_URI_XMLSOAP, "Element");

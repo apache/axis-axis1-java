@@ -118,4 +118,20 @@ public class SOAP12Constants implements SOAPConstants {
     public String getNextRoleURI() {
         return Constants.URI_SOAP12_NEXT_ACTOR;
     }
+
+    /**
+     * Obtain the ref attribute name
+     */
+    public String getAttrHref() {
+        return Constants.ATTR_REF;
+    }
+
+    /**
+     * Obtain the item type name of an array
+     */
+    public String getAttrItemType() {
+        return Constants.ATTR_ITEM_TYPE;
+    }
+
+
 }

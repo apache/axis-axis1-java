@@ -111,7 +111,7 @@ public class SOAPHeaderElement extends MessageElement
                                          Constants.ATTR_MUST_UNDERSTAND);
 
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
-            mustUnderstand = ((val != null) && val.equals("true")) ? true : false;
+            mustUnderstand = ((val != null) && (val.equals("true") || val.equals("1"))) ? true : false;
         else
             mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
@@ -153,7 +153,7 @@ public class SOAPHeaderElement extends MessageElement
                                          Constants.ATTR_MUST_UNDERSTAND);
 
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
-            mustUnderstand = ((val != null) && val.equals("true")) ? true : false;
+            mustUnderstand = ((val != null) && (val.equals("true") || val.equals("1"))) ? true : false;
         else
             mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
