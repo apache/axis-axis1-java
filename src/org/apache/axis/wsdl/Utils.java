@@ -303,6 +303,9 @@ public class Utils {
         StringBuffer sb = new StringBuffer(80);
         for(int i = words.length-1; i >= 0; --i) {
             String word = words[i];
+            if (isJavaKeyword(word)) {
+                word = makeNonJavaKeyword(word);
+            }
             // seperate with dot
             if( i != words.length-1 )
                 sb.append('.');
