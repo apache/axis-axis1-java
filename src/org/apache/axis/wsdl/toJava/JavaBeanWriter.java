@@ -71,7 +71,8 @@ public class JavaBeanWriter extends JavaWriter {
     private Vector elements;
     private Vector attributes;
     private TypeEntry extendType;
-    private HashMap elementMappings = null;
+    protected JavaWriter helper;
+    protected Vector names = new Vector();
 
     /**
      * Constructor.
@@ -79,19 +80,23 @@ public class JavaBeanWriter extends JavaWriter {
      * @param type        The type representing this class
      * @param elements    Vector containing the Type and name of each property
      * @param extendType  The type representing the extended class (or null)
+     * @param attributes  Vector containing the attribute types and names    
+     * @param helper      Helper class writer                                
      */
     protected JavaBeanWriter(
             Emitter emitter,
             TypeEntry type,
             Vector elements,
             TypeEntry extendType,
-            Vector attributes) {
+            Vector attributes,
+            JavaWriter helper) {
         super(emitter, type, "", "java",
               JavaUtils.getMessage("genType00"), "complexType");
         this.type = type;
         this.elements = elements;
         this.attributes = attributes;
         this.extendType = extendType;
+        this.helper = helper;
     } // ctor
 
     /**
@@ -110,21 +115,12 @@ public class JavaBeanWriter extends JavaWriter {
         }
 
         // We are only interested in the java names of the types, so create a names list
-        Vector names = new Vector();
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl)elements.get(i);
                 TypeEntry type = elem.getType();
                 String elemName = elem.getName().getLocalPart();
                 String javaName = Utils.xmlNameToJava(elemName);
-                if (!javaName.equals(elemName)) {
-                    // If we did some mangling, make sure we'll write out the XML
-                    // the correct way.
-                    if (elementMappings == null)
-                        elementMappings = new HashMap();
-
-                    elementMappings.put(javaName, elem.getName());
-                }
                 names.add(type.getName());
                 names.add(javaName);
             }
@@ -169,27 +165,6 @@ public class JavaBeanWriter extends JavaWriter {
         pw.println();
         pw.println("    public " + className + "() {");
         pw.println("    }");
-
-        // The code used to generate a constructor that set
-        // all of the properties.  
-        boolean fullConstructorGen = false;
-        if (fullConstructorGen) {
-            pw.println();
-            if (names.size() > 0) {
-                pw.print("    public " + className + "(");
-                for (int i = 0; i < names.size(); i += 2) {
-                    if (i != 0) pw.print(", ");
-                    String variable = (String) names.get(i + 1);
-                    pw.print((String) names.get(i) + " " + variable);
-                }
-                pw.println(") {");
-                for (int i = 1; i < names.size(); i += 2) {
-                    String variable = (String) names.get(i);
-                    pw.println("        this." + variable + " = " + variable + ";");
-                }
-                pw.println("    }");
-            }
-        }
 
         pw.println();
         int j = 0; 
@@ -251,68 +226,6 @@ public class JavaBeanWriter extends JavaWriter {
             }
         }
        
-        // if we have attributes, create metadata function which returns the
-        // list of properties that are attributes instead of elements
-
-        if (attributes != null || elementMappings != null) {
-            boolean wroteFieldType = false;
-            pw.println("    // " + JavaUtils.getMessage("typeMeta"));
-            pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
-            pw.println("        new org.apache.axis.description.TypeDesc();");
-            pw.println();
-            pw.println("    static {");
-
-            if (attributes != null) {
-                for (int i = 0; i < attributes.size(); i += 2) {
-                    String attrName = (String) attributes.get(i + 1);
-                    String fieldName = Utils.xmlNameToJava(attrName);
-                    pw.print("        ");
-                    if (!wroteFieldType) {
-                        pw.print("org.apache.axis.description.FieldDesc ");
-                        wroteFieldType = true;
-                    }
-                    pw.println("field = new org.apache.axis.description.AttributeDesc();");
-                    pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    if (!fieldName.equals(attrName)) {
-                        pw.print("        field.setXmlName(");
-                        pw.print("new javax.xml.rpc.namespace.QName(null, \"");
-                        pw.println(attrName + "\"));");
-                    }
-                    pw.println("        typeDesc.addFieldDesc(field);");
-                }
-            }
-
-            if (elementMappings != null) {
-                Iterator i = elementMappings.keySet().iterator();
-                while (i.hasNext()) {
-                    String fieldName = (String)i.next();
-                    QName xmlName = (QName)elementMappings.get(fieldName);
-                    pw.print("        ");
-                    if (!wroteFieldType) {
-                        pw.print("org.apache.axis.description.FieldDesc ");
-                        wroteFieldType = true;
-                    }
-                    pw.println("field = new org.apache.axis.description.ElementDesc();");
-                    pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    pw.print(  "        field.setXmlName(new javax.xml.rpc.namespace.QName(\"");
-                    pw.println(xmlName.getNamespaceURI() + "\", \"" +
-                               xmlName.getLocalPart() + "\"));");
-                    pw.println("        typeDesc.addFieldDesc(field);");
-                }
-            }
-
-            pw.println("    };");
-            pw.println();
-
-            pw.println("    /**");
-            pw.println("     * " + JavaUtils.getMessage("returnTypeMeta"));
-            pw.println("     */");
-            pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
-            pw.println("        return typeDesc;");
-            pw.println("    }");
-            pw.println();
-        }
-        
         // if this is a simple type, we need to emit a toString and a string
         // constructor
         if (type.isSimpleType() && valueType != null) {
@@ -329,6 +242,14 @@ public class JavaBeanWriter extends JavaWriter {
             pw.println();
         }
 
+        writeEqualsMethod();
+
+        helper.write(pw);
+        pw.println("}");
+        pw.close();
+    } // writeFileBody
+
+    protected void writeEqualsMethod() {
         pw.println("    public boolean equals(Object obj) {");
         pw.println("        // compare elements");
         pw.println("        " +  className + " other = (" + className + ") obj;");
@@ -372,9 +293,5 @@ public class JavaBeanWriter extends JavaWriter {
             }
         }
         pw.println("    }");
-
-        pw.println("}");
-        pw.close();
-    } // writeOperation
-
+    }
 } // class JavaBeanWriter

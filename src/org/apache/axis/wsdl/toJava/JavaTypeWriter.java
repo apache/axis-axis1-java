@@ -95,7 +95,7 @@ public class JavaTypeWriter implements Writer {
                 Vector v = SchemaUtils.getEnumerationBaseAndValues(
                         node, symbolTable);
                 if (v != null) {
-                    typeWriter = new JavaEnumTypeWriter(emitter, type, v);
+                    typeWriter = getEnumTypeWriter(emitter, type, v);
                 }
                 else {
                     TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
@@ -108,8 +108,7 @@ public class JavaTypeWriter implements Writer {
                         }
                     }
 
-                    typeWriter = new 
-                        JavaBeanWriter(
+                    typeWriter = getBeanWriter(
                             emitter, 
                             type, 
                             SchemaUtils.getContainedElementDeclarations(
@@ -125,7 +124,7 @@ public class JavaTypeWriter implements Writer {
             // If the holder is needed (ie., something uses this type as an out or inout
             // parameter), instantiate the holder writer.
             if (holderIsNeeded(type)) {
-                holderWriter = new JavaHolderWriter(emitter, type);
+                holderWriter = getHolderWriter(emitter, type);
             }
         }
     } // ctor
@@ -134,8 +133,9 @@ public class JavaTypeWriter implements Writer {
      * Write all the service bindnigs:  service and testcase.
      */
     public void write() throws IOException {
-        if (typeWriter != null)
+        if (typeWriter != null) {
             typeWriter.write();
+        }
         if (holderWriter != null) {
             holderWriter.write();
         }
@@ -149,4 +149,39 @@ public class JavaTypeWriter implements Writer {
                 (Boolean) entry.getDynamicVar(HOLDER_IS_NEEDED);
         return (holderIsNeeded != null && holderIsNeeded.booleanValue());
     } // holderIsNeeded
+
+    /**
+     * getEnumWriter
+     **/
+    protected JavaWriter getEnumTypeWriter(Emitter emitter, TypeEntry type, Vector v) {
+        return new JavaEnumTypeWriter(emitter, type, v);
+    }
+
+    /**
+     * getBeanWriter
+     **/
+    protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type, 
+                                   Vector elements, TypeEntry base,
+                                   Vector attributes) {
+        JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
+                                                  attributes);
+        return new JavaBeanWriter(emitter, type, elements, base, attributes, 
+                                  helperWriter);
+    }
+
+    /**
+     * getHelperWriter
+     **/
+    protected JavaWriter getBeanHelperWriter(Emitter emitter, TypeEntry type,
+                                         Vector elements, TypeEntry base, 
+                                         Vector attributes) {
+        return new JavaBeanHelperWriter(emitter, type, elements, base, attributes); 
+    }
+
+    /**
+     * getHolderWriter
+     **/
+    protected Writer getHolderWriter(Emitter emitter, TypeEntry type) {
+        return new JavaHolderWriter(emitter, type);
+    }
 } // class JavaTypeWriter
