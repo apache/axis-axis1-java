@@ -187,6 +187,12 @@ public class WSDDService
             desc.setWSDLFile(fileName);
         }
 
+        Element urlElem = getChildElement(e, ELEM_WSDD_ENDPOINTURL);
+        if (urlElem != null) {
+            String endpointURL = XMLUtils.getChildCharacterData(urlElem);
+            desc.setEndpointURL(endpointURL);
+        }
+
         String providerStr = e.getAttribute(ATTR_PROVIDER);
         if (providerStr != null && !providerStr.equals("")) {
             providerQName = XMLUtils.getQNameFromString(providerStr, e);
@@ -518,6 +524,13 @@ public class WSDDService
         for (int i=0; i < namespaces.size(); i++ ) {
             context.startElement(QNAME_NAMESPACE, null);
             context.writeString((String)namespaces.get(i));
+            context.endElement();
+        }
+
+        String endpointURL = desc.getEndpointURL();
+        if (endpointURL != null) {
+            context.startElement(QNAME_ENDPOINTURL, null);
+            context.writeSafeString(endpointURL);
             context.endElement();
         }
 

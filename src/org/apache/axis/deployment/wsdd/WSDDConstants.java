@@ -127,6 +127,7 @@ public class WSDDConstants
     public static final String ELEM_WSDD_ELEMENTMAPPING = "elementMapping";
     public static final String ELEM_WSDD_WSDLFILE = "wsdlFile";
     public static final String ELEM_WSDD_NAMESPACE = "namespace";
+    public static final String ELEM_WSDD_ENDPOINTURL = "endpointURL";
 
     public static final QName QNAME_PARAM = new QName(URI_WSDD, ELEM_WSDD_PARAM);
     public static final QName QNAME_DOC = new QName(URI_WSDD, ELEM_WSDD_DOC);
@@ -146,7 +147,8 @@ public class WSDDConstants
     public static final QName QNAME_ELEMENTMAPPING = new QName(URI_WSDD, ELEM_WSDD_ELEMENTMAPPING);
     public static final QName QNAME_WSDLFILE = new QName(URI_WSDD, ELEM_WSDD_WSDLFILE);
     public static final QName QNAME_NAMESPACE = new QName(URI_WSDD, ELEM_WSDD_NAMESPACE);
-    
+    public static final QName QNAME_ENDPOINTURL = new QName(URI_WSDD, ELEM_WSDD_ENDPOINTURL);
+
     public static final String ATTR_LANG_SPEC_TYPE = "languageSpecificType";
     public static final String ATTR_QNAME = "qname";
     public static final String ATTR_NAME = "name";

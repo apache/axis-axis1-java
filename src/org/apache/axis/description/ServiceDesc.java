@@ -119,6 +119,13 @@ public class ServiceDesc {
      */
     private String wsdlFileName = null;
 
+    /**
+     * An endpoint URL which someone has specified for this service.  If
+     * this is set, WSDL generation will pick it up instead of defaulting
+     * to the transport URL.
+     */
+    private String endpointURL = null;
+
     /** Place to store user-extensible service-related properties */
     private HashMap properties = null;
 
@@ -549,7 +556,7 @@ public class ServiceDesc {
      */
     public void loadServiceDescByIntrospection()
     {
-        loadServiceDescByIntrospection(implClass, true);
+        loadServiceDescByIntrospection(implClass);
 
         // Setting this to null means there is nothing more to do, and it
         // avoids future string compares.
@@ -560,19 +567,19 @@ public class ServiceDesc {
      * Fill in a service description by introspecting the implementation
      * class.
      */    
-    public void loadServiceDescByIntrospection(Class implClass, boolean searchParents) {
+    public void loadServiceDescByIntrospection(Class implClass) {
         if (introspectionComplete || implClass == null) {
             return;
         }
 
-        loadServiceDescByIntrospectionRecursive(implClass, searchParents);
+        loadServiceDescByIntrospectionRecursive(implClass);
         introspectionComplete = true;
     }
 
     /**
      * Recursive helper class for loadServiceDescByIntrospection
      */
-    private void loadServiceDescByIntrospectionRecursive(Class implClass, boolean searchParents)
+    private void loadServiceDescByIntrospectionRecursive(Class implClass)
     {
         if (Skeleton.class.equals(implClass)) {
             return;
@@ -592,7 +599,7 @@ public class ServiceDesc {
                 Class superClass = superClasses[i];
                 if (stopClasses == null ||
                         !stopClasses.contains(superClass.getName())) {
-                    loadServiceDescByIntrospectionRecursive(superClass, true);
+                    loadServiceDescByIntrospectionRecursive(superClass);
                 }
             }
         } else {
@@ -602,7 +609,7 @@ public class ServiceDesc {
                     !superClass.getName().startsWith("javax.") &&
                     (stopClasses == null ||
                         !stopClasses.contains(superClass.getName()))) {
-                loadServiceDescByIntrospectionRecursive(superClass, true);
+                loadServiceDescByIntrospectionRecursive(superClass);
             }
         }
     }
@@ -922,5 +929,13 @@ public class ServiceDesc {
             return null;
 
         return properties.get(name);
+    }
+
+    public String getEndpointURL() {
+        return endpointURL;
+    }
+
+    public void setEndpointURL(String endpointURL) {
+        this.endpointURL = endpointURL;
     }
 }

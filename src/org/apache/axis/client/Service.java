@@ -274,12 +274,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         try {
             this.wsdlDefinition = def ;
 
-            // grrr!  Too many flavors of QName
-            String ns = serviceName.getNamespaceURI();
-            String lp = serviceName.getLocalPart();
-            QName  qn = new QName( ns, lp );
-
-            this.wsdlService    = def.getService( qn );
+            this.wsdlService    = def.getService( serviceName );
             if ( this.wsdlService == null )
                 throw new ServiceException(
                         JavaUtils.getMessage("noService00", "" + serviceName));

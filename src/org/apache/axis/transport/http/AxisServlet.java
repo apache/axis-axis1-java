@@ -65,8 +65,6 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFault;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Admin;
@@ -78,7 +76,6 @@ import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -324,14 +321,6 @@ public class AxisServlet extends HttpServlet
                     String url = HttpUtils.getRequestURL(req).toString();
 
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
-
-
-                    msgContext.setProperty(MessageContext.WSDLGEN_INTFNAMESPACE,
-                      getOption(servletContext, MessageContext.WSDLGEN_INTFNAMESPACE,url));
-
-                    msgContext.setProperty(MessageContext.WSDLGEN_SERV_LOC_URL,
-                      getOption(servletContext, MessageContext.WSDLGEN_SERV_LOC_URL,url));
-
 
                     boolean wsdlRequested = false;
                     boolean listRequested = false;
