@@ -88,7 +88,7 @@ Copyright:
     <include name="*.java" />
   </javac>
 
-  <copy todir="${build.dir}/${componentName}/foreach" >
+  <copy todir="${build.dir}/tools/${componentName}/foreach" >
      <fileset dir="${tools.dir}/${componentName}/foreach" excludes="**/*.java"/>
   </copy>
 
