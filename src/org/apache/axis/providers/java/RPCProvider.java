@@ -152,45 +152,8 @@ public class RPCProvider extends JavaProvider
                 }
             }
 
-            String methodNameMatch = allowedMethods; 
-
-            // allowedMethods may be a comma-delimited string of method names.
-            // If so, look for the one matching mname.
-            if (allowedMethods != null && allowedMethods.indexOf(' ') != -1) {
-                StringTokenizer tok = new StringTokenizer(allowedMethods, " ");
-                String nextMethodName = null;
-                while (tok.hasMoreElements()) {
-                    String token = tok.nextToken();
-                    if (token.equals(mName)) {
-                        nextMethodName = token;
-                        break;
-                    }
-                }
-                // didn't find a matching one...
-                if (nextMethodName == null) {
-                    throw new AxisFault( "AxisServer.error",
-                            JavaUtils.getMessage("namesDontMatch00", mName, allowedMethods),
-                            null, null );  // should they??
-                }
-                methodNameMatch = nextMethodName;
-            }
-            
-            if ( methodNameMatch != null && !methodNameMatch.equals(mName) )
-                throw new AxisFault( "AxisServer.error",
-                        JavaUtils.getMessage("namesDontMatch01",
-                            new String[] {mName, methodNameMatch, allowedMethods}),
-                        null, null );  // should they??
-            
-            if (log.isDebugEnabled()) {
-                log.debug( "mName: " + mName );
-                log.debug( "MethodNameMatch: " + methodNameMatch );
-                log.debug( "MethodName List: " + allowedMethods );
-            }
-
-            ///////////////////////////////////////////////////////////////
-            // If allowedMethods (i.e. methodNameMatch) is null, 
-            //  then treat it as a wildcard automatically matching mName
-            ///////////////////////////////////////////////////////////////
+            // Check if we can find a Method by this name
+            checkMethodName(msgContext, allowedMethods, mName);
 
             // Get the actual method to invoke.
             // Since the method signature may contain output parameters
@@ -199,13 +162,13 @@ public class RPCProvider extends JavaProvider
             // wsdl.  Thus the following code only works if there is no 
             // overloading.  
             int	numberOfBodyArgs = args.size();
-            Method[] methods = getMethod(jc, mName);
+            Method[] methods = getMethod(msgContext, jc, mName);
 
             // If the method wasn't found, maybe it needs some Java mangling (ie., it's a Java
             // keyword or it's capitalized and the java mapping requires lowercase).
             if (methods == null) {
                 mName = JavaUtils.xmlNameToJava(mName);
-                methods = getMethod(jc, mName);
+                methods = getMethod(msgContext, jc, mName);
             }
 
             if ( methods == null )
@@ -259,7 +222,7 @@ public class RPCProvider extends JavaProvider
                 // Note that if the method returns a primitive, invoke(...) automatically
                 // wraps it in a java.lang class representing the primitive.
                 try {
-                    objRes = method.invoke(obj, argValues);
+                    objRes = invokeMethod(msgContext, method, obj, argValues);
                     break;
                 } catch (IllegalArgumentException e) {
                     // Hm - maybe we can help this with a conversion or two...
@@ -276,7 +239,7 @@ public class RPCProvider extends JavaProvider
 
                     // OK, now try again...
                     try {
-                        objRes = method.invoke( obj, argValues );
+                        objRes = invokeMethod(msgContext, method, obj, argValues);
                         break;
                     } catch (IllegalArgumentException exp) {
                         StringBuffer argbuf = new StringBuffer();
@@ -370,9 +333,62 @@ public class RPCProvider extends JavaProvider
         }
     }
     
-    protected Method[] getMethod(JavaClass jc, String mName)
+    protected Method[] getMethod(MessageContext msgContext, JavaClass jc, String mName)
     {
         return jc.getMethod(mName);
+    }
+
+    protected Object invokeMethod(MessageContext msgContext,
+                                  Method method, Object obj,
+                                  Object[] argValues)
+        throws Exception
+    {
+        return (method.invoke(obj, argValues));
+    }
+
+    protected void checkMethodName(MessageContext msgContext, String allowedMethods, String mName)
+        throws Exception
+    {
+        String methodNameMatch = allowedMethods;
+
+        // allowedMethods may be a comma-delimited string of method names.
+        // If so, look for the one matching mname.
+        if (allowedMethods != null && allowedMethods.indexOf(' ') != -1) {
+            StringTokenizer tok = new StringTokenizer(allowedMethods, " ");
+            String nextMethodName = null;
+            while (tok.hasMoreElements()) {
+                String token = tok.nextToken();
+                if (token.equals(mName)) {
+                    nextMethodName = token;
+                    break;
+                }
+            }
+            // didn't find a matching one...
+            if (nextMethodName == null) {
+                throw new AxisFault( "AxisServer.error",
+                        JavaUtils.getMessage("namesDontMatch00", mName, allowedMethods),
+                        null, null );  // should they??
+            }
+            methodNameMatch = nextMethodName;
+        }
+
+        if ( methodNameMatch != null && !methodNameMatch.equals(mName) )
+            throw new AxisFault( "AxisServer.error",
+                    JavaUtils.getMessage("namesDontMatch01",
+                        new String[] {mName, methodNameMatch, allowedMethods}),
+                    null, null );  // should they??
+
+        if (log.isDebugEnabled()) {
+            log.debug( "mName: " + mName );
+            log.debug( "MethodNameMatch: " + methodNameMatch );
+            log.debug( "MethodName List: " + allowedMethods );
+        }
+
+        ///////////////////////////////////////////////////////////////
+        // If allowedMethods (i.e. methodNameMatch) is null,
+        //  then treat it as a wildcard automatically matching mName
+        ///////////////////////////////////////////////////////////////
+        return;
     }
 
     /**
