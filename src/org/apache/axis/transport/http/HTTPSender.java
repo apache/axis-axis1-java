@@ -166,9 +166,40 @@ public class HTTPSender extends BasicHandler {
                         OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
 
                         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
+
+                        String tunnelUser = System.getProperty("https.proxyUser");
+                        String tunnelPassword = System.getProperty("https.proxyPassword");
+                        if (tunnelUser == null) tunnelUser =
+                               System.getProperty("http.proxyUser");
+                        if (tunnelPassword == null) tunnelPassword =
+                               System.getProperty("http.proxyPassword");
+
+// More secure version... engage later?
+//                        PasswordAuthentication pa =
+//                                Authenticator.requestPasswordAuthentication(
+//                                        InetAddress.getByName(tunnelHost),
+//                                        tunnelPort, "SOCK", "Proxy","HTTP");
+//                        if(pa == null){
+//                            printDebug("No Authenticator set.");
+//                        }else{
+//                            printDebug("Using Authenticator.");
+//                            tunnelUser = pa.getUserName();
+//                            tunnelPassword = new String(pa.getPassword());
+//                        }
+
+
                         out.print("CONNECT " + host + ":" + port + " HTTP/1.0\r\n"
-                                  + "User-Agent: AxisClient"
-                                  + "\r\n\r\n");
+                                  + "User-Agent: AxisClient");
+                        if (tunnelUser != null && tunnelPassword != null) {
+                            //add basic authentication header for the proxy
+                            sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();
+                            String encodedPassword =
+                                 enc.encode((tunnelUser + ":" + tunnelPassword).getBytes());
+                            out.print("\nProxy-Authorization: Basic " + encodedPassword);
+                        }
+                        out.print("\nContent-Length: 0");
+                        out.print("\nPragma: no-cache");
+                        out.print("\r\n\r\n");
                         out.flush();
                         
                         InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
