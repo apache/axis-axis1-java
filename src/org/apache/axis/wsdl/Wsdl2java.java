@@ -82,17 +82,15 @@ public class Wsdl2java
             int argcount = args.length;
             int arg = 0;
             while ( arg < (args.length-1)) {
-                if( args[arg].equals("-skeleton") )      {
+                if( args[arg].startsWith("-skel") )      {
                     bSkeleton = true;
                    --argcount;
                 }
-                if( args[arg].equals("-verbose") )      {
+                if( args[arg].startsWith("-v") )      {
                     bVerbose = true;
                    --argcount;
                 }
-                if( args[arg].equals("-messageContext") )        {
-                	if(!bSkeleton)
-                	    usage();            
+                if( args[arg].startsWith("-messageContext") )        {
                     bMessageContext = true;
                    --argcount;
                 }
@@ -100,6 +98,10 @@ public class Wsdl2java
             }
             if (argcount != 1 )
                 usage();
+            if (bMessageContext && !bSkeleton) {
+                System.out.println("Error: -messageContext switch only valid with -skeleton");
+                usage();
+            }
 
             String uri = args[arg];
             if (uri.startsWith("-"))
