@@ -61,6 +61,7 @@ import org.apache.axis.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import samples.jaxm.UddiPing;
+import samples.jaxm.SOAPFaultTest;
 
 import java.net.ConnectException;
 
@@ -73,6 +74,15 @@ public class TestJAXMSamples extends TestCase {
     public TestJAXMSamples(String name) {
         super(name);
     } // ctor
+
+    public void testSOAPFaultTest () throws Exception {
+        try {
+            SOAPFaultTest.main(new String[0]);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new Exception("Fault returned from test: " + t);
+        }
+    }
 
     public void testUddiPing() throws Exception {
         try {
@@ -129,7 +139,7 @@ public class TestJAXMSamples extends TestCase {
 
     public static void main(String args[]) throws Exception {
         TestJAXMSamples tester = new TestJAXMSamples("tester");
-        tester.testUddiPing();
+        tester.testSOAPFaultTest();
     } // main
 }
 
