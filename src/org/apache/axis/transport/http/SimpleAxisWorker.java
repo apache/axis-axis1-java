@@ -294,8 +294,14 @@ public class SimpleAxisWorker implements Runnable {
 
                 // if get, then return simpleton document as response
                 if (httpRequest.toString().equals("GET")) {
+                    
                     OutputStream out = socket.getOutputStream();
                     out.write(HTTP);
+                    if(fileName.length()==0) {
+                        out.write("301 Redirect\nLocation: /axis/\n\n".getBytes());
+                        out.flush();
+                        return;                        
+                    }
                     out.write(status);
 
                     if (methodName != null) {
