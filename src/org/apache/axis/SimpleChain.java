@@ -156,11 +156,7 @@ public class SimpleChain extends BasicHandler implements Chain {
         } catch( AxisFault f ) {
            // Attach the fault to the response message; enabling access to the
            // fault details while inside the handler onFault methods.
-            SOAPEnvelope env = new SOAPEnvelope();
-            SOAPFault faultEl = new SOAPFault(f);
-            env.clearBody();
-            env.addBodyElement(faultEl);
-            Message respMsg = new Message(env);
+            Message respMsg = new Message(f);
             msgContext.setResponseMessage(respMsg);
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).onFault( msgContext );

@@ -67,6 +67,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.server.AxisServer;
 
 /**
 * Used to verify that Faults are processed properly in the Handler chain
@@ -94,8 +95,7 @@ public class TestChainFault extends TestCase
         private int hcount = 0;
 
         public TestMessageContext() {
-            // A null engine is good enough for this test
-            super(null);
+            super(new AxisServer());
         }
 
         public void incCount() {

@@ -58,6 +58,7 @@ package org.apache.axis ;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
@@ -68,10 +69,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
@@ -91,6 +93,9 @@ public class AxisFault extends java.rmi.RemoteException {
     protected String    faultString = "";
     protected String    faultActor ;
     protected Vector    faultDetails ;  // vector of Element's
+
+    /** SOAP headers which should be serialized with the Fault */
+    protected ArrayList faultHeaders = null;
 
     /**
      * Make an AxisFault based on a passed Exception.  If the Exception is
@@ -309,9 +314,16 @@ public class AxisFault extends java.rmi.RemoteException {
 
         SOAPEnvelope envelope = new SOAPEnvelope();
 
-        SOAPFault fault =
-                                new SOAPFault(this);
+        SOAPFault fault = new SOAPFault(this);
         envelope.addBodyElement(fault);
+
+        // add any headers we need
+        if (faultHeaders != null) {
+            for (Iterator i = faultHeaders.iterator(); i.hasNext();) {
+                SOAPHeaderElement header = (SOAPHeaderElement) i.next();
+                envelope.addHeader(header);
+            }
+        }
 
         envelope.output(context);
     }
@@ -328,5 +340,22 @@ public class AxisFault extends java.rmi.RemoteException {
     public void printStackTrace(java.io.PrintWriter pw) {
         pw.println(dumpToString());
         super.printStackTrace(pw);
+    }
+
+    /**
+     * Add a SOAP header which should be serialized along with the
+     * fault.
+     *
+     * @param header a SOAPHeaderElement containing some fault-relevant stuff
+     */
+    public void addHeader(SOAPHeaderElement header) {
+        if (faultHeaders == null) {
+            faultHeaders = new ArrayList();
+        }
+        faultHeaders.add(header);
+    }
+
+    public void clearHeaders() {
+        faultHeaders = null;
     }
 };
