@@ -77,7 +77,7 @@ public class Wsdl2javaAntTask extends Task
 {
     private boolean verbose = false;
     private boolean server = false;
-    private boolean skeletonDeploy = true;
+    private boolean skeletonDeploy = false;
     private boolean testCase = false;
     private boolean noImports = false;
     private boolean all = false;

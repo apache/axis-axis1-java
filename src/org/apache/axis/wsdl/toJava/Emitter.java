@@ -109,7 +109,7 @@ public class Emitter {
     protected Definition def = null;
     protected boolean bDebug = false;
     protected boolean bEmitServer = false;
-    protected boolean bDeploySkeleton = true;  
+    protected boolean bDeploySkeleton = false;
     protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
     protected boolean bGenerateImports = true;
