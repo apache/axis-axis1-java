@@ -497,38 +497,24 @@ resource property files (tcpmon.properties).</li>
 <li>
 The resource.properties file contains translation and usage instructions.&nbsp;
 Here is an example message:</li>
-
-<br>&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
+<p>
 <p><font color="#009900">sample00=My name is {0}, and my title is {1}.</font>
 <br>&nbsp;
 <ol>
 <li>
 sample00 is the key that the code will use to access this message.</li>
-
 <li>
 The text after the = is the message text.</li>
-
 <li>
 The <font color="#009900">{<i>number</i>}</font> syntax defines the location
 for inserts.</li>
-
-<br>&nbsp;</ol>
-
+<p>
+</ol>
 <li>
-The code should use the static method org.apache.axis.utils.JavaUtils.getMessage
-method to obtain the text and add inserts.&nbsp; Here is an example usage:</li>
-
-<br>&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
+The code should use the
+static method org.apache.axis.utils.JavaUtils.getMessage
+to obtain the text and add inserts.&nbsp; Here is an example usage:</li>
+<p>
 <p><font color="#009900">JavaUtils.getMessage("sample00", "Rich Scheuerle",
 "Software Developer");</font>
 <br>&nbsp;
