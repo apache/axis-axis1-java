@@ -204,7 +204,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 JavaDeployWriter.class);      // for deploy.wsdd
         addGenerator(Definition.class,
                 JavaUndeployWriter.class);    // for undeploy.wsdd
+		addGenerator(Definition.class,
+				JavaBuildFileWriter.class); //add a build file writer
+    
     }                                              // addDefinitionGenerators
+    
 
     /**
      * Do the Wsdl2java generator pass:
