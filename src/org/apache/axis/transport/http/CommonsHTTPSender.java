@@ -285,19 +285,23 @@ public class CommonsHTTPSender extends BasicHandler {
         if (port == -1) {
             port = 80;          // even for https
         }
-        if (tcp.getProxyHost().length() > 0 &&
-        tcp.getProxyPort().length() > 0 &&
-        !hostInNonProxyList) {
+        
+        if(hostInNonProxyList){
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
-            if (tcp.getProxyUser().length() != 0) {
-                Credentials proxyCred =
-                new UsernamePasswordCredentials(tcp.getProxyUser(),
-                tcp.getProxyPassword());
-                client.getState().setProxyCredentials(null, null, proxyCred);
+            if (tcp.getProxyHost().length() == 0 ||
+            tcp.getProxyPort().length() == 0) {
+                config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
+            } else {
+                if (tcp.getProxyUser().length() != 0) {
+                    Credentials proxyCred =
+                    new UsernamePasswordCredentials(tcp.getProxyUser(),
+                    tcp.getProxyPassword());
+                    client.getState().setProxyCredentials(null, null, proxyCred);
+                }
+                int proxyPort = new Integer(tcp.getProxyPort()).intValue();
+                config.setProxy(tcp.getProxyHost(), proxyPort);
             }
-            int proxyPort = new Integer(tcp.getProxyPort()).intValue();
-            config.setProxy(tcp.getProxyHost(), proxyPort);
         }
         return config;
     }
