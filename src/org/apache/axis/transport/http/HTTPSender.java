@@ -892,7 +892,10 @@ if(!http10)
         if ((nonProxyHosts == null) || (host == null)) {
             return false;
         }
-        StringTokenizer tokenizer = new StringTokenizer(nonProxyHosts, "|");
+        /* The http.nonProxyHosts system property is a list enclosed in
+         * double quotes with items separated by a vertical bar.
+         */
+        StringTokenizer tokenizer = new StringTokenizer(nonProxyHosts, "|\"");
 
         while (tokenizer.hasMoreTokens()) {
             String pattern = tokenizer.nextToken();
