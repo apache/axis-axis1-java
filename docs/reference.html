@@ -20,6 +20,7 @@
   <li><a href="#Deployment">Deployment (WSDD) Reference</a></li>
   <li><a href="#global_configuration">Global Axis Configuration</a></li>
   <li><a href="#individual_service">Individual Service Configuration</a></li>
+  <li><a href="#axis_logging">Axis Logging Configuration</a></li>
   <li><a href="#axis_components" >Pre-Configured Axis Components Reference</a></li>
 </ul>
 <h2> <a name="Tools"></a>Tools Reference</h2>
@@ -655,6 +656,61 @@ your custom WSDL file.
 </tr>
  -->
 </table>
+<a name="axis_logging" />
+
+<h2>Axis Logging Configuration</h2>
+
+Axis uses the Jakarta Projects's
+<a href="http://jakarta.apache.org/commons/logging.html">commons-logging API</a>,
+as implemented in <tt>commons-logging.jar</tt> to implement logging throughout the code. Normally
+this library routes the logging to the Log4j library, provided that an
+implementation of log4j is on the classpath of the server or client. The
+commons-logging API can also bind to Avalon, <tt>System.out</tt> or the Java1.4
+logger. The JavaDocs for the library explain the process for selecting a logger,
+which can be done via a system property or a properties file in the classpath.
+
+<p>
+
+Log4J can be configured using the file log4j.properties in the classpath; later
+versions also support an XML configuration. Axis includes a preconfigured
+log4j.properties file in <tt>axis.jar</tt>. While this is adequate for basic use,
+any complex project will want to modify their own version of the file. Here is
+what to do 
+<ol>
+<li>Open up axis.jar in a zipfile viewer and remove log4j.properties from the jar
+<li>Or, when building your own copy of axis.jar, set the Ant property
+    <tt>exclude.log4j.configuration</tt> to keep the properties file out the JAR.
+<li>Create your own log4J.properties file, and include it in <tt>WEB-INF/classes</tt>
+(server-side), in your main application JAR file client side.
+<li>Edit this log4J properties file to your hearts content. Server side,
+setting up rolling logs with fancy html output is convenient, though once you
+start clustering the back end servers that ceases to be as usuable. Log4J power tools,
+such as 'chainsaw', are the secret here.
+</ol>
+
+<h3>Log Categories</h3>
+
+Axis classes that log information create their own per-class log, each of which
+may output information at different levels. For example, the main entry point
+servlet has a log called <tt>org.apache.axis.transport.http.AxisServlet</tt>,
+the AxisEngine is <tt>org.apache.axis.AxisEngine</tt>, and so on. There are
+also special logs for special categories.
+<p>
+<table border=0>
+<tr>
+  <td valign=top><tt>org.apache.axis.TIME</tt></td>
+  <td>A log that records the time to execute incoming messages, splitting up
+  into preamble, invoke, post and send times. These are only logged at debug level.
+</tr>
+<tr>
+  <td valign=top><tt>org.apache.axis.EXCEPTIONS</tt></td>
+  <td>Exceptions that are sent back over the wire. AxisFaults, which are normally
+  created in 'healthy' operation, are logged at debug level. Other Exceptions
+  are logged at the Info level, as they are more indicative of server side trouble.
+</tr>
+</table>
+
+
 
 <a name="axis_components" />
 
