@@ -164,7 +164,7 @@ Copyright:
 
     <uptodate property="javadoc.required"
               targetfile="${build.lib}/${name}.jar">
-      <srcfiles dir="${build.dir}" includes="**/*.html"/>
+      <srcfiles dir="${build.dir}" includes="**/*.html" />
     </uptodate>
   </target>
 
@@ -217,10 +217,9 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates the binary distribution                                            -->
+  <!-- Creates the binary distribution                                     -->
   <!-- =================================================================== -->
-  <!-- target name="dist" depends="compile, javadocsIfRequired, samples" -->
-  <target name="dist" depends="compile, javadocsIfRequired ">
+  <target name="dist" depends="compile, javadocsIfRequired, samples" >
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/docs"/>
     <mkdir dir="${dist.dir}/docs/apiDocs"/>
@@ -234,19 +233,15 @@ Copyright:
     <copy todir="${dist.dir}/lib">
       <fileset dir="${build.lib}"/>
     </copy>
-    <!--
     <copy todir="${dist.dir}/samples">
       <fileset dir="${build.samples}"/>
     </copy>
-    -->
     <copy todir="${dist.dir}/docs">
       <fileset dir="${docs.dir}"/>
     </copy>
-    <!--
     <copy todir="${dist.dir}/webapps">
       <fileset dir="${webapps}"/>
     </copy>
-    -->
 
     <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
     <copy file="README" tofile="${dist.dir}/README"/>
@@ -254,7 +249,7 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates the source distribution                                            -->
+  <!-- Creates the source distribution                                     -->
   <!-- =================================================================== -->
   <target name="srcdist" depends="init">
     <copy todir="${dist.dir}/src">
