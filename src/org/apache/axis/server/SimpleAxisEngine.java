@@ -91,12 +91,14 @@ public class SimpleAxisEngine extends BasicHandler
     public void init() {
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: SimpleAxisEngine::init" );
-        HandlerRegistry  hr = new SimpleHandlerRegistry();
+        //HandlerRegistry  hr = new SimpleRegistry("handlers.reg");
+        HandlerRegistry  hr = new SupplierRegistry("handlers-supp.reg");
         hr.init();
         addOption( Constants.HANDLER_REGISTRY, hr );
 
         // Load the simple deployed services registry and init it
-        HandlerRegistry  sr = new SimpleServiceRegistry();
+        //HandlerRegistry  sr = new SimpleRegistry("services.reg");
+        HandlerRegistry  sr = new SupplierRegistry("services-supp.reg");
         sr.init();
         addOption( Constants.SERVICE_REGISTRY, sr );
         Debug.Print( 1, "Exit: SimpleAxisEngine::init" );

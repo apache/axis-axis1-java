@@ -58,6 +58,7 @@ package org.apache.axis.suppliers;
 import java.util.Hashtable;
 import org.apache.axis.Supplier;
 import org.apache.axis.Handler;
+import org.apache.axis.utils.Debug;
 
 /** A <code>FactorySupplier</code> always gives you a new Handler instance.
  * 
@@ -79,6 +80,7 @@ public class FactorySupplier implements Supplier
         try {
             Handler handler = (Handler)_class.newInstance();
             handler.setOptions(_options);
+            Debug.Print(1, "FactorySupplier returning new instance of " + _class.getName());
             return handler;
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();

@@ -64,6 +64,7 @@ import org.xml.sax.InputSource ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.suppliers.*;
 
 import org.apache.axis.* ;
 
@@ -72,16 +73,18 @@ import org.apache.axis.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class Admin {
-  private static SimpleHandlerRegistry  hr = null ;
-  private static SimpleServiceRegistry  sr = null ;
+  private static HandlerRegistry  hr = null ;
+  private static HandlerRegistry  sr = null ;
 
   private void init() {
     if ( hr == null ) {
-      hr = new SimpleHandlerRegistry();
+      // hr = new SimpleRegistry("handlers.reg");
+      hr = new SupplierRegistry("handlers-supp.reg");
       hr.init();
     }
     if ( sr == null ) {
-      sr = new SimpleServiceRegistry();
+      // sr = new SimpleRegistry("services.reg");
+      sr = new SupplierRegistry("services-supp.reg");
       sr.init();
     }
   }
@@ -150,10 +153,27 @@ public class Admin {
         if ( type.equals( "handler" ) ) {
           String   cls   = elem.getAttribute( "class" );
           System.out.println( "Deploying handler: " + name );
-          h = hr.find( name );
-          if ( h == null ) h = (Handler) Class.forName(cls).newInstance();
-          getOptions( elem, h );
-          hr.add( name, h );
+          
+          if (hr instanceof SupplierRegistry) {
+            String lifeCycle = elem.getAttribute("lifecycle");
+            Supplier supplier;
+
+            if ("factory".equals(lifeCycle)) {
+              supplier = new FactorySupplier(Class.forName(cls), new Hashtable());
+            } else if ("static".equals(lifeCycle)) {
+              supplier = new SimpleSupplier((Handler)Class.forName(cls).newInstance());
+            } else {
+              // Default to static for now
+              supplier = new SimpleSupplier((Handler)Class.forName(cls).newInstance());
+            }
+            
+            ((SupplierRegistry)hr).add(name, supplier);
+          } else {
+            h = hr.find( name );
+            if ( h == null ) h = (Handler) Class.forName(cls).newInstance();
+            getOptions( elem, h );
+            hr.add( name, h );
+          }
         }
         else if ( type.equals( "chain" ) ) {
           String   flow    = elem.getAttribute( "flow" );
