@@ -257,6 +257,7 @@ public class JavaBeanWriter extends JavaWriter {
     protected void writeEqualsMethod() {
         pw.println("    public boolean equals(Object obj) {");
         pw.println("        // compare elements");
+        pw.println("        if (!(obj instanceof " + className + ")) return false;");
         pw.println("        " +  className + " other = (" + className + ") obj;");
         pw.println("        if (obj == null) return false;");
         pw.println("        if (this == obj) return true;");
@@ -282,6 +283,16 @@ public class JavaBeanWriter extends JavaWriter {
                         variableType.equals("byte")) {
                     pw.print("            " + variable + " == other." + get +
                             Utils.capitalizeFirstChar(variable) + "()");
+                } else if (variableType.indexOf("[") >=0) {
+                    // Use java.util.Arrays.equals to compare arrays.
+                    pw.println("            ((" + variable +
+                               "==null && other." + get +
+                               Utils.capitalizeFirstChar(variable) + "()==null) || ");
+                    pw.println("             (" + variable + "!=null &&");
+                    pw.print("              java.util.Arrays.equals(" + variable +
+                             ", other." + get +
+                             Utils.capitalizeFirstChar(variable) + "())))");
+
                 } else {
                     pw.println("            ((" + variable +
                                "==null && other." + get +
