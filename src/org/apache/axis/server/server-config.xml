@@ -9,6 +9,7 @@
   <handler name="JWSProcessor" class="org.apache.axis.handlers.JWSProcessor"/>
   <handler name="JWSHandler" class="org.apache.axis.handlers.JWSHandler"/>
   <handler name="LocalResponder" class="org.apache.axis.transport.local.LocalResponder"/>
+  <handler name="URLMapper" class="org.apache.axis.handlers.http.URLMapper"/>
 
   <chain name="global.request" flow="JWSHandler,debug"/>
  </handlers>
