@@ -140,7 +140,7 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
             for (int j=i+1; j < methods.size(); j++ ) {
                 MethodRep m1 = (MethodRep) methods.elementAt(i);
                 MethodRep m2 = (MethodRep) methods.elementAt(j);
-                if (m1.getName() == m2.getName()) {
+                if (m1.getName().equals(m2.getName())) {
                     m2.setName(m2.getName() + "_unique_"  + id);
                     id++;
                 }
