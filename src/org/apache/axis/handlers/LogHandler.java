@@ -58,7 +58,6 @@ package org.apache.axis.handlers ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -66,52 +65,99 @@ import org.apache.commons.logging.Log;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.io.IOException;
 
 /**
+ * A simple Handler which logs the request and response messages to either
+ * the console or a specified file (default "axis.log").
+ *
+ * To use this, deploy it either in both the request and response flows
+ * (global, service, or transport) or in just the response flow.  If deployed
+ * in both places, you'll also get an elapsed time indication, which can be
+ * handy for debugging.
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class LogHandler extends BasicHandler {
     protected static Log log =
         LogFactory.getLog(LogHandler.class.getName());
 
-    long start = 0;
+    long start = -1;
+    private boolean writeToConsole = false;
+    private String filename = "axis.log";
+
+    public void init() {
+        super.init();
+        
+        Object opt = this.getOption("LogHandler.writeToConsole");
+        if (opt != null && opt instanceof String &&
+                "true".equalsIgnoreCase((String)opt))
+            writeToConsole = true;
+
+        opt = this.getOption("LogHandler.fileName");
+        if (opt != null && opt instanceof String)
+            filename = (String)opt;
+    }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: LogHandler::invoke");
         if (msgContext.getPastPivot() == false) {
            start = System.currentTimeMillis();
         } else {
-            try {
-                FileWriter  fw   = new FileWriter( "axis.log", true );
-                PrintWriter pw   = new PrintWriter( fw );
-
-                Message inMsg = msgContext.getRequestMessage();
-                Message outMsg = msgContext.getResponseMessage();
-
-                pw.println( "=======================================================" );
-                pw.println( "= " + Messages.getMessage("elapsed00",
-                       "" + (System.currentTimeMillis() - start)));
-                pw.println( "= " + Messages.getMessage("inMsg00",
-                       (inMsg == null ? "null" : inMsg.getSOAPPartAsString())));
-                pw.println( "= " + Messages.getMessage("outMsg00",
-                       (outMsg == null ? "null" : outMsg.getSOAPPartAsString())));
-                pw.println( "=======================================================" );
-
-                pw.close();
-            } catch( Exception e ) {
-                log.error( Messages.getMessage("exception00"), e );
-                throw AxisFault.makeFault(e);
-            }
+            logMessages(msgContext);
         }
         log.debug("Exit: LogHandler::invoke");
+    }
+
+    private void logMessages(MessageContext msgContext) throws AxisFault {
+        try {
+            PrintWriter writer   = null;
+
+            writer = getWriter(msgContext);
+
+            Message inMsg = msgContext.getRequestMessage();
+            Message outMsg = msgContext.getResponseMessage();
+
+            writer.println( "=======================================================" );
+            if (start != -1) {
+                writer.println( "= " + Messages.getMessage("elapsed00",
+                       "" + (System.currentTimeMillis() - start)));
+            }
+            writer.println( "= " + Messages.getMessage("inMsg00",
+                   (inMsg == null ? "null" : inMsg.getSOAPPartAsString())));
+            writer.println( "= " + Messages.getMessage("outMsg00",
+                   (outMsg == null ? "null" : outMsg.getSOAPPartAsString())));
+            writer.println( "=======================================================" );
+
+            writer.close();
+        } catch( Exception e ) {
+            log.error( Messages.getMessage("exception00"), e );
+            throw AxisFault.makeFault(e);
+        }
+    }
+
+    private PrintWriter getWriter(MessageContext msgContext) throws IOException {
+        PrintWriter writer;
+
+        // Allow config info to control where we write.
+        if (writeToConsole) {
+            // Writing to the console
+            writer = new PrintWriter(System.out);
+        } else {
+            // Writing to a file.
+            if (filename == null) {
+                filename = "axis.log";
+            }
+            writer = new PrintWriter(new FileWriter( filename, true ));
+        }
+        return writer;
     }
 
     public void undo(MessageContext msgContext) {
         log.debug("Enter: LogHandler::undo");
         try {
-            FileWriter  fw   = new FileWriter( "axis.log", true );
-            PrintWriter pw   = new PrintWriter( fw );
+            PrintWriter pw   = getWriter(msgContext);
             pw.println( "=====================" );
             pw.println( "= " + Messages.getMessage("fault00") );
             pw.println( "=====================" );
@@ -120,5 +166,13 @@ public class LogHandler extends BasicHandler {
             log.error(Messages.getMessage("exception00"), e );
         }
         log.debug("Exit: LogHandler::undo");
+    }
+
+    public void onFault(MessageContext msgContext) {
+        try {
+            logMessages(msgContext);
+        } catch (AxisFault axisFault) {
+            log.error(Messages.getMessage("exception00"), axisFault);
+        }
     }
 };
