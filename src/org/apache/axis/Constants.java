@@ -613,6 +613,10 @@ public class Constants {
     public static final QName SOAP_INTEGER = new QName(URI_DEFAULT_SOAP_ENC, "integer");
     public static final QName SOAP_DECIMAL = new QName(URI_DEFAULT_SOAP_ENC, "decimal");
     public static final QName SOAP_ARRAY = new QName(URI_DEFAULT_SOAP_ENC, "Array");
+    public static final QName SOAP_COMMON_ATTRS11 = new QName(URI_SOAP11_ENC, "commonAttributes");
+    public static final QName SOAP_COMMON_ATTRS12 = new QName(URI_SOAP12_ENC, "commonAttributes");
+    public static final QName SOAP_ARRAY_ATTRS11 = new QName(URI_SOAP11_ENC, "arrayAttributes");
+    public static final QName SOAP_ARRAY_ATTRS12 = new QName(URI_SOAP12_ENC, "arrayAttributes");
     public static final QName SOAP_ARRAY12 = new QName(URI_SOAP12_ENC, "Array");
 
     public static final QName SOAP_MAP = new QName(NS_URI_XMLSOAP, "Map");

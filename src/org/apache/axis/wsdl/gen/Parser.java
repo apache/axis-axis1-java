@@ -348,7 +348,7 @@ public class Parser {
             // Write out the type if and only if:
             //  - we found its definition (getNode())
             //  - it is referenced 
-            //  - it is not a base type
+            //  - it is not a base type or an attributeGroup
             //  - it is a Type (not an Element) or a CollectionElement
             // (Note that types that are arrays are passed to getGenerator
             //  because they may require a Holder)
@@ -357,6 +357,7 @@ public class Parser {
             boolean isType = (type instanceof Type ||
                     type instanceof CollectionElement);
             if (type.getNode() != null &&
+                    ! type.getNode().getLocalName().equals("attributeGroup") &&
                     type.isReferenced() &&
                     isType &&
                     type.getBaseType() == null) {

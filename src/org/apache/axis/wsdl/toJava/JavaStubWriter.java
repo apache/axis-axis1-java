@@ -199,7 +199,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 TypeEntry type = (TypeEntry) it.next();
                 // Note this same check is repeated in JavaDeployWriter.
 
-                // 1) Don't register types that are base (primitive) types.
+                // 1) Don't register types that are base (primitive) types or attributeGroups.
                 //    If the baseType != null && getRefType() != null this
                 //    is a simpleType that must be registered.
                 // 2) Don't register the special types for collections
@@ -210,7 +210,9 @@ public class JavaStubWriter extends JavaClassWriter {
                     type instanceof CollectionTE ||
                     type instanceof Element ||
                     !type.isReferenced() ||
-                    type.isOnlyLiteralReferenced()) {
+                    type.isOnlyLiteralReferenced() ||
+                    (type.getNode() != null &&
+                      type.getNode().getLocalName().equals("attributeGroup"))) {
                     continue;
                 }
 
