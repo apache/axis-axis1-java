@@ -211,20 +211,6 @@
         <mapping namespace="http://soapinterop.org/xsd" package="interop.testb"/>
     </wsdl2java>
 
-    <!-- More information at: http://www.whitemesa.com/interop/proposalC.html -->
-    <!--
-    <wsdl2java url="http://www.whitemesa.com/interop/echoHeaderBindings.wsdl"
-               output="build/work"
-               testcase="no"
-               deployscope="none"
-               skeleton="yes"
-               verbose="yes"
-               noimports="no">
-        <mapping namespace="http://soapinterop.org/" package="interop.echoheader"/>
-        <mapping namespace="http://soapinterop.org/xsd" package="interop.echoheader"/>
-    </wsdl2java>
-    -->
-
     <!-- More information at: http://www.whitemesa.net/  -->
     <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
                output="build/work"
@@ -248,7 +234,8 @@
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopb"/>
         <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopb"/>
     </wsdl2java>
-    <!--
+
+    <!-- we don't handle xsd:anyType yet
     <wsdl2java url="http://mssoapinterop.org/stk/InteropBtyped.wsdl"
                output="build/work"
                testcase="no"
@@ -260,6 +247,7 @@
         <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopbtyped"/>
     </wsdl2java>
     -->
+
     <wsdl2java url="http://mssoapinterop.org/stk/InteropC.wsdl"
                output="build/work"
                testcase="no"
@@ -327,19 +315,6 @@
                noimports="no">
     </wsdl2java>
 
-    <!-- Reverse lookup of US Area codes and International Country codes 
-         from http://www.soapclient.com/uddi/uddi.sri?requestname=get_xmethods -->
-    <!--
-    <wsdl2java url="http://www.taragroup.com/bin/AreaCode.exe/wsdl/iGetArea"
-               output="build/work"
-               testcase="no"
-               deployscope="none"
-               skeleton="yes"
-               verbose="yes"
-               noimports="no">
-    </wsdl2java>
-    -->
-
     <!-- Verify files generated based on what is referenced in WSDL -->
     <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
                output="build/work"
@@ -369,17 +344,6 @@
                testcase="yes">
     </wsdl2java>
 
-    <!--
-    <wsdl2java url="http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl"
-               output="build/work"
-               testcase="no"
-               deployscope="none"
-               skeleton="yes"
-               verbose="yes"
-               noimports="no">
-    </wsdl2java>
-    -->    
-
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
 
@@ -403,6 +367,52 @@
                verbose="yes"
                noimports="no">
     </wsdl2java>
+
+    More information at: http://www.whitemesa.com/interop/proposalC.html
+    this WSDL file is bad.  It refers to portType "InteropTestPortType" but that portType is not defined.
+    <wsdl2java url="http://www.whitemesa.com/interop/echoHeaderBindings.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               verbose="yes"
+               noimports="no">
+        <mapping namespace="http://soapinterop.org/" package="interop.echoheader"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="interop.echoheader"/>
+    </wsdl2java>
+
+    Reverse lookup of US Area codes and International Country codes from
+    http://www.soapclient.com/uddi/uddi.sri?requestname=get_xmethods
+
+    namespaces are used improperly
+
+    > WSDL2Java http://www.taragroup.com/bin/AreaCode.exe/wsdl/iGetArea
+    java.io.IOException: Emitter failure.  There is an undefined binding (IGetAreabinding) in the WSDL document.
+    Hint: make sure <port binding=".."> is fully qualified.
+
+    <wsdl2java url="http://www.taragroup.com/bin/AreaCode.exe/wsdl/iGetArea"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               verbose="yes"
+               noimports="no">
+    </wsdl2java>
+
+    wrong namespace used when referring to types:
+
+    > WSDL2Java http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl
+    java.io.IOException: Type http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl:ArrayOfString is referenced but not defined.
+
+    <wsdl2java url="http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               verbose="yes"
+               noimports="no">
+    </wsdl2java>
+
     -->
 
   </target>
