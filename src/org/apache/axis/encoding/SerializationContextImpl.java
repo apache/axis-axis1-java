@@ -68,6 +68,7 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
+import org.apache.axis.utils.IdentityHashMap;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
@@ -149,7 +150,7 @@ public class SerializationContextImpl implements SerializationContext
      * A place to hold objects we cache for multi-ref serialization, and
      * remember the IDs we assigned them.
      */
-    private HashMap multiRefValues = null;
+    private IdentityHashMap multiRefValues = null;
     private int multiRefIndex = -1;
 
     class MultiRefItem {
@@ -166,16 +167,17 @@ public class SerializationContextImpl implements SerializationContext
 
     }
     /**
-     * These three variables are necessary to process multi-level object graphs for multi-ref
-     * serialization.
+     * These three variables are necessary to process 
+     * multi-level object graphs for multi-ref serialization.
      * While writing out nested multi-ref objects (via outputMultiRef), we
-     * will fill the secondLevelObjects vector with any new objects encountered.
+     * will fill the secondLevelObjects vector 
+     * with any new objects encountered.
      * The outputMultiRefsFlag indicates whether we are currently within the
      * outputMultiRef() method (so that serialization() knows to update the
      * secondLevelObjects vector).
      * The forceSer variable is the trigger to force actual serialization of the indicated object.
      */
-    private HashSet secondLevelObjects = null;
+    private IdentityHashMap secondLevelObjects = null;
     private Object forceSer = null;
     private boolean outputMultiRefsFlag = false;
 
@@ -631,7 +633,7 @@ public class SerializationContextImpl implements SerializationContext
         // processing.
         if (doMultiRefs && (value != forceSer) && !isPrimitive(value, javaType)) {
             if (multiRefIndex == -1)
-                multiRefValues = new HashMap();
+                multiRefValues = new IdentityHashMap();
 
             String id;
             MultiRefItem mri = (MultiRefItem)multiRefValues.get(value);
@@ -650,8 +652,8 @@ public class SerializationContextImpl implements SerializationContext
                  */
                 if (outputMultiRefsFlag) {
                     if (secondLevelObjects == null)
-                        secondLevelObjects = new HashSet();
-                    secondLevelObjects.add(value);
+                        secondLevelObjects = new IdentityHashMap();
+                    secondLevelObjects.put(value, value);
                 }
             } else {
                 id = mri.id;
@@ -716,7 +718,8 @@ public class SerializationContextImpl implements SerializationContext
                            "CDATA",
                            encodingStyle);
 
-        Iterator i = ((HashMap)multiRefValues.clone()).keySet().iterator();
+        Iterator i = 
+            ((IdentityHashMap)multiRefValues.clone()).keys().iterator();
         while (i.hasNext()) {
             while (i.hasNext()) {
                 Object val = i.next();
@@ -735,8 +738,12 @@ public class SerializationContextImpl implements SerializationContext
                           true);   // mri.sendType
             }
 
+            // Done processing the iterated values.  During the serialization
+            // of the values, we may have run into new nested values.  These
+            // were placed in the secondLevelObjects map, which we will now
+            // process by changing the iterator to locate these values. 
             if (secondLevelObjects != null) {
-                i = secondLevelObjects.iterator();
+                i = secondLevelObjects.keys().iterator();
                 secondLevelObjects = null;
             }
         }
@@ -1055,7 +1062,7 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             SerializerInfo info = null;
-// If the javaType is abstract, try getting a
+            // If the javaType is abstract, try getting a
             // serializer that matches the value's class.
             if (javaType != null &&
                 !javaType.isPrimitive() &&
