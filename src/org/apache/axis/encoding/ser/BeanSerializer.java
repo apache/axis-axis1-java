@@ -371,7 +371,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 if (field != null) {
                     QName qname = field.getXmlName();
                     QName fieldXmlType = field.getXmlType();
-                    boolean isAnonymous = fieldXmlType.getLocalPart().startsWith(">");
+                    boolean isAnonymous = fieldXmlType != null && fieldXmlType.getLocalPart().startsWith(">");
 
                     if (qname != null) {
                         // FIXME!
@@ -386,7 +386,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         writeAttribute(types,
                                        propName,
                                        fieldType,
-                                       field.getXmlType(),
+                                       fieldXmlType,
                                        complexType);
                     } else {
                         writeField(types,
