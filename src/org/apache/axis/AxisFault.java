@@ -364,7 +364,18 @@ public class AxisFault extends java.rmi.RemoteException {
     public void setFaultCode(QName code) {
         faultCode = code ;
     }
+    
+    /**
+     * Set the fault code (as a String).
+     * 
+     * @deprecated expect to see this go away after 1.1, use
+     *             setFaultCodeAsString instead!
+     */ 
 
+    public void setFaultCode(String code) {
+        setFaultCodeAsString(code);
+    }
+    
     /**
      * set a fault code string that is turned into a qname
      * in the SOAP 1.1 or 1.2 namespace, depending on the current context
