@@ -62,9 +62,6 @@ import java.lang.reflect.*;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
-import org.apache.axis.message.RPCArg;
-import org.apache.axis.message.RPCBody;
-import org.apache.axis.message.SOAPBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.BasicHandler;
@@ -168,6 +165,8 @@ public class HTTPDispatchHandler extends BasicHandler {
       }
 
       reqEnv  = (String) msgContext.getRequestMessage().getAs("String");
+      
+      System.out.println("Msg: " + reqEnv);
 
       OutputStream  out  = sock.getOutputStream();
       InputStream   inp  = sock.getInputStream();
@@ -269,13 +268,12 @@ public class HTTPDispatchHandler extends BasicHandler {
       }
 
       if ( b != -1 ) {
-        Document doc = XMLUtils.newDocument( inp );
-        outMsg = new Message( doc, "Document" );
+        outMsg = new Message( inp, "InputStream" );
         msgContext.setResponseMessage( outMsg );
 
         Debug.Print( 1, "\nXML received:" );
         Debug.Print( 1, "---------------------------------------------------");
-        Debug.Print( 1, XMLUtils.DocumentToString( doc ) );
+        Debug.Print( 1, (String)outMsg.getAs("String") );
       }
       inp.close();
       out.close();
