@@ -2,6 +2,8 @@
 <definitions name="City_BBB" targetNamespace="urn:CityBBB"
 xmlns="http://schemas.xmlsoap.org/wsdl/"
 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
 xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <types>
     <xsd:schema attributeFormDefault="qualified"
@@ -24,6 +26,14 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         </xsd:complexType>
       </xsd:element>
 
+      <xsd:element name="getAttractions2">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="queryList" type="tns:QueryArray" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
       <xsd:element name="getAttractionResponse">
         <xsd:complexType>
           <xsd:sequence>
@@ -42,6 +52,36 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         </xsd:complexType>
       </xsd:element>
 
+      <xsd:element name="getAttractions2Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_return" type="tns:AttractionArray" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:complexType name="Query">
+        <xsd:sequence>
+          <xsd:element name="value" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="QueryArray">
+	  <xsd:complexContent>
+             <xsd:restriction base="soapenc:Array">
+                <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="tns:Query[]"/> 
+             </xsd:restriction>
+          </xsd:complexContent>
+      </xsd:complexType>
+ 
+      <xsd:complexType name="AttractionArray">
+	  <xsd:complexContent>
+             <xsd:restriction base="soapenc:Array">
+                <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="tns:Attraction[]"/> 
+             </xsd:restriction>
+          </xsd:complexContent>
+      </xsd:complexType>
+  
       <xsd:complexType name="Attraction">
         <xsd:sequence>
           <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
@@ -151,6 +191,14 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <part element="tns:getAttractionsResponse" name="parameters" />
   </message>
 
+  <message name="getAttractions2In">
+    <part element="tns:getAttractions2" name="parameters" />
+  </message>
+
+  <message name="getAttractions2Out">
+    <part element="tns:getAttractions2Response" name="parameters" />
+  </message>
+
   <portType name="City_BBBPortType">
     <operation name="getAttraction">
       <input message="tns:getAttractionIn" />
@@ -161,6 +209,11 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <input message="tns:getAttractionsIn" />
 
       <output message="tns:getAttractionsOut" />
+    </operation>
+    <operation name="getAttractions2">
+      <input message="tns:getAttractions2In" />
+
+      <output message="tns:getAttractions2Out" />
     </operation>
   </portType>
 
@@ -181,6 +234,17 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     </operation>
     <operation name="getAttractions">
       <soap:operation soapAction="getAttractions" />
+
+      <input>
+        <soap:body use="literal" />
+      </input>
+
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getAttractions2">
+      <soap:operation soapAction="getAttractions2" />
 
       <input>
         <soap:body use="literal" />

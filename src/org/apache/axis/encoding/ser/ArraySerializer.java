@@ -130,6 +130,7 @@ public class ArraySerializer implements Serializer
             componentType = Object.class;
         }
 
+
         // Check to see if componentType is also an array.
         // If so, set the componentType to the most nested non-array
         // componentType.  Increase the dims string by "[]"
@@ -218,10 +219,16 @@ public class ArraySerializer implements Serializer
             }
         }
 
+        // Need to distinguish if this is array processing for an
+        // actual schema array or for a maxOccurs usage.
+        // For the maxOccurs case, the currentXMLType of the context is
+        // the same as the componentQName.
+        boolean maxOccursUsage = componentQName.equals(context.getCurrentXMLType());
+
         // Are we encoded?
         boolean isEncoded = context.getMessageContext().isEncoded();
 
-        if (isEncoded) {
+        if (isEncoded && !maxOccursUsage) {
             AttributesImpl attrs;
             if (attributes == null) {
                 attrs = new AttributesImpl();
@@ -272,12 +279,11 @@ public class ArraySerializer implements Serializer
             attributes = attrs;
         }
 
-        // For non-encoded (literal) use, each item is named with the QName
-        // we got in the arguments.  For encoded, we write an element with
-        // that QName, and then each item is an <item> inside that.
+        // For the maxOccurs case, each item is named with the QName
+        // we got in the arguments.  For normal array case, we write an element with
+        // that QName, and then serialize each item as <item>
         QName elementName = name;
-
-        if (isEncoded) {
+        if (!maxOccursUsage) {
             context.startElement(name, attributes);
             elementName = Constants.QNAME_LITERAL_ITEM;
         }
@@ -316,7 +322,7 @@ public class ArraySerializer implements Serializer
             }
         }
 
-        if (isEncoded)
+        if (!maxOccursUsage)
             context.endElement();
     }
 
