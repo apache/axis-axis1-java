@@ -224,6 +224,7 @@ public class HTTPSender extends BasicHandler {
             }
             
             StringBuffer header = new StringBuffer();
+            byte[] request = reqEnv.getBytes();
 
             header.append( HTTPConstants.HEADER_POST )
              .append(" " )
@@ -232,7 +233,7 @@ public class HTTPSender extends BasicHandler {
              .append( " HTTP/1.0\r\n" )
              .append( HTTPConstants.HEADER_CONTENT_LENGTH )
              .append( ": " )
-             .append( reqEnv.length() )
+             .append( request.length )
              .append( "\r\n" )
              .append( HTTPConstants.HEADER_HOST )
              .append( ": " )
@@ -249,7 +250,7 @@ public class HTTPSender extends BasicHandler {
             header.append("\r\n");
 
             out.write( header.toString().getBytes() );
-            out.write( reqEnv.getBytes() );
+            out.write( request );
 
             Debug.Print( 1, "XML sent:" );
             Debug.Print( 1, "---------------------------------------------------");
