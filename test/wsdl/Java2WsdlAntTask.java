@@ -60,6 +60,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 import java.util.HashMap;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 /**
  * Simple Ant task for running Java2Wsdl utility. 
@@ -110,7 +112,10 @@ public class Java2WsdlAntTask extends Task
             emitter.setUseInheritedMethods(useInheritedMethods);
             emitter.emit(output, Emitter.MODE_ALL);
         } catch (Throwable t) {
-            throw new BuildException("Error while running " + getClass().getName(), t); 
+            StringWriter writer = new StringWriter();
+            t.printStackTrace(new PrintWriter(writer));
+            log(writer.getBuffer().toString(), Project.MSG_ERR);
+            throw new BuildException("Error while running " + getClass().getName(), t);
         }
     }
 
