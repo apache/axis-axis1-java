@@ -55,23 +55,18 @@
 
 package org.apache.axis;
 
-import java.io.*;
-import java.net.URL;
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.client.Transport;
-import org.apache.axis.utils.* ;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.handlers.soap.* ;
-import org.apache.axis.registries.* ;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
-import org.apache.axis.encoding.*;
+import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Priority;
-
-import org.w3c.dom.*;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -84,11 +79,6 @@ public abstract class AxisEngine extends BasicHandler
 {
     static Category category =
             Category.getInstance(AxisEngine.class.getName());
-
-    static {
-        BasicConfigurator.configure();
-        Category.getRoot().setPriority(Priority.FATAL);
-    }
 
     // Engine property names
     public static final String PROP_XML_DECL = "sendXMLDeclaration";

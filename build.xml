@@ -164,8 +164,11 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/server"/>
     <copy file="${src.dir}/org/apache/axis/client/client-config.xml"
           toDir="${build.dest}/org/apache/axis/client"/>
+    <copy file="${src.dir}/log4j.properties"
+          toDir="${build.dest}"/>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
+      <include name="log4j.properties"/>
     </jar>
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>

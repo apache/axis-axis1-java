@@ -63,20 +63,15 @@ package org.apache.axis.utils ;
  */
 
 import org.apache.log4j.Category;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Priority;
 
-import java.net.* ;
-import java.util.* ;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 public class Options {
     static Category category =
             Category.getInstance(Options.class.getName());
-
-    static {
-        BasicConfigurator.configure();
-        Category.getRoot().setPriority(Priority.FATAL);
-    }
 
     String  args[] = null ;
 
