@@ -363,7 +363,12 @@ public class SchemaUtils {
         TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
                                                              forElement.value);
         if (type != null) {
-            return new ElementDecl(type, Utils.getAxisQName(nodeName));
+            ElementDecl elem = new ElementDecl(type ,Utils.getAxisQName(nodeName));
+            String minOccurs = Utils.getAttribute(elementNode, "minOccurs");
+            if (minOccurs != null && minOccurs.equals("0")) {
+                elem.setMinOccursIs0(true);
+            }
+            return elem;
         }
         
         return null;
