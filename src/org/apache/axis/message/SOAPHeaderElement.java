@@ -37,29 +37,32 @@ import javax.xml.soap.SOAPException;
  * @author Glyn Normington (glyn@apache.org)
  */
 public class SOAPHeaderElement extends MessageElement
-    implements javax.xml.soap.SOAPHeaderElement {
+    implements javax.xml.soap.SOAPHeaderElement 
+{
+
     protected boolean   processed = false;
 
     protected String    actor = "http://schemas.xmlsoap.org/soap/actor/next";
     protected boolean   mustUnderstand = false;
     protected boolean   relay = false;
 
-    public SOAPHeaderElement(String namespace, String localPart)
+    public SOAPHeaderElement(String namespace, String localPart) 
     {
         super(namespace, localPart);
     }
 
-    public SOAPHeaderElement(Name name)
+    public SOAPHeaderElement(Name name) 
     {
         super(name);
     }
 
-    public SOAPHeaderElement(QName qname)
+    public SOAPHeaderElement(QName qname) 
     {
         super(qname);
     }
 
-    public SOAPHeaderElement(String namespace, String localPart, Object value)
+    public SOAPHeaderElement(String namespace, String localPart, 
+                             Object value) 
     {
         super(namespace, localPart, value);
     }
@@ -69,7 +72,7 @@ public class SOAPHeaderElement extends MessageElement
         super(qname, value);
     }
 
-    public SOAPHeaderElement(Element elem)
+    public SOAPHeaderElement(Element elem) 
     {
         super(elem);
 
@@ -105,16 +108,21 @@ public class SOAPHeaderElement extends MessageElement
         }
     }
 
-    public void setParentElement(SOAPElement parent) throws SOAPException {
-        if(parent == null)
+    public void setParentElement(SOAPElement parent) throws SOAPException 
+    {
+        if(parent == null) {
             throw new IllegalArgumentException(Messages.getMessage("nullParent00"));
-        if(!(parent instanceof SOAPHeader))
-            throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
-        try {
-            super.setParentElement(parent);
-        } catch (Throwable t) {
-            throw new SOAPException(t);
         }
+        // migration aid
+        if (parent instanceof SOAPEnvelope) {
+            log.warn(Messages.getMessage("bodyHeaderParent"));
+            parent = ((SOAPEnvelope)parent).getHeader();
+        }
+        if (!(parent instanceof SOAPHeader)) {
+            throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
+        }
+
+        super.setParentElement(parent);
     }
 
     public SOAPHeaderElement(String namespace,
@@ -122,7 +130,7 @@ public class SOAPHeaderElement extends MessageElement
                              String prefix,
                              Attributes attributes,
                              DeserializationContext context)
-            throws AxisFault
+        throws AxisFault
     {
         super(namespace, localPart, prefix, attributes, context);
 
@@ -154,15 +162,8 @@ public class SOAPHeaderElement extends MessageElement
         alreadySerialized = true;
     }
 
-    public void detachNode() {
-        if (parent != null) {
-            ((SOAPHeader)parent).removeHeader(this);
-        }
-        super.detachNode();
-    }
-
     private void setMustUnderstandFromString(String val, boolean isSOAP12) 
-            throws AxisFault {
+        throws AxisFault {
         if (val != null && val.length() > 0) {
             if ("0".equals(val)) {
                 mustUnderstand = false;

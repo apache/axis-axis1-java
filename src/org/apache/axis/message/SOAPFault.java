@@ -34,8 +34,8 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.Name;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Locale;
+import java.util.List;
 
 /** A Fault body element.
  *
@@ -291,7 +291,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     application-specific error information
      */
     public javax.xml.soap.Detail getDetail() {
-        ArrayList children = this.getChildren();
+        List children = this.getChildren();
         if(children==null || children.size()<=0)
             return null;
 

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.encoding.TypeMapping;
@@ -120,7 +121,7 @@ public class MessageElement implements SOAPElement,
 
     /** No-arg constructor for building messages?
      */
-    public MessageElement()
+    public MessageElement() 
     {
     }
 
@@ -138,7 +139,7 @@ public class MessageElement implements SOAPElement,
         addMapping(new Mapping(namespace, prefix));
     }
 
-    public MessageElement(Name eltName)
+    public MessageElement(Name eltName) 
     {
         this(eltName.getLocalName(),eltName.getPrefix(), eltName.getURI());
     }
@@ -149,7 +150,7 @@ public class MessageElement implements SOAPElement,
         objectValue = value;
     }
 
-    public MessageElement(QName name)
+    public MessageElement(QName name) 
     {
         this(name.getNamespaceURI(), name.getLocalPart());
     }
@@ -277,7 +278,7 @@ public class MessageElement implements SOAPElement,
     {
         return fixupDeserializer;
     }
-
+ 
     public void setEndIndex(int endIndex)
     {
         endEventIndex = endIndex;
@@ -285,7 +286,14 @@ public class MessageElement implements SOAPElement,
     }
 
     public boolean isDirty() { return _isDirty; }
-    public void setDirty(boolean dirty) { _isDirty = dirty; }
+
+    public void setDirty(boolean dirty)
+    { 
+        _isDirty = dirty; 
+        if (_isDirty && parent != null) {
+            parent.setDirty(true);
+        }
+    }
 
     public boolean isRoot() { return _isRoot; }
     public String getID() { return id; }
@@ -294,21 +302,22 @@ public class MessageElement implements SOAPElement,
 
     public Attributes getAttributesEx() { return attributes; }
 
-    public Node getFirstChild() {
-        Iterator iterator = getChildElements();
-        if(iterator != null && iterator.hasNext()){
-            return (Node)iterator.next();
-        }else{
+    public Node getFirstChild()
+    {
+        if (children != null && !children.isEmpty()) {
+            return (Node)children.get(0);
+        } else {
             return null;
         }
     }
 
-    public Node getLastChild() {
-        ArrayList children = getChildren();
-        if(children != null)
+    public Node getLastChild()
+    {
+        if (children != null && !children.isEmpty()) {
             return (Node)children.get(children.size()-1);
-        else
+        } else {
             return null;
+        }
     }
 
     public Node getNextSibling() {
@@ -444,8 +453,11 @@ public class MessageElement implements SOAPElement,
         attributes = attrs;
     }
 
-    public void detachAllChildren(){
-        children =  new ArrayList();
+    public void detachAllChildren()
+    {
+        if (children != null) {
+            children.clear();
+        }
     }
     
     public NodeList getChildNodes() {
@@ -457,36 +469,42 @@ public class MessageElement implements SOAPElement,
     }
 
     public Node appendChild(Node newChild) throws DOMException {
-        if(children == null) children = new ArrayList();
+        initializeChildren();
         children.add(newChild);
         return newChild;
     }
 
     public Node removeChild(Node oldChild) throws DOMException {
-        if(children == null) children = new ArrayList();
+        initializeChildren();
         int position = children.indexOf(oldChild);
-        if(position < 0)
-            throw new  DOMException(DOMException.NOT_FOUND_ERR,"MessageElement Not found");;
-            children.remove(position);
-            return oldChild;
+        if(position < 0) {
+            throw new DOMException(DOMException.NOT_FOUND_ERR,
+                                   "MessageElement Not found");
+        }
+        children.remove(position);
+        return oldChild;
     }
-
+    
     public Node insertBefore(Node newChild, Node refChild) throws DOMException {
-        if(children == null) children = new ArrayList();
+        initializeChildren();
         int position = children.indexOf(refChild);
-        if(position < 0)  position = 0;
+        if (position < 0) {
+            position = 0;
+        }
         children.add(position,newChild);
         return newChild;
     }
-
+    
     public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
-        if(children == null) children = new ArrayList();
+        initializeChildren();
         int position = children.indexOf(oldChild);
-        if(position < 0)
-            throw new  DOMException(DOMException.NOT_FOUND_ERR,"MessageElement Not found");;
-            children.remove(position);
-            children.add(position, newChild);
-            return oldChild;
+        if(position < 0) {
+            throw new DOMException(DOMException.NOT_FOUND_ERR,
+                                   "MessageElement Not found");;
+        }
+        children.remove(position);
+        children.add(position, newChild);
+        return oldChild;
     }
 
     /**
@@ -611,7 +629,7 @@ public class MessageElement implements SOAPElement,
     }
 
     public boolean hasChildNodes() {
-        return children.size() > 0;
+        return (children != null && !children.isEmpty());
     }
 
     public String getLocalName() {
@@ -666,7 +684,7 @@ public class MessageElement implements SOAPElement,
 
     public void removeContents() {
         // unlink
-        if(children != null){
+        if(children != null) {
             for(int i = 0; i < children.size(); i++){
                 try{
                     ((MessageElement)children.get(i)).setParent(null);
@@ -675,6 +693,7 @@ public class MessageElement implements SOAPElement,
             }
             // empty the collection
             children.clear();
+            setDirty(true);
         }
     }
 
@@ -711,7 +730,7 @@ public class MessageElement implements SOAPElement,
      *     there was a problem in the encoding style being set.
      * @see #getEncodingStyle() getEncodingStyle()
      */
-    public void setEncodingStyle(String encodingStyle) throws SOAPException {
+    public void setEncodingStyle(String encodingStyle) throws SOAPException { 
         if (encodingStyle == null) {
             encodingStyle = "";
         }
@@ -728,15 +747,29 @@ public class MessageElement implements SOAPElement,
     }
 
     private MessageElement getParent() { return parent; }
+
     private void setParent(MessageElement parent) throws SOAPException
     {
-        this.parent = parent;
+        if (this.parent == parent) {
+            return;
+        }
+        if (this.parent != null) {
+            this.parent.removeChild(this);
+        }
         if (parent != null) {
             parent.addChild(this);
         }
+        this.parent = parent;
     }
 
-    private ArrayList children = null;
+    protected List children = null;
+
+    protected void initializeChildren() 
+    {
+        if (children == null) {
+            children = new ArrayList();
+        }
+    }
 
     /**
      * Note that this method will log a error and no-op if there is
@@ -745,12 +778,12 @@ public class MessageElement implements SOAPElement,
     public void addChild(MessageElement el) throws SOAPException
     {
         if (objectValue != null) {
-            SOAPException exc = new SOAPException(Messages.getMessage("valuePresent"));
+            SOAPException exc = 
+                new SOAPException(Messages.getMessage("valuePresent"));
             log.error(Messages.getMessage("valuePresent"), exc);
             throw exc;
         }
-        if (children == null)
-            children = new ArrayList();
+        initializeChildren();
         children.add(el);
         el.parent = this;
     }
@@ -758,24 +791,31 @@ public class MessageElement implements SOAPElement,
     /**
      * Remove a child element.
      */
-    public void removeChild(MessageElement child) {
+    public void removeChild(MessageElement child) 
+    {
+        if (children == null) {
+            return;
+        }
         // Remove all occurrences in case it has been added multiple times.
+        boolean removed = false;
         int i;
         while ((i = children.indexOf(child)) != -1) {
             children.remove(i);
+            removed = true;
         }
+        setDirty(removed);
     }
 
-    public ArrayList getChildren()
+    public List getChildren()
     {
         return children;
     }
 
-    public void setContentsIndex(int index)
+    public void setContentsIndex(int index) 
     {
         startContentsIndex = index;
     }
-
+ 
     public void setNSMappings(ArrayList namespaces)
     {
         this.namespaces = namespaces;
@@ -881,11 +921,12 @@ public class MessageElement implements SOAPElement,
         this.objectValue = newValue;
     }
 
-    public Object getValueAsType(QName type) throws Exception
+    public Object getValueAsType(QName type) throws Exception 
     {
         return getValueAsType(type, null);
     }
-    public Object getValueAsType(QName type, Class cls) throws Exception
+
+    public Object getValueAsType(QName type, Class cls) throws Exception 
     {
         if (context == null)
             throw new Exception(Messages.getMessage("noContext00"));
@@ -958,6 +999,7 @@ public class MessageElement implements SOAPElement,
         attributes.addAttribute(namespace, localName, attrName, "CDATA",
                                 value);
     }
+
     /**
      * Set an attribute, adding the attribute if it isn't already present
      * in this element, and changing the value if it is.  Passing null as the
@@ -995,7 +1037,8 @@ public class MessageElement implements SOAPElement,
         env.setDirty(true);
         message = env;
     }
-    public SOAPEnvelope getEnvelope()
+
+    public SOAPEnvelope getEnvelope() 
     {
         return message;
     }
@@ -1015,7 +1058,7 @@ public class MessageElement implements SOAPElement,
         return (MessageElement)obj;
     }
 
-    public Document getAsDocument() throws Exception
+    public Document getAsDocument() throws Exception 
     {
         String elementString = getAsString();
 
@@ -1044,7 +1087,7 @@ public class MessageElement implements SOAPElement,
         return writer.getBuffer().toString();
     }
 
-    public Element getAsDOM() throws Exception
+    public Element getAsDOM() throws Exception 
     {
         return getAsDocument().getDocumentElement();
     }
@@ -1057,7 +1100,7 @@ public class MessageElement implements SOAPElement,
         recorder.replay(startEventIndex, endEventIndex, handler);
     }
 
-    public void publishContents(ContentHandler handler) throws SAXException
+    public void publishContents(ContentHandler handler) throws SAXException 
     {
         if (recorder == null)
             throw new SAXException(Messages.getMessage("noRecorder00"));
@@ -1120,7 +1163,7 @@ public class MessageElement implements SOAPElement,
 
     /** Subclasses can override
      */
-    protected void outputImpl(SerializationContext context) throws Exception
+    protected void outputImpl(SerializationContext context) throws Exception 
     {
         if (elementRep != null) {
             boolean oldPretty = context.getPretty();
@@ -1279,11 +1322,11 @@ public class MessageElement implements SOAPElement,
     public SOAPElement addChildElement(String localName,
                                        String prefix,
                                        String uri) throws SOAPException {
-            MessageElement child = new MessageElement(uri, localName);
-            child.setPrefix(prefix);
-            child.addNamespaceDeclaration(prefix, uri);
-            addChild(child);
-            return child;
+        MessageElement child = new MessageElement(uri, localName);
+        child.setPrefix(prefix);
+        child.addNamespaceDeclaration(prefix, uri);
+        addChild(child);
+        return child;
     }
 
     /**
@@ -1295,6 +1338,7 @@ public class MessageElement implements SOAPElement,
         throws SOAPException {
         try {
             addChild((MessageElement)element);
+            setDirty(true);
             return element;
         } catch (ClassCastException e) {
             throw new SOAPException(e);
@@ -1404,8 +1448,7 @@ public class MessageElement implements SOAPElement,
     }
 
     public Iterator getChildElements() {
-        if (children == null)
-            children = new ArrayList();
+        initializeChildren();
         return children.iterator();
     }
 
@@ -1416,20 +1459,19 @@ public class MessageElement implements SOAPElement,
      * @return
      */
     public MessageElement getChildElement(QName qname) {
-        if (children == null) return null;
-        for (Iterator i = children.iterator(); i.hasNext();) {
-            MessageElement child = (MessageElement) i.next();
-            if (child.getQName().equals(qname))
-                return child;
+        if (children != null) {
+            for (Iterator i = children.iterator(); i.hasNext();) {
+                MessageElement child = (MessageElement) i.next();
+                if (child.getQName().equals(qname))
+                    return child;
+            }
         }
         return null;
     }
 
     public Iterator getChildElements(QName qname) {
-        if (children == null)
-            children = new ArrayList();
+        initializeChildren();
         int num = children.size();
-
         Vector c = new Vector(num);
         for (int i = 0; i < num; i++) {
             MessageElement child = (MessageElement)children.get(i);
@@ -1582,7 +1624,10 @@ public class MessageElement implements SOAPElement,
         return null;
     }
 
-    public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws DOMException {
+    public void setAttributeNS(String namespaceURI, String qualifiedName, 
+                               String value) 
+        throws DOMException 
+    {
         AttributesImpl attributes = makeAttributesEditable();
         String localName =  qualifiedName.substring(qualifiedName.indexOf(":")+1, qualifiedName.length());
 
@@ -1600,7 +1645,9 @@ public class MessageElement implements SOAPElement,
         return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
-    public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+    public NodeList getElementsByTagNameNS(String namespaceURI, 
+                                           String localName) 
+    {
         return getElementsNS(this,namespaceURI,localName);
     }
 
@@ -1648,12 +1695,9 @@ public class MessageElement implements SOAPElement,
      *
      * @since SAAJ 1.2 : Nodelist Interface
      */
-    public int getLength(){
-        if(children  == null){
-            children = new ArrayList();
-            return 0;
-        }
-        return children.size();
+    public int getLength() 
+    {
+        return (children == null) ? 0 : children.size();
     }
 
     // setEncodingStyle implemented above
@@ -1661,7 +1705,7 @@ public class MessageElement implements SOAPElement,
     // getEncodingStyle() implemented above
     
     MessageElement findElement(Vector vec, String namespace,
-                                         String localPart)
+                               String localPart) 
     {
         if (vec.isEmpty())
             return null;
@@ -1678,7 +1722,7 @@ public class MessageElement implements SOAPElement,
         return null;
     }
     
-    public boolean equals(Object obj)
+    public boolean equals(Object obj) 
     {
         if (obj == null || !(obj instanceof MessageElement))
             return false;
