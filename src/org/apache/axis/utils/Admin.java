@@ -76,6 +76,18 @@ public class Admin {
   private static  DefaultServiceRegistry  sr = null ;
   private static  TypeMappingRegistry     tmr = null ;
   private boolean onServer = true ;
+    
+
+    /**
+     * Hacky tester function.  Wipe the statics so we can invoke this class
+     * multiple times within the same JVM.  For functional testing purposes.
+     * See test.functional.TestTransportSample
+     */
+    public static void wipe () {
+        hr = null;
+        sr = null;
+        tmr = null;
+    }
 
   private void init() {
     if ( hr == null ) {
@@ -91,7 +103,7 @@ public class Admin {
         sr = new DefaultServiceRegistry(Constants.SERVER_SERVICE_REGISTRY);
       else
         sr = new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
-      hr.setOnServer( onServer );
+      sr.setOnServer( onServer );
       sr.init();
     }
   }
@@ -486,7 +498,7 @@ public class Admin {
     map.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
   }
   
-  public static void main(String args[]) {
+  public static void main(String args[]) throws Exception {
     int  i = 0 ;
 
     if ( args.length < 2 || !(args[0].equals("client") ||
@@ -508,7 +520,11 @@ public class Admin {
       System.err.println( "</undeploy>\n" );
       System.err.println( "<list/>\n" );
 
-      System.exit( 1 );
+
+      // throw an Exception which will go uncaught!  this way, a test suite
+      // can invoke main() and detect the exception
+      throw new IllegalArgumentException();
+      // System.exit( 1 );
     }
 
     Admin admin = new Admin();
@@ -523,12 +539,14 @@ public class Admin {
     }
     catch( AxisFault e ) {
       e.dump();
-      System.exit(1);
+      //System.exit(1);
+        throw e;
     }
     catch( Exception e ) {
       System.err.println( "Error processing '" + args[i] + "'" );
       e.printStackTrace( System.err );
-      System.exit( 1 );
+      //System.exit( 1 );
+        throw e;
     }
   }
 }

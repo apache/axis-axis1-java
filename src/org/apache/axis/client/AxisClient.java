@@ -92,6 +92,7 @@ public class AxisClient extends BasicHandler
     /**
      * Find/load the registries and save them so we don't need to do this
      * each time we're called.
+     * Package access since this should be wrapped by ServiceClient...??? -- RobJ
      */
     public void init() {
         // Load the simple handler registry and init it
@@ -122,18 +123,10 @@ public class AxisClient extends BasicHandler
         String  hName = null ;
         Handler h     = null ;
         
-        /* Do some prep-work.  Get the registries and put them in the */
-        /* msgContext so they can be used by later handlers.          */
-        /**************************************************************/
         HandlerRegistry hr =
             (HandlerRegistry) getOption(Constants.HANDLER_REGISTRY);
         HandlerRegistry sr =
             (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
-        
-        if ( hr != null )
-            msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
-        if ( sr != null )
-            msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
         
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );

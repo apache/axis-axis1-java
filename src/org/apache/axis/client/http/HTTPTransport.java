@@ -139,7 +139,7 @@ public class HTTPTransport extends Transport
         try {
             mc.setTargetService( (String)mc.getProperty(ACTION) );
         } catch (AxisFault f) {
-            System.err.println("HTTPClinet.setupMessageContext: Could not set target service to "+serviceClient.get(ACTION));
+            System.err.println("HTTPTransport.setupMessageContext: Could not set target service to "+serviceClient.get(ACTION));
             throw f;
         }
         

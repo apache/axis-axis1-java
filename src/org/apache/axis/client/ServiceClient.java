@@ -66,6 +66,7 @@ import org.apache.axis.transport.http.HTTPDispatchHandler;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.message.DebugHeader;
 
 import org.w3c.dom.* ;
@@ -131,6 +132,20 @@ public class ServiceClient {
         // set up the message context with the transport
         try {
             transport.init(engine);
+            
+            /* Do some prep-work.  Get the registries and put them in the */
+            /* msgContext so they can be used by later handlers.          */
+            /**************************************************************/
+            HandlerRegistry hr =
+                (HandlerRegistry) engine.getOption(Constants.HANDLER_REGISTRY);
+            HandlerRegistry sr =
+                (HandlerRegistry) engine.getOption(Constants.SERVICE_REGISTRY);
+            
+            if ( hr != null )
+                msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
+            if ( sr != null )
+                msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
+            
             transport.initMessageContext(msgContext, this, engine, doLocal);
         } catch (AxisFault f) {
             // this will happen if there is no appropriate service

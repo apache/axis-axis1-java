@@ -28,6 +28,9 @@ System.out.println("Creating FunctionalTests suite.");
         // ... should be removed?
         suite.addTestSuite(TestTCPEcho.class);
         
+        // transport sample test
+        suite.addTestSuite(TestTransportSample.class);
+
         // stock sample test
         suite.addTestSuite(TestStockSample.class);
 

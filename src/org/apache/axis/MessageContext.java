@@ -219,10 +219,14 @@ public class MessageContext {
         return;
       
       Handler service = sr.find(tServ);
-      if (service == null)
-        throw new AxisFault("No service named '" + tServ + "' in registry!");
-      
-      setServiceHandler(service);
+        /* Do NOT throw an exception if the service handler is not found,
+           since we may be on the client!  -- yow... this is messy. -- RobJ
+         */
+      if (service == null) {
+        // throw new AxisFault("No service named '" + tServ + "' in registry!");
+      } else {
+        setServiceHandler(service);
+      }
     }
 
     /** ServiceHandler is the handler that is the "service".  This handler
@@ -252,7 +256,7 @@ public class MessageContext {
                     // No target service was set.  So here's where we want to
                     // potentially try to dispatch off the QName of the first
                     // appropriate <Body> element.  Might also hook this to
-                    // another configurable piece of code to avoid SOAP 
+                    // another configurable piece of code to avoid SOAP
                     // specifics in this class.
                     SOAPEnvelope env = (SOAPEnvelope)
                                         inMessage.getAs("SOAPEnvelope");

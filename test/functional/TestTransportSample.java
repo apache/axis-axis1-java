@@ -1,5 +1,3 @@
-package samples.transport ;
-
 /*
  * The Apache Software License, Version 1.1
  *
@@ -55,74 +53,81 @@ package samples.transport ;
  * <http://www.apache.org/>.
  */
 
-import java.io.* ;
-import java.lang.Thread ;
+package test.functional;
 
-import org.apache.axis.Message ;
+import java.net.*;
+import java.io.*;
+import java.util.*;
+
 import org.apache.axis.AxisFault ;
-import org.apache.axis.MessageContext ;
-import org.apache.axis.handlers.BasicHandler ;
-import org.apache.axis.server.AxisServer ;
+import org.apache.axis.client.http.AdminClient;
+import org.apache.axis.utils.Debug ;
+import org.apache.axis.utils.Options ;
+import org.apache.axis.utils.QName ;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
-/**
- * Waits for the XML to appear in a file called xml#.req and writes
- * the response in a file called xml#.res
- *
- * @author Doug Davis (dug@us.ibm.com)
+import junit.framework.TestCase;
+
+import org.apache.axis.utils.Admin;
+
+import samples.transport.FileTest;
+
+/** Test the stock sample code.
  */
-public class FileReader extends Thread {
-  static int      nextNum = 1 ;
-  boolean  pleaseStop = false ;
-
-  public void run() {
-    String tmp = "" ;
-    AxisServer  server = new AxisServer();
-    server.init();
-
-    while( !pleaseStop ) {
-      try {
-        Thread.sleep( 100 );
-        File file = new File( "xml" + nextNum + ".req" );
-        if ( !file.exists() ) continue ;
-          
-          // avoid race condition where file comes to exist but we were halted -- RobJ
-          if (pleaseStop) continue;
-
-        Thread.sleep( 100 );   // let the other side finish writing
-        FileInputStream fis = new FileInputStream( "xml" + nextNum + ".req" );
-
-        Message msg = new Message( fis, "InputStream" );
-        MessageContext  msgContext = new MessageContext();
-        msgContext.setRequestMessage( msg );
-
-        // SOAPAction hack
-        byte[]  buf = new byte[50];
-        fis.read( buf, 0, 50 );
-        String action = new String( buf );
-        msgContext.setTargetService( action.trim() );
-        // end of hack
-
-        server.invoke( msgContext );
-        msg = msgContext.getResponseMessage();
-        fis.close();
-
-        (new File("xml" + nextNum + ".req" )).delete();
-
-        FileOutputStream fos = new FileOutputStream( "xml" + nextNum + ".res" );
-        buf = (byte[]) msg.getAs( "Bytes" );
-        fos.write( buf );
-        fos.close();
-        nextNum++ ;
-      }
-      catch( Exception e ) {
-        if ( !(e instanceof FileNotFoundException) )
-          e.printStackTrace();
-      }
+public class TestTransportSample extends TestCase {
+    
+    public TestTransportSample(String name) {
+        super(name);
     }
-      System.out.println("FileReader halted.");
-  }
-
-  public void halt() {
-    pleaseStop = true ;
-  }
+    
+    public void doTestClientDeploy () throws Exception {
+        String[] args = { "client", "samples/transport/client_deploy.xml" };
+        Admin.main(args);
+        Admin.wipe(); // hack!  why are those statics in Admin anyway? -- RobJ
+    }
+    
+    public void doTestDeploy () throws Exception {
+        String[] args = { "server", "samples/transport/deploy.xml" };
+        Admin.main(args);
+        Admin.wipe(); // hack!  why are those statics in Admin anyway? -- RobJ
+    }
+    
+    public void doTestIBM () throws Exception {
+        String[] args = { "IBM" };
+        FileTest.main(args);
+    }
+    
+    public void doTestXXX () throws Exception {
+        String[] args = { "XXX" };
+        FileTest.main(args);
+    }
+    
+    public void testService () throws Exception {
+        try {
+            System.out.println("Testing transport sample.");
+            System.out.println("Testing client deployment...");
+            doTestClientDeploy();
+            System.out.println("Testing deployment...");
+            doTestDeploy();
+            System.out.println("Testing service with symbol IBM...");
+            doTestIBM();
+            System.out.println("Testing service with symbol XXX...");
+            doTestXXX();
+            System.out.println("Test complete.");
+        }
+        catch( Exception e ) {
+            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+            e.printStackTrace();
+            throw new Exception("Fault returned from test: "+e);
+        }
+    }
+    
+    /**
+     * bogus 'main'
+     */
+    public static void main (String[] args) throws Exception {
+        new TestTransportSample("foo").testService();
+    }
 }
+
