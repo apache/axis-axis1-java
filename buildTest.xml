@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE project [
-	<!ENTITY properties SYSTEM "file:xmls/properties.xml">
-        <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
-        <!ENTITY taskdefs SYSTEM "file:xmls/taskdefs.xml">
-	<!ENTITY taskdefs_post_compile SYSTEM "file:xmls/taskdefs_post_compile.xml">
+  <!ENTITY properties SYSTEM "file:xmls/properties.xml">
+  <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
+  <!ENTITY taskdefs SYSTEM "file:xmls/taskdefs.xml">
+  <!ENTITY taskdefs_post_compile SYSTEM "file:xmls/taskdefs_post_compile.xml">
 ]>
 
 <!-- ===================================================================
@@ -11,10 +11,10 @@
 
 <project default="printEnv" basedir=".">
 
-	&properties;
-	&paths;
-	&taskdefs;
-	&taskdefs_post_compile;
+  &properties;
+  &paths;
+  &taskdefs;
+  &taskdefs_post_compile;
 
   <!-- Give user a chance to override without editing this file
        (and without typing -D each time it compiles it) -->
@@ -198,9 +198,9 @@
     <foreach target="buildThem">
         <param name="file">
              <fileset dir="test/" >
-		<patternset>
+               <patternset>
                  <include name="**/buildComponent.xml"/>
-		</patternset>
+               </patternset>
              </fileset>
         </param>
      </foreach>
@@ -212,10 +212,10 @@
   </target>
 
   <target name="runThem">
-        <echo message="test/wsdl/refattr/${file}"/>
-        <ant inheritAll="true" antfile="test/wsdl/refattr/${file}" target="run" >
-           <property name="batch" value="true"/>
-        </ant>
+    <echo message="test/wsdl/refattr/${file}"/>
+    <ant inheritAll="true" antfile="test/wsdl/refattr/${file}" target="run" >
+       <property name="batch" value="true"/>
+    </ant>
   </target>
 
  <target name="buildSamples">
@@ -330,21 +330,21 @@
   <!-- Prepares the JUnit functional test -->
   <!-- =================================================================== -->
   <target name="junit-functional-prepare" if="junit.present">
-	  <mkdir dir="${basedir}/${test.functional.reportdir}" />
-	  <path id="deploy.xml.files">
-		<fileset dir="${build.dir}/work">
-		  <include name="**/deploy.wsdd"/>
-		</fileset>
-	  </path>
+    <mkdir dir="${basedir}/${test.functional.reportdir}" />
+    <path id="deploy.xml.files">
+      <fileset dir="${build.dir}/work">
+        <include name="**/deploy.wsdd"/>
+      </fileset>
+    </path>
 
-	  <path id="undeploy.xml.files">
-		<fileset dir="${build.dir}/work">
-		  <include name="**/undeploy.wsdd"/>
-		</fileset>
-	  </path>
+    <path id="undeploy.xml.files">
+      <fileset dir="${build.dir}/work">
+        <include name="**/undeploy.wsdd"/>
+      </fileset>
+    </path>
 
-	  <property name="deploy.xml.property" refid="deploy.xml.files"/>
-	  <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
+    <property name="deploy.xml.property" refid="deploy.xml.files"/>
+    <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
   </target>
 
   <!-- =================================================================== -->
