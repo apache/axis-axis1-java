@@ -206,12 +206,13 @@ public class Emitter {
             filename2 = getServicePortName() + "_implementation.wsdl";
         }
 
-        // Write out the interface def
-        Document doc = WSDLFactory.newInstance().
-            newWSDLWriter().getDocument(intf);
         for (int i = 0; extraClasses != null && i < extraClasses.length; i++) {
             types.writeTypeForPart(extraClasses[i], null);
         }
+        //types.updateNamespaces();
+        // Write out the interface def
+        Document doc = WSDLFactory.newInstance().
+            newWSDLWriter().getDocument(intf);
         types.insertTypesFragment(doc);
         prettyDocumentToFile(doc, filename1);
 
@@ -259,20 +260,22 @@ public class Emitter {
         switch (mode) {
             case MODE_ALL:
                 def = getWSDL();
-                doc = WSDLFactory.newInstance().
-                    newWSDLWriter().getDocument(def);
                 for (int i = 0; extraClasses != null && i < extraClasses.length; i++) {
                     types.writeTypeForPart(extraClasses[i], null);
                 }
+                //types.updateNamespaces();
+                doc = WSDLFactory.newInstance().
+                    newWSDLWriter().getDocument(def);
                 types.insertTypesFragment(doc);
                 break;
             case MODE_INTERFACE:
                 def = getIntfWSDL();
-                doc = WSDLFactory.newInstance().
-                    newWSDLWriter().getDocument(def);
                 for (int i = 0; extraClasses != null && i < extraClasses.length; i++) {
                     types.writeTypeForPart(extraClasses[i], null);
                 }
+                //types.updateNamespaces();
+                doc = WSDLFactory.newInstance().
+                    newWSDLWriter().getDocument(def);
                 types.insertTypesFragment(doc);
                 break;
             case MODE_IMPLEMENTATION:

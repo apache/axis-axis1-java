@@ -95,6 +95,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  *
@@ -1054,12 +1055,24 @@ public class Types {
         }
     }
 
+    public void updateNamespaces() {
+        Namespaces namespaces = getNamespaces();
+        Iterator nspIterator = namespaces.getNamespaces();
+        while(nspIterator.hasNext()) {
+            String nsp = (String) nspIterator.next();
+            String pref = def.getPrefix(nsp);
+            if (pref == null) {
+                def.addNamespace(namespaces.getCreatePrefix(nsp), nsp);
+            }                
+        }
+    }
+    
     /**
      * Inserts the type fragment into the given wsdl document
      * @param doc
      */
     public void insertTypesFragment(Document doc) {
-
+        updateNamespaces();
         if (wsdlTypesElem != null) {
             // Import the wsdlTypesElement into the doc.
             org.w3c.dom.Node node = doc.importNode(wsdlTypesElem, true);

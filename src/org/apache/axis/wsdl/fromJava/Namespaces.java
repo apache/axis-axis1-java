@@ -219,4 +219,12 @@ public class Namespaces extends HashMap {
         }
         return protocol + "://" + sb.toString();
     }
+    
+    /**
+     * Get the list of namespaces currently registered
+     * @return iterator
+     */ 
+    public Iterator getNamespaces() {
+        return namespacePrefixMap.keySet().iterator();            
+    }
 }
