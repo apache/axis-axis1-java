@@ -107,11 +107,14 @@ public class FileReader extends Thread {
         try {
             server.invoke( msgContext );
             msg = msgContext.getResponseMessage();
-            buf = (byte[]) msg.getAs( "Bytes" );
+        } catch (AxisFault af) {
+            msg = new Message(af, "AxisFault");
         } catch (Exception e) {
-            buf = e.toString().getBytes();
+            msg = new Message(new AxisFault(e.toString()), "AxisFault");
         }
 
+        buf = (byte[]) msg.getAs( "Bytes" );
+        System.out.println("msg=" + new String(buf));
         fos.write( buf );
         fos.close();
 
