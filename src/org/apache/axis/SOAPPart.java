@@ -72,6 +72,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.transform.Source;
 import java.io.*;
 import java.util.Hashtable;
@@ -105,7 +106,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     private static final int FORM_FAULT        = 6;
     private int currentForm;
 
-    private Hashtable headers = new Hashtable();
+    //private Hashtable headers = new Hashtable();
+    private MimeHeaders mimeHeaders = new MimeHeaders();
     private String contentId;
     private String contentLocation;
 
@@ -486,14 +488,18 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             throw new IllegalArgumentException(
                     JavaUtils.getMessage("headerValueNotNull"));
         }
-        headers.put(header.toLowerCase(), value);
+        mimeHeaders.setHeader(header.toLowerCase(), value);
     }
 
     /**
      * Get the specified MIME header.
      */
     public String getFirstMimeHeader (String header) {
-        return (String) headers.get(header.toLowerCase());
+        //return (String) headers.get(header.toLowerCase());
+        String[] values = mimeHeaders.getHeader(header);
+        if(values != null && values.length>0)
+            return values[0];
+        return null;
     }
 
     /**
@@ -551,35 +557,14 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Get all headers that match
      */
     public java.util.Iterator getMatchingMimeHeaders( final String[] match){
-        java.util.LinkedList retList= new java.util.LinkedList();
-        if(null != match && 0 != match.length ){
-            for(int i= match.length-1 ; i > -1 ; --i){
-                    if(match[i] != null){
-                      String key= match[i].toLowerCase();
-                      if(headers.containsKey(key))
-                         retList.add(match[i]);
-                }
-            }
-        }
-        return retList.iterator();
+        return mimeHeaders.getMatchingHeaders(match);
     }
 
     /**
      * Get all headers that do not match
      */
     public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
-        java.util.LinkedList retList= new java.util.LinkedList(headers.keySet());
-        if(null != match && 0 != match.length && !headers.isEmpty()){
-            for(int i= match.length-1 ; i > -1 ; --i){
-                    if(match[i] != null){
-                        String remItem= match[i].toLowerCase();
-                        if(headers.containsKey(remItem)){
-                            retList.remove(remItem);
-                    }
-                }
-            }
-        }
-        return retList.iterator();
+        return mimeHeaders.getNonMatchingHeaders(match);
     }
 
     /**
@@ -592,7 +577,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @see #getContent() getContent()
      */
     public void setContent(Source source) throws SOAPException {
-        //TODO: Flesh this out.
+        InputSource in = org.apache.axis.utils.XMLUtils.getInputSourceFromURI(source.getSystemId());
+        setCurrentMessage(in.getByteStream(), FORM_INPUTSTREAM);
     }
 
     /**
@@ -617,8 +603,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      *     headers for this <CODE>SOAPPart</CODE> object
      */
     public Iterator getAllMimeHeaders() {
-        //TODO: Flesh this out.
-        return null;
+        return mimeHeaders.getAllHeaders();
     }
 
     /**
@@ -646,7 +631,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @see #getMimeHeader(java.lang.String) getMimeHeader(java.lang.String)
      */
     public void setMimeHeader(String name, String value) {
-        //TODO: Flesh this out.
+        mimeHeaders.setHeader(name,value);
     }
 
     /**
@@ -660,10 +645,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @see #setMimeHeader(java.lang.String, java.lang.String) setMimeHeader(java.lang.String, java.lang.String)
      */
     public String[] getMimeHeader(String name) {
-        //TODO: Flesh this out.
-        String[] strings = new String[1];
-        strings[0] = getFirstMimeHeader(name);
-        return strings;
+        return mimeHeaders.getHeader(name);
     }
 
     /**
@@ -671,7 +653,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * <CODE>SOAPEnvelope</CODE> object.
      */
     public void removeAllMimeHeaders() {
-        //TODO: Flesh this out.
+        mimeHeaders.removeAllHeaders();
     }
 
     /**
@@ -680,7 +662,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      *     the name of the MIME header(s) to be removed
      */
     public void removeMimeHeader(String header) {
-        //TODO: Flesh this out.
+        mimeHeaders.removeHeader(header);
     }
 
     /**

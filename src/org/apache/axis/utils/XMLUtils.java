@@ -505,8 +505,17 @@ public class XMLUtils {
             throw new SAXException(message);
         }
     }
-    
-    
+
+
+    /**
+     * Utility to get the bytes uri
+     *
+     * @param uri the resource to get
+     */
+    public static InputSource getInputSourceFromURI(String uri){
+        return getInputSourceFromURI(uri);
+    }
+
     /**
      * Utility to get the bytes at a protected uri
      * 
