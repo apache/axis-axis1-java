@@ -343,5 +343,32 @@ public class OperationDesc {
     public ParameterDesc getReturnParamDesc() {
         return returnDesc;
     }
+
+    public String toString() {
+        return toString("");
+    }
+    public String toString(String indent) {
+        String text ="";
+        text+=indent+"name:        " + getName() + "\n";
+        text+=indent+"returnQName: " + getReturnQName() + "\n";
+        text+=indent+"returnType:  " + getReturnType() + "\n";
+        text+=indent+"returnClass: " + getReturnClass() + "\n";
+        text+=indent+"elementQName:" + getElementQName() + "\n";
+        text+=indent+"soapAction:  " + getSoapAction() + "\n";
+        text+=indent+"style:       " + getStyle().getName() + "\n";
+        text+=indent+"numInParams: " + getNumInParams() + "\n";
+        text+=indent+"method:" + getMethod() + "\n";
+        for (int i=0; i<parameters.size(); i++) {
+            text+=indent+" ParameterDesc[" + i + "]:\n";
+            text+=indent+ ((ParameterDesc)parameters.get(i)).toString("  ") + "\n";
+        }
+        if (faults != null) {
+            for (int i=0; i<faults.size(); i++) {
+                text+=indent+" FaultDesc[" + i + "]:\n";
+                text+=indent+ ((FaultDesc)faults.get(i)).toString("  ") + "\n";
+            }
+        }
+        return text;
+    }
 }
 

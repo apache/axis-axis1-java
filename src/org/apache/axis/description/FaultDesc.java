@@ -93,4 +93,18 @@ public class FaultDesc {
     public void setParameters(ArrayList parameters) {
         this.parameters = parameters;
     }
+
+
+    public String toString() {
+        return toString("");
+    }
+    public String toString(String indent) {
+        String text ="";
+        text+= indent + "qname: " + getQName() + "\n";
+        for (int i=0; i<parameters.size(); i++) {
+            text+= indent +" ParameterDesc[" + i + "]:\n";
+            text+= indent + ((ParameterDesc)parameters.get(i)).toString("  ") + "\n";
+        }
+        return text;
+    }
 }

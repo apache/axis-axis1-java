@@ -103,8 +103,7 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * The value is the object being serialized.  (It may be serialized
      * directly or serialized as an mult-ref'd item)
      * The xmlType (if specified) is the QName of the type that is used to set
-     * xsi:type.  If not specified, xsi:type is set by using the javaType to
-     * find an appopriate xmlType from the TypeMappingRegistry.
+     * xsi:type.  
      * The sendNull flag indicates whether null values should be sent over the
      * wire (default is to send such values with xsi:nil="true").
      * The sendType flag indicates whether the xsi:type flag should be sent
