@@ -446,7 +446,7 @@ public class ServiceClient {
         if ( body.getNamespaceURI() == null ) {
             throw new AxisFault("ServiceClient.invoke", "Cannot invoke ServiceClient with null namespace URI for method "+body.getMethodName(),
                                 null, null);
-        } else if (msgContext.getTargetService() == null) {
+        } else if (msgContext.getServiceHandler() == null) {
             msgContext.setTargetService(body.getNamespaceURI());
         }
        
