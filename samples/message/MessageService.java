@@ -5,7 +5,7 @@ import org.apache.axis.MessageContext ;
 import java.util.Vector ;
 
 public class MessageService {
-    public Element[] echoElements(MessageContext msgC, Vector elems) {
+    public Element[] echoElements(Vector elems) {
         Element[]  result = new Element[elems.size()];
 
         for ( int i = 0 ; i < elems.size() ; i++ )

@@ -675,12 +675,13 @@ public class ServiceDesc {
         // Make an OperationDesc, fill in common stuff
         OperationDesc operation = new OperationDesc();
         operation.setName(method.getName());
+        String defaultNS = "";
         if (namespaceMappings != null && !namespaceMappings.isEmpty()) {
             // If we have a default namespace mapping, require callers to
             // use that namespace.
-            String defaultNS = (String)namespaceMappings.get(0);
-            operation.setElementQName(new QName(defaultNS, method.getName()));
+            defaultNS = (String)namespaceMappings.get(0);
         }
+        operation.setElementQName(new QName(defaultNS, method.getName()));
         operation.setMethod(method);
         Class retClass = method.getReturnType();
         operation.setReturnClass(retClass);

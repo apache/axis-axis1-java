@@ -57,7 +57,6 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
-import org.apache.axis.AxisFault;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
@@ -66,7 +65,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 /**
@@ -84,7 +82,6 @@ public class MsgProvider extends JavaProvider {
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
                                 JavaClass jc,
-                    
                                 Object obj)
         throws Exception
     {
@@ -115,9 +112,7 @@ public class MsgProvider extends JavaProvider {
             Vector                bodies  = reqEnv.getBodyElements();
             SOAPBodyElement       reqBody = reqEnv.getFirstBody();
             NoSuchMethodException exp2 = null ;
-            Object                anElement = 
-                                    clsLoader.loadClass("org.w3c.dom.Element");
-            
+
             doc = reqBody.getAsDOM().getOwnerDocument();
 
             Vector newBodies = new Vector();
@@ -154,28 +149,6 @@ public class MsgProvider extends JavaProvider {
             catch( NoSuchMethodException exp ) {exp2 = exp;}
 
             if ( method == null ) {
-              // Try again with a msgContext first
-              /////////////////////////////////////////////////////////////////
-                argClasses = new Class[2];
-                argObjects = new Object[2];
-                argClasses[0] = clsLoader.loadClass("org.apache.axis.MessageContext");
-                argClasses[1] = clsLoader.loadClass("java.util.Vector");
-                argObjects[0] = msgContext ;
-                argObjects[1] = bodies ;
-
-                try {
-                    method = jc.getJavaClass().getMethod( methodName, argClasses );
-                    Element[] result = (Element[]) method.invoke( obj, argObjects );        
-                    if ( result != null ) {
-                        for ( int i = 0 ; i < result.length ; i++ )
-                            resEnv.addBodyElement( new SOAPBodyElement(result[i]));
-                    }
-                    return ;
-                }
-                catch( NoSuchMethodException exp ) {exp2 = exp;}
-            }
-
-            if ( method == null ) {
               // Try the the simplest case first - just Document as the param 
               /////////////////////////////////////////////////////////////////
                 argClasses = new Class[1];
@@ -183,22 +156,6 @@ public class MsgProvider extends JavaProvider {
                 argClasses[0] = clsLoader.loadClass("org.w3c.dom.Document");
                 argObjects[0] = doc ;
 
-                try {
-                    method = jc.getJavaClass().getMethod( methodName, argClasses );
-                }
-                catch( NoSuchMethodException exp ) {exp2 = exp;}
-            }
-
-            if ( method == null ) {
-              // Ok, no match - so now add MessageContext as the first param
-              // and try it again
-              ///////////////////////////////////////////////////////////////
-                argClasses = new Class[2];
-                argObjects = new Object[2];
-                argClasses[0] = clsLoader.loadClass("org.apache.axis.MessageContext");
-                argClasses[1] = clsLoader.loadClass("org.w3c.dom.Document");
-                argObjects[0] = msgContext ;
-                argObjects[1] = doc ;
                 try {
                     method = jc.getJavaClass().getMethod( methodName, argClasses );
                 }
