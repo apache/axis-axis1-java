@@ -55,27 +55,24 @@
 
 package org.apache.axis.client ;
 
-import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsdl.gen.Parser;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.w3c.dom.Document;
 
 import javax.naming.Reference;
 import javax.naming.Referenceable;
 import javax.naming.StringRefAddr;
-
 import javax.wsdl.Binding;
-import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
@@ -88,11 +85,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Remote;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.Hashtable;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -113,10 +110,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
     private QName               serviceName     = null ;
     private URL                 wsdlLocation    = null ;
-    private Definition          wsdlDefinition  = null ;
     private javax.wsdl.Service  wsdlService     = null ;
     private boolean             maintainSession = false ;
     private HandlerRegistryImpl registry = new HandlerRegistryImpl();
+    private Parser              wsdlParser      = null;
 
     /**
      * Thread local storage used for storing the last call object
@@ -131,14 +128,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private Hashtable transportImpls = new Hashtable();
 
     
-    Definition getWSDLDefinition() {
-        return( wsdlDefinition );
-    }
-
-    javax.wsdl.Service getWSDLService() {
+    protected javax.wsdl.Service getWSDLService() {
         return( wsdlService );
     }
 
+    protected Parser getWSDLParser() {
+        return( wsdlParser );
+    }
+    
     protected AxisClient getAxisClient()
     {
         return new AxisClient(config);
@@ -185,11 +182,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         this.serviceName = serviceName;
         engine = getAxisClient();
         this.wsdlLocation = wsdlDoc;
-        Definition def = null ;
+        Parser parser = null ;
 
         if ( cachingWSDL &&
-             (def = (Definition) cachedWSDL.get(this.wsdlLocation.toString())) != null ){
-          initService( def, serviceName );
+             (parser = (Parser) cachedWSDL.get(this.wsdlLocation.toString())) != null ){
+          initService( parser, serviceName );
         }
         else {
             Document doc = null;
@@ -223,11 +220,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         }
         catch (MalformedURLException mue) {
         }
-        // Start by reading in the WSDL using WSDL4J
-        Definition def = null ;
+        // Start by reading in the WSDL using Parser
+        Parser parser = null ;
         if ( cachingWSDL &&
-             (def = (Definition) cachedWSDL.get(this.wsdlLocation.toString())) != null ) {
-          initService( def, serviceName );
+             (parser = (Parser) cachedWSDL.get(this.wsdlLocation.toString())) != null ) {
+          initService( parser, serviceName );
         }
         else {
             Document doc = null;
@@ -274,16 +271,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private void initService(Document doc, QName serviceName)
             throws ServiceException {
         try {
-            // Start by reading in the WSDL using WSDL4J
-            WSDLReader           reader = WSDLFactory.newInstance()
-                                                     .newWSDLReader();
-            reader.setFeature("javax.wsdl.verbose", false);
-            Definition           def    = reader.readWSDL( null, doc );
+            // Start by reading in the WSDL using Parser
+            Parser parser = new Parser();
+            parser.run(this.wsdlLocation.toString());
 
             if ( cachingWSDL && this.wsdlLocation != null )
-              cachedWSDL.put( this.wsdlLocation.toString(), def );
+              cachedWSDL.put( this.wsdlLocation.toString(), parser );
 
-            initService( def, serviceName );
+            initService( parser, serviceName );
         }
         catch( Exception exp ) {
             throw new ServiceException(
@@ -291,12 +286,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         }
     }
 
-    private void initService(Definition def, QName serviceName)
+    private void initService(Parser parser, QName serviceName)
             throws ServiceException {
         try {
-            this.wsdlDefinition = def ;
-
-            this.wsdlService    = def.getService( serviceName );
+            this.wsdlParser = parser ;
+            ServiceEntry serviceEntry = parser.getSymbolTable().getServiceEntry(serviceName);
+            if ( serviceEntry != null)
+                this.wsdlService    = serviceEntry.getService(); 
             if ( this.wsdlService == null )
                 throw new ServiceException(
                         Messages.getMessage("noService00", "" + serviceName));
@@ -450,7 +446,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         // We can't prefill information if WSDL is not specified,
         // So just return the call that we just created.
-        if ( wsdlDefinition == null )
+        if ( wsdlParser == null )
             return call;
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
