@@ -151,7 +151,6 @@ public class Java2WsdlAntTask extends Task
                     Project.MSG_VERBOSE);
             ClassUtils.setDefaultClassLoader(cl);
             //add extra classes to the classpath when the classpath attr is not null
-            //??why do we do this? Why don't we do this when the classpath is unset?
             if(extraClasses!=null) {
                 StringTokenizer tokenizer = new StringTokenizer(extraClasses, " ,");
                 while (tokenizer.hasMoreTokens()) {
@@ -257,9 +256,13 @@ public class Java2WsdlAntTask extends Task
         }
     }
 
+    /**
+     * add a classpath containing the java classes.
+     * @return
+     */
     public Path createClasspath() {
       if (classpath == null) {
-        classpath = new Path(project);
+        classpath = new Path(getProject());
       }
       return classpath.createPath();
     }
@@ -478,7 +481,7 @@ public class Java2WsdlAntTask extends Task
     }
 
     /**
-     * The setter for the "extraClasses" attribute
+     * A comma separated list of classes to add to the classpath. 
      */
     public void setExtraClasses(String extraClasses) {
         this.extraClasses = extraClasses;
