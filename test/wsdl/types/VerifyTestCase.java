@@ -742,44 +742,28 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("methodUnsignedByte Exception caught: " + re );
         }
         try {
-            NonNegativeInteger sendValue = null;
-            try {
-                sendValue = new NonNegativeInteger("246802468024680");
-            } catch (Exception e) {
-            }
+            NonNegativeInteger sendValue = new NonNegativeInteger("246802468024680");
             NonNegativeIntegerHolder nnih = new NonNegativeIntegerHolder(sendValue);
             NonNegativeInteger actual = binding.methodNonNegativeInteger(sendValue, nnih);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodNonNegativeInteger Exception caught: " + re );
         }
         try {
-            PositiveInteger sendValue = null;
-            try {
-                sendValue = new PositiveInteger("246802468024680");
-            } catch (Exception e) {
-            }
+            PositiveInteger sendValue = new PositiveInteger("246802468024680");
             PositiveIntegerHolder pih = new PositiveIntegerHolder(sendValue);
             PositiveInteger actual = binding.methodPositiveInteger(sendValue, pih);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodPositiveInteger Exception caught: " + re );
         }
         try {
-            NonPositiveInteger sendValue = null;
-            try {
-                sendValue = new NonPositiveInteger("-246802468024680");
-            } catch (Exception e) {
-            }
+            NonPositiveInteger sendValue = new NonPositiveInteger("-246802468024680");
             NonPositiveIntegerHolder npih = new NonPositiveIntegerHolder(sendValue);
             NonPositiveInteger actual = binding.methodNonPositiveInteger(sendValue, npih);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodNonPositiveInteger Exception caught: " + re );
         }
         try {
-            NegativeInteger sendValue = null;
-            try {
-                sendValue = new NegativeInteger("-246802468024680");
-            } catch (Exception e) {
-            }
+            NegativeInteger sendValue = new NegativeInteger("-246802468024680");
             NegativeIntegerHolder nih = new NegativeIntegerHolder(sendValue);
             NegativeInteger actual = binding.methodNegativeInteger(sendValue, nih);
         } catch (java.rmi.RemoteException re) {
@@ -789,7 +773,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
             URI sendValue = null;
             try {
                 sendValue = new URI("urn:this-is-a-test");
-            } catch (Exception e) {
+            } catch (URI.MalformedURIException e) {
             }
             URIHolder ch = new URIHolder(sendValue);
             URI actual = binding.methodAnyURI(sendValue, ch);
@@ -798,11 +782,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         
         try {
-            SimpleAnyURIType sendValue = null;
-            try {
-                sendValue = new SimpleAnyURIType("urn:this-is-a-simple-test");
-            } catch (Exception e) {
-            }
+            SimpleAnyURIType sendValue = new SimpleAnyURIType("urn:this-is-a-simple-test");
             SimpleAnyURITypeHolder ch = new SimpleAnyURITypeHolder(sendValue);
             SimpleAnyURIType actual = binding.methodSimpleAnyURI(sendValue, ch);
         } catch (java.rmi.RemoteException re) {
