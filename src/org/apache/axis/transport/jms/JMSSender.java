@@ -153,6 +153,9 @@ public class JMSSender extends BasicHandler
         if(context.containsProperty(JMSConstants.TIME_TO_LIVE))
             props.put(JMSConstants.TIME_TO_LIVE,
             context.getProperty(JMSConstants.TIME_TO_LIVE));
+        if(context.containsProperty(JMSConstants.JMS_CORRELATION_ID))
+            props.put(JMSConstants.JMS_CORRELATION_ID,
+            context.getProperty(JMSConstants.JMS_CORRELATION_ID));
         return props;
     }
 
