@@ -89,7 +89,7 @@ public abstract class TestClient {
      * verifies arrays are equal.
      */
     protected boolean equals(Object obj1, Object obj2) {
-       if (obj1 == null) return (obj2 == null);
+       if (obj1 == null || obj2 == null) return (obj1 == obj2);
        if (obj1.equals(obj2)) return true;
        if (!obj2.getClass().isArray()) return false;
        if (!obj1.getClass().isArray()) return false;
@@ -201,6 +201,8 @@ public abstract class TestClient {
                     System.out.println(method + "\t OK");
                 } else {
                     System.out.println(method + "\t Fail: " + gotBack);
+                    if (gotBack instanceof Exception)
+                        ((Exception)gotBack).printStackTrace();
                 }
             }
         };
