@@ -101,3 +101,10 @@ them.
 <property name="foreach.fork" value="no"/>
 <property name="ant.inheritAll" value="false"/>
 <property name="ant.inheritRefs" value="false"/>
+
+<!-- to test against .NET, we need a local IIS instance-->
+<property name="iis.base" location="c:\inetpub\wwwroot" />
+<property name="iis.hostname" value="127.0.0.1"/>
+<property name="iis.port" value="80"/>
+
+

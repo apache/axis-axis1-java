@@ -194,6 +194,41 @@
       <available classname="org.exolab.castor.xml.MarshalException" classpathref="classpath" />
     </condition>
     
+
+    <!-- look for WSDL support on the platform -->    
+    <condition property="wsdl.found">
+      <or>
+        <available file="wsdl"     filepath="${env.PATH}"/>
+        <available file="wsdl.exe" filepath="${env.PATH}"/>
+        <available file="wsdl.exe" filepath="${env.Path}"/>
+      </or>
+    </condition>
+    <echo level="verbose">wsdl.found=${wsdl.found}</echo>
+    <condition property="csc.found">
+      <or>
+        <available file="csc"     filepath="${env.PATH}"/>
+        <available file="csc.exe" filepath="${env.PATH}"/>
+        <available file="csc.exe" filepath="${env.Path}"/>
+      </or>
+    </condition>
+    <echo level="verbose">csc.found=${csc.found}</echo>
+    <condition property="dotnetapps.found">
+      <and>
+        <isset property="csc.found"/>
+        <isset property="wsdl.found"/>
+      </and>
+    </condition>
+    <echo level="verbose">dotnetapps.found=${dotnetapps.found}</echo>
+    <!-- look for IIS -->
+    <condition property="iis.found">
+      <and>
+        <os family="windows" />
+        <available file="${iis.base}" type="dir" />
+      </and>
+    </condition>
+    <echo level="verbose">iis.found=${iis.found}</echo>
+    <echo level="verbose">iis.base=${iis.base}</echo>
+
   </target>
 
   <!-- print out the current enviroment. 
