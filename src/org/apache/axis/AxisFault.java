@@ -313,49 +313,43 @@ public class AxisFault extends java.rmi.RemoteException {
      */
     public String dumpToString()
     {
-        String details = new String();
-
+        StringBuffer buf = new StringBuffer("AxisFault");
+        buf.append(JavaUtils.LS);
+        buf.append(" faultCode: ");
+        buf.append(XMLUtils.xmlEncodeString(faultCode.toString()));
+        buf.append(JavaUtils.LS);
+        buf.append(" faultSubcode: ");
+        if (faultSubCode != null) {
+            for (int i = 0; i < faultSubCode.size(); i++) {
+                buf.append(JavaUtils.LS);
+                buf.append(faultSubCode.elementAt(i).toString());
+            }
+        }
+        buf.append(JavaUtils.LS);
+        buf.append(" faultString: ");
+        buf.append(XMLUtils.xmlEncodeString(faultString));
+        buf.append(JavaUtils.LS);
+        buf.append(" faultActor: ");
+        buf.append(XMLUtils.xmlEncodeString(faultActor));
+        buf.append(JavaUtils.LS);
+        buf.append(" faultNode: ");
+        buf.append(XMLUtils.xmlEncodeString(faultNode));
+        buf.append(JavaUtils.LS);
+        buf.append(" faultDetail: ");
         if (faultDetails != null) {
             for (int i=0; i < faultDetails.size(); i++) {
                 Element e = (Element) faultDetails.get(i);
-                String namespace= e.getNamespaceURI();
-                if(namespace==null) {
-                    namespace="";
-                }
-                String partname= e.getLocalName();
-                if(partname==null) {
-                    partname=e.getNodeName();
-                }
-                details += JavaUtils.LS
-                          + "\t{" + namespace + "}"
-                          + partname + ": "
-                          + XMLUtils.getInnerXMLString(e);
+                buf.append(JavaUtils.LS);
+                buf.append("\t{");
+                buf.append(null == e.getNamespaceURI() ? "" : e.getNamespaceURI());
+                buf.append("}");
+                buf.append(null == e.getLocalName() ? "" : e.getLocalName());
+                buf.append(":");
+                buf.append(XMLUtils.getInnerXMLString(e));
             }
         }
-
-        String subCodes = new String();
-        if (faultSubCode != null) {
-            for (int i = 0; i < faultSubCode.size(); i++) {
-                subCodes += JavaUtils.LS
-                            + (QName)faultSubCode.elementAt(i);
-            }
-        }
-        //encode everything except details and subcodes, which are already
-        //dealt with one way or another.
-        String code= XMLUtils.xmlEncodeString(faultCode.toString());
-        String errorString= XMLUtils.xmlEncodeString(faultString);
-        String actor= XMLUtils.xmlEncodeString(faultActor);
-        String node= XMLUtils.xmlEncodeString(faultNode);
-
-
-        return "AxisFault" + JavaUtils.LS
-            + " faultCode: " + code + JavaUtils.LS
-            + " faultSubcode: " + subCodes + JavaUtils.LS
-            + " faultString: " + errorString + JavaUtils.LS
-            + " faultActor: " + actor + JavaUtils.LS
-            + " faultNode: " + node + JavaUtils.LS
-            + " faultDetail: " + details + JavaUtils.LS
-            ;
+        buf.append(JavaUtils.LS);
+        return buf.toString();
     }
 
     /**
