@@ -29,7 +29,7 @@ import org.apache.axis.schema.SchemaVersion;
  * This is the implementation of the axis Default JAX-RPC SOAP Encoding TypeMapping
  * See DefaultTypeMapping for more information.
  */
-public class DefaultJAXRPC11TypeMappingImpl extends DefaultSOAPEncodingTypeMappingImpl {
+public class DefaultJAXRPC11TypeMappingImpl extends DefaultTypeMappingImpl {
 
     private static DefaultJAXRPC11TypeMappingImpl tm = null;
 

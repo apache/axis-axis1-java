@@ -44,6 +44,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestCircularRefs.class);
         suite.addTestSuite(TestAutoTypes.class);
         suite.addTestSuite(EncodingTest.class);
+        suite.addTestSuite(TestDefaultTM.class);
         return suite;
     }
 }
