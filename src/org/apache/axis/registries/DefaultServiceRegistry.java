@@ -63,6 +63,7 @@ import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Admin ;
 import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
 
@@ -115,19 +116,22 @@ public class DefaultServiceRegistry extends SupplierRegistry {
     msgContext.setProperty(Constants.HANDLER_REGISTRY, handlerRegistry);
     msgContext.setProperty(Constants.SERVICE_REGISTRY, this);
 
-    SimpleTargetedChain  cc = null ;
-
     if ( onServer ) {
-      this.add( "JWSProcessor", handlerRegistry.find( "JWSProcessor" ) );
+      Handler h = handlerRegistry.find( "JWSProcessor" );
+      if (h != null)
+        this.add( "JWSProcessor",  new SOAPService(h, "JWSProcessor"));
 
-      cc = new SimpleTargetedChain();
-      cc.setPivotHandler( handlerRegistry.find( "MsgDispatcher" ) );
-      cc.addOption( "className", "org.apache.axis.utils.Admin" );
-      cc.addOption( "methodName", "AdminService" );
-      handlerRegistry.add( "AdminService", cc );
-      this.add( "AdminService", cc );
+      SOAPService service = new SOAPService();
+      service.setPivotHandler( handlerRegistry.find( "MsgDispatcher" ) );
+      service.addOption(SOAPService.OPTION_PIVOT, "MsgDispatcher");
+      service.addOption( "className", "org.apache.axis.utils.Admin" );
+      service.addOption( "methodName", "AdminService" );
+      handlerRegistry.add( "AdminService", service ); // ???
+      this.add( "AdminService", service );
       
-      this.add( "EchoService", handlerRegistry.find( "EchoHandler" ) );
+      h = handlerRegistry.find( "EchoHandler" );
+      if (h != null)
+        this.add( "EchoService",  new SOAPService(h, "EchoHandler"));
     }
     else {
       // Do nothing

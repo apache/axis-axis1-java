@@ -52,82 +52,79 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers;
+package org.apache.axis.handlers.soap;
 
 import org.apache.axis.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
 
-/** 
+/** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
+ * invocation.  It has an input chain, an output chain, and a pivot-point,
+ * and handles the SOAP semantics when invoke()d.
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com) 
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class SOAPServerHandler extends BasicHandler 
+public class SOAPService extends SimpleTargetedChain
 {
+    public static final String OPTION_PIVOT = "pivot";
+    
+    /** Standard, no-arg constructor.
+     */
+    public SOAPService()
+    {
+    }
+    
+    /** Convenience constructor for wrapping SOAP semantics around
+     * "service handlers" which actually do work.
+     */
+    public SOAPService(Handler serviceHandler, String pivotName)
+    {
+        super();
+        setPivotHandler(serviceHandler);
+        addOption(OPTION_PIVOT, pivotName);
+    }
+    
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        Debug.Print( 1, "Enter: SOAPServerHandler::invoke" );
-        SimpleTargetedChain stc = null ;
-
-        String target = msgContext.getTargetService();
-        if ( target == null ) {
-          Debug.Print( 1, "No target set - looking in the Body element" );
-        }
-        else
-          Debug.Print( 1, "Target: " + target );
+        Debug.Print( 1, "Enter: SOAPService::invoke" );
         
-        if ( target == null )
-          throw new AxisFault( "AxisServer.error",
-                               "No target field set", null, null );
-
-        HandlerRegistry serviceReg = null ;
-        serviceReg = 
-          (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
-
-        if ( serviceReg == null )
-          throw new AxisFault("AxisServer.error",
-                              "No service registry set", null, null );
-                         
-        Handler service  = serviceReg.find( target );
-        Handler h = null ;
-        if ( service == null )
-          throw new AxisFault("AxisSever.error",
-                              "Can't find target handler: " + target, 
-                              null, null );
-        msgContext.setProperty( MessageContext.SVC_HANDLER, service );
+        msgContext.setProperty( MessageContext.SVC_HANDLER, this );
         
-        if ( service instanceof SimpleTargetedChain ) {
-          Debug.Print( 2, "Invoking input chain" );
-          stc = (SimpleTargetedChain) service ;
-          h = stc.getInputChain() ;
-          if ( h != null ) h.invoke(msgContext);
+        Handler h = getInputChain() ;
+        if ( h != null ) {
+            Debug.Print( 2, "Invoking input chain" );
+            h.invoke(msgContext);
+        } else {
+            Debug.Print( 3, "No input chain" );
         }
 
         // Do SOAP semantics here
+        Debug.Print( 2, "Doing SOAP semantic checks...");
 
-        if ( stc != null ) {
-          h = stc.getPivotHandler();
-          if ( h != null ) {
+        h = getPivotHandler();
+        if ( h != null ) {
             Debug.Print( 2, "Invoking service/pivot" );
             h.invoke(msgContext);
-          }
-          h = stc.getOutputChain();
-          if ( h != null ) {
+        } else {
+            Debug.Print( 3, "No service/pivot" );
+        }
+        
+        h = getOutputChain();
+        if ( h != null ) {
             Debug.Print( 2, "Invoking output chain" );
             h.invoke(msgContext);
-          }
-        }
-        else {
-          Debug.Print( 2, "Invoking service" );
-          service.invoke(msgContext);
+        } else {
+            Debug.Print( 3, "No output chain" );
         }
 
-        Debug.Print( 1, "Exit : SOAPServerHandler::invoke" );
+        Debug.Print( 1, "Exit : SOAPService::invoke" );
     }
 
     public void undo(MessageContext msgContext) 
     {
-        Debug.Print( 1, "Enter: SOAPServerHandler::undo" );
-        Debug.Print( 1, "Exit: SOAPServerHandler::undo" );
+        Debug.Print( 1, "Enter: SOAPService::undo" );
+        Debug.Print( 1, "Exit: SOAPService::undo" );
     }
 }
