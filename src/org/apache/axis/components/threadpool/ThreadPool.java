@@ -71,11 +71,19 @@ public class ThreadPool {
     protected static Log log =
         LogFactory.getLog(ThreadPool.class.getName());
 
-    public static final long MAX_THREADS = 100;
+    public static final int DEFAULT_MAX_THREADS = 100;
     
     protected Map threads = new Hashtable();
     protected long threadcount;
     public boolean _shutdown;
+    private int maxPoolSize = DEFAULT_MAX_THREADS;
+
+    public ThreadPool() {
+    }
+
+    public ThreadPool(int maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
 
     public void cleanup()
         throws InterruptedException {
@@ -130,9 +138,9 @@ public class ThreadPool {
         if (log.isDebugEnabled()) {
             log.debug("Enter: ThreadPool::addWorker");
         }
-        if (_shutdown ||
-            threadcount == MAX_THREADS)
+        if (_shutdown || threadcount == maxPoolSize) {
             throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
+        }
         Thread thread = new Thread(worker);
         threads.put(worker, thread);
         threadcount++;
@@ -231,7 +239,6 @@ public class ThreadPool {
             }
             return false;
         }
-        long start = System.currentTimeMillis();
         for (; ;) {
             wait(waittime);
             if (threadcount == 0) {
