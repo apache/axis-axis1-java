@@ -67,7 +67,7 @@ public class Wsdl2java
     private static void usage() {
         System.out.println ("Usage: java org.apache.axis.wsdl.Wsdl2java [-verbose] [-skeleton [-messageContext]] WSDL-URI");
         System.out.println ("Switches:");
-        System.out.println ("   -verbose - Turn on verbose output");
+        System.out.println ("   -verbose - emit informational messages");
         System.out.println ("   -skeleton - emit skeleton class for web service");
         System.out.println ("   -messageContext - emit a MessageContext parameter in skeleton");
         System.exit(-1);
@@ -76,21 +76,23 @@ public class Wsdl2java
 
     public static void main(String[] args) {
         try {
-            boolean bSkeleton, bVerbose, bMessageContext;
-            bSkeleton = bVerbose = bMessageContext = false;
-
+            boolean bSkeleton = false;
+            boolean bMessageContext = false;
+            boolean bVerbose = false;
             int argcount = args.length;
             int arg = 0;
             while ( arg < (args.length-1)) {
-                if ( args[arg].startsWith("-v")) {
-                    bVerbose = true;
-                    --argcount;
-                }
-               if( args[arg].startsWith("-skel") )      {
+                if( args[arg].equals("-skeleton") )      {
                     bSkeleton = true;
                    --argcount;
                 }
-               if( args[arg].startsWith("-messageContext") )        {
+                if( args[arg].equals("-verbose") )      {
+                    bVerbose = true;
+                   --argcount;
+                }
+                if( args[arg].equals("-messageContext") )        {
+                	if(!bSkeleton)
+                	    usage();            
                     bMessageContext = true;
                    --argcount;
                 }
@@ -102,14 +104,10 @@ public class Wsdl2java
             String uri = args[arg];
             if (uri.startsWith("-"))
                 usage();
-            if (bMessageContext && !bSkeleton) {
-                System.out.println("Error: -messageContext switch only valid with -skeleton");
-                usage();
-            }
 
             Emitter emitter = new Emitter ();
-            emitter.verbose(bVerbose);
             emitter.generateSkeleton(bSkeleton);
+            emitter.verbose(bVerbose);
             emitter.generateMessageContext(bMessageContext);
             emitter.emit (uri);
         }
