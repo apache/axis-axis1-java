@@ -18,11 +18,12 @@ public class TestSimpleSession extends TestCase {
         Object val = new Float(5.6666);
         session.set("test", val);
         
-        assertEquals(val, session.get("test"));
+        assertEquals("\"test\" equals \"" + session.get("test") + "\", not \"" + val + "\" as expected",
+                     val, session.get("test"));
         
         session.remove("test");
         
-        assertNull(session.get("test"));
+        assertNull("Did not remove \"test\" from the session successfully", session.get("test"));
         
     }
     
