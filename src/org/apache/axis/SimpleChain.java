@@ -155,8 +155,6 @@ public class SimpleChain extends BasicHandler implements Chain {
                 i++;
             }
         } catch( AxisFault f ) {
-            // notify fault in reverse order and then rethrow
-            log.error( JavaUtils.getMessage("axisFault00"), f );
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).onFault( msgContext );
             throw f;
