@@ -1,3 +1,5 @@
+package samples.userguide.example2;
+
 import org.apache.axis.client.ServiceClient;
 
 public class CalcClient

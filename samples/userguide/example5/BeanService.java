@@ -1,3 +1,4 @@
+package samples.userguide.example5;
 
 public class BeanService
 {

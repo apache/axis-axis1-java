@@ -1,3 +1,5 @@
+package samples.userguide.example1;
+
 import org.apache.axis.client.ServiceClient;
 
 public class TestClient
