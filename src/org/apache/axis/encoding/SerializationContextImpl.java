@@ -56,7 +56,6 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -68,7 +67,6 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
-import org.apache.axis.utils.IdentityHashMap;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
@@ -94,10 +92,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.HashMap;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
@@ -150,7 +148,7 @@ public class SerializationContextImpl implements SerializationContext
      * A place to hold objects we cache for multi-ref serialization, and
      * remember the IDs we assigned them.
      */
-    private IdentityHashMap multiRefValues = null;
+    private HashMap multiRefValues = null;
     private int multiRefIndex = -1;
 
     class MultiRefItem {
@@ -158,26 +156,31 @@ public class SerializationContextImpl implements SerializationContext
         Class javaType;
         QName xmlType;
         boolean sendType;
-        MultiRefItem(String id, Class javaType, QName xmlType, boolean sendType) {
+        Object value;
+        MultiRefItem(String id,
+                     Class javaType,
+                     QName xmlType,
+                     boolean sendType, Object value) {
             this.id = id;
             this.javaType = javaType;
             this.xmlType = xmlType;
             this.sendType = sendType;
+            this.value = value;
         }
 
     }
     /**
-     * These three variables are necessary to process 
+     * These three variables are necessary to process
      * multi-level object graphs for multi-ref serialization.
      * While writing out nested multi-ref objects (via outputMultiRef), we
-     * will fill the secondLevelObjects vector 
+     * will fill the secondLevelObjects vector
      * with any new objects encountered.
      * The outputMultiRefsFlag indicates whether we are currently within the
      * outputMultiRef() method (so that serialization() knows to update the
      * secondLevelObjects vector).
      * The forceSer variable is the trigger to force actual serialization of the indicated object.
      */
-    private IdentityHashMap secondLevelObjects = null;
+    private HashSet secondLevelObjects = null;
     private Object forceSer = null;
     private boolean outputMultiRefsFlag = false;
 
@@ -350,7 +353,7 @@ public class SerializationContextImpl implements SerializationContext
         if ((uri == null) || (uri.equals("")))
             return null;
 
-        // If we're looking for an attribute prefix, we shouldn't use the 
+        // If we're looking for an attribute prefix, we shouldn't use the
         // "" prefix, but always register/find one.
         String prefix = nsStack.getPrefix(uri, attribute);
 
@@ -358,7 +361,7 @@ public class SerializationContextImpl implements SerializationContext
             prefix = Constants.NS_PREFIX_SOAP_ENC;
             registerPrefixForURI(prefix, uri);
         }
-        
+
         if (prefix == null) {
             if (defaultPrefix == null) {
                 prefix = "ns" + lastPrefixIndex++;
@@ -441,7 +444,7 @@ public class SerializationContextImpl implements SerializationContext
      * There are slightly different rules for attributes:
      *  - There is no default namespace
      *  - any attribute in a namespace must have a prefix
-     * 
+     *
      * @param qName QName
      * @return prefixed qname representation for serialization.
      */
@@ -630,35 +633,58 @@ public class SerializationContextImpl implements SerializationContext
         // If multi-reference is enabled and this object value is not a primitive
         // and we are not forcing serialization of the object, then generate
         // an element href (and store the object for subsequent outputMultiRef
-        // processing.
+        // processing).
+
+        // NOTE : you'll notice that everywhere we register objects in the
+        // multiRefValues and secondLevelObjects collections, we key them
+        // using getIdentityKey(value) instead of the Object reference itself.
+        // THIS IS IMPORTANT, and please make sure you understand what's
+        // going on if you change any of this code.  It's this way to make
+        // sure that individual Objects are serialized separately even if the
+        // hashCode() and equals() methods have been overloaded to make two
+        // Objects appear equal.
+
         if (doMultiRefs && (value != forceSer) && !isPrimitive(value, javaType)) {
             if (multiRefIndex == -1)
-                multiRefValues = new IdentityHashMap();
+                multiRefValues = new HashMap();
 
             String id;
-            MultiRefItem mri = (MultiRefItem)multiRefValues.get(value);
+
+            // Look for a multi-ref descriptor for this Object.
+            MultiRefItem mri = (MultiRefItem)multiRefValues.get(
+                                                        getIdentityKey(value));
             if (mri == null) {
+                // Didn't find one, so create one, give it a new ID, and store
+                // it for next time.
                 multiRefIndex++;
                 id = "id" + multiRefIndex;
-                mri = new MultiRefItem (id, javaType, xmlType, sendType);
-                multiRefValues.put(value, mri);
+                mri = new MultiRefItem (id, javaType, xmlType, sendType, value);
+                multiRefValues.put(getIdentityKey(value), mri);
 
-                /** Problem - if we're in the middle of writing out
-                 * the multi-refs and hit another level of the
-                 * object graph, we need to make sure this object
-                 * will get written.  For now, add it to a list
-                 * which we'll check each time we're done with
-                 * outputMultiRefs().
+                /** If we're in the middle of writing out
+                 * the multi-refs, we've already cloned the list of objects
+                 * and so even though we add a new one to multiRefValues,
+                 * it won't get serialized this time around.
+                 *
+                 * To deal with this, we maintain a list of "second level"
+                 * Objects - ones that need serializing as a result of
+                 * serializing the first level.  When outputMultiRefs() is
+                 * nearly finished, it checks to see if secondLevelObjects
+                 * is empty, and if not, it goes back and loops over those
+                 * Objects.  This can happen N times depending on how deep
+                 * the Object graph goes.
                  */
                 if (outputMultiRefsFlag) {
                     if (secondLevelObjects == null)
-                        secondLevelObjects = new IdentityHashMap();
-                    secondLevelObjects.put(value, value);
+                        secondLevelObjects = new HashSet();
+                    secondLevelObjects.add(getIdentityKey(value));
                 }
             } else {
+                // Found one, remember it's ID
                 id = mri.id;
             }
 
+            // Serialize an HREF to our object
             AttributesImpl attrs = new AttributesImpl();
             if (attributes != null && 0 < attributes.getLength())
                 attrs.setAttributes(attributes);
@@ -680,6 +706,19 @@ public class SerializationContextImpl implements SerializationContext
 
         // Actually serialize the value.  (i.e. not an href like above)
         serializeActual(elemQName, attributes, value, javaType, xmlType, sendType);
+    }
+
+    /**
+     * Get a String representation of the identity hashCode for a given
+     * Object.  This can be used as a unique key into a HashMap which will
+     * not give false hits on other Objects where hashCode() and equals()
+     * have been overriden to match.
+     *
+     * @param value the Object to hash
+     * @return a String containing the unique identity hashCode
+     */
+    private String getIdentityKey(Object value) {
+        return "" + System.identityHashCode(value);
     }
 
     /**
@@ -718,21 +757,22 @@ public class SerializationContextImpl implements SerializationContext
                            "CDATA",
                            encodingStyle);
 
-        Iterator i = 
-            ((IdentityHashMap)multiRefValues.clone()).keys().iterator();
+        Iterator i =
+            ((HashMap)multiRefValues.clone()).keySet().iterator();
         while (i.hasNext()) {
             while (i.hasNext()) {
                 Object val = i.next();
                 MultiRefItem mri = (MultiRefItem) multiRefValues.get(val);
                 attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
                                    mri.id);
-                forceSer = val;
+
+                forceSer = mri.value;
 
                 // Now serialize the value.
                 // The sendType parameter is set to true for interop purposes.
                 // Some of the remote services do not know how to
                 // ascertain the type in these circumstances (though Axis does).
-                serialize(multirefQName, attrs, val,
+                serialize(multirefQName, attrs, mri.value,
                           mri.javaType, mri.xmlType,
                           true,
                           true);   // mri.sendType
@@ -741,9 +781,9 @@ public class SerializationContextImpl implements SerializationContext
             // Done processing the iterated values.  During the serialization
             // of the values, we may have run into new nested values.  These
             // were placed in the secondLevelObjects map, which we will now
-            // process by changing the iterator to locate these values. 
+            // process by changing the iterator to locate these values.
             if (secondLevelObjects != null) {
-                i = secondLevelObjects.keys().iterator();
+                i = secondLevelObjects.iterator();
                 secondLevelObjects = null;
             }
         }
