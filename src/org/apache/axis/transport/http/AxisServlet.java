@@ -80,6 +80,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
