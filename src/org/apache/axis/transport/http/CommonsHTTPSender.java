@@ -39,6 +39,7 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -297,9 +298,20 @@ public class CommonsHTTPSender extends BasicHandler {
                 config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
             } else {
                 if (tcp.getProxyUser().length() != 0) {
-                    Credentials proxyCred =
-                    new UsernamePasswordCredentials(tcp.getProxyUser(),
-                    tcp.getProxyPassword());
+                    Credentials proxyCred = new UsernamePasswordCredentials(tcp.getProxyUser(),
+                                                tcp.getProxyPassword());
+                    // if the username is in the form "user\domain" 
+                    // then use NTCredentials instead.
+                    int domainIndex = tcp.getProxyUser().indexOf("\\");
+                    if (domainIndex > 0) {
+                        String domain = tcp.getProxyUser().substring(0, domainIndex);
+                        if (tcp.getProxyUser().length() > domainIndex + 1) {
+                            String user = tcp.getProxyUser().substring(domainIndex + 1);
+                            proxyCred = new NTCredentials(user,
+                                            tcp.getProxyPassword(),
+                                            tcp.getProxyHost(), domain);
+                        }
+                    }                     
                     client.getState().setProxyCredentials(null, null, proxyCred);
                 }
                 int proxyPort = new Integer(tcp.getProxyPort()).intValue();
