@@ -209,6 +209,9 @@ public class Emitter {
     /** Should we emit all mapped types in every WSDL? */
     private boolean emitAllTypes = false;
 
+    /** Version string to put at top of WSDL */
+    private String versionMessage = null;
+
     // Style Modes
 
     /** DEPRECATED - Indicates style=rpc use=encoded */
@@ -358,13 +361,17 @@ public class Emitter {
         }
 
         // Add Axis version info as comment to beginnning of generated WSDL
-        Comment wsdlVersion = doc.createComment(
-                Messages.getMessage(
-                        "wsdlCreated00",
-                        XMLUtils.xmlEncodeString(Version.getVersion())));
-
-        doc.getDocumentElement().insertBefore(
-                wsdlVersion, doc.getDocumentElement().getFirstChild());
+        if (versionMessage == null) {
+            String versionMessage = Messages.getMessage(
+                    "wsdlCreated00",
+                    XMLUtils.xmlEncodeString(Version.getVersion()));
+        }
+        // If version is empty string, don't emit one
+        if (versionMessage.length() > 0) {
+            Comment wsdlVersion = doc.createComment(versionMessage);
+            doc.getDocumentElement().insertBefore(
+                    wsdlVersion, doc.getDocumentElement().getFirstChild());
+        }
 
         // Return the document
         return doc;
@@ -941,7 +948,10 @@ public class Emitter {
             def.addService(service);
         }
 
-        if (serviceDesc.getDocumentation() != null) {
+        if (description != null) {
+            service.setDocumentationElement(
+                    createDocumentationElement(description));
+        } else if (serviceDesc.getDocumentation() != null) {
             service.setDocumentationElement(
                     createDocumentationElement(
                             serviceDesc.getDocumentation()));
@@ -2727,5 +2737,25 @@ public class Emitter {
 
     public void setEmitAllTypes(boolean emitAllTypes) {
         this.emitAllTypes = emitAllTypes;
+    }
+
+    /**
+     * Return the version message
+     * @return message or null if emitter will use the default
+     */
+    public String getVersionMessage()
+    {
+        return versionMessage;
+    }
+
+    /**
+     * Set the version message that appears at the top of the WSDL
+     * If not set, we use the default version message.
+     * If set to an empty string, no version message will be emitted
+     * @param versionMessage the message to emit
+     */
+    public void setVersionMessage(String versionMessage)
+    {
+        this.versionMessage = versionMessage;
     }
 }
