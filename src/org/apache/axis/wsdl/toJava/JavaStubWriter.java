@@ -383,7 +383,8 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("        if (call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
-        pw.println("        call.removeAllParameters();");
+        pw.println("        try {");
+        pw.println("            call.removeAllParameters();");
 
         // DUG: need to set the isRPC flag in the Call object
 
@@ -393,27 +394,34 @@ public class JavaStubWriter extends JavaWriter {
 
 
             QName qn = p.type.getQName();
-            String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                    qn.getLocalPart() + "\"))";
+            String typeString = "new javax.xml.rpc.namespace.QName(\"" +
+                    qn.getNamespaceURI() + "\", \"" +
+                    qn.getLocalPart() + "\")";
             if (p.mode == Parameter.IN) {
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
+                pw.println("            call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_IN);");
             }
             else if (p.mode == Parameter.INOUT) {
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", call.PARAM_MODE_INOUT);");
+                pw.println("            call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);");
             }
             else { // p.mode == Parameter.OUT
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", call.PARAM_MODE_OUT);");
+                pw.println("            call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);");
             }
         }
         // set output type
         if (parms.returnType != null) {
             QName qn = parms.returnType.getQName();
-            String outputType = "new org.apache.axis.encoding.XMLType(new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                qn.getLocalPart() + "\"))";
-            pw.println("        call.setReturnType(" + outputType + ");");
+            String outputType = "new javax.xml.rpc.namespace.QName(\"" +
+                qn.getNamespaceURI() + "\", \"" +
+                qn.getLocalPart() + "\")";
+            pw.println("            call.setReturnType(" + outputType + ");");
 
             pw.println();
         }
+        pw.println("        }");
+        pw.println("        catch (javax.xml.rpc.JAXRPCException jre) {");
+        pw.println("            throw new java.rmi.RemoteException(\"" +
+                JavaUtils.getMessage("badCall00") + "\");");
+        pw.println("        }");
 
         // SoapAction and Namespace
         if (soapAction != null) {
@@ -508,8 +516,7 @@ public class JavaStubWriter extends JavaWriter {
                 // call.getOutputParams ().  Pull the Objects from the appropriate place -
                 // resp or call.getOutputParms - and put them in the appropriate place,
                 // either in a holder or as the return value.
-                pw.println("            java.util.Vector output = call.getOutputParams();");
-                int outdex = 0;
+                pw.println("            java.util.Map output = call.getOutputParams();");
                 boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
@@ -542,15 +549,13 @@ public class JavaStubWriter extends JavaWriter {
                                 pw.println ("            " + javifiedName
                                             + ".value = (" + p.type.getName()
                                             + ") org.apache.axis.utils.JavaUtils.convert("
-                                            + "((org.apache.axis.message.RPCParam) output.get("
-                                            + outdex++ + ")).getValue(), "
+                                            + "output.get(\"" + p.name + "\"), "
                                             + p.type.getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName
                                             + ".value = " + getResponseString(p.type,
-                                    "((org.apache.axis.message.RPCParam) output.get("
-                                    + outdex++ + ")).getValue()"));
+                                    "output.get(\"" + p.name + "\")"));
                             }
                         }
                     }

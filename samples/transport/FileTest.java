@@ -8,6 +8,8 @@ import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
+
 /** Tests the simple File transport.  To run:
  *      java org.apache.axis.utils.Admin client client_deploy.xml
  *      java org.apache.axis.utils.Admin server deploy.xml
@@ -41,7 +43,7 @@ public class FileTest {
         engine.deployTransport("FileTransport", c);
 
         call.setOperationName( "getQuote" );
-        call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+        call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
         call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
         call.setReturnType( XMLType.XSD_FLOAT );
         call.setTransport( new FileTransport() );

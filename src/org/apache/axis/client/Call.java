@@ -76,7 +76,6 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.attachments.AttachmentPart; 
 import org.apache.axis.InternalException;
-import javax.xml.rpc.encoding.XMLType ;
 
 import org.apache.log4j.Category;
 
@@ -96,6 +95,7 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 
 import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ParameterMode;
 
 import java.beans.IntrospectionException;
 import java.io.PrintWriter;
@@ -131,14 +131,15 @@ import java.util.HashMap;
 public class Call implements javax.xml.rpc.Call {
     static Category category = Category.getInstance(Call.class.getName());
 
+    private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
     private QName              portTypeName    = null ;
-    private String             operationName   = null ;
+    private QName              operationName   = null ;
     private Vector             paramNames      = null ;
     private Vector             paramTypes      = null ;
     private Vector             paramModes      = null ;
     private String             encodingStyle   = null ;
-    private XMLType            returnType      = null ;
+    private QName              returnType      = null ;
 
     private MessageContext     msgContext      = null ;
 
@@ -154,7 +155,7 @@ public class Call implements javax.xml.rpc.Call {
     private String             transportName   = null ;
 
     // A place to store output parameters
-    private Vector             outParams       = null;
+    private HashMap            outParams       = null;
 
     // A place to store any client-specified headers
     private Vector             myHeaders       = null;
@@ -225,6 +226,17 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Is the caller required to provide the parameter and return type specification?  If true, then
+     * addParameter and setReturnType MUST be called to provide the meta data.  If false, then
+     * addParameter and setReturnType CANNOT be called because the Call object already has the meta
+     * data and the user is not allowed to mess with it.  These methods throw JAXRPCException if
+     * this method returns false.
+     */
+    public boolean isParameterAndReturnSpecRequired() {
+        return parmAndRetReq;
+    } // isParameterAndReturnSpecRequired
+
+    /**
      * Adds the specified parameter to the list of parameters for the
      * operation associated with this Call object.
      *
@@ -233,39 +245,42 @@ public class Call implements javax.xml.rpc.Call {
      * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
      *                       or PARAM_MODE_INOUT
      */
-    public void addParameter(String paramName, XMLType paramType,
-                             int parameterMode) {
+    public void addParameter(String paramName, QName paramType,
+            ParameterMode parameterMode) throws JAXRPCException {
+        if (parmAndRetReq) {
 
-        if ( paramNames == null ) {
-            paramNames = new Vector();
-            paramTypes = new Vector();
-            paramModes = new Vector();
+            if ( paramNames == null ) {
+                paramNames = new Vector();
+                paramTypes = new Vector();
+                paramModes = new Vector();
+            }
+
+            paramNames.add( paramName );
+            paramTypes.add( paramType );
+            paramModes.add( parameterMode );
+
         }
-
-        paramNames.add( paramName );
-        paramTypes.add( paramType.getType() );
-        paramModes.add( new Integer(parameterMode) );
+        else {
+            throw new JAXRPCException();
+        }
     }
 
     /**
-     * Return the XMLType of the parameters with the given name.
+     * Return the QName of the type of the parameters with the given name.
      *
      * Note: Not part of JAX-RPC specification.
      *
      * @param  paramName  name of the parameter to return
      * @return XMLType    XMLType of paramName, or null if not found.
      */
-    public XMLType getParameterTypeByName(String paramName) {
+    public QName getParameterTypeByName(String paramName) {
         int  i ;
 
         if ( paramNames == null ) return( null );
 
         for (i = 0 ; i< paramNames.size() ; i++ ) 
             if ( ((String)paramNames.get(i)).equals(paramName) ) {
-                org.apache.axis.encoding.XMLType  type ;
-                QName qn = (QName) paramTypes.get(i);
-                type = new org.apache.axis.encoding.XMLType( qn );
-                return( type );
+                return (QName) paramTypes.get(i);
             }
         return( null );
     }
@@ -273,31 +288,43 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Sets the return type of the operation associated with this Call object.
      *
-     * @param type XMLType of the return value.
+     * @param type QName of the return value type.
      */
-    public void setReturnType(XMLType type) {
-        returnType = type ;
+    public void setReturnType(QName type) throws JAXRPCException {
+        if (parmAndRetReq) {
+            returnType = type ;
+        }
+        else {
+            throw new JAXRPCException();
+        }
     }
 
     /**
-     * Returns the XMLType of the return value of this Call - or null if
+     * Returns the QName of the type of the return value of this Call - or null if
      * not set.
      *
      * Note: Not part of JAX-RPC specification.
      *
      * @return the XMLType specified for this Call (or null).
      */
-    public XMLType getReturnType() {
+    public QName getReturnType() {
         return( returnType );
     }
 
     /**
      * Clears the list of parameters.
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
+     * removeAllParameters will throw JAXRPCException.
      */
-    public void removeAllParameters() {
-        paramNames = null ;
-        paramTypes = null ;
-        paramModes = null ;
+    public void removeAllParameters() throws JAXRPCException {
+        if (parmAndRetReq) {
+            paramNames = null ;
+            paramTypes = null ;
+            paramModes = null ;
+        }
+        else {
+            throw new JAXRPCException();
+        }
     }
 
     /**
@@ -305,7 +332,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @return String Name of the operation or null if not set.
      */
-    public String getOperationName() {
+    public QName getOperationName() {
         return( operationName );
     }
 
@@ -316,8 +343,16 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param opName Name of the operation.
      */
-    public void setOperationName(String opName) {
+    public void setOperationName(QName opName) {
         operationName = opName ;
+    }
+
+    /**
+     * This is a convenience method.  If the user doesn't care about the QName of the operation, the
+     * user can call this method, which converts a String operation name to a QName.
+     */
+    public void setOperationName(String opName) {
+        operationName = new QName(opName);
     }
 
     public void setOperation(QName portName, String opName) 
@@ -445,11 +480,10 @@ public class Call implements javax.xml.rpc.Call {
                                   JavaUtils.getMessage("typeNotSet00", name) );
                 }
 
-                QName     tmpQN = new QName( type.getNamespaceURI(),
-                                             type.getLocalPart());
-                XMLType   xmlType = new org.apache.axis.encoding.XMLType(tmpQN);
-                int       mode = Call.PARAM_MODE_IN ;
-                this.addParameter( name, xmlType, mode );
+                QName qname = new QName(type.getNamespaceURI(),
+                        type.getLocalPart());
+                ParameterMode mode = ParameterMode.PARAM_MODE_IN;
+                this.addParameter( name, qname, mode );
             }
         }
 
@@ -479,10 +513,9 @@ public class Call implements javax.xml.rpc.Call {
                       throw new JAXRPCException(
                             JavaUtils.getMessage("typeNotSet00", "<return>") );
                 }
-                QName    tmpQN = new QName( type.getNamespaceURI(),
-                                            type.getLocalPart());
-                XMLType  xmlType = new org.apache.axis.encoding.XMLType(tmpQN);
-                this.setReturnType( xmlType );
+                QName qname = new QName(type.getNamespaceURI(),
+                        type.getLocalPart());
+                this.setReturnType( qname );
                 break ;
             }
         }
@@ -620,6 +653,41 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Invokes a specific operation using a synchronous request-response interaction mode. The invoke method takes 
+     * as parameters the object values corresponding to these defined parameter types. Implementation of the invoke 
+     * method must check whether the passed parameter values correspond to the number, order and types of parameters 
+     * specified in the corresponding operation specification.
+     *
+     * @param operationName - Name of the operation to invoke
+     * @param params  - Parameters for this invocation
+     *
+     * @return the value returned from the other end. 
+     *
+     * @throws java.rmi.RemoteException - if there is any error in the remote method invocation or if the Call 
+     * object is not configured properly.
+     */
+    public Object invoke(QName operationName, Object[] params)
+      throws java.rmi.RemoteException {
+        QName origOpName = this.operationName;
+        this.operationName = operationName;
+        try {
+            return this.invoke(params);
+        }
+        catch (java.rmi.RemoteException re) {
+            this.operationName = origOpName;
+            throw re;
+        }
+        catch (RuntimeException re) {
+            this.operationName = origOpName;
+            throw re;
+        }
+        catch (Error e) {
+            this.operationName = origOpName;
+            throw e;
+        }
+    } // invoke
+
+    /**
      * Invokes the operation associated with this Call object using the
      * passed in parameters as the arguments to the method.
      *
@@ -673,10 +741,14 @@ public class Call implements javax.xml.rpc.Call {
             throw new AxisFault( JavaUtils.getMessage("noOperation00") );
         try {
             String ns = (String) getProperty( Call.NAMESPACE );
-            if ( ns == null )
-                return( this.invoke(operationName,getParamList(params)) );
-            else
-                return( this.invoke(ns,operationName,getParamList(params)) );
+            if ( ns == null ) {
+                return this.invoke(
+                        operationName.getLocalPart(), getParamList(params));
+            }
+            else {
+                return this.invoke(
+                        ns, operationName.getLocalPart(), getParamList(params));
+            }
         }
         catch( AxisFault af) {
             throw af;
@@ -830,7 +902,7 @@ public class Call implements javax.xml.rpc.Call {
         // number of params passed in - if not throw an error
         /////////////////////////////////////////////////////////////////////
         for ( i = 0 ; i < paramNames.size() ; i++ ) {
-            if (((Integer)paramModes.get(i)).intValue() == Call.PARAM_MODE_OUT)
+            if (paramModes.get(i) == ParameterMode.PARAM_MODE_OUT)
                 continue ;
             numParams++ ;
         }
@@ -845,7 +917,7 @@ public class Call implements javax.xml.rpc.Call {
         Vector result = new Vector();
         int    j = 0 ;
         for ( i = 0 ; i < numParams ; i++ ) {
-            if (((Integer)paramModes.get(i)).intValue() == Call.PARAM_MODE_OUT)
+            if (paramModes.get(i) == ParameterMode.PARAM_MODE_OUT)
                 continue ;
             RPCParam p = new RPCParam( (String) paramNames.get(i),
                                           params[j++] );
@@ -1142,9 +1214,10 @@ public class Call implements javax.xml.rpc.Call {
              * Are there out-params?  If so, return a Vector instead.
              */
             if (resArgs.size() > 1) {
-                outParams = new Vector();
+                outParams = new HashMap();
                 for (int i = 1; i < resArgs.size(); i++) {
-                    outParams.add(resArgs.get(i));
+                    param = (RPCParam) resArgs.get(i);
+                    outParams.put(param.getName(), param.getValue());
                 }
             }
         }
@@ -1317,7 +1390,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @return Vector of RPCParams
      */
-    public Vector getOutputParams()
+    public Map getOutputParams()
     {
         return this.outParams;
     }

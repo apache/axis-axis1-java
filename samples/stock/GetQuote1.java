@@ -63,6 +63,8 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
+
 import javax.xml.rpc.namespace.QName;
 import java.net.URL;
 
@@ -156,7 +158,7 @@ public class GetQuote1 {
       call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
       call.setEncodingStyle( "http://schemas.xmlsoap.org/soap/encoding/" );
       call.setOperationName( "getQuote" );
-      call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+      call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
       call.setReturnType( XMLType.XSD_FLOAT );
 
       /* Define some service specific properties */

@@ -62,6 +62,8 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
+
 import javax.xml.rpc.namespace.QName;
 import java.net.URL;
 import java.util.Date;
@@ -126,7 +128,7 @@ public class TestClient {
             // Default return type based on what we expect
             call.setOperationName( "Buy" );
             call.setProperty( Call.NAMESPACE, "http://www.soapinterop.org/Bid");
-            call.addParameter( "PO", new XMLType(poqn), Call.PARAM_MODE_IN );
+            call.addParameter( "PO", poqn, ParameterMode.PARAM_MODE_IN );
             call.setReturnType( XMLType.XSD_STRING );
 
             LineItem[] li = new LineItem[2];

@@ -63,6 +63,8 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
+
 import java.net.URL;
 
 /**
@@ -107,7 +109,7 @@ public class GetQuote {
           call.setTargetEndpointAddress( url );
           call.setOperationName( "getQuote" );
           call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
-          call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+          call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
           call.setReturnType( XMLType.XSD_FLOAT );
 
           // TESTING HACK BY ROBJ

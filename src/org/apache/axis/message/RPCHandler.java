@@ -68,7 +68,6 @@ import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
@@ -194,19 +193,13 @@ public class RPCHandler extends SOAPHandler
             if ( msg != null && msg.getMessageType() == Message.RESPONSE ) {
                 Call c = (Call) msgContext.getProperty( MessageContext.CALL );
                 if ( c != null ) {
-                    XMLType xmlType = null ;
-
                     // First look for this param by name
-                    xmlType = (XMLType) c.getParameterTypeByName(localName);
+                    type = c.getParameterTypeByName(localName);
 
                     // If we can't find it by name then assume it must
                     // be the return type - is this correct/safe????
-                    if ( xmlType == null )
-                        xmlType = (XMLType) c.getReturnType();
-
-                    // Now get the QName
-                    if ( xmlType != null )
-                        type = xmlType.getType();
+                    if ( type == null )
+                        type = c.getReturnType();
                 }
             }
 

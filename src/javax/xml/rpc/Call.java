@@ -54,7 +54,8 @@
  */
 package javax.xml.rpc;
 
-import javax.xml.rpc.encoding.XMLType;
+import java.util.Map;
+
 import javax.xml.rpc.namespace.QName;
 
 /**
@@ -81,28 +82,14 @@ import javax.xml.rpc.namespace.QName;
  */
 public interface Call {
 
-    /** Field PARAM_MODE_IN           */
-    static public final int PARAM_MODE_IN = 1;
-
-    /** Field PARAM_MODE_OUT           */
-    static public final int PARAM_MODE_OUT = 2;
-
-    /** Field PARAM_MODE_INOUT           */
-    static public final int PARAM_MODE_INOUT = 3;
-
     /**
-     * Method getEncodingStyle
-     *
-     * @return namespace URI of the Encoding Style
+     * Is the caller required to provide the parameter and return type specification?  If true, then
+     * addParameter and setReturnType MUST be called to provide the meta data.  If false, then
+     * addParameter and setReturnType CANNOT be called because the Call object already has the meta
+     * data and the user is not allowed to mess with it.  These methods throw JAXRPCException if
+     * this method returns false.
      */
-    public String getEncodingStyle();
-
-    /**
-     * Method setEncodingStyle
-     *
-     * @param namespaceURI
-     */
-    public void setEncodingStyle(String namespaceURI);
+    public boolean isParameterAndReturnSpecRequired();
 
     /**
      * Adds a parameter type and mode for a specific operation. Note that the client code is not required to call any 
@@ -112,35 +99,54 @@ public interface Call {
      * @param paramName - Name of the parameter
      * @param paramType - XML datatype of the parameter
      * @param parameterMode - Mode of the parameter-whether PARAM_MODE_IN, PARAM_MODE_OUT or PARAM_MODE_INOUT
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
+     * addParameter will throw JAXRPCException.
      */
-    public void addParameter(String paramName, XMLType paramType,
-                             int parameterMode);
+    public void addParameter(String paramName, QName paramType,
+            ParameterMode parameterMode) throws JAXRPCException;
+
+    /**
+     * Given a parameter name, return the QName of its type.  If the parameter doesn't exist, this
+     * method returns null.
+     *
+     * @param paramName - Name of the parameter.
+     */
+    public QName getParameterTypeByName(String paramName);
 
     /**
      * Sets the return type for a specific operation.
      *
-     * @param type - XML data type of the return value
+     * @param xmlType - QName of the data type of the return value
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
+     * setReturnType will throw JAXRPCException.
      */
-    public void setReturnType(XMLType type);
+    public void setReturnType(QName xmlType) throws JAXRPCException;
 
     /**
-     * Removes all specified parameters from this Call instance
+     * Get the QName of the return type.
      */
-    public void removeAllParameters();
+    public QName getReturnType();
+
+    /**
+     * Removes all specified parameters from this Call instance.
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
+     * removeAllParameters will throw JAXRPCException.
+     */
+    public void removeAllParameters() throws JAXRPCException;
 
     /**
      * Gets the name of the operation to be invoked using this Call instance.
      *
-     * @return Name of the operation
+     * @return QName of the operation
      */
-    public String getOperationName();
+    public QName getOperationName();
 
     /**
      * Sets the name of the operation to be invoked using this Call instance.
      *
-     * @param operationName - Name of the operation to be invoked using the Call instance
+     * @param operationName - QName of the operation to be invoked using the Call instance
      */
-    public void setOperationName(String operationName);
+    public void setOperationName(QName operationName);
 
     /**
      * Gets the qualified name of the port type.
@@ -216,6 +222,23 @@ public interface Call {
      * method must check whether the passed parameter values correspond to the number, order and types of parameters 
      * specified in the corresponding operation specification.
      *
+     * @param operationName - Name of the operation to invoke
+     * @param params  - Parameters for this invocation
+     *
+     * @return the value returned from the other end. 
+     *
+     * @throws java.rmi.RemoteException - if there is any error in the remote method invocation or if the Call 
+     * object is not configured properly.
+     */
+    public Object invoke(QName operationName, Object[] params)
+            throws java.rmi.RemoteException;
+
+    /**
+     * Invokes a specific operation using a synchronous request-response interaction mode. The invoke method takes 
+     * as parameters the object values corresponding to these defined parameter types. Implementation of the invoke 
+     * method must check whether the passed parameter values correspond to the number, order and types of parameters 
+     * specified in the corresponding operation specification.
+     *
      * @param params  - Parameters for this invocation
      *
      * @return the value returned from the other end. 
@@ -236,8 +259,18 @@ public interface Call {
      * a non-void return type has been incorrectly specified for the one-way call) or if there is any error during 
      * the invocation of the one-way remote call
      */
-    public void invokeOneWay(Object[] params)
-        throws javax.xml.rpc.JAXRPCException;
+    public void invokeOneWay(Object[] params) throws JAXRPCException;
+
+    /**
+     * This method returns a java.util.Map of {name, value} for the PARAM_MODE_OUT and
+     * PARAM_MODE_INOUT parameters for the last invoked operation.  If there are no output
+     * parameters, this method returns an empty map.  The parameter names in the returned Map are of
+     * type String.  The ty0pe of a value depends on the mapping between the Java and XML types.
+     *
+     * @throws javax.xml.rpc.JAXRPCException - if this method is invoked on a one-way operation or
+     * if it is invoked before any invoke method has been called.
+     */
+    public Map getOutputParams() throws JAXRPCException;
 }
 
 
