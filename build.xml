@@ -293,8 +293,9 @@ Copyright:
   <!-- =================================================================== -->
 
   <target name="applets" depends="compile">
+    <mkdir dir="${build.webapp}/WEB-INF/classes/"/>
     <javac srcdir="${axis.home}/webapps/axis"
-      destdir="${axis.home}/webapps/axis"
+      destdir="${build.webapp}/WEB-INF/classes/"
       debug="${debug}"
       deprecation="${deprecation}"
       classpathref="classpath">
@@ -402,13 +403,14 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates the binary distribution                                     -->
   <!-- =================================================================== -->
-  <target name="javadocsdist" depends="javadocs" unless="javadoc.notrequired">
+  <target name="javadocsdist" depends="check-javadoc-needed, javadocs" unless="javadoc.notrequired">
+    <mkdir dir="${dist.dir}/docs/apiDocs"/>
     <copy todir="${dist.dir}/docs/apiDocs">
       <fileset dir="${build.javadocs}"/>
     </copy>
   </target>
 
-  <target name="dist" depends="compile, samples, junit"
+  <target name="dist" depends="compile, samples, applets, javadocsdist"
     description="create the full binary distribution">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
@@ -416,7 +418,6 @@ Copyright:
     <mkdir dir="${dist.dir}/webapps/axis"/>
     <mkdir dir="${dist.dir}/xmls"/>
     <mkdir dir="${dist.dir}/docs"/>
-    <mkdir dir="${dist.dir}/docs/apiDocs"/>
 
     <copy todir="${dist.dir}/lib">
       <fileset dir="${build.lib}"/>
@@ -444,19 +445,24 @@ Copyright:
     <copy todir="${dist.dir}/webapps/axis/WEB-INF/classes/samples">
       <fileset dir="${build.samples}"/>
     </copy>
+    <copy todir="${dist.dir}/webapps/axis/">
+      <fileset dir="${build.webapp}"/>
+    </copy>
     <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
     <copy file="README" tofile="${dist.dir}/README"/>
     <copy file="release-notes.html" tofile="${dist.dir}/release-notes.html"/>
     <copy todir="${dist.dir}/xmls">
       <fileset dir="xmls"/>
     </copy>
-    <antcall target="javadocsdist"/>
+    <zip destfile="${build.dir}/${name}-bin-${axis.dirname}.zip">
+        <zipfileset prefix="${name}-${axis.dirname}" dir="${dist.dir}"/>
+    </zip>
   </target>
 
   <!-- =================================================================== -->
   <!-- Creates the source distribution                                     -->
   <!-- =================================================================== -->
-  <target name="srcdist" depends="javadocs"
+  <target name="srcdist" depends="javadocsdist"
       description="Create the source distribution">
     <copy todir="${dist.dir}">
       <fileset dir=".">
@@ -475,10 +481,10 @@ Copyright:
         <exclude name="**/CVS/**"/>
       </fileset>
     </copy>
-    <copy todir="${dist.dir}/docs/apiDocs">
-      <fileset dir="${build.javadocs}"/>
-    </copy>
     <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
+    <zip destfile="${build.dir}/${name}-src-${axis.dirname}.zip">
+        <zipfileset prefix="${name}-${axis.dirname}" dir="${dist.dir}"/>
+    </zip>
   </target>
 
   <!-- =================================================================== -->
