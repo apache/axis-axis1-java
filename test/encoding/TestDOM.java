@@ -121,7 +121,7 @@ public class TestDOM extends TestCase {
        SOAPEnvelope envelope = message.getSOAPEnvelope();
        SOAPBodyElement bodyElement = (SOAPBodyElement)envelope.getBodyElements().elementAt(0);
        MessageElement me = (MessageElement) bodyElement.getChildren().get(0);
-       org.xml.sax.Attributes atts = me.getAttributes();
+       org.xml.sax.Attributes atts = me.getCompleteAttributes();
        assertTrue(atts.getLength()==2);
     }
 
