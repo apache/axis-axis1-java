@@ -323,8 +323,8 @@ public class RPCProvider extends JavaProvider
 
         // allowedMethods may be a comma-delimited string of method names.
         // If so, look for the one matching methodName.
-        if (allowedMethods != null && allowedMethods.indexOf(' ') != -1) {
-            StringTokenizer tok = new StringTokenizer(allowedMethods, " ");
+        if (allowedMethods != null) {
+            StringTokenizer tok = new StringTokenizer(allowedMethods, ", ");
             String nextMethodName = null;
             while (tok.hasMoreElements()) {
                 String token = tok.nextToken();
