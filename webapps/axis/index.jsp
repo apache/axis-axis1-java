@@ -23,6 +23,9 @@
 <%
     // initialize a private HttpServletRequest
     setRequest(request);
+
+    // set a resouce base
+    setResouceBase("i18n");
 %>
 
 <head>

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=utf-8" import="java.util.*" %>
+<%@ page import="java.util.*" %>
 <%
 /*
  * Copyright 2005 The Apache Software Foundation.
@@ -27,6 +27,9 @@
     // private variable
     HttpServletRequest _req = null;
 
+    // private variable
+    String _strResourceName = null;
+
     /**
      * Set a HttpServletRequest to a private variable.
      * @param request HttpServletRequest
@@ -36,22 +39,46 @@
     }
 
     /**
+     * Get the private variable of the HttpServletRequest.
+     * @return HttpServletRequest
+     */
+    HttpServletRequest getRequest() {
+        return _req;
+    }
+
+    /**
+     * Set a resouce base name to a private variable.
+     * @param resouce The resouce base name
+     */
+    void setResouceBase(String resource) {
+        _strResourceName = resource;
+    }
+
+    /**
+     * Get the private variable of the resouce base name.
+     * @return resouce The resouce base name
+     */
+    String getResouceBase() {
+        return _strResourceName;
+    }
+
+    /**
      * Get a ResourceBundle object.
      * @return a ResourceBundle object
      */
     ResourceBundle getRB() {
-        String strLocale = _req.getParameter("locale");
+        String strLocale = getRequest().getParameter("locale");
         ResourceBundle objRb = null;
         Locale objLcl = null;
 
         if (strLocale!=null) {
             objLcl=new Locale(strLocale,"");
         } else {
-            objLcl=_req.getLocale();
+            objLcl=getRequest().getLocale();
         }
 
         Locale.setDefault(objLcl);
-        objRb = ResourceBundle.getBundle("i18n",objLcl);
+        objRb = ResourceBundle.getBundle(getResouceBase(),objLcl);
 
         return objRb;
     }
@@ -61,11 +88,11 @@
      * @return a list of supported locales
      */
     String getLocaleChoice() {
-        String choice = getRB().getString("locales");
+        String choice = getMessage("locales");
         StringBuffer buf = new StringBuffer();
         
         buf.append("<div align=\"right\">\n");
-        buf.append(getRB().getString("language"));
+        buf.append(getMessage("language"));
         buf.append(": ");
 
         StringTokenizer st = new StringTokenizer(choice);
