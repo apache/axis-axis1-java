@@ -10,8 +10,8 @@ import junit.framework.TestCase;
 public class JAXRPCHandler2TestCase extends TestCase {
 
     protected String serviceEndpointUrl =
-	"http://localhost:8080/axis/services/EchoService";
-    protected String qnameService = "EchoService";
+	"http://localhost:8080/axis/services/EchoService2";
+    protected String qnameService = "EchoService2";
     protected String qnamePort = "EchoServicePort";
     
     protected Call call;
