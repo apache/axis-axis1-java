@@ -326,29 +326,34 @@
     <echo message="build.dest = ${build.dest}"/>
     <echo message="lib.dir = ${lib.dir}"/>
     <echo message=""/>
-    <echo message="=== Required Libraries ===" />
-    <echo message="wsdl4j.present=${wsdl4j.present}" />
-    <echo message="commons-logging.present=${commons-logging.present}" />
-    <echo message="commons-discovery.present=${commons-discovery.present}" />
-    <echo message="log4j.present=${log4j.present}" />
+    <echo message="=== Required Libraries (for building code) ===" />
     <echo message="activation.present=${activation.present}" />
+    <echo message="commons-discovery.present=${commons-discovery.present}" />
+    <echo message="commons-logging.present=${commons-logging.present}" />
+    <echo message="wsdl4j.present=${wsdl4j.present}" />
     <echo message=""/>
-    <echo message="--- Optional Libraries ---" />
-    <echo message="servlet.present=${servlet.present}" />
-    <echo message="regexp.present=${regexp.present}" />
-    <echo message="junit.present=${junit.present}" />
-    <echo message="mailapi.present=${mailapi.present}" />
+    <echo message="--- Optional Libraries (for building code) ---" />
     <echo message="attachments.present=${attachments.present}" />
-    <echo message="jimi.present=${jimi.present}" />
-    <echo message="security.present=${security.present}" />
-    <echo message="jdk14.jsse.present=${jdk14.jsse.present}" />
-    <echo message="sun.jsse.present=${sun.jsse.present}" />
-    <echo message="ibm.jsse.present=${ibm.jsse.present}" />
+    <echo message="bsf.present=${bsf.present}" />
+    <echo message="castor.present=${castor.present}" />
     <echo message="commons-httpclient.present=${commons-httpclient.present}" />
-    <echo message="axis-ant.present=${axis-ant.present}" />
-    <echo message="httpunit.present=${httpunit.present}" />
-    <echo message="clover.present=${clover.present}" />
+    <echo message="commons-net.present=${commons-net.present}" />
+    <echo message="ibm.jsse.present=${ibm.jsse.present}" />
+    <echo message="jimi.present=${jimi.present}" />
     <echo message="jms.present=${jms.present}" />
+    <echo message="jdk14.jsse.present=${jdk14.jsse.present}" />
+    <echo message="mailapi.present=${mailapi.present}" />
+    <echo message="regexp.present=${regexp.present}" />
+    <echo message="security.present=${security.present}" />
+    <echo message="servlet.present=${servlet.present}" />
+    <echo message="sun.jsse.present=${sun.jsse.present}" />
+    <echo message=""/>
+    <echo message="--- Miscellaneous (for running tests) ---" />
+    <echo message="axis-ant.present=${axis-ant.present}" />
+    <echo message="clover.present=${clover.present}" />
+    <echo message="httpunit.present=${httpunit.present}" />
+    <echo message="junit.present=${junit.present}" />
+    <echo message="log4j.present=${log4j.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
