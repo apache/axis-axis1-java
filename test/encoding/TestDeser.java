@@ -303,7 +303,6 @@ public class TestDeser extends TestCase {
         list.add("abc");
         list.add(null);
         list.add("def");
-        list.add(null);
         deserialize("<result xsi:type=\"soapenc:Array\" " +
                             "soapenc:arrayType=\"xsd:string[4]\"> " +
       "<item soapenc:position=\"[0]\" xsi:type=\"xsd:string\">abc</item>" +
@@ -312,6 +311,18 @@ public class TestDeser extends TestCase {
                     list, true);
     }
 
+    public void testHugeSparseArray() throws Exception {
+        ArrayList list = new ArrayList(4);
+        list.add("abc");
+        list.add(null);
+        list.add("def");
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[50000000]\"> " +
+      "<item soapenc:position=\"[0]\" xsi:type=\"xsd:string\">abc</item>" +
+      "<item soapenc:position=\"[2]\" xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    list, true);
+    }
     public void testMap() throws Exception {
         HashMap m = new HashMap();
         m.put("abcKey", "abcVal");
