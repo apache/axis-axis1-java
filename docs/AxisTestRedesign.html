@@ -7,6 +7,7 @@
 <a name="top"></a>
 <a href="#quickstart">Quick Start</a><BR>
 <a href="#common">Common Design Principles</a><BR>
+<a href="#general">General Changes</a><BR>
 <a href="#samples">Samples Changes</a><BR>
 <a href="#tests">Test Changes</a><BR>
 <HR>
@@ -117,6 +118,16 @@ This should be done if this sample/test is to be a dependancy of another sample 
   &lt ant inheritAll="true" antfile="buildTest.xml" target="RFCDispatch"/&gt
 &lt/target&gt</PRE>
 </UL>
+</P>
+<a href="#top">Back to the Top</a><BR>
+<HR>
+<a name="general"><H2>Generic Changes</H2></a>
+<P>A new top-level path was created, named "xmls".  This path houses the common xml configuration file fragments.  Roughly, in order of their inclusion, they are:<BR><BR>
+<B>properties.xml</B> contains common properties, eliminating the large property setting blocks at the top of each build*.xml file.<BR>
+<B>path_refs.xml</B> contains the common CLASSPATH setup, to eliminate needing to track, or multiply define this large structure in all files separately.<BR>
+<B>taskdefs.xml</B> contains common ant tasks that are set up, the are inherent in the configuration.<BR>
+<B>taskdefs_post_compile.xml</B> contains the definitions of tasks that are built during the compilation of tasks, such as forEach, java2wsdl, and wsdl2java.<BR>
+<B>targets.xml</B> contains common configuration level targets that required hundreds of lines of repeated code in the build*.xml files.
 </P>
 <a href="#top">Back to the Top</a><BR>
 <HR>
