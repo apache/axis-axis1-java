@@ -59,9 +59,11 @@ import java.io.*;
 import javax.servlet.* ;
 import javax.servlet.http.* ;
 import org.apache.axis.* ;
+import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.* ;
-import org.apache.axis.utils.* ;
+import org.apache.axis.utils.*;
 import org.apache.axis.message.*;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -88,11 +90,78 @@ public class AxisServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
-        res.setContentType("text/html");
-        res.getWriter().println( "In doGet<p>" );
-        res.getWriter().println(" TransportName = " + transportName);
-    }
 
+        ServletContext context = getServletConfig().getServletContext();
+        MessageContext msgContext = new MessageContext(engine);
+        HandlerRegistry hr = engine.getHandlerRegistry();
+
+        String realpath = context.getRealPath(req.getServletPath());
+        if (realpath != null) 
+            msgContext.setProperty(Constants.MC_REALPATH, realpath);
+        
+        if ((realpath!=null) && (realpath.endsWith(".jws"))) {
+            try {
+                // !!! Kludge for right now to allow the JWSProcessor to
+                //     get the class without actually invoking it.
+                msgContext.setProperty("is-http-get", "yes");
+        
+                Handler handler = hr.find("JWSProcessor");
+                if (handler != null) {
+                    handler.invoke(msgContext);
+                    Handler serviceHandler = msgContext.getServiceHandler();
+                    if (serviceHandler != null) {
+                        res.getWriter().println("Got service " +
+                                                serviceHandler);
+                    }
+                    Class cls = (Class)msgContext.getProperty("JWSClass");
+                    
+                    // !!! Need to make this an absolute URI
+                    String url = req.getRequestURI();
+                    
+                    // !!! This should be something reasonable
+                    String urn = "urn:service";
+                    
+                    // !!! This should come from the service itself
+                    String description = "Some service";
+                    
+                    if (req.getParameter("WSDL") != null) {
+                        res.setContentType("text/xml");
+                        WSDLUtils.writeWSDLDoc(cls, url, urn, description,
+                                          msgContext.getTypeMappingRegistry(),
+                                          res.getWriter());
+                        return;
+                    } else {
+                        res.setContentType("text/html");
+                        res.getWriter().println("<h1>" + cls.getName() +
+                                                "</h1>");
+                        res.getWriter().println(
+                               "<p>Hi there, this is an Axis service!</p>");
+                        res.getWriter().println(
+       "<i>Perhaps there'll be a form for invoking the service here...</i>");
+                        res.getWriter().close();
+                        return;
+                    }
+                }
+            } catch (AxisFault fault) {
+                res.getWriter().println("<pre>Fault - " + fault + " </pre>");
+            } catch (Exception e) {
+                  res.getWriter().println("<pre>Exception - " + e + "<br>");
+                  e.printStackTrace(res.getWriter());
+                  res.getWriter().println("</pre>");
+            }
+        }
+
+        res.setContentType("text/html");
+        res.getWriter().println( "<html><h1>Axis HTTP Servlet</h1>" );
+        res.getWriter().println( "Hi, you've reached the Axis HTTP servlet." +
+           "Normally you would be hitting this URL with a SOAP client " +
+           "rather than a browser.");
+
+        res.getWriter().println("<p>In case you're interested, my Axis " +
+            "transport name appears to be '<b>" + transportName + "</b>'");
+        res.getWriter().println("</html>");
+    }
+    
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
         ServletConfig  config  = getServletConfig();

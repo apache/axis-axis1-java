@@ -178,6 +178,12 @@ public class JWSProcessor extends BasicHandler
                 cl.registerClass( clsName, cFile );
             msgContext.setClassLoader( cl );
 
+            if (msgContext.getProperty("is-http-get") != null) {
+                Class c = cl.loadClass(clsName);
+                msgContext.setProperty("JWSClass", c);
+                return;
+            }
+
             /* Create a new RPCProvider - this will be the "service"   */
             /* that we invoke.                                                */
             /******************************************************************/
