@@ -88,8 +88,8 @@
 
   <!-- service decln -->
   <service name="opStyleService">
-    <port name="opStyles" binding="tns:opStyleBinding">
-      <soap:address location="http://localhost:8080/axis/services/opStyles"/>
+    <port name="OpStyles" binding="tns:opStyleBinding">
+      <soap:address location="http://localhost:8080/axis/services/OpStyles"/>
     </port>
   </service>
 
