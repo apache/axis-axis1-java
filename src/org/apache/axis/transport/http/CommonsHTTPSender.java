@@ -55,6 +55,7 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
@@ -239,19 +240,19 @@ public class CommonsHTTPSender extends BasicHandler {
         }
 
         // Get https.proxyXXX settings
-        String tunnelHost = getProperty("https.proxyHost");
-        String tunnelPortStr = getProperty("https.proxyPort");
-        String nonProxyHosts = getProperty("https.nonProxyHosts");
+        String tunnelHost = AxisProperties.getProperty("https.proxyHost");
+        String tunnelPortStr = AxisProperties.getProperty("https.proxyPort");
+        String nonProxyHosts = AxisProperties.getProperty("https.nonProxyHosts");
 
         // Use http.proxyXXX settings if https.proxyXXX is not set
         if (tunnelHost == null) {
-            tunnelHost = getProperty("http.proxyHost");
+            tunnelHost = AxisProperties.getProperty("http.proxyHost");
         }
         if (tunnelPortStr == null) {
-            tunnelPortStr = getProperty("http.proxyPort");
+            tunnelPortStr = AxisProperties.getProperty("http.proxyPort");
         }
         if (nonProxyHosts == null) {
-            nonProxyHosts = getProperty("http.nonProxyHosts");
+            nonProxyHosts = AxisProperties.getProperty("http.nonProxyHosts");
         }
         boolean hostInNonProxyList =
                 isHostInNonProxyList(host, nonProxyHosts);
@@ -267,14 +268,14 @@ public class CommonsHTTPSender extends BasicHandler {
                     ? 80
                     : Integer.parseInt(tunnelPortStr))
                     : 80);
-            String tunnelUser = getProperty("https.proxyUser");
-            String tunnelPassword = getProperty("https.proxyPassword");
+            String tunnelUser = AxisProperties.getProperty("https.proxyUser");
+            String tunnelPassword = AxisProperties.getProperty("https.proxyPassword");
 
             if (tunnelUser == null) {
-                tunnelUser = getProperty("http.proxyUser");
+                tunnelUser = AxisProperties.getProperty("http.proxyUser");
             }
             if (tunnelPassword == null) {
-                tunnelPassword = getProperty("http.proxyPassword");
+                tunnelPassword = AxisProperties.getProperty("http.proxyPassword");
             }
             if (tunnelUser != null) {
                 Credentials proxyCred =
@@ -300,13 +301,13 @@ public class CommonsHTTPSender extends BasicHandler {
     private HttpConnection getConnection(HttpState state, String host, int port)
             throws Exception {
 
-        String proxyHost = getProperty("http.proxyHost");
-        String proxyPort = getProperty("http.proxyPort");
-        String nonProxyHosts = getProperty("http.nonProxyHosts");
+        String proxyHost = AxisProperties.getProperty("http.proxyHost");
+        String proxyPort = AxisProperties.getProperty("http.proxyPort");
+        String nonProxyHosts = AxisProperties.getProperty("http.nonProxyHosts");
         boolean hostInNonProxyList =
                 isHostInNonProxyList(host, nonProxyHosts);
-        String proxyUsername = getProperty("http.proxyUser");
-        String proxyPassword = getProperty("http.proxyPassword");
+        String proxyUsername = AxisProperties.getProperty("http.proxyUser");
+        String proxyPassword = AxisProperties.getProperty("http.proxyPassword");
 
         if (port == -1) {
             port = 80;
