@@ -95,7 +95,7 @@ public class SimpleAxisServer implements Runnable {
     private Hashtable sessions = new Hashtable();
 
     // Are we doing threads?
-    private static boolean doThreads = false;
+    private static boolean doThreads = true;
 
     // Are we doing sessions?
     // Set this to false if you don't want any session overhead.
@@ -103,6 +103,14 @@ public class SimpleAxisServer implements Runnable {
 
     protected boolean isSessionUsed() {
         return doSessions;
+    }
+
+    public void setDoThreads(boolean value) {
+        doThreads = value ;
+    }
+
+    public boolean getDoThreads() {
+        return doThreads ;
     }
 
     protected Session createSession(String cooky) {
