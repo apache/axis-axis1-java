@@ -10,7 +10,7 @@ import java.util.* ;
 import java.math.BigDecimal ;
 
 public class v3 implements vInterface {
-  public void register(String registryURL, Service s) {
+  public void register(String registryURL, Service s) throws Exception {
     try {
       HTTPCall call = new HTTPCall( registryURL, 
                                     "http://www.soapinterop.org/Register" );
@@ -26,14 +26,14 @@ public class v3 implements vInterface {
                                           new RPCParam("ServiceWSDL",
                                                        s.getServiceWsdl()) } );
       call.invoke( body );
-      System.out.println( "Registered" );
     }
     catch( Exception e ) {
       e.printStackTrace();
+      throw e ;
     }
   }
 
-  public void unregister(String registryURL, String name) {
+  public void unregister(String registryURL, String name) throws Exception {
     try {
       HTTPCall call = new HTTPCall( registryURL, 
                                     "http://www.soapinterop.org/Unregister" );
@@ -43,54 +43,29 @@ public class v3 implements vInterface {
                                           new RPCParam("ServiceName",
                                                        name) } );
       call.invoke( body );
-      System.out.println( "Unregistered" );
     }
     catch( Exception e ) {
       e.printStackTrace();
+      throw e ;
     }
   }
 
-  public void register(String registryURL, String myServiceURL ) {
+  public Boolean ping(String serverURL) throws Exception {
     try {
-      HTTPCall call = new HTTPCall( registryURL, 
-                                    "http://www.soapinterop.org/Register" );
-      RPCElement body = new RPCElement( "http://www.soapinterop.org/Registry",
-                                        "Register",
-                                        new RPCParam[] {
-                                          new RPCParam("ServiceName",
-                                                       "EasySoap++"),
-                                          new RPCParam("SerivceURL",
-                                                       myServiceURL),
-                                          new RPCParam("ServiceType",
-                                                       "Bid"),
-                                          new RPCParam("ServiceWSDL",
-                                                       "") } );
-      call.invoke( body );
-      System.out.println( "Registered" );
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
-  }
-
-  public Boolean ping(String serverURL) {
-    try {
-      // Debug.setDebugLevel(1);
       HTTPCall call = new HTTPCall( serverURL,
                                     "http://www.soapinterop.org/Ping" );
       call.invoke( "http://www.soapinterop.org/Bid", "Ping", null );
-      System.out.println( "Ping:" + serverURL + " is still alive" );
       return( new Boolean(true) );
     }
     catch( Exception e ) {
-      // e.printStackTrace();
-      return( new Boolean(false) );
+      e.printStackTrace();
+      throw e ;
     }
   }
 
-  public Vector lookupAsString(String registryURL) throws Exception {
+  public Vector lookupAsString(String registryURL) throws Exception 
+  {
     try {
-      // Debug.setDebugLevel(3);
       ServiceDescription sd = new ServiceDescription("lookup", true );
       sd.addOutputParam("RequestForQuoteResult", 
                         SOAPTypeMappingRegistry.XSD_DOUBLE);
@@ -104,7 +79,6 @@ public class v3 implements vInterface {
                                                        "Bid") } );
       String res = (String) call.invoke( body );
       if ( res == null ) return( null );
-      System.out.println( "LookupAsString:" + res );
       StringTokenizer  lineParser = new StringTokenizer( res, "\n" );
 
       Vector services = new Vector();
@@ -131,14 +105,13 @@ public class v3 implements vInterface {
       return( services );
     }
     catch( Exception e ) {
-      // e.printStackTrace();
+      e.printStackTrace();
       throw e ;
     }
   }
 
-  public double requestForQuote(String serverURL) {
+  public double requestForQuote(String serverURL) throws Exception {
     try {
-      // Debug.setDebugLevel(1);
       ServiceDescription sd = new ServiceDescription("RequestForQuote", true );
       sd.addOutputParam("RequestForQuoteResult",
                         SOAPTypeMappingRegistry.XSD_DOUBLE);
@@ -157,21 +130,18 @@ public class v3 implements vInterface {
                                           new RPCParam( "Quantity", 
                                                         new Integer(10) ) } );
       Object r = call.invoke( body );
-      System.err.println("res type: " + r.getClass().getName() );
-      System.err.println("res: " + r );
       if ( r instanceof Float ) r = ((Float)r).toString();
       if ( r instanceof String ) r = new Double((String) r);
       Double res = (Double) r ;
-      System.out.println( "RequestForQuote:" + res );
       return( res.doubleValue() );
     }
     catch( Exception e ) {
       e.printStackTrace();
-      return( 0.0 );
+      throw e ;
     }
   }
 
-  public String simpleBuy(String serverURL, int quantity ) {
+  public String simpleBuy(String serverURL, int quantity ) throws Exception {
     try {
       ServiceDescription sd = new ServiceDescription("SimpleBuy", true );
       sd.addOutputParam("SimpleBuyResult",
@@ -192,16 +162,17 @@ public class v3 implements vInterface {
                                            new RPCParam("Quantity",
                                                         new Integer(quantity))});
       String res = (String) call.invoke( body );
-      System.out.println( "Buy:" + res );
       return( res );
     }
     catch( Exception e ) {
       e.printStackTrace();
-      return( "Error" + e.toString() );
+      throw e ;
     }
   }
 
-  public String buy(String serverURL, int quantity, int numItems) {
+  public String buy(String serverURL, int quantity, int numItems) 
+      throws Exception 
+  {
     try {
       int      i ; 
       ServiceDescription sd = new ServiceDescription("SimpleBuy", true );
@@ -260,12 +231,11 @@ public class v3 implements vInterface {
                                            new RPCParam("PO",
                                                         po)} );
       String res = (String) call.invoke( body );
-      System.out.println( "Buy:" + res );
       return( res );
     }
     catch( Exception e ) {
       e.printStackTrace();
-      return( null );
+      throw e ;
     }
   }
 
