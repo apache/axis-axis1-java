@@ -303,7 +303,7 @@ public class MessageContext implements SOAPMessageContext {
             String defaultSOAPVersion = (String)engine.getOption(
                                                  AxisEngine.PROP_SOAP_VERSION);
             if (defaultSOAPVersion != null && "1.2".equals(defaultSOAPVersion))
-                soapConstants = SOAPConstants.SOAP12_CONSTANTS;
+                setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
         }
     }
 
@@ -363,6 +363,12 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     public void setSOAPConstants(SOAPConstants soapConstants) {
+        // when changing SOAP versions, remember to keep the encodingURI
+        // in synch.
+        if (soapConstants.getEncodingURI().equals(encodingStyle)) {
+            encodingStyle = this.soapConstants.getEncodingURI();
+        }
+
         this.soapConstants = soapConstants;
     }
 
@@ -395,7 +401,7 @@ public class MessageContext implements SOAPMessageContext {
      * Encoding
      */
     public boolean isEncoded() {
-        return Constants.URI_DEFAULT_SOAP_ENC.equals(encodingStyle);
+        return soapConstants.getEncodingURI().equals(encodingStyle);
     }
 
     /**
