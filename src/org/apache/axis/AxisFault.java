@@ -200,7 +200,6 @@ public class AxisFault extends java.rmi.RemoteException {
         super ("", target);
         // ? SOAP 1.2 or 1.1 ?
         setFaultCodeAsString( Constants.FAULT_SERVER_USER );
-        detail = target;
         initFromException(target);
     }
 
@@ -777,14 +776,5 @@ public class AxisFault extends java.rmi.RemoteException {
             context.serialize(qname, null, detailObject);
             context.setDoMultiRefs(oldMR);
         }
-    }
-
-    /**
-     * Returns the wrapped remote exception (the <i>cause</i>).
-     *
-     * @return  the wrapped remote exception, which may be <tt>null</tt>.
-     */
-    public Throwable getWrapped() {
-        return detail;
     }
 }
