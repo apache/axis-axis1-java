@@ -1013,7 +1013,10 @@ public class SymbolTable {
             for (int i = 0; i < v.size(); ++i) {
                 if (v.get(i) instanceof BindingEntry) {
                     BindingEntry bEntry = (BindingEntry) v.get(i);
-
+                    // Skip non-soap bindings
+                    if(bEntry.getBindingType() != BindingEntry.TYPE_SOAP)
+                        continue;
+                    
                     Binding binding = bEntry.getBinding();
                     PortType portType = binding.getPortType();
 
