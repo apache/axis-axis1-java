@@ -234,11 +234,11 @@ public class TypeMappingImpl implements TypeMapping
         //}
         // Make sure the factories conform to the Axis interfaces
         if (sf != null &&
-            !(sf instanceof SerializerFactory)) {
+            !(sf instanceof javax.xml.rpc.encoding.SerializerFactory)) {
             throw new JAXRPCException();
         }
         if (dsf != null &&
-            !(dsf instanceof DeserializerFactory)) {
+            !(dsf instanceof javax.xml.rpc.encoding.DeserializerFactory)) {
             throw new JAXRPCException();
         }
         Pair pair = new Pair(javaType, xmlType);
@@ -271,7 +271,7 @@ public class TypeMappingImpl implements TypeMapping
         getSerializer(Class javaType, QName xmlType)
         throws JAXRPCException
     {
-        SerializerFactory sf = null;
+        javax.xml.rpc.encoding.SerializerFactory sf = null;
         // Try to get the serializer associated with this pair
         Pair pair = new Pair(javaType, xmlType);
 
@@ -281,14 +281,14 @@ public class TypeMappingImpl implements TypeMapping
         }
         // Now get the serializer with the pair
         if (pair.xmlType != null) {
-            sf = (SerializerFactory) pair2SF.get(pair);
+            sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
             // If not successful, use the xmlType to get
             // another pair.  For some xmlTypes (like SOAP_ARRAY)
             // all of the possible javaTypes are not registered.
             if (sf == null) {
                 pair = (Pair) qName2Pair.get(pair.xmlType);
                 if (pair != null) {
-                    sf = (SerializerFactory) pair2SF.get(pair);
+                    sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
                 }
             }
         }
@@ -322,16 +322,16 @@ public class TypeMappingImpl implements TypeMapping
     public javax.xml.rpc.encoding.DeserializerFactory
         getDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        DeserializerFactory df = null;
+        javax.xml.rpc.encoding.DeserializerFactory df = null;
         Pair pair = new Pair(javaType, xmlType);
         if (javaType == null) {
             pair.javaType = getClassForQName(xmlType);
         }
         if (pair.javaType != null) {
-            df = (DeserializerFactory) pair2DF.get(pair);
+            df = (javax.xml.rpc.encoding.DeserializerFactory) pair2DF.get(pair);
         } 
         if (df == null && delegate != null) {
-            df = (DeserializerFactory) 
+            df = (javax.xml.rpc.encoding.DeserializerFactory)
                 delegate.getDeserializer(javaType, xmlType);
         }
         return df;
