@@ -26,18 +26,6 @@
         encodingStyle=""
       />
       
-        <!-- Removed.  The xsd:any is now mapped to a type XSD_ANY that 
-        automatically uses the ElementSerializer/ElementDeserializer 
-      <typeMapping
-        qname="xsd:anyType"
-        type="java:java.lang.Object"
-        serializer="org.apache.axis.encoding.ser.ElementSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.ElementDeserializerFactory"
-        encodingStyle=""
-      />
-      -->
-
-
       <typeMapping
         qname="query:QueryResultElement"
         type="java:test.wsdl.extensibility._QueryResultElement"
