@@ -357,7 +357,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Build/Test EVERYTHING from scratch!                                 -->
   <!-- =================================================================== -->
-  <target name="all" depends="dist, junit, functional-tests"
+  <target name="all" depends="junit, functional-tests, dist"
       description="do everything: distribution build and functional tests"
     />
 
@@ -399,20 +399,20 @@ Copyright:
   <!-- Creates the binary distribution                                     -->
   <!-- =================================================================== -->
   <target name="javadocsdist" depends="javadocs" unless="javadoc.notrequired">
-    <mkdir dir="${dist.dir}/docs"/>
-    <mkdir dir="${dist.dir}/docs/apiDocs"/>
     <copy todir="${dist.dir}/docs/apiDocs">
       <fileset dir="${build.javadocs}"/>
     </copy>
   </target>
 
-  <target name="dist" depends="compile, javadocsdist, samples, junit"
+  <target name="dist" depends="compile, samples, junit"
     description="create the full binary distribution">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
     <mkdir dir="${dist.dir}/samples"/>
     <mkdir dir="${dist.dir}/webapps/axis"/>
     <mkdir dir="${dist.dir}/xmls"/>
+    <mkdir dir="${dist.dir}/docs"/>
+    <mkdir dir="${dist.dir}/docs/apiDocs"/>
 
     <copy todir="${dist.dir}/lib">
       <fileset dir="${build.lib}"/>
@@ -446,6 +446,7 @@ Copyright:
     <copy todir="${dist.dir}/xmls">
       <fileset dir="xmls"/>
     </copy>
+    <antcall target="javadocsdist"/>
   </target>
 
   <!-- =================================================================== -->
