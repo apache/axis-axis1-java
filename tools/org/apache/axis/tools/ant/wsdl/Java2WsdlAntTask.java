@@ -115,6 +115,7 @@ public class Java2WsdlAntTask extends Task
     private MappingSet mappings=new MappingSet();
     private String extraClasses = null;
     private Path classpath = null;
+    private String soapAction = null;
 
     /**
      * trace out parameters
@@ -146,6 +147,8 @@ public class Java2WsdlAntTask extends Task
         log("\tserviceElementName:" + serviceElementName, logLevel);
         log("\tmethods:" + methods, logLevel);
         log("\textraClasses:" + extraClasses, logLevel);
+        log("\tsoapAction:" + soapAction, logLevel);
+      
 }
 
     /**
@@ -246,6 +249,9 @@ public class Java2WsdlAntTask extends Task
             }
             if(methods!=null) {
                 emitter.setAllowedMethods(methods);
+            }
+            if (soapAction != null) {
+                emitter.setSoapAction(soapAction);
             }
             if (outputImpl == null) {
                 // Normal case
@@ -494,7 +500,12 @@ public class Java2WsdlAntTask extends Task
     public void setExtraClasses(String extraClasses) {
         this.extraClasses = extraClasses;
     }
+    
+    /**
+     * The setter for the "soapAction" attribute
+     */
+    public void setSoapAction( String soapAction ) {
+		this.soapAction = soapAction;
+    }
 
 }
-
-
