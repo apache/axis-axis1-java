@@ -12,7 +12,6 @@ public class Soap12TestDocBindingImpl implements test.wsdl.soap12.assertion.Soap
     }
 
     public java.lang.String echoOk(java.lang.String echoOk) throws java.rmi.RemoteException {
-        return null;
+        return echoOk;
     }
-
 }
