@@ -1300,12 +1300,12 @@ public class tcpmon extends JFrame {
         }
 
         public void setLeft(Component left) {
-            leftPanel.remove(1);
+            leftPanel.removeAll();
             leftPanel.add(left);
         }
 
         public void setRight(Component right) {
-            rightPanel.remove(1);
+            rightPanel.removeAll();
             rightPanel.add(right);
         }
 
