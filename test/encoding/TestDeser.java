@@ -63,7 +63,7 @@ public class TestDeser extends TestCase {
     /**
      * Verify that a given XML deserialized produces the expected result
      */
-    private void deserialize(String data, Object expected) {
+    protected void deserialize(String data, Object expected) {
        Message message = new Message(header + data + footer, "String");
        message.setMessageContext(new MessageContext());
 

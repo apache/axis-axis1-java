@@ -74,7 +74,7 @@ import org.xml.sax.*;
 public class DateSerializer implements Serializer {
 
     private static SimpleDateFormat zulu = 
-      new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     static {
       zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
