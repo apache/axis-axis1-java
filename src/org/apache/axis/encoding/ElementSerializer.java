@@ -55,6 +55,8 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
@@ -76,7 +78,7 @@ public class ElementSerializer implements Serializer {
         throws IOException
     {
         if (!(value instanceof Element))
-            throw new IOException("Can't serialize non-Elements with an ElementSerializer!");
+            throw new IOException(JavaUtils.getMessage("cantSerialize01"));
         
         context.writeDOMElement((Element)value);
     }

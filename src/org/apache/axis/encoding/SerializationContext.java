@@ -61,6 +61,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Attr;
@@ -237,7 +238,7 @@ public class SerializationContext
     public void registerPrefixForURI(String prefix, String uri)
     {
         if (category.isDebugEnabled()) {
-            category.debug("register '" + prefix + "' - '" + uri + "'");
+            category.debug(JavaUtils.getMessage("register00", prefix, uri));
         }
 
         if ((uri != null) && (prefix != null)) {
@@ -379,7 +380,8 @@ public class SerializationContext
         throws IOException
     {
         if (category.isDebugEnabled()) {
-            category.debug("Out: Starting element [" + qName.getNamespaceURI() + "]:" + qName.getLocalPart());
+            category.debug(JavaUtils.getMessage("startElem00",
+                    "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
         }
 
         if (startOfDocument && sendXMLDecl) {
@@ -463,7 +465,7 @@ public class SerializationContext
         String elementQName = (String)elementStack.pop();
 
         if (category.isDebugEnabled()) {
-            category.debug("Out: Ending element " + elementQName);
+            category.debug(JavaUtils.getMessage("endElem00", "" + elementQName));
         }
 
         nsStack.pop();

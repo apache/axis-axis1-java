@@ -57,6 +57,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -113,8 +114,8 @@ public class MapSerializer extends Deserializer implements Serializer
         throws IOException
     {
         if (!(value instanceof Map))
-            throw new IOException("MapSerializer: " +
-                 value.getClass().getName() + " is not a Map");
+            throw new IOException(
+                    JavaUtils.getMessage("noMap00", "MapSerializer", value.getClass().getName()));
         
         Map map = (Map)value;
         
@@ -201,13 +202,13 @@ public class MapSerializer extends Deserializer implements Serializer
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("In MapSerializer.startElement()");
+            category.debug(JavaUtils.getMessage("enter00", "MapSerializer.startElement()"));
         }
         
         value = new HashMap();
         
         if (category.isDebugEnabled()) {
-            category.debug("Out MapSerializer.startElement()");
+            category.debug(JavaUtils.getMessage("exit00", "MapSerializer.startElement()"));
         }
     }
     
@@ -219,11 +220,12 @@ public class MapSerializer extends Deserializer implements Serializer
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("In MapSerializer.onStartChild()");
+            category.debug(JavaUtils.getMessage("enter00", "MapSerializer.onStartChild()"));
         }
 
         if (!localName.equals("item"))
-            throw new SAXException("Only 'item' elements are allowed in a Map!");
+            throw new SAXException(
+                    JavaUtils.getMessage("itemInMap00"));
         
         return new ItemHandler();
     }

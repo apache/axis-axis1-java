@@ -56,6 +56,8 @@ package org.apache.axis.encoding ;
 
 import java.io.ByteArrayOutputStream;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
  * Custom class for supporting primitive XSD data type hexBinary.
  *
@@ -92,8 +94,10 @@ public class Hex extends Object{
         return s1.equals(s2);
     }
 
-    public static final String ERROR_ODD_NUMBER_OF_DIGITS="Odd number of digits hex string";
-    public static final String ERROR_BAD_CHARACTER_IN_HEX_STRING="Bad character or insufficient number of characters in hex string";
+    public static final String ERROR_ODD_NUMBER_OF_DIGITS =
+            JavaUtils.getMessage("oddDigits00");
+    public static final String ERROR_BAD_CHARACTER_IN_HEX_STRING =
+            JavaUtils.getMessage("badChars01");
 
     // Code from Ajp11, from Apache's JServ
 

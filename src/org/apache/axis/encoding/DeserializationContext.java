@@ -66,6 +66,7 @@ import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.NSStack;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
@@ -427,7 +428,7 @@ public class DeserializationContext extends DefaultHandler
     public void pushElementHandler(SOAPHandler handler)
     {
         if (category.isDebugEnabled()) {
-            category.debug("Pushing handler " + handler);
+            category.debug(JavaUtils.getMessage("pushHandler00", "" + handler));
         }
         
         handlerStack.push(handler);
@@ -450,13 +451,13 @@ public class DeserializationContext extends DefaultHandler
         if (!handlerStack.empty()) {
             SOAPHandler handler = getTopHandler();
             if (category.isDebugEnabled()) {
-                category.debug("Popping handler " + handler);
+                category.debug(JavaUtils.getMessage("popHandler00", "" + handler));
             }
             handlerStack.pop();
             return handler;
         } else {
             if (category.isDebugEnabled()) {
-                category.debug("Popping handler...(null)");
+                category.debug(JavaUtils.getMessage("popHandler00", "(null)"));
             }
             return null;
         }
@@ -473,7 +474,7 @@ public class DeserializationContext extends DefaultHandler
     
     public void endDocument() throws SAXException {
         if (category.isDebugEnabled()) {
-            category.debug("EndDocument");
+            category.debug(JavaUtils.getMessage("endDoc00"));
         }
         if (recorder != null)
             recorder.endDocument();
@@ -505,7 +506,7 @@ public class DeserializationContext extends DefaultHandler
         }
        
         if (category.isDebugEnabled()) {
-            category.debug("StartPrefixMapping '" + prefix + "'->'" + uri + "'");
+            category.debug(JavaUtils.getMessage("startPrefix00", prefix, uri));
         }
         
         SOAPHandler handler = getTopHandler();
@@ -517,7 +518,7 @@ public class DeserializationContext extends DefaultHandler
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("EndPrefixMapping '" + prefix + "'");
+            category.debug(JavaUtils.getMessage("endPrefix00", prefix));
         }
         
         if (recorder != null)
@@ -552,7 +553,7 @@ public class DeserializationContext extends DefaultHandler
     public void processingInstruction(String p1, String p2) throws SAXException {
         // must throw an error since SOAP 1.1 doesn't allow
         // processing instructions anywhere in the message
-        throw new SAXException("Processing instructions are not allowed within SOAP Messages");
+        throw new SAXException(JavaUtils.getMessage("noInstructions00"));
     }
 
     public void skippedEntity(String p1) throws SAXException {
@@ -576,8 +577,8 @@ public class DeserializationContext extends DefaultHandler
         SOAPHandler nextHandler = null;
 
         if (category.isDebugEnabled()) {
-            category.debug("startElement ['" + namespace + "' " +
-                           localName + "]");
+            category.debug(JavaUtils.getMessage("startElem00",
+                    "['" + namespace + "' " + localName + "]"));
         }
         
         String prefix = "";
@@ -618,8 +619,8 @@ public class DeserializationContext extends DefaultHandler
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("endElement ['" + namespace + "' " +
-                           localName + "]");
+            category.debug(JavaUtils.getMessage("endElem00",
+                    "['" + namespace + "' " + localName + "]"));
         }
         
         if (recorder != null)
@@ -634,7 +635,7 @@ public class DeserializationContext extends DefaultHandler
             } else {
                 // We should be done!
                 if (category.isDebugEnabled()) {
-                    category.debug("Done with document!");
+                    category.debug(JavaUtils.getMessage("endDoc01"));
                 }
             }
             

@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -120,12 +121,12 @@ public class TypeMappingRegistry implements Serializer {
         // debug assertions: every tmr must have exactly one
         // SOAPTypeMappingRegistry at the top.
         if (parent == null)
-            new Exception("null parent!").printStackTrace();
+            new Exception(JavaUtils.getMessage("nullParent00")).printStackTrace();
         if (this instanceof SOAPTypeMappingRegistry)
-            new Exception("SOAPTypeMappingRegistry w/parent").printStackTrace();
+            new Exception(JavaUtils.getMessage("withParent00")).printStackTrace();
         for (TypeMappingRegistry t = parent; t!=null; t=t.getParent())
             if (t instanceof SOAPTypeMappingRegistry) return;
-        new Exception("no SOAPTypeMappingRegistry parent").printStackTrace();
+        new Exception(JavaUtils.getMessage("noParent00")).printStackTrace();
     }
 
     public TypeMappingRegistry getParent() {
@@ -268,9 +269,8 @@ public class TypeMappingRegistry implements Serializer {
                 _class = _class.getSuperclass();
             }
             
-            throw new IOException("No serializer found for class " +
-                                  value.getClass().getName() +
-                                  " in registry " + this);
+            throw new IOException(JavaUtils.getMessage("noSerializer00",
+                    value.getClass().getName(), "" + this));
         }
         // !!! Write out a generic null, or get type info from somewhere else?
     }
