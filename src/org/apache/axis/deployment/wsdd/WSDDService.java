@@ -61,6 +61,8 @@ import org.apache.axis.FaultableHandler;
 import org.apache.axis.Handler;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.attachments.Attachments;
+import org.apache.axis.attachments.AttachmentsImpl;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -124,6 +126,11 @@ public class WSDDService
     private boolean streaming = false;
 
     /**
+     * What attachment format should be used?
+     */
+    private int sendType = Attachments.SEND_TYPE_NOTSET;
+
+    /**
      * Default constructor
      */
     public WSDDService()
@@ -152,6 +159,11 @@ public class WSDDService
         String streamStr = e.getAttribute(ATTR_STREAMING);
         if (streamStr != null && streamStr.equals("on")) {
             streaming = true;
+        }
+
+        String attachmentStr = e.getAttribute(ATTR_ATTACHMENT_FORMAT);
+        if (attachmentStr != null && !attachmentStr.equals("")) {
+            sendType = AttachmentsImpl.getSendType(attachmentStr);
         }
 
         Element [] operationElements = getChildElements(e, ELEM_WSDD_OPERATION);
@@ -386,6 +398,7 @@ public class WSDDService
                                               respHandler);
         service.setStyle(style);
         service.setHighFidelityRecording(!streaming);
+        service.setSendType(sendType);
 
         if ( getQName() != null )
             service.setName(getQName().getLocalPart());

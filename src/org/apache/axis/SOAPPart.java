@@ -244,12 +244,32 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     }
 
     /**
-     * Write out the contents & headers to out.
-     * TODO: actually write headers!  probably also add parameter
-     * to indicate whether to bother....
+     * Write the contents to the specified writer.
      */
-    public void writeTo(OutputStream out) throws IOException {
-        out.write(this.getAsBytes());
+    public void writeTo(Writer writer) throws IOException {
+
+        if ( currentForm == FORM_FAULT ) {
+            AxisFault env = (AxisFault)currentMessage;
+            try {
+                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+            } catch (Exception e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+                throw env;
+            }
+            return;
+        }
+
+        if ( currentForm == FORM_SOAPENVELOPE ) {
+            SOAPEnvelope env = (SOAPEnvelope)currentMessage;
+            try {
+                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+            } catch (Exception e) {
+                throw AxisFault.makeFault(e);
+            }
+            return;
+        }
+
+        writer.write(this.getAsString());
         // easy, huh?
     }
 
@@ -396,7 +416,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             StringWriter writer = new StringWriter();
             AxisFault env = (AxisFault)currentMessage;
             try {
-                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+                this.writeTo(writer);
             } catch (Exception e) {
                 log.error(JavaUtils.getMessage("exception00"), e);
                 return null;
@@ -410,7 +430,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             StringWriter writer = new StringWriter();
             SOAPEnvelope env = (SOAPEnvelope)currentMessage;
             try {
-                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+                this.writeTo(writer);
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
             }

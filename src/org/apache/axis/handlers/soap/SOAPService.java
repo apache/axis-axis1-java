@@ -65,6 +65,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.enum.Style;
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
@@ -108,6 +109,14 @@ public class SOAPService extends SimpleTargetedChain
      * (default is true)
      */
     private boolean highFidelityRecording = true;
+
+    /**
+     * How does this service wish data which would normally be sent as
+     * an attachment to be sent?  Default for requests is
+     * org.apache.axis.attachments.Attachments.SEND_TYPE_DEFAULT,
+     * and the default for responses is to match the request.
+     */
+    private int sendType = Attachments.SEND_TYPE_NOTSET;
 
     /**
      * Our ServiceDescription.  Holds pretty much all the interesting
@@ -400,5 +409,14 @@ public class SOAPService extends SimpleTargetedChain
 
     public void setHighFidelityRecording(boolean highFidelityRecording) {
         this.highFidelityRecording = highFidelityRecording;
+    }
+
+    // see org.apache.axis.attachments.Attachments
+    public int getSendType() {
+        return sendType;
+    }
+
+    public void setSendType(int sendType) {
+        this.sendType = sendType;
     }
 }
