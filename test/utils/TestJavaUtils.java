@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
+import java.lang.reflect.Array;
 
 public class TestJavaUtils extends TestCase
 {
@@ -109,6 +110,30 @@ public class TestJavaUtils extends TestCase
         ret = JavaUtils.convert(holder2, Object.class);
         assertTrue(ret != null);
         assertTrue(Byte.class.isInstance(ret));
+        
+        // Make sure we convert ArrayList to array in 2D cases
+        Object[] arrayin = new Object[1];
+        ArrayList data = new ArrayList(5);
+        data.add("one"); data.add(new Integer(2)); data.add(new Float(4.0));
+        data.add(new Double(5.0)); data.add("five");
+        arrayin[0] = data;
+        ret = JavaUtils.convert(arrayin, Object[][].class);
+        assertTrue("Converted 2D array/ArrayList wrong", ret.getClass().equals(Object[][].class));
+        Object[][] outer = (Object[][]) ret;
+        assertEquals("Outer array of 2D array/ArrayList is wrong length", 1, outer.length);
+        Object[] inner = ((Object[][])ret)[0];
+        assertEquals("Inner array of 2D array/ArrayLis is wrong length", 5, inner.length);
+        
+        // check 2D ArrayList of ArrayList
+        ArrayList data2D = new ArrayList(2);
+        data2D.add(data); data2D.add(data);
+        ret = JavaUtils.convert(data2D, Object[][].class);
+        assertTrue("Converted 2D ArrayList wrong", ret.getClass().equals(Object[][].class));
+        Object[][] outer2 = (Object[][]) ret;
+        assertEquals("Outer array of 2D ArrayList is wrong length", 2, outer2.length);
+        Object[] inner2 = ((Object[][]) ret)[0];
+        assertEquals("Inner array of 2D ArrayList is wrong length", 5, inner2.length);
+        
     }
 
     /**
