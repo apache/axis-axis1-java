@@ -75,6 +75,15 @@ import java.io.InputStream;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TestService {
+    // Adding these dummy methods to make sure that when we deploy this
+    // service using "allowedMethods="*" that we don't barf on them.
+    // This will ensure that people can take classes that have public
+    // methods (some available thru Axis and some not) and still be able
+    // to deploy them.  (We used to throw exceptions about it)
+    public void testBody(int t) {}
+    public void testElement(int t) {}
+    public void testEnvelope(int t) {}
+
     public SOAPBodyElement [] testBody(SOAPBodyElement [] bodies)
             throws Exception {
 
