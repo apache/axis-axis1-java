@@ -416,7 +416,7 @@ public class Emitter {
             }
 
             if (intfNS == null) 
-                intfNS = Namespaces.makeNamespace(cls.getName());
+                intfNS = namespaces.getCreate(cls.getPackage().getName());
             if (implNS == null)
                 implNS = intfNS + "-impl";
 
