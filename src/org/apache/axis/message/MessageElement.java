@@ -478,7 +478,7 @@ public class MessageElement implements SOAPElement, Serializable
         if ((namespaceURI == null) || (namespaceURI.equals("")))
             return null;
 
-        if (href != null) {
+        if (href != null && getRealElement() != null) {
             return getRealElement().getPrefix(namespaceURI);
         }
 
@@ -498,7 +498,7 @@ public class MessageElement implements SOAPElement, Serializable
         if (prefix == null)
             prefix = "";
 
-        if (href != null) {
+        if (href != null && getRealElement() != null) {
             return getRealElement().getNamespaceURI(prefix);
         }
 

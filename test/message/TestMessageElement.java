@@ -57,6 +57,8 @@ package test.message;
 
 import junit.framework.TestCase;
 import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.message.EnvelopeBuilder;
@@ -69,6 +71,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import java.util.Iterator;
+import java.io.StringReader;
 
 /**
  * Test MessageElement class.
@@ -196,6 +199,20 @@ public class TestMessageElement extends TestCase {
         assertEquals(s1, s2);
     }
     
+    public void testMessageElementNullOngetNamespaceURI() throws Exception{
+        String data="<anElement xmlns:ns1=\"aNamespace\" href=\"unknownProtocol://data\"/>";
+        data="<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body>"+
+             data+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        MessageContext ctx=new MessageContext(new AxisClient());
+        DeserializationContext dser = new DeserializationContextImpl(
+                                           new org.xml.sax.InputSource(new StringReader(data)),
+                                           ctx,
+                                           Message.REQUEST);
+        dser.parse();
+		MessageElement elem=dser.getEnvelope().getBodyByName("","anElement");
+        assertEquals("aNamespace",elem.getNamespaceURI("ns1"));
+        assertEquals("ns1",elem.getPrefix("aNamespace"));
+    }    
     public static void main(String[] args) throws Exception {
         TestMessageElement tester = new TestMessageElement("TestMessageElement");
         tester.testQNameAttrTest();
