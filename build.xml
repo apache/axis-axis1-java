@@ -63,22 +63,22 @@ Copyright:
   <property name="samples.dir" value="./samples"/>
 
   <property name="wsdl4j.jar" value="../../wsdl4j/build/lib/wsdl4j.jar"/>
-  <property name="log4j-core.jar" value="./lib/log4j-core.jar"/>
+  <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
 
   <property name="packages" value="org.*"/>
 
   <property name="build.file" value="build.xml"/>
 
-  <property name="build.dir" value="./build"/>
-  <property name="build.dest" value="./build/classes"/>
-  <property name="build.lib" value="./build/lib"/>
-  <property name="build.samples" value="./build/classes/samples"/>
-  <property name="build.javadocs" value="./build/javadocs"/>
-  <property name="build.webapp" value="./build/webapps/axis"/>
+  <property name="build.dir" value="build"/>
+  <property name="build.dest" value="build/classes"/>
+  <property name="build.lib" value="build/lib"/>
+  <property name="build.samples" value="build/classes/samples"/>
+  <property name="build.javadocs" value="build/javadocs"/>
+  <property name="build.webapp" value="build/webapps/axis"/>
 
-  <property name="webapp" value="./webapps/axis"/>
+  <property name="webapp" value="webapps/axis"/>
 
-  <property name="dist.dir" value="./axis-1_0"/>
+  <property name="dist.dir" value="axis-1_0"/>
 
   <property name="test.functional.usefile" value="true"/>
 
@@ -91,7 +91,7 @@ Copyright:
     <pathelement location="${junit.jar}"/>
     <pathelement location="${wsdl4j.jar}"/>
     <pathelement location="${log4j-core.jar}"/>
-    <fileset dir="./lib">
+    <fileset dir="lib">
      <include name="*.jar"/>
     </fileset>
     <pathelement path="${java.class.path}"/>
@@ -177,7 +177,11 @@ Copyright:
   <!-- =================================================================== -->
   <target name="samples" depends="compile">
     <javac srcdir="." destdir="${build.dest}"
-           classpath="${build.lib}/${name}.jar" debug="${debug}">
+           debug="${debug}">
+      <classpath>
+        <pathelement location="${build.lib}/${name}.jar"/>
+        <path refid="classpath"/>
+      </classpath>
       <include name="samples/**/*.java" />
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
       <exclude name="**/old/**/*.java" />
