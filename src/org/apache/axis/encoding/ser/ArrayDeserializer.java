@@ -103,8 +103,9 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
 
     public QName arrayType = null;
     public int curIndex = 0;
-    QName arrayItemType;
+    QName defaultItemType;
     int length;
+    Class arrayClass = null;
     ArrayList mDimLength = null;  // If set, array of multi-dim lengths 
     ArrayList mDimFactor = null;  // If set, array of factors for multi-dim arrays
     HashSet waiting = new HashSet();  // List of indices waiting for completion
@@ -126,54 +127,120 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                              DeserializationContext context)
         throws SAXException
     {
+        // Deserializing the xml array requires processing the
+        // xsi:type= attribute, the soapenc:arrayType attribute,
+        // and the xsi:type attributes of the individual elements.
+        //
+        // The xsi:type=<qName> attribute is used to determine the java
+        // type of the array to instantiate.  Axis expects it
+        // to be set to the generic "soapenc:Array" or to
+        // a specific qName.  If the generic "soapenc:Array"
+        // specification is used, Axis determines the array
+        // type by examining the soapenc:arrayType attribute.
+        //
+        // The soapenc:arrayType=<qname><dims> is used to determine
+        // i) the number of dimensions, 
+        // ii) the length of each dimension,
+        // iii) the default xsi:type of each of the elements.
+        //
+        // If the arrayType attribute is missing, Axis assumes
+        // a single dimension array with length equal to the number
+        // of nested elements.  In such cases, the default xsi:type of 
+        // the elements is determined using the array xsi:type.
+        //
+        // The xsi:type attributes of the individual elements of the
+        // array are used to determine the java type of the element.
+        // If the xsi:type attribute is missing for an element, the 
+        // default xsi:type value is used.
+
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("enter00", "ArrayDeserializer.startElement()"));
         }
 
+        // Get the qname for the array type=, set it to null if
+        // the generic type is used.
+        QName typeQName = context.getTypeFromAttributes(namespace,
+                                                        localName,
+                                                        attributes);
+        if (typeQName != null && 
+            Constants.isSOAP_ENC(typeQName.getNamespaceURI()) &&
+            typeQName.getLocalPart().equals("Array"))
+            typeQName = null;
+
+        // Now get the arrayType value 
         QName arrayTypeValue = context.getQNameFromString(
                       Constants.getValue(attributes,
                                          Constants.URI_CURRENT_SOAP_ENC,
                                          Constants.ATTR_ARRAY_TYPE));
-        if (arrayTypeValue == null)
-            throw new SAXException(JavaUtils.getMessage("noArrayType00"));
-        
-        String arrayTypeValueNamespaceURI = arrayTypeValue.getNamespaceURI();
-        String arrayTypeValueLocalPart = arrayTypeValue.getLocalPart();
-        int leftBracketIndex = arrayTypeValueLocalPart.lastIndexOf('[');
-        int rightBracketIndex = arrayTypeValueLocalPart.lastIndexOf(']');
 
-        if (leftBracketIndex == -1
-            || rightBracketIndex == -1
-            || rightBracketIndex < leftBracketIndex)
-        {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("badArrayType00", "" + arrayTypeValue));
+        // The first part of the arrayType expression is the default item type qname.
+        // The second part is the dimension information
+        String dimString = null;
+        if (arrayTypeValue != null) {
+            String arrayTypeValueNamespaceURI = arrayTypeValue.getNamespaceURI();
+            String arrayTypeValueLocalPart = arrayTypeValue.getLocalPart();
+            int leftBracketIndex = arrayTypeValueLocalPart.lastIndexOf('[');
+            int rightBracketIndex = arrayTypeValueLocalPart.lastIndexOf(']');
+            if (leftBracketIndex == -1
+                || rightBracketIndex == -1
+                || rightBracketIndex < leftBracketIndex)
+                {
+                    throw new IllegalArgumentException(
+                      JavaUtils.getMessage("badArrayType00", "" + arrayTypeValue));
+                }
+            
+            dimString = 
+                arrayTypeValueLocalPart.substring(leftBracketIndex + 1,
+                                                  rightBracketIndex);
+            arrayTypeValueLocalPart = 
+                arrayTypeValueLocalPart.substring(0, leftBracketIndex);
+            
+            // If multi-dim array set to soapenc:Array
+            if (arrayTypeValueLocalPart.endsWith("]")) {
+                defaultItemType = new QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
+            } else {
+                defaultItemType = new QName(arrayTypeValueNamespaceURI,
+                                            arrayTypeValueLocalPart);
+            }
         }
 
-        Class componentType = null;
-        String componentTypeName =
-                        arrayTypeValueLocalPart.substring(0, leftBracketIndex);
+        // If no type QName and no defaultItemType qname, use xsd:anyType
+        if (defaultItemType == null && typeQName == null)
+            defaultItemType = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "anyType");
         
-        if (componentTypeName.endsWith("]"))
-        {
-            // If the componentTypeName is an array, use soap_enc:Array
-            // with a componentType of ArrayList.class
-            arrayItemType = new QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
-            componentType = ArrayList.class;
+        
+        // Determine the class type for the array.
+        arrayClass = null;
+        if (typeQName != null) {
+            arrayClass = context.getTypeMapping().
+                getClassForQName(typeQName);
+        } else {
+            Class arrayItemClass = context.getTypeMapping().
+                getClassForQName(defaultItemType);
+            if (arrayItemClass != null) {
+                try {
+                    arrayClass = Class.forName(JavaUtils.getLoadableClassName(
+                      arrayItemClass.getName() + "[]"));   
+                } catch (Exception e) {
+                    throw new SAXException(
+                       JavaUtils.getMessage("noComponent00",  "" + defaultItemType));
+                }
+            }
         }
-        else
-            arrayItemType = new QName(arrayTypeValueNamespaceURI,
-                                      componentTypeName);
 
-        String lengthStr =
-                       arrayTypeValueLocalPart.substring(leftBracketIndex + 1,
-                                                         rightBracketIndex);
-        
-        if (lengthStr.length() > 0)
-        {
+        if (arrayClass == null) {
+            throw new SAXException(
+               JavaUtils.getMessage("noComponent00",  "" + defaultItemType));
+        }
+
+        if (dimString == null || dimString.length() == 0) {
+            // Size determined using length of the members
+            value = new ArrayListExtension(arrayClass);
+        }
+        else {
             try
             {
-                StringTokenizer tokenizer = new StringTokenizer(lengthStr, "[],");
+                StringTokenizer tokenizer = new StringTokenizer(dimString, "[],");
 
                 length = Integer.parseInt(tokenizer.nextToken());
 
@@ -191,21 +258,9 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                         }
                     }
 
-
-                // If the componentType was not already determined to be an 
-                // array, go and get it.
-                if (componentType == null)
-                    componentType = context.getTypeMapping().
-                                              getClassForQName(arrayItemType);
-
-                if (componentType == null)
-                    throw new SAXException(
-                            JavaUtils.getMessage("noComponent00",  "" + arrayItemType));
-                
-                
                 // Create an ArrayListExtension class to store the ArrayList
                 // plus converted objects.
-                ArrayList list = new ArrayListExtension(length);
+                ArrayList list = new ArrayListExtension(arrayClass, length);
                 // ArrayList lacks a setSize(), so...
                 for (int i = 0; i < length; i++) {
                     list.add(null);
@@ -216,22 +271,17 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
             catch (NumberFormatException e)
             {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badInteger00", lengthStr));
+                        JavaUtils.getMessage("badInteger00", dimString));
             }
         }
-        else
-        {
-            // asize with no integers: size must be determined by inspection
-            // of the actual members.
-            value = new ArrayListExtension();
-        }
-        
+
+        // If soapenc:offset specified, set the current index accordingly
         String offset = Constants.getValue(attributes,
                                          Constants.URI_CURRENT_SOAP_ENC,
                                          Constants.ATTR_OFFSET);
         if (offset != null) {
-            leftBracketIndex = offset.lastIndexOf('[');
-            rightBracketIndex = offset.lastIndexOf(']');
+            int leftBracketIndex = offset.lastIndexOf('[');
+            int rightBracketIndex = offset.lastIndexOf(']');
 
             if (leftBracketIndex == -1
                 || rightBracketIndex == -1
@@ -272,7 +322,8 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("enter00", "ArrayDeserializer.onStartChild()"));
         }
-        
+
+        // If the position attribute is set, use it to update the current index
         if (attributes != null) {
             String pos =
                 Constants.getValue(attributes,
@@ -301,14 +352,32 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                 return null;
             }
         }
-        
+
+        // Use the xsi:type setting on the attribute if it exists.
         QName itemType = context.getTypeFromAttributes(namespace,
                                                        localName,
                                                        attributes);
-        if (itemType == null)
-            itemType = arrayItemType;
-        
-        Deserializer dSer = context.getDeserializerForType(itemType);
+
+        // If xsi:type is not set, use the default.
+        if (itemType == null) {
+            itemType = defaultItemType;
+        }
+
+        // If xsi:type is still not set, try using the arrayClass info
+        if (itemType == null &&
+            arrayClass != null &&
+            arrayClass.isArray()) {
+            itemType = context.getTypeMapping().
+                getTypeQName(arrayClass.getComponentType());
+        }
+
+        // Get the deserializer for the type.  If no deserializer is 
+        // found, the deserializer is set to DeserializerImpl() which
+        // will properly issue any errors.
+        Deserializer dSer = null;
+        if (itemType != null) {
+            dSer = context.getDeserializerForType(itemType);
+        }
         if (dSer == null) {
             dSer = new DeserializerImpl();  
         }
@@ -518,15 +587,29 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
      **/
     public class ArrayListExtension extends ArrayList implements JavaUtils.ConvertCache {
         private HashMap table = null;
-        
+        private Class arrayClass = null;  // The array class.
         /**
          * Constructors
          */
-        ArrayListExtension() {
+        ArrayListExtension(Class arrayClass) {
             super();
+            this.arrayClass = arrayClass;
+            // Don't use the array class as a hint if it can't be instantiated
+            if (arrayClass == null ||
+                arrayClass.isInterface() ||
+                java.lang.reflect.Modifier.isAbstract(arrayClass.getModifiers())) {
+                arrayClass = null;
+            }                
         }
-        ArrayListExtension(int length) {
+        ArrayListExtension(Class arrayClass, int length) {
             super(length);
+            this.arrayClass = arrayClass;
+            // Don't use the array class as a hint if it can't be instantiated
+            if (arrayClass == null ||
+                arrayClass.isInterface() ||
+                java.lang.reflect.Modifier.isAbstract(arrayClass.getModifiers())) {
+                arrayClass = null;
+            } 
         }
         /**
          * Store converted value
@@ -543,6 +626,13 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
             if (table == null)
                 return null;
             return table.get(cls);
+        }
+
+        /**
+         * Get the destination array class described by the xml
+         **/         
+        public Class getDestClass() {
+            return arrayClass;
         }
     }
    

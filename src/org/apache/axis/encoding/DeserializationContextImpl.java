@@ -349,18 +349,18 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (typeQName != null)
             return typeQName;
         
-        // If no attribute information, can't continue
-        if (attrs == null)
-            return null;
-        
         // Check for type
         String type = Constants.getValue(attrs, Constants.URI_CURRENT_SCHEMA_XSI, "type");
-        
-        if (type == null)
-            return null;
+        if (type != null) {
+            // Return the type attribute value converted to a QName
+            return getQNameFromString(type);
+        }
 
-        // Return the type attribute value converted to a QName
-        return getQNameFromString(type);
+        // If all else fails see if the name is a known type
+        typeQName = new QName(namespace, localName);
+        if (getTypeMapping().getClassForQName(typeQName) != null)
+            return typeQName;
+        return null;
     }
 
     /**

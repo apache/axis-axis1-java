@@ -107,7 +107,7 @@ public class SerializationContextImpl implements SerializationContext
     private int lastPrefixIndex = 1;
     private MessageContext msgContext;
     private boolean pretty = false;
-
+    private static QName multirefQName = new QName("","multiRef");
 
     /**
      * Should I write out objects as multi-refs?
@@ -557,7 +557,7 @@ public class SerializationContextImpl implements SerializationContext
                 // set the javaType argument using value.getClass() because 
                 // values that represent primitives will never get to this point
                 // because they cannot be multi-ref'ed
-                serialize(new QName("","multiRef"), attrs, val, val.getClass());
+                serialize(multirefQName, attrs, val, val.getClass());
             }
 
             if (secondLevelObjects != null) {
@@ -869,6 +869,13 @@ public class SerializationContextImpl implements SerializationContext
             if ( pair != null ) {
                 QName type = tm.getTypeQName(pair.javaType);
                 attributes = setTypeAttribute(attributes, type);
+
+                // The multiref QName is our own fake name.
+                // It may be beneficial to set the name to the 
+                // type name, but I didn't see any improvements
+                // in the interop tests.
+                //if (name.equals(multirefQName) && type != null)
+                //    name = type;
                 pair.ser.serialize(name, attributes, value, this);
                 return;
             }
