@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
@@ -84,11 +83,15 @@ import java.util.StringTokenizer;
  * This is meant to be used on a SOAP Client to call a SOAP server.
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class HTTPSender extends BasicHandler {
-    protected static Log log =
-        LogFactory.getLog(HTTPSender.class.getName());
 
+    protected static Log log = LogFactory.getLog(HTTPSender.class.getName());
+
+    /**
+     * Utility Class BooleanHolder
+     */
     class BooleanHolder {
         public boolean value;
         public BooleanHolder(boolean value) {
@@ -96,22 +99,29 @@ public class HTTPSender extends BasicHandler {
         }
     }
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        if (log.isDebugEnabled()) {
-            log.debug( JavaUtils.getMessage("enter00", 
-                "HTTPSender::invoke") );
-        }
+    /**
+     * invoke creates a socket connection, sends the request SOAP message and then
+     * reads the response SOAP message back from the SOAP server
+     *
+     * @param msgContext the messsage context
+     *
+     * @throws AxisFault
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault
+    {
 
-        /* Find the service we're invoking so we can grab it's options */
-        /***************************************************************/
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "HTTPSender::invoke"));
+        }
         try {
             BooleanHolder useFullURL = new BooleanHolder(false);
-            StringBuffer  otherHeaders = new StringBuffer();
-            String        targetURL = msgContext.getStrProp( MessageContext.TRANS_URL);
-            URL           tmpURL = new URL( targetURL );
-            String        host = tmpURL.getHost();
-            Socket        sock = null ;
+            StringBuffer otherHeaders = new StringBuffer();
+            String targetURL = msgContext.getStrProp(MessageContext.TRANS_URL);
+            URL tmpURL = new URL(targetURL);
+            String host = tmpURL.getHost();
+            Socket sock = null;
 
+            // create socket based on the url protocol type
             if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
                 sock = getSecureSocket(host, tmpURL);
             } else {
@@ -123,118 +133,159 @@ public class HTTPSender extends BasicHandler {
                 sock.setSoTimeout(msgContext.getTimeout());
             }
 
-            writeToSocket(sock, msgContext, tmpURL, otherHeaders, host, useFullURL);
+            // Send the SOAP request to the server
+            writeToSocket(sock, msgContext, tmpURL, otherHeaders, host,
+                    useFullURL);
+
+            // Read the response back from the server
             readFromSocket(sock, msgContext);
-        }
-        catch( Exception e ) {
-            log.debug( e );
+        } catch (Exception e) {
+            log.debug(e);
             throw AxisFault.makeFault(e);
         }
-
         if (log.isDebugEnabled()) {
-            log.debug( JavaUtils.getMessage("exit00", 
-                "HTTPDispatchHandler::invoke") );
+            log.debug(JavaUtils.getMessage("exit00",
+                    "HTTPDispatchHandler::invoke"));
         }
     }
 
+    /**
+     * getSecureSocket is used when we need a secure SSL connection to the SOAP Server
+     *
+     * @param host host name
+     * @param tmpURL url that we need to connect to
+     *
+     * @return a secure socket
+     *
+     * @throws Exception
+     */
     private Socket getSecureSocket(String host, URL tmpURL) throws Exception
     {
         int port = 0;
         Socket sock = null;
-        if ( (port = tmpURL.getPort()) == -1 ) port = 443;
 
-        // Use http.proxyXXX settings if https.proxyXXX is not set
+        if ((port = tmpURL.getPort()) == -1) {
+            port = 443;
+        }
+
+        // Get https.proxyXXX settings
         String tunnelHost = System.getProperty("https.proxyHost");
         String tunnelPortStr = System.getProperty("https.proxyPort");
 
-        if (tunnelHost==null) tunnelHost = System.getProperty("http.proxyHost");
-        if (tunnelPortStr==null) tunnelPortStr = System.getProperty("http.proxyPort");
-
+        // Use http.proxyXXX settings if https.proxyXXX is not set
+        if (tunnelHost == null) {
+            tunnelHost = System.getProperty("http.proxyHost");
+        }
+        if (tunnelPortStr == null) {
+            tunnelPortStr = System.getProperty("http.proxyPort");
+        }
         try {
-            Class SSLSocketFactoryClass =
-                                         Class.forName("javax.net.ssl.SSLSocketFactory");
+
+            // Use java reflection to create a secure socket.
+            Class SSLSocketFactoryClass = Class.forName("javax.net.ssl.SSLSocketFactory");
             Class SSLSocketClass = Class.forName("javax.net.ssl.SSLSocket");
             Method createSocketMethod =
-                                       SSLSocketFactoryClass.getMethod("createSocket",
-                                                                       new Class[] {String.class, Integer.TYPE});
+                    SSLSocketFactoryClass.getMethod("createSocket",
+                            new Class[]{String.class,
+                                        Integer.TYPE});
             Method getDefaultMethod =
-                                     SSLSocketFactoryClass.getMethod("getDefault", new Class[] {});
+                    SSLSocketFactoryClass.getMethod("getDefault", new Class[]{});
             Method startHandshakeMethod =
-                                         SSLSocketClass.getMethod("startHandshake", new Class[] {});
-            Object factory = getDefaultMethod.invoke(null, new Object[] {});
+                    SSLSocketClass.getMethod("startHandshake", new Class[]{});
+            Object factory = getDefaultMethod.invoke(null,new Object[]{});
             Object sslSocket = null;
-            if (tunnelHost == null || tunnelHost.equals("")) {
+
+            if ((tunnelHost == null) || tunnelHost.equals("")) {
                 // direct SSL connection
-                sslSocket = createSocketMethod .invoke(factory,
-                                                       new Object[] {host, new Integer(port)});
+                sslSocket = createSocketMethod.invoke(factory,
+                        new Object[]{host,
+                                     new Integer(
+                                             port)});
             } else {
                 // SSL tunnelling through proxy server
                 Method createSocketMethod2 =
-                                            SSLSocketFactoryClass.getMethod("createSocket",
-                                                                            new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
+                        SSLSocketFactoryClass.getMethod("createSocket",
+                                new Class[]{Socket.class,
+                                            String.class,
+                                            Integer.TYPE,
+                                            Boolean.TYPE});
 
                 // Default proxy port is 80, even for https
-                int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 80: Integer.parseInt(tunnelPortStr)): 80);
+                int tunnelPort = ((tunnelPortStr != null)
+                        ? ((Integer.parseInt(tunnelPortStr) < 0)
+                        ? 80
+                        : Integer.parseInt(tunnelPortStr))
+                        : 80);
 
                 // Create the regular socket connection to the proxy
                 Socket tunnel = new Socket(tunnelHost, tunnelPort);
 
                 // The tunnel handshake method (condensed and made reflexive)
-                OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
-
-                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
-
+                OutputStream tunnelOutputStream =
+                        (OutputStream) SSLSocketClass.getMethod("getOutputStream",
+                                new Class[]{}).invoke(tunnel, new Object[]{});
+                PrintWriter out = new PrintWriter(
+                                    new BufferedWriter(
+                                       new OutputStreamWriter(tunnelOutputStream)));
                 String tunnelUser = System.getProperty("https.proxyUser");
                 String tunnelPassword = System.getProperty("https.proxyPassword");
-                if (tunnelUser == null) tunnelUser =
-                       System.getProperty("http.proxyUser");
-                if (tunnelPassword == null) tunnelPassword =
-                       System.getProperty("http.proxyPassword");
 
-// More secure version... engage later?
-//                        PasswordAuthentication pa =
-//                                Authenticator.requestPasswordAuthentication(
-//                                        InetAddress.getByName(tunnelHost),
-//                                        tunnelPort, "SOCK", "Proxy","HTTP");
-//                        if(pa == null){
-//                            printDebug("No Authenticator set.");
-//                        }else{
-//                            printDebug("Using Authenticator.");
-//                            tunnelUser = pa.getUserName();
-//                            tunnelPassword = new String(pa.getPassword());
-//                        }
+                if (tunnelUser == null) {
+                    tunnelUser = System.getProperty("http.proxyUser");
+                }
+                if (tunnelPassword == null) {
+                    tunnelPassword = System.getProperty("http.proxyPassword");
+                }
 
-
+                // More secure version... engage later?
+                // PasswordAuthentication pa =
+                // Authenticator.requestPasswordAuthentication(
+                // InetAddress.getByName(tunnelHost),
+                // tunnelPort, "SOCK", "Proxy","HTTP");
+                // if(pa == null){
+                // printDebug("No Authenticator set.");
+                // }else{
+                // printDebug("Using Authenticator.");
+                // tunnelUser = pa.getUserName();
+                // tunnelPassword = new String(pa.getPassword());
+                // }
                 out.print("CONNECT " + host + ":" + port + " HTTP/1.0\r\n"
-                          + "User-Agent: AxisClient");
-                if (tunnelUser != null && tunnelPassword != null) {
-                    //add basic authentication header for the proxy
-                    sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();
+                        + "User-Agent: AxisClient");
+                if ((tunnelUser != null) && (tunnelPassword != null)) {
+                    // add basic authentication header for the proxy
+                    sun.misc.BASE64Encoder enc =
+                            new sun.misc.BASE64Encoder();
                     String encodedPassword =
-                         enc.encode((tunnelUser + ":" + tunnelPassword).getBytes());
-                    out.print("\nProxy-Authorization: Basic " + encodedPassword);
+                            enc.encode((tunnelUser + ":"
+                            + tunnelPassword).getBytes());
+
+                    out.print("\nProxy-Authorization: Basic "
+                            + encodedPassword);
                 }
                 out.print("\nContent-Length: 0");
                 out.print("\nPragma: no-cache");
                 out.print("\r\n\r\n");
                 out.flush();
+                InputStream tunnelInputStream =
+                        (InputStream) SSLSocketClass.getMethod("getInputStream",
+                                new Class[]{}).invoke(tunnel, new Object[]{});
 
-                InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
                 if (log.isDebugEnabled()) {
                     log.debug(JavaUtils.getMessage("isNull00",
-                      "tunnelInputStream",
-                      "" + (tunnelInputStream == null)));
+                            "tunnelInputStream",
+                            "" + (tunnelInputStream
+                            == null)));
                 }
-
                 String replyStr = "";
 
                 // Make sure to read all the response from the proxy to prevent SSL negotiation failure
                 // Response message terminated by two sequential newlines
-                int     newlinesSeen = 0;
-                boolean     headerDone = false; /* Done on first newline */
+                int newlinesSeen = 0;
+                boolean headerDone = false;    /* Done on first newline */
 
                 while (newlinesSeen < 2) {
                     int i = tunnelInputStream.read();
+
                     if (i < 0) {
                         throw new IOException("Unexpected EOF from proxy");
                     }
@@ -244,53 +295,69 @@ public class HTTPSender extends BasicHandler {
                     } else if (i != '\r') {
                         newlinesSeen = 0;
                         if (!headerDone) {
-                            replyStr += String.valueOf((char)i);
+                            replyStr += String.valueOf((char) i);
                         }
                     }
                 }
-
-                if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
+                if (!replyStr.startsWith("HTTP/1.0 200")
+                        && !replyStr.startsWith("HTTP/1.1 200")) {
                     throw new IOException(JavaUtils.getMessage("cantTunnel00",
-                            new String[] {tunnelHost, "" + tunnelPort, replyStr}));
+                            new String[]{
+                                tunnelHost,
+                                "" + tunnelPort,
+                                replyStr}));
                 }
+
                 // End of condensed reflective tunnel handshake method
                 sslSocket = createSocketMethod2.invoke(factory,
-                                                       new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
-
+                        new Object[]{tunnel,
+                                     host,
+                                     new Integer(port),
+                                     new Boolean(true)});
                 if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage(
-                        "setupTunnel00", tunnelHost, "" + tunnelPort));
+                    log.debug(JavaUtils.getMessage("setupTunnel00", tunnelHost,
+                            "" + tunnelPort));
                 }
             }
+
             // must shake out hidden errors!
-            startHandshakeMethod.invoke(sslSocket, new Object[] {});
-            sock = (Socket)sslSocket;
+            startHandshakeMethod.invoke(sslSocket, new Object[]{
+            });
+            sock = (Socket) sslSocket;
         } catch (ClassNotFoundException cnfe) {
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("noJSSE00"));
+                log.debug(JavaUtils.getMessage("noJSSE00"));
             }
-
             throw AxisFault.makeFault(cnfe);
         } catch (NumberFormatException nfe) {
-              if (log.isDebugEnabled()) {
-                  log.debug( JavaUtils.getMessage("badProxy00",
-                      tunnelPortStr));
-              }
-
-              throw AxisFault.makeFault(nfe);
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage("badProxy00", tunnelPortStr));
+            }
+            throw AxisFault.makeFault(nfe);
         }
-
         if (log.isDebugEnabled()) {
-            log.debug( JavaUtils.getMessage("createdSSL00"));
+            log.debug(JavaUtils.getMessage("createdSSL00"));
         }
         return sock;
     }
 
-
-    private Socket getSocket(String host, URL tmpURL,
-                             StringBuffer otherHeaders, BooleanHolder useFullURL)
+    /**
+     * Creates a non-ssl socket connection to the SOAP server
+     *
+     * @param host host name
+     * @param tmpURL url to connect to
+     * @param otherHeaders buffer for storing additional headers that need to be sent
+     * @param useFullURL flag to indicate if the complete URL has to be sent
+     *
+     * @return the socket
+     *
+     * @throws IOException
+     */
+    private Socket getSocket(
+            String host, URL tmpURL, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws IOException
     {
+
         int port = 0;
         Socket sock = null;
         String proxyHost = System.getProperty("http.proxyHost");
@@ -300,80 +367,96 @@ public class HTTPSender extends BasicHandler {
         String proxyUsername = System.getProperty("http.proxyUser");
         String proxyPassword = System.getProperty("http.proxyPassword");
 
-        if ( proxyUsername != null ) {
+        if (proxyUsername != null) {
             StringBuffer tmpBuf = new StringBuffer();
-            tmpBuf.append( proxyUsername )
-           .append( ":" )
-           .append( (proxyPassword == null) ? "" : proxyPassword) ;
-            otherHeaders.append( HTTPConstants.HEADER_PROXY_AUTHORIZATION )
-                 .append( ": Basic " )
-                 .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                 .append("\r\n" );
+
+            tmpBuf.append(proxyUsername).append(":").append((proxyPassword
+                    == null)
+                    ? ""
+                    : proxyPassword);
+            otherHeaders.append(HTTPConstants.HEADER_PROXY_AUTHORIZATION)
+                    .append(": Basic ")
+                    .append(Base64.encode(tmpBuf.toString().getBytes()))
+                    .append("\r\n");
         }
-
-        if ((port = tmpURL.getPort()) == -1 ) port = 80;
-
-        if (proxyHost == null || proxyHost.equals("")
-            || proxyPort == null || proxyPort.equals("")
-            || hostInNonProxyList) {
-            sock = new Socket( host, port );
-
+        if ((port = tmpURL.getPort()) == -1) {
+            port = 80;
+        }
+        if ((proxyHost == null) || proxyHost.equals("") || (proxyPort == null)
+                || proxyPort.equals("") || hostInNonProxyList) {
+            sock = new Socket(host, port);
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("createdHTTP00"));
+                log.debug(JavaUtils.getMessage("createdHTTP00"));
             }
         } else {
-            sock = new Socket( proxyHost, new Integer(proxyPort).intValue() );
-
+            sock = new Socket(proxyHost, new Integer(proxyPort).intValue());
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("createdHTTP01",
-                    proxyHost, proxyPort));
+                log.debug(JavaUtils.getMessage("createdHTTP01", proxyHost,
+                        proxyPort));
             }
             useFullURL.value = true;
         }
         return sock;
     }
 
-    private void writeToSocket(Socket sock, MessageContext msgContext,
-                               URL tmpURL, StringBuffer otherHeaders,
-                               String host, BooleanHolder useFullURL)
+    /**
+     * Send the soap request message to the server
+     *
+     * @param sock socket
+     * @param msgContext message context
+     * @param tmpURL url to connect to
+     * @param otherHeaders other headers if any
+     * @param host host name
+     * @param useFullURL flag to indicate if the whole url needs to be sent
+     *
+     * @throws IOException
+     */
+    private void writeToSocket(
+            Socket sock, MessageContext msgContext, URL tmpURL, StringBuffer otherHeaders, String host, BooleanHolder useFullURL)
             throws IOException
     {
-        OutputStream  out  = new BufferedOutputStream(sock.getOutputStream(), 8*1024);
-        String        userID = null ;
-        String        passwd = null ;
-        String        reqEnv = null;
+
+        OutputStream out = new BufferedOutputStream(sock.getOutputStream(),
+                8 * 1024);
+        String userID = null;
+        String passwd = null;
+        String reqEnv = null;
 
         userID = msgContext.getUsername();
         passwd = msgContext.getPassword();
 
-        //  Get SOAPAction, default to ""
-        String   action = msgContext.useSOAPAction() ?
-                msgContext.getSOAPActionURI() : "";
-        if (action == null)
+        // Get SOAPAction, default to ""
+        String action = msgContext.useSOAPAction()
+                ? msgContext.getSOAPActionURI()
+                : "";
+
+        if (action == null) {
             action = "";
+        }
 
         // if UserID is not part of the context, but is in the URL, use
         // the one in the URL.
-        if ( userID == null && tmpURL.getUserInfo() != null) {
+        if ((userID == null) && (tmpURL.getUserInfo() != null)) {
             String info = tmpURL.getUserInfo();
             int sep = info.indexOf(':');
-            if ( (sep>=0) && (sep+1<info.length()) ) {
-                userID = info.substring(0,sep);
-                passwd = info.substring(sep+1);
+
+            if ((sep >= 0) && (sep + 1 < info.length())) {
+                userID = info.substring(0, sep);
+                passwd = info.substring(sep + 1);
             } else {
                 userID = info;
             }
         }
-
-        if ( userID != null ) {
+        if (userID != null) {
             StringBuffer tmpBuf = new StringBuffer();
-            tmpBuf.append( userID )
-           .append( ":" )
-           .append( (passwd == null) ? "" : passwd) ;
-            otherHeaders.append( HTTPConstants.HEADER_AUTHORIZATION )
-                 .append( ": Basic " )
-                 .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                 .append("\r\n" );
+
+            tmpBuf.append(userID).append(":").append((passwd == null)
+                    ? ""
+                    : passwd);
+            otherHeaders.append(HTTPConstants.HEADER_AUTHORIZATION)
+                    .append(": Basic ")
+                    .append(Base64.encode(tmpBuf.toString().getBytes()))
+                    .append("\r\n");
         }
 
         // don't forget the cookies!
@@ -383,234 +466,261 @@ public class HTTPSender extends BasicHandler {
             String cookie2 = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE2);
 
             if (cookie != null) {
-                otherHeaders.append(HTTPConstants.HEADER_COOKIE)
-                 .append(": ")
-                 .append(cookie)
-                 .append("\r\n");
+                otherHeaders.append(HTTPConstants.HEADER_COOKIE).append(": ")
+                        .append(cookie).append("\r\n");
             }
-
             if (cookie2 != null) {
-                otherHeaders.append(HTTPConstants.HEADER_COOKIE2)
-                 .append(": ")
-                 .append(cookie2)
-                 .append("\r\n");
+                otherHeaders.append(HTTPConstants.HEADER_COOKIE2).append(": ")
+                        .append(cookie2).append("\r\n");
             }
         }
-
         StringBuffer header = new StringBuffer();
-        // byte[] request = reqEnv.getBytes();
 
-        header.append( HTTPConstants.HEADER_POST )
-         .append(" " );
+        // byte[] request = reqEnv.getBytes();
+        header.append(HTTPConstants.HEADER_POST).append(" ");
         if (useFullURL.value) {
             header.append(tmpURL.toExternalForm());
         } else {
-            header.append( ((tmpURL.getFile() == null ||
-                    tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) );
+            header.append((((tmpURL.getFile() == null)
+                    || tmpURL.getFile().equals(""))
+                    ? "/"
+                    : tmpURL.getFile()));
         }
+        Message reqMessage = msgContext.getRequestMessage();
 
-        Message reqMessage= msgContext.getRequestMessage();
-
-        header.append( " HTTP/1.0\r\n" )
-         .append( HTTPConstants.HEADER_CONTENT_LENGTH )
-         .append( ": " )
-         .append( reqMessage.getContentLength() )
-         .append( "\r\n" )
-         .append( HTTPConstants.HEADER_HOST )
-         .append( ": " )
-         .append( host )
-         .append( "\r\n" )
-         .append( HTTPConstants.HEADER_CONTENT_TYPE )
-         .append( ": " )
-         .append( reqMessage.getContentType())
-         .append( "\r\n" )
-         .append( (otherHeaders == null ? "" : otherHeaders.toString()))
-         .append( HTTPConstants.HEADER_SOAP_ACTION )
-         .append( ": \"" )
-         .append( action )
-         .append( "\"\r\n");
+        header.append(" HTTP/1.0\r\n")
+                .append(HTTPConstants.HEADER_CONTENT_LENGTH)
+                .append(": ")
+                .append(reqMessage.getContentLength())
+                .append("\r\n")
+                .append(HTTPConstants.HEADER_HOST)
+                .append(": ")
+                .append(host)
+                .append("\r\n")
+                .append(HTTPConstants.HEADER_CONTENT_TYPE)
+                .append(": ")
+                .append(reqMessage.getContentType())
+                .append("\r\n")
+                .append(((otherHeaders == null)? "": otherHeaders.toString()))
+                .append(HTTPConstants.HEADER_SOAP_ACTION)
+                .append(": \"")
+                .append(action)
+                .append("\"\r\n");
 
         // adding user-defined/platform-dependent HTTP headers
-        if (msgContext.getProperty(HTTPConstants.REQUEST_HEADERS)!=null) {
+        if (msgContext.getProperty(HTTPConstants.REQUEST_HEADERS) != null) {
             Hashtable headerTable =
-                (Hashtable)msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
-            for (Enumeration e = headerTable.keys(); e.hasMoreElements(); ) {
+                    (Hashtable) msgContext
+                    .getProperty(HTTPConstants.REQUEST_HEADERS);
+
+            for (Enumeration e = headerTable.keys(); e.hasMoreElements();) {
                 Object key = e.nextElement();
-                header.append(key).append(": ")
-                 .append(headerTable.get(key)).append("\r\n");
+                header.append(key).append(": ").append(headerTable.get(key)).append("\r\n");
             }
         }
-
         header.append("\r\n");
-
-        out.write( header.toString().getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING) );
+        out.write(header.toString()
+                .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
         reqMessage.writeContentToStream(out);
         out.flush();
-
         if (log.isDebugEnabled()) {
-            log.debug( JavaUtils.getMessage("xmlSent00") );
-            log.debug( "---------------------------------------------------");
-            log.debug( header + reqEnv );
+            log.debug(JavaUtils.getMessage("xmlSent00"));
+            log.debug("---------------------------------------------------");
+            log.debug(header + reqEnv);
         }
     }
 
-    private void readFromSocket(Socket sock, MessageContext msgContext) throws IOException {
+    /**
+     * Reads the SOAP response back from the server
+     *
+     * @param sock socket
+     * @param msgContext message context
+     *
+     * @throws IOException
+     */
+    private void readFromSocket(Socket sock, MessageContext msgContext)
+            throws IOException
+    {
         Message outMsg = null;
-        byte       b ;
-        int        len = 0 ;
-        int        colonIndex = -1 ;
-        Hashtable  headers = new Hashtable();
-        String     name, value ;
-        String     statusMessage = "";
+        byte b;
+        int len = 0;
+        int colonIndex = -1;
+        Hashtable headers = new Hashtable();
+        String name, value;
+        String statusMessage = "";
         int returnCode = 0;
-
         BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
-        //Should help performance. Temporary fix only till its all stream oriented.
 
+        // Should help performance. Temporary fix only till its all stream oriented.
         // Need to add logic for getting the version # and the return code
         // but that's for tomorrow!
 
-        /*Logic to read HTTP response headers */
-        boolean readTooMuch= false;
-        b=0;
-        for(ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);;){
-            if(!readTooMuch)b = (byte) inp.read();
-            if(b == -1 ) break ;
-            readTooMuch=false;
-            if ( b != '\r' && b != '\n' ) {
-                if ( b == ':' && colonIndex == -1 ) colonIndex = len ;
+        /* Logic to read HTTP response headers */
+        boolean readTooMuch = false;
+
+        b = 0;
+        for (ByteArrayOutputStream buf = new ByteArrayOutputStream(4097); ;) {
+            if (!readTooMuch) {
+                b = (byte) inp.read();
+            }
+            if (b == -1) {
+                break;
+            }
+            readTooMuch = false;
+            if ((b != '\r') && (b != '\n')) {
+                if ((b == ':') && (colonIndex == -1)) {
+                    colonIndex = len;
+                }
                 len++;
                 buf.write(b);
-            }
-            else if ( b == '\r' )
-                continue ;
-            else {  //b== '\n'
-                if ( len == 0 ) break ;
-
+            } else if (b == '\r') {
+                continue;
+            } else {    // b== '\n'
+                if (len == 0) {
+                    break;
+                }
                 b = (byte) inp.read();
-                readTooMuch= true;
-                    //A space or tab at the begining of a line means the header continues.
-                if( b == ' ' || b== '\t'){
+                readTooMuch = true;
+
+                // A space or tab at the begining of a line means the header continues.
+                if ((b == ' ') || (b == '\t')) {
                     continue;
                 }
-
-                if ( colonIndex != -1 ) {
+                if (colonIndex != -1) {
                     buf.close();
-                    byte[]hdata= buf.toByteArray();
-                    buf.reset();
-                    name = new String( hdata, 0, colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
-                    value = new String( hdata, colonIndex+1, len-1-colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
-                    colonIndex = -1 ;
-                }
-                else {
-                    buf.close();
-                    byte[]hdata= buf.toByteArray();
-                    buf.reset();
-                    name = new String( hdata, 0, len, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
-                    value = "" ;
-                }
+                    byte[] hdata = buf.toByteArray();
 
+                    buf.reset();
+                    name =
+                            new String(hdata, 0, colonIndex,
+                                    HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING);
+                    value =
+                            new String(hdata, colonIndex + 1, len - 1 - colonIndex,
+                                    HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING);
+                    colonIndex = -1;
+                } else {
+                    buf.close();
+                    byte[] hdata = buf.toByteArray();
+
+                    buf.reset();
+                    name =
+                            new String(hdata, 0, len,
+                                    HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING);
+                    value = "";
+                }
                 if (log.isDebugEnabled()) {
-                    log.debug( name + value );
+                    log.debug(name + value);
                 }
+                if (msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE)
+                        == null) {
 
-                if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE)==null){
                     // Reader status code
-                    int start = name.indexOf( ' ' ) + 1 ;
+                    int start = name.indexOf(' ') + 1;
                     String tmp = name.substring(start).trim();
-                    int end   = tmp.indexOf( ' ' );
-                    if ( end != -1 ) tmp = tmp.substring( 0, end );
-                    returnCode = Integer.parseInt( tmp );
-                    msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE,
-                                            new Integer(returnCode) );
+                    int end = tmp.indexOf(' ');
+
+                    if (end != -1) {
+                        tmp = tmp.substring(0, end);
+                    }
+                    returnCode = Integer.parseInt(tmp);
+                    msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
+                            new Integer(returnCode));
                     statusMessage = name.substring(start + end + 1);
-                    msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE,
-                                            statusMessage);
+                    msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE,
+                            statusMessage);
+                } else {
+                    headers.put(name.toLowerCase(), value);
                 }
-                else
-                    headers.put( name.toLowerCase(), value );
-                len = 0 ;
+                len = 0;
             }
         }
-        /*All HTTP headers have been read.*/
 
-        String contentType = (String) headers.get(
-                   HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
-        contentType= (null == contentType )? null:contentType.trim();
+        /* All HTTP headers have been read. */
+        String contentType =
+                (String) headers
+                .get(HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
 
-        if (returnCode > 199 && returnCode < 300) {
+        contentType = (null == contentType)
+                ? null
+                : contentType.trim();
+        if ((returnCode > 199) && (returnCode < 300)) {
             // SOAP return is OK - so fall through
-        } else if (contentType!=null && !contentType.equals("text/html") &&
-                   (returnCode > 499 && returnCode < 600) ) {
+        } else if ((contentType != null) && !contentType.equals("text/html")
+                && ((returnCode > 499) && (returnCode < 600))) {
             // SOAP Fault should be in here - so fall through
         } else {
             // Unknown return code - so wrap up the content into a
             // SOAP Fault.
-           ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);
-           while(-1 !=(b = (byte)inp.read())){
-              buf.write(b);
-           }
+            ByteArrayOutputStream buf = new ByteArrayOutputStream(4097);
 
-            AxisFault fault = new AxisFault("HTTP",
-                                            statusMessage,
-                                            null,
-                                            null);
+            while (-1 != (b = (byte) inp.read())) {
+                buf.write(b);
+            }
+            AxisFault fault = new AxisFault("HTTP", statusMessage, null, null);
+
             fault.setFaultDetailString(JavaUtils.getMessage("return01",
                     "" + returnCode, buf.toString()));
             throw fault;
         }
+        if (b != -1) {    // more data than just headers.
+            String contentLocation =
+                    (String) headers
+                    .get(HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
 
-        if ( b != -1 ) { //more data than just headers.
+            contentLocation = (null == contentLocation)
+                    ? null
+                    : contentLocation.trim();
+            String contentLength =
+                    (String) headers
+                    .get(HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
 
-            String contentLocation = (String) headers.get(
-                HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
-            contentLocation= (null == contentLocation )? null:contentLocation.trim();
-
-            String contentLength = (String) headers.get(
-                HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
-            contentLength= (null == contentLength )? null:contentLength.trim();
-
-            outMsg = new Message( inp, false, contentType, contentLocation);
-
+            contentLength = (null == contentLength)
+                    ? null
+                    : contentLength.trim();
+            outMsg = new Message(inp, false, contentType,
+                    contentLocation);
             outMsg.setMessageType(Message.RESPONSE);
-            msgContext.setResponseMessage( outMsg );
-
+            msgContext.setResponseMessage(outMsg);
             if (log.isDebugEnabled()) {
-                if(null==contentLength )
-                    log.debug( "\n" + JavaUtils.getMessage("no00",
-                      "Content-Length") );
-                log.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
-                log.debug( "-----------------------------------------------");
-                log.debug( (String) outMsg.getSOAPPart().getAsString() );
+                if (null == contentLength) {
+                    log.debug("\n"
+                            + JavaUtils.getMessage("no00", "Content-Length"));
+                }
+                log.debug("\n" + JavaUtils.getMessage("xmlRecd00"));
+                log.debug("-----------------------------------------------");
+                log.debug((String) outMsg.getSOAPPart().getAsString());
             }
-
         }
-
 
         // if we are maintaining session state,
         // handle cookies (if any)
         if (msgContext.getMaintainSession()) {
             handleCookie(HTTPConstants.HEADER_COOKIE,
-                         HTTPConstants.HEADER_SET_COOKIE,
-                         headers,
-                         msgContext);
+                    HTTPConstants.HEADER_SET_COOKIE, headers, msgContext);
             handleCookie(HTTPConstants.HEADER_COOKIE2,
-                         HTTPConstants.HEADER_SET_COOKIE2,
-                         headers,
-                         msgContext);
+                    HTTPConstants.HEADER_SET_COOKIE2, headers, msgContext);
         }
     }
 
-    // little helper function for cookies
-    public void handleCookie
-         (String cookieName, String setCookieName, Hashtable headers,
-          MessageContext msgContext)
+    /**
+     * little helper function for cookies
+     *
+     * @param cookieName
+     * @param setCookieName
+     * @param headers
+     * @param msgContext
+     */
+    public void handleCookie(String cookieName, String setCookieName,
+                             Hashtable headers, MessageContext msgContext)
     {
+
         if (headers.containsKey(setCookieName.toLowerCase())) {
-            String cookie = (String)headers.get(setCookieName.toLowerCase());
+            String cookie = (String) headers.get(setCookieName.toLowerCase());
             cookie = cookie.trim();
+
             // chop after first ; a la Apache SOAP (see HTTPUtils.java there)
             int index = cookie.indexOf(';');
+
             if (index != -1) {
                 cookie = cookie.substring(0, index);
             }
@@ -618,22 +728,33 @@ public class HTTPSender extends BasicHandler {
         }
     }
 
+    /**
+     * Check if the specified host is in the list of non proxy hosts.
+     *
+     * @param host host name
+     * @param nonProxyHosts string containing the list of non proxy hosts
+     *
+     * @return true/false
+     */
     private boolean isHostInNonProxyList(String host, String nonProxyHosts)
     {
-        if(nonProxyHosts == null || host == null)
+        if ((nonProxyHosts == null) || (host == null)) {
             return false;
-        StringTokenizer tokenizer = new StringTokenizer(nonProxyHosts,"|");
-        while(tokenizer.hasMoreTokens()) {
+        }
+        StringTokenizer tokenizer = new StringTokenizer(nonProxyHosts, "|");
+
+        while (tokenizer.hasMoreTokens()) {
             String pattern = tokenizer.nextToken();
 
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage(
-                    "match00",
-                    new String[] {"HTTPSender", host, pattern}));
+                log.debug(JavaUtils.getMessage("match00",
+                        new String[]{"HTTPSender",
+                                     host,
+                                     pattern}));
             }
-
-            if(match(pattern, host, false))
+            if (match(pattern, host, false)) {
                 return true;
+            }
         }
         return false;
     }
@@ -646,62 +767,68 @@ public class HTTPSender extends BasicHandler {
      * @param pattern the (non-null) pattern to match against
      * @param str     the (non-null) string that must be matched against the
      *                pattern
+     * @param isCaseSensitive
      *
      * @return <code>true</code> when the string matches against the pattern,
      *         <code>false</code> otherwise.
      */
-    private static boolean match(String pattern, String str, boolean isCaseSensitive) {
+    private static boolean match(String pattern, String str,
+                                 boolean isCaseSensitive)
+    {
         char[] patArr = pattern.toCharArray();
         char[] strArr = str.toCharArray();
         int patIdxStart = 0;
-        int patIdxEnd   = patArr.length-1;
+        int patIdxEnd = patArr.length - 1;
         int strIdxStart = 0;
-        int strIdxEnd   = strArr.length-1;
+        int strIdxEnd = strArr.length - 1;
         char ch;
-
         boolean containsStar = false;
+
         for (int i = 0; i < patArr.length; i++) {
             if (patArr[i] == '*') {
                 containsStar = true;
                 break;
             }
         }
-
         if (!containsStar) {
+
             // No '*'s, so we make a shortcut
             if (patIdxEnd != strIdxEnd) {
-                return false; // Pattern and string do not have the same size
+                return false;        // Pattern and string do not have the same size
             }
             for (int i = 0; i <= patIdxEnd; i++) {
                 ch = patArr[i];
-                if (isCaseSensitive && ch != strArr[i]) {
-                    return false;// Character mismatch
+                if (isCaseSensitive && (ch != strArr[i])) {
+                    return false;    // Character mismatch
                 }
-                if (!isCaseSensitive && Character.toUpperCase(ch) !=
-                    Character.toUpperCase(strArr[i])) {
-                    return false; // Character mismatch
+                if (!isCaseSensitive
+                        && (Character.toUpperCase(ch)
+                        != Character.toUpperCase(strArr[i]))) {
+                    return false;    // Character mismatch
                 }
             }
-            return true; // String matches against pattern
+            return true;             // String matches against pattern
         }
-
         if (patIdxEnd == 0) {
-            return true; // Pattern contains only '*', which matches anything
+            return true;    // Pattern contains only '*', which matches anything
         }
 
         // Process characters before first star
-        while((ch = patArr[patIdxStart]) != '*' && strIdxStart <= strIdxEnd) {
-            if (isCaseSensitive && ch != strArr[strIdxStart]) {
-                return false;// Character mismatch
+        while ((ch = patArr[patIdxStart]) != '*'
+                && (strIdxStart <= strIdxEnd)) {
+            if (isCaseSensitive && (ch != strArr[strIdxStart])) {
+                return false;    // Character mismatch
             }
-            if (!isCaseSensitive && Character.toUpperCase(ch) !=
-                Character.toUpperCase(strArr[strIdxStart])) {
-                return false;// Character mismatch
+            if (!isCaseSensitive
+                    && (Character.toUpperCase(ch)
+                    != Character.toUpperCase(strArr[strIdxStart]))) {
+                return false;    // Character mismatch
             }
             patIdxStart++;
             strIdxStart++;
         }
         if (strIdxStart > strIdxEnd) {
+
             // All characters in the string are used. Check if only '*'s are
             // left in the pattern. If so, we succeeded. Otherwise failure.
             for (int i = patIdxStart; i <= patIdxEnd; i++) {
@@ -713,18 +840,20 @@ public class HTTPSender extends BasicHandler {
         }
 
         // Process characters after last star
-        while((ch = patArr[patIdxEnd]) != '*' && strIdxStart <= strIdxEnd) {
-            if (isCaseSensitive && ch != strArr[strIdxEnd]) {
-                return false;// Character mismatch
+        while ((ch = patArr[patIdxEnd]) != '*' && (strIdxStart <= strIdxEnd)) {
+            if (isCaseSensitive && (ch != strArr[strIdxEnd])) {
+                return false;    // Character mismatch
             }
-            if (!isCaseSensitive && Character.toUpperCase(ch) !=
-                Character.toUpperCase(strArr[strIdxEnd])) {
-                return false;// Character mismatch
+            if (!isCaseSensitive
+                    && (Character.toUpperCase(ch)
+                    != Character.toUpperCase(strArr[strIdxEnd]))) {
+                return false;    // Character mismatch
             }
             patIdxEnd--;
             strIdxEnd--;
         }
         if (strIdxStart > strIdxEnd) {
+
             // All characters in the string are used. Check if only '*'s are
             // left in the pattern. If so, we succeeded. Otherwise failure.
             for (int i = patIdxStart; i <= patIdxEnd; i++) {
@@ -737,47 +866,50 @@ public class HTTPSender extends BasicHandler {
 
         // process pattern between stars. padIdxStart and patIdxEnd point
         // always to a '*'.
-        while (patIdxStart != patIdxEnd && strIdxStart <= strIdxEnd) {
+        while ((patIdxStart != patIdxEnd) && (strIdxStart <= strIdxEnd)) {
             int patIdxTmp = -1;
-            for (int i = patIdxStart+1; i <= patIdxEnd; i++) {
+
+            for (int i = patIdxStart + 1; i <= patIdxEnd; i++) {
                 if (patArr[i] == '*') {
                     patIdxTmp = i;
                     break;
                 }
             }
-            if (patIdxTmp == patIdxStart+1) {
+            if (patIdxTmp == patIdxStart + 1) {
+
                 // Two stars next to each other, skip the first one.
                 patIdxStart++;
                 continue;
             }
+
             // Find the pattern between padIdxStart & padIdxTmp in str between
             // strIdxStart & strIdxEnd
-            int patLength = (patIdxTmp-patIdxStart-1);
-            int strLength = (strIdxEnd-strIdxStart+1);
-            int foundIdx  = -1;
+            int patLength = (patIdxTmp - patIdxStart - 1);
+            int strLength = (strIdxEnd - strIdxStart + 1);
+            int foundIdx = -1;
+
             strLoop:
             for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
-                    ch = patArr[patIdxStart+j+1];
-                    if (isCaseSensitive && ch != strArr[strIdxStart+i+j]) {
+                    ch = patArr[patIdxStart + j + 1];
+                    if (isCaseSensitive
+                            && (ch != strArr[strIdxStart + i + j])) {
                         continue strLoop;
                     }
-                    if (!isCaseSensitive && Character.toUpperCase(ch) !=
-                        Character.toUpperCase(strArr[strIdxStart+i+j])) {
+                    if (!isCaseSensitive && (Character
+                            .toUpperCase(ch) != Character
+                            .toUpperCase(strArr[strIdxStart + i + j]))) {
                         continue strLoop;
                     }
                 }
-
-                foundIdx = strIdxStart+i;
+                foundIdx = strIdxStart + i;
                 break;
             }
-
             if (foundIdx == -1) {
                 return false;
             }
-
             patIdxStart = patIdxTmp;
-            strIdxStart = foundIdx+patLength;
+            strIdxStart = foundIdx + patLength;
         }
 
         // All characters in the string are used. Check if only '*'s are left
@@ -790,4 +922,3 @@ public class HTTPSender extends BasicHandler {
         return true;
     }
 }
-
