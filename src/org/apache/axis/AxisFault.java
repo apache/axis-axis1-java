@@ -163,4 +163,12 @@ public class AxisFault extends Exception {
 
     envelope.output(context);
   }
+
+  public String toString() {
+    return( "AxisFault\n" +
+            "  faultCode: " + faultCode + "\n" +
+            "  faultString: " + faultString + "\n" +
+            "  faultActor: " + faultActor + "\n" +
+            "  faultDetails: " + faultDetails + "\n"  );
+  }
 };
