@@ -18,7 +18,10 @@ import java.util.Iterator;
 public class ServerHandler implements Handler {
 
 	private int _counter = 0;
+	private int _faultCounter = 0;
+
 	public final static String _actorURI = "myActorURI";
+
 	/**
 	 * Constructor for ClientHandler.
 	 */
@@ -44,6 +47,9 @@ public class ServerHandler implements Handler {
 				SOAPHeaderElement she = (SOAPHeaderElement) iter.next();
 				String counter = she.getAttributeValue(se.createName("counter","",""));
 				_counter = Integer.parseInt(counter) + 1;
+
+				String faultCounter = she.getAttributeValue(se.createName("faultCounter","",""));
+				_faultCounter = Integer.parseInt(faultCounter) + 1;			// Increment it to 2
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,7 +85,23 @@ public class ServerHandler implements Handler {
 	 * @see javax.xml.rpc.handler.Handler#handleFault(MessageContext)
 	 */
 	public boolean handleFault(MessageContext context) {
-		return false;
+		try {
+			SOAPMessageContext smc = (SOAPMessageContext) context;
+			SOAPMessage msg = smc.getMessage();
+			SOAPPart sp = msg.getSOAPPart();
+			SOAPEnvelope se = sp.getEnvelope();
+			SOAPHeader sh = se.getHeader();
+			Name name = se.createName("HeaderTest", "AXIS",
+									  "http://xml.apache.org/axis");
+			SOAPHeaderElement she = sh.addHeaderElement(name);
+
+			she.addAttribute(se.createName("faultCounter","",""), new Integer(_faultCounter +1).toString());
+			she.setActor(_actorURI);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true;
 	}
 
 	/**

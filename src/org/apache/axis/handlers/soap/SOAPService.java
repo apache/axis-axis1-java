@@ -58,6 +58,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
+import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.attachments.Attachments;
@@ -70,6 +71,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.soap.SOAPConstants;
@@ -80,6 +82,7 @@ import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.soap.SOAPFaultException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -88,10 +91,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import javax.xml.rpc.soap.SOAPFaultException;
-import org.apache.axis.message.SOAPFault;
-import org.apache.axis.Message;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -482,7 +481,16 @@ public class SOAPService extends SimpleTargetedChain
             }
 
             if (result) {
-                super.invoke(msgContext);
+                try {
+                    super.invoke(msgContext);
+                } catch (AxisFault e) {
+                    msgContext.setPastPivot(true);
+                    if (handlerImpl != null) {
+                        handlerImpl.handleFault(msgContext);
+                        handlerImpl.destroy();
+                    }
+                    throw e;
+                }
             } else {
                 msgContext.setPastPivot(true);
             }
