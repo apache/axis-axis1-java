@@ -146,27 +146,54 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println();
 
         pw.println("    public " + className + "(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
-        pw.println("        try {" );
-        pw.println("            if (service == null) {");
-        pw.println("                super.service = new org.apache.axis.client.Service();");
-        pw.println("            } else {");
-        pw.println("                super.service = service;");
-        pw.println("            }");
+        pw.println("        if (service == null) {");
+        pw.println("            super.service = new org.apache.axis.client.Service();");
+        pw.println("        } else {");
+        pw.println("            super.service = service;");
+        pw.println("        }");
 
-        if (types.size() > 0 || hasMIME) {
-            writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
+        // keep track of how many type mappings we write out
+        int typeMappingCount = 0;
+        if (types.size() > 0) {
             Iterator it = types.iterator();
             while (it.hasNext()) {
-                TypeEntry te = (TypeEntry) it.next();
-                writeSerializationInit(pw, te);
+                TypeEntry type = (TypeEntry) it.next();
+                // Note this same check is repeated in JavaDeployWriter.
+
+                // 1) Don't register types that are base (primitive) types.
+                //    If the baseType != null && getRefType() != null this
+                //    is a simpleType that must be registered.
+                // 2) Don't register the special types for collections 
+                //    (indexed properties) or elements
+                // 3) Don't register types that are not referenced
+                //    or only referenced in a literal context.
+                if ((type.getBaseType() != null && type.getRefType() == null) ||
+                    type instanceof CollectionTE ||
+                    type instanceof Element ||
+                    !type.isReferenced() ||
+                    type.isOnlyLiteralReferenced()) {
+                    continue;
+                }
+        
+                // Write out serializer declarations
+                if (typeMappingCount == 0) {
+                    writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
+                }
+
+                // write the type mapping for this type
+                writeSerializationInit(pw, type);
+                
+                // increase the number of type mappings count
+                typeMappingCount++;
             }
         }
-
-        pw.println("        }");
-        pw.println("        catch(java.lang.Exception t) {");
-        pw.println("            throw org.apache.axis.AxisFault.makeFault(t);");
-        pw.println("        }");
-
+        // We need to write out the MIME mapping, even if we don't have
+        // any type mappings
+        if (typeMappingCount == 0 && hasMIME) {
+            writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
+            typeMappingCount++;
+        }
+        
         pw.println("    }");
         pw.println();
         pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
@@ -200,7 +227,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("                else");
         pw.println("                    _call.setScopedProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
-        if (types.size() > 0 || hasMIME) {
+        if (typeMappingCount > 0) {
             pw.println("            // " + Messages.getMessage("typeMap00"));
             pw.println("            // " + Messages.getMessage("typeMap01"));
             pw.println("            // " + Messages.getMessage("typeMap02"));
@@ -405,28 +432,6 @@ public class JavaStubWriter extends JavaClassWriter {
 
     private void writeSerializationInit(PrintWriter pw, TypeEntry type) throws IOException {
 
-        // Note this same check is repeated in JavaDeployWriter.
-        boolean process = true;
-
-        // 1) Don't register types that are base (primitive) types.
-        //    If the baseType != null && getRefType() != null this
-        //    is a simpleType that must be registered.
-        // 2) Don't register the special types for collections 
-        //    (indexed properties) or element types
-        // 3) Don't register types that are not referenced
-        //    or only referenced in a literal context.
-        if ((type.getBaseType() != null && type.getRefType() == null) ||
-            type instanceof CollectionTE ||
-            type instanceof Element ||
-            !type.isReferenced() ||
-            type.isOnlyLiteralReferenced()) {
-            process = false;
-        }
-        
-        if (!process) {
-            return;
-        }        
-
         QName qname = type.getQName();
 
         pw.println("            qName = new javax.xml.namespace.QName(\""
@@ -532,7 +537,7 @@ public class JavaStubWriter extends JavaClassWriter {
         if (parms.returnParam != null) {
 
             // Get the QName for the return Type
-            QName returnName = Utils.getXSIType(parms.returnParam);
+            QName returnType = Utils.getXSIType(parms.returnParam);
             
             // Get the javaType
             String javaType = null;
@@ -544,10 +549,10 @@ public class JavaStubWriter extends JavaClassWriter {
             }
             if (javaType == null) {
                 pw.println("        _call.setReturnType(" + 
-                           Utils.getNewQName(returnName) + ");");
+                           Utils.getNewQName(returnType) + ");");
             } else {
                 pw.println("        _call.setReturnType(" + 
-                           Utils.getNewQName(returnName) + 
+                           Utils.getNewQName(returnType) + 
                            ", " + javaType + ".class);");
             }
         }
