@@ -58,6 +58,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.attachments.ManagedMemoryDataSource;
 import javax.activation.DataHandler;
 import org.apache.axis.Part;
+import javax.mail.internet.MimeUtility;
 
 
 /**
@@ -140,9 +141,10 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
             boundaryDelimitedStream = new org.apache.axis.attachments.BoundaryDelimitedStream( is, boundary, 1024);
 
             //Now read through all potential streams until we have found the root part.
+            String contentTransferEncoding = null;
             do {
                 contentId = null;
-                String contentTransferEncoding = null;
+                contentTransferEncoding = null;
                 //Read this attachments headers from the stream.  
                 javax.mail.internet.InternetHeaders headers = new javax.mail.internet.InternetHeaders(boundaryDelimitedStream);
                 //Use java mail utility to read through the headers.
@@ -152,6 +154,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                     contentId = contentId.trim();
                     if (contentId.startsWith("<")) contentId = contentId.substring(1);
                     if (contentId.endsWith(">")) contentId = contentId.substring(0, contentId.length() - 1);
+                    contentId = contentId.trim();
                     if (!contentId.startsWith("cid:")) contentId = "cid:" + contentId; //make sure its identified as cid
                 }
 
@@ -160,16 +163,22 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                     contentLocation = contentLocation.trim();
                     if (contentLocation.startsWith("<")) contentLocation = contentLocation.substring(1);
                     if (contentLocation.endsWith(">")) contentLocation = contentLocation.substring(0, contentLocation.length() - 1);
+                    contentLocation = contentLocation.trim();
                 }
                 contentType = headers.getHeader(HTTPConstants.HEADER_CONTENT_TYPE, null);
                 if (contentType != null) contentType = contentType.trim();
 
                 contentTransferEncoding = headers.getHeader(HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING, null);
-                if (contentTransferEncoding != null ) contentTransferEncoding = contentTransferEncoding.trim();
-                //TODO still need to add support for bas64 and quoted printable.
+                if(contentTransferEncoding != null ) contentTransferEncoding = contentTransferEncoding.trim();
+
+                java.io.InputStream decodedStream=  boundaryDelimitedStream;
+                if(contentTransferEncoding != null && 0 != contentTransferEncoding.length()){
+                    decodedStream= MimeUtility.decode(decodedStream, contentTransferEncoding);
+                }
 
                 if (rootPartContentId != null && !rootPartContentId.equals( contentId)) { //This is a part that has come in prior to the root part. Need to buffer it up.
-                    javax.activation.DataHandler dh = new javax.activation.DataHandler(new org.apache.axis.attachments.ManagedMemoryDataSource(boundaryDelimitedStream, 16 * 1024, contentType, true));
+                    javax.activation.DataHandler dh = new javax.activation.DataHandler(new org.apache.axis.attachments.ManagedMemoryDataSource(decodedStream,
+                   16 * 1024, contentType, true));
 
                     AttachmentPart ap= new AttachmentPart(dh);
                     if(contentId != null) 
@@ -203,7 +212,10 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
             if (boundaryDelimitedStream  == null ) {
                 throw new org.apache.axis.AxisFault( "Root part containing SOAP envelope not found.  contentId=" + rootPartContentId);
             }
-            soapStream = boundaryDelimitedStream; //This should be the SOAP part
+
+            if(contentTransferEncoding != null && 0 != contentTransferEncoding.length()){
+                    soapStream = MimeUtility.decode(boundaryDelimitedStream, contentTransferEncoding);
+            }else soapStream = boundaryDelimitedStream; //This should be the SOAP part
 
         //Read from the input stream all attachments prior to the root part.
         }
@@ -292,6 +304,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                     if (contentId.startsWith("<")) contentId = contentId.substring(1);
                     if (contentId.endsWith(">")) contentId = contentId.substring(0, contentId.length() - 1);
                     if (!contentId.startsWith("cid:")) contentId = "cid:" + contentId;
+                    contentId = contentId.trim();
                 }
                 contentType = headers.getHeader(HTTPConstants.HEADER_CONTENT_TYPE, null);
                 if (contentType != null) contentType = contentType.trim();
@@ -300,7 +313,12 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                 contentTransferEncoding = headers.getHeader(HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING , null);
                 if (contentTransferEncoding != null ) contentTransferEncoding = contentTransferEncoding.trim();
 
-                DataHandler dh= new DataHandler(new ManagedMemoryDataSource(boundaryDelimitedStream, 1024, contentType, true));
+                java.io.InputStream decodedStream=  boundaryDelimitedStream;
+                if(contentTransferEncoding != null && 0 != contentTransferEncoding.length()){
+                    decodedStream= MimeUtility.decode(decodedStream, contentTransferEncoding);
+                }
+
+                DataHandler dh= new DataHandler(new ManagedMemoryDataSource(decodedStream, 1024, contentType, true));
 
                 AttachmentPart ap= new AttachmentPart(dh);
                 if(contentId != null) 
