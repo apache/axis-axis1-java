@@ -90,6 +90,9 @@ public class WSDL2Java extends WSDL2 {
 	/** Field IMPL_CLASS_OPT */
 	protected static final int IMPL_CLASS_OPT = 'c';
 
+    /** Field IMPL_CLASS_OPT */
+    protected static final int JAXRPC11_OPT = 'j';
+
     /** Field emitter */
     private Emitter emitter;
     
@@ -173,7 +176,9 @@ public class WSDL2Java extends WSDL2 {
 				new CLOptionDescriptor("implementationClassName",
 						CLOptionDescriptor.ARGUMENT_REQUIRED,
 						IMPL_CLASS_OPT,
-						Messages.getMessage("implementationClassName"))
+						Messages.getMessage("implementationClassName")),
+                new CLOptionDescriptor("jaxrpc", CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                        JAXRPC11_OPT, Messages.getMessage("optionJaxrpc"))
             };
 
     /**
@@ -310,6 +315,10 @@ public class WSDL2Java extends WSDL2 {
 				emitter.setImplementationClassName(option.getArgument());
 				break;
 
+            case JAXRPC11_OPT:
+                emitter.setUseJaxRPC11Mappings(true);
+                break;
+                
             default :
                 super.parseOption(option);
         }

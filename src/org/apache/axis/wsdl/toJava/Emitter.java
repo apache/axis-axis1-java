@@ -91,6 +91,9 @@ public class Emitter extends Parser {
 
     private boolean typeCollisionProtection = true;
 
+    /** Use JAX-RPC 1.1 type mappings */
+    private boolean useJaxRPC11Mappings = false;
+
     /** Field packageName */
     private String packageName = null;
 
@@ -393,6 +396,26 @@ public class Emitter extends Parser {
     }
 
     /**
+     * Turn on the JAX-RPC 1.1 type mappings, which maps
+     * various XML Schema types to java types (string, BigInteger, Calendar, etc).
+     * <p>
+     * Axis has custom types (in org.apache.axis.types) that are used by
+     * default.
+     */
+    public void setUseJaxRPC11Mappings(boolean b) {
+        useJaxRPC11Mappings = b;
+    }
+
+    /**
+     * Will this emitter use the JAX-RPC 1.1 type mappings for
+     * the types that aren't directly mappable to Java.
+     * @return TRUE if we are using the JAX-RPC 1.1 mappings.
+     */
+    public boolean getsetUseJaxRPC11Mappings() {
+        return useJaxRPC11Mappings;
+    }
+
+    /**
      * Sets the <code>WriterFactory Class</code> to use
      * 
      * @param factory the name of the factory <code>Class</code>
@@ -401,8 +424,7 @@ public class Emitter extends Parser {
 
         try {
             Class clazz = ClassUtils.forName(factory);
-            GeneratorFactory genFac = null;
-
+            GeneratorFactory genFac;
             try {
                 Constructor ctor = clazz.getConstructor(new Class[]{
                     getClass()});
@@ -530,10 +552,7 @@ public class Emitter extends Parser {
      * @return
      */
     public String getJavaVariableName(QName typeQName, QName xmlName, boolean isElement) {
-        String javaName = null;
-        
-        
-        javaName = getJavaVariableNameHook(typeQName, xmlName, isElement);        
+        String javaName = getJavaVariableNameHook(typeQName, xmlName, isElement);
         if (javaName == null) {
             String elemName = Utils.getLastLocalPart(xmlName.getLocalPart());            
             javaName = Utils.xmlNameToJava(elemName);
@@ -730,7 +749,7 @@ public class Emitter extends Parser {
         baseTypeMapping = new BaseTypeMapping() {
 
             final TypeMapping defaultTM =
-                    DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+                    DefaultSOAPEncodingTypeMappingImpl.createWithDelegate(useJaxRPC11Mappings);
 
             public String getBaseName(QName qNameIn) {
 

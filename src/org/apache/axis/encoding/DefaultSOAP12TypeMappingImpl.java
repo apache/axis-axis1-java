@@ -9,7 +9,7 @@ public class DefaultSOAP12TypeMappingImpl
   extends DefaultSOAPEncodingTypeMappingImpl {
   
   public DefaultSOAP12TypeMappingImpl() {
-    super();
+    super(false);
   }
 
 }

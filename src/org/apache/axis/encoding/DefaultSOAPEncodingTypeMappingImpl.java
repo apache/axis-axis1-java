@@ -35,19 +35,24 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
      */
     public static TypeMapping create() {
         if (tm == null) {
-            tm = new DefaultSOAPEncodingTypeMappingImpl();
+            tm = new DefaultSOAPEncodingTypeMappingImpl(false);
         }
         return tm;
     }
     
-    public static TypeMapping createWithDelegate() {
-        TypeMapping ret = new DefaultSOAPEncodingTypeMappingImpl();
+    public static TypeMapping createWithDelegate(boolean UseJaxRPC11Mappings) {
+        TypeMapping ret = new DefaultSOAPEncodingTypeMappingImpl(UseJaxRPC11Mappings);
         ret.setDelegate(DefaultTypeMappingImpl.getSingleton());
         return ret;
     }
 
     protected DefaultSOAPEncodingTypeMappingImpl() {
-        registerSOAPTypes();        
+        this(false);
+    }
+    
+    protected DefaultSOAPEncodingTypeMappingImpl(boolean UseJaxRPC11Mappings) {
+        super(UseJaxRPC11Mappings);
+        registerSOAPTypes();
     }
 
     /**

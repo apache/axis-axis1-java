@@ -79,6 +79,8 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
     
     static {
         try {
+            // We check a system property, but we can use use switches
+            // to control this in WSDL2Java and at runtime.
             jaxrpc11Compliance =
                     System.getProperty("axis.jaxrpc11Compliance", "false")
                     .equalsIgnoreCase("true");
@@ -91,12 +93,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      */
     public static synchronized TypeMapping getSingleton() {
         if (tm == null) {
-            tm = new DefaultTypeMappingImpl();
+            tm = new DefaultTypeMappingImpl(false);
         }
         return tm;
     }
 
-    protected DefaultTypeMappingImpl() {
+    protected DefaultTypeMappingImpl(boolean dojaxrpc11) {
         super(null);
         delegate = null;
 
@@ -561,7 +563,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
-        if (jaxrpc11Compliance) {
+        if (jaxrpc11Compliance || dojaxrpc11) {
             // Table 4-1 of the JAXRPC 1.1 spec
             myRegisterSimple(Constants.XSD_UNSIGNEDINT, long.class);    
             myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, int.class);    
