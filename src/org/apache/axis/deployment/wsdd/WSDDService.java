@@ -54,32 +54,24 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
-import org.apache.axis.encoding.*;
 import org.apache.axis.*;
-import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.OperationDesc;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeploymentException;
-import org.w3c.dom.Document;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.ser.BaseDeserializerFactory;
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.Vector;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.io.IOException;
-import java.beans.IntrospectionException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  *
@@ -138,6 +130,14 @@ public class WSDDService
         if (modeStr != null && !modeStr.equals("")) {
             style = MessageContext.getStyleFromString(modeStr);
             desc.setStyle(style);
+            switch (style) {
+                case ServiceDesc.STYLE_MESSAGE:
+                    providerQName = WSDDConstants.JAVAMSG_PROVIDER;
+                    break;
+                default:
+                    providerQName = WSDDConstants.JAVARPC_PROVIDER;
+                    break;
+            }
         }
 
         Element [] operationElements = getChildElements(e, "operation");
