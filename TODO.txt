@@ -8,6 +8,14 @@ owner (if any) in "<>" brackets.  Example:
 
                  * <Glen> Write TO DO list
 
+BETA 2 MUST DO LIST
+-------------------
+! <Glen> Clean up User's Guide
+! <Russell> Clean up sample readme's
+! <Russell> beta1-to-beta2 document
+! <Glen?> Fix comprehensive types' skeleton bug
+! <Russell?> Grow the FAQ
+
 MESSAGE PARSING / ENCODING
 --------------------------
 ! <> Support literalxml encodingStyle
