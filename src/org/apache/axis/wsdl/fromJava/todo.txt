@@ -20,6 +20,7 @@ Group 2
 * User documentation
   - Rich: I have user-guide.html doc for example6 in my sandbox
 * Internationalization
+  - Rich: Done
 
 
 Group 3

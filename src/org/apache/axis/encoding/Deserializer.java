@@ -324,7 +324,7 @@ public class Deserializer extends SOAPHandler
         if (id != null) {
             context.addObjectById(id, value);
             if (category.isDebugEnabled()) {
-                category.debug("Initial put of deserialized value=" + value + " for id= "+ id);
+                category.debug(JavaUtils.getMessage("deserInitPutValueDebug00", "" + value, id));
             }     
         }
 
@@ -421,7 +421,7 @@ public class Deserializer extends SOAPHandler
         if (id != null) {
             context.addObjectById(id, value);
             if (category.isDebugEnabled()) {
-                category.debug("Put deserialized value=" + value + " for id= "+ id);
+                category.debug(JavaUtils.getMessage("deserPutValueDebug00", "" + value, id));
             }     
         }
     }
