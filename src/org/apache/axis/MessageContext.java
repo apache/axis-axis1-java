@@ -421,6 +421,9 @@ public class MessageContext {
      */
     public static String PASSWORD            = "user.password";
 
+    /** Place to store an AuthenticatedUser */
+    public static String AUTHUSER            = "authenticatedUser";
+
     /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {
