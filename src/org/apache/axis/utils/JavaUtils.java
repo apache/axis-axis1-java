@@ -117,8 +117,12 @@ public class JavaUtils
                 } catch (Exception e) {
                     return arg;
                 }
-                
-                return list.toArray(array);
+
+                // Use convert to assign array elements.                        
+                for (int i=0; i < length; i++) {
+                    array[i] = convert(list.get(i), destClass.getComponentType()); 
+                }
+                return array;
             }
         }
         

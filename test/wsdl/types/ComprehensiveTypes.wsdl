@@ -217,7 +217,6 @@
       <output message="tns:array"/>
     </operation>
 
-    <!-- Multi-Dimensional Arrays currently don't work
     <operation name="arrayMIn">
       <input message="tns:arrayM"/>
       <output message="tns:empty"/>
@@ -230,7 +229,7 @@
       <input message="tns:emptyM"/>
       <output message="tns:arrayM"/>
     </operation>
-     -->
+
     <operation name="complexAllIn">
       <input message="tns:complexAll"/>
       <output message="tns:empty"/>
@@ -422,7 +421,6 @@
       </output>
     </operation>
 
-    <!-- Multi-Dimensional Arrays currently don't work
     <operation name="arrayMIn">
       <soap:operation soapAction=""/>
       <input>
@@ -468,7 +466,6 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
-    -->
 
     <operation name="complexAllIn">
       <soap:operation soapAction=""/>
