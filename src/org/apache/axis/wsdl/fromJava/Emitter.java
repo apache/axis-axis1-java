@@ -76,10 +76,6 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element; 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -169,7 +165,8 @@ public class Emitter {
      *
      * @param filename1  interface WSDL
      * @param filename2  implementation WSDL
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public void emit(String filename1, String filename2) throws IOException, WSDLException {
         // Get interface and implementation defs
@@ -199,7 +196,8 @@ public class Emitter {
      * Generates a complete WSDL document for a given <code>Class</code>
      *
      * @param filename  WSDL
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public void emit(String filename) throws IOException, WSDLException {
         emit(filename, MODE_ALL);
@@ -214,7 +212,8 @@ public class Emitter {
      *
      * @param mode generation mode - all, interface, implementation
      * @return Document
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public Document emit(int mode) throws IOException, WSDLException {
         Document doc = null;
@@ -252,7 +251,8 @@ public class Emitter {
      *
      * @param mode generation mode - all, interface, implementation
      * @return String
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public String emitToString(int mode) throws IOException, WSDLException {
         Document doc = emit(mode);
@@ -270,7 +270,8 @@ public class Emitter {
      *
      * @param filename  WSDL
      * @param mode generation mode - all, interface, implementation
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public void emit(String filename, int mode) throws IOException, WSDLException {
         Document doc = emit(mode);
@@ -299,7 +300,8 @@ public class Emitter {
      * configuration parameters
      *
      * @return WSDL <code>Definition</code>
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public Definition getWSDL() throws IOException, WSDLException {
         // Invoke the init() method to ensure configuration is setup
@@ -326,7 +328,8 @@ public class Emitter {
      * current configuration parameters
      *
      * @return WSDL <code>Definition</code>
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public Definition getIntfWSDL() throws IOException, WSDLException {
         // Invoke the init() method to ensure configuration is setup
@@ -352,7 +355,8 @@ public class Emitter {
      * current configuration parameters
      *
      * @return WSDL <code>Definition</code>
-     * @throws IOException, WSDLException
+     * @throws IOException
+     * @throws WSDLException
      */
     public Definition getImplWSDL() throws IOException, WSDLException {
         // Invoke the init() method to ensure configuration is setup
@@ -519,7 +523,7 @@ public class Emitter {
 
     /**
      * Build a Types object and load the input wsdl types
-     * @param Corresponding wsdl Definition
+     * @param def Corresponding wsdl Definition
      * @return Types object
      */
     private Types createTypes(Definition def)
@@ -538,10 +542,8 @@ public class Emitter {
      *
      * @param def  <code>Definition</code>
      * @param tns  target namespace
-     * @throws WSDLException
      */
-    private void writeDefinitions(Definition def, String tns)
-        throws WSDLException {
+    private void writeDefinitions(Definition def, String tns) {
         def.setTargetNamespace(tns);
 
         def.addNamespace("intf", intfNS);
@@ -579,10 +581,8 @@ public class Emitter {
      * @param def  <code>Definition</code>
      * @param tns  target namespace
      * @param loc  target location
-     * @throws WSDLException
      */
-    private void writeImport(Definition def, String tns, String loc)
-        throws WSDLException {
+    private void writeImport(Definition def, String tns, String loc) {
         Import imp = def.createImport();
 
         imp.setNamespaceURI(tns);
@@ -596,10 +596,8 @@ public class Emitter {
      *
      * @param def  <code>Definition</code>
      * @param add  true if binding should be added to the def
-     * @throws WSDLException
      */
-    private Binding writeBinding(Definition def, boolean add)
-        throws WSDLException {
+    private Binding writeBinding(Definition def, boolean add) {
         QName bindingQName = 
             new QName(intfNS, getBindingName());
 
@@ -665,7 +663,8 @@ public class Emitter {
      *
      * @param def
      * @param binding
-     * @throws WSDLException, AxisFault
+     * @throws WSDLException
+     * @throws AxisFault
      */
     private void writePortType(Definition def, Binding binding)
         throws WSDLException, AxisFault {
@@ -756,7 +755,8 @@ public class Emitter {
      * @param oper Operation, the wsdl operation
      * @param desc OperationDesc, the Operation Description
      * @param bindingOper BindingOperation, corresponding Binding Operation
-     * @throws WSDLException, AxisFault
+     * @throws WSDLException
+     * @throws AxisFault
      */
     private void writeMessages(Definition def,
                                Operation oper,
@@ -926,7 +926,8 @@ public class Emitter {
     /** Create a Request Message
      *
      * @param def
-     * @throws WSDLException, AxisFault
+     * @throws WSDLException
+     * @throws AxisFault
      */
     private Message writeRequestMessage(Definition def,
                                         OperationDesc oper)
@@ -951,7 +952,8 @@ public class Emitter {
     /** Create a Response Message
      *
      * @param def
-     * @throws WSDLException, AxisFault
+     * @throws WSDLException
+     * @throws AxisFault
      */
     private Message writeResponseMessage(Definition def,
                                          OperationDesc desc)
@@ -989,7 +991,8 @@ public class Emitter {
      *
      * @param def
      * @param exception (an ExceptionRep object)
-     * @throws WSDLException, AxisFault
+     * @throws WSDLException
+     * @throws AxisFault
      */
     private Message writeFaultMessage(Definition def,
                                       FaultDesc exception) 
@@ -1040,7 +1043,8 @@ public class Emitter {
      * @param request     message is for a request
      * @param param       ParamRep object
      * @return The parameter name added or null
-     * @throws WSDLException, AxisFault
+     * @throws WSDLException
+     * @throws AxisFault
      */
     public String writePartToMessage(Definition def,
                                      Message msg,
