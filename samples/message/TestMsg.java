@@ -1,4 +1,4 @@
-package samples.message ;
+package samples.message;
 
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
@@ -7,9 +7,9 @@ import org.apache.axis.utils.Options;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import java.net.URL;
-import java.util.Vector ;
+import java.util.Vector;
 
-public class testMessage {
+public class TestMsg {
     public String doit(String[] args) throws Exception {
         Options opts = new Options(args);
         opts.setDefaultURL("http://localhost:8080/axis/services/MessageService");
@@ -42,7 +42,7 @@ public class testMessage {
     }
 
     public static void main(String[] args) throws Exception {
-        String res = (new testMessage()).doit(args);
+        String res = (new TestMsg()).doit(args);
         System.out.println(res);
     }
 }
