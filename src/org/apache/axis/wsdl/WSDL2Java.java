@@ -791,8 +791,14 @@ public class WSDL2Java {
         System.exit(1);
     }
 
-    private void checkForAuthInfo(String uri) throws MalformedURLException {
-        URL url = new URL(uri);
+    private void checkForAuthInfo(String uri) {
+        URL url = null;
+        try {
+            url = new URL(uri);
+        } catch (MalformedURLException e) {
+            // not going to have userInfo
+            return;
+        }
         String userInfo = url.getUserInfo();
         if (userInfo != null) {
             int i = userInfo.indexOf(':');
