@@ -468,6 +468,22 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_NCNAME)
         );
 
+         // a xsd:ID
+        myRegister(Constants.XSD_ID, org.apache.axis.types.Id.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Id.class,
+                                             Constants.XSD_ID),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Id.class,
+                                             Constants.XSD_ID)
+        );
+
+        // a xsd:language
+        myRegister(Constants.XSD_LANGUAGE, org.apache.axis.types.Language.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Language.class,
+                                             Constants.XSD_LANGUAGE),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Language.class,
+                                             Constants.XSD_LANGUAGE)
+        );
+         
         // a xsd:NmToken
         myRegister(Constants.XSD_NMTOKEN, org.apache.axis.types.NMToken.class,
                    new SimpleSerializerFactory(org.apache.axis.types.NMToken.class,

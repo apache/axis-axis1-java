@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,47 +52,48 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package test.types;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
- * test the axis specific type classes
+ * Custom class for supporting XSD data type ID
+ * The base type of Id is NCName.
+ *
+ * @author Eddie Pick <eddie@pick.eu.org>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#ID">XML Schema 3.3.8</a>
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
-        super(name);
+public class Id extends NCName {
+
+    public Id() {
+        super();
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
+    /**
+     * ctor for Id
+     * @exception IllegalArgumentException will be thrown if validation fails
+     */
+    public Id(String stValue) throws IllegalArgumentException {
+        try {
+            setValue(stValue);
+        }
+        catch (IllegalArgumentException e) {
+            // recast normalizedString exception as token exception
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badIdType00") + "data=[" +
+                    stValue + "]");
+        }
+    }
 
-        suite.addTestSuite(TestNonNegativeInteger.class);
-        suite.addTestSuite(TestPositiveInteger.class);
-        suite.addTestSuite(TestNonPositiveInteger.class);
-        suite.addTestSuite(TestNegativeInteger.class);
-        suite.addTestSuite(TestNormalizedString.class);
-        suite.addTestSuite(TestToken.class);
-        suite.addTestSuite(TestUnsignedLong.class);
-        suite.addTestSuite(TestUnsignedInt.class);
-        suite.addTestSuite(TestUnsignedShort.class);
-        suite.addTestSuite(TestUnsignedByte.class);
-        suite.addTestSuite(TestYearMonth.class);
-        suite.addTestSuite(TestYear.class);
-        suite.addTestSuite(TestMonth.class);
-        suite.addTestSuite(TestMonthDay.class);
-        suite.addTestSuite(TestDay.class);
-        suite.addTestSuite(TestName.class);
-        suite.addTestSuite(TestId.class);
-        suite.addTestSuite(TestNCName.class);
-        suite.addTestSuite(TestNMToken.class);
-        suite.addTestSuite(TestDuration.class);
-        return suite;
+
+    /**
+     *
+     * validate the value against the xsd definition
+     *
+     * Same validation as NCName for the time being
+     */
+    public boolean isValid(String stValue) {
+      return super.isValid(stValue);
     }
 }

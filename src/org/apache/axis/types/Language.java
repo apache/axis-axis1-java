@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,47 +52,58 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package test.types;
+import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLChar;
 
 /**
- * test the axis specific type classes
+ * Custom class for supporting XSD data type language
+ * language represents natural language identifiers as defined by [RFC 1766]. 
+ * The value space of language is the set of all strings that are valid language identifiers 
+ * as defined in the language identification section of [XML 1.0 (Second Edition)]. 
+ * The lexical space of language is the set of all strings that are valid language identifiers 
+ * as defined in the language identification section of [XML 1.0 (Second Edition)]. 
+ * The base type of language is token. 
+ *
+ * @author Eddie Pick <eddie@pick.eu.org>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#language">XML Schema 3.3.3</a>
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
-        super(name);
+public class Language extends Token {
+
+    public Language() {
+        super();
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
+    /**
+     * ctor for Language
+     * @exception IllegalArgumentException will be thrown if validation fails
+     */
+    public Language(String stValue) throws IllegalArgumentException {
+        try {
+            setValue(stValue);
+        }
+        catch (IllegalArgumentException e) {
+            // recast normalizedString exception as token exception
+            throw new IllegalArgumentException(
+                Messages.getMessage("badLanguage00") + "data=[" +
+                stValue + "]");
+        }
+    }
 
-        suite.addTestSuite(TestNonNegativeInteger.class);
-        suite.addTestSuite(TestPositiveInteger.class);
-        suite.addTestSuite(TestNonPositiveInteger.class);
-        suite.addTestSuite(TestNegativeInteger.class);
-        suite.addTestSuite(TestNormalizedString.class);
-        suite.addTestSuite(TestToken.class);
-        suite.addTestSuite(TestUnsignedLong.class);
-        suite.addTestSuite(TestUnsignedInt.class);
-        suite.addTestSuite(TestUnsignedShort.class);
-        suite.addTestSuite(TestUnsignedByte.class);
-        suite.addTestSuite(TestYearMonth.class);
-        suite.addTestSuite(TestYear.class);
-        suite.addTestSuite(TestMonth.class);
-        suite.addTestSuite(TestMonthDay.class);
-        suite.addTestSuite(TestDay.class);
-        suite.addTestSuite(TestName.class);
-        suite.addTestSuite(TestId.class);
-        suite.addTestSuite(TestNCName.class);
-        suite.addTestSuite(TestNMToken.class);
-        suite.addTestSuite(TestDuration.class);
-        return suite;
+   /**
+    *
+    * validate the value against the xsd definition
+    * TODO
+    * @see <a href="http://www.ietf.org/rfc/rfc1766.txt">RFC1766</a>
+    * Language-Tag = Primary-tag *( "-" Subtag )
+    * Primary-tag = 1*8ALPHA
+    * Subtag = 1*8ALPHA
+    */
+    public boolean isValid(String stValue) {
+        return true;
     }
 }
