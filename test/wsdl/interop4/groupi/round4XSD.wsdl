@@ -296,21 +296,21 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="RetAnyType">
+      <s:element name="echoAnyType">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="inputAnyType" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="RetAnyTypeResponse">
+      <s:element name="echoAnyTypeResponse">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="return" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="RetAny">
+      <s:element name="echoAnyElement">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="inputAny">
@@ -323,7 +323,7 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="RetAnyResponse">
+      <s:element name="echoAnyElementResponse">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="return">
@@ -549,17 +549,17 @@
   <message name="echoEnumSoapOut">
     <part name="parameters" element="s0:echoEnumResponse" />
   </message>
-  <message name="RetAnyTypeSoapIn">
-    <part name="parameters" element="s0:RetAnyType" />
+  <message name="echoAnyTypeSoapIn">
+    <part name="parameters" element="s0:echoAnyType" />
   </message>
-  <message name="RetAnyTypeSoapOut">
-    <part name="parameters" element="s0:RetAnyTypeResponse" />
+  <message name="echoAnyTypeSoapOut">
+    <part name="parameters" element="s0:echoAnyTypeResponse" />
   </message>
-  <message name="RetAnySoapIn">
-    <part name="parameters" element="s0:RetAny" />
+  <message name="echoAnyElementSoapIn">
+    <part name="parameters" element="s0:echoAnyElement" />
   </message>
-  <message name="RetAnySoapOut">
-    <part name="parameters" element="s0:RetAnyResponse" />
+  <message name="echoAnyElementSoapOut">
+    <part name="parameters" element="s0:echoAnyElementResponse" />
   </message>
   <message name="echoVoidSoapHeaderSoapIn">
     <part name="parameters" element="s2:echoVoidSoapHeader" />
@@ -660,13 +660,13 @@
       <input message="s0:echoEnumSoapIn" />
       <output message="s0:echoEnumSoapOut" />
     </operation>
-    <operation name="RetAnyType">
-      <input message="s0:RetAnyTypeSoapIn" />
-      <output message="s0:RetAnyTypeSoapOut" />
+    <operation name="echoAnyType">
+      <input message="s0:echoAnyTypeSoapIn" />
+      <output message="s0:echoAnyTypeSoapOut" />
     </operation>
-    <operation name="RetAny">
-      <input message="s0:RetAnySoapIn" />
-      <output message="s0:RetAnySoapOut" />
+    <operation name="echoAnyElement">
+      <input message="s0:echoAnyElementSoapIn" />
+      <output message="s0:echoAnyElementSoapOut" />
     </operation>
     <operation name="echoVoidSoapHeader">
       <input message="s0:echoVoidSoapHeaderSoapIn" />
@@ -855,8 +855,8 @@
         <soap:body use="literal" />
       </output>
     </operation>
-    <operation name="RetAnyType">
-      <soap:operation soapAction="http://soapinterop.org/RetAnyType" style="document" />
+    <operation name="echoAnyType">
+      <soap:operation soapAction="http://soapinterop.org/echoAnyType" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -864,8 +864,8 @@
         <soap:body use="literal" />
       </output>
     </operation>
-    <operation name="RetAny">
-      <soap:operation soapAction="http://soapinterop.org/RetAny" style="document" />
+    <operation name="echoAnyElement">
+      <soap:operation soapAction="http://soapinterop.org/echoAnyElement" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -887,231 +887,13 @@
       </output>
     </operation>
   </binding>
-  <binding name="Round4XSDTestSoap12" type="s0:Round4XSDTestSoap">
-    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-    <operation name="echoVoid">
-      <soap12:operation soapAction="http://soapinterop.org/echoVoid" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoInteger">
-      <soap12:operation soapAction="http://soapinterop.org/echoInteger" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoFloat">
-      <soap12:operation soapAction="http://soapinterop.org/echoFloat" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoString">
-      <soap12:operation soapAction="http://soapinterop.org/echoString" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoBase64">
-      <soap12:operation soapAction="http://soapinterop.org/echoBase64" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoDate">
-      <soap12:operation soapAction="http://soapinterop.org/echoDate" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoComplexType">
-      <soap12:operation soapAction="http://soapinterop.org/echoComplexType" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoIntegerMultiOccurs">
-      <soap12:operation soapAction="http://soapinterop.org/echoIntegerMultiOccurs" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoFloatMultiOccurs">
-      <soap12:operation soapAction="http://soapinterop.org/echoFloatMultiOccurs" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoStringMultiOccurs">
-      <soap12:operation soapAction="http://soapinterop.org/echoStringMultiOccurs" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoComplexTypeMultiOccurs">
-      <soap12:operation soapAction="http://soapinterop.org/echoComplexTypeMultiOccurs" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoDecimal">
-      <soap12:operation soapAction="http://soapinterop.org/echoDecimal" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoBoolean">
-      <soap12:operation soapAction="http://soapinterop.org/echoBoolean" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoHexBinary">
-      <soap12:operation soapAction="http://soapinterop.org/echoHexBinary" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoComplexTypeAsSimpleTypes">
-      <soap12:operation soapAction="http://soapinterop.org/echoComplexTypeAsSimpleTypes" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoSimpleTypesAsComplexType">
-      <soap12:operation soapAction="http://soapinterop.org/echoSimpleTypesAsComplexType" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoNestedComplexType">
-      <soap12:operation soapAction="http://soapinterop.org/echoNestedComplexType" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoNestedMultiOccurs">
-      <soap12:operation soapAction="http://soapinterop.org/echoNestedMultiOccurs" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoChoice">
-      <soap12:operation soapAction="http://soapinterop.org/echoChoice" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoEnum">
-      <soap12:operation soapAction="http://soapinterop.org/echoEnum" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="RetAnyType">
-      <soap12:operation soapAction="http://soapinterop.org/RetAnyType" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="RetAny">
-      <soap12:operation soapAction="http://soapinterop.org/RetAny" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-    <operation name="echoVoidSoapHeader">
-      <soap12:operation soapAction="http://soapinterop.org" style="document" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      <input>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-        <soap12:header message="s0:echoVoidSoapHeaderechoMeComplexTypeRequest" part="echoMeComplexTypeRequest" use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-        <soap12:header message="s0:echoVoidSoapHeaderechoMeStringRequest" part="echoMeStringRequest" use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </input>
-      <output>
-        <soap12:body use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-        <soap12:header message="s0:echoVoidSoapHeaderechoMeComplexTypeResponse" part="echoMeComplexTypeResponse" use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-        <soap12:header message="s0:echoVoidSoapHeaderechoMeStringResponse" part="echoMeStringResponse" use="literal" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
-      </output>
-    </operation>
-  </binding>
   <service name="Round4XSDTest">
     <documentation>These operations implement DOC/LIT SOAP operations, for interop testing. Please email johnko@microsoft.com with any questions/coments.</documentation>
     <port name="Round4XSDTestSoap" binding="s0:Round4XSDTestSoap">
       <!--
-      <soap:address location="http://www.whitemesa.net/interop/r4/wsdl-xsd" />
       <soap:address location="http://mssoapinterop.org/asmx/xsd/round4xsd.asmx" />
       -->
       <soap:address location="http://localhost:8080/axis/services/Round4XSDTestSoap" />
-    </port>
-    <port name="Round4XSDTestSoap12" binding="s0:Round4XSDTestSoap12">
-      <soap12:address location="http://mssoapinterop.org/asmx/xsd/round4xsd.asmx" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" />
     </port>
   </service>
 </definitions>

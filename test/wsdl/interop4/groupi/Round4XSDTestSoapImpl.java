@@ -7,7 +7,14 @@
 
 package test.wsdl.interop4.groupi;
 
-public class Round4XSDTestSoapImpl implements test.wsdl.interop4.groupi.Round4XSDTestSoap {
+import org.apache.axis.MessageContext;
+import org.apache.axis.Message;
+import org.apache.axis.message.SOAPHeaderElement;
+
+import java.util.Vector;
+import java.util.Iterator;
+
+public class Round4XSDTestSoapImpl implements test.wsdl.interop4.groupi.Round4XSDTestSoap{
     public void echoVoid() throws java.rmi.RemoteException {
         return;
     }
@@ -94,17 +101,24 @@ public class Round4XSDTestSoapImpl implements test.wsdl.interop4.groupi.Round4XS
         return inputEnum;
     }
 
-    public java.lang.Object retAnyType(java.lang.Object inputAnyType) throws java.rmi.RemoteException {
+    public java.lang.Object echoAnyType(java.lang.Object inputAnyType) throws java.rmi.RemoteException {
         return inputAnyType;
     }
 
-    public test.wsdl.interop4.groupi._return retAny(test.wsdl.interop4.groupi.InputAny inputAny) throws java.rmi.RemoteException {
+    public test.wsdl.interop4.groupi._return echoAnyElement(test.wsdl.interop4.groupi.InputAny inputAny) throws java.rmi.RemoteException {
         test.wsdl.interop4.groupi._return output = new test.wsdl.interop4.groupi._return();
         output.set_any(inputAny.get_any());
         return output;
     }
 
     public void echoVoidSoapHeader() throws java.rmi.RemoteException {
+        MessageContext context = MessageContext.getCurrentContext();
+        Message request = context.getRequestMessage();
+        Message response = context.getResponseMessage();
+        Vector headers = request.getSOAPEnvelope().getHeaders();
+        for (int i=0;i<headers.size();i++) {
+            SOAPHeaderElement header = (SOAPHeaderElement)headers.get(i);
+            response.getSOAPEnvelope().addHeader(header);
+        }
     }
-
 }
