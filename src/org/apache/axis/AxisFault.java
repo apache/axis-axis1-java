@@ -227,8 +227,7 @@ public class AxisFault extends java.rmi.RemoteException {
         if (faultDetails != null) {
             for (int i=0; i < faultDetails.size(); i++) {
                 Element e = (Element) faultDetails.get(i);
-                Text text = (Text)e.getFirstChild();
-                details += LS + "\t" +  e.getLocalName() + ": " + text.getData();
+                details += LS + "\t" +  e.getLocalName() + ": " + XMLUtils.getInnerXMLString(e);
             }
         }
         
