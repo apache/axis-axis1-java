@@ -191,36 +191,80 @@ public class tcpmon extends JFrame {
   }
 
   class SocketRR extends Thread {
-    Connection    conn;
     Socket        inSocket  = null ;
     Socket        outSocket  = null ;
     JTextArea     textArea ;
     InputStream   in = null ;
     OutputStream  out = null ;
 
-    public SocketRR(Connection c, Socket i, JTextArea t, Socket o) {
-      conn = c ;
-      inSocket = i ;
-      outSocket = o ;
-      textArea = t ;
+    public SocketRR(Socket inputSocket, InputStream inputStream, 
+                    Socket outputSocket, OutputStream outputStream, 
+                    JTextArea _textArea) {
+      inSocket = inputSocket ;
+      in       = inputStream ;
+      outSocket = outputSocket ;
+      out       = outputStream ;
+      textArea  = _textArea ;
       start();
     }
+
     public void run() {
       try {
         byte[]      buffer = new byte[4096];
+        byte[]      tmpbuffer = new byte[8192];
+        int         saved = 0 ;
         int         len ;
+        int         i1, i2 ;
+        int         i ;
 
-        in     = inSocket.getInputStream();
-        out    = outSocket.getOutputStream();
+        int   thisIndent, nextIndent=0 ;
+
         for ( ;; ) {
           len = in.available();
           if ( len == 0 ) len = 1 ;
-          if ( len > 4096 ) len = 4096 ;
-          len = in.read(buffer,0,len);
+          if ( saved+len > 4096 ) len = 4096-saved ;
+          len = in.read(buffer,saved,len);
           if ( len == -1 ) break ;
-          textArea.append( new String( buffer, 0, len ) );
-          out.write( buffer, 0, len );
-          this.sleep(5);
+
+          if ( false ) {
+            // Do XML Formatting
+            i1 = 0 ;
+            i2 = 0 ;
+            for( ; i1 < len ; i1++ ) {
+              if ( buffer[i1] != '<' && buffer[i1] != '/' )
+                tmpbuffer[i2++] = buffer[i1];
+              else {
+                if ( i1+1 < len ) {
+                   byte b1 = buffer[i1];
+                   byte b2 = buffer[i1+1];
+                   thisIndent = -1 ;
+
+                   if ( b1 == '<' ) {
+                     if ( b2 != '/' )  thisIndent = nextIndent++ ;
+                     else              thisIndent = --nextIndent ;
+                   }
+                   else if ( b1 == '/' ) {
+                     if ( b2 == '>' ) nextIndent-- ;
+                   }
+
+                   if ( thisIndent != -1 ) {
+                    tmpbuffer[i2++] = (byte) '\n' ;
+                    for ( i = 0 ; i < thisIndent ; i++ )
+                      tmpbuffer[i2++] = (byte) ' ' ;
+                   }
+
+                   tmpbuffer[i2++] = buffer[i1];
+                }
+              }
+            }
+            textArea.append( new String( tmpbuffer, 0, i2 ) );
+            out.write( tmpbuffer, 0, i2 );
+          }
+          else {
+            textArea.append( new String( buffer, 0, len ) );
+            out.write( buffer, 0, len );
+          }
+          this.sleep(3);
         }
         halt();
       }
@@ -300,13 +344,75 @@ public class tcpmon extends JFrame {
           listener.outPane.setDividerLocation(divLoc);
           listener.outPane.setVisible( true );
         }
+
+        String targetHost = listener.hostField.getText();
+        int    targetPort = Integer.parseInt(listener.tPortField.getText());
   
-        outSocket = new Socket(listener.hostField.getText(),
-                               Integer.parseInt(listener.tPortField.getText()));
-  
-        rr1 = new SocketRR( this, inSocket, inputText, outSocket );
-        rr2 = new SocketRR( this, outSocket, outputText, inSocket );
-  
+        InputStream  tmpIn1  = null ;
+        OutputStream tmpOut1 = null ;
+
+        InputStream  tmpIn2  = null ;
+        OutputStream tmpOut2 = null ;
+
+        tmpIn1  = inSocket.getInputStream();
+        tmpOut1 = inSocket.getOutputStream();
+
+        String  bufferedData = null ;
+
+        if ( false ) {
+          // Check if we're a proxy
+          int          ch ;
+          byte[]       b = new byte[1];
+          StringBuffer buf = new StringBuffer();
+          String       s ;
+
+          for ( ;; ) {
+            int len ;
+
+            len = tmpIn1.read(b,0,1);
+            if ( len == -1 ) break ;
+            s = new String( b );
+            buf.append( s );
+            if ( b[0] != '\n' ) continue ;
+            break ;
+          }
+
+          bufferedData = buf.toString();
+
+          if ( bufferedData.startsWith( "GET " ) ||
+               bufferedData.startsWith( "POST " ) ) {
+            int  start, end ;
+            URL  url ;
+
+            start = bufferedData.indexOf( ' ' )+1;
+            end   = bufferedData.indexOf( ' ', start );
+            String tmp = bufferedData.substring( start, end );
+            if ( tmp.charAt(0) == '/' ) tmp = tmp.substring(1);
+            url = new URL( tmp );
+            targetHost = url.getHost();
+            targetPort = url.getPort();
+            if ( targetPort == -1 ) targetPort = 80 ;
+
+            bufferedData = bufferedData.substring( 0, start) +
+                           url.getFile() +
+                           bufferedData.substring( end );
+          }
+        }
+
+        outSocket = new Socket(targetHost, targetPort );
+     
+        tmpIn2  = outSocket.getInputStream();
+        tmpOut2 = outSocket.getOutputStream();
+
+        if ( bufferedData != null ) {
+          byte[] b = bufferedData.getBytes();
+          tmpOut2.write( b );
+          inputText.append( bufferedData );
+        }
+
+        rr1 = new SocketRR( inSocket, tmpIn1, outSocket, tmpOut2, inputText);
+        rr2 = new SocketRR( outSocket, tmpIn2, inSocket, tmpOut1, outputText);
+
         while( rr1.isAlive() || rr2.isAlive() ) {
                 Thread.sleep( 10 );
         }
