@@ -17,12 +17,12 @@
 
   <message name="DataRequestMessage">
     <part name="header" element="ses:Session"/>
-    <part name="body" element="cmp:DataRequest"/>
+    <part name="bodyin" element="cmp:DataRequest"/>
   </message>
 
   <message name="DataResponseMessage">
     <part name="header" element="ses:Session"/>
-    <part name="body" element="cmp:DataRequestResponse"/>
+    <part name="bodyout" element="cmp:DataRequestResponse"/>
   </message>
 
   <portType name="multiImpInclDataPortType">

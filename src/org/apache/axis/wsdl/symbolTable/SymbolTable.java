@@ -1114,7 +1114,7 @@ public class SymbolTable {
                               int index, 
                               int outdex, 
                               Parameters parameters, 
-                              boolean trimInput) {        
+                              boolean trimInput) throws IOException {        
         Parameter p = (Parameter)inputs.get(index);
         // If this is an element, we want the XML to reflect the element name
         // not the part name.
@@ -1131,9 +1131,7 @@ public class SymbolTable {
         // At this point we know the name and type of the parameter, and that it's at least an
         // in parameter.  Now check to see whether it's also in the outputs Vector.  If it is,
         // then it's an inout parameter.
-        // Don't bother doing this if the parameters are wrapped since their
-        // names won't be the part names.
-        if (outdex >= 0 && !wrapped) {
+        if (outdex >= 0) {
             Parameter outParam = (Parameter)outputs.get(outdex);
             if (p.getType().equals(outParam.getType())) {
                 outputs.remove(outdex);
@@ -1143,7 +1141,12 @@ public class SymbolTable {
                 // If we're here, we have both an input and an output
                 // part with the same name but different types.... guess
                 // it's not really an inout....
-                ++parameters.inputs;  // Is this OK??
+                throw new IOException(JavaUtils.getMessage("differentTypes00", 
+                     new String[] { p.getName(), 
+                                    p.getType().getQName().toString(), 
+                                    outParam.getType().getQName().toString()
+                                   }
+                ));
             }
         } else {
             ++parameters.inputs;
