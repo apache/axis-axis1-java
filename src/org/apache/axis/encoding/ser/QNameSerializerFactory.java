@@ -62,6 +62,6 @@ import javax.xml.namespace.QName;
  */
 public class QNameSerializerFactory extends BaseSerializerFactory {
     public QNameSerializerFactory(Class javaType, QName xmlType) {
-        super(QNameSerializer.class, true, xmlType, javaType);   // true indicates shared class
+        super(QNameSerializer.class, xmlType, javaType);   // true indicates shared class
     }
 }

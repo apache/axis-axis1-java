@@ -63,6 +63,6 @@ import javax.xml.namespace.QName;
  */
 public class CalendarSerializerFactory extends BaseSerializerFactory {
     public CalendarSerializerFactory(Class javaType, QName xmlType) {
-        super(CalendarSerializer.class, true, xmlType, javaType);   // true indicates shared class
+        super(CalendarSerializer.class, xmlType, javaType);   // true indicates shared class
     }
 }

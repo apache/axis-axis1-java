@@ -76,6 +76,6 @@ import org.apache.axis.encoding.Deserializer;
  */
 public class DateSerializerFactory extends BaseSerializerFactory {
     public DateSerializerFactory(Class javaType, QName xmlType) {
-        super(DateSerializer.class, true, xmlType, javaType);   // true indicates shared class
+        super(DateSerializer.class, xmlType, javaType);   // true indicates shared class
     }
 }

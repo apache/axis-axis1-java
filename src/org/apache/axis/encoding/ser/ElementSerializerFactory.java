@@ -76,6 +76,6 @@ import org.apache.axis.encoding.Deserializer;
  */
 public class ElementSerializerFactory extends BaseSerializerFactory {
     public ElementSerializerFactory() {
-        super(ElementSerializer.class, true);  // Share ElementSerializer instance
+        super(ElementSerializer.class);  // Share ElementSerializer instance
     }
 }

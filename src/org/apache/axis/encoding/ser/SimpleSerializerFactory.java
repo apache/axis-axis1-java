@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,33 +53,19 @@
  * <http://www.apache.org/>.
  */
 
+/**
+ * @author Glen Daniels (gdaniels@apache.org)
+ */
 package org.apache.axis.encoding.ser;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
-import java.io.IOException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
-/**
- * SerializerFactory for primitives that have Simple Serialization (i.e. int, short etc.)
- *
- * @author Rich Scheuerle <scheu@us.ibm.com>
- */
-public class SimplePrimitiveSerializerFactory extends BaseSerializerFactory {
+public class SimpleSerializerFactory extends BaseSerializerFactory {
     /**
      * Note that the factory is constructed with the QName and xmlType.  This is important
      * to allow distinction between primitive values and java.lang wrappers.
      **/
-    public SimplePrimitiveSerializerFactory(Class javaType, QName xmlType) {
-        super(SimpleSerializer.class, true, xmlType, javaType);  
+    public SimpleSerializerFactory(Class javaType, QName xmlType) {
+        super(SimpleSerializer.class, xmlType, javaType);
     }
 }

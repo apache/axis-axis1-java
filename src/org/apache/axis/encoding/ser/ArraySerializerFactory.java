@@ -76,6 +76,6 @@ import org.apache.axis.encoding.Deserializer;
  */
 public class ArraySerializerFactory extends BaseSerializerFactory {
     public ArraySerializerFactory() {
-        super(ArraySerializer.class, false); 
+        super(ArraySerializer.class);
     }
 }
