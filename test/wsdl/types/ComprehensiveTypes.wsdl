@@ -133,6 +133,14 @@
         </xsd:sequence>
       </xsd:complexType>
 
+      <xsd:complexType name="emptyFault">
+        <xsd:sequence />
+      </xsd:complexType>
+
+      <xsd:complexType name="emptyComplexType">
+        <xsd:sequence />
+      </xsd:complexType>
+
       <xsd:simpleType name="simpleFwd">
         <xsd:restriction base="typens:simple" />
       </xsd:simpleType>
@@ -602,6 +610,14 @@
     <part name="cat" type="typens:Cat"/>
   </message>
 
+  <message name="emptyFault">
+    <part name="theFault" type="typens:emptyFault" />
+  </message>
+
+  <message name="emptyComplexType">
+    <part name="emptyComplexType" type="typens:emptyComplexType" />
+  </message>
+
   <!-- port type declns -->
   <portType name="TypeTest">
     <operation name="allPrimitivesIn">
@@ -729,6 +745,26 @@
     <operation name="complexWComplexReturn">
       <input message="tns:empty"/>
       <output message="tns:complexWComplex"/>
+    </operation>
+    <operation name="emptyComplexTypeIn" parameterOrder="emptyComplexType">
+      <input message="tns:emptyComplexType"/>
+      <output message="tns:empty"/>
+      <fault name="emptyFault" message="tns:emptyFault"/>
+    </operation>
+    <operation name="emptyComplexTypeInout" parameterOrder="emptyComplexType">
+      <input message="tns:emptyComplexType"/>
+      <output message="tns:emptyComplexType"/>
+      <fault name="emptyFault" message="tns:emptyFault"/>
+    </operation>
+    <operation name="emptyComplexTypeOut" parameterOrder="emptyComplexType">
+      <input message="tns:empty"/>
+      <output message="tns:emptyComplexType"/>
+      <fault name="emptyFault" message="tns:emptyFault"/>
+    </operation>
+    <operation name="emptyComplexTypeReturn">
+      <input message="tns:empty"/>
+      <output message="tns:emptyComplexType"/>
+      <fault name="emptyFault" message="tns:emptyFault"/>
     </operation>
     <operation name="anyIn">
       <input message="tns:any"/>
@@ -1345,6 +1381,78 @@
             namespace=""
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
+    </operation>
+    <operation name="emptyComplexTypeIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+      <fault>
+        <soap:fault name="emptyFault" use="encoded"/>
+      </fault>
+    </operation>
+    <operation name="emptyComplexTypeInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+      <fault>
+        <soap:fault name="emptyFault" use="encoded"/>
+      </fault>
+    </operation>
+    <operation name="emptyComplexTypeOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+      <fault>
+        <soap:fault name="emptyFault" use="encoded"/>
+      </fault>
+    </operation>
+    <operation name="emptyComplexTypeReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+      <fault>
+        <soap:fault name="emptyFault" use="encoded"/>
+      </fault>
     </operation>
     <operation name="anyIn">
       <soap:operation soapAction=""/>
