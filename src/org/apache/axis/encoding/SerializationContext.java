@@ -80,6 +80,8 @@ public class SerializationContext
     public NSStack nsStack = new NSStack();
                                         
     boolean writingStartTag = false;
+    boolean onlyXML = true;
+    int indent=0;
     boolean startOfDocument = true;
     
     Stack elementStack = new Stack();
@@ -292,14 +294,16 @@ public class SerializationContext
         }
 
         if (startOfDocument && sendXMLDecl) {
-            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             startOfDocument = false;
         }
         
         if (writingStartTag) {
-            writer.write(">");
+            writer.write(">\n");
+            indent++;
         }
         
+        for (int i=0; i<indent; i++) writer.write(' ');
         StringBuffer buf = new StringBuffer();
         String elementQName = qName2String(qName);
         buf.append("<");
@@ -330,6 +334,7 @@ public class SerializationContext
 
         writer.write(buf.toString());
         writer.flush();
+        onlyXML=true;
     }
     
     public void endElement()
@@ -345,15 +350,20 @@ public class SerializationContext
         nsStack.peek().clear();
 
         if (writingStartTag) {
-            writer.write("/>");
+            writer.write("/>\n");
             writingStartTag = false;
             return;
         }
         
+        if (onlyXML) {
+          indent--;
+          for (int i=0; i<indent; i++) writer.write(' ');
+        }
         StringBuffer buf = new StringBuffer();
-        buf.append("</" + elementQName + ">");
+        buf.append("</" + elementQName + ">\n");
         writer.write(buf.toString());
         writer.flush();
+        onlyXML=true;
     }
     
     public void writeChars(char [] p1, int p2, int p3)
@@ -365,6 +375,7 @@ public class SerializationContext
         }
         writer.write(p1, p2, p3);
         writer.flush();
+        onlyXML=false;
     }
 
     public void writeString(String string)
@@ -376,6 +387,7 @@ public class SerializationContext
         }
         writer.write(string);
         writer.flush();
+        onlyXML=false;
     }
 
     public void writeSafeString(String string)
