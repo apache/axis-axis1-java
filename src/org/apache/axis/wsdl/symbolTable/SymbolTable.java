@@ -1062,7 +1062,7 @@ public class SymbolTable {
 
         // Collect all the input parameters
         Input input = operation.getInput();
-        if (input != null) {
+        if (input != null && input.getMessage() != null) {
             getParametersFromParts(inputs,
                                    input.getMessage().getOrderedParts(null),
                                    literalInput,
@@ -1072,7 +1072,7 @@ public class SymbolTable {
 
         // Collect all the output parameters
         Output output = operation.getOutput();
-        if (output != null) {
+        if (output != null && output.getMessage() != null) {
             getParametersFromParts(outputs,
                                    output.getMessage().getOrderedParts(null),
                                    literalOutput,
