@@ -1015,6 +1015,7 @@ public class SymbolTable {
                         }
                     }
                 }
+                createTypeFromDef(node, true, level > SCHEMA_LEVEL);
             } else if (isXSD && localPart.equals("any")) {
 
                 // Map xsd:any element to special xsd:any "type"
@@ -3219,6 +3220,10 @@ public class SymbolTable {
         while (it.hasNext()) {
             TypeEntry nestedType = (TypeEntry) it.next();
             TypeEntry refType = entry.getRefType();
+
+            if (nestedType == null) {
+            	continue;
+            }
 
             if ((refType != null) && !refType.equals(nestedType)
                     && nestedType.isOnlyLiteralReferenced()) {
