@@ -23,7 +23,6 @@ import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;

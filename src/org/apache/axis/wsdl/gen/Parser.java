@@ -15,17 +15,6 @@
  */
 package org.apache.axis.wsdl.gen;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionElement;
@@ -38,6 +27,16 @@ import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This is a class with no documentation.

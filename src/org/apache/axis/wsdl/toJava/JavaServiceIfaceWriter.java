@@ -134,7 +134,12 @@ public class JavaServiceIfaceWriter extends JavaClassWriter {
             // TCK depends on the case-sensitivity being preserved,
             // and the interop tests have port names that are not
             // valid java identifiers.  Thus the following code.
-            String portName = p.getName();
+
+            // java port <--> wsdl port mapping
+            String portName = (String) bEntry.getDynamicVar(JavaServiceWriter.PORT_NAME + ":" + p.getName());
+            if (portName == null) {
+                portName = p.getName();
+            }
 
             if (!JavaUtils.isJavaId(portName)) {
                 portName = Utils.xmlNameToJavaClass(portName);

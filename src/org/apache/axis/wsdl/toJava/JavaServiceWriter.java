@@ -37,6 +37,9 @@ public class JavaServiceWriter implements Generator {
     /** Field testCaseWriter */
     protected Generator testCaseWriter = null;
 
+    /** Field PORT_NAME */
+    public static final String PORT_NAME = "port name";
+
     /**
      * Constructor.
      * 

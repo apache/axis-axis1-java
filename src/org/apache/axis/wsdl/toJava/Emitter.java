@@ -15,21 +15,6 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
-
-import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Scope;
@@ -43,6 +28,20 @@ import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Vector;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
