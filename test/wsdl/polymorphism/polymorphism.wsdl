@@ -18,7 +18,12 @@
     <s:schema elementFormDefault="qualified" 
 targetNamespace="http://xml.apache.org/axis/PolymorphismTest">
       <s:element name="GetBAsA">
-        <s:complexType />
+        <s:complexType>
+            <s:sequence>
+                <s:element name="sendC" minOccurs="1" maxOccurs="1"
+                    type="s:boolean"/>
+            </s:sequence>
+        </s:complexType>
       </s:element>
       <s:element name="GetBAsAResponse">
         <s:complexType>
