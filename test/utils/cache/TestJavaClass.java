@@ -21,9 +21,11 @@ public class TestJavaClass extends TestCase
     {
         Class c = new java.util.Date().getClass(); 
         JavaClass jc = new JavaClass(c);
-        assertNotNull(jc);
-        assertTrue(jc.getJavaClass().getName().equals("java.util.Date"));
-        assertTrue(!jc.getJavaClass().getName().equals("java.util.D"));
+        assertNotNull("The JavaClass was null", jc);
+        assertTrue("JavaClass name is not 'java.util.Date', it is: " + jc.getClass().getName(),
+                   jc.getJavaClass().getName().equals("java.util.Date"));
+        assertTrue("JavaClass cut off the name of the real class.",
+                   !jc.getJavaClass().getName().equals("java.util.D"));
     }
 
     public void testGetMethod()
@@ -39,11 +41,15 @@ public class TestJavaClass extends TestCase
         Method add1 = jcVec.getMethod("add", 1);
         Method add2 = jcVec.getMethod("add", 2);
 
-        assertEquals("countTokens", countTkns.getName());
-        assertEquals("nextToken", nextTkn.getName());
+        assertEquals("countTkns name was not 'countTokens', it is: " + countTkns.getName(),
+                     "countTokens", countTkns.getName());
+        assertEquals("nextTkn name was not 'nextToken', it is: " + nextTkn.getName(),
+                     "nextToken", nextTkn.getName());
 
-        assertEquals("boolean", add1.getReturnType().getName());
-        assertEquals("void", add2.getReturnType().getName());
+        assertEquals("Return type was not 'boolean', it was: " + add1.getReturnType().getName(),
+                     "boolean", add1.getReturnType().getName());
+        assertEquals("Return type was not 'void', it was: " + add2.getReturnType().getName(),
+                     "void", add2.getReturnType().getName());
     }
 
     public void testNoSuchMethod()
@@ -52,7 +58,7 @@ public class TestJavaClass extends TestCase
         JavaClass jcVec = new JavaClass(v);
 
         Method add7 = jcVec.getMethod("add", 7);
-        assertNull(add7);
+        assertNull("add7 was not null", add7);
     }
 
     public void testUnknownNumberOfArgs()
@@ -61,10 +67,12 @@ public class TestJavaClass extends TestCase
         JavaClass jcVec = new JavaClass(v);
 
         Method add7 = jcVec.getMethod("add", -1);
-        assertNull(add7);
+        assertNull("add7 was not null", add7);
 
         Method insertElementAt = jcVec.getMethod("insertElementAt", -1);
-        assertEquals(2, insertElementAt.getParameterTypes().length);
-        assertEquals("void", insertElementAt.getReturnType().getName());
+        assertEquals("Length was not 2, it was: " + insertElementAt.getParameterTypes().length,
+                     2, insertElementAt.getParameterTypes().length);
+        assertEquals("Return type was not 'void', it was: " + insertElementAt.getReturnType().getName(),
+                     "void", insertElementAt.getReturnType().getName());
     }
 }
