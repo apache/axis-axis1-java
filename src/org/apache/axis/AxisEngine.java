@@ -95,8 +95,13 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_ATTACHMENT_DIR = "attachments.Directory";
     public static final String PROP_ATTACHMENT_IMPLEMENTATION  = "attachments.implementation" ;
     public static final String PROP_ATTACHMENT_CLEANUP = "attachment.DirectoryCleanUp";
+    public static final String PROP_CONFIG_CLASS = "axis.engineConfigClass";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
+    
+    public static final String ENV_ATTACHMENT_DIR = "axis.attachments.Directory";
+    public static final String ENV_SERVLET_REALPATH = "servlet.realpath";
+    public static final String ENV_SERVLET_CONTEXT = "servletContext";
 
     // Default admin. password
     private static final String DEFAULT_ADMIN_PASSWORD = "admin";
@@ -165,7 +170,7 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void init() {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
+            log.debug("Enter: AxisEngine::init");
         }
 
         // The SOAP/XSD stuff is in the default TypeMapping of the TypeMappingRegistry.
@@ -178,22 +183,13 @@ public abstract class AxisEngine extends BasicHandler
         }
 
         /*Set the default attachment implementation */
+        setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION,
+                         System.getProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
 
-        String attachmentsImp= null;
-        try{
-            attachmentsImp=System.getProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  );
-            if(null!=attachmentsImp)
-                setOption(PROP_ATTACHMENT_IMPLEMENTATION, attachmentsImp);
-        } catch(Throwable t){attachmentsImp= null;} 
-
-        if(attachmentsImp == null ){
-            if((attachmentsImp= (String) getOption(PROP_ATTACHMENT_IMPLEMENTATION)) == null){
-                  setOption(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
-            }
-        }
+        setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
+            log.debug("Exit: AxisEngine::init");
         }
 
     }
@@ -374,9 +370,7 @@ public abstract class AxisEngine extends BasicHandler
         }
 
         // Deal with admin password's default value.
-        if (getOption(PROP_PASSWORD) == null) {
-            setOption(PROP_PASSWORD, DEFAULT_ADMIN_PASSWORD);
-        } else {
+        if (!setOptionDefault(PROP_PASSWORD, DEFAULT_ADMIN_PASSWORD)) {
             setAdminPassword((String)getOption(PROP_PASSWORD));
         }
     }
