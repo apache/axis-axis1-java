@@ -223,7 +223,7 @@ Copyright:
         <pathelement location="${build.dest}"/>
       </classpath>
       <arg value="-s"/>
-      <arg value="samples\addr\AddressBook.wsdl"/>
+      <arg value="samples/addr/AddressBook.wsdl"/>
       <arg value="-p"/>
       <arg value="samples.addr"/>
     </java>
