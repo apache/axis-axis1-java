@@ -576,7 +576,7 @@ public class SerializationContext
                 }
 
                 attributes.addAttribute(attr.getNamespaceURI(),
-                                        attr.getName(),
+                                        attr.getLocalName(),
                                         attr.getName(),
                                         "CDATA", attr.getValue());
             }
