@@ -373,6 +373,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      */
     public void setContent(Object object, String contentType) {
         ManagedMemoryDataSource source = null;
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType);
         if (object instanceof String) {
             try {
                 String s = (String) object;
@@ -397,7 +398,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                         contentType, true);
                 extractFilename(source);
                 datahandler = new DataHandler(source);
-                contentObject = object;
+                contentObject = null; // the stream has been consumed
                 return;
             } catch (java.io.IOException io) {
                 log.error(Messages.getMessage("javaIOException00"), io);
@@ -411,7 +412,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                         contentType, true);
                 extractFilename(source);
                 datahandler = new DataHandler(source);
-                contentObject = object;
+                contentObject = null; // the stream has been consumed
                 return;
             } catch (java.io.IOException io) {
                 log.error(Messages.getMessage("javaIOException00"), io);
