@@ -127,10 +127,18 @@ public class HTTPSender extends BasicHandler {
 
             if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
                 if ( (port = tmpURL.getPort()) == -1 ) port = 443;
-                String tunnelHost = System.getProperty("https.proxyHost");
-                String tunnelPortStr = System.getProperty("https.proxyPort");
-                String tunnelUsername = System.getProperty("https.proxyUsername");
-                String tunnelPassword = System.getProperty("https.proxyPassword");
+
+                // Use http.proxyXXX settings if https.proxyXXX is not set 
+                String tunnelHost = System.getProperty("http.proxyHost");
+                String tunnelPortStr = System.getProperty("http.proxyPort");
+                String tunnelUsername = System.getProperty("http.proxyUsername");
+                String tunnelPassword = System.getProperty("http.proxyPassword");
+                
+                if (tunnelHost==null) tunnelHost = System.getProperty("https.proxyHost");
+                if (tunnelPortStr==null) tunnelPortStr = System.getProperty("https.proxyPort");
+                if (tunnelUsername==null) tunnelUsername = System.getProperty("https.proxyUsername");
+                if (tunnelPassword==null) tunnelPassword = System.getProperty("https.proxyPassword");
+
                 try {
                     Class SSLSocketFactoryClass =
                                                  Class.forName("javax.net.ssl.SSLSocketFactory");
@@ -153,25 +161,48 @@ public class HTTPSender extends BasicHandler {
                         Method createSocketMethod2 =
                                                     SSLSocketFactoryClass.getMethod("createSocket",
                                                                                     new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
-                        int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 443: Integer.parseInt(tunnelPortStr)): 443);
-                        Object tunnel = createSocketMethod .invoke(factory,
-                                                                   new Object[] {tunnelHost, new Integer(tunnelPort)});
+
+                        // Default proxy port is 80, even for https
+                        int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 80: Integer.parseInt(tunnelPortStr)): 80);
+
+                        // Create the regular socket connection to the proxy
+                        Socket tunnel = new Socket(tunnelHost, tunnelPort);
+
                         // The tunnel handshake method (condensed and made reflexive)
                         OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
                         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
                         out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n\r\n\r");
                         out.flush();
                         InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
-                        //BufferedReader in = new BufferedReader(new InputStreamReader(tunnelInputStream));
-                        //DataInputStream in = new DataInputStream(tunnelInputStream);
                         if (category.isDebugEnabled()) {
                             category.debug(JavaUtils.getMessage("isNull00", 
                               "tunnelInputStream", 
                               "" + (tunnelInputStream == null)));
                         }
 
-                        String replyStr = ""; int i;
-                        while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); }
+                        String replyStr = ""; 
+
+                        // Make sure to read all the response from the proxy to prevent SSL negotiation failure
+                        // Response message terminated by two sequential newlines
+                        int		newlinesSeen = 0;
+                        boolean		headerDone = false;	/* Done on first newline */
+
+                        while (newlinesSeen < 2) {
+                            int i = tunnelInputStream.read();
+                            if (i < 0) {
+                                throw new IOException("Unexpected EOF from proxy");
+                            }
+                            if (i == '\n') {
+                                headerDone = true;
+                                ++newlinesSeen;
+                            } else if (i != '\r') {
+                                newlinesSeen = 0;
+                                if (!headerDone) {
+                                    replyStr += String.valueOf((char)i);
+                                }
+                            }
+                        }
+
                         if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
                             throw new IOException(JavaUtils.getMessage("cantTunnel00",
                                     new String[] {tunnelHost, "" + tunnelPort, replyStr}));
