@@ -485,7 +485,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 fault.getMessage().getOrderedParts(null),
                 false,
                 fault.getName(),
-                null, false);
+                null);
         } catch (IOException e) {}
         
         // Inspect each TypeEntry referenced in a Fault Message Part
