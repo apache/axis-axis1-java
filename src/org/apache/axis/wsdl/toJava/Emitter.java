@@ -63,7 +63,7 @@ public class Emitter extends Parser {
     protected HashMap namespaceMap = new HashMap();
 
     /** Field typeMappingVersion */
-    protected String typeMappingVersion = "1.3";
+    protected String typeMappingVersion = "1.2";
 
     /** Field baseTypeMapping */
     protected BaseTypeMapping baseTypeMapping = null;
