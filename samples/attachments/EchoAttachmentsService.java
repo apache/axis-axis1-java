@@ -77,6 +77,17 @@ public class EchoAttachmentsService {
      */
     public DataHandler echo( DataHandler dh) {
         System.err.println("In echo");
+
+        //Attachments are sent by default back as a MIME stream if no attachments were
+        // received.  If attachments are received the same format that was received will
+        // be the default stream type for any attachments sent.
+
+        //The following two commented lines would force any attachments sent back.
+        //  to be in DIME format.
+
+        //Message rspmsg=AxisEngine.getCurrentMessageContext().getResponseMessage();
+        //rspmsg.getAttachmentsImpl().setSendType(org.apache.axis.attachments.Attachments.SEND_TYPE_DIME);
+        
         if (dh == null ) System.err.println("dh is null");
         else System.err.println("Received \""+dh.getClass().getName()+"\".");
         return dh;
@@ -88,6 +99,17 @@ public class EchoAttachmentsService {
      */
     public DataHandler[] echoDir( DataHandler[] attachments) {
         System.err.println("In echoDir");
+
+        //Attachments are sent by default back as a MIME stream if no attachments were
+        // received.  If attachments are received the same format that was received will
+        // be the default stream type for any attachments sent.
+
+        //The following two commented lines would force any attachments sent back.
+        //  to be in DIME format.
+
+        //Message rspmsg=AxisEngine.getCurrentMessageContext().getResponseMessage();
+        //rspmsg.getAttachmentsImpl().setSendType(org.apache.axis.attachments.Attachments.SEND_TYPE_DIME);
+
         if (attachments == null ) System.err.println("attachments is null!");
         else System.err.println("Got " + attachments.length + " attachments!");
         return attachments;

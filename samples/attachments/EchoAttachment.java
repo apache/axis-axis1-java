@@ -91,6 +91,8 @@ public class EchoAttachment {
 
     Options opts = null;
 
+    static boolean doTheDIME= false;
+
     public EchoAttachment( Options opts) {
         this.opts = opts;
     }
@@ -136,6 +138,10 @@ public class EchoAttachment {
         call.setUsername( opts.getUser());
 
         call.setPassword( opts.getPassword() );
+
+        if(doTheDIME)
+            call.setProperty(call.ATTACHMENT_ENCAPSULATION_FORMAT,
+              call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);
 
 
         Object ret = call.invoke( new Object[] {
@@ -207,9 +213,9 @@ public class EchoAttachment {
 
         //call.setScopedProperty(MessageContext.HTTP_TRANSPORT_VERSION,HTTPConstants.HEADER_PROTOCOL_V11);
         Hashtable myhttp= new Hashtable();
-        myhttp.put("dddd","yyy");
+        myhttp.put("dddd","yyy");     //Send extra soap headers
         myhttp.put("SOAPAction","dyyy");
-        myhttp.put("SOAPActions","kkk");
+        myhttp.put("SOAPActions","prova");
         //myhttp.put(HTTPConstants.HEADER_TRANSFER_ENCODING,HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED);
         call.setScopedProperty(HTTPConstants.REQUEST_HEADERS,myhttp);
 
@@ -232,6 +238,10 @@ public class EchoAttachment {
         call.setUsername( opts.getUser());
 
         call.setPassword( opts.getPassword() );
+
+        if(doTheDIME)
+            call.setProperty(call.ATTACHMENT_ENCAPSULATION_FORMAT,
+              call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);
 
         Object ret = call.invoke( new Object[] {
                     attachments
@@ -302,13 +312,24 @@ public class EchoAttachment {
             EchoAttachment echoattachment = new EchoAttachment(opts);
 
             args = opts.getRemainingArgs();
+            int argpos=0;
 
             if(args == null || args.length == 0){
                 System.err.println("Need a file or directory argument.");
                 System.exit(8);
             }
 
-            String argFile = args[0];
+            if( args[0].trim().equalsIgnoreCase("+FDR")){
+              doTheDIME= true;
+              ++argpos;
+            }
+
+            if(argpos >= args.length){
+                System.err.println("Need a file or directory argument.");
+                System.exit(8);
+            }
+
+            String argFile = args[argpos];
 
             java.io.File source = new java.io.File(argFile);
 
@@ -318,7 +339,7 @@ public class EchoAttachment {
             }
 
             if (source.isFile()) {
-                if (echoattachment.echo(args[0])) {
+                if (echoattachment.echo(argFile)) {
                     System.out.println("Attachment sent and received ok!");
                     System.exit(0);
                 }
@@ -328,7 +349,7 @@ public class EchoAttachment {
                 }
             }
             else { //a directory?
-                if (echoattachment.echoDir(args[0])) {
+                if (echoattachment.echoDir(argFile)) {
                     System.out.println("Attachments sent and received ok!");
                     System.exit(0);
                 }

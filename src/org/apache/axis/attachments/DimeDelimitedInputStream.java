@@ -176,6 +176,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     private final int readFromStream(final byte[] b,
         final int start, final int length) 
         throws IOException {
+        if (length == 0) return 0;
 
         int br = 0;
         int brTotal = 0;
@@ -186,12 +187,12 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
             } catch (IOException e) {
                 streamInError = e;
                 throw e;
-            };
+            }
             if (br > 0) brTotal += br;
         }
         while (br > -1 && brTotal < length);
 
-        return brTotal != 0 ? brTotal : br;
+        return br > -1 ? brTotal : br;
     }
 
     /**
@@ -224,7 +225,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     }
 
     /**
-     * Read from the boundary delimited stream.
+     * Read from the DIME stream.
      * @param b is the array to read into.
      * @param off is the offset 
      * @return the number of bytes read. -1 if endof stream.
@@ -258,8 +259,14 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
 
         if (0 == len) return 0; //quick.
 
+        if(recordLength == 0 && bytesRead == 0 &&  !moreChunks){
+          ++bytesRead; //odd case no data to read -- give back 0 next time -1;
+          if(ME) theEnd = true;
+          return 0;
+        }
         if (bytesRead >= recordLength && !moreChunks) {
             dataPadLength -= readPad(dataPadLength);
+            if(ME) theEnd = true;
             return -1;
         }
 

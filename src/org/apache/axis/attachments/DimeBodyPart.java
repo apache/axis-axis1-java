@@ -401,7 +401,6 @@ public class DimeBodyPart {
 
     long getTransmissionSize(long chunkSize) {
         long size = 0;
-
         size += id.length;
         size += dimePadding(id.length);
         size += type.length;
@@ -409,15 +408,19 @@ public class DimeBodyPart {
         //no options.
         long dataSize = getDataSize();
 
-        long fullChunks = dataSize / chunkSize;
-        long lastChunkSize = dataSize % chunkSize;
+        if(0 == dataSize){
+            size+=12; //header size.
+        }else{
 
-        if (0 != lastChunkSize) size += 12; //12 bytes for fixed header
-        size += 12 * fullChunks; //add additional header size for each chunk.
-        size += fullChunks * dimePadding(chunkSize);
-        size += dimePadding(lastChunkSize);
-        size += dataSize;
+            long fullChunks = dataSize / chunkSize;
+            long lastChunkSize = dataSize % chunkSize;
 
+            if (0 != lastChunkSize) size += 12; //12 bytes for fixed header
+            size += 12 * fullChunks; //add additional header size for each chunk.
+            size += fullChunks * dimePadding(chunkSize);
+            size += dimePadding(lastChunkSize);
+            size += dataSize;
+        }
         return size;
     }
 
