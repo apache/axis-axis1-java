@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -92,7 +92,7 @@ public class SOAPEnvelope extends MessageElement
 
     private SOAPHeader header;
     private SOAPBody body;
-    
+
     public Vector trailers = new Vector();
     private SOAPConstants soapConstants;
 
@@ -101,9 +101,9 @@ public class SOAPEnvelope extends MessageElement
     // or anything else your particular service descripton requires.
     //
     // This gets passed back into the service description during
-    // deserialization 
+    // deserialization
     public String messageType;
-    
+
     public SOAPEnvelope()
     {
         this(true, SOAPConstants.SOAP11_CONSTANTS);
@@ -131,7 +131,7 @@ public class SOAPEnvelope extends MessageElement
             namespaces.add(new Mapping(Constants.URI_DEFAULT_SCHEMA_XSI,
                                        Constants.NS_PREFIX_SCHEMA_XSI));
         }
-        
+
         setDirty(true);
     }
 
@@ -145,17 +145,17 @@ public class SOAPEnvelope extends MessageElement
                                               Message.REQUEST, this );
         dser.parse();
     }
-    
+
     public String getMessageType()
     {
         return messageType;
     }
-    
+
     public void setMessageType(String messageType)
     {
         this.messageType = messageType;
     }
-    
+
     public Vector getBodyElements() throws AxisFault
     {
         if (body != null) {
@@ -164,12 +164,12 @@ public class SOAPEnvelope extends MessageElement
             return new Vector();
         }
     }
-    
+
     public Vector getTrailers()
     {
         return trailers;
     }
-    
+
     public SOAPBodyElement getFirstBody() throws AxisFault
     {
         if (body == null) {
@@ -178,7 +178,7 @@ public class SOAPEnvelope extends MessageElement
             return body.getFirstBody();
         }
     }
-    
+
     public Vector getHeaders() throws AxisFault
     {
         if (header != null) {
@@ -187,10 +187,10 @@ public class SOAPEnvelope extends MessageElement
             return new Vector();
         }
     }
-    
+
     /**
      * Get all the headers targeted at a list of actors.
-     */ 
+     */
     public Vector getHeadersByActor(ArrayList actors)
     {
         if (header != null) {
@@ -199,7 +199,7 @@ public class SOAPEnvelope extends MessageElement
             return new Vector();
         }
     }
-    
+
     public void addHeader(SOAPHeaderElement hdr)
     {
         if (header == null) {
@@ -209,7 +209,7 @@ public class SOAPEnvelope extends MessageElement
         header.addHeader(hdr);
         _isDirty = true;
     }
-    
+
     public void addBodyElement(SOAPBodyElement element)
     {
         if (body == null) {
@@ -242,7 +242,7 @@ public class SOAPEnvelope extends MessageElement
             _isDirty = true;
         }
     }
-    
+
     public void removeBody() {
         body = null;
     }
@@ -264,7 +264,7 @@ public class SOAPEnvelope extends MessageElement
             _isDirty = true;
         }
     }
-    
+
     public void removeTrailer(MessageElement element)
     {
         if (log.isDebugEnabled())
@@ -272,7 +272,7 @@ public class SOAPEnvelope extends MessageElement
         trailers.removeElement(element);
         _isDirty = true;
     }
-    
+
     public void clearBody()
     {
         if (body != null) {
@@ -280,7 +280,7 @@ public class SOAPEnvelope extends MessageElement
             _isDirty = true;
         }
     }
-    
+
     public void addTrailer(MessageElement element)
     {
         if (log.isDebugEnabled())
@@ -293,18 +293,18 @@ public class SOAPEnvelope extends MessageElement
     /**
      * Get a header by name (always respecting the currently in-scope
      * actors list)
-     */ 
+     */
     public SOAPHeaderElement getHeaderByName(String namespace,
                                              String localPart)
         throws AxisFault
     {
         return getHeaderByName(namespace, localPart, false);
     }
-    
+
     /**
      * Get a header by name, filtering for headers targeted at this
      * engine depending on the accessAllHeaders parameter.
-     */ 
+     */
     public SOAPHeaderElement getHeaderByName(String namespace,
                                              String localPart,
                                              boolean accessAllHeaders)
@@ -318,7 +318,7 @@ public class SOAPEnvelope extends MessageElement
             return null;
         }
     }
-    
+
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
         throws AxisFault
     {
@@ -328,7 +328,7 @@ public class SOAPEnvelope extends MessageElement
             return body.getBodyByName(namespace, localPart);
         }
     }
-    
+
     public Enumeration getHeadersByName(String namespace, String localPart)
         throws AxisFault
     {
@@ -340,11 +340,11 @@ public class SOAPEnvelope extends MessageElement
      * and localPart.  Depending on the value of the accessAllHeaders
      * parameter, we will attempt to filter on the current engine's list
      * of actors.
-     * 
+     *
      * !!! NOTE THAT RIGHT NOW WE ALWAYS ASSUME WE'RE THE "ULTIMATE
      * DESTINATION" (i.e. we match on null actor).  IF WE WANT TO FULLY SUPPORT
      * INTERMEDIARIES WE'LL NEED TO FIX THIS.
-     */ 
+     */
     public Enumeration getHeadersByName(String namespace, String localPart,
                                         boolean accessAllHeaders)
         throws AxisFault
@@ -357,7 +357,7 @@ public class SOAPEnvelope extends MessageElement
             return new Vector().elements();
         }
     }
-    
+
     /** Should make SOAPSerializationException?
      */
     public void outputImpl(SerializationContext context)
@@ -374,14 +374,24 @@ public class SOAPEnvelope extends MessageElement
                                              mapping.getNamespaceURI());
             }
         }
-        
+
         Enumeration enum;
-        
+
         // Output <SOAP-ENV:Envelope>
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                        Constants.ELEM_ENVELOPE), attributes);
 
-        // Output headers        
+        // Output non-SOAPHeader and non-SOAPBody stuff.
+        Iterator i = getChildElements();
+        while (i.hasNext()) {
+            MessageElement element = (MessageElement)i.next();
+            if(element instanceof SOAPHeader ||
+               element instanceof SOAPBody)
+                continue;
+            element.output(context);
+        }
+
+        // Output headers
         if (header != null) {
             header.outputImpl(context);
         }
@@ -398,7 +408,7 @@ public class SOAPEnvelope extends MessageElement
             element.output(context);
             // Output this independent element
         }
-        
+
         // Output </SOAP-ENV:Envelope>
         context.endElement();
 
@@ -434,14 +444,14 @@ public class SOAPEnvelope extends MessageElement
         // Ok to use the SOAP envelope's namespace URI and prefix?
         return new PrefixedQName(namespaceURI, localName, prefix);
     }
-    
+
     public javax.xml.soap.Name createName(String localName,
                                           String prefix,
                                           String uri)
         throws SOAPException {
         return new PrefixedQName(uri, localName, prefix);
     }
-    
+
     public javax.xml.soap.SOAPBody getBody() throws SOAPException {
         return body;
     }

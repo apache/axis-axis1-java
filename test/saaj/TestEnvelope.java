@@ -5,11 +5,15 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.Node;
+import javax.xml.soap.Text;
+import java.util.Iterator;
 
 public class TestEnvelope extends junit.framework.TestCase {
 
@@ -86,6 +90,48 @@ public class TestEnvelope extends junit.framework.TestCase {
         assertTrue(!iterator.hasNext());
     }
 
+    public void testText1() throws Exception {
+        SOAPEnvelope envelope = getSOAPEnvelope();
+        Iterator iStart = envelope.getChildElements();
+        int countStart = getIteratorCount(iStart);
+        SOAPElement se = envelope.addTextNode("<txt>This is text</txt>");
+        assertTrue(se != null);
+        assertTrue(envelope.getValue().equals("<txt>This is text</txt>"));
+        Iterator i = envelope.getChildElements();
+        int count = getIteratorCount(i);
+        assertTrue(count == countStart + 1);
+    }
+
+    public void testText2() throws Exception {
+        SOAPEnvelope envelope = getSOAPEnvelope();
+	    SOAPElement se = envelope.addTextNode("This is text");
+	    Iterator iterator = se.getChildElements();
+	    Node n = null;
+	    while (iterator.hasNext()) {
+            n = (Node)iterator.next();
+            if (n instanceof Text)
+                break;
+	    }
+	    assertTrue(n instanceof Text);
+		Text t = (Text)n;
+		assertTrue(!t.isComment());
+    }
+
+    public void testText3() throws Exception {
+        SOAPEnvelope envelope = getSOAPEnvelope();
+	    SOAPElement se = envelope.addTextNode("<!-- This is a comment -->");
+	    Iterator iterator = se.getChildElements();
+	    Node n = null;
+	    while (iterator.hasNext()) {
+            n = (Node)iterator.next();
+            if (n instanceof Text)
+                break;
+	    }
+	    assertTrue(n instanceof Text);
+		Text t = (Text)n;
+		assertTrue(t.isComment());
+    }
+
     private int getIteratorCount(java.util.Iterator i) {
         int count = 0;
         while (i.hasNext()) {
@@ -97,6 +143,9 @@ public class TestEnvelope extends junit.framework.TestCase {
 
     public static void main(String[] args) throws Exception {
         test.saaj.TestEnvelope tester = new test.saaj.TestEnvelope("TestEnvelope");
+        tester.testText3();
+        tester.testText2();
+        tester.testText1();
         tester.testHeaderElements();
         tester.testFaults();
         tester.testAttributes();

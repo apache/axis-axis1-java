@@ -788,7 +788,7 @@ public class MessageElement implements SOAPElement
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if(parent == null)
-            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
+            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00"));
         try {
             setParent((MessageElement)parent);
         } catch (Throwable t) {
@@ -873,7 +873,7 @@ public class MessageElement implements SOAPElement
         org.apache.axis.message.Text text = new org.apache.axis.message.Text(s);
         try {
             addChild((MessageElement)text);
-            return text;
+            return this;
         } catch (ClassCastException e) {
             throw new SOAPException(e);
         }
