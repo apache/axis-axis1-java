@@ -54,6 +54,8 @@
  */
 package org.apache.axis.deployment.v2dd;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -75,7 +77,7 @@ public class V2DDService extends V2DDElement {
         NodeList nl = element.getElementsByTagNameNS(V2DDConstants.V2DD_NS, "provider");
         Element e = (Element)nl.item(0);
         if (e == null)
-            throw new V2DDException("The required provider element is missing");
+            throw new V2DDException(JavaUtils.getMessage("noProviderElem00"));
         V2DDProvider provider = (V2DDProvider)getChild(e);
         if (provider == null) {
             String type = null;

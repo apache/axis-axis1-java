@@ -58,6 +58,7 @@ import org.apache.axis.deployment.DeploymentDocument;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -106,13 +107,15 @@ public class DeploymentDescriptor implements DeploymentDocument {
      */
     public void deploy(DeploymentRegistry registry) throws DeploymentException {
         if (service == null) {
-            throw new DeploymentException("No Service has been defined");
+            throw new DeploymentException(
+                    JavaUtils.getMessage("noService01"));
         }
         V2DDDeployableItem item = new V2DDDeployableItem(service);
         registry.deployItem(item);
     }
 
     public void importItem(DeployableItem item) throws DeploymentException {
-        throw new DeploymentException("ImportItem not implemented!");
+        throw new DeploymentException(
+                JavaUtils.getMessage("notImplemented00", "importItem"));
     }
 }
