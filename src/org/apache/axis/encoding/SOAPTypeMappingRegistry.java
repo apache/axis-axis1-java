@@ -252,7 +252,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Byte.TYPE, XSD_BYTE, se);
         addSerializer(java.util.Date.class, XSD_DATE, new DateSerializer());
         addSerializer(byte[].class, XSD_BASE64, new Base64Serializer());
-//        addSerializer(byte[].class, XSD_HEXBIN, new HexSerializer());
+        addSerializer(Hex.class, XSD_HEXBIN, new HexSerializer());
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
         
         addDeserializersFor(XSD_STRING, java.lang.String.class, factory);    
@@ -290,7 +290,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializerFactory(XSD_BASE64, byte[].class, base64Ser);
 
         // handle the hexBinary QName...
-        addDeserializerFactory(XSD_HEXBIN, byte[].class, hexSer);
+        addDeserializerFactory(XSD_HEXBIN, Hex.class, hexSer);
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);

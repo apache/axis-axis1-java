@@ -73,7 +73,7 @@ public class HexSerializer implements Serializer {
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
-            value = Hex.decode(chars, start, end);
+            value = new Hex(new String(chars, start, end));
         }
     }
 
@@ -90,10 +90,10 @@ public class HexSerializer implements Serializer {
                           Object value, SerializationContext context)
         throws IOException
     {
-        byte[] data = (byte[]) value;
+        Hex data = (Hex) value;
 
         context.startElement(name, attributes);
-        context.writeString(Hex.encode(data, 0, data.length));
+        context.writeString(data.toString());
         context.endElement();
     }
 }
