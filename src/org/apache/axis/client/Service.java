@@ -102,15 +102,15 @@ import java.lang.reflect.Proxy;
  */
 
 public class Service implements javax.xml.rpc.Service, Serializable, Referenceable {
-    private AxisEngine          engine          = null;
+    private transient AxisEngine          engine = null;
+    private transient EngineConfiguration config =
+        (new DefaultEngineConfigurationFactory()).getClientEngineConfig();
 
     private URL                 wsdlLocation    = null ;
     private Definition          wsdlDefinition  = null ;
     private javax.wsdl.Service  wsdlService     = null ;
     private boolean             maintainSession = false ;
 
-    private EngineConfiguration config =
-        (new DefaultEngineConfigurationFactory()).getClientEngineConfig();
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
