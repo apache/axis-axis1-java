@@ -77,6 +77,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * Implement message processing by walking over RPCElements of the
@@ -198,16 +199,16 @@ public class RPCProvider extends JavaProvider
             // wsdl.  Thus the following code only works if there is no 
             // overloading.  
             int	numberOfBodyArgs = args.size();
-            Method[] method = getMethod(jc, mName);
+            Method[] methods = getMethod(jc, mName);
 
             // If the method wasn't found, maybe it needs some Java mangling (ie., it's a Java
             // keyword or it's capitalized and the java mapping requires lowercase).
-            if (method == null) {
+            if (methods == null) {
                 mName = JavaUtils.xmlNameToJava(mName);
-                method = getMethod(jc, mName);
+                methods = getMethod(jc, mName);
             }
 
-            if ( method == null )
+            if ( methods == null )
                 throw new AxisFault( "AxisServer.error",
                         JavaUtils.getMessage("noMethod00", mName, msgContext.getTargetService()),
                         null, null );
@@ -217,10 +218,11 @@ public class RPCProvider extends JavaProvider
             Exception ex = null;
 
             // There might be more than one method with this name, try them all.
-            int m = 0;
-            for (m = 0; m < method.length; ++m) {
+            int index = 0;
+            for (index = 0; index < methods.length; index++) {
+                Method method = methods[index];
                 ex = null;
-                params = method[m].getParameterTypes();
+                params = method.getParameterTypes();
                 
                 // Don't bother with this one if it has FEWER params
                 if (argValues != null) {
@@ -257,7 +259,7 @@ public class RPCProvider extends JavaProvider
                 // Note that if the method returns a primitive, invoke(...) automatically
                 // wraps it in a java.lang class representing the primitive.
                 try {
-                    objRes = method[m].invoke(obj, argValues);
+                    objRes = method.invoke(obj, argValues);
                     break;
                 } catch (IllegalArgumentException e) {
                     // Hm - maybe we can help this with a conversion or two...
@@ -274,7 +276,7 @@ public class RPCProvider extends JavaProvider
 
                     // OK, now try again...
                     try {
-                        objRes = method[m].invoke( obj, argValues );
+                        objRes = method.invoke( obj, argValues );
                         break;
                     } catch (IllegalArgumentException exp) {
                         StringBuffer argbuf = new StringBuffer();
@@ -291,7 +293,7 @@ public class RPCProvider extends JavaProvider
                                 new String[] {
                                 exp.getMessage(),
                                 objName,
-                                method[m].getName(),
+                                method.getName(),
                                 argbuf.toString()});
                         ex = new IllegalArgumentException(msg);
                         continue;
@@ -303,6 +305,12 @@ public class RPCProvider extends JavaProvider
             if (ex != null) {
                 throw ex;
             }
+
+            // If we've finished iterating through all the methods, throw an exception.
+            if ( index == methods.length )
+                throw new AxisFault( "AxisServer.error",
+                        JavaUtils.getMessage("noMethod00", mName, msgContext.getTargetService()),
+                        null, null );
 
             if (log.isDebugEnabled())
                 log.debug(JavaUtils.getMessage("result00", "" + objRes));
@@ -324,7 +332,7 @@ public class RPCProvider extends JavaProvider
                             resBody.addParam ((RPCParam) list.get (i));
                         }
                         else {
-                            resBody.addParam (new RPCParam (getParameterName(obj, method[m],i, mName),
+                            resBody.addParam (new RPCParam (getParameterName(obj, methods[index],i, mName),
                                                             list.get (i)));
                         }
                     }
@@ -334,7 +342,7 @@ public class RPCProvider extends JavaProvider
                     RPCParam param = new RPCParam(returnQName, objRes);
                     resBody.addParam(param);
                 }
-            } else if (method[m].getReturnType() != Void.TYPE) {
+            } else if (methods[index].getReturnType() != Void.TYPE) {
                 QName returnQName = getReturnQName(serviceDesc, mName);
                 RPCParam param = new RPCParam(returnQName, objRes);
                 resBody.addParam(param);
@@ -348,7 +356,7 @@ public class RPCProvider extends JavaProvider
                     // Create an RPCParam by converting the Holder back into 
                     // the held type.
                     resBody.addParam (new RPCParam (getParameterName(obj,
-                                                                     method[m],
+                                                                     methods[index],
                                                                      i, 
                                                                      mName,
                                                                      args),
