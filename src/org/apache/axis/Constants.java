@@ -89,7 +89,7 @@ public class Constants {
     public static final String URI_SOAP_ENV =
                                 "http://schemas.xmlsoap.org/soap/envelope/" ;
     public static final String URI_SOAP12_ENV =
-                                   "http://www.w3.org/2001/06/soap-envelope";
+                                   "http://www.w3.org/2001/12/soap-envelope";
     public static final String URI_CURRENT_SOAP_ENV = URI_SOAP_ENV;  // SOAP 1.1 over the wire
 
     public static final String[] URIS_SOAP_ENV = {
@@ -117,7 +117,7 @@ public class Constants {
     public static final String URI_SOAP_ENC_ALT = 
                                 "http://schemas.xmlsoap.org/soap/encoding" ;
     public static final String URI_SOAP12_ENC =
-                                   "http://www.w3.org/2001/06/soap-encoding";
+                                   "http://www.w3.org/2001/12/soap-encoding";
     public static final String URI_CURRENT_SOAP_ENC = URI_SOAP_ENC; // SOAP 1.1 over the wire
 
     public static final String[] URIS_SOAP_ENC = {
