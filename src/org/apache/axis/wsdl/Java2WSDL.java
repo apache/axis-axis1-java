@@ -245,6 +245,9 @@ public class Java2WSDL {
     /** Field locationSet */
     boolean locationSet = false;
 
+    /** Field typeMappingVersion */
+    protected String typeMappingVersion = "1.2";
+    
     /**
      * Instantiate a Java2WSDL emitter.
      */
@@ -407,13 +410,7 @@ public class Java2WSDL {
 
             case TYPEMAPPING_OPT:
                 value = option.getArgument();
-
-                try {
-                    emitter.setTypeMappingVersion(value);
-                } catch (Exception e) {
-                    System.out.println(Messages.getMessage("j2wBadTypeMapping00"));
-                    status = false;
-                }
+                typeMappingVersion = value;
                 break;
 
             case SOAPACTION_OPT:
@@ -513,7 +510,6 @@ public class Java2WSDL {
 
             return false;
         }
-
         return true;    // a-OK
     }
 
@@ -560,6 +556,9 @@ public class Java2WSDL {
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
+
+            // Set the TypeMappingVersion
+            emitter.setTypeMappingVersion(typeMappingVersion);
 
             // Find the class using the name
             emitter.setCls(className);
