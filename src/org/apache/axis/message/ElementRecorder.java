@@ -83,7 +83,28 @@ public class ElementRecorder extends DeserializerBase
         if (DEBUG_LOG)
             System.out.println("New ElementRecorder " + this);
     }
-    
+
+    public void startPrefixMapping(String prefix, String uri)
+        throws SAXException
+    {
+        if (DEBUG_LOG) {
+            System.err.println("(rec) startMapping ['" + prefix + "'->'" +
+                           uri + "']");
+        }
+        
+        _events.addElement(new StartPrefixEvent(prefix, uri));
+    }
+
+    public void endPrefixMapping(String prefix)
+        throws SAXException
+    {
+        if (DEBUG_LOG) {
+            System.err.println("(rec) endMapping ['" + prefix + "']");
+        }
+        
+        _events.addElement(new EndPrefixEvent(prefix));        
+    }
+
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes)
         throws SAXException
@@ -93,7 +114,8 @@ public class ElementRecorder extends DeserializerBase
                            localName + "]");
         }
         
-        _events.addElement(new StartElementEvent(namespace, localName, qName, attributes));
+        _events.addElement(new StartElementEvent(namespace, localName,
+                                                 qName, attributes));
         
         if (nextHandler != null)
             nextHandler.startElement(namespace, localName, qName, attributes);

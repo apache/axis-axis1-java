@@ -26,7 +26,7 @@ public class SAXOutputter extends DefaultHandler
     }
     
     public void startPrefixMapping(String p1, String p2) throws SAXException {
-        context.registerPrefixForURI(p2, p1);
+        context.registerPrefixForURI(p1,p2);
     }
     
     public void endPrefixMapping(String p1) throws SAXException {
