@@ -108,6 +108,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     
     public static String COMPLEX_TYPE_FAULT = "ComplexTypeFault";
     public static String EXCEPTION_CLASS_NAME = "ExceptionClassName";
+    public static String EXCEPTION_DATA_TYPE = "ExceptionDataType";
 
     /**
      * Default constructor.  Note that this class is unusable until setEmitter
@@ -469,12 +470,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * setFaultContext:
      * Helper routine for the setFaultContext method above.
      * Examines the indicated fault and sets COMPLEX_TYPE_FAULT
-     * and EXCEPTION_CLASS_NAME as appropriate.
+     * EXCEPTION_DATA_TYPE and EXCEPTION_CLASS_NAME as appropriate.
      * @param fault Fault to analyze
      * @param symbolTable SymbolTable
      */
     private void setFaultContext(Fault fault,
                                  SymbolTable symbolTable) {
+        QName faultXmlType = null;
+        
         Vector parts = new Vector();
         // Get the parts of the fault's message.
         // An IOException is thrown if the parts cannot be
@@ -501,10 +504,16 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 te = te.getRefType();
             }
 
+            // remember the QName of the type.
+            faultXmlType = te.getQName();
+            
             // Determine if the te should be processed using the
             // simple type mapping or the complex type mapping
+            // NOTE: treat array types as simple types
             if (te.getBaseType() != null ||
-                te.isSimpleType()) {
+                te.isSimpleType() ||
+                  (te.getDimensions().length() > 0 && 
+                    te.getRefType().getBaseType() != null) ) {
                 // Simple Type Exception
             } else {
                 // Complex Type Exception
@@ -556,6 +565,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         MessageEntry me = symbolTable.getMessageEntry(
             fault.getMessage().getQName());
         if (me != null) {
+            me.setDynamicVar(
+                             JavaGeneratorFactory.EXCEPTION_DATA_TYPE, 
+                             faultXmlType);
             if (exceptionClassName != null) {
                 me.setDynamicVar(
                                  JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
@@ -923,7 +935,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             while (i.hasNext()) {
                 Fault fault = (Fault) i.next();
                 String exceptionName =
-                  Utils.getFullExceptionName(fault, emitter);
+                  Utils.getFullExceptionName(fault, symbolTable);
                 signature = signature + ", " + exceptionName;
             }
         }

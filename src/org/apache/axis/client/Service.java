@@ -130,6 +130,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     private Hashtable transportImpls = new Hashtable();
 
+    
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
     }
@@ -768,4 +769,5 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     Transport getTransportForURL(URL url) {
         return (Transport)transportImpls.get(url);
     }
+
 }

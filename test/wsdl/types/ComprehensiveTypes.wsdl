@@ -1037,7 +1037,13 @@
       <input message="tns:emptyComplexType"/>
       <output message="tns:empty"/>
       <fault name="emptyFault" message="tns:emptyFault"/>
+        <!-- Can't have faults with <part element=""> in an RPC service...
+             Don't know what the intent was here, but since no one is actually
+             throwing this fault, commenting it out because it's now triggering
+             our more-draconian error checking.
+             
       <fault name="faultWithElement" message="tns:faultWithElement"/>
+      -->
     </operation>
     <operation name="emptyComplexTypeInout" parameterOrder="emptyComplexType">
       <input message="tns:emptyComplexType"/>
@@ -1808,8 +1814,8 @@
             namespace=""
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
-      <fault>
-        <soap:fault name="emptyFault" use="encoded"/>
+      <fault name="emptyFault">
+          <soap:fault name="emptyFault" use="encoded"/>
       </fault>
     </operation>
     <operation name="emptyComplexTypeInout">
@@ -1826,7 +1832,7 @@
             namespace=""
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
-      <fault>
+      <fault name="emptyFault">
         <soap:fault name="emptyFault" use="encoded"/>
       </fault>
     </operation>
@@ -1844,7 +1850,7 @@
             namespace=""
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
-      <fault>
+      <fault name="emptyFault">
         <soap:fault name="emptyFault" use="encoded"/>
       </fault>
     </operation>
@@ -1862,7 +1868,7 @@
             namespace=""
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
-      <fault>
+      <fault name="emptyFault">
         <soap:fault name="emptyFault" use="encoded"/>
       </fault>
     </operation>

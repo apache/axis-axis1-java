@@ -282,6 +282,20 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
      * Return if done parsing document.
      */
     public boolean isDoneParsing();
+
+    /**
+     * Indicate if we're in the midst of processing an href target, in which
+     * case we shouldn't be pushing the element stack.
+     * @param ref
+     */
+    void setProcessingRef(boolean ref);
+
+    /**
+     * Are we in the midst of processing an href target?  If so, we shouldn't
+     * be pushing the element stack...
+     * @return
+     */
+    boolean isProcessingRef();
 }
 
 

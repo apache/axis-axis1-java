@@ -62,30 +62,32 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Import;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
+import javax.wsdl.BindingFault;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.gen.Generator;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.utils.Messages;
 
 /**
  * This is Wsdl2java's Definition Writer.  
  * It currently writes the following files:
- *   deploy.xml, undeploy.xml and Faults as needed.
+ * Faults as needed.
  */
 public class JavaDefinitionWriter implements Generator {
-/*
-    protected Writer deployWriter = null;
-    protected Writer undeployWriter = null;
-*/
     protected Emitter emitter;
     protected Definition definition;
     protected SymbolTable symbolTable;
@@ -95,10 +97,6 @@ public class JavaDefinitionWriter implements Generator {
      */
     public JavaDefinitionWriter(Emitter emitter, Definition definition,
             SymbolTable symbolTable) {
-/*
-        deployWriter = new JavaDeployWriter(emitter, definition, symbolTable);
-        undeployWriter = new JavaUndeployWriter(emitter, definition, symbolTable);
-*/
         this.emitter = emitter;
         this.definition = definition;
         this.symbolTable = symbolTable;
@@ -108,29 +106,31 @@ public class JavaDefinitionWriter implements Generator {
      * Write other items from the definition as needed.
      */
     public void generate() throws IOException {
-/*
-        if (emitter.generateServerSide()) {
-            deployWriter.write();
-            undeployWriter.write();
-        }
-*/
         writeFaults();
     } // generate
 
     /**
-     * Write all the faults.
-     * 
+     * Write all the simple type faults.
+     * The complexType Faults are automatically handled by JavaTypeWriter.
      * The fault name is derived from the fault message name per JAX-RPC
      */
     private void writeFaults() throws IOException {
-        HashMap faults = new HashMap();
+        ArrayList faults = new ArrayList();
         collectFaults(definition, faults);
+        
+        // Fault classes we're actually writing (for dup checking)
+        HashSet generatedFaults = new HashSet();
 
         // iterate over fault list, emitting code.
-        Iterator fi = faults.entrySet().iterator();
+        Iterator fi = faults.iterator();
         while (fi.hasNext()) {
-            Map.Entry entry = (Map.Entry) fi.next();
-            Fault fault = (Fault) entry.getKey();
+            FaultInfo faultInfo = (FaultInfo) fi.next();
+            Fault fault = faultInfo.fault;
+            String name = Utils.getFullExceptionName(fault, symbolTable);
+            if (generatedFaults.contains(name)) {
+                continue;
+            }
+            generatedFaults.add(name);
 
             // Generate the 'Simple' Faults.
             // The complexType Faults are automatically handled
@@ -140,18 +140,21 @@ public class JavaDefinitionWriter implements Generator {
             boolean emitSimpleFault = true;
             if (me != null) {
                 Boolean complexTypeFault = (Boolean)
-                    me.getDynamicVar(
-                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+                    me.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
                 if (complexTypeFault != null &&
                     complexTypeFault.booleanValue()) {
                     emitSimpleFault = false;
                 }
             }
             if (emitSimpleFault) {
-                QName faultQName = (QName) entry.getValue();
                 try {
-                    new JavaFaultWriter(emitter, faultQName, fault,
-                                        symbolTable).generate();
+                    JavaFaultWriter writer = 
+                            new JavaFaultWriter(emitter, 
+                                                symbolTable, 
+                                                faultInfo.fault, 
+                                                faultInfo.soapFault); 
+                    // Go write the file
+                    writer.generate();
                 } catch (DuplicateFileException dfe) {
                     System.err.println(
                             Messages.getMessage("fileExistError00", dfe.getFileName()));
@@ -161,11 +164,25 @@ public class JavaDefinitionWriter implements Generator {
     } // writeFaults
 
     /**
+     * Holder structure for fault information
+     */ 
+    public static class FaultInfo {
+        public FaultInfo(Fault fault, SOAPFault soapFault, QName xmlType) {
+            this.fault = fault;
+            this.soapFault = soapFault;
+            this.xmlType = xmlType;
+        }
+
+        public Fault fault;
+        public SOAPFault soapFault;
+        public QName xmlType;
+    }
+
+    /**
      * Collect all of the faults used in this definition.
      */
     private HashSet importedFiles = new HashSet();
-    private void collectFaults(Definition def, Map faults) throws IOException {
-        Vector faultList = new Vector();
+    private void collectFaults(Definition def, ArrayList faults) throws IOException {
         Map imports = def.getImports();
         Object[] importValues = imports.values().toArray();
         for (int i = 0; i < importValues.length; ++i) {
@@ -181,34 +198,25 @@ public class JavaDefinitionWriter implements Generator {
                 }
             }
         }
-        Map portTypes = def.getPortTypes();
-        Iterator pti = portTypes.values().iterator();
-        // collect referenced faults in a list
-        while (pti.hasNext()) {
-            PortType portType = (PortType) pti.next();
-            
-            // Don't emit faults that are not referenced.
-            if (symbolTable.getPortTypeEntry(portType.getQName()).
-                    isReferenced()) {
-                List operations = portType.getOperations();
-                for (int i = 0; i < operations.size(); ++i) {
-                    Operation operation = (Operation) operations.get(i);
-                    Map opFaults = operation.getFaults();
-                    Iterator fi = opFaults.values().iterator();
-                    while (fi.hasNext()) {
-                        Fault f = (Fault) fi.next();
-                        String name = Utils.getFullExceptionName(
-                                f,
-                                emitter);
-                        // prevent duplicates
-                        if (! faultList.contains(name) ) {
-                            faultList.add(name);
-                            faults.put(f, f.getMessage().getQName());
-                        }
-                    }
+
+        // Traverse the bindings to find faults
+        Map bindings = def.getBindings();
+        Iterator bindi = bindings.values().iterator();
+        while (bindi.hasNext()) {
+            Binding binding = (Binding) bindi.next();
+            BindingEntry entry = symbolTable.getBindingEntry(binding.getQName());
+            if (entry.isReferenced()) {
+                // use the map of bindingOperation -> fault info
+                // created in SymbolTable
+                Map faultMap = entry.getFaults();
+                Iterator it = faultMap.values().iterator();
+                while (it.hasNext()) {
+                    ArrayList list = (ArrayList) it.next();
+                    // Accumulate total list of faults
+                    faults.addAll(list);
                 }
             }
         }
     } // collectFaults
-
+    
 } // class JavaDefinitionWriter

@@ -272,7 +272,11 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     QName xmlName = elem.getName();
                     
                     // Some special handling for arrays
-                    QName xmlType = elem.getType().getQName();
+                    TypeEntry elemType = elem.getType();
+                    if (elemType.getRefType() != null) {
+                        elemType = elemType.getRefType();
+                    }
+                    QName xmlType = elemType.getQName();
                     if (xmlType != null && xmlType.getLocalPart().indexOf("[") > 0) {
                         // Skip array types, because they are special
                         xmlType = null;

@@ -57,6 +57,7 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.FaultDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
@@ -122,6 +123,13 @@ public class WSDDOperation extends WSDDElement
             WSDDParameter parameter = new WSDDParameter(paramEl, desc);
             desc.addParameter(parameter.getParameter());
         }
+        
+        Element [] faultElems = getChildElements(e, ELEM_WSDD_FAULT);
+        for (int i = 0; i < faultElems.length; i++) {
+            Element faultElem = faultElems[i];
+            WSDDFault fault = new WSDDFault(faultElem);
+            desc.addFault(fault.getFaultDesc());
+        }
     }
 
     /**
@@ -160,6 +168,15 @@ public class WSDDOperation extends WSDDElement
             ParameterDesc parameterDesc = (ParameterDesc) i.next();
             WSDDParameter p = new WSDDParameter(parameterDesc);
             p.writeToContext(context);
+        }
+        
+        ArrayList faults = desc.getFaults();
+        if (faults != null) {
+            for (Iterator i = faults.iterator(); i.hasNext();) {
+                FaultDesc faultDesc = (FaultDesc) i.next();
+                WSDDFault f = new WSDDFault(faultDesc);
+                f.writeToContext(context);
+            }
         }
 
         context.endElement();

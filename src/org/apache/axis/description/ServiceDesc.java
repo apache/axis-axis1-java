@@ -646,6 +646,9 @@ public class ServiceDesc {
 
                 oper.setReturnClass(method.getReturnType());
 
+                // Do the faults
+                createFaultMetadata(method, oper);
+                
                 // At some point we might want to check here to see if this
                 // Method is already associated with another Operation, but
                 // this doesn't seem critital.
@@ -1080,6 +1083,13 @@ public class ServiceDesc {
             }
         }
 
+        createFaultMetadata(method, operation);
+
+        addOperationDesc(operation);
+        method2OperationMap.put(method, operation);
+    }
+
+    private void createFaultMetadata(Method method, OperationDesc operation) {
         // Create Exception Types
         Class[] exceptionTypes = new Class[method.getExceptionTypes().length];
         exceptionTypes = method.getExceptionTypes();
@@ -1130,26 +1140,30 @@ public class ServiceDesc {
                 operation.addFault(fault);
                 */
 
-                // Create a single part with the dummy name "fault"
-                // that locates the complexType for this exception.
-                ParameterDesc param = new ParameterDesc(
-                     new QName("", "fault"),
-                     ParameterDesc.IN,
-                     tm.getTypeQName(ex));
-                param.setJavaType(ex);
-                ArrayList exceptionParams = new ArrayList();
-                exceptionParams.add(param);
+                FaultDesc fault = operation.getFaultByClass(ex);
+                if (fault == null) {
+                    QName xmlType = tm.getTypeQName(ex);
+                    // Create a single part with the dummy name "fault"
+                    // that locates the complexType for this exception.
+                    ParameterDesc param = new ParameterDesc(
+                         new QName("", "fault"),
+                         ParameterDesc.IN,
+                         xmlType);
+                    param.setJavaType(ex);
+                    ArrayList exceptionParams = new ArrayList();
+                    exceptionParams.add(param);
+                
+                    fault = new FaultDesc();
+                    String pkgAndClsName = ex.getName();
+                    fault.setName(pkgAndClsName);
+                    fault.setParameters(exceptionParams);
+                    fault.setClassName(pkgAndClsName);
+                    fault.setXmlType(xmlType);
+                }
 
-                String pkgAndClsName = ex.getName();
-                FaultDesc fault = new FaultDesc();
-                fault.setName(pkgAndClsName);
-                fault.setParameters(exceptionParams);
                 operation.addFault(fault);
             }
         }
-
-        addOperationDesc(operation);
-        method2OperationMap.put(method, operation);
     }
 
     private String[] getParamNames(Method method) {

@@ -62,6 +62,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
@@ -542,9 +543,13 @@ public class MessageElement implements SOAPElement, Serializable
         if (dser == null)
             throw new Exception(Messages.getMessage("noDeser00", "" + type));
 
+        boolean oldVal = context.isDoneParsing();
+        ((DeserializationContextImpl)context).deserializing(true);
         context.pushElementHandler(new EnvelopeHandler((SOAPHandler)dser));
 
         publishToHandler((org.xml.sax.ContentHandler) context);
+
+        ((DeserializationContextImpl)context).deserializing(oldVal);
 
         return dser.getValue();
     }

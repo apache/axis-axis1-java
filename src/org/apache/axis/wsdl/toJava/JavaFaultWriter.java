@@ -58,28 +58,42 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Iterator;
+import java.util.Collection;
 
 import javax.wsdl.Fault;
+import javax.wsdl.BindingFault;
+import javax.wsdl.PortType;
+import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
-* This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
-* NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
-*/
+ * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
+ *
+ * NOTE: This only writes simple type faults, the JavaTypeWriter emits
+ * faults that are complex types. 
+ */
 public class JavaFaultWriter extends JavaClassWriter {
     private Fault fault;
     private SymbolTable symbolTable;
+    private SOAPFault soapFault;
 
     /**
      * Constructor.
      */
-    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
-        super(emitter, Utils.getFullExceptionName(fault, emitter), "fault");
+    protected JavaFaultWriter(Emitter emitter, 
+                              SymbolTable symbolTable, 
+                              Fault fault, 
+                              SOAPFault soapFault) {
+        super(emitter, Utils.getFullExceptionName(fault, symbolTable), "fault");
         this.fault = fault;
         this.symbolTable = symbolTable;
+        this.soapFault = soapFault;
     } // ctor
 
     /**
@@ -95,11 +109,17 @@ public class JavaFaultWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         Vector params = new Vector();
 
-        // XXX  Have to get use information (literal/encoded) for fault from
-        // XXX  BindingEntry, which we don't have the QName for
+        boolean literal = false;
+        // Have to get use information (literal/encoded) for fault from Binding.
+        if (soapFault != null) {
+            if ("literal".equalsIgnoreCase(soapFault.getUse())) {
+                literal = true;
+            }
+        }
+
         symbolTable.getParametersFromParts(params, 
                                 fault.getMessage().getOrderedParts(null), 
-                                false, 
+                                literal, 
                                 fault.getName(), 
                                 null);
 
@@ -138,6 +158,22 @@ public class JavaFaultWriter extends JavaClassWriter {
             }
             pw.println("    }");
         }
+
+        // Method that serializes exception data (writeDetail)
+        // The QName of the element is passed in by the runtime and is found
+        // via the fault meta-data in the WSDD.
+        // NOTE: This function is also written in JavaBeanFaultWriter.java
+        pw.println();
+        pw.println("    /**");
+        pw.println("     * Writes the exception data to the faultDetails");
+        pw.println("     */");
+        pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
+        for (int i = 0; i < params.size(); i++) {
+            Parameter param = (Parameter)params.get(i);
+            String variable = param.getName();
+            pw.println("        context.serialize(qname, null, " + Utils.wrapPrimitiveType(param.getType(), variable) + ");");
+        }
+        pw.println("    }");
     } // writeFileBody
 
 } // class JavaFaultWriter

@@ -57,6 +57,7 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.Constants;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
@@ -78,8 +79,10 @@ import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
+import javax.wsdl.BindingFault;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
@@ -223,19 +226,51 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * of the exception to be generated from this fault
      * 
      * @param fault The WSDL fault object
-     * @param emitter the Emitter being used
+     * @param symbolTable the current symbol table
      * @return A Java class name for the fault
      */ 
-    public static String getFullExceptionName(
-            Fault fault, Emitter emitter) {
-
-        // Get the Message referenced in the message attribute of the
-        // fault.
+    public static String getFullExceptionName(Fault fault, 
+                                              SymbolTable symbolTable) {
+        // Get the Message referenced in the message attribute of the fault.
         Message faultMessage = fault.getMessage();
-        MessageEntry me = emitter.getSymbolTable().getMessageEntry(
-            faultMessage.getQName()); 
+        MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
         return (String) me.getDynamicVar(JavaGeneratorFactory.EXCEPTION_CLASS_NAME);
     } // getFullExceptionName
+
+    /**
+     * Given a fault, return the XML type of the exception data.
+     * 
+     * @param fault The WSDL fault object
+     * @param symbolTable the current symbol table
+     * @return A QName for the XML type of the data
+     */ 
+    public static QName getFaultDataType(Fault fault, 
+                                         SymbolTable symbolTable) {
+        // Get the Message referenced in the message attribute of the fault.
+        Message faultMessage = fault.getMessage();
+        MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
+        return (QName) me.getDynamicVar(JavaGeneratorFactory.EXCEPTION_DATA_TYPE);
+    } // getFaultDataType
+
+    /**
+     * Given a fault, return TRUE if the fault is a complex type fault
+     * 
+     * @param fault The WSDL fault object
+     * @param symbolTable the current symbol table
+     * @return A Java class name for the fault
+     */ 
+    public static boolean isFaultComplex(Fault fault, 
+                                         SymbolTable symbolTable) {
+        // Get the Message referenced in the message attribute of the fault.
+        Message faultMessage = fault.getMessage();
+        MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
+        Boolean ret = (Boolean) me.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+        if (ret != null) {
+            return ret.booleanValue();
+        } else {
+            return false;
+        }
+    } // isFaultComplex
 
     /**
      * If the specified node represents a supported JAX-RPC enumeration,
@@ -669,7 +704,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Given a MIME type, return the AXIS-specific type QName.
-     * @param the MIME type name
+     * @param mimeName the MIME type name
      * @return the AXIS-specific QName for the MIME type
      */
     public static QName getMIMETypeQName(String mimeName) {

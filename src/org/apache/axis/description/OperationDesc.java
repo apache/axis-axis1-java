@@ -355,7 +355,53 @@ public class OperationDesc {
     {
         return faults;
     }
+    
+    /**
+     * Returns the FaultDesc for the fault class given.
+     * Returns null if not found.
+     */ 
+    public FaultDesc getFaultByClass(Class cls) {
+        if (faults == null || cls == null) {
+            return null;
+        }
 
+        while (cls != null) {
+            // Check each class in the inheritance hierarchy, stopping at
+            // java.* or javax.* classes.
+
+            for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
+                FaultDesc desc = (FaultDesc) iterator.next();
+                if (cls.getName().equals(desc.getClassName())) {
+                    return desc;
+                }
+            }
+
+            cls = cls.getSuperclass();
+            if (cls != null && (cls.getName().startsWith("java.") ||
+                    cls.getName().startsWith("javax."))) {
+                cls = null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the FaultDesc for a QName (which is typically found
+     * in the details element of a SOAP fault).
+     * Returns null if not found.
+     */ 
+    public FaultDesc getFaultByQName(QName qname) {
+        if (faults != null) {
+            for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
+                FaultDesc desc = (FaultDesc) iterator.next();
+                if (qname.equals(desc.getQName())) {
+                    return desc;
+                }
+            }
+        }
+        return null;
+    }
     public ParameterDesc getReturnParamDesc() {
         return returnDesc;
     }

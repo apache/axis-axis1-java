@@ -82,7 +82,7 @@
       <output>
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
       </output>
-      <fault>
+      <fault name="InvalidTickerFaultMessage">
         <soap:fault name="InvalidTickerFaultMessage" use="encoded"/>
       </fault>
     </operation>
@@ -94,7 +94,7 @@
       <output>
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
       </output>
-      <fault>
+      <fault name="throwFaultFault">
         <soap:fault name="throwFaultFault" use="encoded"/>
       </fault>
     </operation>

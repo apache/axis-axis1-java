@@ -112,7 +112,7 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * The default implementation does nothing.
      * @param value Object representing deserialized value or null
      */
-    public void setValue(Object value, Object hint) throws SAXException;
+    public void setChildValue(Object value, Object hint) throws SAXException;
 
    /**
      * In some circumstances an element may not have

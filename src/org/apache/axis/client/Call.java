@@ -65,6 +65,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.description.FaultDesc;
 import org.apache.axis.enum.Style;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -1488,8 +1489,12 @@ public class Call implements javax.xml.rpc.Call {
 
         // If we never set-up any names... then just return what was passed in
         //////////////////////////////////////////////////////////////////////
-        log.debug( "operation=" + operation);
-        if(operation != null) log.debug("operation.getNumParams()=" +operation.getNumParams());
+        if (log.isDebugEnabled()) {
+            log.debug( "operation=" + operation);
+            if (operation != null)
+                log.debug("operation.getNumParams()=" + 
+                          operation.getNumParams());
+        }
         if ( operation.getNumParams() == 0 ) return( params );
 
         // Count the number of IN and INOUT params, this needs to match the
@@ -2233,4 +2238,18 @@ public class Call implements javax.xml.rpc.Call {
      public void addAttachmentPart( Object attachment){
          attachmentParts.add(attachment);
      }
+    
+    /**
+     * Add a fault for this operation
+     * 
+     * Note: Not part of JAX-RPC specificaion
+     */ 
+    public void addFault(QName qname, Class cls, QName xmlType, boolean isComplex) {
+        FaultDesc fault = new FaultDesc();
+        fault.setQName(qname);
+        fault.setClassName(cls.getName());
+        fault.setXmlType(xmlType);
+        fault.setComplex(isComplex);
+        operation.addFault(fault);
+    }
 }

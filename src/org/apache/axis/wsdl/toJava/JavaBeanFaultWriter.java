@@ -55,6 +55,8 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.util.Vector;
+import java.io.PrintWriter;
+import java.io.IOException;
 
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
@@ -93,7 +95,7 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
         enableFullConstructor = true;
 
         // JSR 101 v1.0 does not support write access methods
-        enableSetters = false;
+        enableSetters = true;
     } // ctor
     
     /**
@@ -111,4 +113,27 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
         return extendsText;
     }
 
+    /**
+     * Write the Exception serialization code
+     * 
+     * NOTE: This function is written in JavaFaultWriter.java also. 
+     */ 
+    protected void writeFileFooter(PrintWriter pw) throws IOException {
+        // We need to have the Exception class serialize itself
+        // with the correct namespace, which can change depending on which
+        // operation the exception is thrown from.  We therefore have the
+        // framework call this generated routine with the correct QName,
+        // and allow it to serialize itself.
+
+        // method that serializes this exception (writeDetail)
+        pw.println();
+        pw.println("    /**");
+        pw.println("     * Writes the exception data to the faultDetails");
+        pw.println("     */");
+        pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
+        pw.println("        context.serialize(qname, null, this);");
+        pw.println("    }");
+        
+        super.writeFileFooter(pw);
+    } // writeFileFooter
 } // class JavaBeanFaultWriter

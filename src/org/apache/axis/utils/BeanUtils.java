@@ -56,6 +56,7 @@ package org.apache.axis.utils;
 
 import org.apache.axis.InternalException;
 import org.apache.axis.Constants;
+import org.apache.axis.AxisFault;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.description.FieldDesc;
 
@@ -120,6 +121,11 @@ public class BeanUtils {
                             if(superClass == Exception.class) {
                                 result = Introspector.
                                         getBeanInfo(secJavaType,Exception.class).
+                                        getPropertyDescriptors();
+                            } else if (AxisFault.class.isAssignableFrom(secJavaType)) {
+                                // Don't include AxisFault data
+                                result = Introspector.
+                                        getBeanInfo(secJavaType,AxisFault.class).
                                         getPropertyDescriptors();
                             } else {
                                 // privileged code goes here
@@ -212,6 +218,14 @@ public class BeanUtils {
                 // add it if not.
                 for (int i=0; i < fields.length; i++) {
                     Field f = fields[i];
+                    // skip if field come from a java.* or javax.* package
+                    // WARNING: Is this going to make bad things happen for
+                    // users JavaBeans?  Do they WANT these fields serialzed?
+                    String clsName = f.getDeclaringClass().getName();
+                    if (clsName.startsWith("java.") ||
+                            clsName.startsWith("javax.")) {
+                        continue;
+                    }
                     // skip field if it is final, transient, or static
                     if (!(Modifier.isStatic(f.getModifiers()) ||
                             Modifier.isFinal(f.getModifiers()) ||

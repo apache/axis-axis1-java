@@ -55,13 +55,11 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -148,13 +146,16 @@ public class MapDeserializer extends DeserializerImpl {
             log.debug("Enter: MapDeserializer::onStartChild()");
         }
 
-        SOAPHandler sh = new ItemHandler(this);
+        ItemHandler handler = new ItemHandler(this);
+        
+        // This item must be complete before we're complete...
+        addChildDeserializer(handler);
         
         if (log.isDebugEnabled()) {
             log.debug("Exit: MapDeserializer::onStartChild()");
         }
 
-        return sh;
+        return handler;
     }
     
     /**
@@ -163,7 +164,7 @@ public class MapDeserializer extends DeserializerImpl {
      * @param value is the value of an element
      * @param hint is the key
      */
-    public void setValue(Object value, Object hint) throws SAXException
+    public void setChildValue(Object value, Object hint) throws SAXException
     {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("gotValue00", "MapDeserializer", "" + value));
@@ -191,7 +192,7 @@ public class MapDeserializer extends DeserializerImpl {
          * whether the passed "val" argument is the key or the value
          * for this mapping.
          */
-        public void setValue(Object val, Object hint) throws SAXException 
+        public void setChildValue(Object val, Object hint) throws SAXException 
         {
             if (hint == KEYHINT) {
                 key = val;
@@ -202,7 +203,7 @@ public class MapDeserializer extends DeserializerImpl {
             }
             numSet++;
             if (numSet == 2)
-                md.setValue(myValue, key);
+                md.setChildValue(myValue, key);
         }
         
         public SOAPHandler onStartChild(String namespace,
@@ -238,6 +239,10 @@ public class MapDeserializer extends DeserializerImpl {
             if (dt != null) {
                 dser.registerValueTarget(dt);
             }
+            
+            // We need this guy to complete for us to complete.
+            addChildDeserializer(dser);
+            
             return (SOAPHandler)dser;
         }
     }
