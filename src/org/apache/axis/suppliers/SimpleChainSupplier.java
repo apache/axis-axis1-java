@@ -52,46 +52,64 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis;
 
-/**
- * @author James Snell (jasnell@us.ibm.com)
+package org.apache.axis.suppliers;
+
+import java.util.Hashtable;
+import java.util.Vector;
+import org.apache.axis.Supplier;
+import org.apache.axis.*;
+import org.apache.axis.utils.Debug;
+import org.apache.axis.registries.HandlerRegistry;
+
+/** A <code>SimpleChainSupplier</code>
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public interface TargetedChain extends Handler { 
-   
-    /**
-     * Returns the Request handler
-     */
-    public Handler   getRequestHandler();
+public class SimpleChainSupplier implements Supplier
+{
+    String _myName;
+    Hashtable _options;
+    Vector _handlerNames;
+    HandlerRegistry _registry;
+    Chain _chain = null;
     
-    /**
-     * Sets the Request Chain
-     */
-    public void    setRequestHandler(Handler reqHandler);
+    public SimpleChainSupplier(String myName,
+                               Vector names,
+                               Hashtable options,
+                               HandlerRegistry registry)
+    {
+        _myName = myName;
+        _handlerNames = names;
+        _options = options;
+        _registry = registry;
+    }
     
-    /**
-     * Returns the Pivot Handler
-     */
-    public Handler getPivotHandler();
-    
-    /**
-     * Sets the Pivot Handler
-     */
-    public void    setPivotHandler(Handler handler);
-    
-    /**
-     * Returns the Response Handler
-     */
-    public Handler   getResponseHandler();
-    
-    /**
-     * Sets the Response Handler
-     */
-    public void    setResponseHandler(Handler respHandler);
-    
-    /**
-     * Clears the Handlers
-     */
-    public void    clear();
-    
+    public Handler getHandler()
+    {
+      if (_chain == null) {
+        Debug.Print(2, "SimpleChainSupplier: Building chain '" + _myName + 
+                       "'");
+        Chain c = new SimpleChain();
+        c.setOptions(_options);
+        c.setName(_myName);
+        try {
+          for (int i = 0; i < _handlerNames.size(); i++) {
+            Handler handler = _registry.find(
+                                             (String)_handlerNames.elementAt(i));
+            c.addHandler(handler);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
+          return null;
+        }
+        
+        _chain = c;
+      }
+      
+      Debug.Print(2, "SimpleChainSupplier: returning chain '" + _myName +
+                     "'");
+      
+      return _chain;
+    }
 }

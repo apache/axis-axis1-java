@@ -130,6 +130,7 @@ public class Debug {
         try {
           FileWriter fw = new FileWriter( "AxisDebug.log", true );
           fw.write( msg, 0, msg.length() );
+          fw.write(System.getProperty("line.separator"));
           fw.close();
         }
         catch( Exception e ) {

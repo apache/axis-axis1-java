@@ -95,6 +95,18 @@ public class Admin {
         handler.addOption( name, value );
     }
   }
+
+  private static void getOptions(Element root, Hashtable table) {
+    NodeList  list = root.getElementsByTagName("option");
+    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
+      Element elem  = (Element) list.item(i);
+      String  name  = elem.getAttribute( "name" );
+      String  value = elem.getAttribute( "value" );
+
+      if ( name != null && value != null )
+        table.put( name, value );
+    }
+  }
   
   /**
    * Register a set of type mappings for a service.
@@ -300,86 +312,62 @@ public class Admin {
   {
     Handler tmpH = null;
     String hName;
-    HandlerRegistry hr = engine.getHandlerRegistry();
+    SupplierRegistry hr = (SupplierRegistry)engine.getHandlerRegistry();
     
     String   name    = elem.getAttribute( "name" );
     String   flow    = elem.getAttribute( "flow" );
-    String   input   = elem.getAttribute( "input" );
+    String   request   = elem.getAttribute( "request" );
     String   pivot   = elem.getAttribute( "pivot" );
-    String   output  = elem.getAttribute( "output" );
+    String   response  = elem.getAttribute( "response" );
+    Hashtable options = new Hashtable();
 
     if ( flow   != null && flow.equals("") )   flow = null ;
-    if ( input  != null && input.equals("") )  input = null ;
-    if ( output != null && output.equals("") ) output = null ;
+    if ( request  != null && request.equals("") )  request = null ;
+    if ( response != null && response.equals("") ) response = null ;
     if ( pivot  != null && pivot.equals("") )  pivot = null ;
     if ( name != null && name.equals("") ) name = null ;
 
     if ( flow != null && flow.length() > 0 ) {
       Debug.Print( 2, "Deploying chain: " + name );
-      Chain    c       = (Chain) hr.find( name );
-
-      if ( c == null ) c = new SimpleChain();
-      else             c.clear();
-
+      Vector names = new Vector();
+      
       StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
       while ( st.hasMoreElements() ) {
-        hName = st.nextToken();
-        tmpH = hr.find( hName );
-        if ( tmpH == null )
-          throw new AxisFault( "Admin.error",
-            "Unknown handler: " + hName,
-            null, null );
-        c.addHandler( tmpH );
+        names.addElement(st.nextToken());
       }
-      getOptions( elem, c );
-      engine.deployHandler( name, c );
+      getOptions( elem, options );
+
+      SimpleChainSupplier supp = new SimpleChainSupplier(name,
+                                                         names,
+                                                         options,
+                                                         hr);
+      
+      hr.add(name, supp);
     }
     else {
       Debug.Print( 2, "Deploying chain: " + name );
       StringTokenizer      st = null ;
-      SimpleTargetedChain  cc = null ;
-      Chain                c  = null ;
+      Vector reqNames = new Vector();
+      Vector respNames = new Vector();
 
-      tmpH = hr.find( name );
-      if (!(tmpH instanceof SimpleTargetedChain))
-        throw new AxisFault("Deploying chain: '" + name + "' in registry, " +
-                            "but not a SimpleTargetedChain!");
-      cc = (SimpleTargetedChain)tmpH;
-
-      if ( cc == null ) cc = new SimpleTargetedChain();
-      else              cc.clear();
-      
-      st = new StringTokenizer( input, " \t\n\r\f," );
+      st = new StringTokenizer( request, " \t\n\r\f," );
       while ( st.hasMoreElements() ) {
-        if ( c == null )
-          cc.setRequestChain( c = new SimpleChain() );
-        hName = st.nextToken();
-        tmpH = hr.find( hName );
-        if ( tmpH == null )
-          throw new AxisFault( "Admin.error",
-            "Deploying chain with unknown handler: " + hName,
-            null, null );
-        c.addHandler( tmpH );
+        reqNames.addElement(st.nextToken());
       }
       
-      cc.setPivotHandler( hr.find( pivot ) );
-      
-      st = new StringTokenizer( output, " \t\n\r\f," );
-      c  = null ;
+      st = new StringTokenizer( response, " \t\n\r\f," );
       while ( st.hasMoreElements() ) {
-        if ( c == null )
-          cc.setResponseChain( c = new SimpleChain() );
-        hName = st.nextToken();
-        tmpH = hr.find( hName );
-        if ( tmpH == null )
-          throw new AxisFault( "Admin.error",
-            "Deploying chain with unknown handler: " + hName,
-            null, null );
-        c.addHandler( tmpH );
+        respNames.addElement(st.nextToken());
       }
-      getOptions( elem, cc );
+      getOptions( elem, options );
       
-      engine.deployHandler( name, cc );
+      TargetedChainSupplier supp = new TargetedChainSupplier(name,
+                                                             reqNames,
+                                                             respNames,
+                                                             pivot,
+                                                             options,
+                                                             hr);
+      hr.add(name,supp);
     }
   }
   
@@ -396,12 +384,12 @@ public class Admin {
     HandlerRegistry sr = engine.getServiceRegistry();
     
     String   name    = elem.getAttribute( "name" );
-    String   input   = elem.getAttribute( "input" );
+    String   request   = elem.getAttribute( "request" );
     String   pivot   = elem.getAttribute( "pivot" );
-    String   output  = elem.getAttribute( "output" );
+    String   response  = elem.getAttribute( "response" );
 
-    if ( input  != null && input.equals("") )  input = null ;
-    if ( output != null && output.equals("") ) output = null ;
+    if ( request  != null && request.equals("") )  request = null ;
+    if ( response != null && response.equals("") ) response = null ;
     if ( pivot  != null && pivot.equals("") )  pivot = null ;
     if ( name != null && name.equals("") ) name = null ;
 
@@ -412,7 +400,7 @@ public class Admin {
     SOAPService     service = null ;
     Chain                c  = null ;
 
-    if ( pivot == null && input == null && output == null )
+    if ( pivot == null && request == null && response == null )
       throw new AxisFault( "Admin.error",
         "Services must use targeted chains",
         null, null );
@@ -422,17 +410,12 @@ public class Admin {
     if ( service == null ) service = new SOAPService();
     else              service.clear();
     
-    // connect the deployed service's typemapping registry to the
-    // engine's typemapping registry
-    TypeMappingRegistry engineTypeMap = engine.getTypeMappingRegistry();
-    service.getTypeMappingRegistry().setParent(engineTypeMap);
-
-    if ( input != null && !"".equals(input) ) {
-      st = new StringTokenizer( input, " \t\n\r\f," );
+    if ( request != null && !"".equals(request) ) {
+      st = new StringTokenizer( request, " \t\n\r\f," );
       c  = null ;
       while ( st.hasMoreElements() ) {
         if ( c == null )
-          service.setRequestChain( c = new SimpleChain() );
+          service.setRequestHandler( c = new SimpleChain() );
         hName = st.nextToken();
         tmpH = hr.find( hName );
         if ( tmpH == null )
@@ -454,12 +437,12 @@ public class Admin {
       service.addOption("pivot", pivot);
     }
     
-    if ( output != null && !"".equals(output) ) {
-      st = new StringTokenizer( output, " \t\n\r\f," );
+    if ( response != null && !"".equals(response) ) {
+      st = new StringTokenizer( response, " \t\n\r\f," );
       c  = null ;
       while ( st.hasMoreElements() ) {
         if ( c == null )
-          service.setResponseChain( c = new SimpleChain() );
+          service.setResponseHandler( c = new SimpleChain() );
         hName = st.nextToken();
         tmpH = hr.find( hName );
         if ( tmpH == null )
@@ -553,6 +536,8 @@ public class Admin {
       String namespaceURI = elem.getNamespaceURI();
       String localName    = elem.getLocalName();
       QName qn = new QName(namespaceURI, localName);
+      
+      Debug.Print(2, "Registering mapping for " + qn + " -> " + classname);
 
       // register both serializers and deserializers for this bean
 
@@ -571,13 +556,13 @@ public class Admin {
       System.err.println( "Where <xml-file> looks like:" );
       System.err.println( "<deploy>" );
       /*
-      System.err.println( "  <transport name=a input=\"a,b,c\" sender=\"s\"");
-      System.err.println( "                    output=\"d,e\"/>" );
+      System.err.println( "  <transport name=a request=\"a,b,c\" sender=\"s\"");
+      System.err.println( "                    response=\"d,e\"/>" );
       */
       System.err.println( "  <handler name=a class=className/>" );
       System.err.println( "  <chain name=a flow=\"a,b,c\" />" );
-      System.err.println( "  <chain name=a input=\"a,b,c\" pivot=\"d\"" );
-      System.err.println( "                  output=\"e,f,g\" />" );
+      System.err.println( "  <chain name=a request=\"a,b,c\" pivot=\"d\"" );
+      System.err.println( "                  response=\"e,f,g\" />" );
       System.err.println( "  <service name=a handler=b />" );
       System.err.println( "</deploy>" );
       System.err.println( "<undeploy>" );

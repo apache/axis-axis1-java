@@ -115,6 +115,16 @@ public class SOAPService extends SimpleTargetedChain
         addOption(OPTION_PIVOT, pivotName);
     }
     
+    /** Tell this service which engine it's deployed to.
+     * 
+     * The main result of this right now is to set up type mapping
+     * relationships.
+     */
+    public void setEngine(AxisEngine engine)
+    {
+      typeMap.setParent(engine.getTypeMappingRegistry());
+    }
+    
     public boolean availableFromTransport(String transportName)
     {
         if (validTransports != null) {
@@ -139,7 +149,7 @@ public class SOAPService extends SimpleTargetedChain
                 msgContext.getTransportName() + ").",
                 null, null);
         
-        Handler h = getRequestChain() ;
+        Handler h = getRequestHandler() ;
         if ( h != null ) {
             Debug.Print( 2, "Invoking request chain" );
             h.invoke(msgContext);
@@ -158,7 +168,7 @@ public class SOAPService extends SimpleTargetedChain
             Debug.Print( 3, "No service/pivot" );
         }
         
-        h = getResponseChain();
+        h = getResponseHandler();
         if ( h != null ) {
             Debug.Print( 2, "Invoking response chain" );
             h.invoke(msgContext);

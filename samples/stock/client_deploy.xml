@@ -7,5 +7,6 @@
 <m:deploy xmlns:m="AdminService">
   <handler name="log" class="org.apache.axis.handlers.LogHandler" />
 
-  <service name="urn:xmltoday-delayed-quotes" input="log" output="log" />
+  <service name="urn:xmltoday-delayed-quotes" request="log"
+           response="log" />
 </m:deploy>

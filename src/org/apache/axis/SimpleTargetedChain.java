@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,20 +67,20 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SimpleTargetedChain extends BasicHandler implements TargetedChain  {
-  protected Chain      requestChain ;
+  protected Handler    requestHandler ;
   protected Handler    pivotHandler ;
-  protected Chain      responseChain ;
+  protected Handler    responseHandler ;
 
   public void init() { 
-    if ( requestChain   != null )   requestChain.init();
+    if ( requestHandler   != null )   requestHandler.init();
     if ( pivotHandler != null ) pivotHandler.init();
-    if ( responseChain  != null )  responseChain.init();
+    if ( responseHandler  != null )  responseHandler.init();
   }
 
   public void cleanup() {
-    if ( requestChain   != null )   requestChain.cleanup();
+    if ( requestHandler   != null )   requestHandler.cleanup();
     if ( pivotHandler != null ) pivotHandler.cleanup();
-    if ( responseChain  != null )  responseChain.cleanup();
+    if ( responseHandler  != null )  responseHandler.cleanup();
   }
 
   /**
@@ -90,7 +90,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
     Debug.Print( 1, "Enter: SimpleTargetedChain::invoke" );
-    if ( requestChain != null ) requestChain.invoke( msgContext );
+    if ( requestHandler != null ) requestHandler.invoke( msgContext );
     try {
       if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
     }
@@ -98,18 +98,18 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
       Debug.Print( 1, e );
       if ( !(e instanceof AxisFault ) )
         e = new AxisFault( e );
-      if ( requestChain != null ) requestChain.undo( msgContext );
+      if ( requestHandler != null ) requestHandler.undo( msgContext );
       throw (AxisFault) e ;
     }
     try {
-      if ( responseChain != null )  responseChain.invoke( msgContext );
+      if ( responseHandler != null )  responseHandler.invoke( msgContext );
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
       if ( !(e instanceof AxisFault ) )
         e = new AxisFault( e );
       if ( pivotHandler != null ) pivotHandler.undo( msgContext );
-      if ( requestChain   != null )   requestChain.undo( msgContext );
+      if ( requestHandler   != null )   requestHandler.undo( msgContext );
       throw (AxisFault) e ;
     }
     Debug.Print( 1, "Exit: SimpleTargetedChain::invoke" );
@@ -120,34 +120,40 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
    */
   public void undo(MessageContext msgContext) {
     Debug.Print( 1, "Enter: SimpleTargetedChain::undo" );
-    if ( responseChain   != null )   responseChain.undo( msgContext );
+    if ( responseHandler   != null )   responseHandler.undo( msgContext );
     if ( pivotHandler  != null )  pivotHandler.undo( msgContext );
-    if ( requestChain    != null )    requestChain.undo( msgContext );
+    if ( requestHandler    != null )    requestHandler.undo( msgContext );
     Debug.Print( 1, "Exit: SimpleTargetedChain::undo" );
   }
 
   public boolean canHandleBlock(QName qname) {
-    return( (requestChain==null)   ? false : requestChain.canHandleBlock(qname) ||
+    return( (requestHandler==null)   ? false : requestHandler.canHandleBlock(qname) ||
             (pivotHandler==null) ? false : pivotHandler.canHandleBlock(qname) ||
-            (responseChain==null)  ? false : responseChain.canHandleBlock(qname) );
+            (responseHandler==null)  ? false : responseHandler.canHandleBlock(qname) );
   }
 
-  public Chain getRequestChain() { return( requestChain ); }
+  public Handler getRequestHandler() { return( requestHandler ); }
 
-  public void setRequestChain(Chain reqChain) { requestChain = reqChain ; }
+  public void setRequestHandler(Handler reqHandler)
+  {
+    requestHandler = reqHandler;
+  }
 
   public Handler getPivotHandler() { return( pivotHandler ); }
 
   public void setPivotHandler(Handler handler) { pivotHandler = handler ; }
 
-  public Chain getResponseChain() { return( responseChain ); }
+  public Handler getResponseHandler() { return( responseHandler ); }
 
-  public void setResponseChain(Chain respChain) { responseChain = respChain ; }
+  public void setResponseHandler(Handler respHandler)
+  {
+    responseHandler = respHandler;
+  }
   
   public void clear() {
-    requestChain = null ;
+    requestHandler = null ;
     pivotHandler = null ;
-    responseChain = null ;
+    responseHandler = null ;
   }
 
   public Element getDeploymentData(Document doc) {
@@ -172,28 +178,36 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
     StringBuffer str  = new StringBuffer();
     Handler      h ;
 
-    if ( requestChain != null ) {
-      Handler[]  handlers = requestChain.getHandlers();
-      str = new StringBuffer();
-      for ( int i = 0 ; i < handlers.length ; i++ ) {
-        h = (Handler) handlers[i];
-        if ( i != 0 ) str.append(",");
-        str.append( h.getName() );
+    if ( requestHandler != null ) {
+      if (requestHandler instanceof Chain) {
+        Handler[]  handlers = ((Chain)requestHandler).getHandlers();
+        str = new StringBuffer();
+        for ( int i = 0 ; i < handlers.length ; i++ ) {
+          h = (Handler) handlers[i];
+          if ( i != 0 ) str.append(",");
+          str.append( h.getName() );
+        }
+      } else {
+        str.append(requestHandler.getName());
       }
-      root.setAttribute( "input", str.toString() );
+      root.setAttribute( "request", str.toString() );
     }
     if ( pivotHandler != null ) {
       root.setAttribute( "pivot", pivotHandler.getName() );
     }
-    if ( responseChain != null ) {
-      Handler[]  handlers = requestChain.getHandlers();
-      str = new StringBuffer();
-      for ( int i = 0 ; i < handlers.length ; i++ ) {
-        h = (Handler) handlers[i];
-        if ( i != 0 ) str.append(",");
-        str.append( h.getName() );
+    if ( responseHandler != null ) {
+      if (responseHandler instanceof Chain) {
+        Handler[]  handlers = ((Chain)responseHandler).getHandlers();
+        str = new StringBuffer();
+        for ( int i = 0 ; i < handlers.length ; i++ ) {
+          h = (Handler) handlers[i];
+          if ( i != 0 ) str.append(",");
+          str.append( h.getName() );
+        }
+      } else {
+        str.append(responseHandler.getName());
       }
-      root.setAttribute( "input", str.toString() );
+      root.setAttribute( "response", str.toString() );
     }
 
     options = this.getOptions();

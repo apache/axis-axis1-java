@@ -8,6 +8,7 @@ import org.apache.axis.handlers.soap.*;
 import org.apache.axis.message.*;
 import org.apache.axis.server.*;
 import org.apache.axis.registries.*;
+import org.apache.axis.utils.QName;
 
 import java.util.Vector;
 import java.io.*;
@@ -49,8 +50,9 @@ public class TestSerializedRPC extends TestCase {
         // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
         reverse.addOption("className", "test.RPCDispatch.Service");
-        reverse.addOption("methodName", "reverseString");
-        sr.add(SOAPAction, reverse);
+        reverse.addOption("methodName", "reverseString reverseData");
+        engine.deployService(SOAPAction, reverse);
+        
     }
 
     /**
@@ -122,5 +124,33 @@ public class TestSerializedRPC extends TestCase {
         String arg = "<arg0 xsi:type=\"xsd:string\">abc</arg0>";
         // invoke the service and verify the result
         assertEquals("cba", rpc("reverseString", arg, false));
+    }
+    
+    /**
+     * Test a method that reverses a data structure
+     */
+    public void testSerReverseData() throws Exception {
+        BeanSerializer ser = new BeanSerializer(Data.class);
+        DeserializerFactory dSerFactory = ser.getFactory(Data.class);
+        QName qName = new QName("urn:foo", "Data");
+        engine.registerTypeMapping(qName, Data.class, dSerFactory,
+                                   ser);
+        
+        // invoke the service and verify the result
+        String arg = "<arg0 xmlns:foo=\"urn:foo\" xsi:type=\"foo:Data\">";
+        arg += "<field1>5</field1><field2>abc</field2><field3>3</field3>";
+        arg += "</arg0>";
+        Data expected = new Data(3, "cba", 5);
+        assertEquals(expected, rpc("reverseData", arg, true));
+    }
+    
+    public static void main(String args[]) {
+      try {
+        TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");
+        tester.testSerReverseString();
+        tester.testSerReverseData();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
 }

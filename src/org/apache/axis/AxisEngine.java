@@ -227,6 +227,8 @@ public abstract class AxisEngine extends BasicHandler
       if (!readRegistryFiles)
         return;
       
+      dontSaveYet = true;
+
       try {
         FileInputStream    fis = new FileInputStream(_handlerRegFilename);
         
@@ -254,13 +256,16 @@ public abstract class AxisEngine extends BasicHandler
         if ( !(e instanceof FileNotFoundException) ) {
           e.printStackTrace( System.err );
         }
+      } finally {
+        dontSaveYet = false;
       }
       
       Debug.Print(2, "Deploying default handlers...");
-      dontSaveYet = true;
       deployDefaultHandlers();
       dontSaveYet = false;
-      saveHandlerRegistry();
+      
+      // We don't actually need to save right now, since by definition
+      // nothing has changed from the persistent version (or the defaults)
     }
     
     /**
@@ -272,6 +277,7 @@ public abstract class AxisEngine extends BasicHandler
       if (!readRegistryFiles)
         return;
       
+      dontSaveYet = true;
       try {
         FileInputStream    fis = new FileInputStream(_serviceRegFilename);
         
@@ -298,13 +304,13 @@ public abstract class AxisEngine extends BasicHandler
         if ( !(e instanceof FileNotFoundException) ) {
           e.printStackTrace( System.err );
         }
+      } finally {
+        dontSaveYet = false;
       }
       
       Debug.Print(2, "Deploying default services...");
-      dontSaveYet = true;
       deployDefaultServices();
       dontSaveYet = false;
-      saveServiceRegistry();
     }
 
     public HandlerRegistry getHandlerRegistry()
@@ -438,6 +444,8 @@ public abstract class AxisEngine extends BasicHandler
     public void deployService(String key, SOAPService service)
     {
         service.setName(key);
+        service.setEngine(this);
+        
         getServiceRegistry().add(key, service);
         saveServiceRegistry();
     }

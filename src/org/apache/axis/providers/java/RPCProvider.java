@@ -186,6 +186,15 @@ public class RPCProvider extends JavaProvider {
                 argValues = tmpArgs ;
               }
             }
+            
+            /*
+            for (int i = 0; i < params.length; i++) {
+              String argClass = argValues[i].getClass().getName();
+              String tgtClass = params[i].getName();
+              System.out.println("arg" + i + ": " + argClass + " -> " +
+                                 tgtClass);
+            }
+            */
 
             Object objRes = method.invoke( obj, argValues );
 
