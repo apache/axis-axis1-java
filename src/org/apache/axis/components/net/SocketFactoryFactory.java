@@ -124,7 +124,7 @@ public class SocketFactoryFactory {
                                     "axis.socketSecureFactory",
                                     classes,
                                     objects),
-                    "org.apache.axis.components.net.JSSESocketFactory");
+                    "org.apache.axis.components.net.DefaultSecureSocketFactory");
         }
         return theSecureFactory;
     }
