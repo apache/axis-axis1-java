@@ -270,6 +270,12 @@ public class CommonsHTTPSender extends BasicHandler {
                 }
                 
             }
+
+            // always release the connection back to the pool if 
+            // it was one way invocation
+            if (msgContext.isPropertyTrue("axis.one.way")) {
+                method.releaseConnection();
+            }
             
         } catch (Exception e) {
             log.debug(e);
