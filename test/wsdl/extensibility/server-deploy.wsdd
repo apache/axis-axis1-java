@@ -22,7 +22,7 @@
         <operation name="query" qname="operNS:query" xmlns:operNS="urn:ExtensibilityQuery" returnQName="retNS:queryResult" xmlns:retNS="urn:ExtensibilityQuery" returnType="rtns:ExtensibilityType" xmlns:rtns="urn:ExtensibilityQuery" >
           <parameter qname="pns:queryExpression" xmlns:pns="urn:ExtensibilityQuery" type="tns:ExtensibilityType" xmlns:tns="urn:ExtensibilityQuery"/>
         </operation>
-        <parameter name="allowedMethods" value="query"/>
+        <parameter name="allowedMethods" value="*"/>
         <parameter name="scope" value="Session"/>
 
         <typeMapping

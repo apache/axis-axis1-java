@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
+import java.io.CharArrayWriter;
 import java.util.Map;
 
 /**
@@ -48,6 +49,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 {
     protected static Log log =
         LogFactory.getLog(BeanDeserializer.class.getName());
+
+    private final CharArrayWriter val = new CharArrayWriter();
 
     QName xmlType;
     Class javaType;
@@ -147,6 +150,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                     DeserializationContext context)
         throws SAXException
     {
+        handleMixedContent();
+
         BeanPropertyDescriptor propDesc = null;
         FieldDesc fieldDesc = null;
 
@@ -446,5 +451,43 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             cacheXMLType = xmlType;
         }
         return dSer;
+    }
+
+    public void characters(char[] chars, int start, int end) throws SAXException {
+        val.write(chars, start, end);
+    }
+
+    public void onEndElement(String namespace, String localName,
+                             DeserializationContext context) throws SAXException {
+        handleMixedContent();
+    }
+
+    protected void handleMixedContent() throws SAXException {
+        BeanPropertyDescriptor propDesc = getAnyPropertyDesc();
+        if (propDesc == null || val.size() == 0) {
+            return;
+        }
+        String textValue = val.toString().trim();
+        val.reset();
+        if (textValue.length() == 0) {
+            return;
+        }
+        try {
+            MessageElement[] curElements = (MessageElement[]) propDesc.get(value);
+            int length = 0;
+            if (curElements != null) {
+                length = curElements.length;
+            }
+            MessageElement[] newElements = new MessageElement[length + 1];
+            if (curElements != null) {
+                System.arraycopy(curElements, 0,
+                        newElements, 0, length);
+            }
+            MessageElement thisEl = new org.apache.axis.message.Text(textValue);
+            newElements[length] = thisEl;
+            propDesc.set(value, newElements);
+        } catch (Exception e) {
+            throw new SAXException(e);
+        }
     }
 }

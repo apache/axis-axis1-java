@@ -29,6 +29,22 @@ xmlns:tns="urn:ExtensibilityQuery" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         </xsd:complexType>
       </xsd:element>
 
+      <xsd:element name="mixedQuery">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="queryExpression" type="tns:ExtensibilityType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="mixedQueryResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="queryResult" type="tns:ExtensibilityType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
     </xsd:schema>
   </types>
 
@@ -40,10 +56,22 @@ xmlns:tns="urn:ExtensibilityQuery" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <part element="tns:queryResponse" name="parameters" />
   </message>
 
+  <message name="mixedQueryIn">
+    <part element="tns:mixedQuery" name="parameters" />
+  </message>
+
+  <message name="mixedQueryOut">
+    <part element="tns:mixedQueryResponse" name="parameters" />
+  </message>
+
   <portType name="ExtensibilityQueryPortType">
     <operation name="query">
       <input message="tns:queryIn" />
       <output message="tns:queryOut" />
+    </operation>
+   <operation name="mixedQuery">
+      <input message="tns:mixedQueryIn" />
+      <output message="tns:mixedQueryOut" />
     </operation>
   </portType>
 
@@ -52,6 +80,15 @@ xmlns:tns="urn:ExtensibilityQuery" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     transport="http://schemas.xmlsoap.org/soap/http" />
     <operation name="query">
       <soap:operation soapAction="query" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="mixedQuery">
+      <soap:operation soapAction="mixedQuery" />
       <input>
         <soap:body use="literal" />
       </input>
