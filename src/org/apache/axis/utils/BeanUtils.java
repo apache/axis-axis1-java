@@ -96,9 +96,17 @@ public class BeanUtils {
                             PropertyDescriptor[] result = null;
                             try {
                                 // privileged code goes here
-                                result = Introspector.
-                                    getBeanInfo(secJavaType).
-                                    getPropertyDescriptors();
+                                Class superClass = secJavaType.getSuperclass();
+                                if(superClass == Exception.class) {
+                                    result = Introspector.
+                                        getBeanInfo(secJavaType,Exception.class).
+                                        getPropertyDescriptors();
+                                } else {
+                                    // privileged code goes here
+                                    result = Introspector.
+                                        getBeanInfo(secJavaType).
+                                        getPropertyDescriptors();
+                                }
                             } catch (java.beans.IntrospectionException Iie) {
                             }
                             return result;

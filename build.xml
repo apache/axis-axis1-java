@@ -210,6 +210,7 @@ Copyright:
     <echo message="-----------------------------------------------------------------"/>
     <echo message="Building with ${ant.version}"/>
     <echo message="using build file ${ant.file}"/>
+    <echo message="Java ${java.version} located at ${java.home} "/>
     <echo message="-----------------------------------------------------------------"/>
 
     <echo message="--- Flags (Note: If the {property name} is displayed, "/>
