@@ -4,6 +4,9 @@ import org.apache.axis.Constants;
 import org.apache.axis.utils.QName;
 import org.xml.sax.*;
 
+import java.util.Date;
+import java.math.BigDecimal;
+
 public class SOAPTypeMappingRegistry extends TypeMappingRegistry { 
     
     public static final QName XSD_STRING = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "string");
@@ -13,6 +16,9 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
     public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
+    public static final QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeinstant");
+    public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
+
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
     public static final QName SOAP_BOOLEAN = new QName(Constants.URI_SOAP_ENC, "boolean");
     public static final QName SOAP_DOUBLE = new QName(Constants.URI_SOAP_ENC, "double");
@@ -22,7 +28,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_SHORT = new QName(Constants.URI_SOAP_ENC, "short");
     public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
     
-    abstract class BasicDeser extends DeserializerBase {
+    public static abstract class BasicDeser extends DeserializerBase {
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
@@ -80,6 +86,12 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     class ShortDeserializerFactory implements DeserializerFactory {
         public DeserializerBase getDeserializer() { return new ShortDeser(); }
     }
+    class DecimalDeser extends BasicDeser {
+        Object makeValue(String source) { return new BigDecimal(source); }
+    }
+    class DecimalDeserializerFactory implements DeserializerFactory {
+        public DeserializerBase getDeserializer() { return new DecimalDeser(); }
+    }
     
     private ArraySerializer arraySer = new ArraySerializer();
 
@@ -133,6 +145,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Integer.class, XSD_INT, se);
         addSerializer(java.lang.Long.class, XSD_LONG, se);
         addSerializer(java.lang.Short.class, XSD_SHORT, se);
+        addSerializer(java.util.Date.class, XSD_DATE, new DateSerializer());
+        addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
         
         addDeserializersFor(XSD_STRING, java.lang.String.class, new StringDeserializerFactory());    
         addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, new BooleanDeserializerFactory());
@@ -141,6 +155,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializersFor(XSD_INT, java.lang.Integer.class, new IntDeserializerFactory());
         addDeserializersFor(XSD_LONG, java.lang.Long.class, new LongDeserializerFactory());
         addDeserializersFor(XSD_SHORT, java.lang.Short.class, new ShortDeserializerFactory());
+        addDeserializersFor(XSD_DATE, java.util.Date.class, new DateSerializer.DateDeserializerFactory());
+        addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, new DecimalDeserializerFactory());
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);
