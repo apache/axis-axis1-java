@@ -504,8 +504,8 @@ public class Emitter {
         String nameValue = xmlNameToJava(portType.getQName().getLocalPart());
         String fileName = nameValue + ".java";
 
-        this.fileList.add(fileName);
-        this.classList.add(nameValue);
+        this.fileList.add(packageDirName + fileName);
+        this.classList.add(packageName + "." + nameValue);
 
         PrintWriter interfacePW = printWriter (fileName);
         if (bVerbose)
@@ -537,8 +537,8 @@ public class Emitter {
         String nameValue = xmlNameToJava(portType.getQName().getLocalPart()) + "Axis";
         String fileName = nameValue + ".java";
 
-        this.classList.add(nameValue);
-        this.fileList.add(fileName);
+        this.fileList.add(packageDirName + fileName);
+        this.classList.add(packageName +  "." + nameValue);
 
         PrintWriter interfacePW = printWriter(fileName);
         if (bVerbose)
@@ -920,8 +920,8 @@ public class Emitter {
             return exceptionName;
         }
 
-        this.classList.add(exceptionName);
-        this.fileList.add(fileName);
+        this.fileList.add(packageDirName + fileName);
+        this.classList.add(packageName +  "." + exceptionName);
 
         PrintWriter pw = printWriter(fileName);
 
@@ -1000,8 +1000,8 @@ public class Emitter {
         String stubName = name + "Stub";
         String stubFileName = stubName + ".java";
 
-        this.classList.add(stubName);
-        this.fileList.add(stubFileName);
+        this.fileList.add(packageDirName + stubFileName);
+        this.classList.add(packageName +  "." + stubName);
 
         PrintWriter stubPW = printWriter(stubFileName);
         if (bVerbose)
@@ -1079,8 +1079,8 @@ public class Emitter {
             String skelName = name + "Skeleton";
             String skelFileName = skelName + ".java";
 
-            this.classList.add(skelName);
-            this.fileList.add(skelFileName);
+            this.fileList.add(packageDirName + skelFileName);
+            this.classList.add(packageName +  "." + skelName);
 
             skelPW = printWriter(skelFileName);
             String implType = portTypeName + " impl";
@@ -1107,8 +1107,8 @@ public class Emitter {
 
             String implFileName = implName + ".java";
 
-            this.classList.add(implName);
-            this.fileList.add(implFileName);
+            this.fileList.add(packageDirName + implFileName);
+            this.classList.add(packageName +  "." + implName);
 
             if (!fileExists (implFileName)) {
                 implPW = printWriter(implFileName);
@@ -1454,8 +1454,8 @@ public class Emitter {
         String serviceName = xmlNameToJava(service.getQName().getLocalPart());
         String fileName = serviceName + ".java";
 
-        this.classList.add(serviceName);
-        this.fileList.add(fileName);
+        this.fileList.add(packageDirName + fileName);
+        this.classList.add(packageName +  "." + serviceName);
 
         PrintWriter servicePW = printWriter(fileName);
         TestCaseEmitter testFactory = null;
@@ -1468,8 +1468,8 @@ public class Emitter {
             String testCase = serviceName + "TestCase";
             String testCaseFileName = testCase + ".java";
 
-            this.classList.add(testCase);
-            this.fileList.add(testCaseFileName);
+            this.fileList.add(packageDirName + testCaseFileName);
+            this.classList.add(packageName +  "." + testCase);
 
             testFactory = new TestCaseEmitter(this.printWriter(testCaseFileName),
                                               this.packageName,
@@ -1828,8 +1828,8 @@ public class Emitter {
 
         String fileName = javaName + ".java";
 
-        this.classList.add(javaName);
-        this.fileList.add(fileName);
+        this.fileList.add(packageDirName + fileName);
+        this.classList.add(packageName + "." + javaName);
 
         PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
@@ -1908,8 +1908,8 @@ public class Emitter {
 
         String fileName = javaName + ".java";
 
-        this.classList.add(javaName);
-        this.fileList.add(fileName);
+        this.fileList.add(packageDirName + fileName);
+        this.classList.add(packageName +  "." + javaName);
 
         PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
@@ -1935,8 +1935,8 @@ public class Emitter {
 
         String fileName = javaName + "Holder.java";
 
-        this.classList.add(javaName);
-        this.fileList.add(fileName);
+        this.fileList.add(packageDirName + fileName);
+        this.classList.add(packageName + "." + javaName);
 
         PrintWriter pw = printWriter(fileName);
         if (bVerbose)

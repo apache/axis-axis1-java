@@ -90,6 +90,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
     private static Project testSuiteProject = null;
     private static List classNames = null;
     private static List fileNames = null;
+    private static ClassLoader loader = null;
 
     public Wsdl2javaTestSuite() {
         super();
@@ -112,8 +113,6 @@ public class Wsdl2javaTestSuite extends TestSuite {
                     .getResourceAsStream(this.getClass().getName().replace('.', '/') + ".list")));
 
             try {
-                URLClassLoader loader = new URLClassLoader(new URL[] {new File(Wsdl2javaTestSuite.WORK_DIR).toURL()},
-                        this.getClass().getClassLoader());
                 String curLine = reader.readLine();
                 int testNum = 0;
                 while (curLine != null) {
@@ -221,8 +220,16 @@ public class Wsdl2javaTestSuite extends TestSuite {
     }
 
     public static void main(String[] args) {
-        String[] testSuiteName = {"-noloading", Wsdl2javaTestSuite.class.getName()};
-        junit.swingui.TestRunner.main(testSuiteName);
+        junit.swingui.TestRunner runner = null;
+        try {
+            loader = new URLClassLoader(new URL[] {new File(Wsdl2javaTestSuite.WORK_DIR).toURL()},
+                Wsdl2javaTestSuite.class.getClassLoader());
+            runner = (junit.swingui.TestRunner) loader.loadClass("junit.swingui.TestRunner").newInstance();
+        } catch (Exception e) {
+            System.exit(1);
+        }
+        runner.start(new String[] {"-noloading", Wsdl2javaTestSuite.class.getName()});
+        runner.runSuite();
     } //public static void main(String[] args)
 
     public void run(TestResult result) {
@@ -280,7 +287,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
         }
     }
 
-    public void testTest() {
-        // STUPID HACK!!  I HATE THIS ABOUT JUNIT!!
+    public static final TestSuite suite() {
+        return new Wsdl2javaTestSuite();
     }
 } //public class Wsdl2javaTestSuite extends TestCase
