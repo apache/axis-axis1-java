@@ -3,8 +3,10 @@ package samples.transport ;
 import java.lang.Thread ;
 
 import org.apache.axis.AxisFault ;
+import org.apache.axis.Constants ;
+import org.apache.axis.client.Call ;
+import org.apache.axis.client.Service ;
 import org.apache.axis.client.AxisClient ;
-import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.client.Transport ;
 
 import org.apache.axis.utils.Options ;
@@ -33,20 +35,19 @@ public class FileTest {
     }
     
     String   symbol = args[0] ;
-    ServiceClient call = new ServiceClient();
-    ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-    sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
-    call.setServiceDescription(sd);
-  
-    call.set(Transport.USER, opts.getUser() );
-    call.set(Transport.PASSWORD, opts.getPassword() );
+    Service  service = new Service();
+    Call     call    = (Call) service.createCall();
+    call.setOperationName( "getQuote" );
+    call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+    call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+    call.setReturnType( XMLType.XSD_FLOAT );
     call.setTransport( new FileTransport() );
+    call.setProperty(Transport.USER, opts.getUser() );
+    call.setProperty(Transport.PASSWORD, opts.getPassword() );
     call.setTimeout(10000);
   
     Float res = new Float(0.0F);
-    res = (Float) call.invoke( "urn:xmltoday-delayed-quotes",
-                               "getQuote",
-                               new Object[] {symbol} );
+    res = (Float) call.invoke( new Object[] {symbol} );
   
     System.out.println( symbol + ": " + res );
 
