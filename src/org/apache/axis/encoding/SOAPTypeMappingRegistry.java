@@ -52,7 +52,14 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         public DeserializerBase getDeserializer() { return new LongDeser(); }
     }
     class StringDeser extends BasicDeser {
-        Object makeValue(String source) { return source; };
+        public void characters(char [] chars, int start, int end) {
+            String work = new String(chars, start, end);
+            if (value == null)
+                value = work;
+            else
+                value = (String)value + work;
+        }
+        Object makeValue(String source) { return null; }
     }
     class StringDeserializerFactory implements DeserializerFactory {
         public DeserializerBase getDeserializer() { return new StringDeser(); }
