@@ -62,6 +62,7 @@ import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.Options;
 import org.apache.axis.wsdl.Emitter;
+import org.apache.axis.wsdl.JavaWriterFactory;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Location;
@@ -249,7 +250,9 @@ public class Wsdl2javaTestSuite extends TestSuite {
      * testNum appended to it.  We also enablt skeleton generation and testcase generation.  We also turn on verbosity.
      */
     protected void prepareTest(String fileName, int testNum) throws Exception {
-        Emitter wsdl2java = new Emitter();
+        JavaWriterFactory writerFactory = new JavaWriterFactory();
+        Emitter wsdl2java = new Emitter(writerFactory);
+        writerFactory.setEmitter(wsdl2java);
         wsdl2java.setOutputDir(Wsdl2javaTestSuite.WORK_DIR);
         wsdl2java.generateSkeleton(true);
         wsdl2java.generateTestCase(true);

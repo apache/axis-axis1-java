@@ -54,6 +54,8 @@
 package test.wsdl;
 
 import org.apache.axis.wsdl.Emitter;
+import org.apache.axis.wsdl.JavaWriterFactory;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -92,7 +94,10 @@ public class Wsdl2javaAntTask extends Task
             log("\tURL:" + url, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
-            Emitter emitter = new Emitter();
+            JavaWriterFactory writerFactory = new JavaWriterFactory();
+            Emitter emitter = new Emitter(writerFactory);
+            writerFactory.setEmitter(emitter);
+
             if ("application".equalsIgnoreCase(deployScope)) {
                 emitter.setScope(Emitter.APPLICATION_SCOPE);
             }
