@@ -78,9 +78,9 @@ public abstract class ServiceFactory {
      * <p> The implementation class to be used can be overridden by
      * setting the javax.xml.rpc.ServiceFactory system property.
      * @return  ServiceFactory.
-     * @throws  JAXRPCException
+     * @throws  ServiceException
      */
-    public static ServiceFactory newInstance() throws JAXRPCException {
+    public static ServiceFactory newInstance() throws ServiceException {
         String factoryImplName =
             System.getProperty("javax.xml.rpc.ServiceFactory",
                                "com.sun.xml.rpc.client.ServiceFactoryImpl");
@@ -89,13 +89,13 @@ public abstract class ServiceFactory {
             return (ServiceFactory) clazz.newInstance();
         }
         catch (ClassNotFoundException e) {
-            throw new JAXRPCException(e);
+            throw new ServiceException(e);
         }
         catch (IllegalAccessException e) {
-            throw new JAXRPCException(e);
+            throw new ServiceException(e);
         }
         catch (InstantiationException e) {
-            throw new JAXRPCException(e);
+            throw new ServiceException(e);
         }
     }
 
@@ -105,16 +105,16 @@ public abstract class ServiceFactory {
                               for the service
      *  @param   serviceName  QName for the service.
      *  @return  Service.
-     *  @throws  JAXRPCException If any error in creation of the specified service
+     *  @throws  ServiceException If any error in creation of the specified service
      */
     public abstract Service createService(URL wsdlDocumentLocation, QName serviceName)
-        throws JAXRPCException;
+        throws ServiceException;
 
     /**
      *  Create a Service instance.
      *  @param   serviceName QName for the service
      *  @return  Service.
-     *  @throws  JAXRPCException If any error in creation of the specified service
+     *  @throws  ServiceException If any error in creation of the specified service
      */
-    public abstract Service createService(QName serviceName) throws JAXRPCException;
+    public abstract Service createService(QName serviceName) throws ServiceException;
 }

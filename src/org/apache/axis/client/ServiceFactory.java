@@ -7,7 +7,6 @@ import org.apache.axis.configuration.FileProvider;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.xml.rpc.JAXRPCException;
 import java.util.Map;
 
 /**
@@ -40,7 +39,6 @@ public class ServiceFactory {
      *                     null to use the default configuration pattern.
      */
     static public Service getService(Map environment)
-        throws JAXRPCException
     {
         Service service = null;
         InitialContext context = null;
