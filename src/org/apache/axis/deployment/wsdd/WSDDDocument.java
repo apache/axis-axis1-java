@@ -94,15 +94,9 @@ public class WSDDDocument extends WSDDConstants
      *
      * @param doc (Document) XXX
      */
-    public WSDDDocument(Document doc) throws WSDDException
+    public WSDDDocument(Document document) throws WSDDException
     {
-        this.doc = doc;
-        Element docEl = doc.getDocumentElement();
-        if (ELEM_WSDD_UNDEPLOY.equals(docEl.getLocalName())) {
-            undeployment = new WSDDUndeployment(docEl);
-        } else {
-            deployment = new WSDDDeployment(docEl);
-        }
+        setDocument(document);
     }
 
     /**
@@ -157,11 +151,14 @@ public class WSDDDocument extends WSDDConstants
      *
      * @param document XXX
      */
-    public void setDocument(Document document)
-    {
-        doc = document;
-
-        deployment = null;
+    public void setDocument(Document document) throws WSDDException {
+        this.doc = document;
+        Element docEl = doc.getDocumentElement();
+        if (ELEM_WSDD_UNDEPLOY.equals(docEl.getLocalName())) {
+            undeployment = new WSDDUndeployment(docEl);
+        } else {
+            deployment = new WSDDDeployment(docEl);
+        }
     }
 
     public void deploy(WSDDDeployment registry) throws ConfigurationException {
