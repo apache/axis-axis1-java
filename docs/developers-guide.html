@@ -30,6 +30,7 @@ Table of Contents</h3>
 <br><a href="#Adding Testcases">Adding Testcases</a>
 <br><a href="#TestStructure">Test and Samples Structure</a>
 <br><a href="#CodeChecks">Adding Source Code Checks</a>
+<br><a href="#JUnit">JUnit and Axis</a>
 <br><a href="#Debugging">Debugging</a>
 <br><a href="#TCK">Running the JAX-RPC Compatibility Tests</a>
 <br>&nbsp;
@@ -888,6 +889,111 @@ Each pattern has three parameters:
 <p>
 A reasonable summary of the regular expression notation is provided in
 the <a href="http://jakarta.apache.org/oro/api/org/apache/oro/text/regex/package-summary.html">Jakarta ORO javadocs</a>.
+
+<h2>
+<a NAME="JUnit"></a>JUnit and Axis</h2>
+
+<p>
+You try to run some JUnit tests on an Axis client that invokes a web service, 
+and you always get this exception:
+<pre>
+java.lang.ExceptionInInitializerError 
+at org.apache.axis.client.Service.<init>(Service.java:108) 
+... 
+
+Caused by: org.apache.commons.logging.LogConfigurationException: ... 
+org.apache.commons.logging.impl.Jdk14Logger does not implement Log 
+at org.apache.commons.logging.impl.LogFactoryImpl.newInstance
+(LogFactoryImpl.java:555) 
+...
+</pre>
+<p>
+Actually, Jdk14Logger does implement Log. What you have is a JUnit classloading 
+issue. JUnit's graphical TestRunner has a feature where it will dynamically 
+reload modified classes every time the user presses the "Run" button. This way, 
+the user doesn't need to relaunch the TestRunner after every edit. For this, 
+JUnit uses its own classloader, junit.runner.TestCaseClassLoader. As of JUnit 
+3.8.1, confusion can arise between TestCaseClassLoader and the system class 
+loader as to which loader did or should load which classes.
+<p>
+There are two ways to avoid this problem.
+<ul>
+<li>Sure and simple fix. Turn off dynamic class reloading by running 
+junit.swingui.TestRunner with the -noloading argument. 
+</li>
+<p>
+<li>Finicky and fancy fix, only necessary if you want dynamic class reloading. 
+Tell TestCaseClassLoader to ignore certain packages and their sub-packages, 
+deferring them to the system classloader. You can do this using a file located 
+in junit.jar, junit/runner/excluded.properties. Its content appears as follows:
+<pre>
+#
+# The list of excluded package paths for the TestCaseClassLoader
+#
+excluded.0=sun.*
+excluded.1=com.sun.*
+excluded.2=org.omg.*
+excluded.3=javax.*
+excluded.4=sunw.*
+excluded.5=java.*
+excluded.6=org.w3c.dom.*
+excluded.7=org.xml.sax.*
+excluded.8=net.jini.*
+</pre></li>
+</ul>
+<p>
+Copy this file, preserving the directory path, into another location, e.g. 
+deployDir. So the copied properties file's path will be 
+deployDir/junit/runner/excluded.properties. Add an extra entry to the end of 
+this file:
+<pre>
+excluded.9=org.apache.*
+</pre>
+<p>
+Edit your classpath so that deployDir appears before junit.jar. This way, the 
+modified excluded.properties will be used, rather than the default. (Don't add 
+the path to excluded.properties itself to the classpath.)
+<p>
+This fix will prevent the commons-logging exception. However, other 
+classloading problems might still arise. For example:
+<pre>
+Dec 10, 2002 7:16:16 PM org.apache.axis.encoding.ser.BeanPropertyTarget set 
+SEVERE: Could not convert [Lfoo.bar.Child; to bean field 'childrenAsArray', 
+type [Lfoo.bar.Child; 
+Dec 10, 2002 7:16:16 PM org.apache.axis.client.Call invoke 
+SEVERE: Exception: 
+java.lang.IllegalArgumentException: argument type mismatch 
+at org.apache.axis.encoding.ser.BeanPropertyTarget.set
+(BeanPropertyTarget.java:182) 
+at org.apache.axis.encoding.DeserializerImpl.valueComplete
+(DeserializerImpl.java:284) 
+...
+</pre>
+<p>
+In this case, you have no choice but to give up on dynamic class reloading and 
+use the -noloading argument.
+<p>
+One other heads-up about JUnit testing of an Axis web service. Suppose you have 
+run JUnit tests locally on the component that you want to expose as a web 
+service. You press the "Run" button to initiate a series of tests. Between each 
+test, all your data structures are re-initialized. Your tests produce a long 
+green bar. Good.
+<p>
+Suppose you now want to run JUnit tests on an Axis client that is connecting to 
+an application server running the Axis web application and with it your web 
+service. Between each test, JUnit will automatically re-initialize your client. 
+<p>
+Your server-side data structures are a different matter. If you're checking 
+your server data at the end of each test (as you should be) and you run more 
+than one test at a time, the second and later tests will fail because they are 
+generating cumulative data on the Axis server based on preceding tests rather 
+than fresh data based only on the current one.
+<p>
+This means that, for each test, you must manually re-initialize your web 
+service. One way to accomplish this is to add to your web service interface a 
+re-initialize operation. Then have the client call that operation at the start 
+of each test.
+
 
 <h2>
 <a NAME="Debugging"></a>Debugging</h2>
