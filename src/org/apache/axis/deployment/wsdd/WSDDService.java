@@ -117,18 +117,6 @@ public class WSDDService
             addTypeMapping(typeMapping);
         }
         
-        Element reqFlowEl = getChildElement(e, "requestFlow");
-        if (reqFlowEl != null) {
-            WSDDRequestFlow reqFlow = new WSDDRequestFlow(reqFlowEl);
-            setRequestFlow(reqFlow);
-        }
-
-        Element respFlowEl = getChildElement(e, "responseFlow");
-        if (respFlowEl != null) {
-            WSDDResponseFlow respFlow = new WSDDResponseFlow(respFlowEl);
-            setResponseFlow(respFlow);
-        }
-        
         String typeStr = e.getAttribute("provider");
         if (typeStr != null && !typeStr.equals(""))
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
