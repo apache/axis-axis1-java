@@ -58,11 +58,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -402,10 +397,6 @@ public class Emitter extends Parser {
     public void run(String wsdlURL) throws IOException, WSDLException {
         setup();
 
-        // Set username and password if provided in URL
-        checkForAuthInfo(wsdlURL);
-        Authenticator.setDefault(new DefaultAuthenticator(getUsername(), getPassword()));
-
         Timer timer = startTimer();
         super.run(wsdlURL);
         timer.stop();
@@ -558,51 +549,6 @@ public class Emitter extends Parser {
                                 return JavaUtils.getTextClassName(cls.getName());
                         }
                     };
-        }
-    }
-
-    private void checkForAuthInfo(String uri) {
-        URL url = null;
-        try {
-            url = new URL(uri);
-        } catch (MalformedURLException e) {
-            // not going to have userInfo
-            return;
-        }
-        String userInfo = url.getUserInfo();
-        if (userInfo != null) {
-            int i = userInfo.indexOf(':');
-            if (i >= 0) {
-                this.username = userInfo.substring(0,i);
-                this.password = userInfo.substring(i+1);
-            } else {
-                this.username = userInfo;
-            }
-        } 
-    }
-
-    /**
-     * This class is used by WSDL2Java main() only
-     * Supports the http.proxyUser and http.proxyPassword properties.
-     */
-    public static class DefaultAuthenticator extends Authenticator {
-        private String user;
-        private String password;
-        
-        DefaultAuthenticator(String user, String pass) {
-            this.user = user;
-            this.password = pass;
-        }
-        protected PasswordAuthentication getPasswordAuthentication() {
-            // if user and password weren't provided, check the system properties
-            if (user == null) {
-                user = System.getProperty("http.proxyUser","");
-            }
-            if (password == null) {
-                password = System.getProperty("http.proxyPassword","");
-            }
-            
-            return new PasswordAuthentication (user, password.toCharArray());
         }
     }
 

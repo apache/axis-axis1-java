@@ -54,6 +54,11 @@
  */
 package org.apache.axis.wsdl.gen;
 
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+
 import java.util.List;
 
 import org.apache.axis.utils.CLArgsParser;
@@ -144,7 +149,32 @@ public class WSDL2 {
         if (wsdlURI == null) {
             printUsage();
         }
+
+        // Set username and password if provided in URL
+        checkForAuthInfo(wsdlURI);
+        Authenticator.setDefault(new DefaultAuthenticator(
+                parser.getUsername(), parser.getPassword()));
     } // validateOptions
+
+    private void checkForAuthInfo(String uri) {
+        URL url = null;
+        try {
+            url = new URL(uri);
+        } catch (MalformedURLException e) {
+            // not going to have userInfo
+            return;
+        }
+        String userInfo = url.getUserInfo();
+        if (userInfo != null) {
+            int i = userInfo.indexOf(':');
+            if (i >= 0) {
+                parser.setUsername(userInfo.substring(0,i));
+                parser.setPassword(userInfo.substring(i+1));
+            } else {
+                parser.setUsername(userInfo);
+            }
+        } 
+    }
 
     protected void printUsage() {
         String lSep = System.getProperty("line.separator");
@@ -198,4 +228,29 @@ public class WSDL2 {
         WSDL2 wsdl2 = new WSDL2();
         wsdl2.run(args);
     } // main
+
+    /**
+     * This class is used by WSDL2 main() only
+     * Supports the http.proxyUser and http.proxyPassword properties.
+     */
+    public static class DefaultAuthenticator extends Authenticator {
+        private String user;
+        private String password;
+        
+        DefaultAuthenticator(String user, String pass) {
+            this.user = user;
+            this.password = pass;
+        }
+        protected PasswordAuthentication getPasswordAuthentication() {
+            // if user and password weren't provided, check the system properties
+            if (user == null) {
+                user = System.getProperty("http.proxyUser","");
+            }
+            if (password == null) {
+                password = System.getProperty("http.proxyPassword","");
+            }
+            
+            return new PasswordAuthentication (user, password.toCharArray());
+        }
+    }
 } // class WSDL2
