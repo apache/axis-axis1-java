@@ -72,6 +72,8 @@ import org.xml.sax.SAXException;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,6 +81,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.io.Reader;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -112,9 +117,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     //private Hashtable headers = new Hashtable();
     private MimeHeaders mimeHeaders = new MimeHeaders();
-    private String contentId;
-    private String contentLocation;
-
 
     private static final String[] formNames =
     { "", "FORM_STRING", "FORM_INPUTSTREAM", "FORM_SOAPENVELOPE",
@@ -605,7 +607,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Sets Content-Id of this part.
      *  already defined.
      * @param newCid new Content-Id
-     * @returns void
      */
     public void setContentId(String newCid){
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
@@ -659,7 +660,26 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         contentSource = source;
         InputSource in = org.apache.axis.utils.XMLUtils.sourceToInputSource(contentSource);
-        setCurrentMessage(in.getByteStream(), FORM_INPUTSTREAM);
+        InputStream is = in.getByteStream();
+        if(is != null) {
+            setCurrentMessage(is, FORM_INPUTSTREAM);
+        } else {
+            Reader r = in.getCharacterStream();
+            if(r == null) {
+                throw new SOAPException(Messages.getMessage("noCharacterOrByteStream"));
+            }
+            BufferedReader br = new BufferedReader(r);
+            String line = null;
+            StringBuffer sb = new StringBuffer();
+            try {
+                while((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (IOException e) {
+                throw new SOAPException(Messages.getMessage("couldNotReadFromCharStream"), e);
+            }
+            setCurrentMessage(sb.toString(), FORM_STRING);
+        }    
     }
 
     /**
@@ -672,6 +692,32 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @see #setContent(javax.xml.transform.Source) setContent(javax.xml.transform.Source)
      */
     public Source getContent() throws SOAPException {
+    	if(contentSource == null) {
+            switch(currentForm) {
+            case FORM_STRING:
+                String s = (String)currentMessage;
+                contentSource = new StreamSource(new StringReader(s));
+                break;
+            case FORM_INPUTSTREAM:
+                contentSource = new StreamSource((InputStream)currentMessage);
+                break;
+            case FORM_SOAPENVELOPE:
+                SOAPEnvelope se = (SOAPEnvelope)currentMessage;
+                try {
+                    contentSource = new DOMSource(se.getAsDocument());
+                } catch (Exception e) {
+                    throw new SOAPException(Messages.getMessage("errorGetDocFromSOAPEnvelope"), e);
+                }
+                break;	
+            case FORM_BYTES:
+                byte[] bytes = (byte[])currentMessage;
+                contentSource = new StreamSource(new ByteArrayInputStream(bytes));
+                break;
+                case FORM_BODYINSTREAM:
+                contentSource = new StreamSource((InputStream)currentMessage);
+                break;
+            }
+       	}        
         return contentSource;
     }
 
