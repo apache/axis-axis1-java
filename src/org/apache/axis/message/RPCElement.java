@@ -147,7 +147,6 @@ public class RPCElement extends SOAPBodyElement
         if (service == null) return;
 
         String  clsName    = (String) service.getOption( "className" );
-        String  typemap    = (String) service.getOption( "typemap" );
 
         try {
             AxisClassLoader cl     = msgContext.getClassLoader();
@@ -159,14 +158,6 @@ public class RPCElement extends SOAPBodyElement
             // decisions about what deserializers to use for parameters
             Method method = jc.getMethod(methodName, -1);
             if (method != null) defaultParamTypes = method.getParameterTypes();
-
-            // if a method is registered for defining typemaps, invoke it
-            if (typemap != null) {
-                Method typemapMethod = jc.getMethod(typemap, 1);
-                Object obj           = cls.newInstance();
-                typemapMethod.invoke(obj,
-                    new Object[] {msgContext.getTypeMappingRegistry()});
-            }
 
             // in the future, we should add support for runtime information
             // from sources like WSDL, based on Handler.getDeploymentData();
