@@ -58,6 +58,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.apache.axis.*;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
@@ -448,22 +449,22 @@ public class WSDDDeployment
      * @param name XXX
      * @return XXX
      */
-    public Handler getService(QName name) throws ConfigurationException
+    public SOAPService getService(QName name) throws ConfigurationException
     {
         WSDDService s = (WSDDService)services.get(name);
         if (s != null) {
-            return s.getInstance(this);
+            return (SOAPService)s.getInstance(this);
         }
 
         return null;
     }
 
-    public Handler getServiceByNamespaceURI(String namespace)
+    public SOAPService getServiceByNamespaceURI(String namespace)
         throws ConfigurationException
     {
         WSDDService s = (WSDDService)namespaceToServices.get(namespace);
         if (s != null) {
-            return s.getInstance(this);
+            return (SOAPService)s.getInstance(this);
         }
         
         return null;

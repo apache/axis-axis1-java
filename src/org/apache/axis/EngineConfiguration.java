@@ -58,6 +58,8 @@ package org.apache.axis;
 import javax.xml.rpc.namespace.QName;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.handlers.soap.SOAPService;
+
 import java.util.Hashtable;
 
 /**
@@ -111,7 +113,7 @@ public interface EngineConfiguration {
      * @return XXX
      * @throws ConfigurationException XXX
      */
-    public Handler getService(QName qname) throws ConfigurationException;
+    public SOAPService getService(QName qname) throws ConfigurationException;
     
     /**
      * Get a service which has been mapped to a particular namespace
@@ -119,7 +121,7 @@ public interface EngineConfiguration {
      * @param namespace a namespace URI
      * @return an instance of the appropriate Service, or null
      */ 
-    public Handler getServiceByNamespaceURI(String namespace)
+    public SOAPService getServiceByNamespaceURI(String namespace)
         throws ConfigurationException;
 
      /**

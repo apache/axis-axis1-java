@@ -423,10 +423,10 @@ public class MessageContext {
         targetService = tServ ;
 
         if (targetService == null)
-            setServiceHandler(null);
+            setService(null);
         else {
             try {
-                setServiceHandler(getAxisEngine().getService(tServ));
+                setService(getAxisEngine().getService(tServ));
             } catch (AxisFault fault) {
                 // If we're on the client, don't throw this fault...
                 if (!isClient()) {
@@ -440,12 +440,13 @@ public class MessageContext {
      * can (and probably will actually be a chain that contains the
      * service specific request/response/pivot point handlers
      */
-    private Handler          serviceHandler ;
-    public Handler getServiceHandler() {
+    private SOAPService serviceHandler ;
+    
+    public SOAPService getService() {
         return( serviceHandler );
     }
     
-    public void setServiceHandler(Handler sh)
+    public void setService(SOAPService sh)
     {
         log.debug("MessageContext: setServiceHandler("+sh+")");
         serviceHandler = sh;

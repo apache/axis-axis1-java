@@ -116,6 +116,9 @@ public class Emitter {
     public static final int MODE_ALL = 0;
     public static final int MODE_INTERFACE = 1;
     public static final int MODE_IMPLEMENTATION = 2;
+    
+    public static final int MODE_RPC = 0;
+    public static final int MODE_DOCUMENT = 1;
 
     private Class cls;
     private Class implCls;                 // Optional implementation class
@@ -131,6 +134,7 @@ public class Emitter {
     private String serviceElementName;
     private String targetService = null;
     private String description;
+    private int mode = MODE_RPC;
     private TypeMapping tm = null;        // Registered type mapping
     private TypeMapping defaultTM = null; // Default TM 
     private Namespaces namespaces;
@@ -485,7 +489,8 @@ public class Emitter {
           new javax.wsdl.QName(intfNS, getServicePortName() + "SoapBinding"));
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
-        soapBinding.setStyle("rpc");
+        String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
+        soapBinding.setStyle(modeStr);
         soapBinding.setTransportURI(Constants.URI_SOAP_HTTP);
 
         binding.addExtensibilityElement(soapBinding);
@@ -643,7 +648,11 @@ public class Emitter {
 
         SOAPOperation soapOper = new SOAPOperationImpl();
         soapOper.setSoapActionURI("");
-        soapOper.setStyle("rpc");
+        
+        // Until we have per-operation configuration, this will always be
+        // the same as the binding default.
+        // soapOper.setStyle("rpc");
+        
         bindingOper.addExtensibilityElement(soapOper);
 
         SOAPBody soapBody = new SOAPBodyImpl();
@@ -1242,5 +1251,13 @@ public class Emitter {
      */
     public void setDefaultTypeMapping(TypeMapping defaultTM) {
         this.defaultTM = defaultTM;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }

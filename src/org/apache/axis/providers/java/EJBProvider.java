@@ -102,7 +102,7 @@ public class EJBProvider extends RPCProvider
                                              String clsName)
         throws Exception
     {
-        Handler serviceHandler = msgContext.getServiceHandler();
+        Handler serviceHandler = msgContext.getService();
         
         // Get the EJB Home object from JNDI
         Object ejbHome = getEJBHome(msgContext, clsName);
@@ -171,7 +171,7 @@ public class EJBProvider extends RPCProvider
      * @return the class info of the EJB remote interface
      */ 
    protected Class getServiceClass(MessageContext msgContext, String beanJndiName) throws Exception {
-        Handler serviceHandler = msgContext.getServiceHandler();
+        Handler serviceHandler = msgContext.getService();
 
        // Get the EJB Home object from JNDI
        Object ejbHome = getEJBHome(msgContext, beanJndiName);
@@ -218,7 +218,7 @@ public class EJBProvider extends RPCProvider
      * Common routine to do the JNDI lookup on the Home interface object
      */ 
     private Object getEJBHome(MessageContext msgContext, String beanJndiName) throws AxisFault {
-        Handler serviceHandler =  msgContext.getServiceHandler();
+        Handler serviceHandler =  msgContext.getService();
         Object ejbHome;
         Properties properties = null;
         

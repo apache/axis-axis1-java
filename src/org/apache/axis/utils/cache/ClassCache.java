@@ -110,7 +110,11 @@ public class ClassCache {
      * @param cl ClassLoader to use if we need to load the class
      * @return JavaClass entry
      */
-    public JavaClass lookup(String className, ClassLoader cl) throws ClassNotFoundException {
+    public JavaClass lookup(String className, ClassLoader cl) 
+            throws ClassNotFoundException {
+        if (className == null) {
+            return null;
+        }
         JavaClass jc = (JavaClass) classCache.get(className);
         if ((jc == null) && (cl != null)) {
             // Try to load the class with the specified classloader

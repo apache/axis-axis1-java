@@ -83,7 +83,7 @@ public class ProxyService {
     {
         try {
             // Look in the message context for our service
-            Handler self = msgContext.getServiceHandler();
+            Handler self = msgContext.getService();
             
             // what is our target URL?
             String dest = (String)self.getOption("URL");

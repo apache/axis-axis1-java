@@ -90,53 +90,12 @@ public class RPCHandler extends SOAPHandler
     private RPCElement call;
     private RPCParam currentParam;
 
-    protected Class  defaultParamTypes[] = null;
-    
     public RPCHandler(RPCElement call)
         throws SAXException
     {
         this.call = call;
     }
 
-    private void determineDefaultParams(String methodName,
-                                        DeserializationContext context) {
-        MessageContext msgContext = context.getMessageContext();
-        Handler service    = msgContext.getServiceHandler();
-        if (service == null) return;
-
-        String  clsName    = (String) service.getOption( "className" );
-
-        try {
-            ClassLoader cl       = msgContext.getClassLoader();
-            ClassCache cache     = msgContext.getAxisEngine().getClassCache();
-            JavaClass       jc   = cache.lookup(clsName, cl);
-            Class           cls  = jc.getJavaClass();
-            
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage(
-                        "lookup00", methodName, clsName));
-            }
-
-            // If we find only one method of this name, we can use it
-            // to make better decisions about what deserializers to use
-            // for parameters.
-            Method[] method = jc.getMethod(methodName);
-            if (method != null && method.length == 1) {
-                defaultParamTypes = method[0].getParameterTypes();
-            }
-            
-            // !!! This should be smart enough to deal with overloaded
-            // methods - we should really be keeping a list of all of
-            // the possibilities, then moving down the list to keep
-            // matching as we deserialize params....
-            //
-
-            // in the future, we should add support for runtime information
-            // from sources like WSDL, based on Handler.getDeploymentData();
-        } catch (Exception e) {
-            // oh well, we tried.
-        }
-    }
 
     public SOAPHandler onStartChild(String namespace,
                                     String localName,
@@ -155,8 +114,6 @@ public class RPCHandler extends SOAPHandler
         }
         
         Vector params = call.getParams();
-        if (params.isEmpty()) 
-            determineDefaultParams(call.getMethodName(), context);
         
         // This is a param.
         currentParam = new RPCParam(namespace, localName, null);
@@ -209,14 +166,12 @@ public class RPCHandler extends SOAPHandler
                 }
             }
 
-            if (type == null && defaultParamTypes!=null &&
-                params.size()<=defaultParamTypes.length) {
+            if (type == null && call.getJavaParamTypes() !=null &&
+                params.size() <= call.getJavaParamTypes().length) {
 
                 TypeMapping typeMap = context.getTypeMapping();
                 int index = params.size()-1;
-                if (index+1<defaultParamTypes.length)
-                    if (defaultParamTypes[0]==MessageContext.class) index++;
-                type = typeMap.getTypeQName(defaultParamTypes[index]);
+                type = typeMap.getTypeQName(call.getJavaParamTypes()[index]);
                 if (log.isDebugEnabled()) {
                     log.debug(JavaUtils.getMessage("typeFromParms00", "" + type));
                 }

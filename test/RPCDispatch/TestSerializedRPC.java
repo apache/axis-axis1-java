@@ -208,12 +208,32 @@ public class TestSerializedRPC extends TestCase {
         assertEquals("Did not echo arg correctly.", arg, rpc("argAsDOM", arg, true));
     }
     
+    /**
+     * Test overloaded method dispatch without the benefit of xsi:types
+     */ 
+    public void testOverloadedMethodDispatch() throws Exception
+    {
+        // invoke the service and verify the result
+        String arg = "<arg0>true</arg0>";
+        Boolean expected = Boolean.TRUE;
+        assertEquals("Overloaded method test failed with a boolean", 
+                     expected, 
+                     rpc("overloaded", arg, true));        
+        
+        arg = "<arg0>5</arg0>";
+        Integer expectedInt = new Integer(5);
+        assertEquals("Overloaded method test failed with an int", 
+                     expectedInt, 
+                     rpc("overloaded", arg, true));        
+    }
+    
     public static void main(String args[]) {
       try {
         TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");
         tester.testSerReverseString();
         tester.testSerReverseData();
         tester.testArgAsDOM();
+        tester.testOverloadedMethodDispatch();
       } catch (Exception e) {
         e.printStackTrace();
       }

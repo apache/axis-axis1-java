@@ -198,19 +198,21 @@ public class RPCProvider extends JavaProvider {
             for (m = 0; m < method.length; ++m) {
                 ex = null;
                 params = method[m].getParameterTypes();
-
-
+                
+                // Don't bother with this one if it has FEWER params
+                if (argValues != null) {
+                    if (params.length < argValues.length)
+                        continue;
+                }
+                
                 // The number of method parameters must match the 
-                // arguments taking into consideration a MessageContext argument
-                // and output parameters.
+                // arguments taking into consideration output parameters.
                 Object[] newArgValues = new Object[params.length];
                 int old = 0;
                 boolean problem = false;
                 for (int n = 0; n < newArgValues.length; n++) {
                     Class heldType = JavaUtils.getHolderValueType(params[n]);
-                    if (params[n] == MessageContext.class) {
-                        newArgValues[n] = msgContext;
-                    } else if (argValues != null && old < argValues.length) {
+                    if (argValues != null && old < argValues.length) {
                         newArgValues[n] = argValues[old++];
                     } else if (heldType == null) {
                         // The parameters that don't match the argValues must

@@ -69,6 +69,7 @@ import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.Constants;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
@@ -108,7 +109,7 @@ public abstract class JavaProvider extends BasicProvider {
                                     String clsName)
         throws Exception
     {
-        String serviceName = msgContext.getServiceHandler().getName();
+        String serviceName = msgContext.getService().getName();
         
         // scope can be "Request", "Session", "Application"
         // (as with Apache SOAP)
@@ -127,7 +128,7 @@ public abstract class JavaProvider extends BasicProvider {
             
             // What do we do if serviceName is null at this point???
             if (serviceName == null)
-                serviceName = msgContext.getServiceHandler().toString();
+                serviceName = msgContext.getService().toString();
 
             // look in incoming session
             if (msgContext.getSession() != null) {
@@ -201,7 +202,7 @@ public abstract class JavaProvider extends BasicProvider {
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
         String serviceName = msgContext.getTargetService();
-        Handler service = msgContext.getServiceHandler();
+        Handler service = msgContext.getService();
 
         /* Now get the service (RPC) specific info  */
         /********************************************/
@@ -276,7 +277,7 @@ public abstract class JavaProvider extends BasicProvider {
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
         String serviceName = msgContext.getTargetService();
-        Handler service = msgContext.getServiceHandler();
+        SOAPService service = msgContext.getService();
 
         /* Now get the service (RPC) specific info  */
         /********************************************/
@@ -311,6 +312,7 @@ public abstract class JavaProvider extends BasicProvider {
             }
 
             Emitter emitter = new Emitter();
+            emitter.setMode(service.getStyle());
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
             emitter.setIntfNamespace(url);
@@ -382,7 +384,7 @@ public abstract class JavaProvider extends BasicProvider {
      * Returns the Class info about the service class.
      */ 
     protected Class getServiceClass(MessageContext msgContext, String clsName) throws Exception {
-        Handler service = msgContext.getServiceHandler();
+        Handler service = msgContext.getService();
         Object obj = getServiceObject(msgContext,
                                    service,
                                    clsName);

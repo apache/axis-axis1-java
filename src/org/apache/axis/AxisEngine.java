@@ -256,7 +256,7 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
-    public Handler getService(String name) throws AxisFault
+    public SOAPService getService(String name) throws AxisFault
     {
         try {
             return config.getService(new QName(null, name));

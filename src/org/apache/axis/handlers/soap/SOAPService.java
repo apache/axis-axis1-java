@@ -96,6 +96,9 @@ public class SOAPService extends SimpleTargetedChain
     static Log log =
             LogFactory.getLog(SOAPService.class.getName());
 
+    public static final int STYLE_RPC = 0;
+    public static final int STYLE_DOCUMENT = 1;
+    
     /** Valid transports for this service
      * (server side only!)
      *
@@ -107,6 +110,11 @@ public class SOAPService extends SimpleTargetedChain
     /** Service-specific type mappings
      */
     private TypeMappingRegistry tmr;
+    
+    /**
+     * Style of the service - document or RPC
+     */ 
+    private int style = STYLE_RPC;
     
     /**
      * SOAPRequestHandler is used to inject SOAP semantics just before
@@ -249,6 +257,14 @@ public class SOAPService extends SimpleTargetedChain
         }
         
         return true;
+    }
+
+    public int getStyle() {
+        return style;
+    }
+
+    public void setStyle(int style) {
+        this.style = style;
     }
     
     /*********************************************************************

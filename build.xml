@@ -74,6 +74,7 @@ Copyright:
   <property name="docs.dir" value="./docs"/>
   <property name="samples.dir" value="./samples"/>
   <property name="test.dir" value="./test"/>
+  <property name="lib.dir" value="./lib"/>
 
   <property name="wsdl4j.jar" value="lib/wsdl4j.jar"/>
   <property name="commons-logging.jar" value="lib/commons-logging.jar"/>

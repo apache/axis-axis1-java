@@ -1595,7 +1595,7 @@ public class Call implements javax.xml.rpc.Call {
             throw new AxisFault("Call.invoke", 
                    JavaUtils.getMessage("cantInvoke00", body.getName()),
                                         null, null);
-        } else if (msgContext.getServiceHandler() == null) {
+        } else if (msgContext.getService() == null) {
             msgContext.setTargetService(body.getNamespaceURI());
         }
 

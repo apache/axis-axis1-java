@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
@@ -229,7 +230,7 @@ public class FileProvider implements EngineConfiguration {
      * @return XXX
      * @throws ConfigurationException XXX
      */
-    public Handler getService(QName qname) throws ConfigurationException {
+    public SOAPService getService(QName qname) throws ConfigurationException {
         return deployment.getService(qname);
     }
 
@@ -239,7 +240,7 @@ public class FileProvider implements EngineConfiguration {
      * @param namespace a namespace URI
      * @return an instance of the appropriate Service, or null
      */
-    public Handler getServiceByNamespaceURI(String namespace)
+    public SOAPService getServiceByNamespaceURI(String namespace)
             throws ConfigurationException {
         return deployment.getServiceByNamespaceURI(namespace);
     }
