@@ -269,6 +269,7 @@ Copyright:
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/MD5AttachTest.java" unless="attachments.present"/>
     </javac>
+    <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
   </target>
 
 
