@@ -176,10 +176,12 @@ public class AdminClient
                 log( "Doing a list" );
                 String str = "<m:list xmlns:m=\"AdminService\"/>" ;
                 input = new ByteArrayInputStream( str.getBytes() );
+                sb.append( process(opts, input) );
             } else if (args[i].equals("quit")) {
                 log("Doing a quit");
                 String str = "<m:quit xmlns:m=\"AdminService\"/>";
                 input = new ByteArrayInputStream(str.getBytes());
+                sb.append( process(opts, input) );
             } else if (args[i].equals("passwd")) {
                 log("Changing admin password");
                 if (args[i + 1] == null) {
@@ -191,39 +193,56 @@ public class AdminClient
                 str += "</m:passwd>";
                 input = new ByteArrayInputStream(str.getBytes());
                 i++;
+                sb.append( process(opts, input) );
             }
             else {
-                log( "Processing file: " + args[i] );
-                input = new FileInputStream( args[i] );
+                if(args[i].indexOf(java.io.File.pathSeparatorChar)==-1){
+                    log( "Processing file: " + args[i] );
+                    input = new FileInputStream( args[i] );
+                    sb.append( process(opts, input) );
+                } else {
+                    java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(args[i],java.io.File.pathSeparator);
+                    while(tokenizer.hasMoreTokens()) {
+                        String file = tokenizer.nextToken();
+                        log( "Processing file: " + file );
+                        input = new FileInputStream( file );
+                        sb.append( process(opts, input) );
+                        if(tokenizer.hasMoreTokens())
+                            sb.append("\n");
+                    }
+                }
             }
-
-            Service service = new Service();
-            Call    call = (org.apache.axis.client.Call) service.createCall();
-
-            call.setTargetEndpointAddress( new URL(opts.getURL()) );
-            call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
-            call.setProperty( Transport.USER, opts.getUser() );
-            call.setProperty( Transport.PASSWORD, opts.getPassword() );
-
-            String tName = opts.isValueSet( 't' );
-            if ( tName != null && !tName.equals("") )
-                call.setProperty( Call.TRANSPORT_NAME, tName );
-
-            Vector result = null ;
-            Object[]  params = new Object[] { new SOAPBodyElement(input) };
-            result = (Vector) call.invoke( params );
-
-            input.close();
-
-            if (result == null || result.isEmpty()) {
-                throw new AxisFault("Null response message!");
-            }
-
-            SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
-            sb.append( body.toString() );
         }
 
         return sb.toString();
+    }
+
+    public static String process(Options opts, InputStream input)  throws Exception
+    {
+        Service service = new Service();
+        Call    call = (org.apache.axis.client.Call) service.createCall();
+
+        call.setTargetEndpointAddress( new URL(opts.getURL()) );
+        call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
+        call.setProperty( Transport.USER, opts.getUser() );
+        call.setProperty( Transport.PASSWORD, opts.getPassword() );
+
+        String tName = opts.isValueSet( 't' );
+        if ( tName != null && !tName.equals("") )
+            call.setProperty( Call.TRANSPORT_NAME, tName );
+
+        Vector result = null ;
+        Object[]  params = new Object[] { new SOAPBodyElement(input) };
+        result = (Vector) call.invoke( params );
+
+        input.close();
+
+        if (result == null || result.isEmpty()) {
+            throw new AxisFault("Null response message!");
+        }
+
+        SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
+        return body.toString();
     }
 
     /**

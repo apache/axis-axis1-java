@@ -4,13 +4,38 @@
   <taskdef name="wsdl2java" classname="org.apache.axis.wsdl.test.Wsdl2javaAntTask"/>
 
   <target name="main">
-    <wsdl2java url="samples/addr/AddressBook.wsdl" package="samples.addr"/>
-    <wsdl2java url="test/inout/inout.wsdl" package="test.inout"/>
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl" package="org.soapinterop"/>
+    <wsdl2java url="samples/addr/AddressBook.wsdl" 
+               deployscope="session"
+               package="samples.addr" 
+               output="build/work" 
+               testcase="no">
+    </wsdl2java>
+    <wsdl2java url="test/inout/inout.wsdl" 
+               package="test.inout" 
+               output="build/work" 
+               testcase="no">
+    </wsdl2java>
+    <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl" 
+               package="org.soapinterop" 
+               output="build/work" 
+               testcase="no">
+    </wsdl2java>
     <!--
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl" package="org.soapinterop"/>
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestC.wsdl" package="org.soapinterop"/>
-    <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl" package="org.soapinterop"/>
+    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl" 
+               package="org.soapinteropB" 
+               output="build/work" 
+               testcase="no">
+    </wsdl2java>
+    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestC.wsdl"
+               package="org.soapinteropC" 
+               output="build/work" 
+               testcase="no">
+    </wsdl2java>
+    <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
+               package="org.soapinterop.echo" 
+               output="build/work" 
+               testcase="no">
+    </wsdl2java>
     -->
   </target>
 </project>
