@@ -57,7 +57,7 @@ package org.apache.axis.transport.http;
 
 import org.apache.axis.*;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.configuration.ServletEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFactory;
 import org.apache.axis.server.AxisServer;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -277,7 +277,7 @@ public class AxisServletBase extends HttpServlet {
                             webInfPath + File.separator + "attachments");
 
         EngineConfiguration config =
-            (new ServletEngineConfigurationFactory(context))
+            EngineConfigurationFactoryFactory.newServletFactory(context)
                     .getServerEngineConfig();
 
         environment.put(EngineConfiguration.PROPERTY_NAME, config);

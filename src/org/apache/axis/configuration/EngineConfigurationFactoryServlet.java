@@ -55,43 +55,45 @@
 
 package org.apache.axis.configuration;
 
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.EngineConfigurationFactory;
+import java.io.File;
+import java.io.InputStream;
 
+import javax.servlet.ServletContext;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
 
 /**
- * This is a 'front' for replacement logic.
- * Use EngineConfigurationFactoryFactory.newFactory().
- * 
+ * This is a default implementation of ServletEngineConfigurationFactory.
+ * It is user-overrideable by a system property without affecting
+ * the caller. If you decide to override it, use delegation if
+ * you want to inherit the behaviour of this class as using
+ * class extension will result in tight loops. That is, your
+ * class should implement EngineConfigurationFactory and keep
+ * an instance of this class in a member field and delegate
+ * methods to that instance when the default behaviour is
+ * required.
+ *
  * @author Richard A. Sitze
- * @author Glyn Normington (glyn@apache.org)
- * 
- * @deprecated
+ * @author Davanum Srinivas (dims@apache.org)
  */
-public class DefaultEngineConfigurationFactory
-    implements EngineConfigurationFactory
+public class EngineConfigurationFactoryServlet
+    extends EngineConfigurationFactoryDefault
 {
-    protected final EngineConfigurationFactory factory;
-    
-    protected DefaultEngineConfigurationFactory(EngineConfigurationFactory factory) {
-        this.factory = factory;
-    }
+    protected static Log log =
+        LogFactory.getLog(EngineConfigurationFactoryServlet.class.getName());
 
+    private ServletContext ctx;
+    
     /**
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
      */
-    public DefaultEngineConfigurationFactory() {
-        this(EngineConfigurationFactoryFactory.newFactory());
-    }
-
-     /**
-     * Get a default client engine configuration.
-     *
-     * @return a client EngineConfiguration
-     */
-    public EngineConfiguration getClientEngineConfig() {
-        return factory.getClientEngineConfig();
+    public EngineConfigurationFactoryServlet(ServletContext ctx) {
+        super();
+        this.ctx = ctx;
     }
 
     /**
@@ -100,6 +102,45 @@ public class DefaultEngineConfigurationFactory
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig() {
-        return factory.getServerEngineConfig();
+        return getServerEngineConfig(ctx);
+    }
+
+    /**
+     * Get a default server engine configuration in a servlet environment.
+     *
+     * @param ctx a ServletContext
+     * @return a server EngineConfiguration
+     */
+    private EngineConfiguration getServerEngineConfig(ServletContext ctx) {
+        /*
+         * Use the WEB-INF directory (so the config files can't get
+         * snooped by a browser)
+         */
+        String webInfPath = ctx.getRealPath("/WEB-INF");
+ 
+            FileProvider config = null ;
+
+            if (webInfPath == null || !(new File(webInfPath,
+                                                 SERVER_CONFIG_FILE)).exists()){
+                InputStream is = ctx.getResourceAsStream("/WEB-INF/"+
+                                                     SERVER_CONFIG_FILE);
+            if (is == null) {
+                log.error(JavaUtils.getMessage
+                          ("servletEngineWebInfError01", 
+                           webInfPath + "/" + SERVER_CONFIG_FILE));
+            } else {
+                config = new FileProvider(is);
+            }
+        }
+        if ( config == null ) {
+            try {
+                config = new FileProvider(webInfPath,
+                                          SERVER_CONFIG_FILE);
+            } catch (ConfigurationException ex) {
+                log.error(JavaUtils.getMessage
+                          ("servletEngineWebInfError00"), ex);
+            }
+        }
+        return config;
     }
 }

@@ -64,7 +64,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.AxisClient;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFactory;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
@@ -117,7 +117,7 @@ public class AxisServer extends AxisEngine
 
     public AxisServer()
     {
-        this((new DefaultEngineConfigurationFactory()).getServerEngineConfig());
+        this(EngineConfigurationFactoryFactory.newFactory().getServerEngineConfig());
     }
 
     public AxisServer(EngineConfiguration config)

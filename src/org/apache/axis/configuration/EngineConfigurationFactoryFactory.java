@@ -56,20 +56,51 @@
 package org.apache.axis.configuration;
 
 import javax.servlet.ServletContext;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.EngineConfigurationFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.logging.Log;
+
 
 /**
- * This is a 'front' for replacement logic.
- * Use EngineConfigurationFactoryFactory.newServletFactory().
- * 
+ * This is a default implementation of EngineConfigurationFactory.
+ * It is user-overrideable by a system property without affecting
+ * the caller. If you decide to override it, use delegation if
+ * you want to inherit the behaviour of this class as using
+ * class extension will result in tight loops. That is, your
+ * class should implement EngineConfigurationFactory and keep
+ * an instance of this class in a member field and delegate
+ * methods to that instance when the default behaviour is
+ * required.
+ *
  * @author Richard A. Sitze
- * @author Glyn Normington (glyn@apache.org)
- * 
- * @deprecated
  */
-public class ServletEngineConfigurationFactory
-    extends DefaultEngineConfigurationFactory
+public class EngineConfigurationFactoryFactory
 {
-    public ServletEngineConfigurationFactory(ServletContext ctx) {
-        super(EngineConfigurationFactoryFactory.newServletFactory(ctx));
+    protected static Log log =
+        LogFactory.getLog(EngineConfigurationFactoryFactory.class.getName());
+
+    /**
+     * Create the default engine configuration and detect whether the user
+     * has overridden this with their own.
+     */
+    private EngineConfigurationFactoryFactory() {
+    }
+
+    public static EngineConfigurationFactory newFactory() {
+        return (EngineConfigurationFactory)AxisProperties.newInstance(
+                new SPInterface(EngineConfigurationFactory.class,
+                                EngineConfigurationFactory.SYSTEM_PROPERTY_NAME),
+                EngineConfigurationFactoryDefault.class);
+    }
+
+    public static EngineConfigurationFactoryServlet newServletFactory(ServletContext ctx) {
+        return (EngineConfigurationFactoryServlet)AxisProperties.newInstance(
+                new SPInterface(EngineConfigurationFactory.class,
+                                EngineConfigurationFactory.SYSTEM_PROPERTY_NAME,
+                                new Class[] { ServletContext.class },
+                                new Object[] { ctx }),
+                EngineConfigurationFactoryServlet.class);
     }
 }

@@ -55,21 +55,70 @@
 
 package org.apache.axis.configuration;
 
-import javax.servlet.ServletContext;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.EngineConfigurationFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
 
 /**
- * This is a 'front' for replacement logic.
- * Use EngineConfigurationFactoryFactory.newServletFactory().
- * 
+ * This is a default implementation of EngineConfigurationFactory.
+ * It is user-overrideable by a system property without affecting
+ * the caller. If you decide to override it, use delegation if
+ * you want to inherit the behaviour of this class as using
+ * class extension will result in tight loops. That is, your
+ * class should implement EngineConfigurationFactory and keep
+ * an instance of this class in a member field and delegate
+ * methods to that instance when the default behaviour is
+ * required.
+ *
  * @author Richard A. Sitze
  * @author Glyn Normington (glyn@apache.org)
- * 
- * @deprecated
  */
-public class ServletEngineConfigurationFactory
-    extends DefaultEngineConfigurationFactory
+public class EngineConfigurationFactoryDefault
+    implements EngineConfigurationFactory
 {
-    public ServletEngineConfigurationFactory(ServletContext ctx) {
-        super(EngineConfigurationFactoryFactory.newServletFactory(ctx));
+    protected static Log log =
+        LogFactory.getLog(EngineConfigurationFactoryDefault.class.getName());
+
+    public final String OPTION_CLIENT_CONFIG_FILE = "axis.ClientConfigFile";
+    public final String OPTION_SERVER_CONFIG_FILE = "axis.ServerConfigFile";
+
+    protected static final String CLIENT_CONFIG_FILE = "client-config.wsdd";
+    protected static final String SERVER_CONFIG_FILE = "server-config.wsdd";
+
+    private String clientConfigFile;
+
+    private String serverConfigFile;
+
+    /**
+     * Create the default engine configuration and detect whether the user
+     * has overridden this with their own.
+     */
+    public EngineConfigurationFactoryDefault() {
+        clientConfigFile = AxisProperties.getProperty(OPTION_CLIENT_CONFIG_FILE,
+                                                      CLIENT_CONFIG_FILE);
+
+        serverConfigFile = AxisProperties.getProperty(OPTION_SERVER_CONFIG_FILE,
+                                                      SERVER_CONFIG_FILE);
+    }
+
+     /**
+     * Get a default client engine configuration.
+     *
+     * @return a client EngineConfiguration
+     */
+    public EngineConfiguration getClientEngineConfig() {
+        return new FileProvider(clientConfigFile);
+    }
+
+    /**
+     * Get a default server engine configuration.
+     *
+     * @return a server EngineConfiguration
+     */
+    public EngineConfiguration getServerEngineConfig() {
+        return new FileProvider(serverConfigFile);
     }
 }
