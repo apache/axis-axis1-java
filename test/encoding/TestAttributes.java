@@ -35,7 +35,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Vector;
 
-import AttributeBean;
 
 /**
  *  Test the serialization of a bean with attributes

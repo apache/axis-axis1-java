@@ -54,6 +54,8 @@
  */
 
 package org.apache.axis.attachments;
+import java.lang.ref.WeakReference;
+
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -123,7 +125,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
       */
     protected BoundaryDelimitedStream(BoundaryDelimitedStream prev,
       int readbufsz ) {
-        super (prev.is);
+        super (null);
 
         streamNo= newStreamNo();
 
@@ -140,7 +142,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
         readBufPos = prev.readBufPos + boundaryBufLen; 
         readBufEnd = prev.readBufEnd;
         //find the new boundary.
-        boundaryPos = boundaryPosition( readbuf, readBufPos, readBufEnd-1);
+        boundaryPos = boundaryPosition( readbuf, readBufPos, readBufEnd);
         prev.theEnd = theEnd; //The stream.
     }
 
@@ -152,11 +154,12 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
      */
      BoundaryDelimitedStream( java.io.InputStream is, byte[] boundary,
       int readbufsz) throws org.apache.axis.AxisFault {
-        super (is);
+        // super (is);
+         super(null); //we handle everything so this is not necessary, don't won't to hang on to a reference.
         isDebugEnabled= log.isDebugEnabled();
         streamNo= newStreamNo();
         closed = false;
-        this.is = is;
+        this.is =  is;
         //Copy the boundary array to make certain it is never altered.
         this.boundary= new byte[boundary.length];
         System.arraycopy(boundary,0,this.boundary,0, boundary.length);
@@ -165,6 +168,22 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
           //allways leave room for at least a 2x boundary
           //Most mime boundaries are 40 bytes or so.
         this.readbufsz = Math.max( (boundaryBufLen) * 2, readbufsz); 
+    }
+
+    private final int readFromStream( final byte[] b) throws java.io.IOException{
+       return readFromStream(b, 0, b.length);
+    }
+    private final int readFromStream( final byte[] b, final int start, final int length) throws java.io.IOException{
+            int minRead= Math.min(boundaryBufLen *2, length); 
+            int br= 0;
+            int brTotal=0;
+            do
+            {
+              br= is.read(b, brTotal + start, length - brTotal);
+              if(br > 0) brTotal+= br;
+            }while(br > -1 && brTotal < minRead);
+
+            return brTotal != 0?  brTotal : br;
     }
      
     /**
@@ -185,8 +204,11 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
 
         if (readbuf == null) { //Allocate the buffer.
             readbuf = new byte[Math.max(len, readbufsz ) ];
-            readBufEnd = is.read(readbuf);
+            readBufEnd = readFromStream(readbuf);
             if( readBufEnd < 0) {
+                readbuf= null;
+                closed= true;
+                theEnd = true;
                 throw new java.io.IOException(
                         JavaUtils.getMessage("eosBeforeMarker"));
             }
@@ -221,9 +243,12 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
                 //copy what was left over.
                 System.arraycopy(readbuf, readBufPos, dstbuf, 0, movecnt);
                 //Read in the new data.
-                int readcnt = is.read(dstbuf, movecnt, dstbuf.length - movecnt);
+                int readcnt = readFromStream(dstbuf, movecnt, dstbuf.length - movecnt);
                 
                 if( readcnt < 0) {
+                    readbuf= null;
+                    closed= true;
+                    theEnd = true;
                     throw new java.io.IOException(
                             JavaUtils.getMessage("eosBeforeMarker"));
                 }
@@ -234,7 +259,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
                                       //just move the boundary by what we moved
                 if (BOUNDARY_NOT_FOUND != boundaryPos ) boundaryPos -= movecnt;
                 else boundaryPos = boundaryPosition( readbuf, readBufPos,
-                                 readBufEnd-1); //See if the boundary is now there.
+                                 readBufEnd); //See if the boundary is now there.
             }
 
         }
@@ -250,6 +275,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
                         {"" + bwritten, "" + streamNo, new String(tb)}));
             }
         }
+        if(eos && theEnd)readbuf= null; //dealloc even in Java.  
 
         return bwritten;
     }
@@ -296,13 +322,44 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
 
         }
     }
+    /**
+     * mark the stream.
+     * This is not supported.
+     */
+    public void mark( int readlimit){
+    //do nothing
+    }
+
+    /**
+     * reset the stream.
+     * This is not supported.
+     */
+    public void reset() throws java.io.IOException{
+      throw new java.io.IOException(JavaUtils.getMessage("attach.bounday.mns"));
+    }
+
+    /**
+     * markSupported
+     * return false; 
+     */
+    public boolean markSupported(){
+      return false;
+    }
+
+    public int available() throws java.io.IOException{
+      int bcopy = readBufEnd - readBufPos - boundaryBufLen;
+                             //never go past the boundary.
+      bcopy = Math.min(bcopy, boundaryPos - readBufPos); 
+      return Math.max(0,bcopy);
+    }
+
 
     /**
      * Read from the boundary delimited stream.
      * @return The position of the boundary. Detects the end of the source stream.
      * 
      */
-    int boundaryPosition( byte[] searchbuf, int start, int end) {
+    protected int boundaryPosition( byte[] searchbuf, int start, int end) {
 
         int foundAt = boundarySearch(searchbuf, start, end);
                                                //First find the boundary marker
@@ -330,7 +387,8 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
    private int boundarySearch(final byte[]text,final int start, final int end ) {
 //log.debug(">>>>" + start + "," + end);   
 
-       int i, j, k;
+       int i=0, j=0, k=0;
+       if(boundaryLen > (end - start)) return BOUNDARY_NOT_FOUND;
       
        if(null == skip){
            skip= new int[256];
@@ -339,10 +397,31 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
        }
 
 
-       for( k=start + boundaryLen-1; k <=end; k += skip[text[k] & (0xff)] ) {
+       for( k=start + boundaryLen-1; k <end; k += skip[text[k] & (0xff)] ) {
 // log.debug(">>>>" + k);   
 //printarry(text, k-boundaryLen+1, end);
+            try{
             for( j=boundaryLen-1, i=k; j>=0 && text[i] == boundary[j]; j-- ) i--;
+            }catch(ArrayIndexOutOfBoundsException e){
+              System.
+              err.println(">>>" +e); //rr temporary till a boundary issue is resolved.
+              System.
+              err.println("start=" +start);
+              System.
+              err.println("k=" +k);
+              System.
+              err.println("text.length=" + text.length );
+              System.
+              err.println("i=" + i );
+              System.
+              err.println("boundary.length=" + boundary.length );
+              System.
+              err.println("j=" + j );
+              System.
+              err.println("end=" + end );
+              throw e;
+
+            }
             if( j == (-1) ) return i+1;
        }
 

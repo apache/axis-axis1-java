@@ -53,6 +53,8 @@
 * <http://www.apache.org/>.
 */
 
+package test.encoding;
+
 import org.apache.axis.description.AttributeDesc;
 import org.apache.axis.description.ElementDesc;
 import org.apache.axis.description.FieldDesc;
