@@ -92,8 +92,8 @@ public class WSDLUtils {
         def.setTargetNamespace(url); // !!! Probably not...
         
         def.addNamespace("serviceNS", url);
-        def.addNamespace("soap", "soapNS");
-        
+        def.addNamespace("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
+
         service.setQName(new javax.wsdl.QName(urn, name));
         def.addService(service);
         

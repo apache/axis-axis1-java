@@ -96,7 +96,7 @@ public class AxisServlet extends HttpServlet {
         HandlerRegistry hr = engine.getHandlerRegistry();
 
         String realpath = context.getRealPath(req.getServletPath());
-        if (realpath != null && req.getPathInfo() != null) {
+        if (realpath != null) {
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
 
             try {
