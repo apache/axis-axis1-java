@@ -288,6 +288,15 @@
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
 
+    <!-- Nested Structure Test -->
+    <wsdl2java url="test/wsdl/nested/Nested.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               testcase="yes">
+        <mapping namespace="urn:Nested" package="test.wsdl.nested"/>
+    </wsdl2java>
+
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated, some from   -->
     <!--                 NStoPkg.properties.                       -->
