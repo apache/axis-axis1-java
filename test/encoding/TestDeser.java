@@ -587,6 +587,14 @@ public class TestDeser extends TestCase {
                     "</varStruct>" +
                     "</whatever>" , ss, true);
     }
+    
+    public void testBug18390() throws Exception {
+        String[] s = new String[] {"GW671055X"};
+        deserialize("<molNames soapenc:arrayType=\"xsd:string[1]\"> " +
+                       "<xsd:string xsi:type=\"xsd:string\">GW671055X</xsd:string>" +
+                    "</molNames>",
+                    s, true);
+    }
 
     // Struct within Struct
     public void testStructStruct2() throws Exception {
