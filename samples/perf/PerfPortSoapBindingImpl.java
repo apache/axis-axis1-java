@@ -7,7 +7,7 @@
 
 package samples.perf;
 
-public class PerfPortSoapBindingImpl implements samples.perf.PerfService_Port{
+public class PerfPortSoapBindingImpl implements samples.perf.PerfService_PortType{
     public java.lang.String handleStringArray(java.lang.String[] s) throws java.rmi.RemoteException {
         String returnString;
         returnString = "array length was - " + s.length;
