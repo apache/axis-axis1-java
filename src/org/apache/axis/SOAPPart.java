@@ -568,7 +568,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @see #getContent() getContent()
      */
     public void setContent(Source source) throws SOAPException {
-        InputSource in = org.apache.axis.utils.XMLUtils.getInputSourceFromURI(source.getSystemId());
+        if(source == null)
+            throw new SOAPException(JavaUtils.getMessage("illegalArgumentException00"));
+
+        InputSource in = org.apache.axis.utils.XMLUtils.sourceToInputSource(source);
         setCurrentMessage(in.getByteStream(), FORM_INPUTSTREAM);
     }
 

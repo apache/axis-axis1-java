@@ -80,10 +80,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXSource;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -518,6 +524,33 @@ public class XMLUtils {
      */
     public static InputSource getInputSourceFromURI(String uri){
         return getInputSourceFromURI(uri);
+    }
+
+    /**
+     * Utility to get the bytes uri
+     *
+     * @param uri the resource to get
+     */
+    public static InputSource sourceToInputSource(Source source) {
+        if (source instanceof SAXSource) {
+            return ((SAXSource) source).getInputSource();
+        } else if (source instanceof DOMSource) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Element domElement = (Element)((DOMSource)source).getNode();
+            PrettyElementToStream(domElement, baos);
+            InputSource  isource = new InputSource(source.getSystemId());
+            isource.setByteStream(new ByteArrayInputStream(baos.toByteArray()));
+            return isource;
+        } else if (source instanceof StreamSource) {
+            StreamSource ss      = (StreamSource) source;
+            InputSource  isource = new InputSource(ss.getSystemId());
+            isource.setByteStream(ss.getInputStream());
+            isource.setCharacterStream(ss.getReader());
+            isource.setPublicId(ss.getPublicId());
+            return isource;
+        } else {
+            return getInputSourceFromURI(source.getSystemId());
+        }
     }
 
     /**
