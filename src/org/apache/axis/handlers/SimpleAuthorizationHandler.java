@@ -93,7 +93,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
         }
 
         boolean allowByDefault =
-            JavaUtils.isTrue(getOption("allowByDefault"));
+            JavaUtils.isTrueExplicitly(getOption("allowByDefault"));
 
         AuthenticatedUser user = (AuthenticatedUser)msgContext.
                                          getProperty(MessageContext.AUTHUSER);

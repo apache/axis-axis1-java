@@ -194,7 +194,7 @@ public class Admin
          */
         Handler serviceHandler = msgContext.getService();
         if (serviceHandler != null  &&
-            !JavaUtils.isTrue(serviceHandler.getOption("enableRemoteAdmin"))) {
+            !JavaUtils.isTrueExplicitly(serviceHandler.getOption("enableRemoteAdmin"))) {
                 
             String remoteIP = msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
             if (remoteIP != null  &&

@@ -211,9 +211,8 @@ public class RPCHandler extends SOAPHandler
         }
 
 
-        if (JavaUtils.isTrue(attributes.getValue(Constants.URI_2001_SCHEMA_XSI,
-                                           "nil")))
-          return( new DeserializerImpl() );
+        if (JavaUtils.isTrueExplicitly(attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil")))
+          return new DeserializerImpl();
         
         Deserializer dser = null;
         if ((type == null) && (namespace != null) && (!namespace.equals(""))) {
