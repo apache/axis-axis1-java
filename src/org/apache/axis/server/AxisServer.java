@@ -451,8 +451,9 @@ public class AxisServer extends AxisEngine
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
                         h = transportChain.getRequestHandler();
-                        if (h != null)
+                        if (h != null) {
                             h.generateWSDL(msgContext);
+                        }
                     }
                 }
 
@@ -479,11 +480,12 @@ public class AxisServer extends AxisEngine
                         rm.getSOAPEnvelope().getFirstBody();
                         h = msgContext.getService();
                     }
-                    if (h == null)
+                    if (h == null) {
                         throw new AxisFault(Constants.QNAME_NO_SERVICE_FAULT_CODE,
                                             Messages.getMessage("noService05",
                                                                  "" + msgContext.getTargetService()),
                                             null, null );
+                    }
                 }
 
                 h.generateWSDL(msgContext);
@@ -497,8 +499,9 @@ public class AxisServer extends AxisEngine
                 /***********************************************/
                 if (transportChain != null) {
                     h = transportChain.getResponseHandler();
-                    if (h != null)
+                    if (h != null) {
                         h.generateWSDL(msgContext);
+                    }
                 }
             }
         } catch (AxisFault e) {
