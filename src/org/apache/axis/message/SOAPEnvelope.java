@@ -533,6 +533,7 @@ public class SOAPEnvelope extends MessageElement
         if (body == null) {
             body = new SOAPBody(this, soapConstants);
             _isDirty = true;
+            body.setOwnerDocument((org.apache.axis.SOAPPart) getOwnerDocument());
             return body;
         } else {
             throw new SOAPException(Messages.getMessage("bodyPresent"));
@@ -547,6 +548,7 @@ public class SOAPEnvelope extends MessageElement
     public javax.xml.soap.SOAPHeader addHeader() throws SOAPException {
         if (header == null) {
             header = new SOAPHeader(this, soapConstants);
+            header.setOwnerDocument((org.apache.axis.SOAPPart) getOwnerDocument());
             return header;
         } else {
             throw new SOAPException(Messages.getMessage("headerPresent"));
@@ -608,5 +610,16 @@ public class SOAPEnvelope extends MessageElement
             body = null;
         }
         return super.removeChild(oldChild);
+    }
+
+
+    public void setOwnerDocument(org.apache.axis.SOAPPart sp) {
+        super.setOwnerDocument(sp);
+        if(body != null) {
+            body.setOwnerDocument(sp);
+        }
+        if(header != null){
+            header.setOwnerDocument(sp);
+        }
     }
 }
