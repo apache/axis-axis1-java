@@ -3,13 +3,14 @@
 				xmlns="http://xml.apache.org/axis/wsdd/" 
 				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
 				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xmlns:samp="urn:xml-soap-address-demo"
 				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
 	<documentation>
     		Address Book Sample
     	</documentation>		
 	<service name="AddressBook_Service">
-		<typeMapping name="address" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespaceURI="urn:xml-soap-address-demo" localPart="address" languageSpecificType="java:samples.addressbook.Address" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
-		<typeMapping name="phone" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespaceURI="urn:xml-soap-address-demo" localPart="phone" languageSpecificType="java:samples.addressbook.PhoneNumber" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
+		<typeMapping name="address" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qName="samp:address" languageSpecificType="java:samples.addressbook.Address" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
+		<typeMapping name="phone" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qName="samp:phone" languageSpecificType="java:samples.addressbook.PhoneNumber" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
 		<provider>
 			<operation name="getAddressFromName"/>
 			<operation name="addEntry"/>
