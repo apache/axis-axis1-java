@@ -1565,10 +1565,6 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @return
      */
     public BaseTypeMapping getBaseTypeMapping() {
-        
-        final TypeMapping defaultTM = (emitter != null) ? emitter.getDefaultTypeMapping() :
-                DefaultTypeMappingImpl.getSingleton();
-
         if (btm == null) {
             btm = new BaseTypeMapping() {
 
@@ -1578,7 +1574,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
                                     qNameIn.getLocalPart());
                     Class cls =
-                            defaultTM.getClassForQName(qName);
+                            emitter.getDefaultTypeMapping().getClassForQName(qName);
 
                     if (cls == null) {
                         return null;

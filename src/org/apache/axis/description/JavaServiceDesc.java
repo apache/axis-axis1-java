@@ -140,12 +140,7 @@ public class JavaServiceDesc implements ServiceDesc {
     private ArrayList completedNames = new ArrayList();
 
     /** Our typemapping for resolving Java<->XML type issues */
-    private TypeMapping tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-
-    // If someone has explicitly set the type mapping, don't mess with it
-    // when use is set.
-    private boolean tmSet = false;
-
+    private TypeMapping tm = null;
     private TypeMappingRegistry tmr = null;
 
     private boolean haveAllSkeletonMethods = false;
@@ -170,16 +165,6 @@ public class JavaServiceDesc implements ServiceDesc {
         if (!useSet) {
             // Use hasn't been explicitly set, so track style
             use = style == Style.RPC ? Use.ENCODED : Use.LITERAL;
-
-            // If we haven't been given an explicit type mapping, make
-            // sure we have the right one for the use
-            if (!tmSet) {
-                if (use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
-                    tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-                } else {
-                    tm = DefaultTypeMappingImpl.getSingleton();
-                }
-            }
         }
     }
 
@@ -195,16 +180,6 @@ public class JavaServiceDesc implements ServiceDesc {
     public void setUse(Use use) {
         useSet = true;
         this.use = use;
-
-        // If we haven't been given an explicit type mapping, make
-        // sure we have the right one for the use
-        if (!tmSet) {
-            if (use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
-                tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-            } else {
-                tm = DefaultTypeMappingImpl.getSingleton();
-            }
-        }
     }
 
     /**
@@ -314,11 +289,13 @@ public class JavaServiceDesc implements ServiceDesc {
     }
 
     public TypeMapping getTypeMapping() {
+        if(tm == null) {
+            throw new RuntimeException(Messages.getMessage("noDefaultTypeMapping00"));
+        }
         return tm;
     }
 
     public void setTypeMapping(TypeMapping tm) {
-        tmSet = true;
         this.tm = tm;
     }
 
@@ -689,7 +666,7 @@ public class JavaServiceDesc implements ServiceDesc {
                         // the Method parameter javaType because
                         // the ParameterDesc is being constructed
                         // by introspecting the Method.
-                        typeQName = tm.getTypeQName(actualType);
+                        typeQName = getTypeMapping().getTypeQName(actualType);
                         param.setTypeQName(typeQName);
                     } else {
                         // A type qname is available.
@@ -704,7 +681,7 @@ public class JavaServiceDesc implements ServiceDesc {
                             paramClass = JavaUtils.getHolderValueType(paramClass);
                         }
                         if (paramClass == null) {
-                            paramClass = tm.getClassForQName(param.getTypeQName());
+                            paramClass = getTypeMapping().getClassForQName(param.getTypeQName());
                         }
 
                         if (paramClass != null) {
@@ -754,7 +731,7 @@ public class JavaServiceDesc implements ServiceDesc {
             
             QName returnType = oper.getReturnType();
             if (returnType == null) {
-                oper.setReturnType(tm.getTypeQName(returnClass));
+                oper.setReturnType(getTypeMapping().getTypeQName(returnClass));
             }
 
             // Do the faults
@@ -1271,6 +1248,7 @@ public class JavaServiceDesc implements ServiceDesc {
 
     private QName getTypeQName(Class javaClass) {
         QName typeQName;
+        TypeMapping tm = getTypeMapping();
         if (style == Style.RPC) {
             typeQName = tm.getTypeQName(javaClass);
         } else {
@@ -1350,7 +1328,7 @@ public class JavaServiceDesc implements ServiceDesc {
                 // XMLType
                 QName xmlType = fault.getXmlType();
                 if (xmlType == null) {
-                    fault.setXmlType(tm.getTypeQName(ex));
+                    fault.setXmlType(getTypeMapping().getTypeQName(ex));
                 }
                 
                 // Name and Class Name
@@ -1369,7 +1347,7 @@ public class JavaServiceDesc implements ServiceDesc {
                 // We add a single parameter which points to the type
                 if (fault.getParameters() == null) {
                     if (xmlType == null) {
-                        xmlType = tm.getTypeQName(ex);
+                        xmlType = getTypeMapping().getTypeQName(ex);
                     }
                     QName qname = fault.getQName();
                     if (qname == null) {

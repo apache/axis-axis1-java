@@ -2523,12 +2523,7 @@ public class Emitter {
      */
     public TypeMapping getDefaultTypeMapping() {
         if (defaultTM == null) {
-            if (use == Use.ENCODED) {
-                // Use the one with SOAP encoded types
-                defaultTM = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-            } else {
-                defaultTM = DefaultTypeMappingImpl.getSingleton();
-            }
+            throw new RuntimeException(Messages.getMessage("noDefaultTypeMapping00"));
         }
         return defaultTM;
     }

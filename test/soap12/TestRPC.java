@@ -43,6 +43,7 @@ public class TestRPC extends TestCase {
         LocalTransport transport = new LocalTransport(server);
 
         SOAPService service = new SOAPService(new RPCProvider());
+        service.setEngine(server);
         service.setOption("className", "test.soap12.Echo");
         service.setOption("allowedMethods", "*");
         service.setOption("use", Use.ENCODED);

@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 
 import javax.xml.namespace.QName;
 
@@ -36,6 +37,7 @@ public class TestServiceDesc extends TestCase {
  
     public void testFaultSynch() throws Exception {
         JavaServiceDesc desc = new JavaServiceDesc();
+        desc.setTypeMapping(DefaultTypeMappingImpl.getSingleton());
 
         desc.loadServiceDescByIntrospection(ServiceClass.class);
 

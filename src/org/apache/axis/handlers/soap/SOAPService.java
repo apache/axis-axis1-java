@@ -28,6 +28,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.HandlerChainImpl;
@@ -224,7 +225,9 @@ public class SOAPService extends SimpleTargetedChain
 
         this.engine = engine;
         ((LockableHashtable)options).setParent(engine.getOptions());
-        getTypeMappingRegistry().delegate(engine.getTypeMappingRegistry());
+        TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
+        serviceDescription.setTypeMapping((TypeMapping)tmr.getDefaultTypeMapping());
+        getTypeMappingRegistry().delegate(tmr);
     }
 
     public AxisEngine getEngine() {
@@ -294,6 +297,7 @@ public class SOAPService extends SimpleTargetedChain
             return;
         }
         this.serviceDescription = serviceDescription;
+        serviceDescription.setTypeMapping((TypeMapping)this.getTypeMappingRegistry().getDefaultTypeMapping());
     }
 
     public void setPropertyParent(Hashtable parent)
