@@ -22,9 +22,7 @@ public class TypeMapper
         
         public void characters(char [] chars, int start, int end)
         {
-            System.out.print("BasicDeser parsing chars...");
             value = makeValue(new String(chars, start, end));
-            System.out.println("val is [" + value + "]");
         }
         abstract Object makeValue(String source);
     }
@@ -69,17 +67,14 @@ public class TypeMapper
     
     public DeserializerBase getDeserializer(QName qName)
     {
-        System.out.print("Getting deserializer...");
         Enumeration e = deserializers.keys();
         while (e.hasMoreElements()) {
             QName keyQName = (QName)e.nextElement();
             if (keyQName.equals(qName)) {
-                System.out.println("got it.");
                 return ((DeserFactory)deserializers.get(keyQName)).getDeser();
             }
         }
         
-        System.out.println("didn't find one.");
         return null;
     }
     

@@ -95,6 +95,7 @@ public class HTTPCall {
 
   // For testing
   public  boolean doLocal = false ;
+  private static final boolean DEBUG_LOG = false;
 
   public HTTPCall() {
   }
@@ -189,12 +190,20 @@ public class HTTPCall {
     if ( body.getPrefix() == null )       body.setPrefix( "m" );
     if ( body.getNamespaceURI() == null ) body.setNamespaceURI( action );
 
-    try {
-        SerializationContext ctx = new SerializationContext(new PrintWriter(System.out));
-        reqEnv.output(ctx);
-    } catch (Exception e) {
-        e.printStackTrace();
-        System.exit(1);
+    if (DEBUG_LOG) {
+        try {
+            SerializationContext ctx = new SerializationContext(new PrintWriter(System.out));
+            System.out.println("");
+            System.out.println("**DEBUG**");
+            reqEnv.output(ctx);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        } finally {
+            System.out.println("");
+            System.out.println("**DEBUG**");
+            System.out.println("");
+        }
     }
     
     try {
@@ -223,7 +232,6 @@ public class HTTPCall {
 
     if (resArgs != null && resArgs.size() > 0) {
         RPCParam param = (RPCParam)resArgs.get(0);
-        System.out.println("Got param '" + param.getName() + "' = " + param.getValue());
         result = param.getValue();
     }
 

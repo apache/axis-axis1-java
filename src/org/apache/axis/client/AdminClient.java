@@ -60,9 +60,11 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.utils.Options ;
+import org.apache.axis.encoding.SerializationContext ;
+import org.apache.axis.message.SOAPEnvelope ;
+import org.apache.axis.message.SOAPBodyElement ;
 import org.apache.axis.Message ;
 import org.apache.axis.MessageContext ;
-import org.apache.axis.client.HTTPMessage ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.encoding.ServiceDescription;
 
@@ -114,8 +116,11 @@ public class AdminClient {
         outMsg = msgContext.getResponseMessage();
         outMsg.setServiceDescription(new ServiceDescription("Admin", false));
         input.close();
-        outMsg.getAs("SOAPEnvelope");
-        System.out.println( outMsg.getAs( "String" ) );
+        SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAs("SOAPEnvelope");
+        SOAPBodyElement body = envelope.getFirstBody();
+        SerializationContext ctx = new SerializationContext(new PrintWriter(System.out));
+        body.output(ctx);
+        // System.out.println( outMsg.getAs( "String" ) );
       }
     }
     catch( Exception e ) {
