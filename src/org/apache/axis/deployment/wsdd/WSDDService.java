@@ -164,12 +164,20 @@ public class WSDDService extends WSDDDeployableItem implements DeployableItem {
     }
    
     public Handler newInstance(DeploymentRegistry registry) throws Exception {
-        Handler h = super.makeNewInstance(registry);
-        TargetedChain c = (TargetedChain)h;
-        c.setInputChain((Chain)getRequestFlow().newInstance(registry));
-        c.setPivotHandler(getProvider().newInstance(registry));
-        c.setOutputChain((Chain)getResponseFlow().newInstance(registry));
-        return c;
+        try {
+            Handler h = super.makeNewInstance(registry);
+            TargetedChain c = (TargetedChain)h;
+            WSDDFlow request = getRequestFlow();
+            WSDDFlow response = getResponseFlow();
+            if (request != null)
+                c.setInputChain((Chain)request.newInstance(registry));
+            c.setPivotHandler(getProvider().newInstance(registry));
+            if (response != null)
+                c.setOutputChain((Chain)response.newInstance(registry));
+            return c;
+        } catch (Exception e) {
+            return null;
+        }
     }
     
 }

@@ -54,8 +54,13 @@
  */
 package org.apache.axis.deployment.v2dd.providers;
 
+import org.apache.axis.handlers.providers.BasicProvider;
 import org.apache.axis.deployment.v2dd.V2DDProvider;
+import org.apache.axis.deployment.v2dd.V2DDOption;
+import org.apache.axis.deployment.v2dd.V2DDConstants;
+import org.apache.axis.handlers.providers.ComProvider;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class V2DDComProvider extends V2DDProvider { 
 
@@ -63,4 +68,18 @@ public class V2DDComProvider extends V2DDProvider {
         super(e);
     }
     
+    public void newInstance(BasicProvider provider) {
+        V2DDOption[] options = getOptions();
+        for (int n = 0; n < options.length; n++) {
+            if (options[n].getKey().equals("progid")) {
+                provider.addOption(ComProvider.OPTION_PROGID, options[n].getValue());
+            }
+            if (options[n].getKey().equals("threadingModel")) {
+                provider.addOption(ComProvider.OPTION_THREADING_MODEL, options[n].getValue());
+            }
+            if (options[n].getKey().equals("clsid")) {
+                provider.addOption(ComProvider.OPTION_CLSID, options[n].getValue());
+            }
+        }
+    }
 }

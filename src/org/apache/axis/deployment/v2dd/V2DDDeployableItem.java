@@ -56,6 +56,9 @@ package org.apache.axis.deployment.v2dd;
 
 import java.io.Serializable;
 import org.apache.axis.Handler;
+import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.handlers.providers.*;
+import org.apache.axis.deployment.v2dd.providers.*;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.utils.QName;
@@ -89,6 +92,30 @@ public class V2DDDeployableItem implements DeployableItem, Serializable {
         // compatible handler here using the service
         // definition to configure the instance
         
-        return null;
+        try {
+            SimpleTargetedChain stc = new SimpleTargetedChain();
+            
+            V2DDProvider prov = service.getProvider();
+            String[] methods = prov.getMethods();
+
+            BasicProvider provider = null;
+            
+            if (prov instanceof V2DDComProvider) provider = new ComProvider();
+            if (prov instanceof V2DDScriptProvider) provider = new BSFProvider();
+            if (provider == null) provider = new JavaProvider();
+               
+            provider.setOptions(prov.getOptionsTable());
+            prov.newInstance(provider);
+            
+            for (int n = 0; n < methods.length; n++) {
+                provider.addOperation(methods[n],
+                                      new QName(V2DDConstants.V2DD_NS, 
+                                                methods[n]));
+            }
+            
+            return provider;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

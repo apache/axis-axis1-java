@@ -54,13 +54,25 @@
  */
 package org.apache.axis.deployment.v2dd.providers;
 
+import org.apache.axis.handlers.providers.BasicProvider;
 import org.apache.axis.deployment.v2dd.V2DDProvider;
+import org.apache.axis.deployment.v2dd.V2DDConstants;
+import org.apache.axis.handlers.providers.BSFProvider;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class V2DDScriptProvider extends V2DDProvider { 
 
     public V2DDScriptProvider(Element e) {
         super(e);
+    }
+  
+    public void newInstance(BasicProvider provider) {
+        NodeList nl = getElement().getElementsByTagNameNS(V2DDConstants.V2DD_NS, "script");
+        Element script = (Element)nl.item(0);
+        provider.addOption(BSFProvider.OPTION_LANGUAGE, script.getAttribute("language"));
+        provider.addOption(BSFProvider.OPTION_SCRIPT, XMLUtils.getInnerXMLString(script));
     }
     
 }

@@ -57,8 +57,8 @@ package org.apache.axis.deployment.wsdd;
 public class WSDDConstants { 
     
     public final static String WSDD_NS   = "http://xml.apache.org/axis/wsdd/";
-    public final static String WSDD_JAVA = "http://xml.apache.org/axis/wsdd/providers/java/";
-    public final static String WSDD_COM  = "http://xml.apache.org/axis/wsdd/providers/com/";
-    public final static String WSDD_BSF  = "http://xml.apache.org/axis/wsdd/providers/bsf/";
+    public final static String WSDD_JAVA = "http://xml.apache.org/axis/wsdd/providers/java";
+    public final static String WSDD_COM  = "http://xml.apache.org/axis/wsdd/providers/com";
+    public final static String WSDD_BSF  = "http://xml.apache.org/axis/wsdd/providers/bsf";
 
 }

@@ -54,13 +54,25 @@
  */
 package org.apache.axis.deployment.v2dd.providers;
 
+import org.apache.axis.handlers.providers.BasicProvider;
 import org.apache.axis.deployment.v2dd.V2DDProvider;
+import org.apache.axis.deployment.v2dd.V2DDConstants;
+import org.apache.axis.handlers.providers.JavaProvider;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class V2DDJavaProvider extends V2DDProvider { 
 
     public V2DDJavaProvider(Element e) {
         super(e);
+    }
+ 
+    public void newInstance(BasicProvider provider) {
+        NodeList nl = getElement().getElementsByTagNameNS(V2DDConstants.V2DD_NS, "java");
+        Element java = (Element)nl.item(0);
+        provider.addOption(JavaProvider.OPTION_CLASSNAME, java.getAttribute("class"));
+        provider.addOption(JavaProvider.OPTION_IS_STATIC, 
+                           new Boolean(java.getAttribute("isStatic")));
     }
     
 }

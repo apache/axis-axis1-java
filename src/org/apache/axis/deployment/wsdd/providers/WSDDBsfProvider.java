@@ -57,15 +57,46 @@ package org.apache.axis.deployment.wsdd.providers;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDException;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.handlers.providers.BSFProvider;
+import org.apache.axis.handlers.providers.BasicProvider;
+import org.apache.axis.utils.QName;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element; 
+import org.w3c.dom.NodeList;
 
 public class WSDDBsfProvider extends WSDDProvider { 
     
     public WSDDBsfProvider(Element e) throws WSDDException { super(e); }
     
     public Handler newProviderInstance(DeploymentRegistry registry) throws Exception {
-        return null;
+        String type;
+        type = (!(type = getType()).equals("") ? type : "org.apache.axis.handlers.providers.BSFProvider");
+        Class _class = Class.forName(type);
+        BasicProvider provider = (BasicProvider)_class.newInstance();
+        
+        // set the basic java provider deployment options
+        Element prov = (Element)getElement().getElementsByTagNameNS(WSDDConstants.WSDD_BSF, "provider").item(0);
+        if (prov == null) {
+            throw new WSDDException("The BSF Provider requires the presence of a bsf:provider element in the WSDD");
+        }
+        String option = prov.getAttribute("language");
+        if (!option.equals("")) provider.addOption(BSFProvider.OPTION_LANGUAGE, option);
+        option = prov.getAttribute("src");
+        if (!option.equals("")) provider.addOption(BSFProvider.OPTION_SRC, option);
+        option = XMLUtils.getInnerXMLString(prov);
+        if (!option.equals("")) provider.addOption(BSFProvider.OPTION_SCRIPT, option);
+        
+        // collect the information about the operations
+        NodeList nl = getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS, "operation");
+        for (int n = 0; n < nl.getLength(); n++) {
+            Element op = (Element)nl.item(n);
+            provider.addOperation(op.getAttribute("name"),
+                                  new QName(op.getAttribute("qName"),op));
+        }
+        
+        return provider;
     }
     
 }

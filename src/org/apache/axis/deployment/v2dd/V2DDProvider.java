@@ -58,6 +58,7 @@ import java.util.StringTokenizer;
 import java.util.Hashtable;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.apache.axis.handlers.providers.BasicProvider;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.deployment.v2dd.providers.*;
 
@@ -134,4 +135,6 @@ public class V2DDProvider extends V2DDElement {
         } 
         return options;
     }
+    
+    public void newInstance(BasicProvider provider) {}
 }
