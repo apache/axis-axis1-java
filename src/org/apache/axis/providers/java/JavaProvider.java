@@ -181,7 +181,8 @@ public abstract class JavaProvider extends BasicProvider {
      * the message (via processMessage).
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug( "Enter: JavaProvider::invoke (for provider "+this+")");
+        if (category.isDebugEnabled())
+            category.debug( "Enter: JavaProvider::invoke (for provider "+this+")");
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -249,11 +250,13 @@ public abstract class JavaProvider extends BasicProvider {
             if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
             throw (AxisFault) exp ;
         }
-        category.debug("Exit: JavaProvider::invoke (for provider "+this+")");
+        if (category.isDebugEnabled())
+            category.debug("Exit: JavaProvider::invoke (for provider "+this+")");
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: JavaProvider::editWSDL (for provider "+this+")" );
+        if (category.isDebugEnabled())
+            category.debug("Enter: JavaProvider::editWSDL (for provider "+this+")" );
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
