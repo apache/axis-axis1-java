@@ -61,8 +61,8 @@
   <!-- Determine what dependencies are present                             -->
   <!-- =================================================================== -->
 
-  <target name="setenv">
-
+  <target name="setenv" unless="setenv.already.executed">
+    <property name="setenv.already.executed" value="true"/>
     <condition property="ant.good">
       <and>
         <contains string="${ant.version}" substring="Apache Ant version"/>
