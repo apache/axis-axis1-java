@@ -53,21 +53,21 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils;
+package org.apache.axis.i18n;
 
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
-import java.util.Locale;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Date;
-import java.util.Enumeration;
-import java.text.MessageFormat;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.Properties;
 
 /**
+ * CURRENTLY NOT USED
+ * KEEPING FOR REFERENCE  9/19/2002
+ * 
  * <p>Wrapper class for resource bundles. Property files are used to store
  * resource strings, which are the only types of resources available.
  * Property files can inherit properties from other files so that
