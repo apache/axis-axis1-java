@@ -71,7 +71,9 @@ import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
+import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Import;
@@ -1491,23 +1493,38 @@ public class SymbolTable {
             List bindList = binding.getBindingOperations();
             Map mimeTypes = new HashMap();
             for (Iterator opIterator = bindList.iterator(); opIterator.hasNext();) {
+                BindingOperation bindOp = (BindingOperation) opIterator.next();
+                BindingInput bindingInput = bindOp.getBindingInput();
+                BindingOutput bindingOutput = bindOp.getBindingOutput();
+                String opName = bindOp.getName();
+
+                // First, make sure the binding operation matches a portType operation
+                String inputName = bindingInput == null ? null :
+                        bindingInput.getName();
+                String outputName = bindingOutput == null ? null :
+                        bindingOutput.getName();
+                if (binding.getPortType().getOperation(
+                        opName, inputName, outputName) == null) {
+                    throw new IOException(Messages.getMessage("unmatchedOp",
+                            new String[] {opName, inputName, outputName}));
+                }
+
                 int inputBodyType = BindingEntry.USE_ENCODED;
                 int outputBodyType = BindingEntry.USE_ENCODED;
-                BindingOperation bindOp = (BindingOperation) opIterator.next();
                 Map opMimeTypes = new HashMap();
-                mimeTypes.put(bindOp.getName(), opMimeTypes);
+                mimeTypes.put(opName, opMimeTypes);
 
                 // input
-                if (bindOp.getBindingInput() != null) {
-                    if (bindOp.getBindingInput().getExtensibilityElements() != null) {
-                        Iterator inIter = bindOp.getBindingInput().getExtensibilityElements().iterator();
+                if (bindingInput != null) {
+                    if (bindingInput.getExtensibilityElements() != null) {
+                        Iterator inIter = bindingInput.getExtensibilityElements().iterator();
                         for (; inIter.hasNext();) {
                             Object obj = inIter.next();
                             if (obj instanceof SOAPBody) {
                                 String use = ((SOAPBody) obj).getUse();
                                 if (use == null) {
                                     throw new IOException(Messages.getMessage(
-                                            "noUse", bindOp.getName()));
+                                            "noUse", opName));
                                 }
                                 if (use.equalsIgnoreCase("literal")) {
                                     inputBodyType = BindingEntry.USE_LITERAL;
@@ -1525,16 +1542,16 @@ public class SymbolTable {
                 }
 
                 // output
-                if (bindOp.getBindingOutput() != null) {
-                    if (bindOp.getBindingOutput().getExtensibilityElements() != null) {
-                        Iterator outIter = bindOp.getBindingOutput().getExtensibilityElements().iterator();
+                if (bindingOutput != null) {
+                    if (bindingOutput.getExtensibilityElements() != null) {
+                        Iterator outIter = bindingOutput.getExtensibilityElements().iterator();
                         for (; outIter.hasNext();) {
                             Object obj = outIter.next();
                             if (obj instanceof SOAPBody) {
                                 String use = ((SOAPBody) obj).getUse();
                                 if (use == null) {
                                     throw new IOException(Messages.getMessage(
-                                            "noUse", bindOp.getName()));
+                                            "noUse", opName));
                                 }
                                 if (use.equalsIgnoreCase("literal")) {
                                     outputBodyType = BindingEntry.USE_LITERAL;
@@ -1569,7 +1586,7 @@ public class SymbolTable {
                             String use = ((SOAPBody) obj).getUse();
                             if (use == null) {
                                 throw new IOException(Messages.getMessage(
-                                        "noUse", bindOp.getName()));
+                                        "noUse", opName));
                             }
                             if (use.equalsIgnoreCase("literal")) {
                                 faultBodyType = BindingEntry.USE_LITERAL;
