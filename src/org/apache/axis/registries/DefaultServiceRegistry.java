@@ -118,8 +118,7 @@ public class DefaultServiceRegistry extends SupplierRegistry {
     SimpleTargetedChain  cc = null ;
 
     if ( onServer ) {
-      handlerRegistry.add("JWSProcessor",handlerRegistry.find("jwsprocessor"));
-      this.add( "JWSProcessor", handlerRegistry.find( "jwsprocessor" ) );
+      this.add( "JWSProcessor", handlerRegistry.find( "JWSProcessor" ) );
 
       cc = new SimpleTargetedChain();
       cc.setPivotHandler( handlerRegistry.find( "MsgDispatcher" ) );

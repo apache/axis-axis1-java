@@ -123,7 +123,7 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
       this.add( "HTTPAction"   , new HTTPActionHandler() );
       this.add( "HTTPAuth"     , new HTTPAuthHandler() );
       this.add( "JWSHandler"   , new JWSHandler() );
-      
+      this.add( "JWSProcessor" , new JWSProcessor() );
       // Want this around by default for testing.
       this.add( "EchoHandler"  , new EchoHandler() );
 
