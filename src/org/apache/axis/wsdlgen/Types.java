@@ -279,7 +279,7 @@ public class Types {
             elem.setAttribute("name", "item");
             String elType = componentTypeName;
             if (isNullable(componentType)) {
-                elem.setAttribute("nullable", "true");
+                elem.setAttribute("nillable", "true");
             }
             elem.setAttribute("type", elType);
             complexType.setAttribute("base", "soap:Array");
@@ -314,7 +314,7 @@ public class Types {
      * Create Element with a unique name generated from the namespace information
      * @param qName the namespace of the created element
      * @param elementType schema type representation of the element
-     * @param nullable nullable attribute of the element
+     * @param nullable nillable attribute of the element
      * @return the created Element
      */
     private Element createElement(QName qName, String elementType, boolean nullable) {
@@ -322,7 +322,7 @@ public class Types {
         String name = generateUniqueElementName(qName);
         element.setAttribute("name", name);
         if (nullable)
-            element.setAttribute("nullable", "true");
+            element.setAttribute("nillable", "true");
         element.setAttribute("type", elementType);
         return element;
     }
@@ -338,7 +338,7 @@ public class Types {
         Element element = docHolder.createElement("element");
         element.setAttribute("name", elementName);
         if (nullable)
-            element.setAttribute("nullable", "true");
+            element.setAttribute("nillable", "true");
         element.setAttribute("type", elementType);
         return element;
     }
