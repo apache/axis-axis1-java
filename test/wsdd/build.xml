@@ -49,7 +49,7 @@ Copyright:
 </target>
 
 <target name="copy" depends="setenv,clean">
-   <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
+   <copy file="${axis.home}/test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
 </target>
 
 <target name="compile" depends="copy">
