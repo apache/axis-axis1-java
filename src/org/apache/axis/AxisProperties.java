@@ -135,7 +135,7 @@ public class AxisProperties {
         getMappedNames().map(clazz.getName(), defaultNames);
     }
 
-    public static ResourceNameDiscover getNameDiscoverer() {
+    public static synchronized ResourceNameDiscover getNameDiscoverer() {
         if (nameDiscoverer == null) {
             nameDiscoverer = new NameDiscoverers();
             nameDiscoverer.addResourceNameDiscover(getAlternatePropertyNameDiscoverer());
