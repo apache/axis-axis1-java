@@ -62,7 +62,11 @@ WSDL from Java</a></li>
 </ul>
 
 <li>
+<a href="#published interfaces">Published Interfaces</a></li>
+
+<li>
 <a href="#tcpmon">Using TCPMon</a></li>
+
 
 <li>
 <a href="#Glossary">Glossary</a></li>
@@ -108,6 +112,11 @@ greater speed than earlier versions of Apache SOAP.</li>
 <b>Flexibility.</b> The Axis architecture gives the developer complete
 freedom to insert extensions into the engine for custom header processing,
 system management, or anything else you can imagine.</li>
+
+<li>
+<b>Stability.</b> Axis defines a set of
+<a href="#published interfaces">published interfaces</a> which change
+relatively slowly compared to the rest of Axis.</li>
 
 <li>
 <b>Component-oriented deployment.</b> You can easily define reusable networks
@@ -1074,6 +1083,31 @@ files for the WidgetPrice web service.</li>
 </ul>
 Now you have all of the necessary files to build your client/server side
 code and deploy the web service!
+<h2>
+<a name="published interfaces"></a>Published Axis Interfaces</h2>
+Although you may use any of the interfaces
+present in Axis, you need to be aware that some are more stable than
+others since
+there is a continuing need to refactor Axis to maintain and improve its
+modularity.
+<p>Hence certain interfaces are designated as <i>published</i>,
+which means that they are relatively stable.
+As Axis is refactored, the Axis developers will try to avoid changing
+published interfaces unnecessarily and will certainly consider the impact
+on users of any modifications.
+<p>
+So if you stick to using only published interfaces, you'll minimise the pain
+of migrating between releases of Axis. On the other hand, if you
+decide to use unpublished interfaces, migrating between releases
+could be an interesting exercise!
+If you would like an interface to be published,
+you should make the case for this on the
+<a href="mailto:axis-user@xml.apache.org">axis-user</a> mailing list.
+<p>
+The current list of published interfaces is as follows:
+<ul>
+<li>No interfaces published so far -- everything is subject to change!
+</ul>
 <h2>
 <a NAME="tcpmon"></a>Using the Axis TCP Monitor (tcpmon)</h2>
 The included "tcpmon" utility can be found in the org.apache.axis.utils
