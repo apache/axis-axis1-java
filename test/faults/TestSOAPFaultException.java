@@ -104,6 +104,7 @@ public class TestSOAPFaultException extends TestCase {
      * used as service implementation
      */
     public TestSOAPFaultException() {
+        super("TestSOAPFaultException");
     }
 
     public TestSOAPFaultException(String s) {
