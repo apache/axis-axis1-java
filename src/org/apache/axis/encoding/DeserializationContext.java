@@ -72,7 +72,7 @@ public class DeserializationContext
 {
     public SOAPSAXHandler baseHandler;
     public Hashtable idMappings = new Hashtable();
-    public TypeMappingRegistry mappingRegistry = new SOAPTypeMappingRegistry();
+    public TypeMappingRegistry mappingRegistry = null;
     public Hashtable fixups = new Hashtable();
     public boolean hasUnresolvedHrefs = false;
     
@@ -147,6 +147,8 @@ public class DeserializationContext
 
     public TypeMappingRegistry getTypeMappingRegistry()
     {
+        if (mappingRegistry == null) 
+            mappingRegistry = new SOAPTypeMappingRegistry();
         return mappingRegistry;
     }
     
@@ -163,7 +165,7 @@ public class DeserializationContext
     
     public DeserializerBase getDeserializer(QName qName)
     {
-        DeserializerBase dSer = mappingRegistry.getDeserializer(qName);
+        DeserializerBase dSer = getTypeMappingRegistry().getDeserializer(qName);
         dSer.setDeserializationContext(this);
         return dSer;
     }
