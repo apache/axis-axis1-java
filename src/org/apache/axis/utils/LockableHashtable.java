@@ -139,7 +139,6 @@ public class LockableHashtable extends Hashtable {
         if (lockedEntries.contains(p1)) {
             return null;
         }
-        if (lockedEntries.contains(p1)) lockedEntries.remove(p1);
         return super.remove(p1);
     }
     
