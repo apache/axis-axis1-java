@@ -54,6 +54,10 @@
  */
 package test.chains;
 
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
+import org.apache.axis.Message;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -64,8 +68,16 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 
+/**
+* Used to verify that Faults are processed properly in the Handler chain
+* @author Russell Butek (butek@us.ibm.com)
+* @author Chris Haddad <haddadc@cobia.net>
+*/
 public class TestChainFault extends TestCase
 {
+  // correlation message
+    public static String FAULT_MESSAGE = "Blew a gasket!";
+
     public TestChainFault (String name) {
         super(name);
     }
@@ -102,6 +114,7 @@ public class TestChainFault extends TestCase
     private class TestHandler extends BasicHandler {
         private int chainPos;
         private boolean doFault = false;
+        private String stFaultCatch = null;
 
         /* The following state really relates to a Message Context, so this Handler
          * must not be used for more than one Message Context. However, it
@@ -117,12 +130,15 @@ public class TestChainFault extends TestCase
             doFault = true;
         }
 
+        public void setFaultCatch(String stValue) { stFaultCatch = stValue; }
+        public String getFaultCatch() { return stFaultCatch; }
+
         public void invoke(MessageContext msgContext) throws AxisFault {
             TestMessageContext mc = (TestMessageContext)msgContext;
             assertEquals("Handler.invoke out of sequence", chainPos, mc.count());
             invoked = true;
             if (doFault) {
-                throw new AxisFault();
+                throw new AxisFault(TestChainFault.FAULT_MESSAGE);
             }
             mc.incCount();
         }
@@ -132,14 +148,39 @@ public class TestChainFault extends TestCase
             mc.decCount();
             assertEquals("Handler.onFault out of sequence", chainPos, mc.count());
             assertTrue("Handler.onFault protocol error", invoked);
+            // grap the Soap Fault String
+            stFaultCatch = getFaultString(msgContext);
         }
+    }
+
+    /**
+    * Extract the fault string from the Soap Response
+    *
+    **/
+    String getFaultString(MessageContext msgContext) {
+      String stRetval = null;
+      Message message = msgContext.getResponseMessage();
+      try {
+          if (message != null) {
+            SOAPBody oBody  = message.getSOAPEnvelope().getBody();
+            stRetval = oBody.getFault().getFaultString();
+          }
+      }
+      catch (javax.xml.soap.SOAPException e) {
+          assertTrue("Unforseen soap exception", false);
+      }
+      catch (AxisFault f) {
+          assertTrue("Unforseen axis fault", false);
+      }
+
+      return stRetval;
     }
 
     public void testSimpleChainFaultAfterInvoke()
     {
         try {
             SimpleChain c = new SimpleChain();
-            
+
             for (int i = 0; i < 5; i++) {
                 c.addHandler(new TestHandler(i));
             }
@@ -154,11 +195,12 @@ public class TestChainFault extends TestCase
         }
     }
 
+
     public void testSimpleChainFaultDuringInvoke()
     {
         try {
             SimpleChain c = new SimpleChain();
-            
+
             for (int i = 0; i < 5; i++) {
                 TestHandler th = new TestHandler(i);
                 if (i == 3) {
@@ -166,7 +208,7 @@ public class TestChainFault extends TestCase
                 }
                 c.addHandler(th);
             }
-            
+
 
             TestMessageContext mc = new TestMessageContext();
             try {
@@ -180,4 +222,48 @@ public class TestChainFault extends TestCase
             assertTrue("Unexpected exception", false);
         }
     }
+
+/**
+* Ensure that the fault detail is being passed back
+* to handlers that executed prior to the fault
+**/
+    public void testFaultDetailAvailableDuringInvoke()
+    {
+      // the handler instance to validate
+      // NOTE:must execute before the handler that throws the fault
+      TestHandler testHandler = null;
+
+        try {
+            SimpleChain c = new SimpleChain();
+
+            for (int i = 0; i < 5; i++) {
+                TestHandler th = new TestHandler(i);
+                if (i == 2)
+                  testHandler = th;
+
+                if (i == 3) {
+                    th.setToFault();
+                }
+                c.addHandler(th);
+            }
+
+
+            TestMessageContext mc = new TestMessageContext();
+            try {
+                c.invoke(mc);
+                assertTrue("Testcase error - didn't throw fault", false);
+            } catch (AxisFault f) {
+                // did we save off the fault string?
+              assertEquals("faultstring does not match constant",
+                testHandler.getFaultCatch(),TestChainFault.FAULT_MESSAGE);
+                // does saved faultString match AxisFault?
+              assertEquals("Fault not caught by handler",
+                testHandler.getFaultCatch(),f.getFaultString());
+            }
+
+        } catch (Exception ex) {
+            assertTrue("Unexpected exception", false);
+        }
+    }
+
 }

@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -55,6 +55,9 @@
 
 package org.apache.axis ;
 
+import org.apache.axis.Message;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
@@ -118,7 +121,7 @@ public class SimpleChain extends BasicHandler implements Chain {
 
        invoked = true;
         doVisiting(msgContext, iVisitor);
- 
+
         if (log.isDebugEnabled()) {
             log.debug("Exit: SimpleChain::invoke");
         }
@@ -151,6 +154,14 @@ public class SimpleChain extends BasicHandler implements Chain {
                 i++;
             }
         } catch( AxisFault f ) {
+           // Attach the fault to the response message; enabling access to the
+           // fault details while inside the handler onFault methods.
+            SOAPEnvelope env = new SOAPEnvelope();
+            SOAPFault faultEl = new SOAPFault(f);
+            env.clearBody();
+            env.addBodyElement(faultEl);
+            Message respMsg = new Message(env);
+            msgContext.setResponseMessage(respMsg);
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).onFault( msgContext );
             throw f;
@@ -193,7 +204,7 @@ public class SimpleChain extends BasicHandler implements Chain {
             throw new InternalException(
               JavaUtils.getMessage("addAfterInvoke00",
                                    "SimpleChain::addHandler"));
-        
+
         handlers.add( handler );
     }
 
@@ -204,7 +215,7 @@ public class SimpleChain extends BasicHandler implements Chain {
     public Handler[] getHandlers() {
         if (handlers.size() == 0)
             return null;
-        
+
         Handler [] ret = new Handler[handlers.size()];
         return( (Handler[]) handlers.toArray(ret) );
     }
