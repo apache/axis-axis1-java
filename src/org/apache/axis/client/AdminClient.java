@@ -158,7 +158,7 @@ public class AdminClient
             }
             call = (Call) service.createCall();
         } catch (ServiceException e) {
-            log.fatal(Messages.getMessage("couldntCall00"), e);
+            System.err.println(Messages.getMessage("couldntCall00") + ": " + e);
             call = null;
         }
     }
@@ -260,9 +260,9 @@ public class AdminClient
         args = opts.getRemainingArgs();
 
         if ( args == null  || opts.isFlagSet('?') > 0) {
-            log.info(Messages.getMessage("usage00","AdminClient [Options] [list | <deployment-descriptor-files>]"));
-            log.info("");
-            log.info(getUsageInfo());
+            System.out.println(Messages.getMessage("usage00","AdminClient [Options] [list | <deployment-descriptor-files>]"));
+            System.out.println("");
+            System.out.println(getUsageInfo());
             return null;
         }
 
@@ -274,9 +274,9 @@ public class AdminClient
             else if (args[i].equals("quit")) 
               sb.append( quit(opts) );
             else if (args[i].equals("passwd")) {
-                log.info(Messages.getMessage("changePwd00"));
+                System.out.println(Messages.getMessage("changePwd00"));
                 if (args[i + 1] == null) {
-                    log.error(Messages.getMessage("needPwd00"));
+                    System.err.println(Messages.getMessage("needPwd00"));
                     return null;
                 }
                 String str = "<m:passwd xmlns:m=\"http://xml.apache.org/axis/wsdd/\">";
@@ -381,7 +381,7 @@ public class AdminClient
                 System.exit(1);
             }
         } catch (Exception e) {
-            log.error(Messages.getMessage("exception00"), e);
+            System.err.println(Messages.getMessage("exception00") + ": " + e);
             System.exit(1);
         }
     }
