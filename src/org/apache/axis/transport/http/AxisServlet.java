@@ -619,7 +619,9 @@ public class AxisServlet extends HttpServlet
                        " invoke=" + (t2-t1) +
                        " post=" + (t3-t2) +
                        " send=" + (t4-t3) +
-                       " " + msgContext.getTargetService() + "." + msgContext.getOperation().getName() );
+                       " " + msgContext.getTargetService() + "." +
+                        ((msgContext.getOperation( ) == null) ?
+                        "" : msgContext.getOperation().getName()) );
         }
 
     }
