@@ -187,6 +187,7 @@ public class HTTPDispatchHandler extends BasicHandler {
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
+      e.printStackTrace();
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
     } 

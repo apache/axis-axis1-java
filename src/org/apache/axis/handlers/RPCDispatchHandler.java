@@ -102,7 +102,7 @@ public class RPCDispatchHandler extends BasicHandler {
         Vector       args  = body.getArgs();        //RPCArg's
   
         if ( methodName != null && !methodName.equals(mName) )
-          throw new AxisFault( "AxisServier.error", 
+          throw new AxisFault( "AxisServer.error", 
                                "Method names don't match\n" +
                                  "Body name=" + mName + "\n" +
                                  "Service name=" + methodName,

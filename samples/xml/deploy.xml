@@ -17,14 +17,14 @@
   <chain name="echoChain" input="debug,log" pivot="echo" output="log" />
   <chain name="errorChain" input="log,log" pivot="error" output="log,log" />
 
-  <service name="EchoService" handler="echoChain" />
-  <service name="ErrorService" handler="errorChain" />
-  <service name="ErrorService1" handler="error" />
+  <service name="EchoService" pivot="echoChain" />
+  <service name="ErrorService" pivot="errorChain" />
+  <service name="ErrorService1" pivot="error" />
 
   <chain name="LogRPC" flow="log,RPCDispatcher,log" />
 
   <!--- sample showing up to give options 
-  <service name="urn:FOOBAR" handler="LogRPC" >
+  <service name="urn:FOOBAR" pivot="LogRPC" >
     <option name="className" value="samples.stockquote.FooBar" />
     <option name="methodName" value="doWork" />
   </service>

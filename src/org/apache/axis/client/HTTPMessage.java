@@ -152,7 +152,9 @@ public class HTTPMessage {
 
     // For testing - skip HTTP layer
     if ( doLocal ) {
-      client = new org.apache.axis.server.SimpleAxisEngine();
+      client = new org.apache.axis.server.AxisServer();
+      msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.Input" );
+      msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.Output" );
       msgContext.setTargetService( action );
     }
 

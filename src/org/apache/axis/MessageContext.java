@@ -157,11 +157,12 @@ public class MessageContext {
      */
     public static String TRANS_URL           = "transport.url";
 
-    /** This String identifies the transport through which this
-     *  message has come. This will be (todo) used for
-     *  identifying the transport chain.
-     */
-    public static String TRANS_ID            = "transport.id";
+    /** The transport specific input/output chains  */
+    public static String TRANS_INPUT         = "transport.input";
+    public static String TRANS_OUTPUT        = "transport.output";
+
+    /** The protocol specific handler (ie. SOAP) */
+    public static String PROTOCOL_HANDLER    = "procotol.handler";
 
     /** A String with the user's ID (if available)
      */
@@ -170,6 +171,12 @@ public class MessageContext {
     /** A String with the user's password (if available)
      */
     public static String PASSWORD            = "user.password";
+
+    /** Just a util so we don't have to cast the result 
+     */
+    public String getStrProp(String propName) {
+      return( (String) getProperty(propName) );
+    }
 
     public Object getProperty(String propName) {
         if ( bag == null ) return( null );

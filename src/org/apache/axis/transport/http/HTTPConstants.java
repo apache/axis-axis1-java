@@ -66,8 +66,6 @@ public class HTTPConstants {
      *  (Maybe this should be more specific, like "http_servlet",
      *   whaddya think? - todo by Jacek)
      */
-    public static String TRANSPORT_ID = "http";
-
     public static final String HEADER_POST = "POST";
     public static final String HEADER_HOST = "Host";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
