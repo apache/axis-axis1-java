@@ -85,7 +85,11 @@ public class Messages {
     private static final String resourceName = MessagesConstants.resourceName;
     private static final Locale locale = MessagesConstants.locale;
 
-    private static final ResourceBundle parent = null;
+    private static final ResourceBundle parent =
+        (MessagesConstants.rootPackageName == packageName)
+        ? null
+        : MessagesConstants.rootBundle;
+
 
     /***** NO NEED TO CHANGE ANYTHING BELOW *****/
 
