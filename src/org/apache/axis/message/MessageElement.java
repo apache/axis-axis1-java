@@ -61,6 +61,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.w3c.dom.*;
 import org.apache.axis.Constants;
 import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.events.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.Debug;
@@ -85,6 +86,8 @@ public class MessageElement extends DeserializerBase
     // The java Object value of this element.  This is either set by
     // deserialization, or by the user creating a message.
     protected QName typeQName = null;
+    
+    protected Vector qNameAttrs = null;
     
     // String representation of this element.
     protected String stringRep = null;
@@ -211,6 +214,24 @@ public class MessageElement extends DeserializerBase
     
     public QName getType() { return typeQName; }
     public void setType(QName qName) { typeQName = qName; }
+    
+    protected static class QNameAttr {
+        QName name;
+        QName value;
+    }
+    
+    public void addAttribute(String namespace, String localName,
+                             QName value)
+    {
+        if (qNameAttrs == null)
+            qNameAttrs = new Vector();
+        
+        QNameAttr attr = new QNameAttr();
+        attr.name = new QName(namespace, localName);
+        attr.value = value;
+        
+        qNameAttrs.addElement(attr);
+    }
 
     public void setEnvelope(SOAPEnvelope env)
     {
@@ -258,11 +279,20 @@ public class MessageElement extends DeserializerBase
             }
             deserializer = null;
         } else {
-            // No attached deserializer, try it as a String...
-            try {
-                value = getValueAsType(SOAPTypeMappingRegistry.XSD_STRING);
-            } catch (AxisFault fault) {
-                Debug.Print(1, "Couldn't deserialize as String : " + fault);
+            
+            // Still not sure about this....
+            
+            if (recorder != null) {
+                try {
+                    StringWriter writer = new StringWriter();
+                    SerializationContext ctx = new SerializationContext(writer,
+                                                                        context.getMessageContext());
+                    recorder.publishChildrenToHandler(new SAXOutputter(ctx));
+                    writer.close();
+                    return writer.toString();
+                } catch (Exception e) {
+                    Debug.Print(1, "Exception while stringizing recorded events: " + e);
+                }
             }
         }
         
@@ -357,37 +387,49 @@ public class MessageElement extends DeserializerBase
         AttributesImpl attrs;
         Object val = getValue();
         
-        if (val != null) {
-            if (typeQName == null)
-                typeQName = context.getQNameForClass(val.getClass());
+        if ((val != null) && (typeQName == null))
+            typeQName = context.getQNameForClass(val.getClass());
+        
+        if (attributes == null) {
+            attrs = new AttributesImpl();
+            // Writing a message from memory out to XML...
+            // !!! How do we set other attributes when serializing??
             
-            if (attributes == null) {
-                attrs = new AttributesImpl();
-                // Writing a message from memory out to XML...
-                // !!! How do we set other attributes when serializing??
-                
-                ServiceDescription desc = context.getServiceDescription();
-                if ((desc == null) || desc.getSendTypeAttr()) {
-                    if (typeQName != null) {
-                        attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type", "xsi:type",
-                                           "CDATA",
-                                           context.qName2String(typeQName));
-                    }
+            ServiceDescription desc = context.getServiceDescription();
+            if ((desc == null) || desc.getSendTypeAttr()) {
+                if (typeQName != null) {
+                    attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type", "xsi:type",
+                                       "CDATA",
+                                       context.qName2String(typeQName));
                 }
-                
-                if (val == null)
-                    attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "null", "xsi:null",
-                                       "CDATA", "1");
-            } else {
-                attrs = new AttributesImpl(attributes);
             }
             
-            context.startElement(new QName(getNamespaceURI(), getName()), attrs);
-            // Output the value...
-            if (val != null)
-                context.writeString(DOM2Writer.normalize(value.toString()));
-            
-            context.endElement();
+            /*  Removing this for right now... need to deal with nillable for real!!!
+            if (val == null)
+                attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "null", "xsi:null",
+                                   "CDATA", "1");
+            */
+        } else {
+            attrs = attributes;
         }
+        
+        if (qNameAttrs != null) {
+            for (int i = 0; i < qNameAttrs.size(); i++) {
+                QNameAttr attr = (QNameAttr)qNameAttrs.elementAt(i);
+                attrs.addAttribute(attr.name.getNamespaceURI(),
+                                   attr.name.getLocalPart(),
+                                   context.qName2String(attr.name), "CDATA",
+                                   context.qName2String(attr.value));
+            }
+        }
+        
+        context.startElement(new QName(getNamespaceURI(), getName()), attrs);
+
+            
+        // Output the value...
+        if (val != null)
+            context.writeString(DOM2Writer.normalize(value.toString()));
+        
+        context.endElement();
     }
 }

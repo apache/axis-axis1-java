@@ -185,8 +185,32 @@ public class SOAPService extends SimpleTargetedChain
             }
         }
         
+        // !!! we should indicate SOAP1.2 compliance via the
+        // MessageContext, not a boolean here....
+        boolean doMisunderstoodHeaders = true;
+        
         if (misunderstoodHeaders != null) {
             // !!! If SOAP 1.2, insert misunderstood fault header here
+            if (doMisunderstoodHeaders) {
+                Message respMsg = msgContext.getResponseMessage();
+                if (respMsg == null) {
+                    respMsg = new Message(new SOAPEnvelope());
+                    msgContext.setResponseMessage(respMsg);
+                }
+                env = respMsg.getAsSOAPEnvelope();
+                for (int i = 0; i < misunderstoodHeaders.size(); i++) {
+                    SOAPHeader badHeader = (SOAPHeader)misunderstoodHeaders.
+                                                                elementAt(i);
+                    QName badQName = new QName(badHeader.getNamespaceURI(),
+                                               badHeader.getName());
+                    SOAPHeader newHeader = new SOAPHeader(
+                                               Constants.URI_SOAP12_FAULT_NS,
+                                               Constants.ELEM_MISUNDERSTOOD);
+                    newHeader.addAttribute(null, "qname", badQName);
+                    
+                    env.addHeader(newHeader);
+                }
+            }
             
             throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
                         "Didn't understand MustUnderstand header(s)!",

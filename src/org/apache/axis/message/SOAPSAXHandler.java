@@ -543,6 +543,8 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                     if (localName.equals(Constants.ELEM_BODY)) {
                         if (parsedBody)
                             throw new SAXException("Found duplicate body element");
+                        if (!parsedHeaders)
+                            parsedHeaders = true;
                         state = IN_BODY;
                         return;
                     }

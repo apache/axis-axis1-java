@@ -61,6 +61,7 @@ import javax.servlet.http.* ;
 import org.apache.axis.* ;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.message.*;
 
 /**
  *
@@ -178,7 +179,15 @@ public class AxisServlet extends HttpServlet {
         res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
       if ( !(e instanceof AxisFault) )
         e = new AxisFault( e );
-      msgContext.setResponseMessage( new Message((AxisFault)e) );
+      msg = msgContext.getResponseMessage();
+      if (msg == null) {
+        msg = new Message((AxisFault)e);
+        msgContext.setResponseMessage(msg);
+      } else {
+        SOAPEnvelope env = msg.getAsSOAPEnvelope();
+        env.clearBody();
+        env.addBodyElement(new SOAPFaultElement((AxisFault)e));
+      }
     }
 
     /* Send it back along the wire...  */

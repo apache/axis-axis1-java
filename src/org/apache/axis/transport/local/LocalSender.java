@@ -60,6 +60,8 @@ import org.apache.axis.handlers.*;
 import org.apache.axis.server.*;
 import org.apache.axis.transport.http.*;
 import org.apache.axis.utils.*;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFaultElement;
 
 import java.net.*;
 
@@ -133,8 +135,16 @@ public class LocalSender extends BasicHandler {
     try {
         targetServer.invoke(serverContext);
     } catch (AxisFault fault) {
-        Message faultMessage = new Message(fault);
-        serverContext.setResponseMessage(faultMessage);
+        Message respMsg = serverContext.getResponseMessage();
+        if (respMsg == null) {
+            respMsg = new Message(fault);
+            serverContext.setResponseMessage(respMsg);
+        } else {
+            SOAPFaultElement faultEl = new SOAPFaultElement(fault);
+            SOAPEnvelope env = respMsg.getAsSOAPEnvelope();
+            env.clearBody();
+            env.addBodyElement(faultEl);
+        }
     }
 
     // copy back the response, and force its format to String in order to

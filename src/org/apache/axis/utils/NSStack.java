@@ -147,6 +147,9 @@ public class NSStack {
     }
     
     public String getPrefix(String namespaceURI) {
+        if ((namespaceURI == null) || (namespaceURI.equals("")))
+            return null;
+        
         if (!stack.isEmpty()) {
             for (int n = stack.size() - 1; n >= 0; n--) {
                 Hashtable t = (Hashtable)stack.elementAt(n);
