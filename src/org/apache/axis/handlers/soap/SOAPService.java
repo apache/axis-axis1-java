@@ -89,6 +89,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.xml.rpc.soap.SOAPFaultException;
+import org.apache.axis.message.SOAPFault;
+import org.apache.axis.Message;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -473,19 +476,33 @@ public class SOAPService extends SimpleTargetedChain
         if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain();
         boolean result = true;
         
-        if (handlerImpl != null) {
-            result = handlerImpl.handleRequest(msgContext);
-        }
-        
-        if (result) {
-            super.invoke(msgContext);
-        } else {
-            msgContext.setPastPivot(true);
-        }
+        try {
+            if (handlerImpl != null) {
+                result = handlerImpl.handleRequest(msgContext);
+            }
+
+            if (result) {
+                super.invoke(msgContext);
+            } else {
+                msgContext.setPastPivot(true);
+            }
  
-        if ( handlerImpl != null) {
-            handlerImpl.handleResponse(msgContext);
-            handlerImpl.destroy();
+            if ( handlerImpl != null) {
+                handlerImpl.handleResponse(msgContext);
+                handlerImpl.destroy();
+            }
+        } catch (SOAPFaultException e) {
+            msgContext.setPastPivot(true);
+            throw new AxisFault(e.getMessage());
+            
+        } catch (RuntimeException e) {
+            SOAPFault fault = new SOAPFault(new AxisFault("Server", "Server Error", null, null));
+            SOAPEnvelope env = new SOAPEnvelope();
+            env.addBodyElement(fault);
+            Message message = new Message(env);
+            message.setMessageType(Message.RESPONSE);
+            msgContext.setResponseMessage(message);
+            throw new AxisFault(e.getMessage());
         }
     }
 }

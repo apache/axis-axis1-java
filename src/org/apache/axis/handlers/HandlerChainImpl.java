@@ -138,6 +138,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
                     return false;
                 }
             } catch (SOAPFaultException sfe) {
+                currentHandler.handleFault(context);
                 throw sfe;
             }
         }
