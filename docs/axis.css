@@ -26,3 +26,24 @@ h3 {
 h1 {
     margin-left: -30px
 }
+
+.note { 
+    font-weight:bold;  
+}
+
+.head { 
+    font-weight:bold; 
+    font-size: 240%; 
+    text-align: center; 
+}
+
+td.section { 
+    background-color: #82ADF6; 
+    font-size: 180%; 
+    text-align: center; 
+    font-weight: bold; 
+}
+
+small.red { 
+    color: red 
+}
