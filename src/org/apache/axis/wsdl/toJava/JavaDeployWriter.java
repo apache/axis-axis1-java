@@ -127,6 +127,12 @@ public class JavaDeployWriter extends JavaWriter {
 
             for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {
                 Port myPort = (Port) portIterator.next();
+                BindingEntry bEntry =  symbolTable.getBindingEntry(myPort.getBinding().getQName());
+
+                // If this isn't an SOAP binding, skip it
+                if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
+                    continue;
+                }
                 writeDeployPort(myPort);
             }
         }
