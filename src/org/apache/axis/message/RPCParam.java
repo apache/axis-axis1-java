@@ -187,7 +187,7 @@ public class RPCParam extends MessageElement
             // what's already there.
             for (int i = 0; i < attributes.getLength(); i++) {
                 attrs.addAttribute(attributes.getURI(i), attributes.getLocalName(i),
-                                   attributes.getQName(i), "string",
+                                   attributes.getQName(i), "CDATA",
                                    attributes.getValue(i));
             }
         } else {
@@ -198,14 +198,14 @@ public class RPCParam extends MessageElement
             if ((desc == null) || desc.getSendTypeAttr()) {
                 if (typeQName != null) {
                     attrs.addAttribute(Constants.URI_SCHEMA_XSI, "type", "xsi:type",
-                                       "string",
+                                       "CDATA",
                                        context.qName2String(typeQName));
                 }
             }
         
             if (val == null)
                 attrs.addAttribute(Constants.URI_SCHEMA_XSI, "null", "xsi:null",
-                                   "string", "1");
+                                   "CDATA", "1");
         }
         
         context.startElement(new QName(getNamespaceURI(), getName()), attrs);

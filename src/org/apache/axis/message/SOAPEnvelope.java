@@ -286,7 +286,7 @@ public class SOAPEnvelope
             attrs = new AttributesImpl();
             attrs.addAttribute(Constants.URI_SOAP_ENV,
                                Constants.ATTR_ENCODING_STYLE,
-                               "SOAP-ENV:" + Constants.ATTR_ENCODING_STYLE, "string", encodingStyleURI);
+                               "SOAP-ENV:" + Constants.ATTR_ENCODING_STYLE, "CDATA", encodingStyleURI);
         }
         
         context.startElement(new QName(Constants.URI_SOAP_ENV,
