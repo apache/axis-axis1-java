@@ -54,36 +54,28 @@
  */
 package org.apache.axis.transport.http;
 
-import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.net.BooleanHolder;
+import org.apache.axis.components.net.SocketFactory;
+import org.apache.axis.components.net.SocketFactoryFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.XMLUtils;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.SOAPException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -94,29 +86,6 @@ import java.util.StringTokenizer;
 public class HTTPSender extends BasicHandler {
 
     protected static Log log = LogFactory.getLog(HTTPSender.class.getName());
-
-    /** Hook for creating a different SSL socket factory
-     * XXX The whole thing can be refactored to use something like tomcat.util, which
-     *  is cleaner and support PureTLS.
-     */
-    public static interface SocketFactoryFactory {
-
-        /** Returns an instance of SSLSocketFactory, possibly with
-         *  different parameters ( like different trust policies )
-         */
-        public Object createFactory() throws Exception;
-    }
-
-
-    /**
-     * Utility Class BooleanHolder
-     */
-    static class BooleanHolder {
-        public boolean value;
-        public BooleanHolder(boolean value) {
-            this.value = value;
-        }
-    }
 
     /**
      * invoke creates a socket connection, sends the request SOAP message and then
@@ -143,7 +112,7 @@ public class HTTPSender extends BasicHandler {
 
                 // create socket based on the url protocol type
                 if (targetURL.getProtocol().equalsIgnoreCase("https")) {
-                    sock = getSecureSocket(host, port);
+                    sock = getSecureSocket(host, port, otherHeaders, useFullURL);
                 } else {
                     sock = getSocket(host, port, otherHeaders, useFullURL);
                 }
@@ -155,7 +124,7 @@ public class HTTPSender extends BasicHandler {
 
                 // Send the SOAP request to the server
                 writeToSocket(sock, msgContext, targetURL,
-                              otherHeaders, host, port, useFullURL);
+                        otherHeaders, host, port, useFullURL);
             } finally {
                 // FIXME (DIMS): IS THIS REALLY NEEDED? SalesRankNPrice fails
                 // for a direct (non-proxy) connection if this is enabled.
@@ -184,206 +153,11 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws Exception
      */
-    private Socket getSecureSocket(String host, int port) throws Exception {
-        Socket sock = null;
-
-        if (port == -1) {
-            port = 443;
-        }
-
-        // Get https.proxyXXX settings
-        String tunnelHost = getGlobalProperty("https.proxyHost");
-        String tunnelPortStr = getGlobalProperty("https.proxyPort");
-        String nonProxyHosts = getGlobalProperty("https.nonProxyHosts");
-
-        // Use http.proxyXXX settings if https.proxyXXX is not set
-        if (tunnelHost == null) {
-            tunnelHost = getGlobalProperty("http.proxyHost");
-        }
-        if (tunnelPortStr == null) {
-            tunnelPortStr = getGlobalProperty("http.proxyPort");
-        }
-        if (nonProxyHosts == null) {
-            nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
-        }
-
-        boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
-
-        try {
-
-            // Use java reflection to create a secure socket.
-            Class SSLSocketFactoryClass = ClassUtils.forName("javax.net.ssl.SSLSocketFactory");
-            Class SSLSocketClass = ClassUtils.forName("javax.net.ssl.SSLSocket");
-            Method createSocketMethod =
-                    SSLSocketFactoryClass.getMethod("createSocket",
-                            new Class[]{String.class,
-                                        Integer.TYPE});
-            Method getDefaultMethod =
-                    SSLSocketFactoryClass.getMethod("getDefault", new Class[]{});
-            Method startHandshakeMethod =
-                    SSLSocketClass.getMethod("startHandshake", new Class[]{});
-
-            Object factory = null;
-
-            // Hook in a different SSL socket factory
-            String socketFactoryClass = getGlobalProperty("axis.socketFactory");
-            if (socketFactoryClass != null) {
-                try {
-                    Class c1 = ClassUtils.forName(socketFactoryClass);
-                    SocketFactoryFactory sff = (SocketFactoryFactory) c1.newInstance();
-                    factory = sff.createFactory();
-                    if (log.isDebugEnabled()) {
-                        log.debug("Created socket factory " + sff.getClass().getName());
-                    }
-                } catch (Exception ex) {
-                }
-            }
-
-
-            if (factory == null)
-                factory = getDefaultMethod.invoke(null, new Object[]{});
-            Object sslSocket = null;
-
-            if ((tunnelHost == null) || tunnelHost.equals("") || hostInNonProxyList) {
-                // direct SSL connection
-                sslSocket = createSocketMethod.invoke(factory,
-                        new Object[]{host,new Integer(port)});
-            } else {
-                // SSL tunnelling through proxy server
-                Method createSocketMethod2 =
-                        SSLSocketFactoryClass.getMethod("createSocket",
-                                new Class[]{Socket.class,
-                                            String.class,
-                                            Integer.TYPE,
-                                            Boolean.TYPE});
-
-                // Default proxy port is 80, even for https
-                int tunnelPort = ((tunnelPortStr != null)
-                        ? ((Integer.parseInt(tunnelPortStr) < 0)
-                        ? 80
-                        : Integer.parseInt(tunnelPortStr))
-                        : 80);
-
-                // Create the regular socket connection to the proxy
-                Socket tunnel = new Socket(tunnelHost, tunnelPort);
-
-                // The tunnel handshake method (condensed and made reflexive)
-                OutputStream tunnelOutputStream =
-                        (OutputStream) SSLSocketClass.getMethod("getOutputStream",
-                                new Class[]{}).invoke(tunnel, new Object[]{});
-                PrintWriter out = new PrintWriter(
-                        new BufferedWriter(
-                                new OutputStreamWriter(tunnelOutputStream)));
-                String tunnelUser = getGlobalProperty("https.proxyUser");
-                String tunnelPassword = getGlobalProperty("https.proxyPassword");
-
-                if (tunnelUser == null) {
-                    tunnelUser = getGlobalProperty("http.proxyUser");
-                }
-                if (tunnelPassword == null) {
-                    tunnelPassword = getGlobalProperty("http.proxyPassword");
-                }
-
-                // More secure version... engage later?
-                // PasswordAuthentication pa =
-                // Authenticator.requestPasswordAuthentication(
-                // InetAddress.getByName(tunnelHost),
-                // tunnelPort, "SOCK", "Proxy","HTTP");
-                // if(pa == null){
-                // printDebug("No Authenticator set.");
-                // }else{
-                // printDebug("Using Authenticator.");
-                // tunnelUser = pa.getUserName();
-                // tunnelPassword = new String(pa.getPassword());
-                // }
-                out.print("CONNECT " + host + ":" + port + " HTTP/1.0\r\n"
-                        + "User-Agent: AxisClient");
-                if ((tunnelUser != null) && (tunnelPassword != null)) {
-                    // add basic authentication header for the proxy
-                    String encodedPassword =
-                            XMLUtils.base64encode((tunnelUser + ":"
-                            + tunnelPassword).getBytes());
-
-                    out.print("\nProxy-Authorization: Basic "
-                            + encodedPassword);
-                }
-                out.print("\nContent-Length: 0");
-                out.print("\nPragma: no-cache");
-                out.print("\r\n\r\n");
-                out.flush();
-                InputStream tunnelInputStream =
-                        (InputStream) SSLSocketClass.getMethod("getInputStream",
-                                new Class[]{}).invoke(tunnel, new Object[]{});
-
-                if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("isNull00",
-                            "tunnelInputStream",
-                            "" + (tunnelInputStream
-                            == null)));
-                }
-                String replyStr = "";
-
-                // Make sure to read all the response from the proxy to prevent SSL negotiation failure
-                // Response message terminated by two sequential newlines
-                int newlinesSeen = 0;
-                boolean headerDone = false;    /* Done on first newline */
-
-                while (newlinesSeen < 2) {
-                    int i = tunnelInputStream.read();
-
-                    if (i < 0) {
-                        throw new IOException("Unexpected EOF from proxy");
-                    }
-                    if (i == '\n') {
-                        headerDone = true;
-                        ++newlinesSeen;
-                    } else if (i != '\r') {
-                        newlinesSeen = 0;
-                        if (!headerDone) {
-                            replyStr += String.valueOf((char) i);
-                        }
-                    }
-                }
-                if (!replyStr.startsWith("HTTP/1.0 200")
-                        && !replyStr.startsWith("HTTP/1.1 200")) {
-                    throw new IOException(JavaUtils.getMessage("cantTunnel00",
-                            new String[]{
-                                tunnelHost,
-                                "" + tunnelPort,
-                                replyStr}));
-                }
-
-                // End of condensed reflective tunnel handshake method
-                sslSocket = createSocketMethod2.invoke(factory,
-                        new Object[]{tunnel,
-                                     host,
-                                     new Integer(port),
-                                     new Boolean(true)});
-                if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("setupTunnel00", tunnelHost,
-                            "" + tunnelPort));
-                }
-            }
-
-            // must shake out hidden errors!
-            startHandshakeMethod.invoke(sslSocket, new Object[]{
-            });
-            sock = (Socket) sslSocket;
-        } catch (ClassNotFoundException cnfe) {
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("noJSSE00"));
-            }
-            throw AxisFault.makeFault(cnfe);
-        } catch (NumberFormatException nfe) {
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("badProxy00", tunnelPortStr));
-            }
-            throw AxisFault.makeFault(nfe);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("createdSSL00"));
-        }
-        return sock;
+    private Socket getSecureSocket(
+            String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
+            throws Exception {
+        SocketFactory factory = SocketFactoryFactory.getSecureFactory(getOptions());
+        return factory.create(host, port, otherHeaders, useFullURL);
     }
 
     /**
@@ -400,45 +174,9 @@ public class HTTPSender extends BasicHandler {
      */
     private Socket getSocket(
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
-            throws IOException {
-        Socket sock = null;
-        String proxyHost = getGlobalProperty("http.proxyHost");
-        String proxyPort = getGlobalProperty("http.proxyPort");
-        String nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
-        boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
-        String proxyUsername = getGlobalProperty("http.proxyUser");
-        String proxyPassword = getGlobalProperty("http.proxyPassword");
-
-        if (proxyUsername != null) {
-            StringBuffer tmpBuf = new StringBuffer();
-
-            tmpBuf.append(proxyUsername).append(":").append((proxyPassword
-                    == null)
-                    ? ""
-                    : proxyPassword);
-            otherHeaders.append(HTTPConstants.HEADER_PROXY_AUTHORIZATION)
-                    .append(": Basic ")
-                    .append(Base64.encode(tmpBuf.toString().getBytes()))
-                    .append("\r\n");
-        }
-        if (port == -1) {
-            port = 80;
-        }
-        if ((proxyHost == null) || proxyHost.equals("") || (proxyPort == null)
-                || proxyPort.equals("") || hostInNonProxyList) {
-            sock = new Socket(host, port);
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("createdHTTP00"));
-            }
-        } else {
-            sock = new Socket(proxyHost, new Integer(proxyPort).intValue());
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("createdHTTP01", proxyHost,
-                        proxyPort));
-            }
-            useFullURL.value = true;
-        }
-        return sock;
+            throws Exception {
+        SocketFactory factory = SocketFactoryFactory.getFactory(getOptions());
+        return factory.create(host, port, otherHeaders, useFullURL);
     }
 
     /**
@@ -530,89 +268,79 @@ public class HTTPSender extends BasicHandler {
         }
         Message reqMessage = msgContext.getRequestMessage();
 
-        boolean http10= true;
-        boolean httpChunkStream= false;
-        String httpConnection= null;
+        boolean http10 = true;
+        boolean httpChunkStream = false;
+        String httpConnection = null;
 
-        String httpver= msgContext.getStrProp(MessageContext.HTTP_TRANSPORT_VERSION);
-        if( null == httpver) httpver= HTTPConstants.HEADER_PROTOCOL_V10;
-        httpver=httpver.trim();
-        if(httpver.equals( HTTPConstants.HEADER_PROTOCOL_V11)){
-            http10= false;
+        String httpver = msgContext.getStrProp(MessageContext.HTTP_TRANSPORT_VERSION);
+        if (null == httpver) httpver = HTTPConstants.HEADER_PROTOCOL_V10;
+        httpver = httpver.trim();
+        if (httpver.equals(HTTPConstants.HEADER_PROTOCOL_V11)) {
+            http10 = false;
         }
 
-        //process user defined headers for information. 
+        //process user defined headers for information.
         Hashtable userHeaderTable = (Hashtable) msgContext.
-             getProperty(HTTPConstants.REQUEST_HEADERS);
+                getProperty(HTTPConstants.REQUEST_HEADERS);
 
-        if(userHeaderTable != null) {
-            if(null== otherHeaders) otherHeaders= new StringBuffer(1024);
+        if (userHeaderTable != null) {
+            if (null == otherHeaders) otherHeaders = new StringBuffer(1024);
 
             for (java.util.Iterator e = userHeaderTable.entrySet().iterator();
-                  e.hasNext();) {
+                 e.hasNext();) {
 
-                java.util.Map.Entry me= (java.util.Map.Entry)e.next();
-                Object keyObj= me.getKey();
-                if(null == keyObj) continue;
-                String key= keyObj.toString().trim();
+                java.util.Map.Entry me = (java.util.Map.Entry) e.next();
+                Object keyObj = me.getKey();
+                if (null == keyObj) continue;
+                String key = keyObj.toString().trim();
 
-                if(key.equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING)){
-                    if(!http10){
-                      String val=  me.getValue().toString();
-                      if(null != val && val.trim().equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED))
-                          httpChunkStream= true; 
+                if (key.equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING)) {
+                    if (!http10) {
+                        String val = me.getValue().toString();
+                        if (null != val && val.trim().equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED))
+                            httpChunkStream = true;
                     }
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_HOST)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_TYPE)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_SOAP_ACTION)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_LENGTH)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE2)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_AUTHORIZATION)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_PROXY_AUTHORIZATION)){
-                  //ignore
-                }
-                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_CONNECTION)){
-                    if(!http10) {
-                      String val= me.getValue().toString();
-                      if(val.trim().equalsIgnoreCase(HTTPConstants.HEADER_CONNECTION_CLOSE))
-                          httpConnection= HTTPConstants.HEADER_CONNECTION_CLOSE; 
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_HOST)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_TYPE)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_SOAP_ACTION)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_LENGTH)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE2)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_AUTHORIZATION)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_PROXY_AUTHORIZATION)) {
+                    //ignore
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_CONNECTION)) {
+                    if (!http10) {
+                        String val = me.getValue().toString();
+                        if (val.trim().equalsIgnoreCase(HTTPConstants.HEADER_CONNECTION_CLOSE))
+                            httpConnection = HTTPConstants.HEADER_CONNECTION_CLOSE;
                     }
                     //HTTP 1.0 will always close.
-                    //HTTP 1.1 will use persistent. //no need to specify 
-                }
-                else{
+                    //HTTP 1.1 will use persistent. //no need to specify
+                } else {
                     otherHeaders.append(key).append(": ").append(me.getValue()).append("\r\n");
                 }
             }
         }
 
-if(!http10)
-   httpConnection= HTTPConstants.HEADER_CONNECTION_CLOSE; //Force close for now.
+        if (!http10)
+            httpConnection = HTTPConstants.HEADER_CONNECTION_CLOSE; //Force close for now.
 
         header.append(" ");
         header.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
-                     HTTPConstants.HEADER_PROTOCOL_11) 
+                HTTPConstants.HEADER_PROTOCOL_11)
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_HOST)
                 .append(": ")
                 .append(host)
-                .append((port==-1)?(""):(":"+port))
+                .append((port == -1)?(""):(":" + port))
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_CONTENT_TYPE)
                 .append(": ")
@@ -623,29 +351,28 @@ if(!http10)
                 .append(action)
                 .append("\"\r\n");
 
-        if(!httpChunkStream ){
+        if (!httpChunkStream) {
             //Content length MUST be sent on HTTP 1.0 requests.
             header.append(HTTPConstants.HEADER_CONTENT_LENGTH)
-                  .append(": ")
-                  .append(reqMessage.getContentLength())
-                  .append("\r\n");
-         }
-         else{
+                    .append(": ")
+                    .append(reqMessage.getContentLength())
+                    .append("\r\n");
+        } else {
             //Do http chunking.
-            header.append(HTTPConstants.HEADER_TRANSFER_ENCODING )
-            .append(": " )
-            .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
-            .append("\r\n" );
-         }
-
-        if(null != httpConnection){
-           header.append(HTTPConstants.HEADER_CONNECTION); 
-           header.append(": " );
-           header.append(httpConnection); 
-           header.append("\r\n" );
+            header.append(HTTPConstants.HEADER_TRANSFER_ENCODING)
+                    .append(": ")
+                    .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
+                    .append("\r\n");
         }
 
-        if(null != otherHeaders)
+        if (null != httpConnection) {
+            header.append(HTTPConstants.HEADER_CONNECTION);
+            header.append(": ");
+            header.append(httpConnection);
+            header.append("\r\n");
+        }
+
+        if (null != otherHeaders)
             header.append(otherHeaders); //Add other headers to the end.
 
         header.append("\r\n"); //The empty line to start the BODY.
@@ -654,10 +381,10 @@ if(!http10)
 
         out.write(header.toString()
                 .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
-        out.flush();        
-        ChunkedOutputStream chunkedOutputStream= null; 
-        if(httpChunkStream){
-            out= chunkedOutputStream=  new ChunkedOutputStream(out);
+        out.flush();
+        ChunkedOutputStream chunkedOutputStream = null;
+        if (httpChunkStream) {
+            out = chunkedOutputStream = new ChunkedOutputStream(out);
         }
 
         out = new BufferedOutputStream(out, 8 * 1024);
@@ -666,7 +393,7 @@ if(!http10)
         } catch (SOAPException e) {
             log.error(JavaUtils.getMessage("exception00"), e);
         }
-        if(null != chunkedOutputStream){
+        if (null != chunkedOutputStream) {
             out.flush();
             chunkedOutputStream.eos();
         }
@@ -825,13 +552,13 @@ if(!http10)
             String transferEncoding =
                     (String) headers
                     .get(HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase());
-            if(null != transferEncoding
-                  && transferEncoding.trim()
-                    .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED )){
-                 inp= new ChunkedInputStream(inp); 
+            if (null != transferEncoding
+                    && transferEncoding.trim()
+                    .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
+                inp = new ChunkedInputStream(inp);
             }
 
-                    
+
             outMsg = new Message(inp, false, contentType,
                     contentLocation);
             outMsg.setMessageType(Message.RESPONSE);
@@ -880,200 +607,5 @@ if(!http10)
             }
             msgContext.setProperty(cookieName, cookie);
         }
-    }
-
-    /**
-     * Check if the specified host is in the list of non proxy hosts.
-     *
-     * @param host host name
-     * @param nonProxyHosts string containing the list of non proxy hosts
-     *
-     * @return true/false
-     */
-    private boolean isHostInNonProxyList(String host, String nonProxyHosts) {
-        if ((nonProxyHosts == null) || (host == null)) {
-            return false;
-        }
-        /* The http.nonProxyHosts system property is a list enclosed in
-         * double quotes with items separated by a vertical bar.
-         */
-        StringTokenizer tokenizer = new StringTokenizer(nonProxyHosts, "|\"");
-
-        while (tokenizer.hasMoreTokens()) {
-            String pattern = tokenizer.nextToken();
-
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("match00",
-                        new String[]{"HTTPSender",
-                                     host,
-                                     pattern}));
-            }
-            if (match(pattern, host, false)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Matches a string against a pattern. The pattern contains two special
-     * characters:
-     * '*' which means zero or more characters,
-     *
-     * @param pattern the (non-null) pattern to match against
-     * @param str     the (non-null) string that must be matched against the
-     *                pattern
-     * @param isCaseSensitive
-     *
-     * @return <code>true</code> when the string matches against the pattern,
-     *         <code>false</code> otherwise.
-     */
-    private static boolean match(String pattern, String str,
-                                 boolean isCaseSensitive) {
-        char[] patArr = pattern.toCharArray();
-        char[] strArr = str.toCharArray();
-        int patIdxStart = 0;
-        int patIdxEnd = patArr.length - 1;
-        int strIdxStart = 0;
-        int strIdxEnd = strArr.length - 1;
-        char ch;
-        boolean containsStar = false;
-
-        for (int i = 0; i < patArr.length; i++) {
-            if (patArr[i] == '*') {
-                containsStar = true;
-                break;
-            }
-        }
-        if (!containsStar) {
-
-            // No '*'s, so we make a shortcut
-            if (patIdxEnd != strIdxEnd) {
-                return false;        // Pattern and string do not have the same size
-            }
-            for (int i = 0; i <= patIdxEnd; i++) {
-                ch = patArr[i];
-                if (isCaseSensitive && (ch != strArr[i])) {
-                    return false;    // Character mismatch
-                }
-                if (!isCaseSensitive
-                        && (Character.toUpperCase(ch)
-                        != Character.toUpperCase(strArr[i]))) {
-                    return false;    // Character mismatch
-                }
-            }
-            return true;             // String matches against pattern
-        }
-        if (patIdxEnd == 0) {
-            return true;    // Pattern contains only '*', which matches anything
-        }
-
-        // Process characters before first star
-        while ((ch = patArr[patIdxStart]) != '*'
-                && (strIdxStart <= strIdxEnd)) {
-            if (isCaseSensitive && (ch != strArr[strIdxStart])) {
-                return false;    // Character mismatch
-            }
-            if (!isCaseSensitive
-                    && (Character.toUpperCase(ch)
-                    != Character.toUpperCase(strArr[strIdxStart]))) {
-                return false;    // Character mismatch
-            }
-            patIdxStart++;
-            strIdxStart++;
-        }
-        if (strIdxStart > strIdxEnd) {
-
-            // All characters in the string are used. Check if only '*'s are
-            // left in the pattern. If so, we succeeded. Otherwise failure.
-            for (int i = patIdxStart; i <= patIdxEnd; i++) {
-                if (patArr[i] != '*') {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // Process characters after last star
-        while ((ch = patArr[patIdxEnd]) != '*' && (strIdxStart <= strIdxEnd)) {
-            if (isCaseSensitive && (ch != strArr[strIdxEnd])) {
-                return false;    // Character mismatch
-            }
-            if (!isCaseSensitive
-                    && (Character.toUpperCase(ch)
-                    != Character.toUpperCase(strArr[strIdxEnd]))) {
-                return false;    // Character mismatch
-            }
-            patIdxEnd--;
-            strIdxEnd--;
-        }
-        if (strIdxStart > strIdxEnd) {
-
-            // All characters in the string are used. Check if only '*'s are
-            // left in the pattern. If so, we succeeded. Otherwise failure.
-            for (int i = patIdxStart; i <= patIdxEnd; i++) {
-                if (patArr[i] != '*') {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // process pattern between stars. padIdxStart and patIdxEnd point
-        // always to a '*'.
-        while ((patIdxStart != patIdxEnd) && (strIdxStart <= strIdxEnd)) {
-            int patIdxTmp = -1;
-
-            for (int i = patIdxStart + 1; i <= patIdxEnd; i++) {
-                if (patArr[i] == '*') {
-                    patIdxTmp = i;
-                    break;
-                }
-            }
-            if (patIdxTmp == patIdxStart + 1) {
-
-                // Two stars next to each other, skip the first one.
-                patIdxStart++;
-                continue;
-            }
-
-            // Find the pattern between padIdxStart & padIdxTmp in str between
-            // strIdxStart & strIdxEnd
-            int patLength = (patIdxTmp - patIdxStart - 1);
-            int strLength = (strIdxEnd - strIdxStart + 1);
-            int foundIdx = -1;
-
-            strLoop:
-            for (int i = 0; i <= strLength - patLength; i++) {
-                for (int j = 0; j < patLength; j++) {
-                    ch = patArr[patIdxStart + j + 1];
-                    if (isCaseSensitive
-                            && (ch != strArr[strIdxStart + i + j])) {
-                        continue strLoop;
-                    }
-                    if (!isCaseSensitive && (Character
-                            .toUpperCase(ch) != Character
-                            .toUpperCase(strArr[strIdxStart + i + j]))) {
-                        continue strLoop;
-                    }
-                }
-                foundIdx = strIdxStart + i;
-                break;
-            }
-            if (foundIdx == -1) {
-                return false;
-            }
-            patIdxStart = patIdxTmp;
-            strIdxStart = foundIdx + patLength;
-        }
-
-        // All characters in the string are used. Check if only '*'s are left
-        // in the pattern. If so, we succeeded. Otherwise failure.
-        for (int i = patIdxStart; i <= patIdxEnd; i++) {
-            if (patArr[i] != '*') {
-                return false;
-            }
-        }
-        return true;
     }
 }

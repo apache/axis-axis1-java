@@ -52,65 +52,108 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
-package org.apache.axis.transport.http;
+package org.apache.axis.components.net;
 
 import com.sun.net.ssl.SSLContext;
 import com.sun.net.ssl.TrustManager;
 import com.sun.net.ssl.X509TrustManager;
-
-import org.apache.axis.AxisProperties;
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 
-import java.io.IOException;
+import java.util.Hashtable;
 
-
-/** Hook for Axis sender, allowing unsigned server certs
+/**
+ * Hook for Axis sender, allowing unsigned server certs
  */
-public class FakeTrustSocketFactory implements HTTPSender.SocketFactoryFactory {
+public class FakeTrustSocketFactory extends JSSESocketFactory {
+
+    /** Field log           */
     protected static Log log =
             LogFactory.getLog(FakeTrustSocketFactory.class.getName());
 
-    public Object createFactory() throws IOException {
+    /**
+     * Constructor FakeTrustSocketFactory
+     *
+     * @param attributes
+     */
+    public FakeTrustSocketFactory(Hashtable attributes) {
+        super(attributes);
+    }
+
+    /**
+     * Method getContext
+     *
+     * @return
+     *
+     * @throws Exception
+     */
+    protected com.sun.net.ssl.SSLContext getContext() throws Exception {
+
         try {
             SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(
-                    null, // we don't need no stinkin KeyManager
+
+            sc.init(null, // we don't need no stinkin KeyManager
                     new TrustManager[]{new FakeX509TrustManager()},
-                    new java.security.SecureRandom()
-            );
+                    new java.security.SecureRandom());
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("ftsf00"));
             }
-            return sc.getSocketFactory();
+            return sc;
         } catch (Exception exc) {
             log.error(JavaUtils.getMessage("ftsf01"), exc);
-            throw new IOException(JavaUtils.getMessage("ftsf02"));
+            throw new Exception(JavaUtils.getMessage("ftsf02"));
         }
     }
 
+    /**
+     * Class FakeX509TrustManager
+     */
     public static class FakeX509TrustManager implements X509TrustManager {
+
+        /** Field log           */
         protected static Log log =
                 LogFactory.getLog(FakeX509TrustManager.class.getName());
 
-        public boolean isClientTrusted(java.security.cert.X509Certificate[] chain) {
+        /**
+         * Method isClientTrusted
+         *
+         * @param chain
+         *
+         * @return
+         */
+        public boolean isClientTrusted(java.security.cert
+                .X509Certificate[] chain) {
+
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("ftsf03"));
             }
             return true;
         }
 
-        public boolean isServerTrusted(java.security.cert.X509Certificate[] chain) {
+        /**
+         * Method isServerTrusted
+         *
+         * @param chain
+         *
+         * @return
+         */
+        public boolean isServerTrusted(java.security.cert
+                .X509Certificate[] chain) {
+
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("ftsf04"));
             }
             return true;
         }
 
+        /**
+         * Method getAcceptedIssuers
+         *
+         * @return
+         */
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("ftsf05"));
             }
