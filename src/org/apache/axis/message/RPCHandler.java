@@ -61,27 +61,19 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.Constants;
-import org.apache.axis.Handler;
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.FieldTarget;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.cache.JavaClass;
-import org.apache.axis.utils.cache.ClassCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import java.lang.reflect.Method;
 import java.util.Vector;
 
 /**

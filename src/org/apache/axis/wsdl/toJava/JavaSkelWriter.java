@@ -56,7 +56,6 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -67,7 +66,6 @@ import javax.wsdl.BindingOutput;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
 
 import javax.wsdl.extensions.ExtensibilityElement;
 
@@ -129,6 +127,10 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("        return (org.apache.axis.description.OperationDesc)_myOperations.get(methodName);");
         pw.println("    }");
         pw.println();
+        pw.println("    public static java.util.Collection getOperationDescs() {");
+        pw.println("        return _myOperations.values();");
+        pw.println("    }");
+        pw.println();
 
         // Initialize operation parameter names
         pw.println("    static {");
@@ -142,7 +144,8 @@ public class JavaSkelWriter extends JavaWriter {
 
             if (parameters != null) {
                 // The invoked java name of the operation is stored.
-                String opName = Utils.xmlNameToJava(operation.getOperation().getName());
+                String opName = operation.getOperation().getName();
+                String javaOpName = Utils.xmlNameToJava(opName);
                 pw.println("        _params = new org.apache.axis.description.ParameterDesc [] {");
 
                 for (int j=0; j < parameters.list.size(); j++) {
@@ -167,66 +170,7 @@ public class JavaSkelWriter extends JavaWriter {
                 }
 
                 pw.println("        };");
-//                if (parameters.returnType != null) {
-//                    pw.println("                   " +
-//                               Utils.getNewQName(parameters.returnName) + ",");
-//                } else {
-//                    pw.println("                   null,");
-//                }
 
-//                // Find the input clause's namespace
-//                BindingInput input = operation.getBindingInput();
-//                if (input == null) {
-//                    pw.println("                 null,");
-//                }
-//                else {
-//                    List elems = input.getExtensibilityElements();
-//                    boolean found = false;
-//                    Iterator it = elems.iterator();
-//                    while (!found && it.hasNext()) {
-//                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
-//                        if (elem instanceof SOAPBody) {
-//                            SOAPBody body = (SOAPBody) elem;
-//                            String ns = body.getNamespaceURI();
-//                            if (ns != null) {
-//                                pw.println("                 \"" + ns + "\",");
-//                                found = true;
-//                            }
-//                        }
-//                    }
-//                    if (!found) {
-//                        pw.println("                 null,");
-//                    }
-//                }
-//
-//                // Find the output clause's namespace
-//                BindingOutput output = operation.getBindingOutput();
-//                if (output == null) {
-//                    pw.println("                 null,");
-//                }
-//                else {
-//                    List elems = output.getExtensibilityElements();
-//                    Iterator it = elems.iterator();
-//                    boolean found = false;
-//                    while (!found && it.hasNext()) {
-//                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
-//                        if (elem instanceof SOAPBody) {
-//                            SOAPBody body = (SOAPBody) elem;
-//                            String ns = body.getNamespaceURI();
-//                            if (ns != null) {
-//                                pw.println("                 \"" + ns + "\",");
-//                                found = true;
-//                            }
-//                        }
-//                    }
-//                    if (!found) {
-//                        pw.println("                 null,");
-//                    }
-//                }
-//
-//                if (!found) {
-//                    pw.println("                 null);");
-//                }
                 String returnStr;
                 if (parameters.returnType != null) {
                     returnStr = Utils.getNewQName(parameters.returnName);
@@ -234,7 +178,32 @@ public class JavaSkelWriter extends JavaWriter {
                     returnStr = "null";
                 }
                 pw.println("        _oper = new org.apache.axis.description.OperationDesc(\"" +
-                            opName + "\", _params, " + returnStr + ");");
+                            javaOpName + "\", _params, " + returnStr + ");");
+
+                String ns = "";
+                BindingInput input = operation.getBindingInput();
+                if (input != null) {
+                    List elems = input.getExtensibilityElements();
+                    Iterator it = elems.iterator();
+                    while (it.hasNext()) {
+                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
+                        if (elem instanceof SOAPBody) {
+                            SOAPBody body = (SOAPBody) elem;
+                            ns = body.getNamespaceURI();
+                            break;
+                        }
+                    }
+                }
+
+                // If we need to know the QName (if we have a namespace or
+                // the actual method name doesn't match the XML we expect),
+                // record it in the OperationDesc
+                if (!"".equals(ns) || !javaOpName.equals(opName)) {
+                    javax.xml.rpc.namespace.QName qn =
+                            new javax.xml.rpc.namespace.QName(ns, opName);
+                    pw.println("        _oper.setElementQName(" +
+                            Utils.getNewQName(qn) + ");");
+                }
 
                 // Find the SOAPAction.
                 List elems = operation.getExtensibilityElements();
@@ -252,7 +221,7 @@ public class JavaSkelWriter extends JavaWriter {
                     }
                 }
 
-                pw.println("        _myOperations.put(\"" + opName + "\", _oper);");
+                pw.println("        _myOperations.put(\"" + javaOpName + "\", _oper);");
             }
         }
         pw.println("    }");

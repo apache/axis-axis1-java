@@ -167,6 +167,8 @@ public class WSDDService
             String ns = XMLUtils.getChildCharacterData(namespaceElements[i]);
             namespaces.add(ns);
         }
+        if (!namespaces.isEmpty())
+            desc.setNamespaceMappings(namespaces);
 
         Element wsdlElem = getChildElement(e, "wsdlFile");
         if (wsdlElem != null) {
@@ -183,11 +185,10 @@ public class WSDDService
     }
     
     /**
-     * This method should b used for dynamic deployment using new WSDDService()
-     * etc. It validates some standard parameters for some standard providers
-     * (if any). This is part of Axis. Do this before deployment.desployService().
-     *
-     **/
+     * This method can be used for dynamic deployment using new WSDDService()
+     * etc.  It validates some standard parameters for some standard providers
+     * (if present).  Do this before deployment.deployService().
+     */
     public void validateDescriptors()
     {
         String className = this.getParameter("className");
@@ -224,13 +225,6 @@ public class WSDDService
         typeMappings.add(mapping);
     }
 
-    /**
-     * Add an WSDDOperation to the Service.
-     * @param mapping
-     **/
-    public void addOperation(WSDDOperation operation) {
-        operations.add(operation);
-    }
 
     protected QName getElementName()
     {

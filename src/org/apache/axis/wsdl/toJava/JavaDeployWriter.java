@@ -203,7 +203,7 @@ public class JavaDeployWriter extends JavaWriter {
                 }
                 writeTypeMapping(namespaceURI, localPart, javaType, serializerFactory,
                                  deserializerFactory, encodingStyle);
-            }
+                }
         }
     } //writeDeployTypes
 
@@ -220,8 +220,8 @@ public class JavaDeployWriter extends JavaWriter {
         pw.println("        serializer=\"" + serializerFactory + "\"");
         pw.println("        deserializer=\"" + deserializerFactory + "\"");
         pw.println("        encodingStyle=\"" + encodingStyle + "\"");
-        pw.println("      />");
-    }
+                pw.println("      />");
+            }
 
     /**
      * Write out deployment and undeployment instructions for given WSDL port
@@ -339,7 +339,7 @@ public class JavaDeployWriter extends JavaWriter {
                         paramQName = param.getQName();
                         if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
                             paramQName = new QName("", param.getName());
-                        } 
+                        }
 
                         // Get the parameter mode
                         if (param.getMode() != Parameter.IN) {
@@ -357,7 +357,7 @@ public class JavaDeployWriter extends JavaWriter {
 
         pw.print("      <parameter name=\"allowedMethods\" value=\"");
         if (methodList.length() == 0) {
-            pw.println("\"/>");
+            pw.println("*\"/>");
         }
         else {
             pw.println(methodList.substring(1) + "\"/>");

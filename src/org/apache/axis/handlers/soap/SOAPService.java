@@ -58,39 +58,33 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
-import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.providers.java.MsgProvider;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
-
+import org.apache.axis.utils.cache.ClassCache;
+import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.beans.IntrospectionException;
-import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -121,6 +115,7 @@ public class SOAPService extends SimpleTargetedChain
      * metadata about this service.
      */
     private ServiceDesc serviceDescription = new ServiceDesc();
+    private AxisEngine engine;
 
     /**
      * SOAPRequestHandler is used to inject SOAP semantics just before
@@ -211,8 +206,6 @@ public class SOAPService extends SimpleTargetedChain
 
     private void initTypeMappingRegistry() {
         tmr = new TypeMappingRegistryImpl();
-        // The TMR has the SOAP/XSD in the default TypeMapping
-        //tmr.setParent(SOAPTypeMappingRegistry.getSingleton());
     }
     
     public TypeMappingRegistry getTypeMappingRegistry()
@@ -239,7 +232,9 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void setEngine(AxisEngine engine)
     {
-        tmr.delegate(engine.getTypeMappingRegistry());
+        this.engine = engine;
+        if (engine != null)
+            tmr.delegate(engine.getTypeMappingRegistry());
     }
 
     public boolean availableFromTransport(String transportName)
@@ -265,6 +260,46 @@ public class SOAPService extends SimpleTargetedChain
     }
 
     public ServiceDesc getServiceDescription() {
+        return serviceDescription;
+    }
+
+    public ServiceDesc getInitializedServiceDesc(MessageContext msgContext) {
+        if (serviceDescription.getImplClass() == null) {
+            String clsName = (String)getOption("className");
+
+            if (clsName != null) {
+                ClassLoader cl = null;
+                if (msgContext == null) {
+                    cl = Thread.currentThread().getContextClassLoader();
+                } else {
+                    cl = msgContext.getClassLoader();
+                }
+                if (engine != null) {
+                    ClassCache cache     = engine.getClassCache();
+                    JavaClass       jc   = null;
+                    try {
+                        jc = cache.lookup(clsName, cl);
+                        serviceDescription.setImplClass(jc.getJavaClass());
+                    } catch (ClassNotFoundException e) {
+                        return null;
+                    }
+                } else {
+                    try {
+                        Class cls = cl.loadClass(clsName);
+                        serviceDescription.setImplClass(cls);
+                    } catch (ClassNotFoundException e) {
+                        return null; // FIXME - throw?
+                    }
+                }
+                TypeMapping tm;
+                if (msgContext == null) {
+                    tm = DefaultTypeMappingImpl.getSingleton();
+                } else {
+                    tm = msgContext.getTypeMapping();
+                }
+                serviceDescription.setTypeMapping(tm);
+            }
+        }
         return serviceDescription;
     }
 

@@ -12,6 +12,7 @@
             xmlns:reg="http://www.soapinterop.org/Registry">
 
   <service name="http://www.soapinterop.org/Bid" provider="java:RPC" >
+    <namespace>http://www.soapinterop.org/Bid</namespace>
     <parameter name="className" value="samples.bidbuy.BidService" />
     <parameter name="allowedMethods" value="RequestForQuote SimpleBuy Buy Ping" />
   </service>

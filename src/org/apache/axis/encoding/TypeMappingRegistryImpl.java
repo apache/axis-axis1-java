@@ -175,7 +175,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         mapTM = new HashMap();
         if (Constants.URI_CURRENT_SOAP_ENC.equals(Constants.URI_SOAP_ENC)) {
             defaultDelTM = 
-                new TypeMappingImpl(DefaultTypeMappingImpl.create()); 
+                new TypeMappingImpl(DefaultTypeMappingImpl.getSingleton());
         } else {
             defaultDelTM = 
                 new TypeMappingImpl(DefaultSOAP12TypeMappingImpl.create()); 

@@ -69,6 +69,7 @@ import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * A SimpleProvider is an EngineConfiguration which contains a simple
@@ -102,6 +103,7 @@ public class SimpleProvider implements EngineConfiguration
 
     /** An optional "default" EngineConfiguration */
     EngineConfiguration defaultConfiguration = null;
+    private AxisEngine engine;
 
     /**
      * Default constructor.
@@ -123,8 +125,14 @@ public class SimpleProvider implements EngineConfiguration
      */
     public void configureEngine(AxisEngine engine) throws ConfigurationException
     {
+        this.engine = engine;
+
         if (defaultConfiguration != null)
             defaultConfiguration.configureEngine(engine);
+
+        for (Iterator i = services.values().iterator(); i.hasNext(); ) {
+            ((SOAPService)i.next()).setEngine(engine);
+        }
     }
 
     /**
@@ -234,6 +242,7 @@ public class SimpleProvider implements EngineConfiguration
     public void deployService(QName qname, SOAPService service)
     {
         services.put(qname, service);
+        service.setEngine(engine);
     }
 
     public void deployService(String name, SOAPService service)

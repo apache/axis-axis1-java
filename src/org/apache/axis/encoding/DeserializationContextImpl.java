@@ -111,7 +111,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     
     private SAX2EventRecorder recorder = new SAX2EventRecorder();
     private SOAPEnvelope envelope;
-    
+
 
     /* A map of IDs -> IDResolvers */
     private HashMap idMap;
@@ -225,6 +225,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void setCurElement(MessageElement el)
     {
         curElement = el;
+        if (curElement.getRecorder() != recorder) {
+            recorder = curElement.getRecorder();
+        }
     }
     
     
@@ -380,7 +383,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     /**
      * Convenenience method that returns true if the value is nil 
      * (due to the xsi:nil) attribute.
-     * @param attributes are the element attributes.
+     * @param attrs are the element attributes.
      * @return true if xsi:nil is true
      */
     public boolean isNil(Attributes attrs) {
@@ -472,7 +475,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * not been processed.  If it is not a MessageElement, the Object is the
      * actual deserialized value.  
      * In addition, this method is invoked to get Object values via Attachments.
-     * @param id is the value of an href attribute (or an Attachment id)
+     * @param href is the value of an href attribute (or an Attachment id)
      * @return MessageElement other Object or null
      */ 
     public Object getObjectByRef(String href) {
@@ -508,18 +511,18 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @param id (id name without the #)
      * @param obj is the deserialized object for this id.
      */
-    public void addObjectById(String _id, Object obj)
+    public void addObjectById(String id, Object obj)
     {
         // The resolver uses the href syntax as the key.
-        String id = "#" + _id;
+        String idStr = "#" + id;
         if ((idMap == null) || (id == null))
             return ;
         
-        IDResolver resolver = (IDResolver)idMap.get(id);
+        IDResolver resolver = (IDResolver)idMap.get(idStr);
         if (resolver == null)
             return ;
         
-        resolver.addReferencedObject(id, obj);
+        resolver.addReferencedObject(idStr, obj);
         return;
     }
 
@@ -640,6 +643,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
              */
         }
         curElement = elem;
+
+        if (elem.getRecorder() != recorder)
+            recorder = elem.getRecorder();
     }
     
     /****************************************************************
@@ -802,9 +808,6 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     /** 
      * startElement is called when an element is read.  This is the big work-horse.
      *
-     * This is a big workhorse.  Manage the state of the parser, check for
-     * basic SOAP compliance (envelope, then optional header, then body, etc).
-     * 
      * This guy also handles monitoring the recording depth if we're recording
      * (so we know when to stop).
      */

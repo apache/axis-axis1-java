@@ -109,7 +109,7 @@ public class DefaultSOAP12TypeMappingImpl extends DefaultTypeMappingImpl {
         super();
         // This default type mapping only contains the SOAP 1.2 differences.
         // delegate to the DefaultTypeMapping as necessary.
-        delegate = DefaultTypeMappingImpl.create();
+        delegate = DefaultTypeMappingImpl.getSingleton();
 
         // Notes:
         // 1) The registration statements are order dependent.  The last one

@@ -786,7 +786,6 @@ public class Emitter {
         retParam.setTypeQName(desc.getReturnType());
         retParam.setJavaType(desc.getReturnClass());
         retParam.setMode(ParameterDesc.OUT);
-        // FIXME : Set Java type??
         writePartToMessage(def, msg, false, retParam);
 
         ArrayList parameters = desc.getParameters();

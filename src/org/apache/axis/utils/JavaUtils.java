@@ -389,11 +389,6 @@ public class JavaUtils
                 return true;
         }
 
-//        // FIXME : This is a horrible hack put in here to deal with a problem
-//        // with our default typemappings.
-//        if (destHeld != null && (getPrimitiveClass(destHeld) == src))
-//            return true;
-
         // If it's holder -> held or held -> holder, we're good
         Class srcHeld = JavaUtils.getHolderValueType(src);
         if (srcHeld != null) {
@@ -717,8 +712,8 @@ public class JavaUtils
      * Like String.replace except that the old new items are strings.
      *
      * @param name string
-     * @param oldt old text to replace
-     * @param newt new text to use
+     * @param oldT old text to replace
+     * @param newT new text to use
      * @return replacement string
      **/
     public static final String replace (String name,

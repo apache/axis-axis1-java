@@ -318,7 +318,7 @@ public class Java2WSDL {
                         String value = option.getArgument();
                         if (value.equals("1.1")) {
                             emitter.setDefaultTypeMapping(
-                                DefaultTypeMappingImpl.create());
+                                DefaultTypeMappingImpl.getSingleton());
                         } else if (value.equals("1.2")) {
                             emitter.setDefaultTypeMapping(
                                 DefaultSOAP12TypeMappingImpl.create());
