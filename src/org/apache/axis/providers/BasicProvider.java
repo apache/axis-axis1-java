@@ -59,14 +59,10 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.commons.logging.Log;
-import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 import java.util.Hashtable;
@@ -137,141 +133,18 @@ public abstract class BasicProvider extends BasicHandler {
     /**
      * Generate the WSDL for this service.
      *
-     * Put in the "WSDL" property of the message context
-     * as a org.w3c.dom.Document
+     * This method can be overwritten in a subclass with
+     * code that put in the "WSDL" property of the message 
+     * context as a org.w3c.dom.Document
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        if (log.isDebugEnabled())
-            log.debug("Enter: BSFProvider::generateWSDL (" + this + ")");
-
-        /* Find the service we're invoking so we can grab it's options */
-        /***************************************************************/
-        SOAPService service = msgContext.getService();
-        ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
-
-        // Calculate the appropriate namespaces for the WSDL we're going
-        // to put out.
-        //
-        // If we've been explicitly told which namespaces to use, respect
-        // that.  If not:
-        //
-        // The "interface namespace" should be either:
-        // 1) The namespace of the ServiceDesc
-        // 2) The transport URL (if there's no ServiceDesc ns)
-
-        try {
-            // Location URL is whatever is explicitly set in the MC
-            String locationUrl =
-                    msgContext.getStrProp(MessageContext.WSDLGEN_SERV_LOC_URL);
-
-            if (locationUrl == null) {
-                // If nothing, try what's explicitly set in the ServiceDesc
-                locationUrl = serviceDesc.getEndpointURL();
-            }
-
-            if (locationUrl == null) {
-                // If nothing, use the actual transport URL
-                locationUrl = msgContext.getStrProp(MessageContext.TRANS_URL);
-            }
-
-            // Interface namespace is whatever is explicitly set
-            String interfaceNamespace =
-                    msgContext.getStrProp(MessageContext.WSDLGEN_INTFNAMESPACE);
-
-            if (interfaceNamespace == null) {
-                // If nothing, use the default namespace of the ServiceDesc
-                interfaceNamespace = serviceDesc.getDefaultNamespace();
-            }
-
-            if (interfaceNamespace == null) {
-                // If nothing still, use the location URL determined above
-                interfaceNamespace = locationUrl;
-            }
-
-//  Do we want to do this?
-//
-//            if (locationUrl == null) {
-//                locationUrl = url;
-//            } else {
-//                try {
-//                    URL urlURL = new URL(url);
-//                    URL locationURL = new URL(locationUrl);
-//                    URL urlTemp = new URL(urlURL.getProtocol(),
-//                            locationURL.getHost(),
-//                            locationURL.getPort(),
-//                            urlURL.getFile());
-//                    interfaceNamespace += urlURL.getFile();
-//                    locationUrl = urlTemp.toString();
-//                } catch (Exception e) {
-//                    locationUrl = url;
-//                    interfaceNamespace = url;
-//                }
-//            }
-
-            Emitter emitter = new Emitter();
-
-            // Set the name for the target service.
-            emitter.setServiceElementName(serviceDesc.getName());
-            
-            // service alias may be provided if exact naming is required,
-            // otherwise Axis will name it according to the implementing class name
-            String alias = (String) service.getOption("alias");
-            if (alias != null) emitter.setServiceElementName(alias);
-
-            // Set style/use
-            emitter.setStyle(serviceDesc.getStyle());
-            emitter.setUse(serviceDesc.getUse());
-
-            emitter.setClsSmart(serviceDesc.getImplClass(), locationUrl);
-
-            // If a wsdl target namespace was provided, use the targetNamespace.
-            // Otherwise use the interfaceNamespace constructed above.
-            String targetNamespace = (String) service.getOption(OPTION_WSDL_TARGETNAMESPACE);
-            if (targetNamespace == null ||
-                    targetNamespace.length() == 0) {
-                targetNamespace = interfaceNamespace;
-            }
-            emitter.setIntfNamespace(targetNamespace);
-
-            emitter.setLocationUrl(locationUrl);
-            emitter.setServiceDesc(serviceDesc);
-            emitter.setTypeMapping((TypeMapping) msgContext.getTypeMappingRegistry()
-                    .getTypeMapping(serviceDesc.getUse().getEncoding()));
-            emitter.setDefaultTypeMapping((TypeMapping) msgContext.getTypeMappingRegistry().
-                    getDefaultTypeMapping());
-
-            String wsdlPortType = (String) service.getOption(OPTION_WSDL_PORTTYPE);
-            String wsdlServiceElement = (String) service.getOption(OPTION_WSDL_SERVICEELEMENT);
-            String wsdlServicePort = (String) service.getOption(OPTION_WSDL_SERVICEPORT);
-
-            if (wsdlPortType != null && wsdlPortType.length() > 0) {
-                emitter.setPortTypeName(wsdlPortType);
-            }
-            if (wsdlServiceElement != null && wsdlServiceElement.length() > 0) {
-                emitter.setServiceElementName(wsdlServiceElement);
-            }
-            if (wsdlServicePort != null && wsdlServicePort.length() > 0) {
-                emitter.setServicePortName(wsdlServicePort);
-            }
-
-            String wsdlInputSchema = (String)
-                    service.getOption(OPTION_WSDL_INPUTSCHEMA);
-            if (null != wsdlInputSchema && wsdlInputSchema.length() > 0) {
-                emitter.setInputSchema(wsdlInputSchema);
-            }
-
-            Document doc = emitter.emit(Emitter.MODE_ALL);
-
-            msgContext.setProperty("WSDL", doc);
-        } catch (NoClassDefFoundError e) {
-            entLog.info(Messages.getMessage("toAxisFault00"), e);
-            throw new AxisFault(e.toString(), e);
-        } catch (Exception e) {
-            entLog.info(Messages.getMessage("toAxisFault00"), e);
-            throw AxisFault.makeFault(e);
-        }
-
-        if (log.isDebugEnabled())
-            log.debug("Exit: JavaProvider::generateWSDL (" + this + ")");
+         
+      AxisFault fault = new AxisFault( Messages.getMessage("noWSDL03"));
+      
+      // set the fault code, so that QSWSDLHandler could deside to report "nowsdl"
+      // instead of throwing an AxisFault
+      fault.setFaultCode( Constants.QNAME_NO_WSDLGENERATOR_FAULT_CODE);
+      
+      throw fault;
     }
 }
