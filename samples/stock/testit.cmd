@@ -1,7 +1,5 @@
 rem this assumes webserver is running on port 8080
 
-set
-
 echo First test the StockQuoteService.jws file
 java samples.stock.GetQuote -uuser1 -wpass1 XXX -s/axis/StockQuoteService.jws
 
