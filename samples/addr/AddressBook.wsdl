@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<definitions name="urn:AddressFetcher" 
+<definitions name="urn:AddressFetcher"
              targetNamespace="urn:AddressFetcher2"
              xmlns:tns="urn:AddressFetcher2"
              xmlns:typens="urn:xml-soap-address-demo"
@@ -13,18 +13,22 @@
     <xsd:schema targetNamespace="urn:xml-soap-address-demo"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
       <xsd:complexType name="phone">
-        <xsd:element name="areaCode" type="xsd:int"/>
-        <xsd:element name="exchange" type="xsd:string"/>
-        <xsd:element name="number" type="xsd:string"/>
+        <xsd:all>
+            <xsd:element name="areaCode" type="xsd:int"/>
+            <xsd:element name="exchange" type="xsd:string"/>
+            <xsd:element name="number" type="xsd:string"/>
+        </xsd:all>
       </xsd:complexType>
 
       <xsd:complexType name="address">
-        <xsd:element name="streetNum" type="xsd:int"/>
-        <xsd:element name="streetName" type="xsd:string"/>
-        <xsd:element name="city" type="xsd:string"/>
-        <xsd:element name="state" type="xsd:string"/>
-        <xsd:element name="zip" type="xsd:int"/>
-        <xsd:element name="phoneNumber" type="typens:phone"/>
+        <xsd:all>
+            <xsd:element name="streetNum" type="xsd:int"/>
+            <xsd:element name="streetName" type="xsd:string"/>
+            <xsd:element name="city" type="xsd:string"/>
+            <xsd:element name="state" type="xsd:string"/>
+            <xsd:element name="zip" type="xsd:int"/>
+            <xsd:element name="phoneNumber" type="typens:phone"/>
+        </xsd:all>
       </xsd:complexType>
     </xsd:schema>
   </types>
@@ -56,17 +60,17 @@
 
   <!-- binding declns -->
   <binding name="AddressBookSOAPBinding" type="tns:AddressBook">
-    <soap:binding style="rpc" 
+    <soap:binding style="rpc"
                   transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="addEntry">
       <soap:operation soapAction=""/>
       <input>
-        <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+        <soap:body use="encoded"
+                   namespace="urn:AddressFetcher2"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
-        <soap:body use="encoded" 
+        <soap:body use="encoded"
                    namespace="urn:AddressFetcher2"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
@@ -79,7 +83,7 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
-        <soap:body use="encoded" 
+        <soap:body use="encoded"
                    namespace="urn:AddressFetcher2"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
@@ -94,3 +98,4 @@
   </service>
 
 </definitions>
+
