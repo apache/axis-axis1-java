@@ -145,8 +145,9 @@ public class MsgProvider extends JavaProvider {
                         resEnv.addBodyElement( new SOAPBodyElement(result[i]));
                 }
                 return ;
+            } catch( NoSuchMethodException exp ) {
+                exp2 = exp;
             }
-            catch( NoSuchMethodException exp ) {exp2 = exp;}
 
             if ( method == null ) {
               // Try the the simplest case first - just Document as the param 
@@ -158,8 +159,9 @@ public class MsgProvider extends JavaProvider {
 
                 try {
                     method = jc.getJavaClass().getMethod( methodName, argClasses );
+                } catch( NoSuchMethodException exp ) {
+                    exp2 = exp;
                 }
-                catch( NoSuchMethodException exp ) {exp2 = exp;}
             }
 
             if ( method == null ) {
@@ -180,7 +182,13 @@ public class MsgProvider extends JavaProvider {
             }    
             catch( NoSuchMethodException exp2 ) {
                 // No match - just throw an error
+                //
+                // We do not log the error here, this is
+                // treated as a catch-rethrow as:
+                // 1) it's clear where the exception is generated (try-block above)
+                // 2) we are adding detail to the exception's message.
                 ////////////////////////////////////////////
+
                 String oldmsg = exp2.getMessage(); 
                 oldmsg = oldmsg == null ? "" : oldmsg;
                 String msg = oldmsg + JavaUtils.getMessage("triedClass00",

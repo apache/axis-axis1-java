@@ -55,6 +55,9 @@
 
 package org.apache.axis.providers.java;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
@@ -74,6 +77,9 @@ import java.util.Properties;
  */
 public class EJBProvider extends RPCProvider
 {
+    protected static Log log =
+        LogFactory.getLog(EJBProvider.class.getName());
+
     private static final String beanNameOption = "beanJndiName";
     private static final String homeInterfaceNameOption = "homeInterfaceName";
     private static final String remoteInterfaceNameOption = "remoteInterfaceName";
@@ -232,7 +238,7 @@ public class EJBProvider extends RPCProvider
      */ 
     private Object getEJBHome(MessageContext msgContext, String beanJndiName) throws AxisFault {
         Handler serviceHandler =  msgContext.getService();
-        Object ejbHome;
+        Object ejbHome = null;
         Properties properties = null;
         
         // Set up an InitialContext and use it get the beanJndiName from JNDI
@@ -248,7 +254,7 @@ public class EJBProvider extends RPCProvider
             if (username != null) {
                if (properties == null) properties = new Properties();
                properties.setProperty(Context.SECURITY_PRINCIPAL,
-                                  username);
+                                      username);
             }
 
             // password
@@ -268,7 +274,7 @@ public class EJBProvider extends RPCProvider
             if (factoryClass != null) {
                 if (properties == null) properties = new Properties();
                 properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                                   factoryClass);
+                                       factoryClass);
             }
 
             // contextUrl
@@ -288,7 +294,7 @@ public class EJBProvider extends RPCProvider
                 context = new InitialContext(properties);
             } else {
                 if (cached_context == null)
-                        cached_context = new InitialContext();
+                    cached_context = new InitialContext();
                 context = cached_context;
             }
             
@@ -304,6 +310,7 @@ public class EJBProvider extends RPCProvider
         // Should probably catch javax.naming.NameNotFoundException here 
         catch (Exception exception)
         {
+            log.info(JavaUtils.getMessage("toAxisFault00"), exception);
             throw AxisFault.makeFault(exception);
         }
         return ejbHome;
