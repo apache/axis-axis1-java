@@ -63,6 +63,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.AxisClassLoader;
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
@@ -82,6 +83,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.lang.reflect.Proxy;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -240,6 +242,41 @@ public class Service implements javax.xml.rpc.Service {
     public java.rmi.Remote getPort(QName portName, Class proxyInterface)
                            throws JAXRPCException {
         return( null );
+    }
+
+    /**
+     * Return an object which acts as a dynamic proxy for the passed
+     * interface class.  This is a more "dynamic" version in that it
+     * doesn't actually require WSDL, simply an endpoint address.
+     *
+     * Note: Not part of the JAX-RPC spec.
+     *
+     * @param endpoint the URL which will be used as the SOAP endpoint
+     * @param proxyInterface the interface class which we wish to mimic
+     *                       via a dynamic proxy
+     * @throws JAXRPCException
+     */
+    public java.rmi.Remote getPort(String endpoint, Class proxyInterface)
+        throws JAXRPCException
+    {
+        if (!proxyInterface.isInterface()) {
+            throw new JAXRPCException(JavaUtils.getMessage("mustBeIface00"));
+        }
+
+        if (!(java.rmi.Remote.class.isAssignableFrom(proxyInterface))) {
+            throw new JAXRPCException(
+                            JavaUtils.getMessage("mustExtendRemote00"));
+        }
+
+        try {
+            Call call = new Call(endpoint);
+            ClassLoader classLoader = AxisClassLoader.getClassLoader();
+            return (java.rmi.Remote)Proxy.newProxyInstance(classLoader,
+                                                new Class[] { proxyInterface },
+                                                new AxisClientProxy(call));
+        } catch (Exception e) {
+            throw new JAXRPCException(e.toString());
+        }
     }
 
     /**
