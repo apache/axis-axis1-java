@@ -88,6 +88,7 @@ public class Call implements org.apache.axis.rpc.Call {
     public Call() {
         client = new ServiceClient();
         serviceDesc = new ServiceDescription(null, true);
+        client.setServiceDescription( serviceDesc );
     }
 
     /**
