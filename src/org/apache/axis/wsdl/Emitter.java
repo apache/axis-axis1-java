@@ -120,7 +120,7 @@ public class Emitter {
     private boolean bMessageContext = false;
     private boolean bEmitTestCase = false;
     private boolean bVerbose = false;
-    private boolean bGeneratePackageName = false;
+    private boolean bGeneratePackageName = true;
     private boolean bGenerateImports = true;
     private String packageName = null;
     private String packageDirName = "";
@@ -129,7 +129,8 @@ public class Emitter {
     private ArrayList classList = new ArrayList();
     private ArrayList fileList = new ArrayList();
 
-    private TypeFactory emitFactory = null;
+    private TypeFactory emitFactory = new TypeFactory();
+
     private HashMap portTypesInfo = null;
 
     /**
@@ -179,9 +180,9 @@ public class Emitter {
      */
     public void emit(Document doc) throws IOException {
         try {
-            setup();
             WSDLReader reader = new WSDLReader();
             def = reader.readWSDL(null, doc);
+            setup();
             emit(def, doc);
         }
         catch (Throwable t) {
@@ -196,6 +197,7 @@ public class Emitter {
 
         // Generate types from doc
         if (doc != null) {
+            emitFactory.map(def.getTargetNamespace(), packageName);
             emitFactory.buildTypes(doc);
             if (bVerbose) {
                 System.out.println("Types:");
@@ -265,7 +267,6 @@ public class Emitter {
             System.out.println("Using package name: " + packageName);
         }
 
-        emitFactory = new TypeFactory();
     } // setup
 
     ///////////////////////////////////////////////////
@@ -336,6 +337,11 @@ public class Emitter {
             return value + File.separatorChar;
         }
     } // getPackageDir
+
+    public void setNamespaceMap(HashMap map) {
+        emitFactory.setNamespaceMap(map);
+    }
+
 
     /**
      * Set the output directory to use in emitted source files
@@ -708,7 +714,8 @@ public class Emitter {
             // sure that order is preserved.
             int index = 1;
             int outdex = 1;
-            boolean firstOutput = true;
+            boolean firstOutput = !getReturnType(parameters, output, parameterOrder,
+              (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL));
             String inName = inputs.size() == 0 ? null : (String) inputs.get(1);
             String outName = outputs.size() == 0 ? null : (String) outputs.get(1);
 
@@ -779,7 +786,7 @@ public class Emitter {
         String axisSig = "    public " + parms.returnType + " " + name + "(";
         String skelSig = null;
 
-        if (allOuts == 0)
+        if ((allOuts == 0) && (parms.returnName == null))
             skelSig = "    public void " + name + "(";
         else
             skelSig = "    public Object " + name + "(";
@@ -1049,11 +1056,11 @@ public class Emitter {
         stubPW.println("        try {" );
         stubPW.println("            service = new org.apache.axis.client.Service();");
         stubPW.println("            call = (org.apache.axis.client.Call) service.createCall();");
-        
+
         while (it.hasNext()) {
             writeSerializationInit(stubPW, (Type) it.next());
         }
-        
+
         stubPW.println("        }");
         stubPW.println("        catch(Exception t) {");
         stubPW.println("            throw new org.apache.axis.AxisFault(t);");
@@ -1316,7 +1323,7 @@ public class Emitter {
                         "\", " + wrapPrimitiveType(p.type, p.name) + ")");
             else if (p.mode == Parameter.INOUT)
                 pw.print("new org.apache.axis.message.RPCParam(\"" + p.name +
-                        "\", " + p.name + "._value)");
+                        "\", " + wrapPrimitiveType(p.type, p.name + "._value")+ ")");
         }
         pw.println("});");
         pw.println();
@@ -1336,9 +1343,14 @@ public class Emitter {
 
                     while (p.mode != Parameter.INOUT)
                         p = (Parameter) parms.list.get(++i);
-                    pw.println("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
+                    if (parms.returnName != null) {
+                        pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) call.getOutputParams().get(" + 0 + ")).getValue()"));
+                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
+                    }
+                    else
+                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
                 }
-                else {
+                else if (parms.returnName != null) {
                     // (parms.outputs == 1)
                     // There is only one output and it is the return value.
                     pw.println("             return " + getResponseString(parms.returnType, "resp"));
@@ -1351,7 +1363,7 @@ public class Emitter {
                 // either in a holder or as the return value.
                 pw.println("            java.util.Vector output = call.getOutputParams();");
                 int outdex = 0;
-                boolean firstInoutIsResp = (parms.outputs == 0);
+                boolean firstInoutIsResp = ((parms.outputs == 0) && (parms.returnName == null));
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
                     if (p.mode != Parameter.IN) {
@@ -1365,11 +1377,16 @@ public class Emitter {
                     }
 
                 }
-                if (parms.outputs > 0)
+                if ((parms.outputs > 0) || (parms.returnName != null))
                     pw.println ("            return " + getResponseString(parms.returnType, "resp"));
+
             }
             pw.println("        }");
         }
+        else if (parms.returnName != null) {
+            pw.println("             return " + getResponseString(parms.returnType, "resp"));
+        }
+
         pw.println("    }");
         pw.println();
     } // writeStubOperation
@@ -1395,7 +1412,7 @@ public class Emitter {
         }
 
         // Call the real implementation
-        if (parms.outputs == 0)
+        if ((parms.outputs == 0) && (parms.returnName == null))
             pw.print("        ");
         else
             pw.print("        Object ret = ");
@@ -1420,36 +1437,43 @@ public class Emitter {
                 call = call + p.name + "Holder";
         }
         call = call + ")";
-        pw.println(wrapPrimitiveType(parms.returnType, call) + ";");
+        if ((parms.outputs == 0) && (parms.returnName == null))
+            pw.println(call + ";");
+        else
+            pw.println(wrapPrimitiveType(parms.returnType, call) + ";");
 
         // Handle the outputs, if there are any.
         if (parms.inouts + parms.outputs > 0) {
-            if (parms.inouts == 0 && parms.outputs == 1)
+            if ((parms.inouts == 0 && parms.outputs == 1) && (parms.returnName == null))
             // The only output is a single return value; simply pass it through.
                 pw.println("        return ret;");
-            else if (parms.outputs == 0 && parms.inouts == 1) {
+            else if ((parms.outputs == 0 && parms.inouts == 1) && (parms.returnName == null)) {
                 // There is only one inout parameter.  Find it in the parms list and write
                 // its return
                 int i = 0;
                 Parameter p = (Parameter) parms.list.get(i);
                 while (p.mode != Parameter.INOUT)
                     p = (Parameter) parms.list.get(++i);
-                pw.println("        return " + p.name + "Holder._value;");
+                pw.println("        return " + wrapPrimitiveType(p.type, p.name + "Holder._value") + ";");
             }
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
                 pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
-                if (parms.outputs > 0)
+                if (parms.returnName != null)
                     pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
 
                     if (p.mode != Parameter.IN)
-                        pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + p.name + "Holder._value));");
+                        pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + wrapPrimitiveType(p.type, p.name + "Holder._value") +"));");
                 }
                 pw.println("        return list;");
             }
         }
+        else if (parms.returnName != null) {
+            pw.println("        return ret;");
+        }
+
         pw.println("    }");
         pw.println();
     } // writeSkeletonOperation
@@ -1709,37 +1733,30 @@ public class Emitter {
 
         pw.println();
 
-        //assumes all complex type elements are under one parent
+        pw.print("   <beanMappings ");
+        HashMap nsMap = new HashMap();
+        int i = 1;
+        String nsPrefix = null;
         Iterator it = types.values().iterator();
-        Node node = ((Type) it.next()).getNode();
-        String namespaceURI = Utils.getScopedAttribute(node, "targetNamespace");
-
-        //grab the namespace prefix from the attributes of the root (if it is there)
-        String namespacePrefix = "ns";
-        NamedNodeMap docAttrs = doc.getDocumentElement().getAttributes();
-        for (int i = 0; i < docAttrs.getLength(); i++) {
-            Attr attr = (Attr) docAttrs.item(i);
-            if (attr.getValue().equals(namespaceURI)) {
-                namespacePrefix = ((Attr) docAttrs.item(i)).getLocalName();
-                break;
+        while (it.hasNext()) {
+            Type type = (Type) it.next();
+            if (type.getBaseType() == null) {
+                pw.println("");
+                if (!nsMap.containsKey(type.getQName().getNamespaceURI())) {
+                  nsPrefix = "ns" + i++;
+                  nsMap.put(type.getQName().getNamespaceURI(), nsPrefix);
+                  pw.print("     xmlns:" + nsPrefix  + "=\"" + type.getQName().getNamespaceURI() + "\"");
+                }
             }
         }
-
-        pw.println("   <beanMappings xmlns:" + namespacePrefix + "=\"" + namespaceURI + "\">");
-
+        pw.println(" >");
         it = types.values().iterator();
         while (it.hasNext()) {
             Type type = (Type) it.next();
             if (type.getBaseType() == null) {
-                pw.println();
-                if (packageName == null) {
-                    pw.println("     <" + namespacePrefix + ":" + type.getQName().getLocalPart()
-                           + " classname=\"" + type.getJavaName() +"\"/>");
-                }
-                else {
-                    pw.println("     <" + namespacePrefix + ":" + type.getQName().getLocalPart()
-                           + " classname=\"" + packageName + "." + type.getJavaName() +"\"/>");
-                }
+                nsPrefix = (String)nsMap.get(type.getQName().getNamespaceURI());
+                pw.println("     <" + nsPrefix + ":" + type.getQName().getLocalPart()
+                       + " classname=\"" + type.getJavaName() +"\"/>");
             }
         }
         pw.println("   </beanMappings>");
@@ -1889,12 +1906,12 @@ public class Emitter {
        } else {
            this.classList.add(packageName + "." + javaName);
        }
+        PrintWriter typePW = printWriter(fileName, type.getJavaPackageName());
 
-        PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating type implementation: " + fileName);
 
-        writeFileHeader(fileName, typePW);
+        writeFileHeader(fileName, type.getJavaPackageName(), typePW);
         typePW.println("public class " + javaName + " implements java.io.Serializable {");
 
         for (int i = 0; i < elements.size(); i += 2) {
@@ -1966,7 +1983,6 @@ public class Emitter {
         String javaName = eType.getJavaLocalName();
 
         String fileName = javaName + ".java";
-
         this.fileList.add(packageDirName + fileName);
 
        if (packageName == null) {
@@ -1975,11 +1991,11 @@ public class Emitter {
            this.classList.add(packageName + "." + javaName);
        }
 
-        PrintWriter typePW = printWriter(fileName);
+        PrintWriter typePW = printWriter(fileName, eType.getJavaPackageName());
         if (bVerbose)
             System.out.println("Generating enum type implementation: " + fileName);
 
-        writeFileHeader(fileName, typePW);
+        writeFileHeader(fileName, eType.getJavaPackageName(), typePW);
         typePW.println("public class " + javaName + " implements java.io.Serializable {");
         for (int i=1; i < values.size(); i++) {
             typePW.println("    public static final " + baseType + " _" + values.get(i)
@@ -2007,11 +2023,11 @@ public class Emitter {
             this.classList.add(packageName + "." + javaName);
         }
 
-        PrintWriter pw = printWriter(fileName);
+        PrintWriter pw = printWriter(fileName, type.getJavaPackageName());
         if (bVerbose)
             System.out.println("Generating type implementation holder: " + fileName);
 
-        writeFileHeader(fileName, pw);
+        writeFileHeader(fileName, type.getJavaPackageName(), pw);
         pw.println("public final class " + javaName + "Holder implements java.io.Serializable {");
         pw.println("    public " + javaName + " _value;");
         pw.println();
@@ -2059,12 +2075,37 @@ public class Emitter {
      */
     private PrintWriter printWriter(String name) throws IOException
     {
-        if (outputDir == null) {
-            return new PrintWriter(new FileWriter(packageDirName + name));
+      return printWriter(name, null);
+    } // printWriter
+
+    /**
+     * Get a PrintWriter attached to a file with the given name.  The location of this file
+     * is determined from the values of outputDir and packageDirName.
+     */
+    private PrintWriter printWriter(String name, String packageName) throws IOException
+    {
+        String pkgDirName = packageDirName;
+        if (packageName != null) {
+          pkgDirName = packageName.replace('.', '/');
         }
-        else {
-            return new PrintWriter(new FileWriter(outputDir + File.separatorChar + packageDirName + name));
+
+        File dir = null;
+        if (pkgDirName != null) {
+          if (outputDir == null)
+              dir = new File(pkgDirName);
+          else
+              dir = new File(outputDir, pkgDirName);
+          if (!dir.exists()) {
+            StringTokenizer st = new StringTokenizer(pkgDirName, "/");
+            dir = new File(outputDir);
+            while (st.hasMoreTokens()) {
+              dir = new File(dir, st.nextToken());
+              dir.mkdir();
+            }
+          }
         }
+
+        return new PrintWriter(new FileWriter(new File(dir, name)));
     } // printWriter
 
     /**
@@ -2197,6 +2238,14 @@ public class Emitter {
      * provided stream
      */
     private void writeFileHeader(String filename, PrintWriter pw) {
+        writeFileHeader(filename, null, pw);
+    }
+
+    /**
+     * Write a common header, including the package name (if any) to the
+     * provided stream
+     */
+    private void writeFileHeader(String filename, String pkgName, PrintWriter pw) {
         pw.println("/**");
         pw.println(" * " + filename);
         pw.println(" *");
@@ -2206,53 +2255,61 @@ public class Emitter {
         pw.println();
 
         // print package declaration
-        if (packageName != null) {
-            pw.println("package " + packageName + ";");
+        if (pkgName == null) {
+          if (packageName != null) {
+              pw.println("package " + packageName + ";");
+              pw.println();
+          }
+        }
+        else {
+            pw.println("package " + pkgName + ";");
             pw.println();
         }
     }
 
     private void makePackageName()
     {
-        String hostname = null;
-
-        // get the target namespace of the document
-         String namespace = def.getTargetNamespace();
-         try {
-             hostname = new URL(namespace).getHost();
-         }
-         catch (MalformedURLException e) {
-             // do nothing
-             return;
-         }
-
-        // if we didn't file a hostname, bail
-        if (hostname == null) {
-            return;
-        }
-
-        // tokenize the hostname and reverse it
-        StringTokenizer st = new StringTokenizer( hostname, "." );
-        String[] words = new String[ st.countTokens() ];
-        for(int i = 0; i < words.length; ++i)
-            words[i] = st.nextToken();
-
-        StringBuffer sb = new StringBuffer(80);
-        for(int i = words.length-1; i >= 0; --i) {
-            String word = words[i];
-            // seperate with dot
-            if( i != words.length-1 )
-                sb.append('.');
-
-            // convert digits to underscores
-            if( Character.isDigit(word.charAt(0)) )
-                sb.append('_');
-            sb.append( word );
-        }
-        setPackageName(sb.toString());
+        String pkgName = Utils.makePackageName(def.getTargetNamespace());
+        setPackageName(pkgName);
     }
 
     protected boolean isPrimitiveType(String type) {
         return TYPES.get(type) != null;
+    }
+
+    private boolean getReturnType(Parameters parameters, Output output, List parameterOrder, boolean literal) {
+        if (output.getMessage().getOrderedParts(parameterOrder) ==
+            output.getMessage().getOrderedParts(null))
+            return false;
+        Map parts = output.getMessage().getParts();
+        Iterator itr = parts.values().iterator();
+        List outputParts = output.getMessage().getOrderedParts(parameterOrder);
+        while (itr.hasNext()) {
+           Part part = (Part)itr.next();
+           if (!outputParts.contains(part)) {
+               if (literal) {
+                   QName elementName = part.getElementName();
+                   if (elementName != null) {
+                       parameters.returnType = Utils.capitalize(elementName.getLocalPart());
+                       parameters.returnType = part.getName();
+                       return true;
+                   }
+               } else {
+                   QName typeName = part.getTypeName();
+                   if (typeName != null) {
+                       // Handle the special "java" namespace for types
+                       if (typeName.getNamespaceURI().equalsIgnoreCase("java")) {
+                           parameters.returnType = typeName.getLocalPart();
+                       } else {
+                           parameters.returnType = emitFactory.getType(typeName).getJavaName();
+                       }
+                       parameters.returnName = part.getName();
+                       return true;
+                   }
+                }
+           }
+       }
+       // should never happen ?
+       return false;
     }
 }

@@ -57,12 +57,16 @@ package org.apache.axis.wsdl;
 import org.w3c.dom.Node;
 
 import javax.wsdl.QName;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.StringTokenizer;
+
 
 /**
- * This class contains static utility methods for the emitter.                            
+ * This class contains static utility methods for the emitter.
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
@@ -73,14 +77,14 @@ public class Utils {
      */
     public static String capitalize(String name) {
         char start = name.charAt(0);
-    
+
         if (Character.isLowerCase(start)) {
             start = Character.toUpperCase(start);
             return start + name.substring(1);
         }
         return name;
-    } // capitalize 
-  
+    } // capitalize
+
     /**
      * Convenience method to convert local name to Java name
      */
@@ -107,7 +111,7 @@ public class Utils {
             return getScopedAttribute(node.getParentNode(), attr);
         }
     }
-  
+
     /**
      * Given a node, return the value of the given attribute.
      * Returns null if the attribute is not found
@@ -141,7 +145,7 @@ public class Utils {
             return null;
         }
         String namespace = node.getNamespaceURI();
-    
+
         return (new QName(namespace, localName));
     }
 
@@ -155,7 +159,7 @@ public class Utils {
             return null;
         }
         // This routine may be called for complexType elements.  In some cases,
-        // the complexType may be anonymous, which is why the getScopedAttribute 
+        // the complexType may be anonymous, which is why the getScopedAttribute
         // method is used.
         String localName = getScopedAttribute(node, "name");
         if (localName == null)
@@ -204,7 +208,7 @@ public class Utils {
             || s.equals("http://www.w3.org/2001/XMLSchema/")
             || s.equals("http://www.w3.org/1999/XMLSchema/"));
   }
-  
+
     /**
      * Return true if the indicated string is the schema namespace
      */
@@ -265,6 +269,51 @@ public class Utils {
     public static String makeNonJavaKeyword(String keyword){
         return  keyword + keywordSuffix;
      }
+
+    public static String makePackageName(String namespace)
+    {
+        String hostname = null;
+
+        // get the target namespace of the document
+         try {
+             hostname = new URL(namespace).getHost();
+         }
+         catch (MalformedURLException e) {
+           if (namespace.indexOf(":") > -1) {
+             hostname = namespace.substring(namespace.indexOf(":") + 1);
+             if (hostname.indexOf("/") > -1)
+               hostname = hostname.substring(0, hostname.indexOf("/") );
+           }
+         }
+
+        // if we didn't file a hostname, bail
+        if (hostname == null) {
+            return null;
+        }
+
+        //convert illegal java identifier
+        hostname = hostname.replace('-', '_');
+
+        // tokenize the hostname and reverse it
+        StringTokenizer st = new StringTokenizer( hostname, "." );
+        String[] words = new String[ st.countTokens() ];
+        for(int i = 0; i < words.length; ++i)
+            words[i] = st.nextToken();
+
+        StringBuffer sb = new StringBuffer(80);
+        for(int i = words.length-1; i >= 0; --i) {
+            String word = words[i];
+            // seperate with dot
+            if( i != words.length-1 )
+                sb.append('.');
+
+            // convert digits to underscores
+            if( Character.isDigit(word.charAt(0)) )
+                sb.append('_');
+            sb.append( word );
+        }
+        return sb.toString();
+    }
 }
 
 
