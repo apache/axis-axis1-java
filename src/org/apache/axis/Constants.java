@@ -107,6 +107,9 @@ public class Constants {
     public static final String URI_DEFAULT_SOAP_ENV =
         DEFAULT_SOAP_VERSION.getEnvelopeURI();
 
+    // fixme: this is unsafe - a client can (accidentaly or on purpose)
+    //  over-write the elemnts of this array. This pattern is used throughout
+    //  this file.
     public static final String[] URIS_SOAP_ENV = {
         URI_SOAP11_ENV,
         URI_SOAP12_ENV,
@@ -119,24 +122,28 @@ public class Constants {
     public static final String ENTERPRISE_LOG_CATEGORY = "org.apache.axis.enterprise";
 
     /**
-     * time logged stuff
+     * time logged stuff.
      */
     public static final String TIME_LOG_CATEGORY = "org.apache.axis.TIME";
 
     /**
-     * servlet exceptions. Axis faults are logged at debug level here.
+     * Servlet exceptions. Axis faults are logged at debug level here.
      */
     public static final String EXCEPTION_LOG_CATEGORY = "org.apache.axis.EXCEPTIONS";
 
-    /** The name of the field which accepts xsd:any content in Beans */
+    /** The name of the field which accepts xsd:any content in Beans. */
     public static final String ANYCONTENT = "_any";
     /**
-     * The size of the buffer size for
+     * The size of the buffer size for.
      */
     public static final int HTTP_TXR_BUFFER_SIZE = 8 * 1024;
 
     /**
-     * Returns true if SOAP_ENV Namespace
+     * Returns true if the string is the SOAP_ENV Namespace.
+     *
+     * @param s  the string representation of a URI
+     * @return <code>true</code> if s represents any of the supported soap
+     *              envelope URI strings
      */
     public static boolean isSOAP_ENV(String s) {
         for (int i=0; i<URIS_SOAP_ENV.length; i++) {
@@ -168,7 +175,11 @@ public class Constants {
     };
 
     /**
-     * Returns true if SOAP_ENC Namespace
+     * Returns true if SOAP_ENC Namespace.
+     *
+     * @param s  a string representing the URI to check
+     * @return true if <code>s</code> matches a SOAP ENCODING namespace URI,
+     *              false otherwise
      */
     public static boolean isSOAP_ENC(String s) {
         for (int i=0; i<URIS_SOAP_ENC.length; i++) {
@@ -326,7 +337,10 @@ public class Constants {
     };
 
     /**
-     * Returns true if SchemaXSD Namespace
+     * Returns true if SchemaXSD Namespace.
+     *
+     * @param s  the string representing the URI to check
+     * @return true if s represents the Schema XSD namespace, false otherwise
      */
     public static boolean isSchemaXSD(String s) {
         for (int i=0; i<URIS_SCHEMA_XSD.length; i++) {
@@ -355,7 +369,10 @@ public class Constants {
     };
 
     /**
-     * Returns true if SchemaXSI Namespace
+     * Returns true if SchemaXSI Namespace.
+     *
+     * @param s  the string of the URI to check
+     * @return   true if <code>s</code> is a Schema XSI URI, false otherwise
      */
     public static boolean isSchemaXSI(String s) {
         for (int i=0; i<URIS_SCHEMA_XSI.length; i++) {
@@ -367,7 +384,7 @@ public class Constants {
     }
 
     /**
-     * WSDL Namespace
+     * WSDL Namespace.
      */
     public static final String NS_URI_WSDL11 =
                                  "http://schemas.xmlsoap.org/wsdl/";
@@ -377,7 +394,10 @@ public class Constants {
     };
 
     /**
-     * Returns true if WSDL Namespace
+     * Returns true if this is a WSDL Namespace.
+     *
+     * @param s  a string of a URI to check
+     * @return   true if <code>s</code> is a WSDL namespace URI, false otherwise
      */
     public static boolean isWSDL(String s) {
         for (int i=0; i<NS_URIS_WSDL.length; i++) {
@@ -421,7 +441,11 @@ public class Constants {
     };
 
     /**
-     * Returns true if WSDL SOAP Namespace
+     * Returns true if s is a WSDL SOAP Namespace.
+     *
+     * @param s  a string of a URI to check
+     * @return   true if <code>s</code> matches any of the WSDL SOAP namepace
+     *              URIs, false otherwise
      */
     public static boolean isWSDLSOAP(String s) {
         for (int i=0; i<NS_URIS_WSDL_SOAP.length; i++) {
@@ -456,13 +480,13 @@ public class Constants {
     public static final String ELEM_FAULT_NODE_SOAP12 = "Node" ;
     public static final String ELEM_FAULT_ROLE_SOAP12 = "Role" ;
     public static final String ELEM_FAULT_DETAIL_SOAP12 = "Detail" ;
-    public static final String ELEM_TEXT_SOAP12 = "Text" ;    
+    public static final String ELEM_TEXT_SOAP12 = "Text" ;
 
     public static final String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
     public static final String ATTR_ENCODING_STYLE  = "encodingStyle" ;
     public static final String ATTR_ACTOR           = "actor" ;
     public static final String ATTR_ROLE            = "role" ;
-    public static final String ATTR_RELAY           = "relay" ;    
+    public static final String ATTR_RELAY           = "relay" ;
     public static final String ATTR_ROOT            = "root" ;
     public static final String ATTR_ID              = "id" ;
     public static final String ATTR_HREF            = "href" ;
@@ -505,7 +529,7 @@ public class Constants {
 
     public static final QName FAULT_SOAP12_RECEIVER =
                                   new QName(URI_SOAP12_ENV, "Receiver");
-    
+
     // SOAP 1.2 Fault subcodes
     public static final QName FAULT_SUBCODE_BADARGS =
             new QName(URI_SOAP12_RPC, "BadArguments");
@@ -541,7 +565,7 @@ public class Constants {
     public static final QName QNAME_FAULTDETAIL_SOAP12 =
                                          new QName(URI_SOAP12_ENV, ELEM_FAULT_DETAIL_SOAP12);
     public static final QName QNAME_NOTUNDERSTOOD =
-                                         new QName(URI_SOAP12_ENV, ELEM_NOTUNDERSTOOD);    
+                                         new QName(URI_SOAP12_ENV, ELEM_NOTUNDERSTOOD);
 
     // Define qnames for the all of the XSD and SOAP-ENC encodings
     public static final QName XSD_STRING = new QName(URI_DEFAULT_SCHEMA_XSD, "string");
@@ -658,11 +682,11 @@ public class Constants {
 
     //QNames of well known faults
     /**
-     * the no-service fault value
+     * The no-service fault value.
      */
     public static final QName QNAME_NO_SERVICE_FAULT_CODE
-            = new QName(NS_URI_AXIS, "Server.NoService");         
-    
+            = new QName(NS_URI_AXIS, "Server.NoService");
+
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////
 
@@ -683,27 +707,28 @@ public class Constants {
     // When invoked from a servlet, per JAX-RPC, we need  a
     // ServletEndpointContext object.  This is where it lives.
     public static final String MC_SERVLET_ENDPOINT_CONTEXT = "servletEndpointContext";
-    
+
     // If we're SOAP 1.2, the default behavior in org.apache.axis.message.BodyBuilder
     // is to throw a ProcedureNotPresent fault if we can't dispatch to an
     // OperationDesc during deserialization.  Set this property to any non-null
     // value to prevent this behavior (only used by test.soap12.
     public static final String MC_NO_OPERATION_OK = "NoOperationOK";
-    
+
     // This property indicates we're supporting only a single SOAP version.
     // If set (by the service or engine), we'll only accept envelopes of the
     // specified version.  Value should be an org.apache.axis.soap.SOAPConstants
     public static final String MC_SINGLE_SOAP_VERSION = "SingleSOAPVersion";
 
     /**
-     * what the extension of JWS files is. If changing this, note that
+     * What the extension of JWS files is. If changing this, note that
      * AxisServlet has an xdoclet declaration in the class javadocs that
      * also needs updating.
      */
     public static final String JWS_DEFAULT_FILE_EXTENSION = ".jws";
 
     /**
-     * the default timeout for messages
+     * The default timeout for messages.
+     * 
      * @since Axis1.2
      */
     public static final int DEFAULT_MESSAGE_TIMEOUT=60*1000*10;

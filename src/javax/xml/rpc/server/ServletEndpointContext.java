@@ -133,7 +133,7 @@ public interface ServletEndpointContext {
      *
      * @return The HTTP session associated with the current
      * invocation or <code>null</code> if there is no active session.
-     * @throws JAXRPCException - If this method invoked by a non-HTTP bound
+     * @throws javax.xml.rpc.JAXRPCException - If this method invoked by a non-HTTP bound
      *         endpoints.
      */
     public HttpSession getHttpSession();
@@ -146,7 +146,8 @@ public interface ServletEndpointContext {
      * application (installed as a WAR) per JVM . A servlet
      * based service endpoint is deployed as part of a web
      * application.
-     * @return <code>ServletContext</code>
+     * 
+     * @return the current <code>ServletContext</code>
      */
     public ServletContext getServletContext();
 }

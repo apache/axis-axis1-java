@@ -204,13 +204,16 @@ public class MimeUtils {
         return (long) bas.size();    // This has header length plus the crlf part that seperates the data
     }
 
+    // fixme: filter can be replaced as it is not final - is this intended? If
+    //  so, document
+    // fixme: the fields in filter are not protected - they can be over-written
     /** Field filter           */
     public static String[] filter = new String[]{"Message-ID", "Mime-Version",
                                                  "Content-Type"};
 
     /**
      * This routine will the multi part type and write it out to a stream.
-     * 
+     *
      * <p>Note that is does *NOT* pass <code>AxisProperties</code>
      * to <code>javax.mail.Session.getInstance</code>, but instead
      * the System properties.
@@ -223,7 +226,7 @@ public class MimeUtils {
 
         try {
             Properties props = AxisProperties.getProperties();
-            
+
             props.setProperty(
                     "mail.smtp.host",
                     "localhost");    // this is a bogus since we will never mail it.
@@ -244,11 +247,10 @@ public class MimeUtils {
     }
 
     /**
-     * This routine will get the content type.
+     * This routine will get the content type from a mulit-part mime message.
      *
-     * @param mp
-     *
-     * @return
+     * @param mp the MimeMultipart
+     * @return the content type
      */
     public static String getContentType(javax.mail.internet.MimeMultipart mp) {
         StringBuffer contentType = new StringBuffer(mp.getContentType());

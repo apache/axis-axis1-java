@@ -98,66 +98,103 @@ public interface EngineConfiguration {
      * @throws ConfigurationException if there was a problem
      */
     void writeEngineConfig(AxisEngine engine) throws ConfigurationException;
-   
+
+    // fixme: if no handler is found, do we return null, or throw a
+    //  ConfigurationException, or throw another exception? IMHO returning
+    //  null is nearly always evil
     /**
-     * retrieve an instance of the named handler
-     * @param qname XXX
-     * @return XXX
-     * @throws ConfigurationException XXX
+     * Retrieve an instance of the named handler.
+     *
+     * @param qname the <code>QName</code> identifying the
+     *              <code>Handler</code>
+     * @return the <code>Handler</code> associated with <code>qname</code>
+     * @throws ConfigurationException if there was a failure in resolving
+     *              <code>qname</code>
      */
     Handler getHandler(QName qname) throws ConfigurationException;
- 
-   /**
-     * retrieve an instance of the named service
-     * @param qname XXX
-     * @return XXX
-     * @throws ConfigurationException XXX
+
+    /**
+     * Retrieve an instance of the named service.
+     *
+     * @param qname the <code>QName</code> identifying the
+     *              <code>Service</code>
+     * @return the <code>Service</code> associated with <code>qname</code>
+     * @throws ConfigurationException if there was an error resolving the
+     *              qname
      */
     SOAPService getService(QName qname) throws ConfigurationException;
-    
+
     /**
-     * Get a service which has been mapped to a particular namespace
-     * 
+     * Get a service which has been mapped to a particular namespace.
+     *
      * @param namespace a namespace URI
      * @return an instance of the appropriate Service, or null
-     */ 
+     * @throws ConfigurationException if there was an error resolving the
+     *              namespace
+     */
     SOAPService getServiceByNamespaceURI(String namespace)
         throws ConfigurationException;
 
-     /**
-     * retrieve an instance of the named transport
-     * @param qname XXX
-     * @return XXX
-     * @throws ConfigurationException XXX
+    /**
+     * Retrieve an instance of the named transport.
+     *
+     * @param qname the <code>QName</code> of the transport
+     * @return a <code>Handler</code> implementing the transport
+     * @throws ConfigurationException if there was an error resolving the
+     *              transport
      */
     Handler getTransport(QName qname) throws ConfigurationException;
 
     /**
-     * Retrieve the TypeMappingRegistry for this engine
+     * Retrieve the TypeMappingRegistry for this engine.
+     *
+     * @return the type mapping registry
+     * @throws ConfigurationException  if there was an error resolving the
+     *              registry
      */
     TypeMappingRegistry getTypeMappingRegistry()
         throws ConfigurationException;
 
     /**
      * Returns a global request handler.
+     *
+     * @return the <code>Handler</code> that globally handles requests
+     * @throws ConfigurationException  if there was some error fetching the
+     *              handler
      */
     Handler getGlobalRequest() throws ConfigurationException;
 
     /**
      * Returns a global response handler.
+     *
+     * @return the <code>Handler</code> that globally handles responses
+     * @throws ConfigurationException  if there was some error fetching the
+     *              handler
      */
     Handler getGlobalResponse() throws ConfigurationException;
 
+    // fixme: where is the contract for what can be in this Hashtable?
+    // fixme: did we intend to use Hashtable? Will Map do? Do we need
+    //  synchronization? If so, will one of the Collections synchronized
+    //  wrappers do fine?
     /**
      * Returns the global configuration options.
+     *
+     * @return the global options as a <code>Hashtable</code>
+     * @throws ConfigurationException if the global options could not be
+     *              returned
      */
     Hashtable getGlobalOptions() throws ConfigurationException;
 
     /**
-     * Get an enumeration of the services deployed to this engine,
-     * these are represented as ServiceDesc objects
+     * Get an enumeration of the services deployed to this engine.
+     * Each service is represented as <code>ServiceDesc</code> object.
+     *
      * @see org.apache.axis.description.ServiceDesc
-     * @return something to iterate with
+     * @return an <code>Iterator</code> over the <code>ServiceDesc</code>
+     *              objects
+     * @throws ConfigurationException if the deployed services could not be
+     *              returned
      */
     Iterator getDeployedServices() throws ConfigurationException;
 }

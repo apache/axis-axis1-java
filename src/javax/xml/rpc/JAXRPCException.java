@@ -63,7 +63,9 @@ package javax.xml.rpc;
  */
 public class JAXRPCException extends RuntimeException {
 
-    /** Field cause */
+    // fixme: Why doesn't this use the jdk1.4 exception wrapping APIs?
+
+    /** The cause of this error. */
     Throwable cause;
 
     /**
@@ -116,7 +118,7 @@ public class JAXRPCException extends RuntimeException {
     }
 
     /**
-     * Gets the Linked cause
+     * Gets the linked cause.
      *
      * @return The cause of this Exception or <code>null</code>
      *     if the cause is noexistent or unknown

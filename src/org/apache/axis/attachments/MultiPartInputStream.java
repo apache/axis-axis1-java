@@ -60,12 +60,9 @@ import org.apache.axis.Part;
 
 
 /**
+ * This simulates the multipart stream.
  *
- * @author Rick Rineholt 
- */
-
-/** This simulates the multipart stream 
- *
+ * @author Rick Rineholt
  */
 public abstract class MultiPartInputStream extends
   java.io.FilterInputStream {
@@ -75,20 +72,21 @@ public abstract class MultiPartInputStream extends
     }
 
     public abstract Part getAttachmentByReference(final String[] id)
-     throws org.apache.axis.AxisFault;  
+     throws org.apache.axis.AxisFault;
 
-    public abstract java.util.Collection getAttachments() 
+    public abstract java.util.Collection getAttachments()
       throws org.apache.axis.AxisFault;
 
     /**
-     * Return the content location. 
+     * Return the content location.
      * @return the Content-Location of the stream.
      *   Null if no content-location specified.
      */
     public abstract String getContentLocation();
 
     /**
-     * Return the content id of the stream 
+     * Return the content id of the stream.
+     * 
      * @return the Content-Location of the stream.
      *   Null if no content-location specified.
      */

@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class DoubleWrapperHolder
+ * Holder for <code>Double</code>s.
  *
  * @version 1.0
  */
 public final class DoubleWrapperHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Double</code> contained by this holder. */
     public Double value;
 
     /**
-     * Constructor DoubleWrapperHolder
+     * Make a new <code>DoubleWrapperHolder</code> with a <code>null</code> value.
      */
     public DoubleWrapperHolder() {}
 
     /**
-     * Constructor DoubleWrapperHolder
+     * Make a new <code>DoubleWrapperHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>Double</code> to hold
      */
     public DoubleWrapperHolder(Double value) {
         this.value = value;

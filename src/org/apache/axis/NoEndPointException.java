@@ -57,10 +57,15 @@ package org.apache.axis;
 import org.apache.axis.utils.Messages;
 
 /**
+ * An exception to indicate that there is no end point.
+ *
  * @author Russell Butek (butek@us.ibm.com)
  */
 public class NoEndPointException extends AxisFault
 {
+    /**
+     * Create a new exception with the default message and other details.
+     */
     public NoEndPointException ()
     {
         super("Server.NoEndpoint", Messages.getMessage("noEndpoint"), null, null);

@@ -81,7 +81,7 @@ public interface HandlerChain extends List {
      *             if a handler in the chain returned
      *             <code>false</code> from its handleRequest
      *             method.
-     * @throws JAXRPCException if any processing error happens
+     * @throws javax.xml.rpc.JAXRPCException if any processing error happens
      */
     public boolean handleRequest(MessageContext context);
 
@@ -95,7 +95,7 @@ public interface HandlerChain extends List {
      *             chain have been processed. Returns <code>false</code>
      *             if a handler in the chain returned
      *             <code>false</code> from its handleResponse method.
-     * @throws JAXRPCException if any processing error happens
+     * @throws javax.xml.rpc.JAXRPCException if any processing error happens
      */
     public boolean handleResponse(MessageContext context);
 
@@ -109,7 +109,7 @@ public interface HandlerChain extends List {
      *             chain have been processed. Returns <code>false</code>
      *             if a handler in the chain returned
      *             <code>false</code> from its handleFault method.
-     * @throws JAXRPCException if any processing error happens
+     * @throws javax.xml.rpc.JAXRPCException if any processing error happens
      */
     public boolean handleFault(MessageContext context);
 
@@ -119,14 +119,16 @@ public interface HandlerChain extends List {
      * @param config Configuration for the initialization of this handler
      *                 chain
      *
-     * @throws JAXRPCException If any error during initialization
+     * @throws javax.xml.rpc.JAXRPCException if there is any error that prevents
+     *              initialization
      */
     public void init(Map config);
 
     /**
      * Indicates the end of lifecycle for a HandlerChain.
      *
-     * @throws JAXRPCException If any error during destroy
+     * @throws javax.xml.rpc.JAXRPCException if there was any error that
+     *              prevented destroy from completing
      */
     public void destroy();
 

@@ -137,7 +137,8 @@ import java.io.InputStream;
  */
 public abstract class MessageFactory {
 
-    /**  */
+    // fixme: this should be protected as the class is abstract.
+    /** Create a new MessageFactory. */
     public MessageFactory() {}
 
     /**
@@ -199,11 +200,9 @@ public abstract class MessageFactory {
         MimeHeaders mimeheaders, InputStream inputstream)
             throws IOException, SOAPException;
 
-    /**  */
     private static final String DEFAULT_MESSAGE_FACTORY =
         "org.apache.axis.soap.MessageFactoryImpl";
 
-    /**  */
     private static final String MESSAGE_FACTORY_PROPERTY =
         "javax.xml.soap.MessageFactory";
 }

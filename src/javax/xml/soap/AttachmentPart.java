@@ -159,7 +159,8 @@ import java.util.Iterator;
  */
 public abstract class AttachmentPart {
 
-    /**  */
+    // fixme: should this constructor be protected?
+    /** Create a new AttachmentPart. */
     public AttachmentPart() {}
 
     /**

@@ -70,15 +70,15 @@ import java.util.Map;
  */
 public class HandlerInfo implements Serializable {
 
-    /** Default constructor */
+    /** Default constructor. */
     public HandlerInfo() {
         handlerClass = null;
         config       = new HashMap();
     }
 
     /**
-     *  Constructor for HandlerInfo
-     *  <p>
+     *  Constructor for HandlerInfo.
+     *
      *  @param  handlerClass Java Class for the Handler
      *  @param  config Handler Configuration as a java.util.Map
      *  @param  headers QNames for the header blocks processed
@@ -93,7 +93,8 @@ public class HandlerInfo implements Serializable {
     }
 
     /**
-     *  Sets the Handler class
+     *  Sets the Handler class.
+     *
      *  @param  handlerClass Class for the Handler
      */
     public void setHandlerClass(Class handlerClass) {
@@ -101,7 +102,8 @@ public class HandlerInfo implements Serializable {
     }
 
     /**
-     *  Gets the Handler class
+     *  Gets the Handler class.
+     *
      *  @return Returns null if no Handler class has been
      *    set; otherwise the set handler class
      */
@@ -118,7 +120,8 @@ public class HandlerInfo implements Serializable {
     }
 
     /**
-     *  Gets the Handler configuration
+     *  Gets the Handler configuration.
+     *
      *  @return  Returns empty Map if no configuration map
      *     has been set; otherwise returns the set configuration map
      */
@@ -146,13 +149,13 @@ public class HandlerInfo implements Serializable {
         return headers;
     }
 
-    /** Handler Class */
+    /** Handler Class. */
     private Class handlerClass;
 
-    /** Configuration Map */
+    /** Configuration Map. */
     private Map config;
 
-    /** headers */
+    /** Headers. */
     private QName[] headers;
 }
 

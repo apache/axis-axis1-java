@@ -63,30 +63,27 @@ import java.io.Serializable;
  * as specified in <a href="http://www.w3.org/TR/xmlschema-2/#QName">XML
  * Schema Part2: Datatypes specification</a>.
  * <p>
- * The value of a QName contains a <b>namespaceURI</b>, a <b>localPart</b> and a <b>prefix</b>.
- * The localPart provides the local part of the qualified name. The
- * namespaceURI is a URI reference identifying the namespace.
+ * The value of a QName contains a <b>namespaceURI</b>, a <b>localPart</b> and a
+ * <b>prefix</b>. The localPart provides the local part of the qualified name.
+ * The namespaceURI is a URI reference identifying the namespace.
  *
  * @version 1.1
  */
 public class QName implements Serializable {
 
-    /** comment/shared empty string */
+    /** Comment/shared empty <code>String</code>. */
     private static final String emptyString = "".intern();
 
-    /** Field namespaceURI */
     private String namespaceURI;
 
-    /** Field localPart */
     private String localPart;
 
-    /** Field prefix */
     private String prefix;
 
     /**
      * Constructor for the QName.
      *
-     * @param localPart Local part of the QName
+     * @param localPart local part of the QName
      */
     public QName(String localPart) {
         this(emptyString, localPart, emptyString);
@@ -95,8 +92,8 @@ public class QName implements Serializable {
     /**
      * Constructor for the QName.
      *
-     * @param namespaceURI Namespace URI for the QName
-     * @param localPart Local part of the QName.
+     * @param namespaceURI namespace URI for the QName
+     * @param localPart local part of the QName.
      */
     public QName(String namespaceURI, String localPart) {
         this(namespaceURI, localPart, emptyString);
@@ -127,34 +124,34 @@ public class QName implements Serializable {
     }
 
     /**
-     * Gets the Namespace URI for this QName
+     * Gets the namespace URI for this QName.
      *
-     * @return Namespace URI
+     * @return namespace URI
      */
     public String getNamespaceURI() {
         return namespaceURI;
     }
 
     /**
-     * Gets the Local part for this QName
+     * Gets the local part for this QName.
      *
-     * @return Local part
+     * @return the local part
      */
     public String getLocalPart() {
         return localPart;
     }
 
     /**
-     * Gets the Prefix for this QName
+     * Gets the prefix for this QName.
      *
-     * @return Prefix
+     * @return the prefix
      */
     public String getPrefix() {
         return prefix;
     }
 
     /**
-     * Returns a string representation of this QName
+     * Returns a string representation of this QName.
      *
      * @return  a string representation of the QName
      */
@@ -256,6 +253,9 @@ public class QName implements Serializable {
     /**
      * Ensure that deserialization properly interns the results.
      * @param in the ObjectInputStream to be read
+     * @throws IOException  if there was a failure in the object input stream
+     * @throws ClassNotFoundException   if the class of any sub-objects could
+     *              not be found
      */
     private void readObject(ObjectInputStream in) throws
             IOException, ClassNotFoundException {

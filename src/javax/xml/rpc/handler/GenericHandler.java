@@ -77,7 +77,7 @@ import javax.xml.namespace.QName;
 public abstract class GenericHandler implements Handler {
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     protected GenericHandler() {}
 

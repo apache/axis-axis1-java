@@ -66,56 +66,55 @@ import org.apache.commons.logging.Log;
  */
 public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
-    /** Field log           */
+    /** The <code>Log</code> that this class should log all events to. */
     protected static Log log =
             LogFactory.getLog(BoundaryDelimitedStream.class.getName());
 
-    /** Field boundary           */
     protected byte[] boundary = null;
 
-    /** Field boundaryLen           */
-    int boundaryLen = 0;              // The boundary length.
+    /** The boundary length. */
+    int boundaryLen = 0;
 
-    /** Field boundaryBufLen           */
-    int boundaryBufLen = 0;           // The boundary length plus crlf.
+    /** The boundary length plus crlf. */
+    int boundaryBufLen = 0;
 
-    /** Field is           */
-    java.io.InputStream is = null;    // The source input stream.
+    /** The source input stream. */
+    java.io.InputStream is = null;
 
-    /** Field closed           */
-    boolean closed = true;            // The stream has been closed.
+    /** The stream has been closed. */
+    boolean closed = true;
 
-    /** Field eos           */
-    boolean eos = false;              // eof has been detected.
+    /** eof has been detected. */
+    boolean eos = false;
 
-    /** Field theEnd           */
-    boolean theEnd = false;           // There are no more streams left.
+    /** There are no more streams left. */
+    boolean theEnd = false;
 
-    /** Field readbufsz           */
-    int readbufsz = 0;                // Minimum to read at one time.
+    /** Minimum to read at one time. */
+    int readbufsz = 0;
 
-    /** Field readbuf           */
-    byte[] readbuf = null;            // The buffer we are reading.
+    /** The buffer we are reading. */
+    byte[] readbuf = null;
 
-    /** Field readBufPos           */
-    int readBufPos = 0;               // Where we have read so far in the stream.
+    /** Where we have read so far in the stream. */
+    int readBufPos = 0;
 
-    /** Field readBufEnd           */
-    int readBufEnd = 0;               // The number of bytes in array.
+    /** The number of bytes in array. */
+    int readBufEnd = 0;
 
-    /** Field BOUNDARY_NOT_FOUND           */
+    /** Field BOUNDARY_NOT_FOUND.           */
     protected static final int BOUNDARY_NOT_FOUND = Integer.MAX_VALUE;
 
     // Where in the stream a boundary is located.
 
-    /** Field boundaryPos           */
+    /** Field boundaryPos.           */
     int boundaryPos = BOUNDARY_NOT_FOUND;
 
-    /** Field streamCount           */
-    static int streamCount = 0;       // number of streams produced.
+    /** The number of streams produced. */
+    static int streamCount = 0;
 
     /**
-     * Method newStreamNo
+     * Signal that a new stream has been created.
      *
      * @return
      */
@@ -126,15 +125,19 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         return ++streamCount;
     }
 
-    /** Field streamNo           */
+    /** Field streamNo.           */
     protected int streamNo = -1;    // Keeps track of stream
 
-    /** Field isDebugEnabled           */
+    /** Field isDebugEnabled.           */
     static boolean isDebugEnabled = false;
 
     /**
-     * Gets the next stream. From the previous using the same buffer size to read.
-     * @return the boundary delmited stream. Null if there are no more streams.
+     * Gets the next stream. From the previous using the same buffer size to
+     * read.
+     *
+     * @return the boundary delmited stream, null if there are no more streams.
+     * @throws java.io.IOException if there was an error loading the data for
+     *              the next stream
      */
     public synchronized BoundaryDelimitedStream getNextStream()  throws java.io.IOException  {
         return getNextStream(readbufsz);
@@ -144,7 +147,9 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      * Gets the next stream. From the previous using  new buffer reading size.
      *
      * @param readbufsz
-     * @return the boundary delmited stream. Null if there are no more streams.
+     * @return the boundary delmited stream, null if there are no more streams.
+     * @throws java.io.IOException if there was an error loading the data for
+     *              the next stream
      */
     protected synchronized BoundaryDelimitedStream getNextStream(
             int readbufsz)  throws java.io.IOException  {
@@ -163,12 +168,15 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
     /**
      *  Constructor to create the next stream from the previous one.
      *
-     * @param prev
-     * @param readbufsz
+     * @param prev      the previous stream
+     * @param readbufsz how many bytes to make the read buffer
+     * @throws java.io.IOException if there was a problem reading data from
+     *              <code>prev</code>
      */
     protected BoundaryDelimitedStream(BoundaryDelimitedStream prev,
-                                      int readbufsz) throws java.io.IOException  {
-
+                                      int readbufsz)
+            throws java.io.IOException
+    {
         super(null);
 
         streamNo = newStreamNo();
@@ -192,7 +200,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
     }
 
     /**
-     * Create a new boundary stream;
+     * Create a new boundary stream.
      *
      * @param is
      * @param boundary is the boundary that separates the individual streams.
@@ -226,31 +234,11 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         this.readbufsz = Math.max((boundaryBufLen) * 2, readbufsz);
     }
 
-    /**
-     * Method readFromStream
-     *
-     * @param b
-     *
-     * @return
-     *
-     * @throws java.io.IOException
-     */
     private final int readFromStream(final byte[] b)
             throws java.io.IOException {
         return readFromStream(b, 0, b.length);
     }
 
-    /**
-     * Method readFromStream
-     *
-     * @param b
-     * @param start
-     * @param length
-     *
-     * @return
-     *
-     * @throws java.io.IOException
-     */
     private final int readFromStream(
             final byte[] b, final int start, final int length)
             throws java.io.IOException {
@@ -486,13 +474,6 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         return false;
     }
 
-    /**
-     * Method available
-     *
-     * @return
-     *
-     * @throws java.io.IOException
-     */
     public int available() throws java.io.IOException {
 
         int bcopy = readBufEnd - readBufPos - boundaryBufLen;
@@ -506,11 +487,12 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
     /**
      * Read from the boundary delimited stream.
      *
-     * @param searchbuf
-     * @param start
-     * @param end
+     * @param searchbuf buffer to read from
+     * @param start     starting index
+     * @param end       ending index
      * @return The position of the boundary. Detects the end of the source stream.
-     *
+     * @throws java.io.IOException if there was an error manipulating the
+     *              underlying stream
      */
     protected int boundaryPosition(byte[] searchbuf, int start, int end) throws java.io.IOException  {
 
@@ -531,7 +513,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
                     // If there really was no crlf at then end then this is not a boundary.
                     foundAt = BOUNDARY_NOT_FOUND;
-                } 
+                }
             }
         }
 
@@ -540,18 +522,8 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
     /* The below uses a standard textbook Boyer-Moore pattern search. */
 
-    /** Field skip           */
     private int[] skip = null;
 
-    /**
-     * Method boundarySearch
-     *
-     * @param text
-     * @param start
-     * @param end
-     *
-     * @return
-     */
     private int boundarySearch(final byte[] text, final int start,
                                final int end) {
 
@@ -607,6 +579,11 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         return BOUNDARY_NOT_FOUND;
     }
 
+    /**
+     * Close the underlying stream and remove all references to it.
+     *
+     * @throws java.io.IOException if the stream could not be closed
+     */
     protected void finalClose() throws java.io.IOException {
       if(theEnd) return;
       theEnd= true;

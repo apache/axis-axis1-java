@@ -78,9 +78,9 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      *     if there was no TypeMapping associated with the specified
      *     <code>encodingStyleURI</code>
      *
-     * @throws JAXRPCException If there is an error in the
-     *              registration of the <code>TypeMapping</code> for
-     *              the specified <code>encodingStyleURI</code>.
+     * @throws javax.xml.rpc.JAXRPCException if there is any error that prevents
+     *              the registration of the <code>TypeMapping</code> for
+     *              the specified <code>encodingStyleURI</code>
      */
     public TypeMapping register(String encodingStyleURI, TypeMapping mapping);
 
@@ -100,8 +100,9 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      *
      * @param mapping TypeMapping instance
      *
-     * @throws JAXRPCException If there is an error in the
-     *             registration of the default <code>TypeMapping</code>
+     * @throws javax.xml.rpc.JAXRPCException if there is any error that
+     *              prevents the registration of the default
+     *              <code>TypeMapping</code>
      */
     public void registerDefault(TypeMapping mapping);
 

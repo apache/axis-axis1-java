@@ -57,24 +57,25 @@ package javax.xml.rpc.holders;
 import java.util.Calendar;
 
 /**
- * Class CalendarHolder
+ * Holder for <code>Calendar</code>s.
  *
  * @version 1.0
  */
 public final class CalendarHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Calendar</code> that is held. */
     public Calendar value;
 
     /**
-     * Constructor CalendarHolder
+     * Make a new <code>CalendarHolder</code> with a <code>null</code> value.r
      */
     public CalendarHolder() {}
 
     /**
-     * Constructor CalendarHolder
+     * Make a new <code>CalendarHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>Calendar</code> to hold
      */
     public CalendarHolder(Calendar value) {
         this.value = value;

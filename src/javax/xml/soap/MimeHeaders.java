@@ -72,13 +72,8 @@ import java.util.Vector;
  */
 public class MimeHeaders {
 
-    /**  */
     class MatchingIterator implements Iterator {
 
-        /**
-         *
-         * @return
-         */
         private Object nextMatch() {
 
             label0:
@@ -111,10 +106,6 @@ public class MimeHeaders {
             return null;
         }
 
-        /**
-         *
-         * @return
-         */
         public boolean hasNext() {
 
             if (nextHeader == null) {
@@ -124,10 +115,6 @@ public class MimeHeaders {
             return nextHeader != null;
         }
 
-        /**
-         *
-         * @return
-         */
         public Object next() {
 
             if (nextHeader != null) {
@@ -145,28 +132,18 @@ public class MimeHeaders {
             }
         }
 
-        /**  */
         public void remove() {
             iterator.remove();
         }
 
-        /**  */
         private boolean match;
 
-        /**  */
         private Iterator iterator;
 
-        /**  */
         private String names[];
 
-        /**  */
         private Object nextHeader;
 
-        /**
-         *
-         * @param as
-         * @param flag
-         */
         MatchingIterator(String as[], boolean flag) {
 
             match    = flag;
@@ -362,6 +339,11 @@ public class MimeHeaders {
         return new MatchingIterator(names, false);
     }
 
-    /**  */
+    // fixme: does this need to be a Vector? Will a non-synchronized impl of
+    // List do?
+    /**
+     * A <code>Vector</code> containing the headers as <code>MimeHeader</code>
+     *              instances.
+     */
     protected Vector headers;
 }

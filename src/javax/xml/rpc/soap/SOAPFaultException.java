@@ -80,8 +80,8 @@ import javax.xml.soap.Detail;
 public class SOAPFaultException extends RuntimeException {
 
     /**
-     *  Constructor for SOAPFaultException
-     *  <p>
+     *  Constructor for SOAPFaultException.
+     *
      *  @param  faultcode    <code>QName</code> for the SOAP faultcode
      *  @param  faultstring  <code>faultstring</code> element of SOAP fault
      *  @param  faultactor   <code>faultactor</code> element of SOAP fault
@@ -118,8 +118,10 @@ public class SOAPFaultException extends RuntimeException {
     }
 
     /**
-     * Gets the <code>faultactor</code> element. The <code>faultactor</code> element provides information
-     * about which SOAP node on the SOAP message path caused the fault to happen. It indicates the source of the fault.
+     * Gets the <code>faultactor</code> element. The <code>faultactor</code>
+     * element provides information about which SOAP node on the SOAP message
+     * path caused the fault to happen. It indicates the source of the fault.
+     *
      * @return <code>faultactor</code> element of the SOAP fault
      */
     public String getFaultActor() {
@@ -127,8 +129,9 @@ public class SOAPFaultException extends RuntimeException {
     }
 
     /**
-     * Gets the detail element. The detail element is intended for carrying application specific error
-     * information related to the SOAP Body.
+     * Gets the detail element. The detail element is intended for carrying
+     * application specific error information related to the SOAP Body.
+     *
      * @return <code>detail</code> element of the SOAP fault
      */
     public Detail getDetail() {
@@ -138,12 +141,12 @@ public class SOAPFaultException extends RuntimeException {
     /** Qualified name of the faultcode. */
     private QName faultcode;
 
-    /** The faultstring element of the SOAP fault */
+    /** The faultstring element of the SOAP fault. */
     private String faultstring;
 
-    /** faultactor element of the SOAP fault */
+    /** Faultactor element of the SOAP fault. */
     private String faultactor;
 
-    /** detail element of the SOAP fault */
+    /** Detail element of the SOAP fault. */
     private Detail detail;
 }

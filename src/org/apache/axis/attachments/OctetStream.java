@@ -55,6 +55,7 @@
 
 package org.apache.axis.attachments;
 
+// fixme: this is completely undocumented
 public class OctetStream {
     private byte[] bytes = null;
 

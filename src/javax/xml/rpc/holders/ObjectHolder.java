@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class ObjectHolder
+ * Holder for <code>Object</code>s.
  *
  * @version 1.0
  */
 public final class ObjectHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Object</code> contained by this holder. */
     public Object value;
 
     /**
-     * Constructor ObjectHolder
+     * Make a new <code>ObjectHolder</code> with a <code>null</code> value.
      */
     public ObjectHolder() {}
 
     /**
-     * Constructor ObjectHolder
+     * Make a new <code>ObjectHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>Object</code> to hold
      */
     public ObjectHolder(Object value) {
         this.value = value;

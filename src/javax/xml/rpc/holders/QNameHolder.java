@@ -57,24 +57,25 @@ package javax.xml.rpc.holders;
 import javax.xml.namespace.QName;
 
 /**
- * Class QNameHolder
+ * Holder for <code>QName</code>s.
  *
  * @version 1.0
  */
 public final class QNameHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>QName</code> contained by this holder. */
     public QName value;
 
     /**
-     * Constructor QNameHolder
+     * Make a new <code>QNameHolder</code> with a <code>null</code> value.
      */
     public QNameHolder() {}
 
     /**
-     * Constructor QNameHolder
+     * Make a new <code>QNameHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value the <code>QName</code> to hold
      */
     public QNameHolder(QName value) {
         this.value = value;

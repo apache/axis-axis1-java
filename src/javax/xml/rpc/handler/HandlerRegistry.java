@@ -94,11 +94,11 @@ public interface HandlerRegistry extends Serializable {
      * <code>javax.xml.rpc.handler.HandlerInfo</code>.
      *
      *  @param   portName Qualified name of the target service endpoint
-     *  @param   chain A List representing configuration for the
+     *  @param   chain a List representing configuration for the
      *             handler chain
-     *  @throws  JAXRPCException If any error in the configuration of
-     *             the handler chain
-     *  @throws java.lang.UnsupportedOperationException If this
+     *  @throws  javax.xml.rpc.JAXRPCException if there is any error in the
+     *             configuration of the handler chain
+     *  @throws java.lang.UnsupportedOperationException if this
      *     set operation is not supported. This is done to
      *     avoid any overriding of a pre-configured handler
      *     chain.

@@ -70,11 +70,11 @@ public class SimpleTargetedChain extends SimpleChain implements TargetedChain
 {
     protected static Log log =
             LogFactory.getLog(SimpleTargetedChain.class.getName());
-    
+
     protected Handler    requestHandler ;
     protected Handler    pivotHandler ;
     protected Handler    responseHandler ;
-    
+
     /**
      * Pivot indicator sets "past pivot point" before the response handler
      * runs. This avoids having to reimplement SimpleChain.invoke and
@@ -82,19 +82,21 @@ public class SimpleTargetedChain extends SimpleChain implements TargetedChain
      */
     private class PivotIndicator extends BasicHandler {
         public PivotIndicator() {}
-        
+
         public void invoke(MessageContext msgContext) throws AxisFault {
             msgContext.setPastPivot(true);
         }
     }
-    
+
     /**
      * Default no-arg constructor.
      */
     public SimpleTargetedChain() {}
-    
+
     /**
      * Constructor for an instance with effectively only a pivot handler.
+     *
+     * @param  handler the <code>Handler</code> to use
      */
     public SimpleTargetedChain(Handler handler) {
         pivotHandler = handler;
@@ -103,7 +105,7 @@ public class SimpleTargetedChain extends SimpleChain implements TargetedChain
             addHandler(new PivotIndicator());
         }
     }
-    
+
     /**
      * Constructor which takes real or null request, pivot, and response
      * handlers.
@@ -112,40 +114,46 @@ public class SimpleTargetedChain extends SimpleChain implements TargetedChain
                                Handler respHandler) {
         init(reqHandler, null, pivHandler, null, respHandler);
     }
-    
+
     /**
      * Initialiser which takes real or null request, pivot, and response
      * handlers and which allows for special request and response
      * handlers to be inserted just before and after any pivot handler.
+     *
+     * @param reqHandler  the request <code>Handler</code>
+     * @param specialReqHandler the special request <code>Handler</code>
+     * @param pivHandler  the pivot <code>Handler</code>
+     * @param specialRespHandler the special response <code>Handler</code>
+     * @param respHandler the response <code>Handler</code>
      */
     protected void init(Handler reqHandler, Handler specialReqHandler,
                         Handler pivHandler, Handler specialRespHandler,
                         Handler respHandler) {
-        
+
         requestHandler = reqHandler;
         if (requestHandler != null)
             addHandler(requestHandler);
-        
+
         if (specialReqHandler != null)
             addHandler(specialReqHandler);
-        
+
         pivotHandler = pivHandler;
         if (pivotHandler != null) {
             addHandler(pivotHandler);
             addHandler(new PivotIndicator());
         }
-        
+
         if (specialRespHandler != null)
             addHandler(specialRespHandler);
-        
+
         responseHandler = respHandler;
         if (responseHandler != null)
             addHandler(responseHandler);
     }
-    
+
     public Handler getRequestHandler() { return( requestHandler ); }
-    
+
     public Handler getPivotHandler() { return( pivotHandler ); }
-    
+
     public Handler getResponseHandler() { return( responseHandler ); }
 };

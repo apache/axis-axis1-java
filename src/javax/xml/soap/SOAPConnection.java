@@ -71,7 +71,6 @@ package javax.xml.soap;
  */
 public abstract class SOAPConnection {
 
-    /**  */
     public SOAPConnection() {}
 
     /**

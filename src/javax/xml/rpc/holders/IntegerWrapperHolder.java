@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class IntegerWrapperHolder
+ * Holder for <code>Integer</code>s.
  *
  * @version 1.0
  */
 public final class IntegerWrapperHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Integer</code> contained by this holder. */
     public Integer value;
 
     /**
-     * Constructor IntegerWrapperHolder
+     * Make a new <code>IntegerWrapperHolder</code> with a <code>null</code> value.
      */
     public IntegerWrapperHolder() {}
 
     /**
-     * Constructor IntegerWrapperHolder
+     * Make a new <code>IntegerWrapperHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value the <code>Integer</code> to hold
      */
     public IntegerWrapperHolder(Integer value) {
         this.value = value;

@@ -178,7 +178,7 @@ public interface Attachments extends java.io.Serializable {
     /**
      * Sets the root part of this multipart block
      *
-     * @param newRoot
+     * @param newRoot  the new root <code>Part</code>
      */
     public void setRootPart(Part newRoot);
 
@@ -213,7 +213,7 @@ public interface Attachments extends java.io.Serializable {
     /**
      * This is the number of attachments.
      *
-     * @return
+     * @return the number of attachments
      */
     public int getAttachmentCount();
 
@@ -229,7 +229,7 @@ public interface Attachments extends java.io.Serializable {
 
 
     /** Use the default attatchment send type. */
-    public final int SEND_TYPE_NOTSET = 1; 
+    public final int SEND_TYPE_NOTSET = 1;
 
     /** Use the SOAP with MIME attatchment send type. */
     public final int SEND_TYPE_MIME = 2; //use mime
@@ -243,26 +243,26 @@ public interface Attachments extends java.io.Serializable {
     final int SEND_TYPE_MAX = 4;
 
     /** The default attatchment type. MIME */
-    final int SEND_TYPE_DEFAULT = SEND_TYPE_MIME; 
+    final int SEND_TYPE_DEFAULT = SEND_TYPE_MIME;
 
     /** The prefix used to assoc. attachments as content-id */
     public final String CIDprefix= "cid:";
 
     /**
-     * Set the format for attachments. 
+     * Set the format for attachments.
      *
      * @param sendtype the format to send.
-     *      SEND_TYPE_MIME for Multipart Releated Mail type attachments. 
-     *      SEND_TYPE_DIME for DIME type attachments. 
+     *      SEND_TYPE_MIME for Multipart Releated Mail type attachments.
+     *      SEND_TYPE_DIME for DIME type attachments.
      */
 
     public void setSendType( int sendtype);
 
     /**
-     * Determine if an object is to be treated as an attchment. 
+     * Determine if an object is to be treated as an attchment.
      *
      *
-     * @return SEND_TYPE_MIME, SEND_TYPE_DIME,  SEND_TYPE_NOTSET  
+     * @return SEND_TYPE_MIME, SEND_TYPE_DIME,  SEND_TYPE_NOTSET
      */
 
     public int getSendType();

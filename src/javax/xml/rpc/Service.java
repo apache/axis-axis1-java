@@ -220,7 +220,7 @@ public interface Service {
     /**
      * Returns an <code>Iterator</code> for the list of
      * <code>QName</code>s of service endpoints grouped by this
-     * service
+     * service.
      *
      * @return Returns <code>java.util.Iterator</code> with elements
      *     of type <code>javax.xml.namespace.QName</code>

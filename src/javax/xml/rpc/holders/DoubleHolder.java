@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class DoubleHolder
+ * Holder for <code>double</code>s.
  *
  * @version 1.0
  */
 public final class DoubleHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>double</code> contained by this holder. */
     public double value;
 
     /**
-     * Constructor DoubleHolder
+     * Make a new <code>DoubleHolder</code> with a <code>null</code> value.
      */
     public DoubleHolder() {}
 
     /**
-     * Constructor DoubleHolder
+     * Make a new <code>DoubleHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>double</code> to hold
      */
     public DoubleHolder(double value) {
         this.value = value;

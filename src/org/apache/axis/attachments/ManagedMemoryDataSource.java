@@ -74,11 +74,14 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     protected static Log log =
          LogFactory.getLog(ManagedMemoryDataSource.class.getName());
 
-    /** Field contentType           */
-    protected String contentType = "application/octet-stream";    // Is the default.
+    /**
+     * The content type. This defaults to
+     * <code>application/octet-stream</code>.
+     */
+    protected String contentType = "application/octet-stream";
 
-    /** Field ss           */
-    java.io.InputStream ss = null;             // The incoming source stream.
+    /** The incoming source stream. */
+    java.io.InputStream ss = null;
 
     /** Field MIN_MEMORY_DISK_CACHED           */
     public static final int MIN_MEMORY_DISK_CACHED = -1;
@@ -99,9 +102,11 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     /** Field readers           */
     protected java.util.WeakHashMap readers = new java.util.WeakHashMap();
 
-    /** Field deleted           */
+    /**
+     * Flag to show if the resources behind this have been deleted.
+     */
     protected boolean deleted =
-            false;                                 // The resources behind this have been deleted.
+            false;
 
     // Memory is allocated in these size chunks.
 
@@ -114,14 +119,15 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     // Should not be called;
 
     /**
-     * Constructor ManagedMemoryDataSource
+     * Constructor ManagedMemoryDataSource.
      */
     protected ManagedMemoryDataSource() {
     }
 
     /**
-     * Create a new boundary stream;
-     * @param ss is the source input stream that is used to create this data source..
+     * Create a new boundary stream.
+     *
+     * @param ss is the source input stream that is used to create this data source.
      * @param maxCached  This is the max memory that is to be used to cache the data.
      * @param contentType the mime type for this data stream.
      *   by buffering you can some effiency in searching.
@@ -135,8 +141,9 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     }
 
     /**
-     * Create a new boundary stream;
-     * @param ss is the source input stream that is used to create this data source..
+     * Create a new boundary stream.
+     *
+     * @param ss is the source input stream that is used to create this data source.
      * @param maxCached  This is the max memory that is to be used to cache the data.
      * @param contentType the mime type for this data stream.
      *   by buffering you can some effiency in searching.
@@ -212,9 +219,8 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     /**
      * This will flush any memory source to disk and
      * provide the name of the file if desired.
-     * Return the name of the file of the stream.
      *
-     * @return
+     * @return the name of the file of the stream
      */
     public java.lang.String getName() {
 
@@ -234,11 +240,12 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     }
 
     /**
-     * This method returns an OutputStream where the data can be written and throws the appropriate exception if it can not do so.
+     * This method returns an OutputStream where the data can be written and
+     * throws the appropriate exception if it can not do so.
      * NOT SUPPORTED, not need for axis, data sources are create by constructors.
      *
      *
-     * @return
+     * @return always <code>null</code>
      *
      * @throws java.io.IOException
      */
@@ -246,34 +253,32 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
         return null;
     }
 
-    /** Field memorybuflist           */
+    /** The linked list to hold the in memory buffers. */
     protected java.util.LinkedList memorybuflist =
-            new java.util.LinkedList();    // The linked list to hold the in memory buffers.
+            new java.util.LinkedList();
 
-    /** Field currentMemoryBuf           */
-    protected byte[] currentMemoryBuf = null;    // Hold the last memory buffer.
+    /** Hold the last memory buffer. */
+    protected byte[] currentMemoryBuf = null;
 
-    /** Field currentMemoryBufSz           */
+    /** The number of bytes written to the above buffer. */
     protected int currentMemoryBufSz =
-            0;                                       // The number of bytes written to the above buffer.
+            0;
 
-    /** Field totalsz           */
-    protected int totalsz = 0;    // The total size in bytes in this data source.
+    /** The total size in bytes in this data source. */
+    protected int totalsz = 0;
 
-    /** Field cachediskstream           */
+    /** This is the cached disk stream. */
     protected java.io.BufferedOutputStream cachediskstream =
-            null;                                    // This is the cached disk stream.
+            null;
 
-    // If true the source input stream is now closed.
-
-    /** Field closed           */
+    /** If true the source input stream is now closed. */
     protected boolean closed = false;
 
     /**
      * Write bytes to the stream.
-     * @param data all bytes of this array are written to the stream.
      *
-     * @throws java.io.IOException
+     * @param data all bytes of this array are written to the stream
+     * @throws java.io.IOException if there was a problem writing the data
      */
     protected void write(byte[] data) throws java.io.IOException {
         write(data, data.length);
@@ -380,11 +385,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
         }
     }
 
-    /**
-     * Method finalize
-     *
-     * @throws Throwable
-     */
     protected void finalize() throws Throwable {
 
         if (null != cachediskstream) {    // close the disk cache.
@@ -465,11 +465,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
         }
     }
 
-    /**
-     * Method delete
-     *
-     * @return
-     */
     public synchronized boolean delete() {
 
         boolean ret = false;
@@ -529,29 +524,30 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
      */
     private class Instream extends java.io.InputStream {
 
-        /** Field bread           */
-        protected int bread = 0;               // bytes read
+        /** bytes read. */
+        protected int bread = 0;
 
-        /** Field fin           */
-        java.io.FileInputStream fin = null;    // The real stream.
+        /** The real stream. */
+        java.io.FileInputStream fin = null;
 
-        /** Field currentIndex           */
+        /** The position in the list were we are reading from. */
         int currentIndex =
-                0;                                 // The position in the list were we are reading from.
+                0;
 
-        /** Field currentBuf           */
-        byte[] currentBuf = null;    // the buffer we are currently reading from.
+        /** the buffer we are currently reading from. */
+        byte[] currentBuf = null;
 
-        /** Field currentBufPos           */
-        int currentBufPos = 0;                 // The current position in there.
+        /** The current position in there. */
+        int currentBufPos = 0;
 
-        /** Field readClosed           */
-        boolean readClosed = false;            // The read stream has been closed.
+        /** The read stream has been closed. */
+        boolean readClosed = false;
 
         /**
-         * Constructor Instream
+         * Constructor Instream.
          *
-         * @throws java.io.IOException
+         * @throws java.io.IOException if the Instream could not be created or
+         *              if the data source has been deleted
          */
         protected Instream() throws java.io.IOException {
 
@@ -564,11 +560,12 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
         }
 
         /**
-         * Method available
+         * Query for the number of bytes available for reading.
          *
-         * @return
+         * @return the number of bytes left
          *
-         * @throws java.io.IOException
+         * @throws java.io.IOException if this stream is not in a state that
+         *              supports reading
          */
         public int available() throws java.io.IOException {
 
@@ -651,15 +648,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             throw new java.io.IOException(Messages.getMessage("noResetMark"));
         }
 
-        /**
-         * Skip bytes in the stream.
-         * 
-         * @param skipped the number of bytes to skip.
-         *
-         * @return
-         *
-         * @throws java.io.IOException
-         */
         public long skip(long skipped) throws java.io.IOException {
 
             if (debugEnabled) {
@@ -727,16 +715,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             return skipped;
         }
 
-        /**
-         * Read from the stream.
-         * @param b the data buffer to write to.
-         * @param off the offset in the buffer to write to
-         * @param len the number of bytes to write to the buffer.
-         *
-         * @return
-         *
-         * @throws java.io.IOException
-         */
         public int read(byte[] b, int off, int len) throws java.io.IOException {
 
             if (debugEnabled) {
@@ -901,11 +879,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             }
         }
 
-        /**
-         * Method finalize
-         *
-         * @throws Throwable
-         */
         protected void finalize() throws Throwable {
             close();
         }

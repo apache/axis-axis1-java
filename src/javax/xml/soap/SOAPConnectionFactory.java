@@ -54,10 +54,17 @@
  */
 package javax.xml.soap;
 
-/**  */
+/**
+ * A factory for creating <code>SOAPConnection</code> objects. Implementation of
+ * this class is optional. If <code>SOAPConnectionFactory.newInstance()</code>
+ * throws an <code>UnsupportedOperationException</code> then the implementation
+ * does not support the SAAJ communication infrastructure. Otherwise
+ * <code>SOAPConnection</code> objects can be created by calling
+ * <code>createConnection()</code> on the newly created
+ * <code>SOAPConnectionFactory</code> object.
+ */
 public abstract class SOAPConnectionFactory {
 
-    /**  */
     public SOAPConnectionFactory() {}
 
     /**
@@ -89,11 +96,9 @@ public abstract class SOAPConnectionFactory {
      */
     public abstract SOAPConnection createConnection() throws SOAPException;
 
-    /**  */
     private static final String DEFAULT_SOAP_CONNECTION_FACTORY =
         "org.apache.axis.soap.SOAPConnectionFactoryImpl";
 
-    /**  */
     private static final String SF_PROPERTY =
         "javax.xml.soap.SOAPConnectionFactory";
 }

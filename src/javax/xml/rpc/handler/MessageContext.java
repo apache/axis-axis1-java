@@ -87,20 +87,23 @@ public interface MessageContext {
     public abstract void setProperty(String name, Object value);
 
     /**
-     * Gets the value of a specific property from the <code>MessageContext</code>
-     * @param name Name of the property whose value is to be
+     * Gets the value of a specific property from the
+     * <code>MessageContext</code>.
+     *
+     * @param name the name of the property whose value is to be
      *        retrieved
-     * @return Value of the property
+     * @return the value of the property
      * @throws java.lang.IllegalArgumentException if an illegal
      *        property name is specified
      */
     public abstract Object getProperty(String name);
 
     /**
-     * Removes a property (name-value pair) from the <code>MessageContext</code>
-     * @param  name Name of the property to be removed
+     * Removes a property (name-value pair) from the
+     * <code>MessageContext</code>.
      *
-     * @param nae
+     * @param  name the name of the property to be removed
+     *
      * @throws java.lang.IllegalArgumentException if an illegal
      *        property name is specified
      */
@@ -117,7 +120,8 @@ public interface MessageContext {
 
     /**
      * Returns an Iterator view of the names of the properties
-     * in this <code>MessageContext</code>
+     * in this <code>MessageContext</code>.
+     *
      * @return Iterator for the property names
      */
     public abstract Iterator getPropertyNames();

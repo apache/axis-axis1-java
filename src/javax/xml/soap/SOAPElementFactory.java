@@ -71,9 +71,9 @@ package javax.xml.soap;
 public class SOAPElementFactory {
 
     /**
-     * Constructor SOAPElementFactory
+     * Create a new <code>SOAPElementFactory from a <code>SOAPFactory</code>.
      *
-     * @param soapfactory
+     * @param soapfactory  the <code>SOAPFactory</code> to use
      */
     private SOAPElementFactory(SOAPFactory soapfactory) {
         sf = soapfactory;
@@ -152,6 +152,5 @@ public class SOAPElementFactory {
         }
     }
 
-    /** Field sf           */
     private SOAPFactory sf;
 }

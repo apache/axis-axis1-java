@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class LongWrapperHolder
+ * Holder for <code>Long</code>s.
  *
  * @version 1.0
  */
 public final class LongWrapperHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Long</code> contained by this holder. */
     public Long value;
 
     /**
-     * Constructor LongWrapperHolder
+     * Make a new <code>LongWrapperHolder</code> with a <code>null</code> value.
      */
     public LongWrapperHolder() {}
 
     /**
-     * Constructor LongWrapperHolder
+     * Make a new <code>LongWrapperHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value the <code>Long</code> to hold
      */
     public LongWrapperHolder(Long value) {
         this.value = value;

@@ -67,5 +67,10 @@ import org.apache.axis.deployment.wsdd.WSDDDeployment;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface WSDDEngineConfiguration extends EngineConfiguration {
+    /**
+     * Get the WSDDDeployment for this engine configuration.
+     *
+     * @return the WSDDDeployment
+     */
     public WSDDDeployment getDeployment();
 }

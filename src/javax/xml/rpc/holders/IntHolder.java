@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class IntHolder
+ * Holder for <code>int</code>s.
  *
  * @version 1.0
  */
 public final class IntHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>int</code> contained by this holder. */
     public int value;
 
     /**
-     * Constructor IntHolder
+     * Make a new <code>IntHolder</code> with a <code>null</code> value.
      */
     public IntHolder() {}
 
     /**
-     * Constructor IntHolder
+     * Make a new <code>IntHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>int</code> to hold
      */
     public IntHolder(int value) {
         this.value = value;

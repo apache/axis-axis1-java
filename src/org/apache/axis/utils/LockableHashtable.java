@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -59,46 +59,51 @@ import java.util.Vector;
 import java.util.Set;
 import java.util.HashSet;
 
+// fixme: Is there a reason to use Hashtable rather than Map here?
 /**
- * This subclass of the java Hashtable allows individual 
+ * This subclass of the java Hashtable allows individual
  * entries to be "locked" so that their values cannot be
  * overwritten or removed.
- * 
+ *
  * Note, only the put() and remove() methods have been
  * overridden.  The clear() method still removes all
  * entries whether they've been locked or not.
- * 
+ *
  * @author James Snell (jasnell@us.ibm.com)
  */
-public class LockableHashtable extends Hashtable { 
+public class LockableHashtable extends Hashtable {
 
+    // fixme - we are potentialy synchronizing on /both/ the current Hashtable
+    //  and also the Vector - a non-synchronizing List impl such as ArrayList
+    //  may give better performance. We are doing lots of .contains on this
+    //  Vector - it would probably be better to use a Set impl
     /**
      * Stores the keys of the locked entries
      */
     Vector lockedEntries = new Vector();
-    
+
     /** Place to look for properties which we don't find locally. */
     private Hashtable parent = null;
 
     public LockableHashtable() {
         super();
     }
-    
+
     public LockableHashtable(int p1, float p2) {
         super(p1, p2);
     }
-    
+
     public LockableHashtable(java.util.Map p1) {
         super(p1);
     }
-    
+
     public LockableHashtable(int p1) {
         super(p1);
     }
-    
+
     /**
      * Set the parent Hashtable for this object
-     */ 
+     */
     public synchronized void setParent(Hashtable parent)
     {
         this.parent = parent;
@@ -132,7 +137,7 @@ public class LockableHashtable extends Hashtable {
     /**
      * Get an entry from this hashtable, and if we don't find anything,
      * defer to our parent, if any.
-     */ 
+     */
     public synchronized Object get(Object key) {
         Object ret = super.get(key);
         if ((ret == null) && (parent != null)) {
@@ -151,7 +156,7 @@ public class LockableHashtable extends Hashtable {
         if (locked) lockedEntries.add(p1);
         return super.put(p1, p2);
     }
-    
+
     /**
      * Overrides the Hashtable.put() method to mark items as not being locked.
      */
@@ -160,7 +165,7 @@ public class LockableHashtable extends Hashtable {
     }
 
     /**
-     * Checks to see if an item is locked before it is removed. 
+     * Checks to see if an item is locked before it is removed.
      */
     public synchronized Object remove(Object p1) {
         if (lockedEntries.contains(p1)) {
@@ -168,10 +173,10 @@ public class LockableHashtable extends Hashtable {
         }
         return super.remove(p1);
     }
-    
+
     /**
      * Returns true if a given key is in our locked list
-     */ 
+     */
     public boolean isKeyLocked(Object key)
     {
         return lockedEntries.contains(key);

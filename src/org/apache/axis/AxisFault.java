@@ -94,6 +94,9 @@ import org.w3c.dom.Text;
  */
 
 public class AxisFault extends java.rmi.RemoteException {
+    /**
+     * The <code>Log</code> used by this class for all logging.
+     */
     protected static Log log =
         LogFactory.getLog(AxisFault.class.getName());
 
@@ -105,7 +108,7 @@ public class AxisFault extends java.rmi.RemoteException {
     protected Vector    faultDetails ;  // vector of Element's
     protected String    faultNode ;
 
-    /** SOAP headers which should be serialized with the Fault */
+    /** SOAP headers which should be serialized with the Fault. */
     protected ArrayList faultHeaders = null;
 
     /**
@@ -114,6 +117,9 @@ public class AxisFault extends java.rmi.RemoteException {
      * AxisFault.  If the Exception is an InvocationTargetException (which
      * already wraps another Exception), get the wrapped Exception out from
      * there and use that instead of the passed one.
+     *
+     * @param e the <code>Exception</code> to build a fault for
+     * @return  an <code>AxisFault</code> representing <code>e</code>
      */
     public static AxisFault makeFault(Exception e)
     {
@@ -132,7 +138,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * make a fault
+     * Make a fault in the <code>Constants.NS_URI_AXIS</code> namespace.
+     *
      * @param code fault code which will be passed into the Axis namespace
      * @param faultString fault string
      * @param actor fault actor
@@ -146,7 +153,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * make a fault in any namespace
+     * Make a fault in any namespace.
+     *
      * @param code fault code which will be passed into the Axis namespace
      * @param faultString fault string
      * @param actor fault actor
@@ -166,7 +174,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * make a fault in any namespace
+     * Make a fault in any namespace.
+     *
      * @param code fault code which will be passed into the Axis namespace
      * @param subcodes fault subcodes which will be pased into the Axis namespace
      * @param faultString fault string
@@ -194,9 +203,12 @@ public class AxisFault extends java.rmi.RemoteException {
         }
     }
 
+    // fixme: docs says private, access says protected
     /**
-     * Wrap an AxisFault around an existing Exception - this is private
+     * Wrap an AxisFault around an existing Exception. This is private
      * to force everyone to use makeFault() above, which sanity-checks us.
+     *
+     * @param target  the target <code>Exception</code>
      */
     protected AxisFault(Exception target) {
         super ("", target);
@@ -319,8 +331,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * init the fault details data structure; does nothing
-     * if this exists already
+     * Init the fault details data structure; does nothing
+     * if this exists already.
      */
     private void initFaultDetails() {
         if (faultDetails == null) {
@@ -329,14 +341,14 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * clear the fault details list
+     * Clear the fault details list.
      */
     public void clearFaultDetails() {
         faultDetails=null;
     }
 
     /**
-     * dump the fault info to the log at debug level
+     * Dump the fault info to the log at debug level.
      */
     public void dump()
     {
@@ -392,7 +404,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * set the fault code
+     * Set the fault code.
+     *
      * @param code a new fault code
      */
     public void setFaultCode(QName code) {
@@ -402,6 +415,7 @@ public class AxisFault extends java.rmi.RemoteException {
     /**
      * Set the fault code (as a String).
      *
+     * @param code a new fault code
      * @deprecated expect to see this go away after 1.1, use
      *             setFaultCodeAsString instead!
      */
@@ -424,7 +438,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * get the fault code
+     * Get the fault code <code>QName</code>.
+     *
      * @return fault code QName or null if there is none yet.
      */
     public QName getFaultCode() {
@@ -432,7 +447,11 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
+     * Add a fault sub-code with the local name <code>code</code> and namespace
+     * <code>Constants.NS_URI_AXIS</code>.
      * This is new in SOAP 1.2, ignored in SOAP 1.1
+     *
+     * @param code  the local name of the code to add
      * @since axis1.1
      */
     public void addFaultSubCodeAsString(String code) {
@@ -441,8 +460,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * do whatever is needed to create the fault subcodes
-     * data structure, if it is needed
+     * Do whatever is needed to create the fault subcodes
+     * data structure, if it is needed.
      */
     protected void initFaultSubCodes() {
         if (faultSubCode == null) {
@@ -451,7 +470,10 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * This is new in SOAP 1.2, ignored in SOAP 1.1
+     * Add a fault sub-code.
+     * This is new in SOAP 1.2, ignored in SOAP 1.1.
+     *
+     * @param code  the <code>QName</code> of the fault sub-code to add
      * @since axis1.1
      */
     public void addFaultSubCode(QName code) {
@@ -460,7 +482,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * This is new in SOAP 1.2, ignored in SOAP 1.1
+     * Clear all fault sub-codes.
+     * This is new in SOAP 1.2, ignored in SOAP 1.1.
      *
      * @since axis1.1
      */
@@ -483,7 +506,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
 
     /**
-     * set a fault string;
+     * Set a fault string.
      * @param str new fault string; null is turned into ""
      */
     public void setFaultString(String str) {
@@ -495,8 +518,9 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * get the fault string; this will never be null but may be the
-     * empty string
+     * Get the fault string; this will never be null but may be the
+     * empty string.
+     *
      * @return a fault string
      */
     public String getFaultString() {
@@ -504,7 +528,9 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * This is SOAP 1.2 equivalent of {@link #setFaultString(java.lang.String)}
+     * This is SOAP 1.2 equivalent of {@link #setFaultString(java.lang.String)}.
+     *
+     * @param str  the fault reason as a <code>String</code>
      * @since axis1.1
      */
     public void setFaultReason(String str) {
@@ -512,16 +538,17 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * This is SOAP 1.2 equivalent of {@link #getFaultString()}
+     * This is SOAP 1.2 equivalent of {@link #getFaultString()}.
      * @since axis1.1
-     * @return
+     * @return the fault <code>String</code>
      */
     public String getFaultReason() {
         return getFaultString();
     }
 
     /**
-     * set the fault actor
+     * Set the fault actor.
+     *
      * @param actor fault actor
      */
     public void setFaultActor(String actor) {
@@ -537,16 +564,18 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * This is SOAP 1.2 equivalent of {@link #getFaultActor()}
+     * This is SOAP 1.2 equivalent of {@link #getFaultActor()}.
      * @since axis1.1
-     * @return
+     * @return the name of the fault actor
      */
     public String getFaultRole() {
         return getFaultActor();
     }
 
+    // fixme: both faultRole and faultActor refer to the other one - can we
+    //  break the circularity here?
     /**
-     * This is SOAP 1.2 equivalent of {@link #setFaultActor(java.lang.String)}
+     * This is SOAP 1.2 equivalent of {@link #setFaultActor(java.lang.String)}.
      * @since axis1.1
      */
     public void setFaultRole(String role) {
@@ -554,6 +583,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
+     * Get the fault node.
+     *
      * This is new in SOAP 1.2
      * @since axis1.1
      * @return
@@ -563,7 +594,11 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * This is new in SOAP 1.2
+     * Set the fault node.
+     *
+     * This is new in SOAP 1.2.
+     *
+     * @param node  a <code>String</code> representing the fault node
      * @since axis1.1
      */
     public void setFaultNode(String node) {
@@ -571,7 +606,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * set the fault detail element to the arrary of details
+     * Set the fault detail element to the arrary of details.
+     *
      * @param details list of detail elements, can be null
      */
     public void setFaultDetail(Element[] details) {
@@ -613,7 +649,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * append an element to the fault detail list
+     * Append an element to the fault detail list.
+     *
      * @param detail the new element to add
      * @since Axis1.1
      */
@@ -623,7 +660,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * create an element of the given qname and add it to the details
+     * Create an element of the given qname and add it to the details.
+     *
      * @param qname qname of the element
      * @param body string to use as body
      */
@@ -634,8 +672,11 @@ public class AxisFault extends java.rmi.RemoteException {
 
         addFaultDetail(detail);
     }
+
+    // fixme: should we be returning null for none or a zero length array?
     /**
-     * get all the fault details
+     * Get all the fault details.
+     *
      * @return an array of fault details, or null for none
      */
     public Element[] getFaultDetails() {
@@ -650,7 +691,7 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * Find a fault detail element by its qname
+     * Find a fault detail element by its qname.
      * @param qname name of the node to look for
      * @return the matching element or null
      * @since axis1.1
@@ -685,9 +726,10 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * find and remove a specified fault detail element
+     * Find and remove a specified fault detail element.
+     *
      * @param qname qualified name of detail
-     * @return true if it was found and removed
+     * @return true if it was found and removed, false otherwise
      * @since axis1.1
      */
     public boolean removeFaultDetail(QName qname) {
@@ -700,7 +742,8 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * add this fault and any needed headers to the output context
+     * Add this fault and any needed headers to the output context.
+     *
      * @param context
      * @throws Exception
      */
@@ -728,8 +771,9 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * string operator
-     * @return the current fault string; may be empty but never null
+     * Stringify this fault as the current fault string.
+     *
+     * @return the fault string, possibly the empty string, but never null
      */
     public String toString() {
         return faultString;
@@ -737,7 +781,8 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * The override of the base class method prints out the
-     * fault info before the stack trace
+     * fault info before the stack trace.
+     *
      * @param ps where to print
      */
     public void printStackTrace(PrintStream ps) {
@@ -747,7 +792,8 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * The override of the base class method prints out the
-     * fault info before the stack trace
+     * fault info before the stack trace.
+     *
      * @param pw where to print
      */
     public void printStackTrace(java.io.PrintWriter pw) {
@@ -778,7 +824,7 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
-     * clear all fault headers
+     * Clear all fault headers.
      */
     public void clearHeaders() {
         faultHeaders = null;
@@ -786,10 +832,16 @@ public class AxisFault extends java.rmi.RemoteException {
 
 
     /**
-     * Writes any exception data to the faultDetails
+     * Writes any exception data to the faultDetails.
+     *
      * This can be overrided (and is) by emitted exception clases.
-     * The base implementation will attempt to serialize exception data
-     * the fault was created from an Exception and a type mapping is found for it.
+     * The base implementation will attempt to serialize exception data the
+     * fault was created from an Exception and a type mapping is found for it.
+     *
+     * @param qname the <code>QName</code> to write this under
+     * @param context the <code>SerializationContext</code> to write this fault
+     *              to
+     * @throws java.io.IOException if we can't write ourselves for any reason
      */
     public void writeDetails(QName qname, SerializationContext context)
             throws java.io.IOException {

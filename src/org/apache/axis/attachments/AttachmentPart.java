@@ -72,7 +72,8 @@ import java.io.File;
 import java.io.InputStream;
 
 /**
- * Class AttachmentPart
+ * An attachment part.
+ *
  *
  */
 public class AttachmentPart extends javax.xml.soap.AttachmentPart
@@ -82,34 +83,35 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     protected static Log log =
             LogFactory.getLog(AttachmentPart.class.getName());
 
-    /** Field datahandler
+    /**
+     * The data handler.
+     * <p>
      * TODO: make private?
      * */
     javax.activation.DataHandler datahandler = null;
 
-    /** Field mimeHeaders           */
+    /** Field mimeHeaders.           */
     private javax.xml.soap.MimeHeaders mimeHeaders =
             new javax.xml.soap.MimeHeaders();
 
-    /** Field contentObject */
     private Object contentObject;
 
     /**
-     * the name of a file used to store the data
+     * The name of a file used to store the data.
      */
     private String attachmentFile;
 
     /**
-     * Constructor AttachmentPart
+     * Bulds a new <code>AttachmentPart</code>.
      */
     public AttachmentPart() {
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SessionUtils.generateSessionId());
     }
 
     /**
-     * Constructor AttachmentPart
+     * Bulds a new <code>AttachmentPart</code> with a <code>DataHandler</code>.
      *
-     * @param dh
+     * @param dh the <code>DataHandler</code>
      */
     public AttachmentPart(javax.activation.DataHandler dh) {
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
@@ -125,18 +127,20 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         }
     }
 
+    // fixme: be aware, this may never be called
     /**
-     * on death, we clean up our file
-     * @throws Throwable
+     * On death, we clean up our file.
+     *
+     * @throws Throwable if anything went wrong during finalization
      */
     protected void finalize() throws Throwable {
         dispose();
     }
 
     /**
-     * Method getActivationDataHandler
+     * Get the data handler.
      *
-     * @return
+     * @return the activation <code>DataHandler</code>
      */
     public javax.activation.DataHandler getActivationDataHandler() {
         return datahandler;
@@ -179,6 +183,10 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     /**
      * check if this Part's mimeheaders matches the one passed in.
      * TODO: Am not sure about the logic.
+     *
+     * @param headers  the <code>MimeHeaders</code> to check
+     * @return true if all header name, values in <code>headers</code> are
+     *              found, false otherwise
      */
     public boolean matches(javax.xml.soap.MimeHeaders headers) {
         for (Iterator i = headers.getAllHeaders(); i.hasNext();) {
@@ -201,69 +209,30 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         return true;
     }
 
-    /**
-     * Content location.
-     */
     public String getContentLocation() {
         return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
     }
 
-    /**
-     * Set content location.
-     *
-     * @param loc
-     */
     public void setContentLocation(String loc) {
         setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
     }
 
-    /**
-     *     Sets Content-Id of this part.
-     *      already defined.
-     *     @param newCid new Content-Id
-     */
     public void setContentId(String newCid) {
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
     }
 
-    /**
-     * Content ID.
-     *
-     * @return
-     */
     public String getContentId() {
         return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
     }
 
-    /**
-     * Get all headers that match
-     *
-     * @param match
-     *
-     * @return
-     */
     public java.util.Iterator getMatchingMimeHeaders(final String[] match) {
         return mimeHeaders.getMatchingHeaders(match);
     }
 
-    /**
-     * Get all headers that do not match
-     *
-     * @param match
-     *
-     * @return
-     */
     public java.util.Iterator getNonMatchingMimeHeaders(final String[] match) {
         return mimeHeaders.getNonMatchingHeaders(match);
     }
 
-    /**
-     * Retrieves all the headers for this <CODE>
-     * AttachmentPart</CODE> object as an iterator over the <CODE>
-     * MimeHeader</CODE> objects.
-     * @return  an <CODE>Iterator</CODE> object with all of the Mime
-     *     headers for this <CODE>AttachmentPart</CODE> object
-     */
     public Iterator getAllMimeHeaders() {
         return mimeHeaders.getAllHeaders();
     }
@@ -538,7 +507,8 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     }
 
     /**
-     * maybe add file name to the attachment
+     * Maybe add file name to the attachment.
+     *
      * @param source the source of the data
      */
 
@@ -551,21 +521,26 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     }
 
     /**
-     * set the filename of this attachment part
-     * @param path
+     * Set the filename of this attachment part.
+     *
+     * @param path  the new file path
      */
     protected void setAttachmentFile(String path) {
         attachmentFile=path;
     }
 
     /**
-     * detach the attachment file from this class, so it is not cleaned up
+     * Detach the attachment file from this class, so it is not cleaned up.
+     * This has the side-effect of making subsequent calls to
+     * getAttachmentFile() return <code>null</code>.
      */
     public void detachAttachmentFile() {
         attachmentFile=null;
     }
+    
     /**
-     * get the filename of this attachment
+     * Get the filename of this attachment.
+     *
      * @return the filename or null for an uncached file
      */
     public String getAttachmentFile() {

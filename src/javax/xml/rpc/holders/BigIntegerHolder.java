@@ -57,24 +57,25 @@ package javax.xml.rpc.holders;
 import java.math.BigInteger;
 
 /**
- * Class BigIntegerHolder
+ * Holder for <code>BigInteger</code>s.
  *
  * @version 1.0
  */
 public final class BigIntegerHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>BigInteger</code> that is held. */
     public BigInteger value;
 
     /**
-     * Constructor BigIntegerHolder
+     * Make a new <code>BigIntegerHolder</code> with a <code>null</code> value.
      */
     public BigIntegerHolder() {}
 
     /**
-     * Constructor BigIntegerHolder
+     * Make a new <code>BigIntegerHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value the <code>BigInteger</code> to hold
      */
     public BigIntegerHolder(BigInteger value) {
         this.value = value;

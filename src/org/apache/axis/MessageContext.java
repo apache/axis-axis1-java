@@ -80,6 +80,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+// fixme: fields are declared throughout this class, some at the top, and some
+//  near to where they are used. We should move all field declarations into a
+//  single block - it makes it easier to see what is decalred in this class and
+//  what is inherited. It also makes it easier to find them.
 /**
  * A MessageContext is the Axis implementation of the javax
  * SOAPMessageContext class, and is core to message processing
@@ -106,6 +110,7 @@ import java.util.Hashtable;
  * @author Jacek Kopecky (jacek@idoox.com)
  */
 public class MessageContext implements SOAPMessageContext {
+    /** The <code>Log</code> used for logging all messages. */
     protected static Log log =
             LogFactory.getLog(MessageContext.class.getName());
 
@@ -136,12 +141,12 @@ public class MessageContext implements SOAPMessageContext {
     private String       transportName;
 
     /**
-     * The default classloader that this service should use
+     * The default <code>ClassLoader</code> that this service should use.
      */
     private ClassLoader  classLoader;
 
     /**
-     * The AxisEngine which this context is involved with
+     * The AxisEngine which this context is involved with.
      */
     private AxisEngine   axisEngine;
 
@@ -158,8 +163,12 @@ public class MessageContext implements SOAPMessageContext {
      */
     private boolean      maintainSession = false;
 
+    // fixme: ambiguity here due to lac of docs - havePassedPivot vs
+    //  request/response, vs sending/processing & recieving/responding
+    //  I may have just missed the key bit of text
     /**
-     * Are we doing request stuff, or response stuff?
+     * Are we doing request stuff, or response stuff? True if processing
+     * response (I think).
      */
     private boolean      havePassedPivot = false;
 
@@ -181,33 +190,39 @@ public class MessageContext implements SOAPMessageContext {
      */
     private LockableHashtable bag = new LockableHashtable();
 
-    /**
+    /*
      * These variables are logically part of the bag, but are separated
      * because they are used often and the Hashtable is more expensive.
+     *
+     * fixme: this may be fixed by moving to a plain Map impl like HashMap.
+     *  Alternatively, we could hide all this magic behind a custom Map impl -
+     *  is synchronization on the map needed? these properties aren't
+     *  synchronized so I'm guessing not.
      */
     private String  username       = null;
     private String  password       = null;
     private String  encodingStyle  = Use.ENCODED.getEncoding();
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
-    
+
     /**
-     * SOAP Actor roles
+     * SOAP Actor roles.
      */
     private String[] roles;
 
-    /** Our SOAP namespaces and such */
+    /** Our SOAP namespaces and such. */
     private SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
 
-    /** Schema version information - defaults to 2001 */
+    /** Schema version information - defaults to 2001. */
     private SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
 
-    /** what is our current operation */
+    /** Our current operation. */
     private OperationDesc currentOperation = null;
 
     /**
-     * the current operation
-     * @return the current operation; may be null
+     * The current operation.
+     *
+     * @return the current operation; may be <code>null</code>
      */
     public  OperationDesc getOperation()
     {
@@ -215,8 +230,9 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * set the current operation
-     * @param operation
+     * Set the current operation.
+     *
+     * @param operation  the <code>Operation</code> this context is executing
      */
     public void setOperation(OperationDesc operation)
     {
@@ -224,14 +240,15 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * getPossibleOperationsByQName
-     * Returns a list of operation descriptors that could may 
+     * Returns a list of operation descriptors that could may
      * possibly match a body containing an element of the given QName.
      * For non-DOCUMENT, the list of operation descriptors that match
      * the name is returned.  For DOCUMENT, all the operations that have
      * qname as a parameter are returned
+     *
      * @param qname of the first element in the body
      * @return list of operation descriptions
+     * @throws AxisFault if the operation names could not be looked up
      */
     public OperationDesc [] getPossibleOperationsByQName(QName qname) throws AxisFault
     {
@@ -270,7 +287,7 @@ public class MessageContext implements SOAPMessageContext {
                     ArrayList allOperations = desc.getOperations();
                     ArrayList foundOperations = new ArrayList();
                     for (int i=0; i < allOperations.size(); i++ ) {
-                        OperationDesc tryOp = 
+                        OperationDesc tryOp =
                             (OperationDesc) allOperations.get(i);
                         if (tryOp.getParamByQName(qname) != null) {
                             foundOperations.add(tryOp);
@@ -278,7 +295,7 @@ public class MessageContext implements SOAPMessageContext {
                     }
                     if (foundOperations.size() > 0) {
                         possibleOperations = (OperationDesc[])
-                            JavaUtils.convert(foundOperations, 
+                            JavaUtils.convert(foundOperations,
                                               OperationDesc[].class);
                     }
                 }
@@ -310,6 +327,7 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Get the active message context.
+     *
      * @return the current active message context
      */
     public static MessageContext getCurrentContext() {
@@ -317,7 +335,7 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * temporary directory to store attachments
+     * Temporary directory to store attachments.
      */
     protected static String systemTempDir= null;
     /**
@@ -381,7 +399,7 @@ public class MessageContext implements SOAPMessageContext {
             if (defaultSOAPVersion != null && "1.2".equals(defaultSOAPVersion)) {
                 setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
             }
-            
+
             String singleSOAPVersion = (String)engine.getOption(
                                         AxisEngine.PROP_SOAP_ALLOWED_VERSION);
             if (singleSOAPVersion != null) {
@@ -390,7 +408,7 @@ public class MessageContext implements SOAPMessageContext {
                                 SOAPConstants.SOAP12_CONSTANTS);
                 } else if ("1.1".equals(singleSOAPVersion)) {
                     setProperty(Constants.MC_SINGLE_SOAP_VERSION,
-                                SOAPConstants.SOAP11_CONSTANTS);                    
+                                SOAPConstants.SOAP11_CONSTANTS);
                 }
             }
         }
@@ -411,8 +429,10 @@ public class MessageContext implements SOAPMessageContext {
     private TypeMappingRegistry mappingRegistry = null;
 
     /**
-     * replace the engine's type mapping registry with a local one
-     * @param reg
+     * Replace the engine's type mapping registry with a local one. This will
+     * have no effect on any type mappings obtained before this call.
+     *
+     * @param reg  the new <code>TypeMappingRegistry</code>
      */
     public void setTypeMappingRegistry(TypeMappingRegistry reg) {
         mappingRegistry = reg;
@@ -436,7 +456,9 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * Return the type mapping currently in scope for our encoding style
+     * Return the type mapping currently in scope for our encoding style.
+     *
+     * @return the type mapping
      */
     public TypeMapping getTypeMapping()
     {
@@ -445,25 +467,43 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * Transport
+     * The name of the transport for this context.
+     *
+     * @return the transport name
      */
     public String getTransportName()
     {
         return transportName;
     }
 
+    // fixme: the transport names should be a type-safe e-num, or the range
+    //  of legal values should be specified in the documentation and validated
+    //  in the method (raising IllegalArgumentException)
+    /**
+     * Set the transport name for this context.
+     *
+     * @param transportName the name of the transport
+     */
     public void setTransportName(String transportName)
     {
         this.transportName = transportName;
     }
 
     /**
-     * SOAP constants
+     * Get the <code>SOAPConstants</code> used by this message context.
+     *
+     * @return the soap constants
      */
     public SOAPConstants getSOAPConstants() {
         return soapConstants;
     }
 
+    /**
+     * Set the <code>SOAPConstants</code> used by this message context.
+     * This may also affect the encoding style.
+     *
+     * @param soapConstants  the new soap constants to use
+     */
     public void setSOAPConstants(SOAPConstants soapConstants) {
         // when changing SOAP versions, remember to keep the encodingURI
         // in synch.
@@ -475,32 +515,47 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * Schema version information
+     * Get the XML schema version information.
+     *
+     * @return the <code>SchemaVersion</code> in use
      */
-
     public SchemaVersion getSchemaVersion() {
         return schemaVersion;
     }
 
+    /**
+     * Set the XML schema version this message context will use.
+     *
+     * @param schemaVersion  the new <code>SchemaVersion</code>
+     */
     public void setSchemaVersion(SchemaVersion schemaVersion) {
         this.schemaVersion = schemaVersion;
     }
 
     /**
-     * Sessions
+     * Get the current session.
+     *
+     * @return the <code>Session</code> this message context is within
      */
     public Session getSession()
     {
         return session;
     }
 
+    /**
+     * Set the current session.
+     *
+     * @param session  the new <code>Session</code>
+     */
     public void setSession(Session session)
     {
         this.session = session;
     }
 
     /**
-     * Encoding
+     * Indicates if the opration is encoded.
+     *
+     * @return <code>true</code> if it is encoded, <code>false</code> otherwise
      */
     public boolean isEncoded() {
         return (getOperationUse() == Use.ENCODED);
@@ -508,15 +563,19 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * Set whether we are maintaining session state
-     * @param yesno flag to set to true to maintain sessions
+     * Set whether we are maintaining session state.
+     *
+     * @param yesno flag to set to <code>true</code> to maintain sessions
      */
     public void setMaintainSession (boolean yesno) {
         maintainSession = yesno;
     }
 
     /**
-     * Are we maintaining session state?
+     * Discover if we are maintaining session state.
+     *
+     * @return <code>true</code> if we are maintaining state, <code>false</code>
+     *              otherwise
      */
     public boolean getMaintainSession () {
         return maintainSession;
@@ -580,6 +639,8 @@ public class MessageContext implements SOAPMessageContext {
     /**
      * Return the current (i.e. request before the pivot, response after)
      * message.
+     *
+     * @return the current <code>Message</code>
      */
     public Message getCurrentMessage()
     {
@@ -587,17 +648,21 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     *  Gets the SOAPMessage from this message context
-     *  @return Returns the SOAPMessage; returns null if no request
-     *          SOAPMessage is present in this SOAPMessageContext
+     *  Gets the SOAPMessage from this message context.
+     *
+     *  @return the <code>SOAPMessage</code>, <code>null</code> if no request
+     *          <code>SOAPMessage</code> is present in this
+     *          <code>SOAPMessageContext</code>
      */
     public javax.xml.soap.SOAPMessage getMessage() {
         return getCurrentMessage();
     }
 
     /**
-     * Set the current (i.e. request before the pivot, response after)
-     * message.
+     * Set the current message. This will set the request before the pivot,
+     * and the response afterwards, as guaged by the passedPivod property.
+     *
+     * @param curMsg  the <code>Message</code> to assign
      */
     public void setCurrentMessage(Message curMsg)
     {
@@ -611,25 +676,35 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     *  Sets the SOAPMessage for this message context
-     *  @param   message  Request SOAP message
-     *  @throws java.lang.UnsupportedOperationException If this
-     *     operation is not supported
+     * Sets the SOAPMessage for this message context.
+     * This is equivalent to casting <code>message</code> to
+     * <code>Message</code> and then passing it on to
+     * <code>setCurrentMessage()</code>.
+     *
+     * @param message  the <code>SOAPMessage</code> this context is for
      */
     public void setMessage(javax.xml.soap.SOAPMessage message) {
         setCurrentMessage((Message)message);
     }
 
     /**
-     * Determine when we've passed the pivot
+     * Determine when we've passed the pivot.
+     *
+     * @return <code>true</code> if we have, <code>false</code> otherwise
      */
     public boolean getPastPivot()
     {
         return havePassedPivot;
     }
 
+    // fixme: is there any legitimate case where we could pass the pivot and
+    //  then go back again? Is there documentation about the life-cycle of a
+    //  MessageContext, and in particular the re-use of instances that would be
+    //  relevant?
     /**
-     * Indicate when we've passed the pivot
+     * Indicate when we've passed the pivot.
+     *
+     * @param pastPivot  true if we are past the pivot point, false otherwise
      */
     public void setPastPivot(boolean pastPivot)
     {
@@ -655,9 +730,10 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * get the classloader, implicitly binding to the thread context
-     * classloader if an override has not been supplied
-     * @return
+     * Get the classloader, implicitly binding to the thread context
+     * classloader if an override has not been supplied.
+     *
+     * @return the class loader
      */
     public ClassLoader getClassLoader() {
         if ( classLoader == null ) {
@@ -667,20 +743,28 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     * set a new classloader
-     * @param cl
+     * Set a new classloader. Setting to null will result in getClassLoader()
+     * binding back to the thread context class loader.
+     *
+     * @param cl    the new <code>ClassLoader</code> or <code>null</code>
      */
     public void setClassLoader(ClassLoader cl ) {
         classLoader = cl ;
     }
 
+    /**
+     * Get the name of the targed service for this message.
+     *
+     * @return the target service
+     */
     public String getTargetService() {
-        return( targetService );
+        return targetService;
     }
 
     /**
-     * get the axis engine. Will be null if the message was created outside
-     * an engine
+     * Get the axis engine. This will be <code>null</code> if the message was
+     * created outside an engine
+     *
      * @return the current axis engine
      */
     public AxisEngine getAxisEngine()
@@ -690,12 +774,14 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Set the target service for this message.
-     *
+     * <p>
      * This looks up the named service in the registry, and has
      * the side effect of setting our TypeMappingRegistry to the
      * service's.
      *
-     * @param tServ the name of the target service.
+     * @param tServ the name of the target service
+     * @throws AxisFault  if anything goes wrong in resolving or setting the
+     *              service
      */
     public void setTargetService(String tServ) throws AxisFault {
         log.debug("MessageContext: setTargetService(" + tServ+")");
@@ -722,10 +808,24 @@ public class MessageContext implements SOAPMessageContext {
      */
     private SOAPService serviceHandler ;
 
+    /**
+     * Get the <code>SOAPService</code> used to handle services in this
+     * context.
+     *
+     * @return the service handler
+     */
     public SOAPService getService() {
-        return( serviceHandler );
+        return  serviceHandler;
     }
 
+    /**
+     * Set the <code>SOAPService</code> used to handle services in this
+     * context. This method configures a wide range of
+     * <code>MessageContext</code> properties to suit the handler.
+     *
+     * @param sh the new service handler
+     * @throws AxisFault if the service could not be set
+     */
     public void setService(SOAPService sh) throws AxisFault
     {
         log.debug("MessageContext: setServiceHandler("+sh+")");
@@ -754,12 +854,17 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Let us know whether this is the client or the server.
+     *
+     * @return true if we are a client
      */
     public boolean isClient()
     {
         return (axisEngine instanceof AxisClient);
     }
 
+    // fixme: public final statics tend to go in a block at the top of the
+    //  class deffinition, not marooned in the middle
+    // fixme: chose public static final /or/ public final static
     /** Contains an instance of Handler, which is the
      *  ServiceContext and the entrypoint of this service.
      *
@@ -768,20 +873,20 @@ public class MessageContext implements SOAPMessageContext {
      */
     public static final String ENGINE_HANDLER      = "engine.handler";
 
-    /** This String is the URL that the message came to
+    /** This String is the URL that the message came to.
      */
     public static final String TRANS_URL           = "transport.url";
 
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static final String QUIT_REQUESTED = "quit.requested";
 
-    /** Place to store an AuthenticatedUser */
+    /** Place to store an AuthenticatedUser. */
     public static final String AUTHUSER            = "authenticatedUser";
 
-    /** If on the client - this is the Call object */
+    /** If on the client - this is the Call object. */
     public static final String CALL                = "call_object" ;
 
-    /** Are we doing Msg vs RPC? - For Java Binding */
+    /** Are we doing Msg vs RPC? - For Java Binding. */
     public static final String IS_MSG              = "isMsg" ;
 
     /** The directory where in coming attachments are created. */
@@ -797,13 +902,14 @@ public class MessageContext implements SOAPMessageContext {
      */
     public static final String WSDLGEN_INTFNAMESPACE      = "axis.wsdlgen.intfnamespace";
 
-    /** The value of the property is used by service WSDL generation (aka ?WSDL)
+    /** The value of the property is used by service WSDL generation (aka ?WSDL).
      * For the service's location if not set TRANS_URL property is used.
      *  (helps provide support through proxies.
      */
     public static final String WSDLGEN_SERV_LOC_URL      = "axis.wsdlgen.serv.loc.url";
 
-    /** The value of the property is used by service WSDL generation (aka ?WSDL)
+    // fixme: should this be a type-safe e-num?
+    /** The value of the property is used by service WSDL generation (aka ?WSDL).
      *  Set this property to request a certain level of HTTP.
      *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_10
      *    for HTTP 1.0
@@ -812,6 +918,12 @@ public class MessageContext implements SOAPMessageContext {
      */
     public static final String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
 
+    // fixme: is this the name of a security provider, or the name of a security
+    //  provider class, or the actualy class of a security provider, or
+    //  something else?
+    /**
+     * The security provider.
+     */
     public static final String SECURITY_PROVIDER = "securityProvider";
 
     /*
@@ -820,33 +932,48 @@ public class MessageContext implements SOAPMessageContext {
      * ones above are left non-final for compatibility reasons.
      */
 
-    /** Just a util so we don't have to cast the result
+    /**
+     * Get a <code>String</code> property by name.
+     *
+     * @param propName the name of the property to fetch
+     * @return the value of the named property
+     * @throws ClassCastException if the property named does not have a
+     *              <code>String</code> value
      */
     public String getStrProp(String propName) {
-        return( (String) getProperty(propName) );
+        return (String) getProperty(propName);
     }
 
     /**
-     * Tests to see if the named property is set in the 'bag'.
-     * If not there then 'false' is returned.
-     * If there, then...
-     *   if its a Boolean, we'll return booleanValue()
-     *   if its an Integer,  we'll return 'false' if its '0' else 'true'
-     *   if its a String, we'll return 'false' if its 'false' or '0' else 'true'
-     *   All other types return 'true'
+     * Tests to see if the named property is set in the 'bag', returning
+     * <code>false</code> if it is not present at all.
+     * This is equivalent to <code>isPropertyTrue(propName, false)</code>.
+     *
+     * @param propName  the name of the property to check
+     * @return true or false, depending on the value of the property
      */
     public boolean isPropertyTrue(String propName) {
         return isPropertyTrue(propName, false);
     }
 
     /**
-     * Tests to see if the named property is set in the 'bag'.
-     * If not there then 'defaultVal' will be returned.
-     * If there, then...
-     *   if its a Boolean, we'll return booleanValue()
-     *   if its an Integer,  we'll return 'false' if its '0' else 'true'
-     *   if its a String, we'll return 'false' if its 'false', 'no', or '0' - else 'true'
-     *   All other types return 'true'
+     * Test if a property is set to something we consider to be true in the
+     * 'bag'.
+     * <ul>
+     * <li>If not there then <code>defaultVal</code> is returned.</li>
+     * <li>If there, then...<ul>
+     *   <li>if its a <code>Boolean</code>, we'll return booleanValue()</li>
+     *   <li>if its an <code>Integer</code>,  we'll return <code>false</code>
+     *   if its <code>0</code> else <code>true</code></li>
+     *   <li>if its a <code>String</code> we'll return <code>false</code> if its
+     *   <code>"false"</code>" or <code>"0"</code> else <code>true</code></li>
+     *   <li>All other types return <code>true</code></li>
+     * </ul></li>
+     * </ul>
+     *
+     * @param propName  the name of the property to check
+     * @param defaultVal  the default value
+     * @return true or false, depending on the value of the property
      */
     public boolean isPropertyTrue(String propName, boolean defaultVal) {
         return JavaUtils.isTrue(getProperty(propName), defaultVal);
@@ -944,10 +1071,15 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
-     *  Returns an Iterator view of the names of the properties in this MessageContext
-     *  @return Iterator for the property names
+     * Returns an <code>Iterator</code> view of the names of the properties in
+     * this <code>MessageContext</code>.
+     *
+     * @return an <code>Iterator</code> over all property names
      */
     public java.util.Iterator getPropertyNames() {
+        // fixme: this is potentially unsafe for the caller - changing the
+        //  properties will kill the iterator. Consider iterating over a copy:
+        // return new HashSet(bag.keySet()).iterator();
         return bag.keySet().iterator();
     }
 
@@ -964,6 +1096,7 @@ public class MessageContext implements SOAPMessageContext {
      * Returns the value associated with the named property - or null if not
      * defined/set.
      *
+     * @param name  the property name
      * @return Object value of the property - or null
      */
     public Object getProperty(String name) {
@@ -1001,6 +1134,15 @@ public class MessageContext implements SOAPMessageContext {
         }
     }
 
+    // fixme: this makes no copy of parent, so later modifications to parent
+    //  can alter this context - is this intended? If so, it needs documenting.
+    //  If not, it needs fixing.
+    /**
+     * Set the Hashtable that contains the default values for our
+     * properties.
+     *
+     * @param parent
+     */
     public void setPropertyParent(Hashtable parent)
     {
         bag.setParent(parent);
@@ -1008,13 +1150,17 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Set the username.
+     *
+     * @param username  the new user name
      */
     public void setUsername(String username) {
         this.username = username;
     } // setUsername
 
     /**
-     * Get the user name
+     * Get the user name.
+     *
+     * @return the user name as a <code>String</code>
      */
     public String getUsername() {
         return username;
@@ -1022,20 +1168,28 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Set the password.
+     *
+     * @param password  a <code>String</code> containing the new password
      */
     public void setPassword(String password) {
         this.password = password;
     } // setPassword
 
     /**
-     * Get the password
+     * Get the password.
+     *
+     * @return the current password <code>String</code>
      */
     public String getPassword() {
         return password;
     } // getPassword
 
     /**
-     * Get the operation style.
+     * Get the operation style. This is either the style of the current
+     * operation or if that is not set, the style of the service handler, or
+     * if that is not set, <code>Style.RPC</code>.
+     *
+     * @return the <code>Style</code> of this message
      */
     public Style getOperationStyle() {
         if (currentOperation != null) {
@@ -1051,6 +1205,8 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Get the operation use.
+     *
+     * @return the operation <code>Use</code>
      */
     public Use getOperationUse() {
         if (currentOperation != null) {
@@ -1065,21 +1221,39 @@ public class MessageContext implements SOAPMessageContext {
     } // getOperationUse
 
     /**
-     * Should soapAction be used?
+     * Enable or dissable the use of soap action information. When enabled,
+     * the message context will attempt to use the soap action URI
+     * information during binding of soap messages to service methods. When
+     * dissabled, it will make no such attempt.
+     *
+     * @param useSOAPAction  <code>true</code> if soap action URI information
+     *              should be used, <code>false</code> otherwise
      */
     public void setUseSOAPAction(boolean useSOAPAction) {
         this.useSOAPAction = useSOAPAction;
     } // setUseSOAPAction
 
+    // fixme: this doesn't follow beany naming conventions - should be
+    //  isUseSOAPActions or getUseSOAPActions or something prettier
     /**
-     * Are we using soapAction?
+     * Indicates wether the soap action URI is being used or not.
+     *
+     * @return <code>true</code> if it is, <code>false</code> otherwise
      */
     public boolean useSOAPAction() {
         return useSOAPAction;
     } // useSOAPAction
 
+    // fixme: this throws IllegalArgumentException but never raises it -
+    //  perhaps in a sub-class?
+    // fixme: IllegalArgumentException is unchecked. Best practice says you
+    //  should document unchecked exceptions, but not list them in throws
     /**
      * Set the soapAction URI.
+     *
+     * @param SOAPActionURI  a <code>String</code> giving the new soap action
+     *              URI
+     * @throws IllegalArgumentException if the URI is not liked
      */
     public void setSOAPActionURI(String SOAPActionURI)
             throws IllegalArgumentException {
@@ -1088,6 +1262,8 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Get the soapAction URI.
+     *
+     * @return the URI of this soap action
      */
     public String getSOAPActionURI() {
         return SOAPActionURI;
@@ -1126,6 +1302,9 @@ public class MessageContext implements SOAPMessageContext {
         }
     }
 
+    /**
+     * Return this context to a clean state.
+     */
     public void reset()
     {
         if (bag != null) {
@@ -1136,24 +1315,46 @@ public class MessageContext implements SOAPMessageContext {
         currentOperation = null;
     }
 
+    /**
+     * Read the high fidelity property.
+     * <p>
+     * Some behavior may be apropreate for high fidelity contexts that is not
+     * relevant for low fidelity ones or vica-versa.
+     *
+     * @return <code>true</code> if the context is high fidelity,
+     *              <code>false</code> otherwise
+     */
     public boolean isHighFidelity() {
         return highFidelity;
     }
 
+    /**
+     * Set the high fidelity propert.
+     * <p>
+     * Users of the context may be changing what they do based upon this flag.
+     *
+     * @param highFidelity  the new value of the highFidelity property
+     */
     public void setHighFidelity(boolean highFidelity) {
         this.highFidelity = highFidelity;
     }
 
     /**
-     * <i>Not (yet) implemented method in the SOAPMessageContext interface</i>
-     * 
-     * Gets the SOAP actor roles associated with an execution of the HandlerChain and its contained Handler instances.
-     * Note that SOAP actor roles apply to the SOAP node and are managed using HandlerChain.setRoles and
-     * HandlerChain.getRoles. Handler instances in the HandlerChain use this information about the SOAP actor roles
-     * to process the SOAP header blocks. Note that the SOAP actor roles are invariant during the processing of
-     * SOAP message through the HandlerChain.
+     * Gets the SOAP actor roles associated with an execution of the
+     * <code>HandlerChain</code> and its contained <code>Handler</code>
+     * instances.
+     * <p>
+     * <i>Not (yet) implemented method in the SOAPMessageContext interface</i>.
+     * <p>
+     * <b>Note:</b> SOAP actor roles apply to the SOAP node and are managed
+     * using <code>HandlerChain.setRoles()</code> and
+     * <code>HandlerChain.getRoles()</code>. Handler instances in the
+     * <code>HandlerChain</code> use this information about the SOAP actor roles
+     * to process the SOAP header blocks. Note that the SOAP actor roles are
+     * invariant during the processing of SOAP message through the
+     * <code>HandlerChain</code>.
      *
-     * @return Array of URIs for SOAP actor roles
+     * @return an array of URIs for SOAP actor roles
      * @see javax.xml.rpc.handler.HandlerChain#setRoles(java.lang.String[]) HandlerChain.setRoles(java.lang.String[])
      * @see javax.xml.rpc.handler.HandlerChain#getRoles() HandlerChain.getRoles()
      */
@@ -1161,7 +1362,15 @@ public class MessageContext implements SOAPMessageContext {
         //TODO: Flesh this out.
         return roles;
     }
-    
+
+    /**
+     * Set the SOAP actor roles associated with an executioni of
+     * <code>CodeHandlerChain</code> and its contained <code>Handler</code>
+     * instances.
+     *
+     * @param roles an array of <code>String</code> instances, each representing
+     *              the URI for a SOAP actor role
+     */
     public void setRoles( String[] roles) {
         this.roles = roles;
     }

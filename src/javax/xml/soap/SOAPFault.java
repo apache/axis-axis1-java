@@ -176,11 +176,67 @@ public interface SOAPFault extends SOAPBodyElement {
      */
     public abstract Detail addDetail() throws SOAPException;
 
+    /**
+     * Sets this <code>SOAPFault</code> object with the given fault code.
+     *
+     * Fault codes, which give information about the fault, are defined in the
+     * SOAP 1.1 specification. A fault code is mandatory and must be of type
+     * <code>QName</code>. This method provides a convenient way to set a fault
+     * code. For example,
+     *
+     * <pre>
+     SOAPEnvelope se = ...;
+     // Create a qualified name in the SOAP namespace with a localName
+     // of "Client".  Note that prefix parameter is optional and is null
+     // here which causes the implementation to use an appropriate prefix.
+     Name qname = se.createName("Client", null,
+     SOAPConstants.URI_NS_SOAP_ENVELOPE);
+     SOAPFault fault = ...;
+     fault.setFaultCode(qname);
+     *
+     * It is preferable to use this method over setFaultCode(String).
+     *
+     * @param name a <code>Name</code> object giving the fault code to be set.
+     *              It must be namespace qualified.
+     * @throws SOAPException if there was an error in adding the
+     *              <code>faultcode</code> element to the underlying XML tree
+     */
     public abstract void setFaultCode(Name name) throws SOAPException;
 
+    /**
+     * Gets the mandatory SOAP 1.1 fault code for this <code>SOAPFault</code>
+     * object as a SAAJ <code>Name</code> object. The SOAP 1.1 specification
+     * requires the value of the "faultcode" element to be of type QName. This
+     * method returns the content of the element as a QName in the form of a
+     * SAAJ <code>Name</code> object. This method should be used instead of the
+     * <code>getFaultCode()</code> method since it allows applications to easily
+     * access the namespace name without additional parsing.
+     * <p>
+     * In the future, a QName object version of this method may also be added.
+     * @return a <code>Name</code> representing the faultcode
+     */
     public abstract Name getFaultCodeAsName();
 
-    public abstract void setFaultString(String s, Locale locale) throws SOAPException;
+    /**
+     * Sets the fault string for this <code>SOAPFault</code> object to the given
+     * string and localized to the given locale.
+     *
+     * @param faultString       a <code>String</code> giving an explanation of
+     *              the fault
+     * @param locale            a <code>Locale</code> object indicating the
+     *              native language of the <code>faultString</code>
+     * @throws SOAPException    if there was an error in adding the
+     *              <code>faultString</code> to the underlying XML tree
+     */
+    public abstract void setFaultString(String faultString, Locale locale) throws SOAPException;
 
+    /**
+     * Returns the optional detail element for this <code>SOAPFault</code>
+     * object.
+     *
+     * @return a <code>Locale</code> object indicating the native language of
+     *              the fault string or <code>null</code> if no locale was
+     *              specified
+     */
     public abstract Locale getFaultStringLocale();
 }

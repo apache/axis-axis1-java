@@ -115,7 +115,8 @@ public interface TypeMapping {
      * @param sf SerializerFactory
      * @param dsf DeserializerFactory
      *
-     * @throws JAXRPCException If any error during the registration
+     * @throws javax.xml.rpc.JAXRPCException if there are any errors that
+     *              prevent registration
      */
     public void register(Class javaType, QName xmlType, SerializerFactory sf,
                          DeserializerFactory dsf);
@@ -151,8 +152,8 @@ public interface TypeMapping {
      * @param javaType Class of the Java type
      * @param xmlType Qualified name of the XML data type
      *
-     * @throws JAXRPCException If there is error
-     * in removing the registered SerializerFactory
+     * @throws javax.xml.rpc.JAXRPCException if there is any error that prevents
+     *              removal of the registered SerializerFactory
      */
     public void removeSerializer(Class javaType, QName xmlType);
 
@@ -163,8 +164,8 @@ public interface TypeMapping {
      * @param javaType Class of the Java type
      * @param xmlType Qualified name of the XML data type
      *
-     * @throws JAXRPCException If there is error in removing
-     * the registered DeserializerFactory
+     * @throws javax.xml.rpc.JAXRPCException if there is any error in removing
+     *              the registered DeserializerFactory
      */
     public void removeDeserializer(Class javaType, QName xmlType);
 }

@@ -93,9 +93,7 @@ public class MimeHeader {
         return value;
     }
 
-    /**  */
     private String name;
 
-    /**  */
     private String value;
 }

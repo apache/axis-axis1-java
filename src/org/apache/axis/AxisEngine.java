@@ -83,6 +83,9 @@ import java.util.Hashtable;
  */
 public abstract class AxisEngine extends BasicHandler
 {
+    /**
+     * The <code>Log</code> for all message logging.
+     */
     protected static Log log =
         LogFactory.getLog(AxisEngine.class.getName());
 
@@ -116,13 +119,16 @@ public abstract class AxisEngine extends BasicHandler
     /** Our go-to guy for configuration... */
     protected EngineConfiguration config;
 
-    /** Has the user changed the password yet? */
+    /** Has the user changed the password yet? True if they have. */
     protected boolean _hasSafePassword = false;
 
-    /** Should we save the engine config each time we modify it? */
+    /**
+     * Should we save the engine config each time we modify it? True if we
+     * should.
+     */
     protected boolean shouldSaveConfig = false;
 
-    /** Java class cache */
+    /** Java class cache. */
     protected ClassCache classCache = new ClassCache();
 
     /**
@@ -133,7 +139,7 @@ public abstract class AxisEngine extends BasicHandler
     private Session session = new SimpleSession();
 
     /**
-     * What actor URIs hold for the entire engine?
+     * What actor URIs hold for the entire engine? Find them here.
      */
     private ArrayList actorURIs = new ArrayList();
 
@@ -173,7 +179,8 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     /**
-     * (re)initialize - What should really go in here???
+     * Initialize the engine. Multiple calls will (may?) return the engine to
+     * the intialized state.
      */
     public void init() {
         if (log.isDebugEnabled()) {
@@ -202,9 +209,10 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     /**
-     * cleanup routine removes application scoped objects
+     * Cleanup routine removes application scoped objects.
+     *
      * There is a small risk of this being called more than once
-     * so the cleanup should be designed to resist that event
+     * so the cleanup should be designed to resist that event.
      */
     public void cleanup() {
         super.cleanup();
@@ -238,15 +246,31 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
+    /**
+     * Get the <code>EngineConfiguration</code> used throughout this
+     * <code>AxisEngine</code> instance.
+     *
+     * @return the engine configuration instance
+     */
     public EngineConfiguration getConfig() {
         return config;
     }
 
+    /**
+     * Discover if this <code>AxisEngine</code> has a safe password.
+     *
+     * @return  true if it is safe, false otherwise
+     */
     public boolean hasSafePassword()
     {
         return _hasSafePassword;
     }
 
+    /**
+     * Set the administration password.
+     *
+     * @param pw  the literal value of the password as a <code>String</code>
+     */
     public void setAdminPassword(String pw)
     {
         setOption(PROP_PASSWORD, pw);
@@ -254,11 +278,26 @@ public abstract class AxisEngine extends BasicHandler
         saveConfiguration();
     }
 
+    /**
+     * Set the flag that controls if the configuration should be saved.
+     *
+     * @param shouldSaveConfig  true if the configuration should be changed,
+     *              false otherwise
+     */
     public void setShouldSaveConfig(boolean shouldSaveConfig)
     {
         this.shouldSaveConfig = shouldSaveConfig;
     }
 
+    // fixme: could someone who knows double-check I've got the semantics of
+    //   this right?
+    /**
+     * Get the <code>Handler</code> for a particular local name.
+     *
+     * @param name  the local name of the request type
+     * @return      the <code>Handler</code> for this request type
+     * @throws AxisFault
+     */
     public Handler getHandler(String name) throws AxisFault
     {
         try {
@@ -268,6 +307,15 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
+    // fixme: could someone who knows double-check I've got the semantics of
+    //   this right?
+    /**
+     * Get the <code>SOAPService</code> for a particular local name.
+     *
+     * @param name  the local name of the request type
+     * @return      the <code>SOAPService</code> for this request type
+     * @throws AxisFault
+     */
     public SOAPService getService(String name) throws AxisFault
     {
         try {
@@ -281,6 +329,14 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
+    /**
+     * Get the <code>Handler</code> that implements the transport for a local
+     * name.
+     *
+     * @param name  the local name to fetch the transport for
+     * @return  a <code>Handler</code> for this local name
+     * @throws AxisFault
+     */
     public Handler getTransport(String name) throws AxisFault
     {
         try {
@@ -290,6 +346,12 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
+    /**
+     * Get the <code>TypeMappingRegistry</code> for this axis engine.
+     *
+     * @return the <code>TypeMappingRegistry</code> if possible, or null if
+     *              there is any error resolving it
+     */
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         TypeMappingRegistry tmr = null;
@@ -302,53 +364,86 @@ public abstract class AxisEngine extends BasicHandler
         return tmr;
     }
 
+    /**
+     * Get the global request <code>Handler</code>.
+     *
+     * @return the <code>Handler</code> used for global requests
+     * @throws ConfigurationException
+     */
     public Handler getGlobalRequest()
         throws ConfigurationException
     {
         return config.getGlobalRequest();
     }
 
+    /**
+     * Get the global respones <code>Handler</code>.
+     *
+     * @return the <code>Handler</code> used for global responses
+     * @throws ConfigurationException
+     */
     public Handler getGlobalResponse()
         throws ConfigurationException
     {
         return config.getGlobalResponse();
     }
 
+    // fixme: this exposes the /actual/ actorsURIs array - do we intend this?
+    //   if so, then we need to document this so that people don't change this
+    //   by accident but have the chance to change a copy
+    // fixme: publishing this as ArrayList prevents us moving to another
+    //   List impl later
+    /**
+     * Get a list of actor URIs that hold for the entire engine.
+     *
+     * @return an <code>ArrayList</code> of all actor URIs as
+     *              <code>Strings</code>
+     */
     public ArrayList getActorURIs()
     {
         return actorURIs;
     }
 
+    /**
+     * Add an actor by uri that will hold for the entire engine.
+     *
+     * @param uri  a <code>String</code> giving the uri of the actor to add
+     */
     public void addActorURI(String uri)
     {
         actorURIs.add(uri);
     }
 
+    /**
+     * Remove an actor by uri that will hold for the entire engine.
+     *
+     * @param uri  a <code>String</code> giving the uri of the actor to remove
+     */
     public void removeActorURI(String uri)
     {
         actorURIs.remove(uri);
     }
 
-    /*********************************************************************
-     * Client engine access
-     *
+    /**
+     * Client engine access.
+     * <p>
      * An AxisEngine may define another specific AxisEngine to be used
      * by newly created Clients.  For instance, a server may
      * create an AxisClient and allow deployment to it.  Then
      * the server's services may access the AxisClient's deployed
      * handlers and transports.
-     *********************************************************************
+     *
+     * @return an <code>AxisEngine</code> that is the client engine
      */
 
     public abstract AxisEngine getClientEngine ();
 
-    /*********************************************************************
+   /**
     * Administration and management APIs
     *
     * These can get called by various admin adapters, such as JMX MBeans,
     * our own Admin client, web applications, etc...
     *
-    *********************************************************************
     */
 
     /**
@@ -366,6 +461,9 @@ public abstract class AxisEngine extends BasicHandler
      * Convert boolean options from String to Boolean and default
      * any ommitted boolean options to TRUE. Default the admin.
      * password.
+     *
+     * @param handler  the <code>Handler</code> to normalise; instances of
+     *              <code>AxisEngine</code> get extra data normalised
      */
     public static void normaliseOptions(Handler handler) {
         // Convert boolean options to Booleans so we don't need to use
@@ -401,6 +499,8 @@ public abstract class AxisEngine extends BasicHandler
 
     /**
      * (Re-)load the global options from the registry.
+     *
+     * @throws ConfigurationException
      */
     public void refreshGlobalOptions() throws ConfigurationException {
         Hashtable globalOptions = config.getGlobalOptions();
@@ -411,16 +511,22 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     /**
-     * accessor only, for application session
-     * (could call it "engine session" instead, but named with reference
-     * to Apache SOAP's notion of "application scope")
+     * Get the <code>Session</code> object associated with the application
+     * session.
+     *
+     * @return a <code>Session</code> scoped to the application
      */
     public Session getApplicationSession () {
         return session;
     }
 
+    /**
+     * Get the <code>ClassCache</code> associated with this engine.
+     *
+     * @return the class cache
+     */
     public ClassCache getClassCache() {
         return classCache;
     }
-    
+
 }

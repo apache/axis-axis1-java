@@ -159,7 +159,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      */
     private Message msgObject;
 
-    /** Field contentSource */
+    /** Field contentSource. */
     private Source contentSource = null;
 
     /**
@@ -169,7 +169,13 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     // private Object originalMessage ; //free up reference  this is not in use.
 
     /**
+     * Create a new SOAPPart.
+     * <p>
      * Do not call this directly!  Should only be called by Message.
+     *
+     * @param parent  the parent <code>Message</code>
+     * @param initialContents  the initial contens <code>Object</code>
+     * @param isBodyStream if the body is in a stream
      */
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
 
@@ -202,7 +208,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
 
     /**
-     * Get the Message for this Part.
+     * Get the <code>Message</code> for this <code>Part</code>.
+     *
+     * @return the <code>Message</code> for this <code>Part</code>
      */
     public Message getMessage(){
       return msgObject;
@@ -211,6 +219,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     /**
      * Set the Message for this Part.
      * Do not call this Directly. Called by Message.
+     *
+     * @param msg  the <code>Message</code> for this part
      */
     public void setMessage (Message msg) {
         this.msgObject= msg;
@@ -218,6 +228,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Content type is always "text/xml" for SOAPParts.
+     *
+     * @return the content type
      */
     public String getContentType() {
         return "text/xml";
@@ -227,6 +239,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Get the content length for this SOAPPart.
      * This will force buffering of the SOAPPart, but it will
      * also cache the byte[] form of the SOAPPart.
+     *
+     * @return the content length in bytes
      */
     public int getContentLength() {
         try {
@@ -238,7 +252,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     }
     /**
      * This set the SOAP Envelope for this part.
-     *
+     * <p>
      * Note: It breaks the chicken/egg created.
      *  I need a message to create an attachment...
      *  From the attachment I should be able to get a reference...
@@ -246,6 +260,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      *    place the  attachment reference to it.
      *  How do I now update the SOAP envelope with what I've changed?
      *
+     * @param env   the <code>SOAPEnvelope</CODE> for this <code>SOAPPart</code>
      */
 
     public void setSOAPEnvelope(org.apache.axis.message.SOAPEnvelope env){
@@ -257,6 +272,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * TODO: For now, since we aren't actually doing MIME yet,
      * this is the same as getContentLength().  Soon it will be
      * different.
+     *
+     * @return the total size
      */
     public int getSize() {
         // for now, we don't ever do headers!  ha ha
@@ -265,6 +282,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Write the contents to the specified writer.
+     *
+     * @param writer  the <code>Writer</code> to write to
      */
     public void writeTo(Writer writer) throws IOException {
 
@@ -300,11 +319,18 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * <p>
      * The method name is historical.
      * TODO: rename this for clarity; should be more like getContents.
+     *
+     * @return the current content
      */
     public Object getCurrentMessage() {
         return currentMessage;
     }
 
+    /**
+     * Set the current message
+     * @param currMsg
+     * @param form
+     */
     public void setCurrentMessage(Object currMsg, int form) {
       currentMessageAsString = null; //Get rid of any cached stuff this is new.
       currentMessageAsBytes = null;
@@ -315,6 +341,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Set the current contents of this Part.
      * The method name is historical.
      * TODO: rename this for clarity to something more like setContents???
+     *
+     * @param currMsg  the new content of this part
+     * @param form  the form of the message
      */
     private void setCurrentForm(Object currMsg, int form) {
         if (log.isDebugEnabled()) {
@@ -336,6 +365,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     /**
      * Get the contents of this Part (not the headers!), as a byte
      * array.  This will force buffering of the message.
+     *
+     * @return an array of bytes containing a byte representation of this Part
+     * @throws AxisFault if this Part can't be serialized to the byte array
      */
     public byte[] getAsBytes() throws AxisFault {
         log.debug("Enter: SOAPPart::getAsBytes");
@@ -357,7 +389,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if ( currentForm == FORM_INPUTSTREAM ) {
             // Assumes we don't need a content length
             try {
-                InputStream  inp = null; 
+                InputStream  inp = null;
                 byte[]  buf = null;
                 try{
                     inp = (InputStream) currentMessage ;
@@ -367,11 +399,11 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                     while ( (len = inp.read(buf,0,4096)) != -1 )
                         baos.write( buf, 0, len );
                     buf = baos.toByteArray();
-                }finally{    
-                  if(inp != null && 
-                    currentMessage instanceof org.apache.axis.transport.http.SocketInputStream )    
-                    inp.close(); 
-                }  
+                }finally{
+                  if(inp != null &&
+                    currentMessage instanceof org.apache.axis.transport.http.SocketInputStream )
+                    inp.close();
+                }
                 setCurrentForm( buf, FORM_BYTES );
                 log.debug("Exit: SOAPPart::getAsBytes");
                 return (byte[])currentMessage;
@@ -385,7 +417,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_SOAPENVELOPE ||
              currentForm == FORM_FAULT ){
-            // Set message to FORM_STRING and 
+            // Set message to FORM_STRING and
             // translate to bytes below
             getAsString();
         }
@@ -425,6 +457,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     /**
      * Get the contents of this Part (not the headers!), as a String.
      * This will force buffering of the message.
+     *
+     * @return a <code>String</code> containing the content of this message
+     * @throws AxisFault  if there is an error serializing this part
      */
     public String getAsString() throws AxisFault {
         log.debug("Enter: SOAPPart::getAsString");
@@ -449,7 +484,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 currentMessageAsString != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Exit: SOAPPart::getAsString(): " + currentMessageAsString);
-                } 
+                }
                 return currentMessageAsString;
             }
             // Save this message in case it is requested later in getAsBytes
@@ -507,6 +542,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Get the contents of this Part (not the MIME headers!), as a
      * SOAPEnvelope.  This will force a complete parse of the
      * message.
+     *
+     * @return a <code>SOAPEnvelope</code> containing the message content
+     * @throws AxisFault if the envelope could not be constructed
      */
     public SOAPEnvelope getAsSOAPEnvelope()
         throws AxisFault
@@ -549,7 +587,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             throw AxisFault.makeFault(real);
         }
 
-        SOAPEnvelope nse= dser.getEnvelope(); 
+        SOAPEnvelope nse= dser.getEnvelope();
         if(currentMessageAsEnvelope != null){
           //Need to synchronize back processed header info.
           Vector newHeaders= nse.getHeaders();
@@ -558,13 +596,13 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
            Iterator ohi= oldHeaders.iterator();
            Iterator nhi= newHeaders.iterator();
            while( ohi.hasNext() && nhi.hasNext()){
-             SOAPHeaderElement nhe= (SOAPHeaderElement)nhi.next(); 
-             SOAPHeaderElement ohe= (SOAPHeaderElement)ohi.next(); 
+             SOAPHeaderElement nhe= (SOAPHeaderElement)nhi.next();
+             SOAPHeaderElement ohe= (SOAPHeaderElement)ohi.next();
 
              if(ohe.isProcessed()) nhe.setProcessed(true);
-           }  
+           }
           }
-          
+
         }
 
         setCurrentForm(nse, FORM_SOAPENVELOPE);
@@ -575,6 +613,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Add the specified MIME header, as per JAXM.
+     *
+     * @param header  the header to add
+     * @param value   the value of that header
      */
     public void addMimeHeader (String header, String value) {
         mimeHeaders.addHeader(header, value);
@@ -582,6 +623,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Get the specified MIME header.
+     *
+     * @param header  the name of a MIME header
+     * @return the value of the first header named <code>header</code>
      */
     private String getFirstMimeHeader (String header) {
         String[] values = mimeHeaders.getHeader(header);
@@ -597,6 +641,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Content location.
+     *
+     * @return the content location
      */
     public String getContentLocation() {
         return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
@@ -604,6 +650,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Set content location.
+     *
+     * @param loc  the content location
      */
     public void setContentLocation(String loc) {
         setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
@@ -620,6 +668,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Content ID.
+     *
+     * @return the content ID
      */
     public String getContentId() {
         return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
@@ -638,14 +688,21 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
 
     /**
-     * Get all headers that match
+     * Get all headers that match.
+     *
+     * @param match  an array of <code>String</code>s giving mime header names
+     * @return an <code>Iterator</code> over all values matching these headers
      */
     public java.util.Iterator getMatchingMimeHeaders( final String[] match){
         return mimeHeaders.getMatchingHeaders(match);
     }
 
     /**
-     * Get all headers that do not match
+     * Get all headers that do not match.
+     *
+     * @param match  an array of <code>String</code>s giving mime header names
+     * @return an <code>Iterator</code> over all values not matching these
+     *          headers
      */
     public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
         return mimeHeaders.getNonMatchingHeaders(match);
@@ -685,7 +742,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 throw new SOAPException(Messages.getMessage("couldNotReadFromCharStream"), e);
             }
             setCurrentMessage(sb.toString(), FORM_STRING);
-        }    
+        }
     }
 
     /**
@@ -714,7 +771,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 } catch (Exception e) {
                     throw new SOAPException(Messages.getMessage("errorGetDocFromSOAPEnvelope"), e);
                 }
-                break;  
+                break;
             case FORM_BYTES:
                 byte[] bytes = (byte[])currentMessage;
                 contentSource = new StreamSource(new ByteArrayInputStream(bytes));
@@ -723,7 +780,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 contentSource = new StreamSource((InputStream)currentMessage);
                 break;
             }
-        }        
+        }
         return contentSource;
     }
 

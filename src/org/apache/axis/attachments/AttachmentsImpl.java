@@ -78,13 +78,13 @@ public class AttachmentsImpl implements Attachments {
     protected static Log log =
             LogFactory.getLog(AttachmentsImpl.class.getName());
 
-    /** Field attachments           */
+    /** Field attachments.           */
     private HashMap attachments = new java.util.HashMap();
 
-    /** Field orderedAttachments           */
+    /** Field orderedAttachments.           */
     private LinkedList orderedAttachments = new LinkedList();
 
-    /** Field soapPart           */
+    /** Field soapPart.           */
     protected SOAPPart soapPart = null;
 
     /**
@@ -104,7 +104,7 @@ public class AttachmentsImpl implements Attachments {
     protected String contentLocation = null;
 
 	/**
-	 * The HashMap for DataHandler Managements 
+	 * The HashMap for DataHandler Managements.
 	 */
 	private HashMap stackDataHandler = new HashMap();
 
@@ -146,7 +146,7 @@ public class AttachmentsImpl implements Attachments {
 
                     if (mimetype.equalsIgnoreCase(
                             org.apache.axis.Message.MIME_MULTIPART_RELATED)) {
-                        sendtype=  SEND_TYPE_MIME;     
+                        sendtype=  SEND_TYPE_MIME;
                         mpartStream =
                                 new org.apache.axis.attachments.MultiPartRelatedInputStream(
                                         contentType,
@@ -170,13 +170,13 @@ public class AttachmentsImpl implements Attachments {
                         soapPart = new org.apache.axis.SOAPPart(null,
                                 mpartStream,
                                 false);
-                     } else if (mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)) { 
+                     } else if (mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)) {
                          try{
                             mpartStream=
                              new MultiPartDimeInputStream( (java.io.InputStream) intialContents);
                              soapPart = new org.apache.axis.SOAPPart(null, mpartStream, false);
                          }catch(Exception e){ throw org.apache.axis.AxisFault.makeFault(e);}
-                         sendtype=  SEND_TYPE_DIME;     
+                         sendtype=  SEND_TYPE_DIME;
                     }
                 }
             }
@@ -217,7 +217,7 @@ public class AttachmentsImpl implements Attachments {
             throws org.apache.axis.AxisFault {
 
         multipart = null;
-        
+
         dimemultipart = null;
 
         mergeinAttachments();
@@ -266,15 +266,6 @@ public class AttachmentsImpl implements Attachments {
         return oldPart;
     }
 
-    /**
-     * Create an attachment part with a buried JAF data handler.
-     *
-     * @param datahandler
-     *
-     * @return
-     *
-     * @throws org.apache.axis.AxisFault
-     */
     public Part createAttachmentPart(Object datahandler)
             throws org.apache.axis.AxisFault {
 
@@ -327,7 +318,7 @@ public class AttachmentsImpl implements Attachments {
                 if (null != part) {
                     if(part instanceof Part)
                         addAttachmentPart((Part)part);
-                    else 
+                    else
                         createAttachmentPart(part);
                 }
             }
@@ -388,7 +379,7 @@ public class AttachmentsImpl implements Attachments {
                 ret = (AttachmentPart) attachments.get(fqreference);
         }
 
-        if( null == ret && reference.startsWith(Attachments.CIDprefix)){ 
+        if( null == ret && reference.startsWith(Attachments.CIDprefix)){
              //This is a content-id lets see if we have it.
                 ret = (Part) attachments.get( reference.substring(4));
         }
@@ -415,17 +406,12 @@ public class AttachmentsImpl implements Attachments {
      * From the complex stream return the root part.
      * Today this is SOAP.
      *
-     * @return
+     * @return the root <code>Part</code>
      */
     public Part getRootPart() {
         return soapPart;
     }
 
-    /**
-     * Sets the root part of this multipart block
-     *
-     * @param newRoot
-     */
     public void setRootPart(Part newRoot) {
 
         try {
@@ -452,7 +438,7 @@ public class AttachmentsImpl implements Attachments {
 
         mergeinAttachments();
 
-        int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :   this.sendtype;       
+        int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :   this.sendtype;
 
         try {
               if(sendtype == SEND_TYPE_MIME)
@@ -466,18 +452,18 @@ public class AttachmentsImpl implements Attachments {
     }
 
     /**
-     * Creates the DIME message 
+     * Creates the DIME message
      *
      * @return a DIME part
      *
-     * @throws org.apache.axis.AxisFault
+     * @throws org.apache.axis.AxisFault if the part could not be built
      */
     protected DimeMultiPart createDimeMessage() throws org.apache.axis.AxisFault{
-        int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :   this.sendtype;       
+        int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :   this.sendtype;
         if (sendtype == SEND_TYPE_DIME){
            if(dimemultipart== null){
 
-              dimemultipart= new DimeMultiPart(); 
+              dimemultipart= new DimeMultiPart();
               dimemultipart.addBodyPart(new DimeBodyPart(
                 soapPart.getAsBytes(), DimeTypeNameFormat.URI,
                 "http://schemas.xmlsoap.org/soap/envelope/",
@@ -488,7 +474,7 @@ public class AttachmentsImpl implements Attachments {
                 AttachmentPart part= (AttachmentPart)i.next();
                     DataHandler dh= AttachmentUtils.
                       getActivationDataHandler(part);
-                    dimemultipart.addBodyPart(new 
+                    dimemultipart.addBodyPart(new
                       DimeBodyPart(dh,part.getContentId()));
               }
             }
@@ -506,11 +492,11 @@ public class AttachmentsImpl implements Attachments {
     public void writeContentToStream(java.io.OutputStream os)
             throws org.apache.axis.AxisFault {
         int sendtype= this.sendtype == SEND_TYPE_NOTSET ?
-                          SEND_TYPE_DEFAULT : this.sendtype;       
-        try{    
+                          SEND_TYPE_DEFAULT : this.sendtype;
+        try{
 
         mergeinAttachments();
-        if(sendtype == SEND_TYPE_MIME){        
+        if(sendtype == SEND_TYPE_MIME){
         org.apache.axis.attachments.MimeUtils.writeToMultiPartStream(os,
                 (multipart != null)
                 ? multipart
@@ -545,8 +531,8 @@ public class AttachmentsImpl implements Attachments {
         mergeinAttachments();
 
         int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :
-               this.sendtype;       
-        if(sendtype == SEND_TYPE_MIME)        
+               this.sendtype;
+        if(sendtype == SEND_TYPE_MIME)
           return org.apache.axis.attachments.MimeUtils.getContentType((multipart
                   != null)
                   ? multipart
@@ -554,13 +540,13 @@ public class AttachmentsImpl implements Attachments {
                   org.apache.axis.attachments.MimeUtils.createMP(
                           soapPart.getAsString(),
                           orderedAttachments)));
-        else return org.apache.axis.Message.MIME_APPLICATION_DIME;        
+        else return org.apache.axis.Message.MIME_APPLICATION_DIME;
     }
 
     /**
      * This is the number of attachments.
      *
-     * @return
+     * @return the number of attachments
      */
     public int getAttachmentCount() {
 
@@ -660,7 +646,7 @@ public class AttachmentsImpl implements Attachments {
         throw new IllegalArgumentException("");
       if( sendtype > SEND_TYPE_MAX )
         throw new IllegalArgumentException("");
-      this.sendtype= sendtype;  
+      this.sendtype= sendtype;
     }
 
     public int getSendType(){
@@ -684,21 +670,28 @@ public class AttachmentsImpl implements Attachments {
 
     }
 
+    // consider type-safe e-num here?
     /**
      * Determine how an object typically sent as attachments are to
-     * be represented.
+     * be represented. Currently, MIME DIME and NONE are reccognised.
+     *
+     * @param value  a String representing a sending type, treated in a
+     *              case-insensetive manner
+     * @return an <code>int</code> send type code
      */
-
     public static int getSendType(String value) {
         if (value.equalsIgnoreCase("MIME")) return SEND_TYPE_MIME;
         if (value.equalsIgnoreCase("DIME")) return SEND_TYPE_DIME;
         if (value.equalsIgnoreCase("NONE")) return SEND_TYPE_NONE;
         return SEND_TYPE_NOTSET;
     }
-    
+
     /**
      * For a given sendType value, return a string representation.
-     */ 
+     *
+     * @param value  a type code integer
+     * @return a <code>String</code> representation of <code>value</code>
+     */
     public static String getSendTypeString(int value) {
         if (value == SEND_TYPE_MIME) {
             return "MIME";

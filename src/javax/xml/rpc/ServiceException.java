@@ -64,7 +64,9 @@ package javax.xml.rpc;
  */
 public class ServiceException extends Exception {
 
-    /** Field cause */
+    // fixme: could we refactor this to use the jdk1.4 exception wrapping stuff?
+
+    /** The cause of this exception. */
     Throwable cause;
 
     /**
@@ -88,9 +90,9 @@ public class ServiceException extends Exception {
      * Constructs a new exception with the specified detail
      * message and cause.
      *
-     * @param message The detail message which is later retrieved
+     * @param message the detail message which is later retrieved
      *            using the <code>getMessage</code> method
-     * @param cause The cause which is saved for the later
+     * @param cause the cause which is saved for the later
      *            retrieval throw by the <code>getCause</code>
      *            method
      */
@@ -107,7 +109,7 @@ public class ServiceException extends Exception {
      * cause.toString())</tt> (which typically contains the
      * class and detail message of <tt>cause</tt>).
      *
-     * @param cause The cause which is saved for the later
+     * @param cause the cause which is saved for the later
      *            retrieval throw by the getCause method.
      *            (A <tt>null</tt> value is permitted, and
      *            indicates that the cause is nonexistent or
@@ -118,9 +120,9 @@ public class ServiceException extends Exception {
     }
 
     /**
-     * Gets the Linked cause
+     * Gets the linked cause.
      *
-     * @return The cause of this Exception or <code>null</code>
+     * @return the cause of this Exception or <code>null</code>
      *     if the cause is noexistent or unknown
      */
     public Throwable getLinkedCause() {

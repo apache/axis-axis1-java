@@ -94,11 +94,14 @@ public class AxisClientProxy implements InvocationHandler {
 
 
     /**
-     * Parameters for invoke method are not the same as parameter for Call 
-     * instance : 
+     * Map between the parameters for the method call and the parameters needed
+     * for the <code>Call</code>.
+     * <p>
+     * Parameters for invoke method are not the same as parameter for Call
+     * instance :
      * - Holders must be converted to their mapped java types
      * - only in and inout parameters must be present in call parameters
-     * 
+     *
      * @param proxyParams proxyParameters
      * @return Object[]   Call parameters
      * @throws JavaUtils.HolderException
@@ -111,18 +114,18 @@ public class AxisClientProxy implements InvocationHandler {
         {
             // we don't know which parameters are IN, OUT or INOUT
             // let's suppose they are all in
-            return proxyParams; 
+            return proxyParams;
         }
-        
+
         Vector paramsCall = new Vector();
         for (int i = 0; proxyParams != null && i < proxyParams.length;i++)
         {
             Object param = proxyParams[i];
-            ParameterDesc paramDesc = operationDesc.getParameter(i);            
-            
+            ParameterDesc paramDesc = operationDesc.getParameter(i);
+
             if (paramDesc.getMode() == ParameterDesc.INOUT) {
                 paramsCall.add(JavaUtils.getHolderValue((Holder)param));
-            } 
+            }
             else
             if (paramDesc.getMode() == ParameterDesc.IN) {
                 paramsCall.add(param);
@@ -132,8 +135,8 @@ public class AxisClientProxy implements InvocationHandler {
     }
 
     /**
-     * copy in/out and out parameters (Holder parameters) back to proxyParams 
-     * 
+     * Copy in/out and out parameters (Holder parameters) back to proxyParams.
+     *
      * @param proxyParams proxyParameters
      */
     private void callOutputParams2proxyParams(Object[] proxyParams)
@@ -146,26 +149,32 @@ public class AxisClientProxy implements InvocationHandler {
             // let's suppose they are all in
             return;
         }
-        
+
         Map outputParams = call.getOutputParams();
-       
+
         for (int i = 0; i < operationDesc.getNumParams();i++)
         {
             Object param = proxyParams[i];
             ParameterDesc paramDesc = operationDesc.getParameter(i);
             if ((paramDesc.getMode() == ParameterDesc.INOUT) ||
                 (paramDesc.getMode() == ParameterDesc.OUT)) {
-                             
+
                   JavaUtils.setHolderValue((Holder)param,
                       outputParams.get(paramDesc.getQName()));
             }
         }
     }
 
-
-
+    // fixme: what is o used for?
     /**
      * Handle a method invocation.
+     *
+     * @param o         the object to invoke relative to
+     * @param method    the <code>Method</code> to invoke
+     * @param objects   the arguments to the method
+     * @return  the result of the method
+     * @throws Throwable if anything went wrong in method dispatching or the
+     *              execution of the method itself
      */
     public Object invoke(Object o, Method method, Object[] objects)
             throws Throwable {
@@ -176,7 +185,7 @@ public class AxisClientProxy implements InvocationHandler {
         else {
           Object outValue;
           Object[] paramsCall;
-          
+
           if ((call.getTargetEndpointAddress() != null) &&
               (call.getPortName() != null)) {
               // call object has been prefilled : targetEndPoint and portname
@@ -203,11 +212,12 @@ public class AxisClientProxy implements InvocationHandler {
           return outValue;
         }
     }
-    
+
     /**
-     * Returns the current call 
-     * @return call
-     */ 
+     * Returns the current call.
+     *
+     * @return the current <code>Call</code>
+     */
     public Call getCall(){
         return call;
     }

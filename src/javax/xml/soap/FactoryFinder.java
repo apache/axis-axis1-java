@@ -105,7 +105,8 @@ class FactoryFinder {
     }
 
     /**
-     * instantiates a factory object given the factory's property name and the default class name
+     * Instantiates a factory object given the factory's property name and the
+     * default class name.
      *
      * @param factoryPropertyName
      * @param defaultFactoryClassName
@@ -121,8 +122,8 @@ class FactoryFinder {
         } catch (SecurityException securityexception) {}
 
         try {
-            String propertiesFileName = System.getProperty("java.home") 
-                                        + File.separator + "lib" 
+            String propertiesFileName = System.getProperty("java.home")
+                                        + File.separator + "lib"
                                         + File.separator + "jaxm.properties";
             File file = new File(propertiesFileName);
             if (file.exists()) {
@@ -157,16 +158,25 @@ class FactoryFinder {
     }
 
     /**
-     * returns an input stream for the specified resource.
-     * @param factoryResource
-     * @return
+     * Returns an input stream for the specified resource.
+     *
+     * <p>This method will firstly try
+     * <code>ClassLoader.getSystemResourceAsStream()</code> then
+     * the class loader of the current thread with
+     * <code>getResourceAsStream()</code> and finally attempt
+     * <code>getResourceAsStream()</code> on
+     * <code>FactoryFinder.class.getClassLoader()</code>.
+     *
+     * @param factoryResource  the resource name
+     * @return  an InputStream that can be used to read that resource, or
+     *              <code>null</code> if the resource could not be resolved
      */
     private static InputStream getResource(String factoryResource) {
         ClassLoader classloader = null;
         try {
             classloader = Thread.currentThread().getContextClassLoader();
         } catch (SecurityException securityexception) {}
-        
+
         InputStream inputstream;
         if (classloader == null) {
             inputstream = ClassLoader.getSystemResourceAsStream(factoryResource);

@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class BooleanWrapperHolder
+ * Holder for <code>Boolean</code>s.
  *
  * @version 1.0
  */
 public final class BooleanWrapperHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Boolean</code> contained by this holder. */
     public Boolean value;
 
     /**
-     * Constructor BooleanWrapperHolder
+     * Make a new <code>BooleanWrapperHolder</code> with a <code>null</code> value.
      */
     public BooleanWrapperHolder() {}
 
     /**
-     * Constructor BooleanWrapperHolder
+     * Make a new <code>BooleanWrapperHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>Boolean</code> to hold
      */
     public BooleanWrapperHolder(Boolean value) {
         this.value = value;

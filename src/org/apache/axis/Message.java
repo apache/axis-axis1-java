@@ -94,26 +94,38 @@ import java.util.Collections;
  */
 public class Message extends javax.xml.soap.SOAPMessage
     implements java.io.Serializable {
+
+    /**
+     * The <code>Log</code> that this class uses for logging all messages.
+     */
     protected static Log log =
         LogFactory.getLog(Message.class.getName());
 
+    /** Message is a request. */
     public static final String REQUEST = "request";
+
+    /** Message is a a response. */
     public static final String RESPONSE = "response";
 
-    // MIME parts defined for messages.
+    /** MIME parts defined for messages. */
     public static final String MIME_MULTIPART_RELATED = "multipart/related";
 
+    /** DIME parts defined for messages. */
     public static final String MIME_APPLICATION_DIME = "application/dime";
 
-    /** Default Attachments Implementation class */
+    /** Default Attachments Implementation class. */
     public static final String DEFAULT_ATTACHMNET_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
-    /** Current Attachment implementation */
+    /** Current Attachment implementation. */
     private static String mAttachmentsImplClassName=DEFAULT_ATTACHMNET_IMPL;
 
-    // look at the input stream to find the headers to decide.
+    /** Look at the input stream to find the headers to decide the mime type. */
     public static final String MIME_UNKNOWN = "  ";
 
+    // fixme: is this constrained to two values - request/response (e.g.
+    //  REQUEST and RESPONSE)? If so, this needs documenting in the get/set
+    //  methods and/or converting into a type-safe e-num. Potentially get/set
+    //  methods should check these values & throw IllegalArgumentException
     /**
      * The messageType indicates whether this is request or response.
      */
@@ -135,8 +147,9 @@ public class Message extends javax.xml.soap.SOAPMessage
     private boolean saveRequired = true;
 
     /**
-     * Returns name of the class prividing Attachment Implementation
-     * @return class Name
+     * Returns the name of the class prividing Attachment Implementation.
+     *
+     * @return class name
      */
     public static String getAttachmentImplClassName(){
         return mAttachmentsImplClassName;
@@ -144,18 +157,38 @@ public class Message extends javax.xml.soap.SOAPMessage
 
     private MessageContext msgContext;
 
+    /**
+     * Get the message type.
+     *
+     * @return the message type <code>String</code>
+     */
     public String getMessageType() {
         return messageType;
     }
 
+    /**
+     *  Set the message type.
+     *
+     * @param messageType the message type <code>String</code>
+     */
     public void setMessageType(String messageType) {
         this.messageType = messageType;
     }
 
+    /**
+     * Get the context associated with this message.
+     *
+     * @return  the message context for this message
+     */
     public MessageContext getMessageContext() {
         return msgContext;
     }
 
+    /**
+     * Set the context associated with this message.
+     *
+     * @param msgContext  the message context for this message
+     */
     public void setMessageContext(MessageContext msgContext) {
         this.msgContext = msgContext;
     }
@@ -224,11 +257,12 @@ public class Message extends javax.xml.soap.SOAPMessage
      * But that all will come later, with lots of additional refactoring.
      *
      * @param initialContents may be String, byte[], InputStream, SOAPEnvelope,
-     *                        or AxisFault.
+     *                        or AxisFault
      * @param bodyInStream is true if initialContents is an InputStream
-     *                     containing just the SOAP body (no SOAP-ENV).
-     * @param contentType this if the contentType has been already determined.
-     *                   (as in the case of servlets);
+     *                     containing just the SOAP body (no SOAP-ENV)
+     * @param contentType this if the contentType has been already determined
+     *                   (as in the case of servlets)
+     * @param contentLocation the location of the content
      */
     public Message(Object initialContents,
                    boolean bodyInStream,
@@ -240,6 +274,9 @@ public class Message extends javax.xml.soap.SOAPMessage
     /**
      * Construct a Message.  An overload of Message(Object, boolean),
      * defaulting bodyInStream to false.
+     *
+     * @param initialContents may be String, byte[], InputStream, SOAPEnvelope,
+     *                        or AxisFault
      */
     public Message(Object initialContents) {
         setup(initialContents, false, null, null, null);
@@ -289,9 +326,17 @@ public class Message extends javax.xml.soap.SOAPMessage
         return attachmentSupportEnabled;
     }
 
-
     /**
      * Do the work of construction.
+     *
+     * @param initialContents may be String, byte[], InputStream, SOAPEnvelope,
+     *                        or AxisFault
+     * @param bodyInStream is true if initialContents is an InputStream
+     *                     containing just the SOAP body (no SOAP-ENV)
+     * @param contentType this if the contentType has been already determined
+     *                   (as in the case of servlets)
+     * @param contentLocation the location of the content
+     * @param mimeHeaders  mime headers for attachments
      */
     private void setup(Object initialContents, boolean bodyInStream,
                        String contentType, String contentLocation,
@@ -359,21 +404,44 @@ public class Message extends javax.xml.soap.SOAPMessage
      * but it's hard to know how to do that without necessitating
      * a lot of casts in client code.  Refactoring keeps getting
      * easier anyhow.
+     *
+     * @return the soap part of this message
      */
     public javax.xml.soap.SOAPPart getSOAPPart() {
         return mSOAPPart;
     }
 
+    // fixme: do we realy need this? Can client code not just call
+    //  getSOAPPart().getAsString() or is there some future optimization that
+    //  could be hooked in here?
+    /**
+     * Get a string representation of this message's SOAPPart.
+     *
+     * @return the soap part of this message as a <code>String</code>
+     * @throws org.apache.axis.AxisFault if the stringification failed
+     */
     public String getSOAPPartAsString() throws org.apache.axis.AxisFault {
         return mSOAPPart.getAsString();
     }
 
+    // fixme: do we realy need this? Can client code not just call
+    //  getSOAPPart().getAsBytes() or is there some future optimization that
+    //  could be hooked in here?
+    /**
+     * Get a byte array representation of this message's SOAPPart.
+     *
+     * @return the soap part of this message as a <code>byte[]</code>
+     * @throws org.apache.axis.AxisFault if creating the byte[] failed
+     */
     public byte[] getSOAPPartAsBytes() throws org.apache.axis.AxisFault {
         return mSOAPPart.getAsBytes();
     }
 
     /**
-     * Get this message's SOAPPart as a SOAPEnvelope
+     * Get this message's SOAPPart as a SOAPEnvelope.
+     *
+     * @return a SOAPEnvelope containing this message's SOAPPart
+     * @throws AxisFault if this failed
      */
     public SOAPEnvelope getSOAPEnvelope() throws AxisFault {
         return mSOAPPart.getAsSOAPEnvelope();
@@ -381,14 +449,27 @@ public class Message extends javax.xml.soap.SOAPMessage
 
     /**
      * Get the Attachments of this Message.
+     * <p>
      * If this returns null, then NO ATTACHMENT SUPPORT EXISTS in this
      * configuration of Axis, and no attachment operations may be
      * performed.
+     *
+     * @return the <code>Attachments</code> if attachments are supported, null
+     *              otherwise
      */
     public Attachments getAttachmentsImpl() {
         return mAttachments;
     }
 
+    /**
+     * Get the content type of the attachments.
+     *
+     * @param sc    provides the default content type
+     * @return      a <code>String</code> giving the content type of the
+     *              attachment
+     * @throws AxisFault if there was an error deducing the content type from
+     *              this message
+     */
     public String getContentType(SOAPConstants sc) throws AxisFault {
 
         int sendType = Attachments.SEND_TYPE_NOTSET;
@@ -410,6 +491,13 @@ public class Message extends javax.xml.soap.SOAPMessage
     }
 
     //This will have to give way someday to HTTP Chunking but for now kludge.
+    /**
+     * Get the content length, including both soap and any attachments.
+     *
+     * @return the total length of this message in bytes
+     * @throws org.apache.axis.AxisFault if there was a problem that prevented
+     *              the length being calculated
+     */
     public long getContentLength() throws org.apache.axis.AxisFault {
         long ret = mSOAPPart.getAsBytes().length;
         if (mAttachments != null && 0 < mAttachments.getAttachmentCount()) {
@@ -644,7 +732,7 @@ public class Message extends javax.xml.soap.SOAPMessage
     }
 
     /**
-     * dispose of attachments
+     * Dispose of attachments.
      */
     public void dispose() {
         if(mAttachments!=null) {

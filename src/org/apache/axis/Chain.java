@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -57,24 +57,42 @@ package org.apache.axis ;
 
 
 
-/** 
+/**
+ * A <code>Handler</code> that executes a 'chain' of child handlers in order.
  *
  * @author Doug Davis (dug@us.ibm.com.com)
  */
 
 public interface Chain extends Handler {
+    // fixme: if this can't be called after invoke, what exception should we
+    //  document as being thrown if someone tries it?
     /**
      * Adds a handler to the end of the chain. May not be called after invoke.
+     *
+     * @param handler  the <code>Handler</code> to be added
      */
     public void addHandler(Handler handler);
 
     /**
-     * Is this handler in the chain?
+     * Discover if a handler is in this chain.
+     *
+     * @param handler  the <code>Handler</code> to check
+     * @return <code>true</code> if it is in this chain, <code>false</code>
+     *              otherwise
      */
     public boolean contains(Handler handler);
 
+    // fixme: do we want to use an array here, or a List? the addHandler method
+    //  kind of indicates that the chain is dynamic
+    // fixme: there's nothing in this contract about whether modifying this
+    //  list of handlers will modify the chain or not - seems like a bad idea to
+    //  expose the stoorage as we have addHandler and contains methods.
+    // fixme: would adding an iterator, size and remove method mean we could
+    //  drop this entirely?
     /**
-     * Get the list of handlers in the chain - is Handler[] the right form?
+     * Get the list of handlers in the chain. Is Handler[] the right form?
+     *
+     * @return an array of <code>Handler</code>s that have been added
      */
     public Handler[] getHandlers();
 

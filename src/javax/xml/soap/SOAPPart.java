@@ -97,7 +97,6 @@ import java.util.Iterator;
  */
 public abstract class SOAPPart implements org.w3c.dom.Document {
 
-    /**  */
     public SOAPPart() {}
 
     /**

@@ -304,7 +304,24 @@ public interface SOAPElement extends Node, org.w3c.dom.Element {
      */
     public abstract String getEncodingStyle();
 
+    /**
+     * Detaches all children of this <code>SOAPElement</code>.
+     * <p>
+     * This method is useful for rolling back the construction of partially
+     * completed <code>SOAPHeaders</code> and <code>SOAPBodys</code> in
+     * reparation for sending a fault when an error condition is detected. It is
+     * also useful for recycling portions of a document within a SOAP message.
+     */
     public abstract void removeContents();
-    
+
+    /**
+     * Returns an <code>Iterator</code> over the namespace prefix
+     * <code>String</code>s visible to this element. The prefixes returned by
+     * this iterator can be passed to the method <code>getNamespaceURI()</code>
+     * to retrieve the URI of each namespace.
+     *
+     * @return an iterator over the namespace prefixes are within scope of this
+     *              <code>SOAPElement</code> object
+     */
     public abstract Iterator getVisibleNamespacePrefixes();
 }

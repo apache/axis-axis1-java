@@ -66,7 +66,7 @@ import javax.mail.internet.MimeUtility;
 import java.io.IOException;
 
 /**
- * This simulates the multipart stream
+ * This simulates the multipart stream.
  *
  * @author Rick Rineholt
  */
@@ -126,13 +126,11 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
     protected String contentId = null;
 
     /**
-     * Multipart stream.
-     * @param the string that holds the contentType
+     * Create a new Multipart stream.
+     * @param contentType  the string that holds the contentType
+     * @param stream       the true input stream from where the source
      *
-     * @param contentType
-     * @param is the true input stream from where the source.
-     *
-     * @throws org.apache.axis.AxisFault
+     * @throws org.apache.axis.AxisFault if the stream could not be created
      */
     public MultiPartRelatedInputStream(
             String contentType, java.io.InputStream stream)
@@ -141,7 +139,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         super(null);    // don't cache this stream.
 
         try {
-            
+
             // First find the start and boundary parameters. There are real weird rules regard what
             // can be in real headers what needs to be escaped etc  let mail parse it.
             javax.mail.internet.ContentType ct =
@@ -213,7 +211,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                         throw new org.apache.axis.AxisFault(
                                 Messages.getMessage(
                                         "mimeErrorNoBoundary", "--"));
-                     found = boundary.length >4  && boundary[2] == '-' &&  boundary[3]== '-'; 
+                     found = boundary.length >4  && boundary[2] == '-' &&  boundary[3]== '-';
                 }
               }
 
@@ -404,18 +402,9 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
             }
         }
         //even if there is stuff in buffer if EOF then this can't be a boundary.
-        return null; 
+        return null;
     }
 
-    /**
-     * Method getAttachmentByReference
-     *
-     * @param id
-     *
-     * @return the attachment Part
-     *
-     * @throws org.apache.axis.AxisFault
-     */
     public Part getAttachmentByReference(final String[] id)
             throws org.apache.axis.AxisFault {
 
@@ -440,11 +429,12 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
     }
 
     /**
-     * Method addPart
+     * Add an <code>AttachmentPart</code> together with its content and location
+     * IDs.
      *
-     * @param contentId
-     * @param locationId
-     * @param ap
+     * @param contentId     the content ID
+     * @param locationId    the location ID
+     * @param ap            the <code>AttachmentPart</code>
      */
     protected void addPart(String contentId, String locationId,
                            AttachmentPart ap) {
@@ -465,21 +455,15 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         " * \0 ".intern()};    // Shouldn't never match
 
     /**
-     * Method readAll
+     * Read all data.
      *
-     * @throws org.apache.axis.AxisFault
+     * @throws org.apache.axis.AxisFault if there was a problem reading all the
+     *              data
      */
     protected void readAll() throws org.apache.axis.AxisFault {
         readTillFound(READ_ALL);
     }
 
-    /**
-     * Method getAttachments
-     *
-     * @return the collection of attachments
-     *
-     * @throws org.apache.axis.AxisFault
-     */
     public java.util.Collection getAttachments()
             throws org.apache.axis.AxisFault {
 
@@ -659,35 +643,14 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         return ret;
     }
 
-    /**
-     * Return the content location.
-     * @return the Content-Location of the stream.
-     *   Null if no content-location specified.
-     */
     public String getContentLocation() {
         return contentLocation;
     }
 
-    /**
-     * Return the content id of the stream
-     * @return the Content-Location of the stream.
-     *   Null if no content-location specified.
-     */
     public String getContentId() {
         return contentId;
     }
 
-    /**
-     * Read the root stream.
-     *
-     * @param b
-     * @param off
-     * @param len
-     *
-     * @return
-     *
-     * @throws java.io.IOException
-     */
     public int read(byte[] b, int off, int len) throws java.io.IOException {
 
         if (closed) {
@@ -707,26 +670,10 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         return read;
     }
 
-    /**
-     * Method read
-     *
-     * @param b
-     *
-     * @return
-     *
-     * @throws java.io.IOException
-     */
     public int read(byte[] b) throws java.io.IOException {
         return read(b, 0, b.length);
     }
 
-    /**
-     * Method read
-     *
-     * @return
-     *
-     * @throws java.io.IOException
-     */
     public int read() throws java.io.IOException {
 
         if (closed) {
@@ -746,11 +693,6 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         return ret;
     }
 
-    /**
-     * Method close
-     *
-     * @throws java.io.IOException
-     */
     public void close() throws java.io.IOException {
 
         closed = true;
@@ -758,12 +700,6 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         soapStream.close();
     }
 
-    /**
-     * Available test is used by Oracle XML parser
-     * @since Axis1.2
-     * @return true if there is data; false if we are closed or at the end of the stream
-     * @throws java.io.IOException
-     */
     public int available() throws java.io.IOException {
         return (closed || eos) ? 0 : soapStream.available();
     }
