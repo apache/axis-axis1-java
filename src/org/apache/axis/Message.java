@@ -60,11 +60,10 @@ import javax.servlet.* ;
 import javax.servlet.http.* ;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
-import org.apache.xml.serialize.* ;
 
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.Debug ;
+import org.apache.axis.utils.XMLUtils ;
 
 /**
  *
@@ -203,18 +202,9 @@ public class Message {
       getAsDocument();
 
     if ( currentForm.equals("Document") ) { 
-      try {
-        ByteArrayOutputStream  baos = new ByteArrayOutputStream();
-        XMLSerializer  xs = new XMLSerializer( baos, new OutputFormat() );
-        xs.serialize( (Document) currentMessage );
-        baos.close();
-        currentForm = "String" ;
-        currentMessage = baos.toString();
-        return( (String) currentMessage );
-      }
-      catch( Exception e ) {
-        e.printStackTrace( System.err );
-      }
+      currentForm = "String" ;
+      currentMessage = XMLUtils.DocumentToString( (Document) currentMessage );
+      return( (String) currentMessage );
     }
 
     System.err.println("Can't convert " + currentForm + " to String" );
@@ -225,18 +215,6 @@ public class Message {
   private Document getAsDocument() {
     Debug.Print( 2, "Enter: Message::getAsDocument" );
     if ( currentForm.equals("Document") ) return( (Document) currentMessage );
-
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
 
     InputStream inp     = null ;
 
@@ -260,7 +238,7 @@ public class Message {
         // Reader reader = new StringReader( (String) currentMessage );
         ByteArrayInputStream bais =  null ;
         bais = new ByteArrayInputStream( ((String)currentMessage).getBytes() );
-        setCurrentMessage( db.parse( bais ), "Document" );
+        setCurrentMessage( XMLUtils.newDocument( bais ), "Document" );
         Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
@@ -271,7 +249,7 @@ public class Message {
       else if ( currentForm.equals("AxisFault") ) {
         AxisFault     fault = (AxisFault) currentMessage ;
         SOAPEnvelope  env   = new SOAPEnvelope();
-        SOAPBody      body  = new SOAPBody( fault.getElement() );
+        SOAPBody      body  = new SOAPBody( fault.getElement(null) );
 
         env.addBody( body );
 
@@ -291,7 +269,7 @@ public class Message {
         return( null );
       }
   
-      setCurrentMessage( db.parse( inp ), "Document" );
+      setCurrentMessage( XMLUtils.newDocument( inp ), "Document" );
       Debug.Print( 2, "Exit: Message::getAsDocument" );
       return( (Document) currentMessage );
     }

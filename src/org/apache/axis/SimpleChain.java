@@ -61,7 +61,6 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.*;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /**
  *
@@ -148,21 +147,8 @@ public class SimpleChain extends BasicHandler implements Chain {
   public Element getDeploymentData() {
     Debug.Print( 1, "Enter: SimpleChain::getDeploymentData" );
 
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-    Document               doc = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-      doc = db.newDocument();
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
-
-    Element root = doc.createElement( "chain" );
+    Document doc  = XMLUtils.newDocument();
+    Element  root = doc.createElement( "chain" );
 
     if (handlers != null ) {
       StringBuffer str = new StringBuffer();

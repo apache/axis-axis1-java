@@ -61,11 +61,11 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Admin ;
+import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /** 
  *
@@ -134,12 +134,7 @@ public class DefaultServiceRegistry extends SupplierRegistry {
                                                   clientXML).getBytes() );
 
     try {
-      DocumentBuilderFactory  dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      DocumentBuilder         db  = dbf.newDocumentBuilder();
-      Document                doc = null ;
-
-      doc = db.parse( input );
+      Document doc = XMLUtils.newDocument( input );
       admin.AdminService( msgContext, doc );
     }
     catch( Exception e ) {

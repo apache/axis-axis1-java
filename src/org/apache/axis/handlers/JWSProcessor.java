@@ -59,10 +59,10 @@ import java.io.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.AxisClassLoader ;
+import org.apache.axis.utils.XMLUtils ;
 import sun.tools.javac.Main;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /**
  * This handler will use the JWSFileName property of the MsgContext to
@@ -122,7 +122,12 @@ public class JWSProcessor extends BasicHandler
         FileOutputStream  out      = new FileOutputStream( errFile );
         Main              compiler = new Main( out, "javac" );
         String            outdir   = f1.getParent();
-        String[]          args     = new String[] { "-d", outdir, jFile };
+        String[]          args     = null ;
+        
+        args = new String[] { "-d", outdir, 
+                              "-classpath",
+                                System.getProperty("java.class.path" ),
+                              jFile };
         boolean           result   = compiler.compile( args );
 
         /* Delete the temporary *.java file and check the return code */
@@ -137,20 +142,7 @@ public class JWSProcessor extends BasicHandler
           /***********************************************************/
           (new File(cFile)).delete();
 
-          DocumentBuilderFactory dbf = null ;
-          DocumentBuilder        db  = null ;
-          Document               doc = null ;
-          
-          try {
-            dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            db  = dbf.newDocumentBuilder();
-            doc = db.newDocument();
-          }
-          catch( Exception e ) {
-            Debug.Print( 1, e );
-            throw new AxisFault( e );
-          }
+          Document doc = XMLUtils.newDocument();
 
           Element         root = doc.createElement( "Errors" );
           StringBuffer    sbuf = new StringBuffer();

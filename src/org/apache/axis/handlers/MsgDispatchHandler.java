@@ -68,7 +68,6 @@ import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /**
  *
@@ -110,21 +109,7 @@ public class MsgDispatchHandler extends BasicHandler {
                               new SOAPEnvelope() :
                               (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
 
-      DocumentBuilderFactory dbf = null ;
-      DocumentBuilder        db  = null ;
-      Document               doc = null ;
-
-      try {
-        dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        db  = dbf.newDocumentBuilder();
-        doc = db.newDocument();
-      }
-      catch( Exception e ) {
-        Debug.Print( 1, e );
-        throw new AxisFault( e );
-      }
-
+      Document doc = XMLUtils.newDocument();
       doc.appendChild( doc.importNode(reqBody.getRoot(),true) );
 
       /* If no methodName was specified during deployment then get it */

@@ -66,11 +66,11 @@ import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPDispatchHandler;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /**
  * This class is meant to be the interface that client/requestor code
@@ -167,20 +167,7 @@ public class HTTPMessage {
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     MessageContext       msgContext = new MessageContext( reqMsg );
 
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-    Document               doc = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-      doc = db.newDocument();
-    } 
-    catch( Exception e ) {
-      Debug.Print( 1, e );
-      throw new AxisFault( e );
-    }
+    Document doc = XMLUtils.newDocument();
 
     // For testing - skip HTTP layer
     if ( doLocal ) {
@@ -247,8 +234,12 @@ public class HTTPMessage {
     SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
     SOAPBody      resBody = resEnv.getFirstBody();
 
-    doc = db.newDocument();
-    doc.appendChild( doc.importNode( resBody.getRoot(), true ) );
+    doc = XMLUtils.newDocument();
+    Element  root = resBody.getRoot();
+    if ( root.getOwnerDocument() != doc )
+      doc.appendChild( doc.importNode( root, true ) );
+    else
+      doc.appendChild( root );
 
     mc.setResponseMessage( new Message(doc, "Document") );
 

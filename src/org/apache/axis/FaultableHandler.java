@@ -146,22 +146,8 @@ public class FaultableHandler implements Handler {
     options = opts ;
   }
 
-  public Element getDeploymentData() {
+  public Element getDeploymentData(Document doc) {
     Debug.Print( 1, "Enter: FaultableHandler::getDeploymentData" );
-
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-    Document               doc = null ;
-   
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-      doc = db.newDocument();
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
 
     Element  root = doc.createElement( "handler" );
     root.setAttribute( "class", this.getClass().getName() );
