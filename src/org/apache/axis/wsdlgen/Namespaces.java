@@ -65,7 +65,7 @@ import java.util.StringTokenizer;
  * @author rkumar@borland.com
  */
 public class Namespaces extends HashMap {
-    private static int prefixCount = 1;
+    private int prefixCount = 1;
     private HashMap namespacePrefixMap = null;
 
     public Namespaces() {
@@ -82,7 +82,7 @@ public class Namespaces extends HashMap {
     public String getCreate(String key) {
         Object value = super.get(key);
         if (value == null) {
-            value = makeNamespace((String) key);
+            value = makeNamespaceFromPackageName((String) key);
             put(key, value, null);
         }
         return (String) value;
@@ -98,7 +98,7 @@ public class Namespaces extends HashMap {
     public String getCreate(String key, String prefix) {
         Object value = super.get(key);
         if (value == null) {
-            value = makeNamespace((String) key);
+            value = makeNamespaceFromPackageName((String) key);
             put(key, value, prefix);
         }
         return (String) value;
@@ -195,6 +195,15 @@ public class Namespaces extends HashMap {
         if (clsName.lastIndexOf('.') == -1)
             return protocol + "://" + "DefaultNamespace";
         String packageName = clsName.substring(0, clsName.lastIndexOf('.'));
+        return makeNamespaceFromPackageName(packageName, protocol);       
+    }
+
+    private static String makeNamespaceFromPackageName(String packageName) {
+      return makeNamespaceFromPackageName(packageName, "http");       
+    }
+    
+    
+    private static String makeNamespaceFromPackageName(String packageName, String protocol) {
         StringTokenizer st = new StringTokenizer( packageName, "." );
         String[] words = new String[ st.countTokens() ];
         for(int i = 0; i < words.length; ++i)
