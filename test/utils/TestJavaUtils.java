@@ -34,7 +34,17 @@ public class TestJavaUtils extends TestCase
      */
     public void testXmlNameToJava() {
 
+        /* Begin TABLE 20-2 Illustrative Examples from JAXRPC Spec */
         assertEquals("mixedCaseName", JavaUtils.xmlNameToJava("mixedCaseName"));
+
+        assertEquals("nameWithDashes", JavaUtils.xmlNameToJava("name-with-dashes"));
+        
+        assertEquals("name_with_underscore", JavaUtils.xmlNameToJava("name_with_underscore"));
+        
+        assertEquals("other_punctChars", JavaUtils.xmlNameToJava("other_punct.chars"));
+        
+        assertEquals("answer42", JavaUtils.xmlNameToJava("Answer42"));
+        /* End TABLE 20-2 Illustrative Examples from JAXRPC Spec */
 
         assertEquals("nameWithDashes",
                 JavaUtils.xmlNameToJava("name-with-dashes"));
