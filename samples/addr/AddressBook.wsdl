@@ -93,7 +93,7 @@
   <!-- service decln -->
   <service name="AddressBookService">
     <port name="AddressBook" binding="tns:AddressBookSOAPBinding">
-      <soap:address location="http://localhost:8080/axis/servlet/AxisServlet"/>
+      <soap:address location="http://localhost:8080/axis/services/AddressBook"/>
     </port>
   </service>
 
