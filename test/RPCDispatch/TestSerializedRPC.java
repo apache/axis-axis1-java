@@ -3,24 +3,21 @@ package test.RPCDispatch;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.utils.cache.JavaClass;
-
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
@@ -79,7 +76,7 @@ public class TestSerializedRPC extends TestCase {
         tm.register(javaType, xmlType, sf, df);
 
         ServiceDesc desc = new ServiceDesc();
-        desc.loadServiceDescByIntrospection(new JavaClass(Service.class), tm);
+        desc.loadServiceDescByIntrospection(Service.class, tm);
         reverse.setServiceDescription(desc);
         
         // Now we've got the service description loaded up.  We're going to

@@ -55,28 +55,23 @@
 
 package org.apache.axis.message;
 
+import org.apache.axis.Constants;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
-import org.apache.axis.Handler;
-import org.apache.axis.Message;
-import org.apache.axis.wsdl.toJava.Utils;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
-import java.lang.reflect.Method;
 
 public class RPCElement extends SOAPBodyElement
 {
@@ -177,8 +172,11 @@ public class RPCElement extends SOAPBodyElement
                 } catch (ClassNotFoundException e) {
                     throw new SAXException(e);
                 }
-                TypeMapping tm = (TypeMapping)msgContext.getTypeMappingRegistry().getTypeMapping(msgContext.getEncodingStyle());
-                serviceDesc.loadServiceDescByIntrospection(jc, tm);
+                TypeMapping tm = (TypeMapping)msgContext.
+                        getTypeMappingRegistry().
+                        getTypeMapping(msgContext.getEncodingStyle());
+                serviceDesc.loadServiceDescByIntrospection(jc.getJavaClass(),
+                                                           tm);
             }
 
             if (serviceDesc != null) {
