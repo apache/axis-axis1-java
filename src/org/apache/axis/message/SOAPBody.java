@@ -157,9 +157,9 @@ public class SOAPBody extends MessageElement
 
     SOAPBodyElement getFirstBody() throws AxisFault
     {
-        List bodyElements = getChildren();
-        return (bodyElements == null) ? 
-            null : (SOAPBodyElement)bodyElements.get(0);
+        if (!hasChildNodes())
+            return null;
+        return (SOAPBodyElement)getChildren().get(0);
     }
 
     void addBodyElement(SOAPBodyElement element) 
