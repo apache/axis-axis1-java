@@ -99,7 +99,6 @@ public class Main {
             System.err.print(" \"" + (String) h[i] + "\"");
         System.err.println("");
 
-        Object[] pets =pi.getPets();
         System.err.print ("\tPets=");
         for(int i=0; i<pets.length; i++)
             System.err.print(" \"" + (String) pets[i] + "\"");
@@ -131,6 +130,9 @@ public class Main {
         pib.addEntry (name, pi);
         System.err.println (">> Querying info for '" + name + "'");
         PersonalInfo resp = pib.getPersonalInfoFromName (name);
+
+        // Get just the pets to test return of an array.
+        pets = pib.getPetsFromName (name);
         System.err.println (">> Response is:");
         printPersonalInfo (resp);
         pib.addEntry (name, pi);

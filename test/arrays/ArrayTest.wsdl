@@ -78,6 +78,14 @@
     <part name="info" type="typens:personalInfo"/>
   </message>
 
+  <message name="GetPetsFromNameRequest">
+    <part name="name" type="xsd:string"/>
+  </message>
+
+  <message name="GetPetsFromNameResponse">
+    <part name="pets" type="typens:petArray"/>
+  </message>
+
   <!-- port type declns -->
   <portType name="PersonalInfoBook">
     <operation name="addEntry">
@@ -86,6 +94,10 @@
     <operation name="getPersonalInfoFromName">
       <input message="tns:GetPersonalInfoFromNameRequest"/>
       <output message="tns:GetPersonalInfoFromNameResponse"/>
+    </operation>
+    <operation name="getPetsFromName">
+      <input message="tns:GetPetsFromNameRequest"/>
+      <output message="tns:GetPetsFromNameResponse"/>
     </operation>
   </portType>
 
@@ -107,6 +119,19 @@
       </output>
     </operation>
     <operation name="getPersonalInfoFromName">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getPetsFromName">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded"
