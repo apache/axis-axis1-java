@@ -63,6 +63,7 @@
             <xsd:element name="enum5" type="typens:enumDouble"/>
             <xsd:element name="enum6" type="typens:enumShort"/>
             <xsd:element name="enum7" type="typens:enumByte"/>
+            <xsd:element name="nested" type="typens2:b"/>
           </xsd:all>
         </xsd:complexType>
       </xsd:element>
@@ -176,6 +177,20 @@
 
         <!-- Collection of enums -->
         <xsd:element name="three" type="typens:enum" maxOccurs="unbounded" />
+
+
+        <!-- Test for nested defined complexType -->
+        <xsd:element name="a" type="xsd:short" />
+        <xsd:complexType name="b">
+          <xsd:sequence>
+            <xsd:complexType name="a">
+              <xsd:sequence>
+                <xsd:element name="c" type="xsd:int" />
+              </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="d" type="typens2:a" />
+          </xsd:sequence>
+        </xsd:complexType>
     </xsd:schema>
 
   </types>
