@@ -505,7 +505,12 @@ public class Emitter {
         String fileName = nameValue + ".java";
 
         this.fileList.add(packageDirName + fileName);
-        this.classList.add(packageName + "." + nameValue);
+
+        if (packageName == null) {
+            this.classList.add(nameValue);
+        } else {
+            this.classList.add(packageName + "." + nameValue);
+        }
 
         PrintWriter interfacePW = printWriter (fileName);
         if (bVerbose)
@@ -538,7 +543,12 @@ public class Emitter {
         String fileName = nameValue + ".java";
 
         this.fileList.add(packageDirName + fileName);
-        this.classList.add(packageName +  "." + nameValue);
+
+        if (packageName == null) {
+            this.classList.add(nameValue);
+        } else {
+            this.classList.add(packageName + "." + nameValue);
+        }
 
         PrintWriter interfacePW = printWriter(fileName);
         if (bVerbose)
@@ -921,7 +931,12 @@ public class Emitter {
         }
 
         this.fileList.add(packageDirName + fileName);
-        this.classList.add(packageName +  "." + exceptionName);
+
+        if (packageName == null) {
+            this.classList.add(exceptionName);
+        } else {
+            this.classList.add(packageName + "." + exceptionName);
+        }
 
         PrintWriter pw = printWriter(fileName);
 
@@ -1001,7 +1016,12 @@ public class Emitter {
         String stubFileName = stubName + ".java";
 
         this.fileList.add(packageDirName + stubFileName);
-        this.classList.add(packageName +  "." + stubName);
+
+        if (packageName == null) {
+            this.classList.add(stubName);
+        } else {
+            this.classList.add(packageName + "." + stubName);
+        }
 
         PrintWriter stubPW = printWriter(stubFileName);
         if (bVerbose)
@@ -1080,7 +1100,12 @@ public class Emitter {
             String skelFileName = skelName + ".java";
 
             this.fileList.add(packageDirName + skelFileName);
-            this.classList.add(packageName +  "." + skelName);
+
+            if (packageName == null) {
+                this.classList.add(skelName);
+            } else {
+                this.classList.add(packageName + "." + skelName);
+            }
 
             skelPW = printWriter(skelFileName);
             String implType = portTypeName + " impl";
@@ -1108,7 +1133,12 @@ public class Emitter {
             String implFileName = implName + ".java";
 
             this.fileList.add(packageDirName + implFileName);
-            this.classList.add(packageName +  "." + implName);
+
+            if (packageName == null) {
+                this.classList.add(implName);
+            } else {
+                this.classList.add(packageName + "." + implName);
+            }
 
             if (!fileExists (implFileName)) {
                 implPW = printWriter(implFileName);
@@ -1455,7 +1485,12 @@ public class Emitter {
         String fileName = serviceName + ".java";
 
         this.fileList.add(packageDirName + fileName);
-        this.classList.add(packageName +  "." + serviceName);
+
+        if (packageName == null) {
+            this.classList.add(serviceName);
+        } else {
+            this.classList.add(packageName + "." + serviceName);
+        }
 
         PrintWriter servicePW = printWriter(fileName);
         TestCaseEmitter testFactory = null;
@@ -1469,7 +1504,12 @@ public class Emitter {
             String testCaseFileName = testCase + ".java";
 
             this.fileList.add(packageDirName + testCaseFileName);
-            this.classList.add(packageName +  "." + testCase);
+
+            if (packageName == null) {
+                this.classList.add(testCase);
+            } else {
+                this.classList.add(packageName + "." + testCase);
+            }
 
             testFactory = new TestCaseEmitter(this.printWriter(testCaseFileName),
                                               this.packageName,
@@ -1829,7 +1869,12 @@ public class Emitter {
         String fileName = javaName + ".java";
 
         this.fileList.add(packageDirName + fileName);
-        this.classList.add(packageName + "." + javaName);
+
+       if (packageName == null) {
+           this.classList.add(javaName);
+       } else {
+           this.classList.add(packageName + "." + javaName);
+       }
 
         PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
@@ -1909,7 +1954,12 @@ public class Emitter {
         String fileName = javaName + ".java";
 
         this.fileList.add(packageDirName + fileName);
-        this.classList.add(packageName +  "." + javaName);
+
+       if (packageName == null) {
+           this.classList.add(javaName);
+       } else {
+           this.classList.add(packageName + "." + javaName);
+       }
 
         PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
@@ -1936,7 +1986,12 @@ public class Emitter {
         String fileName = javaName + "Holder.java";
 
         this.fileList.add(packageDirName + fileName);
-        this.classList.add(packageName + "." + javaName);
+
+        if (packageName == null) {
+            this.classList.add(javaName);
+        } else {
+            this.classList.add(packageName + "." + javaName);
+        }
 
         PrintWriter pw = printWriter(fileName);
         if (bVerbose)
