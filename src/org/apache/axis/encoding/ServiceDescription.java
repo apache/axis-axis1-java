@@ -102,7 +102,8 @@ public class ServiceDescription
      */
     public Vector inputParams = new Vector();
     public Vector outputParams = new Vector();
-    
+    public QName returnType = null;
+
     // Should we tack on "xsi:type" attributes?
     public boolean sendXsiType = true;
     
@@ -146,9 +147,9 @@ public class ServiceDescription
         outputParams.clear();
     }
     
-    public void setOutputType(QName type)
+    public void setReturnType(QName type)
     {
-        outputParams.addElement(new Param(null, type));
+        returnType = type;
     }
     
     public void setSendTypeAttr(boolean sendType)
@@ -236,5 +237,10 @@ public class ServiceDescription
         if (param != null)
             return param.type;
         return null;
+    }
+
+    public QName getReturnType()
+    {
+        return returnType;
     }
 }
