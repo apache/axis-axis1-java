@@ -81,6 +81,7 @@ Copyright:
       <exclude name="**/bak/**"/>
       <exclude name="**/org/apache/axis/components/net/JSSE*.java" unless="jsse.present"/>
       <exclude name="**/org/apache/axis/components/net/Fake*.java" unless="jsse.present"/>
+      <exclude name="**/org/apache/axis/components/image/JimiIO.java" unless="jimi.present"/>
       <exclude name="**/org/apache/axis/attachments/AttachmentsImpl.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/AttachmentPart.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/AttachmentUtils.java" unless="attachments.present"/>
