@@ -55,6 +55,8 @@
 
 package org.apache.axis.ime.internal.util.handler;
 
+import java.util.Hashtable;
+
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.MessageContext;
@@ -167,4 +169,30 @@ public class HandlerMessageExchange
             }
         }
     }
+    
+  public void clearOptions() {
+    handler.setOptions(null);
+  }
+
+  public Hashtable getOptions() {
+    return handler.getOptions();
+  }
+
+  public Object getOption(String propertyId, Object defaultValue) {
+    Object value = getOption(propertyId);
+    return (value == null) ? defaultValue : value;
+  }
+
+  public Object getOption(String propertyId) {
+    return handler.getOption(propertyId);
+  }
+
+  public void setOptions(Hashtable properties) {
+    handler.setOptions(properties);
+  }
+
+  public void setOption(String propertyId, Object propertyValue) {
+    handler.setOption(propertyId, propertyValue);
+  }
+
 }

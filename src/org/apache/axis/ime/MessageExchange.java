@@ -56,9 +56,8 @@ package org.apache.axis.ime;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
-import org.apache.axis.features.FeatureEnabled;
 
-import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * Represents the boundary interface through which messages
@@ -68,8 +67,7 @@ import java.util.Map;
  * @author James M Snell (jasnell@us.ibm.com)
  * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public interface MessageExchange
-        extends FeatureEnabled {
+public interface MessageExchange {
 
     /**
      * Send an outbound message.  (Impl's of this method
@@ -197,38 +195,38 @@ public interface MessageExchange
 
     /**
      * @param String The id of the property
-     * @param Object The value of the property
+     * @param Object The value of the Option
      */
-    public void setProperty(
-            String propertyId,
-            Object propertyValue);
+    public void setOption(
+            String OptionId,
+            Object OptionValue);
 
     /**
-     * @param String The id of the property
-     * @return Object The value of the property
+     * @param String The id of the Option
+     * @return Object The value of the Option
      */
-    public Object getProperty(
-            String propertyId);
+    public Object getOption(
+            String OptionId);
 
     /**
-     * @param String The id of the property
-     * @param Object The default value of the property
-     * @return Object The value of the property
+     * @param String The id of the Option
+     * @param Object The default value of the Option
+     * @return Object The value of the Option
      */
-    public Object getProperty(
-            String propertyId,
+    public Object getOption(
+            String OptionId,
             Object defaultValue);
 
     /**
-     * @return java.lang.Map The collection of properties
+     * @return java.lang.Hashtable The collection of properties
      */
-    public Map getProperties();
+    public Hashtable getOptions();
 
     /**
-     * @param java.lang.Map The collection of properties
+     * @param java.lang.Hashtable The collection of properties
      */
-    public void setProperties(Map properties);
+    public void setOptions(Hashtable options);
 
-    public void clearProperties();
+    public void clearOptions();
 
 }

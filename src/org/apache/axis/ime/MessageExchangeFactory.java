@@ -56,7 +56,7 @@ package org.apache.axis.ime;
 
 import org.apache.axis.AxisFault;
 
-import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
@@ -76,7 +76,7 @@ public interface MessageExchangeFactory {
      * @return ConfigurableMessageExchange
      */
     public MessageExchange createMessageExchange(
-            Map properties,
+            Hashtable options,
             String[] enabledFeatures)
               throws AxisFault;
 }
