@@ -166,9 +166,21 @@ public class JavapUtils
         Vector cachedInfo = null;        
         BufferedReader br = null;
         try {
+            String cp = System.getProperty("java.class.path");
+
             Runtime rt = Runtime.getRuntime();
             // The -l option is used to access the local variables.
-            Process pr = rt.exec("javap -private -l " + cls.getName());
+            Process pr = rt.exec("javap -classpath " + cp + " -private -l " + cls.getName());
+
+            //BufferedReader ebr = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+            //if (ebr != null) {
+            //    String line = ebr.readLine();
+            //    System.out.println(line);
+            //    while (line != null) {
+            //        line = ebr.readLine();
+            //    }
+            //}
+
             br = new BufferedReader(new InputStreamReader(pr.getInputStream()));
             if (br != null) {
                 cachedInfo = new Vector();
