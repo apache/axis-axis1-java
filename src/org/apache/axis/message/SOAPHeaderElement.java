@@ -97,6 +97,11 @@ public class SOAPHeaderElement extends MessageElement
     {
         super(namespace, localPart, value);
     }
+    
+    public SOAPHeaderElement(QName qname, Object value)
+    {
+        super(qname, value);
+    }
 
     public SOAPHeaderElement(Element elem)
     {
