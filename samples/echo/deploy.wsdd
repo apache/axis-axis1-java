@@ -5,7 +5,6 @@
 <!-- or                                                         -->
 <!--   java org.apache.axis.client.http.AdminClient deploy.wsdd  -->
 <!--      after the axis server is running                      -->
-<!-- This file will be replaced by WSDD once it's ready         -->
 
  <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
 			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
