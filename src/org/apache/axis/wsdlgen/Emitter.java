@@ -149,6 +149,14 @@ public class Emitter {
         Definition intf = getIntfWSDL();
         Definition impl = getImplWSDL();
 
+        // Supply reasonable file names if not supplied
+        if (filename1 == null) {
+            filename1 = getServiceName() + "_interface.wsdl";
+        }
+        if (filename2 == null) {
+            filename2 = getServiceName() + "_implementation.wsdl";
+        }
+
         // Write out the interface def      
         Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(intf);
         types.insertTypesFragment(doc);
@@ -201,6 +209,23 @@ public class Emitter {
             default:
                 throw new Exception ("unrecognized output WSDL mode"); 
         }
+
+        // Supply a reasonable file name if not supplied
+        if (filename == null) {
+            filename = getServiceName();
+            switch (mode) {
+            case MODE_ALL:
+                filename +=".wsdl";
+                break;
+            case MODE_INTERFACE:
+                filename +="_interface.wsdl";
+                break;
+            case MODE_IMPLEMENTATION:
+                filename +="_implementation.wsdl";
+                break;
+            }
+        }
+            
         XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename)));
     }
 
@@ -596,6 +621,11 @@ public class Emitter {
      */
     public void writePartToMessage(Definition def, Message msg, boolean request, int num, Class param, String paramName) throws Exception
     {
+        // Return if this is a void type
+        if (param == null ||
+            param == java.lang.Void.TYPE)
+            return;
+
         // Determine if this is a Holder class.  
         boolean holder = false;
         if (num >= 0 &&
