@@ -105,7 +105,7 @@ public class JWSHandler extends BasicHandler
         LogFactory.getLog(JWSHandler.class.getName());
 
     public final String OPTION_JWS_FILE_EXTENSION = "extension";
-    public final String DEFAULT_JWS_FILE_EXTENSION = ".jws";
+    public final String DEFAULT_JWS_FILE_EXTENSION = Constants.JWS_DEFAULT_FILE_EXTENSION;
 
     protected static HashMap soapServices = new HashMap();
 
