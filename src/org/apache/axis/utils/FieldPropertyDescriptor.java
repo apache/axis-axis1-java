@@ -142,4 +142,8 @@ public class FieldPropertyDescriptor extends BeanPropertyDescriptor {
             return field.getType();
         }
     }
+
+    public Field getField() {
+        return field;
+    }
 }
