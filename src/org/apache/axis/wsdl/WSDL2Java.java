@@ -114,8 +114,7 @@ public class WSDL2Java {
     // The emitter framework Emitter class.
     private Emitter emitter;
     // Timeout, in milliseconds, to let the Emitter do its work
-    private long timeoutms = -1; // 45 sec default
-    //private long timeoutms = 45000; // 45 sec default
+    private long timeoutms = 45000; // 45 sec default
 
     JavaWriterFactory writerFactory = null;
 
@@ -436,15 +435,11 @@ public class WSDL2Java {
                 wsdlThread.join();
         } catch (InterruptedException e) {
         }
-
-//        while (!runnable.isDone()) {
-//            // Check at one-second intervals
-//            Thread.sleep(1000);
-//            if (new Date().getTime() > timeout) {
-//                wsdlThread.interrupt();
-//                throw new Exception(JavaUtils.getMessage("timedOut"));
-//            }
-//        }
+        
+        if (wsdlThread.isAlive()) {
+            wsdlThread.interrupt();
+            throw new Exception(JavaUtils.getMessage("timedOut"));
+        }
 
         if (runnable.getFailure() != null) {
             throw runnable.getFailure();
