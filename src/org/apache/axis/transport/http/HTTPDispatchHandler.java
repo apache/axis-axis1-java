@@ -288,9 +288,6 @@ public class HTTPDispatchHandler extends BasicHandler {
 
         msgContext.setResponseMessage( outMsg );
       }
-      inp.close();
-      out.close();
-      sock.close();
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
