@@ -89,14 +89,14 @@ import java.net.URL;
 public class AdminClient
 {
     protected PrintWriter _log;
-    
+
     /**
      * Construct an admin client w/o a logger
      */
     public AdminClient()
     {
     }
-    
+
     /**
      * Construct an admin client with a logger
      */
@@ -104,7 +104,7 @@ public class AdminClient
     {
         _log = log;
     }
-    
+
     /**
      * Construct an admin client with a logger
      */
@@ -112,7 +112,7 @@ public class AdminClient
     {
         _log = new PrintWriter(out);
     }
-    
+
     /**
      * Logs a message if a logger has been provided
      */
@@ -124,7 +124,7 @@ public class AdminClient
             _log.flush();
         }
     }
-    
+
     /**
      * <p>Processes a set of administration commands.</p>
      * <p>The following commands are available:</p>
@@ -150,7 +150,7 @@ public class AdminClient
      * <p>If <code>-l</code> or <code>-h -p -s</code> are not set, the
      * AdminClient will invoke
      * <code>http://localhost:8080/axis/servlet/AxisServlet</code>.</p>
-     * 
+     *
      * @param args Commands to process
      * @return XML result or null in case of failure. In the case of multiple
      * commands, the XML results will be concatenated, separated by \n
@@ -159,24 +159,24 @@ public class AdminClient
     public String process (String[] args) throws Exception
     {
         StringBuffer sb = new StringBuffer();
-        
+
         Options opts = new Options( args );
-        
+
         if (opts.isFlagSet('d') > 0) {
             // Set log4j properties... !!!
         }
-        
+
         args = opts.getRemainingArgs();
-        
+
         if ( args == null ) {
             log( "Usage: AdminClient xml-files | list" );
             return null;
         }
-        
+
         for ( int i = 0 ; i < args.length ; i++ )
         {
             InputStream input = null;
-            
+
             if ( args[i].equals("list") ) {
                 log( "Doing a list" );
                 String str = "<m:list xmlns:m=\"AdminService\"/>" ;
@@ -201,7 +201,7 @@ public class AdminClient
                 log( "Processing file: " + args[i] );
                 input = new FileInputStream( args[i] );
             }
-            
+
             Service service = new Service();
             Call    call = (org.apache.axis.client.Call) service.createCall();
 
@@ -209,23 +209,28 @@ public class AdminClient
             call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
             call.setProperty( Transport.USER, opts.getUser() );
             call.setProperty( Transport.PASSWORD, opts.getPassword() );
-            
+
             String tName = opts.isValueSet( 't' );
             if ( tName != null && !tName.equals("") )
                 call.setProperty( Call.TRANSPORT_NAME, tName );
-            
+
             Vector result = null ;
             Object[]  params = new Object[] { new SOAPBodyElement(input) };
             result = (Vector) call.invoke( params );
-            
+
             input.close();
+
+            if (result == null || result.isEmpty()) {
+                throw new AxisFault("Null response message!");
+            }
+
             SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
             sb.append( body.toString() );
         }
-        
+
         return sb.toString();
     }
-    
+
     /**
      * Creates in instance of <code>AdminClient</code> and
      * invokes <code>process(args)</code>.
