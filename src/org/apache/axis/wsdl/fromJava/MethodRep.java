@@ -56,6 +56,7 @@ package org.apache.axis.wsdl.fromJava;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Field;
 import java.util.Vector;
 
 import javax.xml.rpc.ParameterMode;
@@ -65,12 +66,14 @@ import javax.xml.rpc.ParameterMode;
  * emitter.  The information in the MethodRep can be changed by 
  * user provided code to affect the emitted wsdl file.  (See ClassRep)
  * @author Rich Scheuerle  (scheu@us.ibm.com)
+ * @author Brent Ulbricht
  */
 public class MethodRep {
     
     private String   _name       = "";
     private ParamRep _returns    = null;                                           
     private Vector   _parameters = new Vector();    
+    private Vector   _exceptions = new Vector();
 
     /**
      * Constructor
@@ -134,6 +137,24 @@ public class MethodRep {
             }
             _parameters.add(new ParamRep(name, types[i], modes[i+1]));
         }
+
+        // Create Exception Types
+        Class[] exceptionTypes = new Class[method.getExceptionTypes().length];
+        exceptionTypes = method.getExceptionTypes();
+
+        for (int i=0; i < exceptionTypes.length; i++) {
+            // Every remote method declares a java.rmi.RemoteException
+            if (exceptionTypes[i] != java.rmi.RemoteException.class) {
+                Field[] f = exceptionTypes[i].getDeclaredFields();
+                Vector exceptionParams = new Vector();
+                for (int j = 0; j < f.length; j++) {
+                    exceptionParams.add(new ParamRep(f[j].getName(),
+                                                     f[j].getType(), ParamRep.IN));
+                }
+                String pkgAndClsName = exceptionTypes[i].getName();
+                _exceptions.add(new ExceptionRep(pkgAndClsName, exceptionParams));
+            }
+        }
     }
        
     /**
@@ -145,4 +166,6 @@ public class MethodRep {
     public void     setReturns(ParamRep pr)  { _returns = pr; }
     public Vector   getParameters()          { return _parameters; }
     public void     setParameters(Vector v)  { _parameters = v; }
+    public Vector   getExceptions()          { return _exceptions; }
+    public void     setExceptions(Vector v)  { _exceptions = v; }
 };

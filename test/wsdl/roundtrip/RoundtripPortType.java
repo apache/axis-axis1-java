@@ -60,6 +60,9 @@ import test.wsdl.roundtrip.BondInvestment;
 import test.wsdl.roundtrip.StockInvestment;
 import test.wsdl.roundtrip.PreferredStockInvestment;
 import test.wsdl.roundtrip.CallOptions;
+import test.wsdl.roundtrip.InvalidTickerSymbol;
+import test.wsdl.roundtrip.InvalidTradeExchange;
+import test.wsdl.roundtrip.InvalidCompanyId;
 
 /**
  * The RoundtripPortType interface defines the methods necessary when
@@ -155,6 +158,11 @@ public interface RoundtripPortType {
         throws java.rmi.RemoteException;
     public java.lang.Long methodSoapLong(java.lang.Long inSoapLong)
         throws java.rmi.RemoteException;
-
+    public void throwInvalidTickerException()
+        throws InvalidTickerSymbol, 
+               java.rmi.RemoteException;
+    public void throwInvalidTradeExchange()
+        throws InvalidCompanyId, InvalidTradeExchange, InvalidTickerSymbol, 
+               java.rmi.RemoteException;
 } // RoundtripPortType
 

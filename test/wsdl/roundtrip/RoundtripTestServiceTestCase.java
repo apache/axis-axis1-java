@@ -74,6 +74,9 @@ import test.wsdl.roundtrip.PreferredStockInvestment;
 import test.wsdl.roundtrip.RoundtripPortType;
 import test.wsdl.roundtrip.RoundtripPortTypeServiceLocator;
 import test.wsdl.roundtrip.CallOptions;
+import test.wsdl.roundtrip.InvalidTickerSymbol;
+import test.wsdl.roundtrip.InvalidTradeExchange;
+import test.wsdl.roundtrip.InvalidCompanyId;
 
 /**
  * This class contains the test methods to verify that Java mapping
@@ -1008,6 +1011,44 @@ public class RoundtripTestServiceTestCase extends TestCase {
         }
 
     } // testMethodSoapLong
+
+    /**
+     *  Test to insure that a user defined exception can be
+     *  thrown and received.
+     */
+    public void testInvalidTickerSymbol() {
+
+        try {
+            binding.throwInvalidTickerException();
+            fail("Should have received an InvalidTickerSymbol exception.");
+        } catch (InvalidTickerSymbol its) {
+            // Test was successful
+        } catch(RemoteException re) {
+            fail("Remote Exception caught: " + re);
+        }
+
+    } // testInvalidTickerSymbol
+
+    /**
+     *  Test to insure that more than one user defined exception can be
+     *  defined in a method.
+     */
+    public void testInvalidTradeExchange() {
+
+        try {
+            binding.throwInvalidTradeExchange();
+            fail("Should have received an InvalidTradeExchange exception.");
+        } catch (InvalidTradeExchange ite) {
+            // Test was successful
+        } catch (InvalidTickerSymbol its) {
+            fail("Should have received an InvalidTradeExchange exception.");
+        } catch (InvalidCompanyId ici) {
+            fail("Should have received an InvalidTradeExchange exception.");
+        } catch (RemoteException re) {
+            fail("Remote Exception caught: " + re);
+        }
+
+    } // testInvalidTradeExchange
 
 } // End class RoundtripTestServiceTestCase
 

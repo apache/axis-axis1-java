@@ -109,14 +109,26 @@ import javax.xml.rpc.ParameterMode;
  *  | fields
  *  +-------------------> FieldRep(s)
  *
+ *
  *            name
  *  MethodRep ----------> String
- *        | |
- *        | | return
- *        | +-----------> ParamRep
+ *     |  | |
+ *     |  | | return
+ *     |  | +-----------> ParamRep
+ *     |  |
+ *     |  | params
+ *     |  +-------------> ParamRep
+ *     |
+ *     |    exceptions
+ *     +----------------> ExceptionRep
+ *
+ *
+ *               name
+ *  ExceptionRep ----------> String
  *        |
  *        | params
  *        +-------------> ParamRep
+ *
  *
  *           name
  *  ParamRep -----------> String
@@ -126,6 +138,7 @@ import javax.xml.rpc.ParameterMode;
  *      |
  *      |   mode
  *      +---------------> int (in/out/inout)
+ *
  *
  *           name
  *  FieldRep -----------> String
