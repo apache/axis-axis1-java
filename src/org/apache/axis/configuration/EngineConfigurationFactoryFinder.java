@@ -168,11 +168,20 @@ public class EngineConfigurationFactoryFinder
                         }
                 
                         if (factory == null) {
+                            String className = "org.apache.axis.configuration.EngineConfigurationFactoryServlet"; 
                             try {
-                                factory = EngineConfigurationFactoryServlet.newFactory(obj);
-                            } catch (RuntimeException e) {
+                                ClassLoader loader = EngineConfigurationFactory.class.getClassLoader(); 
+                                Class clazz = loader.loadClass(className);
+                                Method method =
+                                    ClassUtils.findPublicStaticMethod(clazz,
+                                                                      EngineConfigurationFactory.class,
+                                                                      "newFactory",
+                                                                      newFactoryParamTypes);
+                                factory = (EngineConfigurationFactory)method.invoke(null, params);
+                            } catch (ClassNotFoundException e) {
+                            } catch (Throwable e) {
                                 log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
-                                                              EngineConfigurationFactoryServlet.class.getName(),
+                                                              className,
                                                               requiredMethod), e);
                             }
                 
@@ -180,7 +189,7 @@ public class EngineConfigurationFactoryFinder
                                 try {
                                     // should NEVER return null.
                                     factory = EngineConfigurationFactoryDefault.newFactory(obj);
-                                } catch (RuntimeException e) {
+                                } catch (Throwable e) {
                                     log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                                                   EngineConfigurationFactoryDefault.class.getName(),
                                                                   requiredMethod), e);

@@ -93,12 +93,15 @@ Copyright:
       <exclude name="**/org/apache/axis/attachments/ImageDataSource.java" unless="jimiAndAttachments.present"/>
       <exclude name="**/org/apache/axis/attachments/MimeMultipartDataSource.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/PlainTextDataSource.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/configuration/EngineConfigurationFactoryServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/configuration/ServletEngineConfigurationFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerSerializer.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerDeserializerFactory.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerSerializerFactory.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerDeserializer.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/handlers/MD5AttachHandler.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/handlers/SOAPMonitorHandler.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/monitor/SOAPMonitorService.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
