@@ -63,13 +63,10 @@ import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
-import org.w3c.dom.Node;
-
 /**
 * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
 */
 public class JavaEnumTypeWriter extends JavaClassWriter {
-    private TypeEntry type;
     private Vector elements;
 
     /**
@@ -79,7 +76,6 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
             Emitter emitter,
             TypeEntry type, Vector elements) {
         super(emitter, type.getName(), "enumType");
-        this.type = type;
         this.elements = elements;
     } // ctor
 
@@ -256,7 +252,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
      * Get the enumeration names for the values.
      * The name is affected by whether all of the values of the enumeration
      * can be expressed as valid java identifiers.
-     * @param Vector base and values vector from getEnumerationBaseAndValues
+     * @param bv Vector base and values vector from getEnumerationBaseAndValues
      * @return Vector names of enum value identifiers.
      */
     public static Vector getEnumValueIds(Vector bv) {

@@ -57,10 +57,6 @@ package org.apache.axis.wsdl.toJava;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**

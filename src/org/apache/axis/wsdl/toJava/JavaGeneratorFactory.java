@@ -84,7 +84,6 @@ import org.apache.axis.wsdl.gen.GeneratorFactory;
 
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -375,7 +374,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         // If there is already an existing type, there will be a 
                         // collision.  If there is an existing anon type, there will be a 
                         // collision.  In both cases, the java type name should be mangled.
-                        TypeEntry existing = symbolTable.getType(typeQName);
+                        symbolTable.getType(typeQName);
                         if (anonQNames.get(typeQName) != null) {
                             localName += "Type" + uniqueNum++;
                             typeQName = new QName(typeQName.getNamespaceURI(), localName);
@@ -404,7 +403,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * all MessageEntries for faults are tagged with the
      * EXCEPTION_CLASS_NAME variable, which indicates the java exception
      * class name.
-     * @param SymbolTable
+     * @param symbolTable SymbolTable
      */
     private void setFaultContext(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();
@@ -445,8 +444,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * Helper routine for the setFaultContext method above.
      * Examines the indicated fault and sets COMPLEX_TYPE_FAULT
      * and EXCEPTION_CLASS_NAME as appropriate.
-     * @param Fault to analyze
-     * @param SymbolTable 
+     * @param fault Fault to analyze
+     * @param symbolTable SymbolTable
      */
     private void setFaultContext(Fault fault,
                                  SymbolTable symbolTable) {
@@ -861,7 +860,6 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
             String javifiedName = Utils.xmlNameToJava(p.getName());
             if (p.getMode() == Parameter.IN) {
-                String typeString;
                 signature = signature + Utils.getParameterTypeName(p) + " " + javifiedName;
             }
             else {

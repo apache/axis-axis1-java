@@ -54,17 +54,9 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-
 import java.util.Vector;
 
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.symbolTable.ElementDecl;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-
-import org.w3c.dom.Node;
 
 /**
  * This is Wsdl2java's Complex Faylt Writer.

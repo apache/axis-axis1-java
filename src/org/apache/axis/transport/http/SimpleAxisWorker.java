@@ -60,6 +60,8 @@ import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
@@ -76,6 +78,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 
 public class SimpleAxisWorker implements Runnable {
@@ -332,10 +336,35 @@ public class SimpleAxisWorker implements Runnable {
                         }
                     }
 
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("<h2>And now... Some Services</h2>\n");
+                    Iterator i = engine.getConfig().getDeployedServices();
+                    out.write("<ul>\n".getBytes());
+                    while (i.hasNext()) {
+                        ServiceDesc sd = (ServiceDesc)i.next();
+                        sb.append("<li>\n");
+                        sb.append(sd.getName());
+                        sb.append(" <a href=\"../services/");
+                        sb.append(sd.getName());
+                        sb.append("?wsdl\"><i>(wsdl)</i></a></li>\n");
+                        ArrayList operations = sd.getOperations();
+                        if (!operations.isEmpty()) {
+                            sb.append("<ul>\n");
+                            for (Iterator it = operations.iterator(); it.hasNext();) {
+                                OperationDesc desc = (OperationDesc) it.next();
+                                sb.append("<li>" + desc.getName());
+                            }
+                            sb.append("</ul>\n");
+                        }
+                    }
+                    sb.append("</ul>\n");
+
+                    byte [] bytes = sb.toString().getBytes();
+
                     out.write(HTML_MIME_STUFF);
-                    putInt(buf, out, cannedHTMLResponse.length);
+                    putInt(buf, out, bytes.length);
                     out.write(SEPARATOR);
-                    out.write(cannedHTMLResponse);
+                    out.write(bytes);
                     out.flush();
                     return;
                 }

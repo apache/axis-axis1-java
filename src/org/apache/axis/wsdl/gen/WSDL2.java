@@ -132,7 +132,7 @@ public class WSDL2 {
     /**
      * addOptions
      * Add option descriptions to the tool.
-     * @param CLOptionDescriptor[] the options
+     * @param newOptions CLOptionDescriptor[] the options
      */
     protected void addOptions(CLOptionDescriptor[] newOptions) {
         if (newOptions != null && newOptions.length > 0) {
@@ -146,7 +146,7 @@ public class WSDL2 {
 
     /**
      * Parse an option
-     * @param CLOption is the option
+     * @param option CLOption is the option
      */
     protected void parseOption(CLOption option) {
         switch (option.getId()) {
@@ -253,7 +253,7 @@ public class WSDL2 {
     /**
      * run
      * checkes the command-line arguments and runs the tool.
-     * @param String[] command-line arguments.
+     * @param args String[] command-line arguments.
      */
     protected void run(String[] args) {
         // Parse the arguments
@@ -294,7 +294,7 @@ public class WSDL2 {
     /**
      * Main
      * Run the tool with the specified command-line arguments
-     * @param String[] command-line arguments
+     * @param args String[] command-line arguments
      */
     public static void main(String[] args) {
         WSDL2 wsdl2 = new WSDL2();

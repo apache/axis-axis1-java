@@ -60,7 +60,6 @@ import javax.wsdl.Message;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
 
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;

@@ -65,9 +65,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
 import javax.wsdl.Fault;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
@@ -75,7 +73,6 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
-import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 
 import org.apache.axis.utils.JavaUtils;
@@ -83,7 +80,6 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionType;
 import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -131,8 +127,6 @@ public class JavaStubWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         PortType portType = binding.getPortType();
 
-        String portTypeName = 
-                (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;

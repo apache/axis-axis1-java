@@ -56,7 +56,6 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.net.MalformedURLException;
@@ -109,8 +108,6 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.URLHashSet;
 
-import org.apache.axis.wsdl.gen.Generator;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -159,7 +156,6 @@ public class SymbolTable {
     public static final String ANON_TOKEN = ">";
 
     private Definition def = null;
-    private Document   doc = null;
     private String     wsdlURI = null;
 
     /**
@@ -372,7 +368,6 @@ public class SymbolTable {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.verbose", verbose);
         this.def = reader.readWSDL(context, doc);
-        this.doc = doc;
 
         add(context, def, doc);
     } // populate
@@ -1011,7 +1006,6 @@ public class SymbolTable {
 
         boolean literalInput = false;
         boolean literalOutput = false;
-        String bindingName = "unknown";
         if (bindingEntry != null) {
             literalInput = (bindingEntry.getInputBodyType(operation) == BindingEntry.USE_LITERAL);
             literalOutput = (bindingEntry.getOutputBodyType(operation) == BindingEntry.USE_LITERAL);
