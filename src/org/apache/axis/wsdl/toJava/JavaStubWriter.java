@@ -520,7 +520,7 @@ public class JavaStubWriter extends JavaWriter {
             // turn off multirefs
             pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
             // turn off XSI types
-            pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_SEND_XSI, Boolean.FALSE);");
+            pw.println("        call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
         
         // Operation name
