@@ -86,12 +86,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     public static String holder(TypeEntry type, Emitter emitter) {
         String typeValue = type.getName();
 
-        // byte[] and Byte[] have reserved holders
+        // byte[] has a reserved holders
         if (typeValue.equals("byte[]")) {
             return "javax.xml.rpc.holders.ByteArrayHolder";
-        }
-        else if (typeValue.equals("java.lang.Byte[]")) {
-            return "javax.xml.rpc.holders.ByteWrapperArrayHolder";
         }
         // Anything else with [] gets its holder from the qname
         else if (typeValue.endsWith("[]")) {

@@ -17,7 +17,6 @@ import javax.xml.rpc.holders.BigIntegerHolder;
 import javax.xml.rpc.holders.BooleanWrapperHolder;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.ByteArrayHolder;
-import javax.xml.rpc.holders.ByteWrapperArrayHolder;
 import javax.xml.rpc.holders.ByteHolder;
 import javax.xml.rpc.holders.CalendarHolder;
 import javax.xml.rpc.holders.DoubleWrapperHolder;
@@ -108,7 +107,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new java.math.BigDecimal(7),
                     new Integer(0),
                     new Short((short) 0),
-                    new Byte[]{new Byte((byte) 7)});
+                    new byte[]{(byte) 7});
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -135,7 +134,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new BigDecimalHolder(new java.math.BigDecimal(12)),
                     new IntegerWrapperHolder(new Integer(13)),
                     new ShortWrapperHolder(new Short((short) 14)),
-                    new ByteWrapperArrayHolder(new Byte[]{new Byte((byte) 15)}));
+                    new ByteArrayHolder(new byte[]{(byte) 15}));
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -162,7 +161,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new BigDecimalHolder(),
                     new IntegerWrapperHolder(),
                     new ShortWrapperHolder(),
-                    new ByteWrapperArrayHolder());
+                    new ByteArrayHolder());
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -597,15 +596,6 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
-// Comment out for now because causes compile errors
-//        try {
-//            Byte[] sendValue = {new java.lang.Byte((byte) 10), new java.lang.Byte((byte) 9)};
-//            ByteWrapperArrayHolder bach = new ByteWrapperArrayHolder(sendValue);
-//            Byte[] actual = binding.methodSoapBase64(sendValue, bach);
-//        } catch (java.rmi.RemoteException re) {
-//            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-//        }
-
     }
 }
 

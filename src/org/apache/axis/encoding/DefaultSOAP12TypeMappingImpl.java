@@ -120,14 +120,13 @@ public class DefaultSOAP12TypeMappingImpl extends DefaultTypeMappingImpl {
                    null, null, false);
 
         // SOAP 1.2
-        // byte[] -ser-> XSD_BASE64
-        // Byte[] -ser-> SOAP_BASE64
+        // byte[] -ser-> SOAP_BASE64
         // XSD_BASE64 -deser-> byte[]
-        // SOAP_BASE64 -deser->Byte[]
-        myRegister(Constants.SOAP_BASE64,     java.lang.Byte[].class,     
-                   new Base64SerializerFactory(java.lang.Byte[].class,
+        // SOAP_BASE64 -deser->byte[]
+        myRegister(Constants.SOAP_BASE64,     byte[].class,     
+                   new Base64SerializerFactory(byte[].class,
                                                Constants.SOAP_BASE64 ),
-                   new Base64DeserializerFactory(java.lang.Byte[].class, 
+                   new Base64DeserializerFactory(byte[].class, 
                                                  Constants.SOAP_BASE64),
                    true);
     }

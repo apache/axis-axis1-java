@@ -29,8 +29,8 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
         int[]    id     = new int[]    { 0, 0, 7 };
         int id2         = 123;
         String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
-        Byte[]   nickName = new Byte[] { new Byte((byte)'g'), new Byte((byte)'e'),
-                                         new Byte((byte)'e'), new Byte((byte)'k') };
+        byte[]   nickName = new byte[] { (byte)'g', (byte)'e',
+                                         (byte)'e', (byte)'k'};
         PersonalInfo pi = new PersonalInfo();
         pi.setName(name);
         pi.setFavoriteMovies(movies);
@@ -78,7 +78,7 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
             assertTrue("Food are corrupted " + value, 
                        value.getFoods(1).equals(pi.getFoods(1)));
             assertTrue("Nickname is corrupted " + value, 
-                       value.getNickName()[1].equals(pi.getNickName()[1]));
+                       value.getNickName()[1] == pi.getNickName()[1]);
             
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
