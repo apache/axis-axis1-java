@@ -164,7 +164,8 @@ public class TypeMappingImpl implements TypeMapping
      * styles and XML schema namespaces.
      */
     public String[] getSupportedEncodings() {
-        return (String[]) namespaces.toArray();
+        String[] stringArray = new String[namespaces.size()];
+        return (String[]) namespaces.toArray(stringArray);
     }
 
     /**
