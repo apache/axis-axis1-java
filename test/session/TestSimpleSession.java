@@ -11,12 +11,14 @@ import org.apache.axis.client.Call;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.MessageContext;
-import org.apache.axis.Constants;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.XMLStringProvider;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.providers.java.RPCProvider;
+
+import javax.xml.rpc.namespace.QName;
+
 
 /** 
  * Test deserialization of SOAP responses
@@ -87,11 +89,11 @@ public class TestSimpleSession extends TestCase {
         service.setOption("className", "test.session.TestSimpleSession");
         service.setOption("allowedMethods", "counter");
 
-        SimpleProvider simpleProvider =
-                new SimpleProvider(
-                        new FileProvider(Constants.SERVER_CONFIG_FILE));
-        AxisServer server = new AxisServer(simpleProvider);
-        simpleProvider.deployService("sessionTest", service);
+        EngineConfiguration config =
+            (new DefaultEngineConfigurationFactory()).
+            getServerEngineConfigWithService(new QName(null, "sessionTest"),
+                                             service);
+        AxisServer server = new AxisServer(config);
 
         // Set up the client side (using the WSDD above)
         Service svc = new Service(clientProvider);

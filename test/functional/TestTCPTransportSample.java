@@ -59,12 +59,11 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.Constants;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.log4j.Category;
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
@@ -102,13 +101,12 @@ public class TestTCPTransportSample extends TestCase {
             tester.getQuote(new String [] { "-ltcp://localhost:8088", "XXX" });
             String   symbol = "XXX"; // args[0] ;
 
-            SimpleProvider provider =
-                    new SimpleProvider(
-                            new FileProvider(Constants.CLIENT_CONFIG_FILE));
             SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
-            provider.deployTransport("tcp", c);
+            EngineConfiguration config =
+                (new DefaultEngineConfigurationFactory()).
+                getClientEngineConfigWithTransport(new QName(null, "tcp"), c);
+            Service service = new Service(config);
 
-            Service  service = new Service(provider);
             Call     call    = (Call) service.createCall();
 
             call.setTargetEndpointAddress( new URL("tcp://localhost:8088") );
