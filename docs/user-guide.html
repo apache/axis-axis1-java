@@ -1,3 +1,4 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
 <html>
 <head>
 <title>Axis User's Guide</title>
@@ -437,15 +438,105 @@ If this had been a real order processing system, we'd probably have charged you 
   and the DataSer example (in samples/encoding) to see how custom serializers 
   work. </font></i></p>
 <h2>Using WSDL with Axis</h2>
-<p>The Web Service Description Language is a specification authored by IBM and 
-  Microsoft, and supported by many other organizations. WSDL serves to describe 
-  Web Services in a structured way.</p>
+<p>The <a href="http://www.w3.org/TR/wsdl">Web Service Description Language</a> 
+  is a specification authored by IBM and Microsoft, and supported by many other 
+  organizations. WSDL serves to describe Web Services in a structured way. A WSDL 
+  description of a service tells us, in a machine-understandable way, the interface 
+  to the service, the data types it uses, and where the service is located. Please 
+  see the spec (follow the link in the first sentence) for details about WSDL's 
+  format and options.</p>
 <p>Axis supports WSDL in two ways: first, when you deploy a service in Axis, users 
   may then access your service's URL with a standard web browser and by appending 
   &quot;?WSDL&quot; to the end of the URL, they will obtain an automatically-generated 
-  WSDL document which describes your service. Second, </p>
+  WSDL document which describes your service. Second, we provide a &quot;Wsdl2java&quot; 
+  tool which will build Java proxies and skeletons for services with WSDL descriptions. 
+  Both of these techniques are explained in more detail below.</p>
+<h3>WSDL generation for deployed services</h3>
+<p>When you make a service available using Axis, there is typically a unique URL 
+  associated with that service. For JWS files, that URL is simply the path to 
+  the JWS file itself. For non-JWS services, this is usually the URL &quot;http://&lt;host&gt;/axis/services/&lt;service-name&gt;&quot;.</p>
+<p>If you access the service URL in a browser, you'll see a message indicating 
+  that the endpoint is an Axis service, and that you should usually access it 
+  using SOAP. However, if you tack on &quot;?wsdl&quot; to the end of the URL, 
+  Axis will automatically generate a service description for the deployed service, 
+  and return it as XML in your browser (try it!). The resulting description may 
+  be saved or used as input to proxy-generation, described next. You can give 
+  the WSDL-generation URL to your online partners, and they'll be able to use 
+  it to access your service with toolkits like .NET, SOAP::Lite, or any other 
+  software which supports using WSDL.</p>
+<h3>Building stubs and skeletons with Wsdl2java</h3>
+<p>You'll find the Axis WSDL -&gt; Java tool in &quot;org.apache.axis.wsdl.Wsdl2java&quot;. 
+  The basic invocation form looks like this:</p>
+<div class="example">
+  <pre>% java org.apache.axis.wsdl.Wsdl2java <i>(url-to-wsdl-file)</i>
+</pre>
+</div>
+<h4>Stubs - making Web Service access transparent from the client side</h4>
+<p>A <b>stub</b> is a Java class which has the same interface as a remote Web 
+  Service. It stands in as a <b>proxy</b> (another term for the same idea) for 
+  the remote service, letting you call it exactly as if it were a local object. 
+  In other words, you don't need to deal with the endpoint URL, namespace, or 
+  parameter arrays which are involved in dynamic invocation via the ServiceClient. 
+  The stub hides all that work for you.</p>
+<p><font color="#FF0000"><i>Insert example here</i></font></p>
+<p>Wsdl2java generates a few classes; here's a rundown of what they are and how 
+  to use them:</p>
+<ul>
+  <li>There will be an interface for each referenced PortType in the WSDL. These 
+    interfaces are the ones you will actually use to call the remote methods. 
+  </li>
+  <li>The Stub classes implement the interface, and contain the code which turns 
+    the method invocations into SOAP calls using the Axis ServiceClient.</li>
+  <li>The Service class serves as a factory for obtaining Stub instances</li>
+</ul>
+<p>So a typical usage of the stub classes would be as follows:</p>
+<pre class="example">public class Tester {
+  public static void main(String [] args)
+  {
+    Service service = new Service();
+
+
+    // Now use the service to get a PortType that we can call
+    PortType port = service.getPort();
+
+    port.method(5, 4);
+  }
+} </pre>
+<h4>Skeletons - frameworks for implementing Web Services</h4>
+<p>Just as a stub is the client side of a Web Service represented in Java, a <b>skeleton</b> 
+  is a Java framework for the server side. You'd want to make a skeleton if you 
+  had a WSDL description of a service which you'd like to implement. For instance, 
+  you might want to join a digital marketplace which requires you to make your 
+  inventory available via a particular Web Service interface.</p>
+<p>To make skeleton classes, you just specify the &quot;--skeleton&quot; option 
+  to Wsdl2java.</p>
+<p><font color="#FF0000"><i>Insert example here</i></font></p>
+<p>There are a couple of classes produced by the skeleton generator, so let's 
+  take a look at them:</p>
+<ul>
+  <li>The Skeleton proper (in our example, <b>TemperatureBindingSkeleton</b>) 
+    is the class you'll actually deploy as an Axis service. You won't need to 
+    edit the code in here at all.</li>
+  <li>The Implementation class (<b>TemperatureBindingImpl</b>) is the actual framework 
+    class which you'll flesh out with your own code.</li>
+</ul>
+<h4>Data Types for Stubs and Skeletons</h4>
 <h3></h3>
-<p>&nbsp;</p>
+<p>WSDL files can contain (or reference) XML Schema describing the data types 
+  used by particular operations. As we've seen, Axis needs to do some work to 
+  map schema types to Java types, and this remains true whether we code the Java 
+  by hand or generate it with a tool. When you use Wsdl2java to generate either 
+  stubs or skeletons for operations which contain complex types, you will notice 
+  that Java classes corresponding to the XML data types are also generated. For 
+  the stub, the code inside the stub handles setting up the type mapping in Axis 
+  - and for the skeleton, the type mappings are included in the generated &quot;deploy.xml&quot; 
+  file. </p>
+<h5>Holders</h5>
+<p>You'll notice that for each data class that Wsdl2java generates, there is a 
+  corresponding &quot;Holder&quot; class - for instance a class called &quot;MyDataType&quot; 
+  would also get a companion class &quot;MyDataTypeHolder&quot;. These classes 
+  exist so that we have a reasonably clean mapping for WSDL's in/out and out parameters 
+  in Java. See the examples for more details.</p>
 <h2><a name="DeploymentReference"></a>Deployment Reference</h2>
 <i>Note: this reference reflects the state of the deploy.xml structure as of the 
 alpha 1 release. This will <b>very likely change</b> in a subsequent release to 
