@@ -225,6 +225,14 @@ public class Call implements javax.xml.rpc.Call {
         paramModes.add( new Integer(parameterMode) );
     }
 
+    /**
+     * Return the XMLType of the parameters with the given name.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param  paramName  name of the parameter to return
+     * @return XMLType    XMLType of paramName, or null if not found.
+     */
     public XMLType getParameterTypeByName(String paramName) {
         int  i ;
 
@@ -252,6 +260,8 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Returns the XMLType of the return value of this Call - or null if
      * not set.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @return the XMLType specified for this Call (or null).
      */
