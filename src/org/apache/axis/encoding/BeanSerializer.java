@@ -219,6 +219,7 @@ public class BeanSerializer extends DeserializerBase implements Serializer {
                 context.serialize(new QName("", propName), null, propValue);
             }
         } catch (Exception e) {
+        e.printStackTrace();
             throw new IOException(e.toString());
         }
 
