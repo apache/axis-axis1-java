@@ -2345,7 +2345,7 @@ public class SymbolTable {
 
         // If there is no binding MIME construct (ie., the mimeType parameter is
         // null), then get the MIME type from the AXIS-specific xml MIME type.
-        if (mimeInfo == null) {
+        if (mimeInfo == null && p.getType() != null) {
             QName mimeQName = p.getType().getQName();
 
             if (mimeQName.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
