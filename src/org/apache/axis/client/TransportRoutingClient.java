@@ -92,7 +92,7 @@ public class TransportRoutingClient {
             SimpleAxisEngine engine = new SimpleAxisEngine();
             MessageContext msgContext = new MessageContext();
             Message message = new Message(msg, "String");
-            msgContext.setIncomingMessage(message);
+            msgContext.setRequestMessage(message);
             
             /** The transport is http.
              */
@@ -106,7 +106,7 @@ public class TransportRoutingClient {
             engine.init();
             engine.invoke(msgContext);
             
-            System.out.println(msgContext.getOutgoingMessage().getAs("String"));
+            System.out.println(msgContext.getResponseMessage().getAs("String"));
         }
         catch( Exception e ) {
             e.printStackTrace();

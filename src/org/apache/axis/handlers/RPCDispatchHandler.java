@@ -88,7 +88,7 @@ public class RPCDispatchHandler extends BasicHandler {
       AxisClassLoader cl     = new AxisClassLoader();
       Class           cls    = cl.loadClass(clsName); 
       Object          obj    = cls.newInstance();
-      Message         inMsg  = msgContext.getIncomingMessage();
+      Message         inMsg  = msgContext.getRequestMessage();
       SOAPEnvelope    env    = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
       Vector          bodies = env.getAsRPCBody();
       SOAPEnvelope    resEnv = null ;
@@ -134,7 +134,7 @@ public class RPCDispatchHandler extends BasicHandler {
       }
 
       Message outMsg = new Message( resEnv, "SOAPEnvelope" );
-      msgContext.setOutgoingMessage( outMsg );
+      msgContext.setResponseMessage( outMsg );
     }
     catch( Exception e ) {
       Debug.Print( 1, e );

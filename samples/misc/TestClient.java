@@ -96,9 +96,9 @@ public class TestClient {
 
       System.out.println( "Request:\n" + msg );
         
-      msgContext.setIncomingMessage( inMsg );
+      msgContext.setRequestMessage( inMsg );
       hMsg.invoke( msgContext );
-      outMsg = msgContext.getOutgoingMessage();
+      outMsg = msgContext.getResponseMessage();
 
       System.out.println( "Response:\n" + outMsg.getAs( "String" ) );
     }

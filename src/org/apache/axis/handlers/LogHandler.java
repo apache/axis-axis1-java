@@ -73,8 +73,8 @@ public class LogHandler extends BasicHandler {
       FileWriter  fw   = new FileWriter( "axis.log", true );
       PrintWriter pw   = new PrintWriter( fw );
 
-      Message inMsg = msgContext.getIncomingMessage();
-      Message outMsg = msgContext.getOutgoingMessage();
+      Message inMsg = msgContext.getRequestMessage();
+      Message outMsg = msgContext.getResponseMessage();
   
       pw.println( "=======================================================" );
       pw.println( "= " + ( new Time(System.currentTimeMillis()) ).toString() );

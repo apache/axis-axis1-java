@@ -96,7 +96,7 @@ public class HTTPDispatchHandler extends BasicHandler {
       Socket             sock = null ;
 
       sock    = new Socket( host, port );
-      reqEnv  = (String) msgContext.getIncomingMessage().getAs("String");
+      reqEnv  = (String) msgContext.getRequestMessage().getAs("String");
 
       OutputStream  out  = sock.getOutputStream();
       InputStream   inp  = sock.getInputStream();
@@ -176,7 +176,7 @@ public class HTTPDispatchHandler extends BasicHandler {
         parser.parse( new InputSource( inp ) );
   
         outMsg = new Message( parser.getDocument(), "Document" );
-        msgContext.setOutgoingMessage( outMsg );
+        msgContext.setResponseMessage( outMsg );
         if ( Debug.DebugOn(2) ) {
           Debug.Print( 2, "XML received:" );
           Message m = new Message( parser.getDocument(), "Document" );
