@@ -149,22 +149,23 @@ public class JavaDeployWriter extends JavaWriter {
             TypeEntry type = (TypeEntry) types.elementAt(i);
             if (type.getBaseType() == null && type.isReferenced()
                     && !type.isOnlyLiteralReferenced()
-                    && !type.getName().endsWith("[]")) {
-                // Generate a typeMapping clause that is compatible with JSR 109
-                // This replaces the old beanMapping clause
-                //pw.println("  <beanMapping");
-                //pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
-                //pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');
-                //pw.println("    type=\"" + 
-                // Constants.NSPREFIX_WSDD_JAVA + ":" + type.getName() + '"');
-                //pw.println("  />");
-
+                    && !(type instanceof CollectionType)) {
                 pw.println("  <typeMapping");
                 pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
                 pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');
                 pw.println("    type=\"java:" + type.getName() + '"');
-                pw.println("    serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");
-                pw.println("    deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"");
+                if (type.getName().endsWith("[]")) {
+                    pw.println("    serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"");
+                    pw.println("    deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"");
+                } else if (type.getNode() != null && 
+                   SchemaUtils.getEnumerationBaseAndValues(
+                     type.getNode(), emitter.getSymbolTable()) != null) {
+                    pw.println("    serializer=\"org.apache.axis.encoding.ser.EnumSerializerFactory\"");
+                    pw.println("    deserializer=\"org.apache.axis.encoding.ser.EnumDeserializerFactory\"");
+                } else {
+                    pw.println("    serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");
+                    pw.println("    deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"");
+                }
                 pw.println("    encodingStyle=\""+ Constants.URI_CURRENT_SOAP_ENC+"\"");
                 pw.println("  />");
             }
