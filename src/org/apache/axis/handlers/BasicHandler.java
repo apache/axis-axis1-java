@@ -86,7 +86,10 @@ public abstract class BasicHandler implements Handler {
     protected Hashtable options;
     protected String name;
 
-    /** Should this Handler use a LockableHashtable for options? */
+
+    /**
+     * Should this Handler use a LockableHashtable for options?
+     */
     protected void initHashtable(boolean makeLockable)
     {
         if (makeLockable) {
@@ -99,7 +102,6 @@ public abstract class BasicHandler implements Handler {
     /** Stubbed-out methods.  Override in your child class to implement
      * any real behavior.
      */
-
     public void init()
     {
     }
@@ -116,6 +118,7 @@ public abstract class BasicHandler implements Handler {
     public void onFault(MessageContext msgContext)
     {
     }
+
     /** Must implement this in subclasses.
      */
     public abstract void invoke(MessageContext msgContext) throws AxisFault;
@@ -126,6 +129,24 @@ public abstract class BasicHandler implements Handler {
     public void setOption(String name, Object value) {
         if ( options == null ) initHashtable(false);
         options.put( name, value );
+    }
+
+    /**
+     * Set a default value for the given option:
+     * if the option is not already set, then set it.
+     * if the option is already set, then do not set it.
+     * <p>
+     * If this is called multiple times, the first with a non-null value
+     * if 'value' will set the default, remaining calls will be ignored.
+     * <p>
+     * Returns true if value set (by this call), otherwise false;
+     */
+    public boolean setOptionDefault(String name, Object value) {
+        boolean val = (options == null  || options.get(name) == null) && value != null;
+        if (val) {
+            setOption(name, value);
+        }
+        return val;
     }
     
     /**
@@ -164,7 +185,7 @@ public abstract class BasicHandler implements Handler {
     }
 
     public Element getDeploymentData(Document doc) {
-        log.debug(JavaUtils.getMessage("enter00", "BasicHandler::getDeploymentData") );
+        log.debug("Enter: BasicHandler::getDeploymentData");
 
         Element  root = doc.createElementNS("", "handler");
 
@@ -181,7 +202,7 @@ public abstract class BasicHandler implements Handler {
                 root.appendChild( e1 );
             }
         }
-        log.debug(JavaUtils.getMessage("exit00", "BasicHandler::getDeploymentData") );
+        log.debug("Exit: BasicHandler::getDeploymentData");
         return( root );
     }
 
