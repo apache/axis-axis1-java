@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,6 +36,7 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.NetworkUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -176,11 +179,17 @@ public class AxisFault extends java.rmi.RemoteException {
         // ? SOAP 1.2 or 1.1 ?
         setFaultCodeAsString( Constants.FAULT_SERVER_USER );
         initFromException(target);
-        
+
         // if the target is a JAX-RPC SOAPFaultException init
         // AxisFault with the values from the SOAPFaultException
-        if ( target instanceof SOAPFaultException)
-            initFromSOAPFaultException((SOAPFaultException)target);
+        if ( target instanceof SOAPFaultException ) {
+            //strip out the hostname as we want any new one
+            removeHostname();
+            initFromSOAPFaultException((SOAPFaultException) target);
+            //but if they left it out, add it
+            addHostnameIfNeeded();
+        }
+
     }
 
     /**
@@ -218,6 +227,7 @@ public class AxisFault extends java.rmi.RemoteException {
         super (message, t);
         setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
         setFaultString(getMessage());
+        addHostnameIfNeeded();
     }
 
     /**
@@ -257,6 +267,9 @@ public class AxisFault extends java.rmi.RemoteException {
         //add stack trace
         addFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE,
                 JavaUtils.stackToString(target));
+
+        //add the hostname
+        addHostnameIfNeeded();
     }
     
     /**
@@ -266,19 +279,23 @@ public class AxisFault extends java.rmi.RemoteException {
     private void initFromSOAPFaultException(SOAPFaultException fault) {
         
         // faultcode
-        if ( fault.getFaultCode() != null)
-            setFaultCode( fault.getFaultCode());
+        if ( fault.getFaultCode() != null ) {
+            setFaultCode(fault.getFaultCode());
+        }
         
         // faultstring
-        if ( fault.getFaultString() != null)        
-            setFaultString( fault.getFaultString());
+        if ( fault.getFaultString() != null ) {
+            setFaultString(fault.getFaultString());
+        }
         
         // actor
-        if ( fault.getFaultActor() != null)
-            setFaultActor( fault.getFaultActor());          
-        
-        if ( null == fault.getDetail())
-            return;        
+        if ( fault.getFaultActor() != null ) {
+            setFaultActor(fault.getFaultActor());
+        }
+
+        if ( null == fault.getDetail() ) {
+            return;
+        }
         
         // We get an Iterator but we need a List
         Vector details = new Vector();       
@@ -311,8 +328,7 @@ public class AxisFault extends java.rmi.RemoteException {
     /**
      * Dump the fault info to the log at debug level.
      */
-    public void dump()
-    {
+    public void dump() {
         log.debug(dumpToString());
     }
 
@@ -795,7 +811,7 @@ public class AxisFault extends java.rmi.RemoteException {
     /**
      * Writes any exception data to the faultDetails.
      *
-     * This can be overrided (and is) by emitted exception clases.
+     * This can be overridden (and is) by emitted exception clases.
      * The base implementation will attempt to serialize exception data the
      * fault was created from an Exception and a type mapping is found for it.
      *
@@ -826,5 +842,39 @@ public class AxisFault extends java.rmi.RemoteException {
             context.serialize(qname, null, detailObject);
             context.setDoMultiRefs(oldMR);
         }
+    }
+
+    /**
+     * add the hostname of the current system. This is very useful for
+     * locating faults on a cluster.
+     * @since Axis1.2
+     */
+    public void addHostnameIfNeeded() {
+        //look for an existing declaration
+        if(lookupFaultDetail(Constants.QNAME_FAULTDETAIL_HOSTNAME)!=null) {
+            //and do nothing if it exists
+            return;
+        }
+        addHostname(NetworkUtils.getLocalHostname());
+    }
+
+    /**
+     * add the hostname string. If one already exists, remove it.
+     * @param hostname string name of a host
+     * @since Axis1.2
+     */
+    public void addHostname(String hostname) {
+        //add the hostname
+        removeHostname();
+        addFaultDetail(Constants.QNAME_FAULTDETAIL_HOSTNAME,
+                hostname);
+    }
+
+    /**
+     * strip out the hostname on a message. This
+     * is useful for security reasons.
+     */
+    public void removeHostname() {
+        removeFaultDetail(Constants.QNAME_FAULTDETAIL_HOSTNAME);
     }
 }
