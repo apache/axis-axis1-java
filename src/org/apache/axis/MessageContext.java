@@ -60,6 +60,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.session.Session;
 import org.apache.axis.utils.AxisClassLoader;
+import org.apache.axis.client.AxisClient;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
@@ -384,7 +385,15 @@ public class MessageContext {
             setTypeMappingRegistry(tmr);
         }
     }
-
+    
+    /**
+     * Let us know whether this is the client or the server.
+     */
+    public boolean isClient()
+    {
+        return (axisEngine instanceof AxisClient);
+    }
+    
     /** Contains an instance of Handler, which is the
      *  ServiceContext and the entrypoint of this service.
      *
