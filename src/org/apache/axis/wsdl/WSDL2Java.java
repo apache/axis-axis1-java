@@ -103,6 +103,7 @@ public class WSDL2Java {
     protected static final int DEBUG_OPT = 'D';
     protected static final int ALL_OPT = 'a';
     protected static final int TYPEMAPPING_OPT = 'T';
+    protected static final int NETWORK_TIMEOUT_OPT = 'O';
 
     // Scope constants
     public static final byte NO_EXPLICIT_SCOPE = 0x00;
@@ -182,7 +183,11 @@ public class WSDL2Java {
         new CLOptionDescriptor("typeMappingVersion",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 TYPEMAPPING_OPT,
-                JavaUtils.getMessage("optionTypeMapping00"))
+                JavaUtils.getMessage("optionTypeMapping00")),
+        new CLOptionDescriptor("timeout",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                NETWORK_TIMEOUT_OPT,
+                JavaUtils.getMessage("optionTimeout00"))
     };
 
     /**
@@ -423,8 +428,6 @@ public class WSDL2Java {
         WSDLRunnable runnable = new WSDLRunnable(emitter, wsdlURL);
         Thread wsdlThread = new Thread(runnable);
 
-        long timeout = new Date().getTime() + timeoutms;
-
         wsdlThread.start();
 
         try {
@@ -567,6 +570,7 @@ public class WSDL2Java {
                     case DEBUG_OPT:
                         wsdl2java.debug(true);
                         break;
+
                     case TYPEMAPPING_OPT:
                         String tmValue = option.getArgument();
                         if (tmValue.equals("1.1")) {
@@ -576,6 +580,11 @@ public class WSDL2Java {
                         } else {
                             System.out.println(JavaUtils.getMessage("badTypeMappingOption00"));
                         }
+                        break;
+
+                    case NETWORK_TIMEOUT_OPT:
+                        String timeoutValue = option.getArgument();
+                        wsdl2java.setTimeout(Long.parseLong(timeoutValue));
                         break;
                 }
             }
