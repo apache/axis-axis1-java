@@ -46,6 +46,83 @@ of Pluggable APIs that are necessary for such an integration.
 <h2>
 <a NAME="Architectural Overview"></a>Architectural Overview</h2>
 &nbsp;
+<p>Axis consists of several subsystems working together. In this section we'll 
+  give you an overview of how the package works, but for more details please see 
+  the Axis Architecture Guide, a separate document.</p>
+<h3>Handlers and the Message Path in Axis</h3>
+<p>Put simply, Axis is all about processing Messages. When the central Axis processing 
+  logic runs, a series of <b>Handlers</b> are each invoked in order. The particular 
+  oder is determined by two factors - deployment configuration and whether the 
+  engine is a client or a server. The object which is passed to each Handler invocation 
+  is a <b>MessageContext</b>. A MessageContext is a structure which contains several 
+  important parts: 1) a &quot;request&quot; message, 2) a &quot;response&quot; 
+  message, and 3) a bag of properties. We'll go into a little more detail on this 
+  in a bit.</p>
+<p>There are two basic ways which Axis is invoked:</p>
+<ol>
+  <li>As a <b>server</b>, a <b>Transport Listener</b> will create a MessageContext 
+    and invoke the Axis processing framework.</li>
+  <li>As a <b>client</b>, application code (aided in most cases by the client 
+    programming model of Axis) will generate a MessageContext and invoke the Axis 
+    processing framework.</li>
+</ol>
+<p>In either case, the Axis framework's job is simply to pass the resulting MessageContext 
+  through a configurable set of Handlers, each of which has an opportunity to 
+  do whatever it is designed to do with the MessageContext. The message path (for 
+  the server side) looks like this:</p>
+<p><img src="ServerMessagePath.jpg" width="720" height="540"></p>
+<p>(In the diagram above, each of the small cylinders represents a Handler.)</p>
+<p>A message arrives (in some protocol-specific manner) at a Transport Listener. 
+  Let's posit that in this case it's an HTTP servlet. It's the Listener's job 
+  to package the protocol-specific data into a <b>Message</b> object (org.apache.axis.Message), 
+  and put the Message into a <b>MessageContext</b>. The MessageContext is also 
+  loaded with various <b>properties</b> by the Listener - in this case, an example 
+  would be setting the property &quot;http.SOAPAction&quot; to the value of the 
+  SOAPAction HTTP header. The Transport Listener also sets the <b>transportName</b> 
+  String on the MessageContext - in this case we set it to &quot;http&quot;. Once 
+  the MessageContext is ready to go, the Listener hands it into the AxisEngine.</p>
+<p>The AxisEngine's first job is to look up the transport by name. This will result 
+  in an object which contains a <b>request</b> flow, a <b>response</b> flow, or 
+  perhaps both. If a transport request flow exists, it will be invoked, passing 
+  the MessageContext into the invoke() method. This will result in calling all 
+  the Handlers specified in the request flow configuration.</p>
+<p>After the transport request handler, the engine locates a global request flow, 
+  if configured (in the &lt;requestFlow&gt; element of the WSDD &lt;globalConfiguration&gt;, 
+  as explained in the WSDD deployment section later in this document), and then 
+  invokes any Handlers specified therein.</p>
+<p>At some point during the processing up until now, some Handler has hopefully 
+  set the <b>serviceHandler</b> field of the MessageContext (this is usually done 
+  in the HTTP transport by the &quot;URLMapper&quot; Handler, which maps a URL 
+  like &quot;http://localhost/axis/services/AdminService&quot; to the &quot;AdminService&quot; 
+  service). This field determines the Handler we'll invoke to execute service-specific 
+  functionality, such as making an RPC call on a back-end object. Services in 
+  Axis are typically instances of the &quot;SOAPService&quot; class (org.apache.axis.handlers.soap.SOAPService), 
+  which may contain <b>request</b> and <b>response</b> flows (similar to what 
+  we saw at the transport and global levels), and must contain a <b>provider</b>, 
+  which is simply a Handler responsible for implementing the actual back end logic 
+  of the service.</p>
+<p>In typical RPC examples, the provider is the org.apache.axis.providers.java.RPCProvider 
+  class. This is just another Handler that, when invoked, attempts to call a backend 
+  Java object whose class is determined by the &quot;className&quot; parameter 
+  specified at deployment time. It uses the SOAP RPC convention for determining 
+  the method to call, and makes sure the types of the incoming XML-encoded arguments 
+  match the types of the required parameters of the resulting method.</p>
+<h3>The Message Path on the Client</h3>
+<p>The Message Path on the client side is similar, except the order of scoping 
+  is reversed. In other words:</p>
+<p>The <b>service</b> handler, if any, is called first - on the client side, there 
+  is no &quot;provider&quot; since the service is being provided by a remote node, 
+  but there is still the possibility of request and response flows. The service 
+  request and response flows serve to do any service-specific processing of the 
+  message on its way out of the system, and also for the response message on its 
+  way back to the caller.</p>
+<p>After the service request flow, the global requestFlow, if any, is invoked, 
+  followed by the transport. The <b>Transport Sender</b>, a special Handler whose 
+  job it is to actually perform whatever protocol-specific operations are necessary 
+  to get the message to and from the target SOAP server, is invoked to send the 
+  message. The response (if any) is placed into the responseMessage field of the 
+  MessageContext, and the MessageContext then propagates back up through the response 
+  flows - first the transport, then the global, and finally the service.</p>
 <h2>
 <a NAME="Pluggable APIs"></a>Pluggable APIs</h2>
 The following are the points that are pluggable in order to integrate AXIS
