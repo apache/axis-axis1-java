@@ -1390,7 +1390,9 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 }
                 boolean encoded = isEncoded();
                 if (actualXMLType.value == null ||
-                        (!encoded && actualXMLType.value.equals(soapConstants.getArrayType()))) {
+                        (!encoded &&
+                        (actualXMLType.value.equals(Constants.SOAP_ARRAY) ||
+                        actualXMLType.value.equals(Constants.SOAP_ARRAY12)))) {
                     actualXMLType.value = tm.getXMLType(javaType,
                                                         xmlType,
                                                         encoded);
