@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -280,7 +279,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
                 if (type.isSimpleType()
                         && (variableName.endsWith("Value")
-                        || variableName.equals("value"))) {
+                        || variableName.equals("_value"))) {
                     simpleValueTypes.add(typeName);
                 }
 
@@ -317,7 +316,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
                 if (type.isSimpleType()
                         && (variableName.endsWith("Value")
-                        || variableName.equals("value"))) {
+                        || variableName.equals("_value"))) {
                     simpleValueTypes.add(typeName);
                 }
 
@@ -438,7 +437,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         // Define the member element of the bean
         if (isUnion()) {
-            pw.println("    private java.lang.String value;");
+            pw.println("    private java.lang.String _value;");
 
             return;
         }
@@ -657,8 +656,8 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) {
             pw.println("    public " + className
-                    + "(java.lang.String value) {");
-            pw.println("        this.value = value;");
+                    + "(java.lang.String _value) {");
+            pw.println("        this._value = _value;");
             pw.println("    }");
 
             for (Iterator iterator = simpleValueTypes.iterator();
@@ -671,19 +670,19 @@ public class JavaBeanWriter extends JavaClassWriter {
 
                 pw.println("    public " + className + "(" + typeName
                         + " value) {");
-                pw.println("        setValue(value);");
+                pw.println("        set_value(_value);");
                 pw.println("    }");
                 pw.println();
             }
         } else if (simpleValueTypes.size() == 1) {
             pw.println("    public " + className + "("
-                    + simpleValueTypes.get(0) + " value) {");
-            pw.println("        this.value = value;");
+                    + simpleValueTypes.get(0) + " _value) {");
+            pw.println("        this._value = _value;");
             pw.println("    }");
             pw.println("    public " + className
-                    + "(java.lang.String value) {");
+                    + "(java.lang.String _value) {");
             writeSimpleTypeGetter((String) simpleValueTypes.get(0), null,
-                    "this.value =");
+                    "this._value =");
             pw.println("    }");
             pw.println();
         }
@@ -704,15 +703,15 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         if (wrapper != null) {
             pw.println("        " + returnString + " new " + wrapper
-                    + "(value)." + simpleValueType + "Value();");
+                    + "(_value)." + simpleValueType + "Value();");
         } else {
             if (simpleValueType.equals("byte[]")) {
                 pw.println("        " + returnString
-                        + " org.apache.axis.types.HexBinary.decode(value);");
+                        + " org.apache.axis.types.HexBinary.decode(_value);");
             } else if (simpleValueType.equals("org.apache.axis.types.URI")) {
                 pw.println("        try {");
                 pw.println("            " + returnString
-                        + " new org.apache.axis.types.URI(value);");
+                        + " new org.apache.axis.types.URI(_value);");
                 pw.println("        }");
                 pw.println(
                         "        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
@@ -723,7 +722,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("        try {");
                 pw.println(
                         "            " + returnString
-                        + " (java.text.DateFormat.getDateTimeInstance()).parse(value);");
+                        + " (java.text.DateFormat.getDateTimeInstance()).parse(_value);");
                 pw.println("        }");
                 pw.println("        catch (java.text.ParseException e){");
                 pw.println(
@@ -734,17 +733,17 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println(
                         "            (java.util.Calendar) new org.apache.axis.encoding.ser.CalendarDeserializer(");
                 pw.println(
-                        "                java.lang.String.class, org.apache.axis.Constants.XSD_STRING).makeValue(value);");
+                        "                java.lang.String.class, org.apache.axis.Constants.XSD_STRING).makeValue(_value);");
                 pw.println("        " + returnString + " cal;");
             } else if (enumerationTypes.contains(simpleValueType)) {
 
                 // we're generating code that will obtain a reference to an enumeration: use the
                 // class forString interface, not the constructor.  Bug 19069
                 pw.println("        " + returnString + simpleValueType
-                        + ".fromString(value);");
+                        + ".fromString(_value);");
             } else {
                 pw.println("        " + returnString + " new "
-                        + simpleValueType + "(value);");
+                        + simpleValueType + "(_value);");
             }
         }
     }
@@ -774,25 +773,25 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println("    public java.lang.String toString() {");
 
         if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) {
-            pw.println("        return value;");
+            pw.println("        return _value;");
         } else {
             String wrapper =
                     JavaUtils.getWrapper((String) simpleValueTypes.get(0));
 
             if (wrapper != null) {
                 pw.println("        return new " + wrapper
-                        + "(value).toString();");
+                        + "(_value).toString();");
             } else {
                 String simpleValueType0 = (String)simpleValueTypes.get(0); 
                 if (simpleValueType0.equals("byte[]")) {
                     pw.println(
-                            "        return value == null ? null : org.apache.axis.types.HexBinary.encode(value);");
+                            "        return _value == null ? null : org.apache.axis.types.HexBinary.encode(_value);");
                 } else if (simpleValueType0.equals("java.util.Calendar")) {
                     pw.println(
-                            "        return value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(value, null);");
+                            "        return _value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(_value, null);");
                 } else {
                     pw.println(
-                            "        return value == null ? null : value.toString();");
+                            "        return _value == null ? null : _value.toString();");
                 }
             }
         }
@@ -811,18 +810,18 @@ public class JavaBeanWriter extends JavaClassWriter {
         String wrapper = JavaUtils.getWrapper(simpleValueType);
 
         if (wrapper != null) {
-            pw.println("        this.value = new " + wrapper
-                    + "(value).toString();");
+            pw.println("        this._value = new " + wrapper
+                    + "(_value).toString();");
         } else {
             if (simpleValueType.equals("byte[]")) {
                 pw.println(
-                        "        this.value = value == null ? null : org.apache.axis.types.HexBinary.encode(value);");
+                        "        this._value = _value == null ? null : org.apache.axis.types.HexBinary.encode(_value);");
             } else if (simpleValueType.equals("java.util.Calendar")) {
                 pw.println(
-                        "        this.value = value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(value, null);");
+                        "        this._value = _value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(_value, null);");
             } else {
                 pw.println(
-                        "        this.value = value == null ? null : value.toString();");
+                        "        this._value = _value == null ? null : _value.toString();");
             }
         }
     }
@@ -901,7 +900,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }                    
                 if (isUnion()) {
                     pw.println("    public void set" + capName + "(" + typeName
-                            + " value) {");
+                            + " _value) {");
                     writeSimpleTypeSetter(typeName);
                 } else {
                     pw.println("    public void set" + capName + "(" + typeName
@@ -938,7 +937,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
                     if (enableSetters) {
                         pw.println("    public void set" + capName + "(int i, "
-                                + compName + " value) {");
+                                + compName + " _value) {");
 
                         // According to the section 7.2 of the JavaBeans
                         // specification, the indexed setter should not
@@ -962,7 +961,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                          * pw.println("            this." + name + " = a;");
                          * pw.println("        }");
                          */
-                        pw.println("        this." + name + "[i] = value;");
+                        pw.println("        this." + name + "[i] = _value;");
                         pw.println("    }");
                         pw.println();
                     }
@@ -1091,8 +1090,8 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println("        int _hashCode = " + start + ";");
 
         if (isUnion()) {
-            pw.println("        if (this.value != null) {");
-            pw.println("            _hashCode += this.value.hashCode();");
+            pw.println("        if (this._value != null) {");
+            pw.println("            _hashCode += this._value.hashCode();");
             pw.println("        }");
         }
 
