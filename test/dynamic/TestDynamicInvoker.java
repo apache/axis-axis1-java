@@ -69,8 +69,7 @@ public class TestDynamicInvoker extends TestCase {
     public void test1() throws Exception {
         try {
             String[] args = new String[]{"http://www.xmethods.net/sd/2001/TemperatureService.wsdl", "getTemp", "02067"};
-            DynamicInvoker invoker = new DynamicInvoker();
-            invoker.main(args);
+            DynamicInvoker.main(args);
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
@@ -87,8 +86,7 @@ public class TestDynamicInvoker extends TestCase {
     public void test2() throws Exception {
         try {
             String[] args = new String[]{"http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl", "getQuote", "IBM"};
-            DynamicInvoker invoker = new DynamicInvoker();
-            invoker.main(args);
+            DynamicInvoker.main(args);
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
@@ -105,8 +103,7 @@ public class TestDynamicInvoker extends TestCase {
     public void test3() throws Exception {
         try {
             String[] args = new String[]{"http://mssoapinterop.org/asmx/xsd/round4XSD.wsdl", "echoString(Round4XSDTestSoap)", "Hello World!!!"};
-            DynamicInvoker invoker = new DynamicInvoker();
-            invoker.main(args);
+            DynamicInvoker.main(args);
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
@@ -126,8 +123,7 @@ public class TestDynamicInvoker extends TestCase {
                                         "Add", 
                                         "3", 
                                         "4"};
-            DynamicInvoker invoker = new DynamicInvoker();
-            invoker.main(args);
+            DynamicInvoker.main(args);
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
