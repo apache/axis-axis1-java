@@ -31,7 +31,13 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
                                                   nickName);
 
         // Get the stub and set Session
-        test.wsdl.arrays.PersonalInfoBook binding = new PersonalInfoBookService().getPersonalInfoBook();
+        test.wsdl.arrays.PersonalInfoBook binding;
+        try {
+            binding = new PersonalInfoBookService().getPersonalInfoBook();
+        }
+        catch (javax.xml.rpc.JAXRPCException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre );
+        }
         assertTrue("binding is null", binding != null);
         ((PersonalInfoBookSOAPBindingStub) binding).setMaintainSession (true);
 

@@ -66,7 +66,12 @@ public class WidgetPriceServiceTestCase extends junit.framework.TestCase {
     }
 
     public void testWidgetPrice() {
-        samples.userguide.example6.WidgetPrice binding = new WidgetPriceService().getWidgetPrice();
+        samples.userguide.example6.WidgetPrice binding;
+        try {
+            binding = new WidgetPriceService().getWidgetPrice();
+        } catch (javax.xml.rpc.JAXRPCException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC  Exception caught: " + jre );
+        }
         ((WidgetPriceSoapBindingStub)binding).setMaintainSession(true);
         assertTrue("binding is null", binding != null);
         try {
