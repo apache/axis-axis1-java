@@ -65,13 +65,12 @@
         <mapping namespace="urn:SequenceTest2" package="test.sequence"/>
     </wsdl2java>
     <!-- Copy modified files to work directory -->
-    <copy todir="${build.dir}/work/test" overwrite="yes">
-      <fileset dir="${test.dir}">
-        <include name="sequence/SequenceInfo.java"/>
+    <copy todir="${build.dir}/work/test/sequence" overwrite="yes">
+      <fileset dir="${test.dir}/sequence/impl">
+        <include name="SequenceInfo.java"/>
       </fileset>
     </copy>
     <!-- Compile Java -->
-    <echo message="${build.dir} ${build.dest}"/>
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="test-classpath" />

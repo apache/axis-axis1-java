@@ -125,17 +125,26 @@ Copyright:
     <copy todir="${build.dir}/work/test" overwrite="yes">
       <fileset dir="${test.dir}">
         <include name="**/*Impl.java"/>
+        <exclude name="**/impl/*.java" />
       </fileset>
       <fileset dir="${test.dir}">
         <include name="**/*TestCase.java"/>
+        <exclude name="**/impl/*.java" />
       </fileset>
       <fileset dir="${test.dir}">
         <include name="**/Main.java"/>
-      </fileset>
-      <fileset dir="${test.dir}">
-        <include name="sequence/SequenceInfo.java"/>
+        <exclude name="**/impl/*.java" />
       </fileset>
     </copy>
+    <!-- Copy everything in sequence/impl directories into the corresponding work directories
+        (and prune off the impl directory on the copy.
+        Wish I could do this a better way, but ant does not have a regexp mapper installed. -->
+    <copy todir="${build.dir}/work/test/sequence" overwrite="yes">
+      <fileset dir="${test.dir}/sequence/impl">
+        <include name="*.java"/>
+      </fileset>
+    </copy>
+
     <copy todir="${build.dir}/work/samples" overwrite="yes">
       <fileset dir="${samples.dir}">
         <include name="**/*BindingImpl.java"/>
