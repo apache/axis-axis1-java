@@ -57,7 +57,9 @@ package javax.xml.soap;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import java.util.Properties;
 
 /**
@@ -66,62 +68,15 @@ import java.util.Properties;
  * be accessed from other packages.
  */
 class FactoryFinder {
-
     /**
-     * Constructor FactoryFinder
-     */
-    FactoryFinder() {}
-
-    /**
-     * Method newInstance
+     * instantiates an object go the given classname.
      *
      * @param factoryClassName
-     * @param classloader
-     *
-     * @return
-     *
+     * @return a factory object
      * @throws SOAPException
      */
-    private static Object newInstance(
-            String factoryClassName, ClassLoader classloader)
-                throws SOAPException {
-
-        try {
-            Class factory;
-
-            if (classloader == null) {
-                factory = Class.forName(factoryClassName);
-            } else {
-                factory = classloader.loadClass(factoryClassName);
-            }
-
-            return factory.newInstance();
-        } catch (ClassNotFoundException classnotfoundexception) {
-            throw new SOAPException("Provider " + factoryClassName
-                                    + " not found", classnotfoundexception);
-        } catch (Exception exception) {
-            throw new SOAPException("Provider " + factoryClassName
-                                    + " could not be instantiated: "
-                                    + exception, exception);
-        }
-    }
-
-    /**
-     * Method find
-     *
-     * @param factoryPropertyName
-     * @param defaultFactoryClassName
-     *
-     * @return
-     *
-     * @throws SOAPException
-     */
-    static Object find(
-            String factoryPropertyName, String defaultFactoryClassName)
-                throws SOAPException {
-
-        ClassLoader classloader;
-
+    private static Object newInstance(String factoryClassName) throws SOAPException {
+        ClassLoader classloader = null;
         try {
             classloader = Thread.currentThread().getContextClassLoader();
         } catch (Exception exception) {
@@ -129,64 +84,99 @@ class FactoryFinder {
         }
 
         try {
-            String factoryClassName = System.getProperty(factoryPropertyName);
+            Class factory = null;
+            if (classloader == null) {
+                factory = Class.forName(factoryClassName);
+            } else {
+                try {
+                    factory = classloader.loadClass(factoryClassName);
+                } catch (ClassNotFoundException cnfe) {}
+            }
+            if (factory == null) {
+                classloader = FactoryFinder.class.getClassLoader();
+                factory = classloader.loadClass(factoryClassName);
+            }
+            return factory.newInstance();
+        } catch (ClassNotFoundException classnotfoundexception) {
+            throw new SOAPException("Provider " + factoryClassName + " not found", classnotfoundexception);
+        } catch (Exception exception) {
+            throw new SOAPException("Provider " + factoryClassName + " could not be instantiated: " + exception, exception);
+        }
+    }
 
+    /**
+     * instantiates a factory object given the factory's property name and the default class name
+     *
+     * @param factoryPropertyName
+     * @param defaultFactoryClassName
+     * @return a factory object
+     * @throws SOAPException
+     */
+    static Object find(String factoryPropertyName, String defaultFactoryClassName) throws SOAPException {
+        try {
+            String factoryClassName = System.getProperty(factoryPropertyName);
             if (factoryClassName != null) {
-                return newInstance(factoryClassName, classloader);
+                return newInstance(factoryClassName);
             }
         } catch (SecurityException securityexception) {}
 
         try {
-            String propertiesFileName = System.getProperty("java.home")
-                                        + File.separator + "lib"
+            String propertiesFileName = System.getProperty("java.home") 
+                                        + File.separator + "lib" 
                                         + File.separator + "jaxm.properties";
-            File   file               = new File(propertiesFileName);
-
+            File file = new File(propertiesFileName);
             if (file.exists()) {
-                FileInputStream fileInput  = new FileInputStream(file);
-                Properties      properties = new Properties();
-
+                FileInputStream fileInput = new FileInputStream(file);
+                Properties properties = new Properties();
                 properties.load(fileInput);
                 fileInput.close();
-
-                String factoryClassName =
-                    properties.getProperty(factoryPropertyName);
-
-                return newInstance(factoryClassName, classloader);
+                String factoryClassName = properties.getProperty(factoryPropertyName);
+                return newInstance(factoryClassName);
             }
         } catch (Exception exception1) {}
 
         String factoryResource = "META-INF/services/" + factoryPropertyName;
 
         try {
-            java.io.InputStream inputstream = null;
-
-            if (classloader == null) {
-                inputstream =
-                    ClassLoader.getSystemResourceAsStream(factoryResource);
-            } else {
-                inputstream = classloader.getResourceAsStream(factoryResource);
-            }
-
+            InputStream inputstream = getResource(factoryResource);
             if (inputstream != null) {
-                BufferedReader bufferedreader   =
-                    new BufferedReader(new InputStreamReader(inputstream,
-                        "UTF-8"));
-                String         factoryClassName = bufferedreader.readLine();
-
+                BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
+                String factoryClassName = bufferedreader.readLine();
                 bufferedreader.close();
-
-                if ((factoryClassName != null) &&!"".equals(factoryClassName)) {
-                    return newInstance(factoryClassName, classloader);
+                if ((factoryClassName != null) && !"".equals(factoryClassName)) {
+                    return newInstance(factoryClassName);
                 }
             }
         } catch (Exception exception2) {}
 
         if (defaultFactoryClassName == null) {
-            throw new SOAPException("Provider for " + factoryPropertyName
-                                    + " cannot be found", null);
+            throw new SOAPException("Provider for " + factoryPropertyName + " cannot be found", null);
         } else {
-            return newInstance(defaultFactoryClassName, classloader);
+            return newInstance(defaultFactoryClassName);
         }
+    }
+
+    /**
+     * returns an input stream for the specified resource.
+     * @param factoryResource
+     * @return
+     */
+    private static InputStream getResource(String factoryResource) {
+        ClassLoader classloader = null;
+        try {
+            classloader = Thread.currentThread().getContextClassLoader();
+        } catch (SecurityException securityexception) {}
+        
+        InputStream inputstream;
+        if (classloader == null) {
+            inputstream = ClassLoader.getSystemResourceAsStream(factoryResource);
+        } else {
+            inputstream = classloader.getResourceAsStream(factoryResource);
+        }
+
+        if (inputstream == null) {
+            inputstream = FactoryFinder.class.getClassLoader().getResourceAsStream(factoryResource);
+        }
+        return inputstream;
     }
 }
