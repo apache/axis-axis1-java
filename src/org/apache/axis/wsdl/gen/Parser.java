@@ -54,6 +54,17 @@
  */
 package org.apache.axis.wsdl.gen;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionElement;
@@ -66,14 +77,6 @@ import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * This is a class with no documentation.
@@ -504,10 +507,36 @@ public class Parser {
      */
     private void generateTypes(SymbolTable symbolTable) throws IOException {
 
-        Vector types = symbolTable.getTypes();
+        Map elements = symbolTable.getElementIndex();
+        Collection elementCollection = elements.values();
+        for (Iterator i = elementCollection.iterator(); i.hasNext(); ) {
+            TypeEntry type = (TypeEntry) i.next();
 
-        for (int i = 0; i < types.size(); ++i) {
-            TypeEntry type = (TypeEntry) types.elementAt(i);
+            // Write out the type if and only if:
+            // - we found its definition (getNode())
+            // - it is referenced
+            // - it is not a base type or an attributeGroup
+            // - it is a Type (not an Element) or a CollectionElement
+            // (Note that types that are arrays are passed to getGenerator
+            // because they may require a Holder)
+            // A CollectionElement is an array that might need a holder
+            boolean isType = ((type instanceof Type)
+                    || (type instanceof CollectionElement));
+
+            if ((type.getNode() != null)
+                    && !type.getNode().getLocalName().equals("attributeGroup")
+                    && type.isReferenced() && isType
+                    && (type.getBaseType() == null)) {
+                Generator gen = genFactory.getGenerator(type, symbolTable);
+
+                gen.generate();
+            }
+        }
+        
+        Map types = symbolTable.getTypeIndex();
+        Collection typeCollection = types.values();
+        for (Iterator i = typeCollection.iterator(); i.hasNext(); ) {
+            TypeEntry type = (TypeEntry) i.next();
 
             // Write out the type if and only if:
             // - we found its definition (getNode())
