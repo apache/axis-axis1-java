@@ -55,12 +55,14 @@
 
 package test.functional;
 
+import samples.jaxm.DelayedStockQuote;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import samples.jaxm.UddiPing;
-import DelayedStockQuote;
+
+import java.net.ConnectException;
 
 /**
  * Test the JAX-RPC compliance samples.
@@ -92,9 +94,15 @@ public class TestJAXMSamples extends TestCase {
             log.info("Test complete.");
         } catch (javax.xml.soap.SOAPException e) {
             Throwable t = e.getCause();
-            if(t != null){
-                if (t instanceof AxisFault) ((AxisFault) t).dump();
+            if (t != null) {
                 t.printStackTrace();
+                if (t instanceof AxisFault) {
+                    ((AxisFault) t).dump();
+                    if (((AxisFault) t).detail instanceof ConnectException) {
+                        System.out.println("Connect failure caused JAXM DelayedStockQuote to be skipped.");
+                        return;
+                    }
+                }
                 throw new Exception("Fault returned from test: " + t);
             } else {
                 e.printStackTrace();

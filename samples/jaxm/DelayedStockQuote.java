@@ -52,7 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-//package samples.jaxm;
+package samples.jaxm;
 
 import javax.xml.messaging.URLEndpoint;
 import javax.xml.soap.MessageFactory;
