@@ -31,18 +31,27 @@ Copyright:
 </description>
 ==================================================================== -->
 
-<project default="compile">
+<project name="axis tools" default="compile">
+ <description>
+ Builds the tools jars used with Axis
+ </description>
 
 <property name="axis.home" location=".." />
+<property name="tools.dir" location="${axis.home}/tools" />
+
 <property name="componentName" value="org/apache/axis/tools/ant" />
         &properties;
         &paths;
         &taskdefs;
         &targets;
+<property name="tools.build.dir" location="${build.dir}/tools" />
 
-<target name="clean">
-    <echo message="Removing ${build.dir}/tools/${componentName}" />
-    <delete dir="${build.dir}/tools/${componentName}" />
+
+<target name="clean" description="cleanup">
+    <property name="dir.to.clean" 
+      location="${tools.build.dir}/${componentName}" />
+    <echo message="Removing ${dir.to.clean}" />
+    <delete dir="${dir.to.clean}" />
     <delete file="${build.lib}/axis-ant.jar"/>
 </target>
 
@@ -50,43 +59,51 @@ Copyright:
 
 <target name="compile" depends="copy" unless="axis-ant.present">
   <echo message="Compiling tools.*"/>
-  <mkdir dir="${build.dir}/tools"/>
+  <mkdir dir="${tools.build.dir}"/>
     <!-- build my ForEach task -->
-    <echo message="Building ForEach" />
-    <javac srcdir="${axis.home}/tools/${componentName}/foreach" destdir="${build.dir}/tools">
-      <classpath refid="classpath"/>
-      <include name="*.java" />
-    </javac>
+  <echo message="Building ForEach" />
+  <javac srcdir="${tools.dir}/${componentName}/foreach" 
+      destdir="${tools.build.dir}">
+    <classpath refid="classpath"/>
+    <include name="*.java" />
+  </javac>
 
     <!-- build the RunAxisFunctionalTest task -->
-    <echo message="Building RunAxisFunctionalTest" />
-    <javac srcdir="${axis.home}/tools/${componentName}/axis" destdir="${build.dir}/tools">
-      <classpath refid="classpath"/>
-      <include name="*.java" />
-    </javac>
+  <echo message="Building RunAxisFunctionalTest" />
+  <javac srcdir="${tools.dir}/${componentName}/axis" 
+      destdir="${tools.build.dir}">
+    <classpath refid="classpath"/>
+    <include name="*.java" />
+  </javac>
 
     <!-- build the wsdl2java and java2wsdl tasks -->
-    <echo message="Building WSDL tasks" />
-    <javac srcdir="${axis.home}/tools/${componentName}/wsdl" destdir="${build.dir}/tools">
-      <classpath>
-        <pathelement location="${build.lib}/${name}.jar"/>
-        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
-        <path refid="classpath"/>
-      </classpath>
-      <include name="*.java" />
-    </javac>
+  <echo message="Building WSDL tasks" />
+  <javac srcdir="${tools.dir}/${componentName}/wsdl" 
+    destdir="${tools.build.dir}">
+    <classpath>
+      <pathelement location="${build.lib}/${name}.jar"/>
+      <pathelement location="${build.lib}/${jaxrpc}.jar"/>
+      <path refid="classpath"/>
+    </classpath>
+    <include name="*.java" />
+  </javac>
 
   <copy todir="${build.dir}/${componentName}/foreach" >
-     <fileset dir="${axis.home}/tools/${componentName}/foreach" excludes="**/*.java"/>
+     <fileset dir="${tools.dir}/${componentName}/foreach" excludes="**/*.java"/>
   </copy>
 
-  <jar jarfile="${build.lib}/axis-ant.jar" basedir="${build.dir}/tools">
-    <include name="${componentName}/**"/>
+  <jar jarfile="${build.lib}/axis-ant.jar" 
+    basedir="${build.dir}/tools">
+    <fileset dir="${tools.build.dir}">
+      <include name="${componentName}/**"/>
+    </fileset>
+    <fileset dir="${tools.dir}"
+      includes="*-tasks.properties"/>
   </jar>
 </target>
 
 <target name="test" unless="axis-ant.present">
-   <ant antfile="${axis.home}/tools/test.xml" /> 
+   <ant antfile="${tools.dir}/test.xml" /> 
 </target>
 
 </project>
