@@ -2001,7 +2001,10 @@ public class SymbolTable {
                         if(getInnerCollectionComponentQName(node)!=null)
                             dims += "[]";    
                     }
-                    bEntry.setMIMEInfo(op.getName(), content.getPart(), content.getType(), dims);
+                    String type = content.getType();
+                    if(type == null || type.length() == 0)
+                        type = "text/plain";
+                    bEntry.setMIMEInfo(op.getName(), content.getPart(), type, dims);
                 }
                 else if (obj instanceof SOAPBody) {
                     String use = ((SOAPBody) obj).getUse();
