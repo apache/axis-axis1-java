@@ -57,7 +57,7 @@ package org.apache.axis.message;
 
 /**
  *
- * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
 
 import org.apache.axis.encoding.DeserializationContext;
@@ -66,14 +66,14 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class HeaderBuilder extends SOAPHandler {
+public class HeaderElementBuilder extends SOAPHandler {
     protected static Log log =
-            LogFactory.getLog(HeaderBuilder.class.getName());
+            LogFactory.getLog(HeaderElementBuilder.class.getName());
 
-    private SOAPEnvelope envelope;
+    private SOAPHeader header;
 
-    HeaderBuilder(SOAPEnvelope envelope) {
-        this.envelope = envelope;
+    HeaderElementBuilder(SOAPHeader header) {
+        this.header = header;
     }
 
     public void startElement(String namespace, String localName,
@@ -82,22 +82,12 @@ public class HeaderBuilder extends SOAPHandler {
             throws SAXException {
         if (!context.isDoneParsing()) {
             if (myElement == null) {
-                myElement = new SOAPHeader(namespace, localName, qName,
-                        attributes, context,
-                        envelope.getSOAPConstants());
-                envelope.setHeader((SOAPHeader) myElement);
+                myElement = new SOAPHeaderElement(namespace, localName, "",
+                        attributes, context);
+                header.addHeader((SOAPHeaderElement) myElement);
             }
             context.pushNewElement(myElement);
         }
     }
-
-    public SOAPHandler onStartChild(String namespace,
-                                    String localName,
-                                    String prefix,
-                                    Attributes attributes,
-                                    DeserializationContext context)
-            throws SAXException {
-        HeaderElementBuilder handler = new HeaderElementBuilder((SOAPHeader) myElement);
-        return handler;
-    }
 }
+
