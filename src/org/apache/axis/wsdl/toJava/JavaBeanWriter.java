@@ -300,6 +300,10 @@ public class JavaBeanWriter extends JavaClassWriter {
                 } else {
                     String elemName = Utils.getLastLocalPart(elem.getName().getLocalPart());
                     variableName = Utils.xmlNameToJava(elemName);
+                    
+                    if (elem.getMinOccursIs0()) {
+                        typeName = Utils.getWrapperType(typeName);
+                    }
                 }
 
                 names.add(typeName);
@@ -442,7 +446,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             {
                 if (elements != null && i < (elements.size()*2))
                 {
-                    ElementDecl elem = (ElementDecl)elements.get((int)i/2);
+                    ElementDecl elem = (ElementDecl)elements.get(i/2);
                     comments = elem.getDocumentation();
                 }
             } 
@@ -830,7 +834,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             {
                 if (elements != null && i < (elements.size()*2))
                 {
-                    ElementDecl elem = (ElementDecl)elements.get((int)i/2);
+                    ElementDecl elem = (ElementDecl)elements.get(i/2);
                     documentation = elem.getDocumentation();
                 }
             } 

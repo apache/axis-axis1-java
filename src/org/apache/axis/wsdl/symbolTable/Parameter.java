@@ -102,6 +102,9 @@ public class Parameter {
 
     /** Field outHeader */
     private boolean outHeader = false;
+    
+    /** Is this an omittable param? */
+    private boolean omittable = false;
 
     /**
      * Method toString
@@ -266,4 +269,12 @@ public class Parameter {
     public void setOutHeader(boolean outHeader) {
         this.outHeader = outHeader;
     }    // setOutHeader
+
+    public boolean isOmittable() {
+        return omittable;
+    }
+
+    public void setOmittable(boolean omittable) {
+        this.omittable = omittable;
+    }
 }    // class Parameter

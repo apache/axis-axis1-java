@@ -1166,7 +1166,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     javifiedName += ".value";
                 }
 
-                if (p.getMIMEInfo() == null) {
+                if (p.getMIMEInfo() == null && !p.isOmittable()) {
                     javifiedName = Utils.wrapPrimitiveType(p.getType(),
                             javifiedName);
                 }
@@ -1197,8 +1197,7 @@ public class JavaStubWriter extends JavaClassWriter {
             if (allOuts == 1) {
                 if (parms.returnParam != null) {
                     writeOutputAssign(pw, "return ",
-                            parms.returnParam.getType(),
-                            parms.returnParam.getMIMEInfo(), "_resp");
+                            parms.returnParam, "_resp");
                 } else {
 
                     // The resp object must go into a holder
@@ -1215,9 +1214,10 @@ public class JavaStubWriter extends JavaClassWriter {
                     pw.println("            java.util.Map _output;");
                     pw.println(
                             "            _output = _call.getOutputParams();");
-                    writeOutputAssign(pw, javifiedName + ".value = ",
-                            p.getType(), p.getMIMEInfo(),
-                            "_output.get(" + qnameName + ")");
+                    writeOutputAssign(pw,
+                                      javifiedName + ".value = ",
+                                      p,
+                                      "_output.get(" + qnameName + ")");
                 }
             } else {
 
@@ -1228,19 +1228,22 @@ public class JavaStubWriter extends JavaClassWriter {
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
                     String javifiedName = Utils.xmlNameToJava(p.getName());
-                    String qnameName = Utils.getNewQNameWithLastLocalPart(p.getQName());
+                    String qnameName = 
+                            Utils.getNewQNameWithLastLocalPart(p.getQName());
 
                     if (p.getMode() != Parameter.IN) {
-                        writeOutputAssign(pw, javifiedName + ".value = ",
-                                p.getType(), p.getMIMEInfo(),
-                                "_output.get(" + qnameName + ")");
+                        writeOutputAssign(pw,
+                                          javifiedName + ".value = ",
+                                          p,
+                                          "_output.get(" + qnameName + ")");
                     }
                 }
 
                 if (parms.returnParam != null) {
-                    writeOutputAssign(pw, "return ",
-                            parms.returnParam.getType(),
-                            parms.returnParam.getMIMEInfo(), "_resp");
+                    writeOutputAssign(pw,
+                                      "return ", 
+                                      parms.returnParam,
+                                      "_resp");
                 }
             }
 
@@ -1255,33 +1258,36 @@ public class JavaStubWriter extends JavaClassWriter {
      * 
      * @param pw       
      * @param target   (either "return" or "something ="
-     * @param type     (source TypeEntry)
-     * @param mimeInfo 
      * @param source   (source String)
      */
     private void writeOutputAssign(PrintWriter pw, String target,
-                                   TypeEntry type, MimeInfo mimeInfo,
+                                   Parameter param,
                                    String source) {
 
+        TypeEntry type = param.getType();
+        
         if ((type != null) && (type.getName() != null)) {
+            String typeName = type.getName();
+            if (param.isOmittable()) {
+                typeName = Utils.getWrapperType(type.getName());
+            }
 
             // Try casting the output to the expected output.
             // If that fails, use JavaUtils.convert()
             pw.println("            try {");
             pw.println("                " + target
-                    + Utils.getResponseString(type, mimeInfo, source));
+                    + Utils.getResponseString(param, source));
             pw.println(
                     "            } catch (java.lang.Exception _exception) {");
             pw.println(
                     "                " + target
-                    + Utils.getResponseString(
-                            type, mimeInfo,
-                            "org.apache.axis.utils.JavaUtils.convert(" + source + ", "
-                    + type.getName() + ".class)"));
+                    + Utils.getResponseString(param,
+                            "org.apache.axis.utils.JavaUtils.convert(" +
+                            source + ", " + typeName + ".class)"));
             pw.println("            }");
         } else {
             pw.println("              " + target
-                    + Utils.getResponseString(type, mimeInfo, source));
+                    + Utils.getResponseString(param, source));
         }
     }
 }    // class JavaStubWriter
