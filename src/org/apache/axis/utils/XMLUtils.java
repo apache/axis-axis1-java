@@ -70,7 +70,46 @@ public class XMLUtils {
     // Initialize SAX Parser factory defaults
     initSAXFactory(null, true, false);
   }
-                                             
+  
+  /** Encode a string appropriately for XML.
+   * 
+   * Lifted from ApacheSOAP 2.2 (org.apache.soap.Utils)
+   * 
+   * @param orig the String to encode
+   * @return a String in which XML special chars are repalced by entities
+   */
+  public static String xmlEncodeString(String orig)
+  {
+    if (orig == null)
+    {
+      return "";
+    }
+
+    StringBuffer strBuf = new StringBuffer();
+    char[] chars = orig.toCharArray();
+
+    for (int i = 0; i < chars.length; i++)
+    {
+      switch (chars[i])
+      {
+        case '&'  : strBuf.append("&amp;");
+                    break;
+        case '\"' : strBuf.append("&quot;");
+                    break;
+        case '\'' : strBuf.append("&apos;");
+                    break;
+        case '<'  : strBuf.append("&lt;");
+                    break;
+        case '>'  : strBuf.append("&gt;");
+                    break;
+        default   : strBuf.append(chars[i]);
+                    break;
+      }
+    }
+
+    return strBuf.toString();
+  }
+
   /** Initialize the SAX parser factory.
    * 
    * @param factoryClassName The class name of the desired SAXParserFactory

@@ -85,8 +85,13 @@ public class SOAPEncoding implements Serializer, java.io.Serializable {
         }
 
         context.startElement(qname, attrs);
-        if (value != null)
-            context.writeString(value.toString());
+        if (value != null) {
+            if (type.equals(String.class))
+                context.writeString(
+                                XMLUtils.xmlEncodeString(value.toString()));
+            else
+                context.writeString(value.toString());
+        }
         context.endElement();
     }
 }
