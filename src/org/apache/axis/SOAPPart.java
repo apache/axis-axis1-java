@@ -62,6 +62,8 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.SOAPUtils;
+import org.apache.axis.transport.http.HTTPConstants;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,7 +71,11 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.soap.SOAPException;
+import javax.xml.transform.Source;
 import java.io.*;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * The SOAPPart provides access to the root part of the Message which
@@ -86,7 +92,7 @@ import java.io.*;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class SOAPPart extends Part
+public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 {
     protected static Log log =
         LogFactory.getLog(SOAPPart.class.getName());
@@ -98,6 +104,11 @@ public class SOAPPart extends Part
     private static final int FORM_BODYINSTREAM = 5;
     private static final int FORM_FAULT        = 6;
     private int currentForm;
+
+    private Hashtable headers = new Hashtable();
+    private String contentId;
+    private String contentLocation;
+
 
     private static final String[] formNames =
     { "", "FORM_STRING", "FORM_INPUTSTREAM", "FORM_SOAPENVELOPE",
@@ -132,7 +143,8 @@ public class SOAPPart extends Part
      * "Just something to us working..."
      */
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
-        super();
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
+
 
         msgObject=parent;
         // originalMessage = initialContents;
@@ -454,5 +466,234 @@ public class SOAPPart extends Part
         return (SOAPEnvelope)currentMessage;
     }
 
+    /**
+     * Add the specified MIME header, as per JAXM.
+     */
+    public void addMimeHeader (String header, String value) {
+
+        if(null == header) {
+            throw new IllegalArgumentException(JavaUtils.getMessage("headerNotNull"));
+        }
+
+        header = header.trim();
+
+        if(header.length() == 0) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("headerNotEmpty"));
+        }
+
+        if(null == value) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("headerValueNotNull"));
+        }
+        headers.put(header.toLowerCase(), value);
+    }
+
+    /**
+     * Get the specified MIME header.
+     */
+    public String getFirstMimeHeader (String header) {
+        return (String) headers.get(header.toLowerCase());
+    }
+
+    /**
+     * Total size in bytes (of all content and headers, as encoded).
+    public abstract int getSize();
+     */
+
+    /**
+     * Content location.
+     */
+    public String getContentLocation() {
+        return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
+    }
+
+    /**
+     * Set content location.
+     */
+    public void setContentLocation(String loc) {
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
+    }
+
+    /**
+         * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+         *  already defined.
+         * @param newCid new Content-Id
+         * @returns void
+         */
+        public void setContentId(String newCid){
+                if(!newCid.toLowerCase().startsWith("cid:")){
+                        newCid="cid:"+newCid;
+                }
+                addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
+        }
+
+    /**
+     * Content ID.
+     */
+    public String getContentId() {
+        String ret= getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
+        //Do not let the contentID ever be empty.
+        if(ret == null){
+            ret=SOAPUtils.getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        ret= ret.trim();
+        if(ret.length() ==0){
+            ret=SOAPUtils.getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        return ret;
+    }
+
+
+    /**
+     * Get all headers that match
+     */
+    public java.util.Iterator getMatchingMimeHeaders( final String[] match){
+        java.util.LinkedList retList= new java.util.LinkedList();
+        if(null != match && 0 != match.length ){
+            for(int i= match.length-1 ; i > -1 ; --i){
+                    if(match[i] != null){
+                      String key= match[i].toLowerCase();
+                      if(headers.containsKey(key))
+                         retList.add(match[i]);
+                }
+            }
+        }
+        return retList.iterator();
+    }
+
+    /**
+     * Get all headers that do not match
+     */
+    public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
+        java.util.LinkedList retList= new java.util.LinkedList(headers.keySet());
+        if(null != match && 0 != match.length && !headers.isEmpty()){
+            for(int i= match.length-1 ; i > -1 ; --i){
+                    if(match[i] != null){
+                        String remItem= match[i].toLowerCase();
+                        if(headers.containsKey(remItem)){
+                            retList.remove(remItem);
+                    }
+                }
+            }
+        }
+        return retList.iterator();
+    }
+
+    /**
+     * Sets the content of the <CODE>SOAPEnvelope</CODE> object
+     * with the data from the given <CODE>Source</CODE> object.
+     * @param   source javax.xml.transform.Source</CODE> object with the data to
+     *     be set
+     * @throws  SOAPException if there is a problem in
+     *     setting the source
+     * @see #getContent() getContent()
+     */
+    public void setContent(Source source) throws SOAPException {
+        //TODO: Flesh this out.
+    }
+
+    /**
+     * Returns the content of the SOAPEnvelope as a JAXP <CODE>
+     * Source</CODE> object.
+     * @return the content as a <CODE>
+     *     javax.xml.transform.Source</CODE> object
+     * @throws  SOAPException  if the implementation cannot
+     *     convert the specified <CODE>Source</CODE> object
+     * @see #setContent(javax.xml.transform.Source) setContent(javax.xml.transform.Source)
+     */
+    public Source getContent() throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
+    }
+
+    /**
+     * Retrieves all the headers for this <CODE>SOAPPart</CODE>
+     * object as an iterator over the <CODE>MimeHeader</CODE>
+     * objects.
+     * @return an <CODE>Iterator</CODE> object with all of the Mime
+     *     headers for this <CODE>SOAPPart</CODE> object
+     */
+    public Iterator getAllMimeHeaders() {
+        //TODO: Flesh this out.
+        return null;
+    }
+
+    /**
+     * Changes the first header entry that matches the given
+     *   header name so that its value is the given value, adding a
+     *   new header with the given name and value if no existing
+     *   header is a match. If there is a match, this method clears
+     *   all existing values for the first header that matches and
+     *   sets the given value instead. If more than one header has
+     *   the given name, this method removes all of the matching
+     *   headers after the first one.
+     *
+     *   <P>Note that RFC822 headers can contain only US-ASCII
+     *   characters.</P>
+     * @param  name a <CODE>String</CODE> giving the
+     *     header name for which to search
+     * @param  value a <CODE>String</CODE> giving the
+     *     value to be set. This value will be substituted for the
+     *     current value(s) of the first header that is a match if
+     *     there is one. If there is no match, this value will be
+     *     the value for a new <CODE>MimeHeader</CODE> object.
+     * @ throws java.lang.IllegalArgumentException if
+     *     there was a problem with the specified mime header name
+     *     or value
+     * @see #getMimeHeader(java.lang.String) getMimeHeader(java.lang.String)
+     */
+    public void setMimeHeader(String name, String value) {
+        //TODO: Flesh this out.
+    }
+
+    /**
+     * Gets all the values of the <CODE>MimeHeader</CODE> object
+     * in this <CODE>SOAPPart</CODE> object that is identified by
+     * the given <CODE>String</CODE>.
+     * @param   name  the name of the header; example:
+     *     "Content-Type"
+     * @return a <CODE>String</CODE> array giving all the values for
+     *     the specified header
+     * @see #setMimeHeader(java.lang.String, java.lang.String) setMimeHeader(java.lang.String, java.lang.String)
+     */
+    public String[] getMimeHeader(String name) {
+        //TODO: Flesh this out.
+        String[] strings = new String[1];
+        strings[0] = getFirstMimeHeader(name);
+        return strings;
+    }
+
+    /**
+     * Removes all the <CODE>MimeHeader</CODE> objects for this
+     * <CODE>SOAPEnvelope</CODE> object.
+     */
+    public void removeAllMimeHeaders() {
+        //TODO: Flesh this out.
+    }
+
+    /**
+     * Removes all MIME headers that match the given name.
+     * @param  header  a <CODE>String</CODE> giving
+     *     the name of the MIME header(s) to be removed
+     */
+    public void removeMimeHeader(String header) {
+        //TODO: Flesh this out.
+    }
+
+    /**
+     * Gets the <CODE>SOAPEnvelope</CODE> object associated with
+     * this <CODE>SOAPPart</CODE> object. Once the SOAP envelope is
+     * obtained, it can be used to get its contents.
+     * @return the <CODE>SOAPEnvelope</CODE> object for this <CODE>
+     *     SOAPPart</CODE> object
+     * @throws  SOAPException if there is a SOAP error
+     */
+    public javax.xml.soap.SOAPEnvelope getEnvelope() throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
+    }
 }
 

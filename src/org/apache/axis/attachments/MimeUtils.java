@@ -242,7 +242,7 @@ public class MimeUtils
             for (java.util.Iterator it = parts.iterator(); it.hasNext(); ) {
                 org.apache.axis.Part part=  (org.apache.axis.Part) it.next();
                 javax.activation.DataHandler dh =
-                    org.apache.axis.attachments.AttachmentUtils.getActiviationDataHandler(part);
+                    org.apache.axis.attachments.AttachmentUtils.getActivationDataHandler(part);
                 String contentID = part.getContentId();
 
                 if (contentID.startsWith("cid:")) contentID = contentID.substring(4);
@@ -262,7 +262,7 @@ public class MimeUtils
                    HTTPConstants.HEADER_CONTENT_TYPE, HTTPConstants.HEADER_CONTENT_ID,
                    HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING }); i.hasNext(); ){
                        String header= (String) i.next();
-                       messageBodyPart.setHeader(header, part.getMimeHeader(header)); 
+                       messageBodyPart.setHeader(header, part.getFirstMimeHeader(header)); 
                 }
                 multipart.addBodyPart(messageBodyPart);
             }

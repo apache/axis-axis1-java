@@ -320,7 +320,7 @@ public class AttachmentsImpl implements Attachments {
                                                                          (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments)));
         for( java.util.Iterator i= orderedAttachments.iterator(); i.hasNext(); ){
           AttachmentPart part= (AttachmentPart)i.next();
-              DataHandler dh= AttachmentUtils.getActiviationDataHandler(part);
+              DataHandler dh= AttachmentUtils.getActivationDataHandler(part);
               DataSource ds= dh.getDataSource();
               if( ds != null && ds instanceof ManagedMemoryDataSource ){
                   ((ManagedMemoryDataSource) ds).delete();

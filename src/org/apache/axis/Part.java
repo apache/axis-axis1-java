@@ -81,172 +81,54 @@ import java.util.Hashtable;
 
 import org.apache.axis.transport.http.HTTPConstants;
 
-public abstract class Part
+public interface Part
 {
-    protected static Log log =
-        LogFactory.getLog(Part.class.getName());
-
-    private Hashtable headers = new Hashtable();
-    private String contentId;
-    private String contentLocation;
-    
-    /**
-     * Fill in the Message field.  (Of course this can only be called by
-     * subclass constructors since Part itself is abstract.)
-     */
-    public Part () {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , getNewContentIdValue());
-
-    }
-
     /**
      * Add the specified MIME header, as per JAXM.
      */
-    public void addMimeHeader (String header, String value) {
-
-        if(null == header) {
-            throw new IllegalArgumentException(JavaUtils.getMessage("headerNotNull"));
-        }
-
-        header = header.trim();
-
-        if(header.length() == 0) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("headerNotEmpty"));
-        }
-
-        if(null == value) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("headerValueNotNull"));
-        }
-        headers.put(header.toLowerCase(), value);
-    }
+    public void addMimeHeader (String header, String value);
 
     /**
      * Get the specified MIME header.
      */
-    public String getMimeHeader (String header) {
-        return (String) headers.get(header.toLowerCase());
-    }
-    
-    /**
-     * Total size in bytes (of all content and headers, as encoded).
-    public abstract int getSize();
-     */
+    public String getFirstMimeHeader (String header);
 
     /**
      * Content location.
      */
-    public String getContentLocation() {
-        return getMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
-    }
+    public String getContentLocation();
 
     /**
      * Set content location.
      */
-    public void setContentLocation(String loc) {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
-    }
+    public void setContentLocation(String loc);
 
     /**
-         * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
-         *  already defined.
-         * @param newCid new Content-Id
-         * @returns void
-         */
-        public void setContentId(String newCid){
-                if(!newCid.toLowerCase().startsWith("cid:")){
-                        newCid="cid:"+newCid;
-                }
-                addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
-        }
+     * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+     *  already defined.
+     * @param newCid new Content-Id
+     * @returns void
+     */
+    public void setContentId(String newCid);
 
     /**
      * Content ID.
      */
-    public String getContentId() {
-        String ret= getMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
-        //Do not let the contentID ever be empty.
-        if(ret == null){
-            ret=getNewContentIdValue();
-            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
-        }
-        ret= ret.trim();
-        if(ret.length() ==0){
-            ret=getNewContentIdValue();
-            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
-        }
-        return ret;
-    }
-
+    public String getContentId();
 
     /**
-     * Get all headers that match 
+     * Get all headers that match
      */
-    public java.util.Iterator getMatchingMimeHeaders( final String[] match){
-        java.util.LinkedList retList= new java.util.LinkedList();
-        if(null != match && 0 != match.length ){
-            for(int i= match.length-1 ; i > -1 ; --i){
-                    if(match[i] != null){
-                      String key= match[i].toLowerCase();
-                      if(headers.containsKey(key))
-                         retList.add(match[i]); 
-                }
-            }
-        }
-        return retList.iterator();
-    }
+    public java.util.Iterator getMatchingMimeHeaders( final String[] match);
 
     /**
-     * Get all headers that do not match 
+     * Get all headers that do not match
      */
-    public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
-        java.util.LinkedList retList= new java.util.LinkedList(headers.keySet());
-        if(null != match && 0 != match.length && !headers.isEmpty()){
-            for(int i= match.length-1 ; i > -1 ; --i){
-                    if(match[i] != null){
-                        String remItem= match[i].toLowerCase();
-                        if(headers.containsKey(remItem)){
-                            retList.remove(remItem); 
-                    }
-                }
-            }
-        }
-        return retList.iterator();
-    }
+    public java.util.Iterator getNonMatchingMimeHeaders( final String[] match);
 
     /**
      * Content type.
      */
     public abstract String getContentType();
-
-
-    static String thisHost = null;
-
-    private static int count = (int) (Math.random() * 100);
-
-    public static String getNewContentIdValue() {
-        int lcount;
-
-        synchronized (org.apache.axis.Part.class  ) {
-            lcount = ++count;
-        }
-        if (null == thisHost) {
-            try {
-                thisHost = java.net.InetAddress.getLocalHost().getHostName();
-            } 
-            catch (java.net.UnknownHostException e) {
-                log.error(JavaUtils.getMessage("javaNetUnknownHostException00"), e);
-
-                thisHost = "localhost";
-            }
-        }
-
-        StringBuffer s = new StringBuffer();
-
-        // Unique string is <hashcode>.<currentTime>.apache-soap.<hostname>
-        s.append("cid:").append( lcount).append(s.hashCode()).append('.').append(System.currentTimeMillis()).append(".AXIS@").append(thisHost);
-        return s.toString();
-    }
 }
 

@@ -52,51 +52,41 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.utils;
 
-package org.apache.axis.attachments;
-import javax.activation.DataHandler;
-import org.apache.axis.Part;
-import org.apache.axis.AxisFault;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.axis.SOAPPart;
 
+public class SOAPUtils {
+    protected static Log log =
+        LogFactory.getLog(SOAPUtils.class.getName());
 
-/**
- * This class allow access to the Jaf data handler in AttachmentPart. 
- *
- * @author Rick Rineholt
- */
+    static String thisHost = null;
 
-public class AttachmentUtils {
-    private AttachmentUtils(){};  //no one should create.
+    private static int count = (int) (Math.random() * 100);
 
-    /**
-     * Obtain the DataHandler from the part.
-     * @param part the part containing the Java Activiation Framework data source.
-     * @return The Java activiation data handler.
-     */
+    public static String getNewContentIdValue() {
+        int lcount;
 
-    public static DataHandler getActivationDataHandler(Part part) throws AxisFault{
-       if( null == part) {
-        throw new AxisFault(JavaUtils.getMessage("gotNullPart"));
-       }
+        synchronized (org.apache.axis.utils.SOAPUtils.class  ) {
+            lcount = ++count;
+        }
+        if (null == thisHost) {
+            try {
+                thisHost = java.net.InetAddress.getLocalHost().getHostName();
+            }
+            catch (java.net.UnknownHostException e) {
+                log.error(JavaUtils.getMessage("javaNetUnknownHostException00"), e);
 
-       if(!( part instanceof AttachmentPart)){
-        throw new AxisFault(JavaUtils.getMessage("unsupportedAttach",
-                part.getClass().getName(), AttachmentPart.class.getName()));
-       }
-       return ((AttachmentPart) part).getActivationDataHandler();
-    }
+                thisHost = "localhost";
+            }
+        }
 
-    /**
-     * Determine if an object is to be treated as an attchment. 
-     *
-     * @param value the value that is to be determined if
-     * its an attachment.
-     *
-     * @return True if value should be treated as an attchment. 
-     */
-    public static boolean isAttachment( Object value){
-        if( null == value ) return false;
-        return value instanceof  javax.activation.DataHandler;
+        StringBuffer s = new StringBuffer();
+
+        // Unique string is <hashcode>.<currentTime>.apache-soap.<hostname>
+        s.append("cid:").append( lcount).append(s.hashCode()).append('.').append(System.currentTimeMillis()).append(".AXIS@").append(thisHost);
+        return s.toString();
     }
 }
