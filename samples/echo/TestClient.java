@@ -96,7 +96,7 @@ public abstract class TestClient {
        if (obj1 instanceof Date && obj2 instanceof Date)
            if (Math.abs(((Date)obj1).getTime()-((Date)obj2).getTime())<1000)
                return true;
-       
+
        if ((obj1 instanceof Map) && (obj2 instanceof Map)) {
            Map map1 = (Map)obj1;
            Map map2 = (Map)obj2;
@@ -134,12 +134,12 @@ public abstract class TestClient {
     private void test(String type, Object toSend) {
 
         String method = "echo" + type;
-        
+
         type = type.trim();
-        
+
         String arg = "input" + type;
         String resultName = "output" + type;
-        
+
 
         try {
             // set up the argument list
@@ -154,7 +154,7 @@ public abstract class TestClient {
                 sd.setOutputType(map.getTypeQName(toSend.getClass()));
                 call.setServiceDescription(sd);
             }
-            
+
             // set the SOAPAction, optionally appending the method name
             String action = soapAction;
             if (addMethodToAction) action += method;
@@ -181,7 +181,7 @@ public abstract class TestClient {
     /**
      * Set up the call object.
      */
-    public void setURL(String url) 
+    public void setURL(String url)
         throws AxisFault
     {
         call = new ServiceClient(url);
@@ -215,7 +215,7 @@ public abstract class TestClient {
         test("Date        ", new Date());
         test("Decimal     ", new BigDecimal("3.14159"));
         test("Boolean     ", Boolean.TRUE);
-        
+
         HashMap map = new HashMap();
         map.put("stringKey", new Integer(5));
         map.put(new Date(), "string value");
@@ -241,9 +241,20 @@ public abstract class TestClient {
      *   -h localhost -p 8080 -s /soap/servlet/rpcrouter
      */
     public static void main(String args[]) throws Exception {
+        Options opts = new Options(args);
+
+        boolean testPerformance = opts.isFlagSet('k') > 0;
 
         // set up tests so that the results are sent to System.out
-        TestClient client = new TestClient() {
+        TestClient client;
+
+        if (testPerformance) {
+            client = new TestClient() {
+               public void verify(String method, Object sent, Object gotBack) {
+               }
+            };
+        } else {
+            client = new TestClient() {
             public void verify(String method, Object sent, Object gotBack) {
                 if (this.equals(sent, gotBack)) {
                     System.out.println(method + "\t OK");
@@ -255,17 +266,26 @@ public abstract class TestClient {
                 }
             }
         };
+        }
 
         // set up the call object
-        Options opts = new Options(args);
         client.setURL(opts.getURL());
-        
+
         // support for tests with non-compliant applications
         client.addMethodToAction = (opts.isFlagSet('m') > 0);
-        
+
         String action = opts.isValueSet('a');
         if (action != null) client.soapAction = action;
-        
-        client.execute();
+
+        if (testPerformance) {
+            long startTime = System.currentTimeMillis();
+            for (int i = 0; i < 10; i++) {
+                client.execute();
+            }
+            long stopTime = System.currentTimeMillis();
+            System.out.println("That took " + (stopTime - startTime) + " milliseconds");
+        } else {
+            client.execute();
+        }
     }
 }
