@@ -542,6 +542,7 @@ public class Constants {
     public static final QName XSD_ANYURI = new QName(URI_2001_SCHEMA_XSD, "anyURI");
     public static final QName XSD_LANGUAGE = new QName(URI_2001_SCHEMA_XSD, "language");
     public static final QName XSD_ID = new QName(URI_2001_SCHEMA_XSD, "ID");
+    public static final QName XSD_SCHEMA = new QName(URI_2001_SCHEMA_XSD, "schema");
     
     public static final QName XML_LANG = new QName(NS_URI_XML, "lang");
 

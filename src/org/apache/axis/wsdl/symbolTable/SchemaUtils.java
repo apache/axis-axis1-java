@@ -1111,6 +1111,7 @@ public class SchemaUtils {
 
     // list of all of the XSD types in Schema 2001
     private static String schemaTypes[] = {
+        "schema",
         "string",
         "normalizedString",
         "token",        

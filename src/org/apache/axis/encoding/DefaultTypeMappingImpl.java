@@ -565,6 +565,14 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new SimpleDeserializerFactory(org.apache.axis.types.URI.class,
                                              Constants.XSD_ANYURI)
         );
+
+        // a xsd:schema
+        myRegister(Constants.XSD_SCHEMA, org.apache.axis.types.Schema.class,
+                   new BeanSerializerFactory(org.apache.axis.types.Schema.class,
+                                             Constants.XSD_SCHEMA),
+                   new BeanDeserializerFactory(org.apache.axis.types.Schema.class,
+                                             Constants.XSD_SCHEMA)
+        );
         
         // All array objects automatically get associated with the SOAP_ARRAY.
         // There is no way to do this with a hash table,
