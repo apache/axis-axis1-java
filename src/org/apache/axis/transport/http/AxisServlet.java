@@ -144,12 +144,11 @@ public class AxisServlet extends HttpServlet {
                 boolean wsdlRequested = false;
                 boolean listRequested = false;
 
-                Enumeration enum = req.getParameterNames();
-                while (enum.hasMoreElements()) {
-                    String param = (String) enum.nextElement();
-                    if (param.equalsIgnoreCase("wsdl")) {
+                String queryString = req.getQueryString();
+                if (queryString != null) {
+                    if (queryString.equalsIgnoreCase("wsdl")) {
                         wsdlRequested = true;
-                    } else if (param.equalsIgnoreCase("list")) {
+                    } else if (queryString.equalsIgnoreCase("list")) {
                         listRequested = true;
                     }
                 }
