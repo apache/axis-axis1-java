@@ -117,6 +117,7 @@ public class Namespaces extends HashMap {
     String getCreate(String key, boolean create) {
 
         if (defaultPackage != null) {
+            put(key, defaultPackage);
             return defaultPackage;
         }
 
