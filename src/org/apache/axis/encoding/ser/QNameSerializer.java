@@ -52,53 +52,53 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package test.faults;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-import org.apache.axis.AxisFault;
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
-import org.apache.axis.server.AxisServer;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+package org.apache.axis.encoding.ser;
+
+import org.xml.sax.Attributes;
+
+import org.xml.sax.helpers.AttributesImpl;
+
 import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+
+import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializationContext;
 
 /**
- * This class tests Fault deserialization.
- *
- * @author Sam Ruby (rubys@us.ibm.com)
+ * Serializer for QNames.
  */
+public class QNameSerializer implements Serializer {
 
-public class FaultEncode extends TestCase {
-    
-    public FaultEncode(String name) {
-        super(name);
-    } // ctor
-    
-    public void testFault() throws Exception {
-        AxisFault fault = new AxisFault("<code>", "<string>", "<actor>", null);
-        fault.setFaultDetailString("<detail>");
+    /**
+     * Serialize a QName.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        QName qname = (QName) value;
+        AttributesImpl attrImpl = new AttributesImpl(attributes);
+        attrImpl.addAttribute(null, null, "xmlns:qns", null, qname.getNamespaceURI());
+        context.startElement(name, attrImpl);
+        context.writeString("qns:" + qname.getLocalPart());
+        context.endElement();
+    }
 
-        AxisServer server = new AxisServer();
-        Message message = new Message(fault);
-        message.setMessageContext(new MessageContext(server));
+    public String getMechanismType() { return Constants.AXIS_SAX; }
 
-        String data = message.getSOAPPart().getAsString();
-        assertTrue("Fault code not encoded correctly",
-            data.indexOf("&lt;code&gt;")>=0);
-        assertTrue("Fault string not encoded correctly",
-            data.indexOf("&lt;string&gt;")>=0);
-        assertTrue("Fault actor not encoded correctly",
-            data.indexOf("&lt;actor&gt;")>=0);
-        assertTrue("Fault detail not encoded correctly",
-            data.indexOf("&lt;detail&gt;")>=0);
-        
-    } // testFault
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
+    }
 }

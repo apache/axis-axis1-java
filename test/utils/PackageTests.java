@@ -19,7 +19,6 @@ public class PackageTests
         // suite.addTest(TestOptions.suite()); //comment out for now - this
         // class is a mess
         suite.addTest(TestQName.suite());
-        suite.addTest(TestQFault.suite());
         suite.addTest(TestJavaUtils.suite());
         suite.addTest(TestXMLUtils.suite());
         suite.addTest(TestMessages.suite());

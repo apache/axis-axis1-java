@@ -2,11 +2,6 @@ package test.soap;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import test.utils.TestAxisClassLoader;
-import test.utils.TestQName;
-import test.utils.TestQFault;
-import test.utils.TestXMLUtils;
-import test.utils.TestMessages;
 
 /**
  */

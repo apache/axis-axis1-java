@@ -54,7 +54,13 @@
  */
 package org.apache.axis.deployment.v2dd;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import org.apache.axis.Constants;
+
+import org.apache.axis.utils.XMLUtils;
 
 import javax.xml.rpc.namespace.QName;
 
@@ -72,7 +78,35 @@ public class V2DDMap extends V2DDElement {
     
     public QName getQName() {
         if (qname == null) {
-            qname = new QName(element.getAttribute("qname"), element);
+            String qnameString = element.getAttribute("qname");
+            String namespace = "";
+            String localPart = "";
+            if (qnameString != null) {
+                int i = qnameString.indexOf(":");
+
+                if (i < 0) {
+                    localPart = qnameString;
+                    // Find default namespace
+                    Element el = element;
+                    while (el != null) {
+                        Attr attr = el.getAttributeNodeNS(
+                                Constants.NS_URI_XMLNS, "xmlns");
+                        if (attr != null) {
+                            namespace = attr.getValue();
+                            break;
+                        }
+                        Node n = el.getParentNode();
+                        el = n instanceof Element ? (Element) n : null;
+                    }
+                } else {
+                    String prefix = qnameString.substring(0, i);
+                    String local  = qnameString.substring(i + 1);
+
+                    localPart = local;
+                    namespace = XMLUtils.getNamespace(prefix, element);
+                }
+            }
+            qname = new QName(namespace, localPart);
         }
         return qname;
     }

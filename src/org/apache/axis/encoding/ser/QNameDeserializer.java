@@ -52,53 +52,54 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package test.faults;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-import org.apache.axis.AxisFault;
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
-import org.apache.axis.server.AxisServer;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+package org.apache.axis.encoding.ser;
+
+import org.apache.axis.encoding.DeserializationContext;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
 import javax.xml.rpc.namespace.QName;
 
 /**
- * This class tests Fault deserialization.
+ * The DateSerializer deserializes a Date.  Much of the work is done in the 
+ * base class.                                               
  *
  * @author Sam Ruby (rubys@us.ibm.com)
+ * Modified for JAX-RPC @author Rich Scheuerle (scheu@us.ibm.com)
  */
+public class QNameDeserializer extends SimpleDeserializer {
 
-public class FaultEncode extends TestCase {
-    
-    public FaultEncode(String name) {
-        super(name);
+    private DeserializationContext context = null;
+
+    /**
+     * The Deserializer is constructed with the xmlType and 
+     * javaType
+     */
+    public QNameDeserializer(Class javaType, QName xmlType) {
+        super(javaType, xmlType);
     } // ctor
-    
-    public void testFault() throws Exception {
-        AxisFault fault = new AxisFault("<code>", "<string>", "<actor>", null);
-        fault.setFaultDetailString("<detail>");
 
-        AxisServer server = new AxisServer();
-        Message message = new Message(fault);
-        message.setMessageContext(new MessageContext(server));
+    /**
+     * The simple deserializer provides most of the stuff.
+     * We just need to override makeValue().
+     */
+    public Object makeValue(String source) {
+        int colon = source.lastIndexOf(":");
+        String namespace = colon < 0 ? "" :
+                context.getNamespaceURI(source.substring(0, colon));
+        String localPart = colon < 0 ? source : source.substring(colon + 1);
+        return new QName(namespace, localPart);
+    } // makeValue
 
-        String data = message.getSOAPPart().getAsString();
-        assertTrue("Fault code not encoded correctly",
-            data.indexOf("&lt;code&gt;")>=0);
-        assertTrue("Fault string not encoded correctly",
-            data.indexOf("&lt;string&gt;")>=0);
-        assertTrue("Fault actor not encoded correctly",
-            data.indexOf("&lt;actor&gt;")>=0);
-        assertTrue("Fault detail not encoded correctly",
-            data.indexOf("&lt;detail&gt;")>=0);
-        
-    } // testFault
+    public void onStartElement(String namespace, String localName,
+                               String qName, Attributes attributes,
+                               DeserializationContext context)
+            throws SAXException 
+    {
+        this.context = context;
+    } // onStartElement
 }

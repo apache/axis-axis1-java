@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,48 +53,16 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils;
+package org.apache.axis.encoding.ser;
 
 import javax.xml.rpc.namespace.QName;
 
 /**
- * This class allows us to easily implement extensible qualified fault codes
- * as defined by the SOAP Specification. 
- * 
- * @author James Snell (jasnell@us.ibm.com)
+ * A QNameDeserializer Factory
  */
-public class QFault extends QName { 
-    
-    public QFault() {
-        super();
+public class QNameDeserializerFactory extends BaseDeserializerFactory {
+
+    public QNameDeserializerFactory(Class javaType, QName xmlType) {
+        super(QNameDeserializer.class, false, xmlType, javaType); 
     }
-    
-    public QFault(String namespaceURI, String localPart) {
-        super(namespaceURI, localPart);
-    }
-    
-    public QFault(String namespaceURI, String localPart, String minorCode) {
-        super(namespaceURI, localPart);
-        appendMinorCode(minorCode);
-    }
-    
-    public QFault(QFault qfault, String minorCode) {
-        super(qfault.getNamespaceURI(), qfault.getLocalPart());
-        appendMinorCode(minorCode);
-    }
-    
-    public QFault(QName qname)
-    {
-        super(qname.getNamespaceURI(), qname.getLocalPart());
-    }
-    
-    public QFault(QName qname, String minorCode) {
-        super(qname.getNamespaceURI(), qname.getLocalPart());
-        appendMinorCode(minorCode);
-    }
-    
-    public void appendMinorCode(String minorCode) {
-        this.setLocalPart(this.getLocalPart() + "." + minorCode);
-    }
-    
 }

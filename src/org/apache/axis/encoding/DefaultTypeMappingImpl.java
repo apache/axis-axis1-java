@@ -79,6 +79,8 @@ import org.apache.axis.encoding.ser.HexSerializerFactory;
 import org.apache.axis.encoding.ser.HexDeserializerFactory;
 import org.apache.axis.encoding.ser.ElementSerializerFactory;
 import org.apache.axis.encoding.ser.ElementDeserializerFactory;
+import org.apache.axis.encoding.ser.QNameSerializerFactory;
+import org.apache.axis.encoding.ser.QNameDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
 import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
@@ -241,9 +243,9 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // Map QNAME to the jax rpc QName class
         myRegister(Constants.XSD_QNAME,
               javax.xml.rpc.namespace.QName.class,
-              new BeanSerializerFactory(javax.xml.rpc.namespace.QName.class,
+              new QNameSerializerFactory(javax.xml.rpc.namespace.QName.class,
                                         Constants.XSD_QNAME),
-              new BeanDeserializerFactory(javax.xml.rpc.namespace.QName.class,
+              new QNameDeserializerFactory(javax.xml.rpc.namespace.QName.class,
                                         Constants.XSD_QNAME),
                    true);
 

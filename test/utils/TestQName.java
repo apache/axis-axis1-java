@@ -24,14 +24,6 @@ public class TestQName extends TestCase
     protected void setup() {
     }
 
-    public void testQNameDefaultConstructor()
-    {
-        QName qname = new QName();
-        assertTrue("qname not an instance of QName", qname instanceof QName); 
-        // ?? not really necessary.  Compiler won't compile otherwise
-        // assertNull("LocalPart was not null", qname.getLocalPart());
-    }   
-    
     public void testQName2StringConstructor()
     {
         QName qname = new QName("rdf","article");
@@ -42,37 +34,16 @@ public class TestQName extends TestCase
                      "article", qname.getLocalPart()); 
     }
 
-    public void testQNameStringElementConstructor()
-    {
-        String NAMESPACE = "namespace";
-        String PREFIX = "prefix";
-        String LOCALPART = "localPart";
-        String DEFAULTNS = "default";
-        
-        Document doc = XMLUtils.newDocument();
-        Element elem = doc.createElementNS(NAMESPACE, LOCALPART);
-        elem.setAttributeNS(Constants.NS_URI_XMLNS, "xmlns:"+PREFIX, NAMESPACE);
-        QName qname = new QName(PREFIX + ":" + LOCALPART, elem);
-        assertNotNull("qname was null", qname); 
-        assertEquals("Namespace URI did not match",
-                     NAMESPACE, qname.getNamespaceURI()); 
-        assertEquals("LocalPart did not match",
-                     LOCALPART, qname.getLocalPart()); 
-    }
-
     public void testToString()
     {
         QName qname = new QName("PREFIX", "LOCALPART");
         assertEquals("qname was not the same as 'PREFIX:LOCALPART', it was: " + qname.toString(),
                      "PREFIX:LOCALPART", qname.toString());
-
-        qname.setNamespaceURI(null);
-        assertEquals("qname was not the same as 'LOCALPART', is was: " + qname.toString(), "LOCALPART", qname.toString());
     }
 
     public void testEquals()
     {
-        QName qname1 = new QName();
+        QName qname1 = new QName(null, null);
         QName qname2 = new QName("PREFIX", "LOCALPART");
         QName qname3 = new QName("PREFIX", "LOCALPART");
         QName qname4 = new QName("PREFIX", "DIFFLOCALPART");
@@ -99,10 +70,5 @@ public class TestQName extends TestCase
         QName contrast = new QName("xso", "text");
         assertEquals("control hashcode does not equal compare.hashcode", control.hashCode(), compare.hashCode());
         assertTrue("control hashcode is not equivalent to compare.hashcode", !(control.hashCode() == contrast.hashCode()));
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestQName tester = new TestQName("test");
-        tester.testQNameStringElementConstructor();
     }
 }

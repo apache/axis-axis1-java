@@ -52,53 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package test.faults;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-import org.apache.axis.AxisFault;
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
-import org.apache.axis.server.AxisServer;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+package org.apache.axis.encoding.ser;
+
 import javax.xml.rpc.namespace.QName;
 
 /**
- * This class tests Fault deserialization.
- *
- * @author Sam Ruby (rubys@us.ibm.com)
+ * SerializerFactory for QName primitive
  */
-
-public class FaultEncode extends TestCase {
-    
-    public FaultEncode(String name) {
-        super(name);
-    } // ctor
-    
-    public void testFault() throws Exception {
-        AxisFault fault = new AxisFault("<code>", "<string>", "<actor>", null);
-        fault.setFaultDetailString("<detail>");
-
-        AxisServer server = new AxisServer();
-        Message message = new Message(fault);
-        message.setMessageContext(new MessageContext(server));
-
-        String data = message.getSOAPPart().getAsString();
-        assertTrue("Fault code not encoded correctly",
-            data.indexOf("&lt;code&gt;")>=0);
-        assertTrue("Fault string not encoded correctly",
-            data.indexOf("&lt;string&gt;")>=0);
-        assertTrue("Fault actor not encoded correctly",
-            data.indexOf("&lt;actor&gt;")>=0);
-        assertTrue("Fault detail not encoded correctly",
-            data.indexOf("&lt;detail&gt;")>=0);
-        
-    } // testFault
+public class QNameSerializerFactory extends BaseSerializerFactory {
+    public QNameSerializerFactory(Class javaType, QName xmlType) {
+        super(QNameSerializer.class, true, xmlType, javaType);   // true indicates shared class
+    }
 }

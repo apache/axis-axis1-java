@@ -60,7 +60,6 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Callback;
 import org.apache.axis.encoding.CallbackTarget;
-import org.apache.axis.utils.QFault;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
@@ -86,7 +85,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     
     // Fault data
     protected String faultClassName = null;
-    protected QFault faultCode = null;
+    protected QName faultCode = null;
     protected String faultString = null;
     protected String faultActor = null;
     protected Element[] faultDetails;
@@ -200,10 +199,10 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
             QName qname = context.getQNameFromString((String)value);
             if (qname != null) {
                 //??when would QName make sense, this would be app specific
-                faultCode = new QFault(qname);
+                faultCode = qname;
             } else {
                 //?? Where would namespace come from
-                faultCode = new QFault("",(String) value);
+                faultCode = new QName("",(String) value);
             }
         } else if (name.equals(Constants.ELEM_FAULT_STRING)) {
             faultString = (String) value;

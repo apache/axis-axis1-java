@@ -55,11 +55,6 @@
 
 package javax.xml.rpc.namespace;
 
-import org.apache.axis.Constants;
-import org.w3c.dom.Element;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Node;
-
 /**
  * QName class represents a qualified name based on "Namespaces in XML" specification. 
  * A QName is represented as: 
@@ -77,11 +72,6 @@ public class QName {
 
     /** Field localPart           */
     private String localPart = "";
-
-    /**
-     * Constructor for the QName.
-     */
-    public QName() {}
 
     /**
      * Constructor for the QName.
@@ -109,8 +99,9 @@ public class QName {
      *
      * @param namespaceURI
      */
-    public void setNamespaceURI(String namespaceURI) {
+    private void setNamespaceURI(String namespaceURI) {
         if (namespaceURI == null)
+// should throw exception, but gotta clean up first            throw new IllegalArgumentException("namespaceURI == null");
             namespaceURI = "";
         this.namespaceURI = namespaceURI;
     }
@@ -129,8 +120,9 @@ public class QName {
      *
      * @param localPart
      */
-    public void setLocalPart(String localPart) {
+    private void setLocalPart(String localPart) {
         if (localPart == null)
+// should throw exception, but gotta clean up first            throw new IllegalArgumentException("localPart == null");
             localPart = "";
         this.localPart = localPart;
     }
@@ -188,48 +180,6 @@ public class QName {
      */
     public int hashCode() {
         return namespaceURI.hashCode() ^ localPart.hashCode();
-    }
-
-    // temporary!!
-
-    /**
-     * Constructor for the QName.
-     *
-     * @param qName 
-     * @param element
-     */
-    public QName(String qName, org.w3c.dom.Element element) {
-
-        if (qName != null) {
-            int i = qName.indexOf(":");
-
-            if (i < 0) {
-                setLocalPart(qName);
-                // Find default namespace
-                while (element != null) {
-                    Attr attr =
-                        element.getAttributeNodeNS(Constants.NS_URI_XMLNS,
-                                "xmlns");
-                    if (attr != null) {
-                        setNamespaceURI(attr.getValue());
-                        return;
-                    }
-                    Node n = element.getParentNode();
-                    if (! (n instanceof Element))
-                        break;
-                    element  = (Element)n;
-                }
-                // didn't find a namespace
-                setNamespaceURI("");
-            } else {
-                String prefix = qName.substring(0, i);
-                String local  = qName.substring(i + 1);
-
-                setLocalPart(local);
-                setNamespaceURI(org.apache.axis.utils.XMLUtils
-                    .getNamespace(prefix, element));
-            }
-        }
     }
 }
 
