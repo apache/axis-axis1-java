@@ -561,6 +561,20 @@ public class JavaUtils
                 return true;
         }
 
+        if (src.getName().equals("javax.activation.DataHandler")) {
+            if (dest ==  byte[].class)
+                return true;
+            if (dest.isArray() && dest.getComponentType() == byte[].class)
+                return true;
+        }
+
+        if (dest.getName().equals("javax.activation.DataHandler")) {
+            if (src ==  Object[].class)
+                return true;
+            if (src.isArray() && src.getComponentType() == Object[].class)
+                return true;
+        }
+
         if (src.isPrimitive()) {
             return isConvertable(getWrapperClass(src),dest);
         }

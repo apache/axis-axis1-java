@@ -70,14 +70,12 @@ Copyright:
     </wsdl2java>
 
     <mkdir dir="${build.dest}"/>
-    <!--
-    <copy file="BaseTypesInteropTestsTestCase.java"
-         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
+    <copy file="${axis.home}/test/wsdl/interop4/groupG/mime/rpc/MimeRPCInteropTestCase.java"
+         todir="${root.dir}/build/work/test/wsdl/interop4/groupG/mime/rpc"
          overwrite="yes"/>
-    <copy file="InteropTestsBindingImpl.java"
-         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
+    <copy file="${axis.home}/test/wsdl/interop4/groupG/mime/rpc/AttachmentsBindingImpl.java"
+         todir="${root.dir}/build/work/test/wsdl/interop4/groupG/mime/rpc"
          overwrite="yes"/>
-    -->
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work"
       destdir="${build.dest}" debug="on">

@@ -143,4 +143,9 @@
 			</wsdl:output>
 		</wsdl:operation>
 	</wsdl:binding>
+    <wsdl:service name="MimeRPCInterop">
+	    <wsdl:port name="MimeRPCSoapPort" binding="AttachmentsBinding">
+            <soap:address location="http://localhost:8080/axis/services/MimeRPCSoapPort"/>
+        </wsdl:port>
+    </wsdl:service>
 </wsdl:definitions>
