@@ -205,7 +205,7 @@
             }
         } catch (Throwable t){
         }
-        return null;
+        return "an unknown location";
     }
 
     /**
@@ -426,6 +426,11 @@
             "XML Security is not supported",
             "http://xml.apache.org/security/");
 
+    wanted += wantClass(out, "javax.net.ssl.SSLSocketFactory",
+            "jsse.jar or java1.4+ runtime",
+            "Java Secure Socket Extension",
+            "https is not supported",
+            "http://java.sun.com/products/jsse/");
     /*
      * resources on the classpath path
      */
