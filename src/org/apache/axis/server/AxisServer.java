@@ -86,11 +86,9 @@ public class AxisServer extends AxisEngine
     {
         if (factory == null) {
             String factoryClassName = System.getProperty("axis.ServerFactory");
-            System.err.println("Server factory class = " + factoryClassName);
             if (factoryClassName != null) {
                 try {
                     Class factoryClass = Class.forName(factoryClassName);
-                    System.err.println("Got Class");
                     if (AxisServerFactory.class.isAssignableFrom(factoryClass))
                         factory = (AxisServerFactory)factoryClass.newInstance();
                 } catch (Exception e) {
@@ -104,8 +102,6 @@ public class AxisServer extends AxisEngine
                 factory = new DefaultAxisServerFactory();
             }
         }
-        
-        System.err.println("factory is " + factory);
         
         return factory.getServer(environment);                
     }
