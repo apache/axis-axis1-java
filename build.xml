@@ -227,6 +227,7 @@ Copyright:
       </classpath>
       <include name="test/**/*.java" />
       <exclude name="test/inout/*.java" />
+      <exclude name="test/import_/**/*.java"/>
     </javac>
   </target>
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    targetNamespace="urn:import"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:b1="urn:importBinding1"
+    xmlns:b2="urn:importBinding2">
+
+<import
+    location="test/import_/ImportBinding1.wsdl"
+    namespace="urn:importBinding1">
+</import>
+
+<import
+    location="test/import_/ImportBinding2.wsdl"
+    namespace="urn:importBinding2">
+</import>
+
+<service name="ImportService">
+  <documentation>Import test</documentation>
+  <port name="ImportTest1" binding="b1:ImportBinding1">
+    <soap:address location="http://localhost:8080/axis/services/ImportTest1"/>
+  </port>
+  <port name="ImportTest2" binding="b2:ImportBinding2">
+    <soap:address location="http://localhost:8080/axis/services/ImportTest2"/>
+  </port>
+</service>
+
+</definitions>

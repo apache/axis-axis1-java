@@ -27,6 +27,15 @@
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
 
+    <!-- Import Test -->
+    <wsdl2java url="test/import_/import.wsdl"
+               output="build/work"
+               testcase="yes">
+        <mapping namespace="urn:import" package="test.import"/>
+        <mapping namespace="urn:importBinding1" package="test.import.binding1"/>
+        <mapping namespace="urn:importBinding2" package="test.import.binding2"/>
+    </wsdl2java>
+
     <!-- InOut Sample -->
     <wsdl2java url="test/inout/inout.wsdl"
                output="build/work"

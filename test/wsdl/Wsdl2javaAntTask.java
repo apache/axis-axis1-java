@@ -79,7 +79,7 @@ public class Wsdl2javaAntTask extends Task
     private boolean skeleton = true ;
     private boolean messageContext = false;
     private boolean testCase = false;
-    private boolean noImports = true;
+    private boolean noImports = false;
     private HashMap namespaceMap = new HashMap();
     private String output = "." ;
     private String deployScope = "";
