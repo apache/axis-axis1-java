@@ -168,7 +168,6 @@ public class SOAPBody extends MessageElement
     {
         if (log.isDebugEnabled())
             log.debug(JavaUtils.getMessage("addBody00"));
-        bodyElements.addElement(element);
         try {
             element.setParentElement(this);
         } catch (SOAPException ex) {
@@ -248,5 +247,35 @@ public class SOAPBody extends MessageElement
             log.fatal(JavaUtils.getMessage("exception00"), af);
         }
         return false;
+    }
+
+    public void addChild(MessageElement el) throws SOAPException {
+        bodyElements.addElement(el);
+    }
+
+    public java.util.Iterator getChildElements() {
+        return bodyElements.iterator();
+    }
+
+    public java.util.Iterator getChildElements(Name name) {
+        Vector v = new Vector();
+        Enumeration e = bodyElements.elements();
+        SOAPHeaderElement header;
+        while (e.hasMoreElements()) {
+            header = (SOAPHeaderElement)e.nextElement();
+            if (header.getNamespaceURI().equals(name.getURI()) &&
+                header.getName().equals(name.getLocalName())) {
+                v.addElement(header);
+            }
+        }
+        return v.iterator();
+    }
+
+    public void removeChild(MessageElement child) {
+        // Remove all occurrences in case it has been added multiple times.
+        int i;
+        while ((i = bodyElements.indexOf(child)) != -1) {
+            bodyElements.remove(i);
+        }
     }
 }

@@ -81,7 +81,6 @@ public class BodyBuilder extends SOAPHandler
     protected static Log log =
         LogFactory.getLog(BodyBuilder.class.getName());
 
-    private SOAPBodyElement element;
     boolean gotRPCElement = false;
 
     private SOAPEnvelope envelope;
@@ -120,6 +119,7 @@ public class BodyBuilder extends SOAPHandler
                                      DeserializationContext context)
         throws SAXException
     {
+        SOAPBodyElement element = null;
         if (log.isDebugEnabled()) {
             log.debug("Enter: BodyBuilder::onStartChild()");
         }
@@ -222,17 +222,5 @@ public class BodyBuilder extends SOAPHandler
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {
-        if (log.isDebugEnabled()) {
-            log.debug("Enter: BodyBuilder::onEndChild()");
-        }
-
-        if (element != null) {
-            envelope.addBodyElement(element);
-            element = null;
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: BodyBuilder::onEndChild()");
-        }
     }
 }
