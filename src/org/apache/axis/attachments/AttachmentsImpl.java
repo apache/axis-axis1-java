@@ -61,6 +61,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Part;
 import org.apache.axis.SOAPPart;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -73,6 +75,8 @@ import java.util.LinkedList;
  * AttachmentParts.
  */
 public class AttachmentsImpl implements Attachments {
+    protected static Log log =
+            LogFactory.getLog(AttachmentsImpl.class.getName());
 
     /** Field attachments           */
     private HashMap attachments = new java.util.HashMap();
@@ -507,8 +511,21 @@ public class AttachmentsImpl implements Attachments {
      *   <P>This method does not touch the SOAP part.</P>
      */
     public void removeAllAttachments() {
+        try {
+            mergeinAttachments();
+        } catch (AxisFault af){
+            log.warn(JavaUtils.getMessage("exception00"));
+        }
 
-        // TODO: Flesh it out.
+        java.util.Iterator iterator = attachments.values().iterator();
+        while(iterator.hasNext()){
+            Part removedPart = (Part) iterator.next();
+            if (removedPart != null) {
+                attachments.remove(removedPart.getContentId());
+                attachments.remove(removedPart.getContentLocation());
+                orderedAttachments.remove(removedPart);
+            }
+        }
     }
 
     /**
@@ -524,9 +541,17 @@ public class AttachmentsImpl implements Attachments {
      */
     public java.util.Iterator getAttachments(
             javax.xml.soap.MimeHeaders headers) {
-
-        // TODO: Flesh it out.
-        return null;
+        java.util.Vector vecParts = new java.util.Vector();
+        java.util.Iterator iterator = attachments.values().iterator();
+        while(iterator.hasNext()){
+            Part part = (Part) iterator.next();
+            if(part instanceof AttachmentPart){
+                if(((AttachmentPart)part).matches(headers)){
+                    vecParts.add(part);
+                }
+            }
+        }
+        return vecParts.iterator();
     }
 
     /**

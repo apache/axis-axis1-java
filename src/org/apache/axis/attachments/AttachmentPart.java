@@ -124,9 +124,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     }
 
     /**
-     * TODO: everything!
+     * getContentType
      *
-     * @return
+     * @return content type
      */
     public String getContentType() {
         return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE);
@@ -176,6 +176,28 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         }
 
         return null;
+    }
+
+    /**
+     * check if this Part's mimeheaders matches the one passed in.
+     * TODO: Am not sure about the logic.
+     */
+    public boolean matches(javax.xml.soap.MimeHeaders headers){
+        Iterator iterator = headers.getAllHeaders();
+        while(iterator.hasNext()){
+            String key = (String) iterator.next();
+            String[] values1 = headers.getHeader(key);
+            String[] values2 = mimeHeaders.getHeader(key);
+            if(values1.length!=values2.length)
+                return false;
+            java.util.Arrays.sort(values1);
+            java.util.Arrays.sort(values2);
+            for(int i=0;i<values1.length;i++) {
+                if(!values1[i].equals(values2[i]))
+                    return false;
+            }
+        }
+        return true;
     }
 
     /**
