@@ -13,7 +13,7 @@
     <xsd:schema targetNamespace="urn:AddrNoImplSEI"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
 
-      <xsd:simpleType name="stateType">
+      <xsd:simpleType name="StateType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="TX"/>                      
             <xsd:enumeration value="IN"/>                    
@@ -21,7 +21,7 @@
         </xsd:restriction>
       </xsd:simpleType>
 
-      <xsd:element name="phone">
+      <xsd:element name="Phone">
         <xsd:complexType>
           <xsd:all>
               <xsd:element name="areaCode" type="xsd:int"/>
@@ -31,14 +31,14 @@
         </xsd:complexType>
       </xsd:element>
 
-      <xsd:complexType name="address">
+      <xsd:complexType name="Address">
         <xsd:all>
             <xsd:element name="streetNum" type="xsd:int"/>
             <xsd:element name="streetName" type="xsd:string"/>
             <xsd:element name="city" type="xsd:string"/>
-            <xsd:element name="state" type="typens:stateType"/>
+            <xsd:element name="state" type="typens:StateType"/>
             <xsd:element name="zip" type="xsd:int"/>
-            <xsd:element ref="typens:phone"/>
+            <xsd:element ref="typens:Phone"/>
         </xsd:all>
       </xsd:complexType>
     </xsd:schema>
@@ -47,7 +47,7 @@
   <!-- message declns -->
   <message name="AddEntryRequest">
     <part name="name" type="xsd:string"/>
-    <part name="address" type="typens:address"/>
+    <part name="address" type="typens:Address"/>
   </message>
 
   <message name="GetAddressFromNameRequest">
@@ -55,7 +55,7 @@
   </message>
 
   <message name="GetAddressFromNameResponse">
-    <part name="address" type="typens:address"/>
+    <part name="address" type="typens:Address"/>
   </message>
 
   <!-- port type declns -->

@@ -84,14 +84,13 @@
     <!-- AddressBook roundtrip example that does not implement SEI -->
     <!-- Summary -->
     <!-- Bootstrap the process by creating java classes from the original wsdl -->
-    <!-- Compile the classes plus the provided Impl class -->
+    <!--  Compile the classes plus the provided Impl class -->
     <!--   The Impl class is supposed to simulate a server-side EJB -->
     <!--   It does not implement the SEI and it contains some additional throw clauses -->
     <!-- Run Java2WSDL on the Impl class to ensure a valid wsdl is generated -->
-    <!-- Run WSDL2Java on the new wsdl to ensure valid java artifacts are generated -->
-    <!--   This will ensure that java classes are not generated for NullPointerException -->
-    <!-- Copy back over the original Impl and test classes.  -->
-    <!--   They will be compiled and run as part of the test. -->
+    <!-- Run WSDL2Java on the new wsdl to generate client side and other artifacts -->
+    <!-- Replace the generated Impl with the original Impl that does not implement the SEI -->
+    <!--   Compile and run test. -->
     <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
     <delete dir="${build.dir}/work/test/wsdl/addrNoImplSEI"/>
     <wsdl2java url="test/wsdl/addrNoImplSEI/AddressBook.wsdl"
@@ -121,6 +120,7 @@
       <exclude name="test/wsdl/addrNoImplSEI/Main.java" />
     </javac>
 
+
     <!-- Now run java to wsdl to make sure we don't have any strange artifacts -->
     <java2wsdl output="build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
                className= "test.wsdl.addrNoImplSEI.AddressBookNoImplSEISoapBindingImpl"
@@ -132,6 +132,10 @@
     </java2wsdl>
 
     <!-- Now run wsdl to java to make sure we don't have any strange artifacts -->
+    <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
+    <delete>
+       <fileset dir="${build.dir}/work/test/wsdl/addrNoImplSEI" includes="**/*.java"/>
+    </delete>
     <wsdl2java url="build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
                output="build/work"
                deployscope="session"
