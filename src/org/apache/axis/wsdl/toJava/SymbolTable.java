@@ -834,9 +834,11 @@ public class SymbolTable {
 
         boolean literalInput = false;
         boolean literalOutput = false;
+        String bindingName = "unknown";
         if (bindingEntry != null) {
             literalInput = (bindingEntry.getInputBodyType(operation) == BindingEntry.USE_LITERAL);
             literalOutput = (bindingEntry.getOutputBodyType(operation) == BindingEntry.USE_LITERAL);
+            bindingName = bindingEntry.getBinding().getQName().toString();
         }
         
         // Collect all the input parameters
@@ -844,7 +846,7 @@ public class SymbolTable {
         if (input != null) {
             partStrings(inputs,
                     input.getMessage().getOrderedParts(null), 
-                    literalInput);
+                    literalInput, operation.getName(), bindingName);
         }
 
         // Collect all the output parameters
@@ -852,7 +854,7 @@ public class SymbolTable {
         if (output != null) {
             partStrings(outputs,
                     output.getMessage().getOrderedParts(null), 
-                    literalOutput);
+                    literalOutput, operation.getName(), bindingName);
         }
 
         if (parameterOrder != null) {
@@ -979,7 +981,8 @@ public class SymbolTable {
      * This method returns a vector containing the Java types (even indices) and
      * names (odd indices) of the parts.
      */
-    protected void partStrings(Vector v, Collection parts, boolean literal) {
+    protected void partStrings(Vector v, Collection parts, boolean literal, String opName, String bindingName) 
+            throws IOException {
         Iterator i = parts.iterator();
 
         while (i.hasNext()) {
@@ -993,6 +996,9 @@ public class SymbolTable {
                     v.add(getType(typeName));
                     v.add(part.getName());
                 } else if (elementName != null) {
+                    // Just an FYI: The WSDL spec says that for use=encoded
+                    // that parts reference an abstract type using the type attr
+                    // but we do the right thing here, so let it go.
                     v.add(getElement(elementName));
                     v.add(part.getName());
                 }
@@ -1003,9 +1009,20 @@ public class SymbolTable {
             // if we can, we use these as the types
             Node node = null;
             Element e;
-            if (typeName != null) {
-                node = getTypeEntry(typeName, false).getNode();
-            } else if (elementName != null) {
+            if (typeName != null && elementName == null) {
+                // Since we can't (yet?) make the Axis engine generate the right
+                // XML for literal parts that specify the type attribute,
+                // abort processing with an error if we encounter this case
+                //
+                // node = getTypeEntry(typeName, false).getNode();
+                throw new IOException(
+                        JavaUtils.getMessage("literalTypePart00", 
+                                             new String[] {part.getName(), 
+                                                           opName,  
+                                                           bindingName}));
+            }
+            
+            if (elementName != null) {
                 node = getTypeEntry(elementName, true).getNode();
                 // Check if this element is of the form:
                 //    <element name="foo" type="tns:foo_type"/> 
