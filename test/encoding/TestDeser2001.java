@@ -22,16 +22,30 @@ public class TestDeser2001 extends TestDeser {
      */
     public void testMinDate() throws Exception {
         Calendar date = Calendar.getInstance();
-        date.set(1999,04,31,12,01,30);
-        date.setTimeZone(TimeZone.getTimeZone("GMT"));
+        date.set(1999, 04, 31, 0, 0, 0);
         date.set(Calendar.MILLISECOND,0);
-        deserialize("<result xsi:type=\"xsd:dateTime\">" + 
-                       "1999-05-31T12:01:30" + 
+        date.setTimeZone(TimeZone.getTimeZone("GMT"));
+        deserialize("<result xsi:type=\"xsd:date\">" + 
+                       "1999-05-31" + 
                      "</result>",
                      date.getTime());
     }
 
-    public void testDateZ() throws Exception {
+    /** 
+     * Test deserialization of dateTime (Calendar) responses
+     */
+    public void testMinDateTime() throws Exception {
+        Calendar date = Calendar.getInstance();
+        date.set(1999,04,31, 12, 01, 30);
+        date.setTimeZone(TimeZone.getTimeZone("GMT"));
+        date.set(Calendar.MILLISECOND,0);
+        deserialize("<result xsi:type=\"xsd:dateTime\">" + 
+                       "1999-05-31T12:01:30Z" + 
+                     "</result>",
+                     date);
+    }
+
+    public void testDateTimeZ() throws Exception {
         Calendar date = Calendar.getInstance();
         date.set(1999,04,31,12,01,30);
         date.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -39,18 +53,28 @@ public class TestDeser2001 extends TestDeser {
         deserialize("<result xsi:type=\"xsd:dateTime\">" + 
                        "1999-05-31T12:01:30.150Z" + 
                      "</result>",
-                     date.getTime());
+                     date);
     }
 
     public void testDateTZ() throws Exception {
         Calendar date = Calendar.getInstance();
+        date.set(1999, 04, 31, 0, 0, 0);
+        date.setTimeZone(TimeZone.getTimeZone("GMT"));
+        date.set(Calendar.MILLISECOND,0);
+        deserialize("<result xsi:type=\"xsd:date\">" + 
+                       "1999-05-31" + 
+                     "</result>",
+                     date.getTime());
+    }
+
+    public void testDateTimeTZ() throws Exception {
+        Calendar date = Calendar.getInstance();
         date.set(1999,04,31,12,01,30);
-        date.setTimeZone(TimeZone.getTimeZone("GMT-05:00"));
         date.set(Calendar.MILLISECOND,150);
         deserialize("<result xsi:type=\"xsd:dateTime\">" + 
                        "1999-05-31T12:01:30.150-05:00" + 
                      "</result>",
-                     date.getTime());
+                     date);
     }
 
     public void testBase64() throws Exception {

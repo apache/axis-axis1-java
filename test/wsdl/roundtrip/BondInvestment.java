@@ -57,7 +57,7 @@ package test.wsdl.roundtrip;
 
 import java.math.BigInteger;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Calendar;
 import test.wsdl.roundtrip.CallOptions;
 
 /**
@@ -81,7 +81,7 @@ public class BondInvestment implements java.io.Serializable {
     private String tradeExchange;
     public BigInteger portfolioType;
     public BigDecimal bondAmount;
-    public Date callableDate;
+    public Calendar callableDate;
     public byte[] byteArray;
     private short[] shortArray;
     private Boolean wrapperBoolean;

@@ -62,12 +62,15 @@ import org.apache.axis.utils.Options;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 
@@ -350,15 +353,17 @@ public abstract class TestClient {
                 }
             }
         }
-
+        Date inputDate = null;
         {
-            Date input = new Date();
             try {
-                output = binding.echoDate(input);
-                verify("echoDate", input, output);
+                SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
+                zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+                inputDate = zulu.parse(zulu.format(new Date()));
+                output = binding.echoDate(inputDate);
+                verify("echoDate", inputDate, output);
             } catch (Exception e) {
                 if (!testMode) {
-                    verify("echoDate", input, e);
+                    verify("echoDate", inputDate, e);
                 } else {
                     throw e;
                 }
@@ -395,7 +400,7 @@ public abstract class TestClient {
 
         HashMap map = new HashMap();
         map.put(new Integer(5), "String Value");
-        map.put("String Key", new Date());
+        map.put("String Key", inputDate);
         {
             HashMap input = map;
             try {

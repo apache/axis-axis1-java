@@ -55,7 +55,7 @@
 
 package test.wsdl.roundtrip;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * The CallOptions class is just a class to determine how
@@ -67,7 +67,7 @@ import java.util.Date;
 public class CallOptions {
 
     private double callPrice = 103.30;
-    public Date callDate;
+    public Calendar callDate;
 
     public static void main(String[] args) {
 

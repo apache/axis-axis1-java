@@ -67,6 +67,8 @@ import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.CalendarSerializerFactory;
+import org.apache.axis.encoding.ser.CalendarDeserializerFactory;
 import org.apache.axis.encoding.ser.DateSerializerFactory;
 import org.apache.axis.encoding.ser.DateDeserializerFactory;
 import org.apache.axis.encoding.ser.Base64SerializerFactory;
@@ -271,10 +273,10 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new DateDeserializerFactory(java.util.Date.class,
                                                Constants.XSD_DATE1),
                    true);
-        myRegister(Constants.XSD_DATE,       java.util.Date.class,
-                   new DateSerializerFactory(java.util.Date.class,
+        myRegister(Constants.XSD_DATE,       java.util.Calendar.class,
+                   new CalendarSerializerFactory(java.util.Calendar.class,
                                              Constants.XSD_DATE),
-                   new DateDeserializerFactory(java.util.Date.class,
+                   new CalendarDeserializerFactory(java.util.Calendar.class,
                                                Constants.XSD_DATE),
                    true);
 

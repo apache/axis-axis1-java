@@ -436,8 +436,8 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputDate", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"), javax.xml.rpc.ParameterMode.IN);
-        call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        call.addParameter("inputDate", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "date"), javax.xml.rpc.ParameterMode.IN);
+        call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "date"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoDate" : "";
         call.setSOAPActionURI(soapAction+methodName);
