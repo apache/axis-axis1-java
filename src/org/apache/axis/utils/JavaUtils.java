@@ -57,6 +57,9 @@ import java.util.Set;
  */
 public class JavaUtils
 {
+    private JavaUtils() {
+    }
+
     protected static Log log =
         LogFactory.getLog(JavaUtils.class.getName());
     
