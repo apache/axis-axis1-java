@@ -57,6 +57,7 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.Handler;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
@@ -90,11 +91,9 @@ public class WSDDHandler
         throws WSDDException
     {
         super(e);
-        /*
         if (type == null && (this.getClass() == WSDDHandler.class)) {
-            throw new WSDDException("Must include type attribute for Handlers");
+            throw new WSDDException(JavaUtils.getMessage("noTypeAttr00"));
         }
-        */
     }
 
     protected QName getElementName()
@@ -111,6 +110,7 @@ public class WSDDHandler
             attrs.addAttribute("", "name", "name",
                                "CDATA", context.qName2String(name));
         }
+        
         attrs.addAttribute("", "type", "type",
                            "CDATA", context.qName2String(getType()));
         context.startElement(new QName(WSDDConstants.WSDD_NS, "handler"),
