@@ -350,8 +350,12 @@ public class RPCProvider extends JavaProvider {
             if (operation.getMethod().getReturnType() != Void.TYPE) {
                 QName returnQName = operation.getReturnQName();
                 if (returnQName == null) {
+                    String nsp = body.getNamespaceURI();
+                    if(nsp == null || nsp.length()==0) {
+                        nsp = serviceDesc.getDefaultNamespace();    
+                    }
                     returnQName = new QName(msgContext.isEncoded() ? "" :
-                                                body.getNamespaceURI(),
+                                                nsp,
                                             methodName + "Return");
                 }
                 
