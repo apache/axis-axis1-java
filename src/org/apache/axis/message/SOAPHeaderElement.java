@@ -81,10 +81,6 @@ public class SOAPHeaderElement extends MessageElement
     protected String    actor = "";
     protected boolean   mustUnderstand = false;
 
-    public SOAPHeaderElement() {
-        super();
-    }
-
     public SOAPHeaderElement(String namespace, String localPart)
     {
         super(namespace, localPart);
