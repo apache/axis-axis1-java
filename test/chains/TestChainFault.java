@@ -125,9 +125,11 @@ public class TestChainFault extends TestCase
           }
       }
       catch (javax.xml.soap.SOAPException e) {
+          e.printStackTrace();
           assertTrue("Unforseen soap exception", false);
       }
       catch (AxisFault f) {
+          f.printStackTrace();
           assertTrue("Unforseen axis fault", false);
       }
 

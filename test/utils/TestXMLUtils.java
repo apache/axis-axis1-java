@@ -3,7 +3,6 @@ package test.utils;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import test.AxisTestBase;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.message.PrefixedQName;
@@ -345,7 +344,7 @@ public class TestXMLUtils extends AxisTestBase
         parser2.getXMLReader().parse(inputsrc2);
     }
         
-    // If we are using DeserializationContextImpl, we do not allow
+    // If we are using DeserializationContext, we do not allow
     // a DOCTYPE to be specified to prevent denial of service attacks
     // via the ENTITY processing intstruction.
     String msg2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -367,7 +366,7 @@ public class TestXMLUtils extends AxisTestBase
     public void testSAXXXE3() throws Exception
     {
         StringReader strReader3 = new StringReader(msg2);
-        DeserializationContext dser = new DeserializationContextImpl(
+        DeserializationContext dser = new DeserializationContext(
             new InputSource(strReader3), null, org.apache.axis.Message.REQUEST);
         dser.parse();
         SOAPEnvelope env = dser.getEnvelope();
@@ -409,7 +408,7 @@ public class TestXMLUtils extends AxisTestBase
     public void testNSStack() throws Exception
     {
         StringReader strReader3 = new StringReader(msg3);
-        DeserializationContext dser = new DeserializationContextImpl(
+        DeserializationContext dser = new DeserializationContext(
             new InputSource(strReader3), null, org.apache.axis.Message.REQUEST);
         dser.parse();
         org.apache.axis.message.SOAPEnvelope env = dser.getEnvelope();

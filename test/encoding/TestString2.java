@@ -3,9 +3,6 @@ package test.encoding;
 import junit.framework.TestCase;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.server.AxisServer;
@@ -13,12 +10,7 @@ import org.xml.sax.InputSource;
 
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPEnvelope;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.ByteArrayInputStream;
 
 /** Little serialization test with a struct.
@@ -48,7 +40,7 @@ public class TestString2 extends TestCase {
         message.writeTo(baos);
         
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        DeserializationContext dser = new DeserializationContextImpl(
+        DeserializationContext dser = new DeserializationContext(
             new InputSource(bais), msgContext, org.apache.axis.Message.REQUEST);
         dser.parse();
         

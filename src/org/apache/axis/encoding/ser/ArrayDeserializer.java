@@ -29,7 +29,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.axis.soap.SOAPConstants;
-import org.apache.axis.MessageContext;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -111,10 +110,7 @@ public class ArrayDeserializer extends DeserializerImpl
             log.debug("Enter: ArrayDeserializer::startElement()");
         }
 
-        MessageContext msgContext = context.getMessageContext();
-        if (msgContext != null) {
-            soapConstants = msgContext.getSOAPConstants();
-        }
+        soapConstants = context.getSOAPConstants();
 
         // Get the qname for the array type=, set it to null if
         // the generic type is used.

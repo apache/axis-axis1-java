@@ -20,7 +20,6 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
@@ -73,8 +72,7 @@ public class TestMessageElement extends AxisTestBase {
     public void testAddChild() throws Exception {
         SOAPConstants sc = SOAPConstants.SOAP11_CONSTANTS;
         EnvelopeBuilder eb = new EnvelopeBuilder(Message.REQUEST, sc);
-        DeserializationContext dc = new DeserializationContextImpl(null,
-                                                                   eb); 
+        DeserializationContext dc = new DeserializationContext(null, eb);
         MessageElement parent = new MessageElement("parent.names",
                                                 "parent",
                                                 "parns",
@@ -106,8 +104,7 @@ public class TestMessageElement extends AxisTestBase {
     public void testDetachNode() throws Exception {
         SOAPConstants sc = SOAPConstants.SOAP11_CONSTANTS;
         EnvelopeBuilder eb = new EnvelopeBuilder(Message.REQUEST, sc);
-        DeserializationContext dc = new DeserializationContextImpl(null,
-                                                                   eb); 
+        DeserializationContext dc = new DeserializationContext(null, eb);
         SOAPElement parent = new MessageElement("parent.names",
                                                 "parent",
                                                 "parns",
@@ -181,7 +178,7 @@ public class TestMessageElement extends AxisTestBase {
         data="<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body>"+
              data+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
         MessageContext ctx=new MessageContext(new AxisClient());
-        DeserializationContext dser = new DeserializationContextImpl(
+        DeserializationContext dser = new DeserializationContext(
                                            new org.xml.sax.InputSource(new StringReader(data)),
                                            ctx,
                                            Message.REQUEST);
@@ -214,7 +211,7 @@ public class TestMessageElement extends AxisTestBase {
             String data = envelope.toString();
 
             MessageContext ctx = new MessageContext(new AxisClient());
-            DeserializationContext dser = new DeserializationContextImpl(
+            DeserializationContext dser = new DeserializationContext(
                     new org.xml.sax.InputSource(new StringReader(data)),
                     ctx,
                     Message.REQUEST);

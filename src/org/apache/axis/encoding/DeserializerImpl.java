@@ -328,9 +328,7 @@ public class DeserializerImpl extends SOAPHandler
             return;
         }
 
-        SOAPConstants soapConstants = context.getMessageContext() == null ?
-                                        SOAPConstants.SOAP11_CONSTANTS :
-                                        context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getSOAPConstants();
 
         // If this element has an id, then associate the value with the id.
         // (Prior to this association, the MessageElement of the element is
@@ -544,8 +542,8 @@ public class DeserializerImpl extends SOAPHandler
             targets != null &&
             !targets.isEmpty()) {
             StringWriter writer = new StringWriter();
-            SerializationContextImpl serContext = 
-                        new SerializationContextImpl(writer,
+            SerializationContext serContext =
+                        new SerializationContext(writer,
                                                  context.getMessageContext());
             serContext.setSendDecl(false);
             

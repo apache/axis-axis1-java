@@ -27,7 +27,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
@@ -67,7 +67,7 @@ public class TestDerivatedBeanSerializer extends TestCase {
 		// Initialisation of attribute used in the testMethods.
 		stringWriter = new StringWriter();
 		MessageContext msgContext = new MessageContext(new AxisServer());
-		context = new SerializationContextImpl(stringWriter, msgContext);
+		context = new SerializationContext(stringWriter, msgContext);
 
 		// Create a TypeMapping and register the specialized Type Mapping
 		TypeMappingRegistry reg = context.getTypeMappingRegistry();

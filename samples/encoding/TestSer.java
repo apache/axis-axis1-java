@@ -3,9 +3,8 @@ package samples.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCElement;
@@ -52,7 +51,7 @@ public class TestSer
             
             if (args.length == 0) {
                 Writer stringWriter = new StringWriter();
-                SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+                SerializationContext context = new SerializationContext(stringWriter, msgContext);
                 
                 TypeMappingRegistry reg = context.getTypeMappingRegistry();
                 TypeMapping tm = (TypeMapping) reg.getTypeMapping(Constants.URI_SOAP11_ENC);
@@ -76,7 +75,7 @@ public class TestSer
                 reader = new FileReader(args[0]);
             }
             
-            DeserializationContext dser = new DeserializationContextImpl(
+            DeserializationContext dser = new DeserializationContext(
                 new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
             dser.parse();
             SOAPEnvelope env = dser.getEnvelope();

@@ -7,7 +7,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.BasicServerConfig;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
@@ -60,7 +60,7 @@ public class TestAttributes extends TestCase {
         body.setEncodingStyle(null);
 
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+        SerializationContext context = new SerializationContext(stringWriter, msgContext);
         context.setDoMultiRefs(false);  // no multirefs
         context.setPretty(false);
 
@@ -132,7 +132,7 @@ public class TestAttributes extends TestCase {
         body.setEncodingStyle(null);
 
         StringWriter writer = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(writer,
+        SerializationContext context = new SerializationContext(writer,
                                                                     msgContext);
         context.setDoMultiRefs(false);
 

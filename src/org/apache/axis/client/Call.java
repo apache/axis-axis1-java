@@ -32,7 +32,7 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
@@ -2703,7 +2703,7 @@ public class Call implements javax.xml.rpc.Call {
         if (log.isDebugEnabled()) {
             StringWriter writer = new StringWriter();
             try {
-                SerializationContext ctx = new SerializationContextImpl(writer,
+                SerializationContext ctx = new SerializationContext(writer,
                                                                    msgContext);
                 requestMessage.getSOAPEnvelope().output(ctx);
                 writer.close();

@@ -277,16 +277,15 @@ public class SOAPHeaderElement extends MessageElement
 
     private SOAPConstants getSOAPConstants() {
         SOAPConstants soapConstants = null;
+        if (context != null) {
+            return context.getSOAPConstants();
+        }
         if (getNamespaceURI() != null &&
                 getNamespaceURI().equals(SOAPConstants.SOAP12_CONSTANTS.getEnvelopeURI())) {
             soapConstants = SOAPConstants.SOAP12_CONSTANTS;
         }
         if (soapConstants == null && getEnvelope() != null) {
             soapConstants = getEnvelope().getSOAPConstants();
-        }
-        if (soapConstants == null && context != null &&
-                context.getMessageContext() != null) {
-            soapConstants = context.getMessageContext().getSOAPConstants();
         }
         if (soapConstants == null) {
             soapConstants = SOAPConstants.SOAP11_CONSTANTS;

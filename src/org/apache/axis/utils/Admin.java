@@ -29,7 +29,7 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.server.AxisServer;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
@@ -218,7 +218,7 @@ public class Admin
         throws AxisFault
     {
         StringWriter writer = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(writer, null);
+        SerializationContext context = new SerializationContext(writer, null);
         context.setPretty(true);
         try {
             EngineConfiguration config = engine.getConfig();

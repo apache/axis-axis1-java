@@ -7,7 +7,6 @@ import org.apache.axis.server.AxisServer;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.DeserializationContext;
 import org.xml.sax.InputSource;
 
@@ -73,7 +72,7 @@ public class TestSOAPFaultDetail extends junit.framework.TestCase
     private SOAPBodyElement getFirstBody(InputSource msgSource)
             throws Exception
     {
-        DeserializationContext dser = new DeserializationContextImpl(
+        DeserializationContext dser = new DeserializationContext(
                 msgSource, _msgContext, Message.RESPONSE);
         dser.parse();
         SOAPEnvelope env = dser.getEnvelope();

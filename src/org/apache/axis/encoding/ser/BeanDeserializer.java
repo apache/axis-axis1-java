@@ -155,7 +155,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         BeanPropertyDescriptor propDesc = null;
         FieldDesc fieldDesc = null;
 
-        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getSOAPConstants();
         String encodingStyle = context.getMessageContext().getEncodingStyle();
         boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
 

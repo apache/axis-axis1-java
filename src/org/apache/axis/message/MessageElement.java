@@ -21,10 +21,9 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Mapping;
@@ -381,17 +380,15 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                     clonedME.addNamespaceDeclaration(namespace.getPrefix(), namespace.getNamespaceURI()); // why exception here!!
                 }
             }
-            // clear reference to old children
-            clonedME.detachAllChildren();
+            clonedME.children = new ArrayList();
 
             // clear parents relationship to old parent
-            clonedME.setParent(null);
+            clonedME.parent = null;
             // clonedME.setObjectValue(objectValue); // how to copy this???
             clonedME.setDirty(this._isDirty);
             if(encodingStyle != null){
                 clonedME.setEncodingStyle(new String(encodingStyle));
             }
-            clonedME.setRecorder(recorder);
             return clonedME;
         }catch(Exception ex){
             return null;
@@ -689,12 +686,12 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             throw new Exception(Messages.getMessage("noDeser00", "" + type));
 
         boolean oldVal = context.isDoneParsing();
-        ((DeserializationContextImpl)context).deserializing(true);
+        context.deserializing(true);
         context.pushElementHandler(new EnvelopeHandler((SOAPHandler)dser));
 
         publishToHandler((org.xml.sax.ContentHandler) context);
 
-        ((DeserializationContextImpl)context).deserializing(oldVal);
+        context.deserializing(oldVal);
 
         return dser.getValue();
     }
@@ -817,7 +814,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         } else {
             msgContext = MessageContext.getCurrentContext();
         }
-        serializeContext = new SerializationContextImpl(writer, msgContext);
+        serializeContext = new SerializationContext(writer, msgContext);
         serializeContext.setSendDecl(false);
         output(serializeContext);
         writer.close();

@@ -8,7 +8,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
@@ -58,7 +58,7 @@ public class TestFault extends TestCase {
         msg.addBodyElement(fault);
         Writer stringWriter = new StringWriter();
         SerializationContext context = 
-                new SerializationContextImpl(stringWriter, msgContext);
+                new SerializationContext(stringWriter, msgContext);
         context.setDoMultiRefs(false);
         msg.output(context);
         String msgString = stringWriter.toString();

@@ -60,9 +60,9 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.NullProvider;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.Mapping;
@@ -157,12 +157,12 @@ public class SignedSOAPEnvelope extends SOAPEnvelope {
             byte[] canonicalMessage = c14n.canonicalizeSubtree(doc);
 
             InputSource is = new InputSource(new java.io.ByteArrayInputStream(canonicalMessage));
-            DeserializationContextImpl dser = null;
+            DeserializationContext dser = null;
             if (msgContext == null) {
                 AxisClient tmpEngine = new AxisClient(new NullProvider());
                 msgContext = new MessageContext(tmpEngine);
             }
-            dser = new DeserializationContextImpl(is, msgContext,
+            dser = new DeserializationContext(is, msgContext,
                     Message.REQUEST, this);
 
             dser.parse();
@@ -176,7 +176,7 @@ public class SignedSOAPEnvelope extends SOAPEnvelope {
     private Document getSOAPEnvelopeAsDocument(SOAPEnvelope env, MessageContext msgContext)
             throws Exception {
         StringWriter writer = new StringWriter();
-        SerializationContext serializeContext = new SerializationContextImpl(writer, msgContext);
+        SerializationContext serializeContext = new SerializationContext(writer, msgContext);
         env.output(serializeContext);
         writer.close();
 

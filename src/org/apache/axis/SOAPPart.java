@@ -18,8 +18,7 @@ package org.apache.axis ;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.MimeHeaders;
 import org.apache.axis.message.SOAPDocumentImpl;
@@ -284,7 +283,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if ( currentForm == FORM_FAULT ) {
             AxisFault env = (AxisFault)currentMessage;
             try {
-                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+                env.output(new SerializationContext(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
                 log.error(Messages.getMessage("exception00"), e);
                 throw env;
@@ -295,7 +294,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if ( currentForm == FORM_SOAPENVELOPE ) {
             SOAPEnvelope env = (SOAPEnvelope)currentMessage;
             try {
-                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+                env.output(new SerializationContext(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
             }
@@ -637,7 +636,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         } else {
             is = new InputSource(new StringReader(getAsString()));
         }
-        DeserializationContext dser = new DeserializationContextImpl(is,
+        DeserializationContext dser = new DeserializationContext(is,
                                            getMessage().getMessageContext(),
                                            getMessage().getMessageType());
         dser.getEnvelope().setOwnerDocument(this);

@@ -141,7 +141,7 @@ public class RPCHandler extends SOAPHandler
         QName qname = new QName(namespace, localName);
         ParameterDesc paramDesc = null;
 
-        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getSOAPConstants();
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
             Constants.QNAME_RPC_RESULT.equals(qname)) {
             // TODO: fix it ... now we just skip it

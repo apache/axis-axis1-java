@@ -49,9 +49,7 @@ public class HeaderBuilder extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
-        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
-        if (context.getMessageContext() != null)
-            soapConstants = context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getSOAPConstants();
 
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
             attributes.getValue(Constants.URI_SOAP12_ENV, Constants.ATTR_ENCODING_STYLE) != null) {

@@ -179,7 +179,7 @@ public class ArraySerializer implements Serializer
             // It is necessary for
             // interoperability (echo2DStringArray).  It is 'safe' for now
             // because Axis treats arrays as non multi-ref (see the note
-            // in SerializationContextImpl.isPrimitive(...) )
+            // in SerializationContext.isPrimitive(...) )
             // More complicated processing is necessary for 3-dim arrays, etc.
             //
             // Axis 1.1 - December 2002

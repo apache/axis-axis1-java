@@ -5,9 +5,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCElement;
@@ -65,7 +64,7 @@ public class TestSer extends TestCase {
         msg.addBodyElement(body);
 
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+        SerializationContext context = new SerializationContext(stringWriter, msgContext);
         context.setDoMultiRefs(multiref);
 
         // Create a TypeMapping and register the specialized Type Mapping
@@ -87,7 +86,7 @@ public class TestSer extends TestCase {
 
         StringReader reader = new StringReader(msgString);
 
-        DeserializationContext dser = new DeserializationContextImpl(
+        DeserializationContext dser = new DeserializationContext(
             new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
         dser.parse();
 
@@ -153,7 +152,7 @@ public class TestSer extends TestCase {
             msg.addBodyElement(body);
             body.setEncodingStyle(Constants.URI_LITERAL_ENC);
 
-            SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+            SerializationContext context = new SerializationContext(stringWriter, msgContext);
             msg.output(context);
 
             msgString = stringWriter.toString();

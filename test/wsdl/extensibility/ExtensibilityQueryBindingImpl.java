@@ -5,37 +5,16 @@
 
 package test.wsdl.extensibility;
 
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.Text;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.util.Calendar;
-import java.util.Vector;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
 
 public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType {
     private final static String[] books = new String[] { "The Grid", "The Oxford Dictionary" }; 

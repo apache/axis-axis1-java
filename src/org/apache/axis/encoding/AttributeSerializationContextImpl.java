@@ -28,7 +28,7 @@ import java.io.Writer;
  *
  * @author Thomas Sandholm (sandholm@mcs.anl.gov)
  */
-public class AttributeSerializationContextImpl extends SerializationContextImpl
+public class AttributeSerializationContextImpl extends SerializationContext
 {
    SerializationContext parent;
    public AttributeSerializationContextImpl(Writer writer, SerializationContext parent)

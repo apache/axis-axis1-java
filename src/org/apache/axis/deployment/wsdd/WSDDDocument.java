@@ -18,7 +18,7 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
@@ -100,7 +100,7 @@ public class WSDDDocument extends WSDDConstants
      */
     public Document getDOMDocument() throws ConfigurationException {
         StringWriter writer = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(writer, null);
+        SerializationContext context = new SerializationContext(writer, null);
         context.setPretty(true);
         try {
             deployment.writeToContext(context);

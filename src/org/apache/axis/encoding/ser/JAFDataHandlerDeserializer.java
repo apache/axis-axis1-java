@@ -56,7 +56,7 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
         }
 //        super.startElement(namespace, localName, qName, attributes, context);
 
-        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getSOAPConstants();
 
         QName type = context.getTypeFromAttributes(namespace,
                                                    localName,

@@ -55,9 +55,7 @@ public class BodyBuilder extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
-        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
-        if (context.getMessageContext() != null)
-            soapConstants = context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getSOAPConstants();
 
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
             attributes.getValue(Constants.URI_SOAP12_ENV, Constants.ATTR_ENCODING_STYLE) != null) {
@@ -90,15 +88,12 @@ public class BodyBuilder extends SOAPHandler
                                          String prefix, Attributes attributes,
                                          DeserializationContext context)
         throws AxisFault {
-        SOAPConstants soapConstants = context.getMessageContext() == null ?
-                                        SOAPConstants.SOAP11_CONSTANTS :
-                                        context.getMessageContext().getSOAPConstants();
         return new SOAPBody(namespace,
                             localName,
                             prefix,
                             attributes,
                             context,
-                            soapConstants);
+                            context.getSOAPConstants());
     }
 
     public SOAPHandler onStartChild(String namespace,
@@ -146,9 +141,7 @@ public class BodyBuilder extends SOAPHandler
         }
 
         Style style = operations == null ? Style.RPC : operations[0].getStyle();
-        SOAPConstants soapConstants = context.getMessageContext() == null ?
-                                        SOAPConstants.SOAP11_CONSTANTS :
-                                        context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getSOAPConstants();
 
         /** Now we make a plain SOAPBodyElement IF we either:
          * a) have an non-root element, or
