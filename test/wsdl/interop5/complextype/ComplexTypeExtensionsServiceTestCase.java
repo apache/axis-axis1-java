@@ -14,7 +14,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     
     protected void setUp() throws Exception {
         if(url == null) {
-            url = new URL(new test.wsdl.interop4.groupG.dime.doc.DimeDOCInteropLocator().getDimeDOCSoapPortAddress());
+            url = new URL(new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPortAddress());
         }
     }    
 
