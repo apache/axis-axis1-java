@@ -188,6 +188,8 @@ public class Options {
             if ( arg.charAt(0) != '-' || arg.charAt(1) != optChar )
                 continue ;
             value = arg.substring(2);
+            if ( loop+1 < usedArgs.size() )
+                value = (String) usedArgs.elementAt(++loop);
         }
 
         for ( loop = 0 ; loop < args.length ; loop++ ) {
@@ -224,7 +226,8 @@ public class Options {
         }
         if ( value != null ) {
             if ( usedArgs == null ) usedArgs = new Vector();
-            usedArgs.add( "-" + optChar + value );
+            usedArgs.add( "-" + optChar );
+            if ( value.length() > 0 ) usedArgs.add( value );
         }
         return( value );
     }
