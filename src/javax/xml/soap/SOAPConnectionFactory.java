@@ -68,7 +68,8 @@ public abstract class SOAPConnectionFactory {
      * @throws  SOAPException  if there was an error creating
      *     the <CODE>SOAPConnectionFactory
      */
-    public static SOAPConnectionFactory newInstance() throws SOAPException {
+    public static SOAPConnectionFactory newInstance()
+            throws SOAPException, UnsupportedOperationException {
 
         try {
             return (SOAPConnectionFactory) FactoryFinder.

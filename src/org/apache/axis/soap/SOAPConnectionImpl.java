@@ -79,7 +79,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
      *     response to the message that was sent
      * @throws  SOAPException if there is a SOAP error
      */
-    public SOAPMessage call(SOAPMessage request, Endpoint endpoint)
+    public SOAPMessage call(SOAPMessage request, Object endpoint)
         throws SOAPException {
         try {
             Call call = new Call(endpoint.toString());
