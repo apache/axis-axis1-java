@@ -58,6 +58,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 import org.apache.axis.*;
 import org.apache.axis.encoding.*;
+import org.apache.axis.message.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -170,6 +171,27 @@ public class SOAPService extends SimpleTargetedChain
 
         // Do SOAP semantics here
         Debug.Print( 2, "Doing SOAP semantic checks...");
+        
+        // 1. Check mustUnderstands
+        SOAPEnvelope env = msgContext.getRequestMessage().getAsSOAPEnvelope();
+        Vector headers = env.getHeaders();
+        Vector misunderstoodHeaders = null;
+        for (int i = 0; i < headers.size(); i++) {
+            SOAPHeader header = (SOAPHeader)headers.elementAt(i);
+            if (header.isMustUnderstand() && !header.isProcessed()) {
+                if (misunderstoodHeaders == null)
+                    misunderstoodHeaders = new Vector();
+                misunderstoodHeaders.addElement(header);
+            }
+        }
+        
+        if (misunderstoodHeaders != null) {
+            // !!! If SOAP 1.2, insert misunderstood fault header here
+            
+            throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
+                        "Didn't understand MustUnderstand header(s)!",
+                        null, null);
+        }
 
         h = getPivotHandler();
         if ( h != null ) {

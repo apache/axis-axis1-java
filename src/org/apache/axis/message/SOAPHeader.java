@@ -109,7 +109,7 @@ public class SOAPHeader extends MessageElement {
         processed = false;
     }
     
-    public boolean getMustUnderstand() { return( mustUnderstand ); }
+    public boolean isMustUnderstand() { return( mustUnderstand ); }
     public void setMustUnderstand(boolean b) { 
         mustUnderstand = b ;
     }

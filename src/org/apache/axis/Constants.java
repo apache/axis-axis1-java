@@ -55,6 +55,8 @@
 
 package org.apache.axis;
 
+import org.apache.axis.utils.QFault;
+
 public class Constants {
   // Some common Constants that should be used in local handler options
   // (Not all implementations will have these concepts - for example
@@ -71,12 +73,31 @@ public class Constants {
 
 
   public static String AXIS_NS = "http://xml.apache.org/axis/";
+  
+  //
+  // SOAP 1.1 constants
+  //
   public static String URI_SOAP_ENV =
                                "http://schemas.xmlsoap.org/soap/envelope/" ;
   public static String URI_SOAP_ENC =
                                "http://schemas.xmlsoap.org/soap/encoding/" ;
   public static String URI_NEXT_ACTOR = 
                                "http://schemas.xmlsoap.org/soap/actor/next" ;
+  
+  //
+  // SOAP 1.2 constants
+  //
+  public static String URI_SOAP12_ENV =
+                        "http://www.w3.org/2001/06/soap-envelope";
+  public static String URI_SOAP12_ENC =
+                        "http://www.w3.org/2001/06/soap-encoding";
+  public static String URI_SOAP12_NEXT_ACTOR =
+                        "http://www.w3.org/2001/06/soap-envelope/actor/next";
+  public static String URI_SOAP12_FAULT_NS =
+                        "http://www.w3.org/2001/06/soap-faults";
+  public static String URI_SOAP12_UPGRADE_NS =
+                        "http://www.w3.org/2001/06/soap-upgrade";
+  
 
   public static String NS_URI_XMLNS = 
                                "http://www.w3.org/2000/xmlns/";
@@ -130,6 +151,9 @@ public class Constants {
   // Fault Codes
   //////////////////////////////////////////////////////////////////////////
   public static String FAULT_SERVER_GENERAL = "Server.generalException";
+  
+  public static final QFault FAULT_MUSTUNDERSTAND =
+                            new QFault(URI_SOAP_ENV, "MustUnderstand");
 
 
   // Misc Strings
