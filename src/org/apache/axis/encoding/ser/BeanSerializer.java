@@ -312,7 +312,7 @@ public class BeanSerializer implements Serializer, Serializable {
             // Get the property descriptors for the super class
             TypeDesc superTypeDesc = TypeDesc.getTypeDescForClass(superClass);
             if (superTypeDesc != null) {
-                superPd = typeDesc.getPropertyDescriptors();
+                superPd = superTypeDesc.getPropertyDescriptors();
             } else {
                 superPd = BeanUtils.getPd(superClass, null);
             }
