@@ -21,7 +21,13 @@
   <service name="ErrorService" handler="errorChain" />
   <service name="ErrorService1" handler="error" />
 
-  <chain name="LogRPC" flow="log,RPCDispatch,log" />
+  <chain name="LogRPC" flow="log,RPCDispatcher,log" />
+
+  <handler name="router" class="org.apache.axis.handlers.Router" />
+
+  <handler name="HTTPAction" class="org.apache.axis.handlers.HTTPActionHandler" />
+  <chain name="HTTPTransport" flow="HTTPAction,router" />
+  <service name="AxisServlet" handler="HTTPTransport" />
 
   <!--- sample showing up to give options 
   <service name="urn:FOOBAR" handler="LogRPC" >

@@ -111,6 +111,13 @@ public class AxisServlet extends HttpServlet {
     Message           msg        = new Message( req, "ServletRequest" );
 
     msgContext.setIncomingMessage( msg );
+    
+    /** Set the target which tells the engine where to dispatch.  In the
+     * real world, this would probably be gotten from the servlet
+     * configuration.
+     */
+    msgContext.setProperty(Constants.MC_TARGET, Constants.SERVLET_TARGET);
+    
 
     /* Save the SOAPAction header in the MessageContext bag - this will */
     /* be used to tell the Axis Engine which service is being invoked.  */
