@@ -1,8 +1,10 @@
+package org.apache.axis.message;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,18 +55,14 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+import org.xml.sax.Attributes;
+import org.apache.axis.encoding.DeserializationContext;
 
-import java.util.Hashtable;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** A simple MessageElement factory interface.
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public interface MessageWithAttachments { 
-    
-    public boolean hasAttachments();
-    public Hashtable getAttachments();
-    public Object getAttachment(String id);
-    public Object getAttachment(int index);
-    
+public interface ElementFactory
+{
+    public MessageElement createElement(String namespace, String localName, Attributes attributes, DeserializationContext context);
 }

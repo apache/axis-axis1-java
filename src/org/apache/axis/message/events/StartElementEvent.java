@@ -1,8 +1,10 @@
+package org.apache.axis.message.events;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,29 +55,34 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-import java.io.Reader;
-import java.io.InputStream;
-import org.apache.axis.AxisFault;
-import org.apache.axis.utils.QName;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** A <code>StartElementEvent</code>
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public interface Message { 
+
+public class StartElementEvent implements SAXEvent
+{
+    String _namespace;
+    String _localPart;
+    String _qName;
+    Attributes _attributes;
     
-    public Reader getCharacterStream();
-    public InputStream getByteStream();
+    public StartElementEvent(String namespace, String localPart,
+                             String qName, Attributes attributes)
+    {
+        _namespace = namespace;
+        _localPart = localPart;
+        _qName = qName;
+        _attributes = new AttributesImpl(attributes);
+    }
     
-    public MessageElement getEnvelope() throws AxisFault;
-    public MessageElement getHeader() throws AxisFault; 
-    public MessageElement getFirstHeaderEntry() throws AxisFault;
-    public MessageElement getFirstHeaderEntryNamed(QName qname) throws AxisFault;
-    public MessageElement getBody() throws AxisFault;
-    public MessageElement getFirstBodyEntry() throws AxisFault;
-    public MessageElement getFirstBodyEntryNamed(QName qname) throws AxisFault;
-    
-    public String toString();
-    
+    public void publishToHandler(ContentHandler handler) throws SAXException
+    {
+        handler.startElement(_namespace, _localPart, _qName, _attributes);
+    }
 }

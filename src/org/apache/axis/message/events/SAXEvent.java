@@ -1,8 +1,10 @@
+package org.apache.axis.message.events;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,18 +55,17 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-import java.util.Hashtable;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** This is a simple interface for classes which store cached SAX events.
+ * Each implementing class should keep some representation of the particular
+ * event it reflects, and know how to "replay" that event to a ContentHandler.
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public interface MessageWithAttachments { 
-    
-    public boolean hasAttachments();
-    public Hashtable getAttachments();
-    public Object getAttachment(String id);
-    public Object getAttachment(int index);
-    
+public interface SAXEvent
+{
+    public void publishToHandler(ContentHandler handler)
+        throws SAXException;
 }
