@@ -167,7 +167,7 @@ public class JavaStubWriter extends JavaWriter {
 
         pw.println("    }");
         pw.println();
-        pw.println("    private org.apache.axis.client.Call getCall() throws java.rmi.RemoteException {");
+        pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
         pw.println("        try {");
         pw.println("            org.apache.axis.client.Call call =");
         pw.println("                    (org.apache.axis.client.Call) super.service.createCall();");
@@ -493,7 +493,7 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("        if (super.cachedEndpoint == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
-        pw.println("        org.apache.axis.client.Call call = getCall();");
+        pw.println("        org.apache.axis.client.Call call = createCall();");
 
         // loop over paramters and set up in/out params
         for (int i = 0; i < parms.list.size(); ++i) {
