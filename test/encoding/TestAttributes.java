@@ -87,6 +87,8 @@ public class TestAttributes extends TestCase {
         log.debug(msgString);
         log.debug("---");
 
+        System.out.println(msgString);
+
         Message message = new Message(msgString);
         message.setMessageContext(msgContext);
         SOAPEnvelope env = message.getSOAPEnvelope();
@@ -109,13 +111,13 @@ public class TestAttributes extends TestCase {
     }
 
     public void testSimpleType2() throws Exception {
-        //Testcase for 12453 - Axis does not correctly HTML-encode <'s and >'s
-        //checkSimpleBeanRoundTrip("http://mysite.com?a=1&b=2", 85.0F);
+        //Testcase for 12452 - Axis does not correctly XML-encode ampersands
+        checkSimpleBeanRoundTrip("http://mysite.com?a=1&b=2", 85.0F);
     }
 
     public void testSimpleType3() throws Exception {
-        //Testcase for 12453 - Axis does not correctly HTML-encode <'s and >'s
-        //checkSimpleBeanRoundTrip("</name>", 85.0F);
+        //Testcase for 12453 - Axis does not correctly XML-encode <'s and >'s
+        checkSimpleBeanRoundTrip("</name>", 85.0F);
     }
     
     private void checkSimpleBeanRoundTrip(String text, float temp) throws Exception {

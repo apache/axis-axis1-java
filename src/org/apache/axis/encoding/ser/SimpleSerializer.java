@@ -64,7 +64,6 @@ import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.wsdl.fromJava.Types;
@@ -142,7 +141,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
         context.startElement(name, attributes);
         if (value != null) {
-            context.writeString(getValueAsString(value, context));
+            context.writeSafeString(getValueAsString(value, context));
         }
         context.endElement();
     }
@@ -166,8 +165,6 @@ public class SimpleSerializer implements SimpleValueSerializer {
             } else if (data == Double.NEGATIVE_INFINITY) {
                 return "-INF";
             }
-        } else if (value instanceof String) {
-            return XMLUtils.xmlEncodeString((String)value);
         }
 
         return value.toString();
