@@ -953,7 +953,7 @@ public class Types {
             javaType.isPrimitive()) {
             if (issueErrors && 
                 !beanCompatErrs.contains(javaType)) {
-                log.error(Messages.getMessage("beanCompatType00",
+                log.warn(Messages.getMessage("beanCompatType00",
                                                javaType.getName()));
                 beanCompatErrs.add(javaType);
             }
@@ -966,7 +966,7 @@ public class Types {
             javaType.getName().startsWith("javax.")) {
             if (issueErrors && 
                 !beanCompatErrs.contains(javaType)) {
-                log.error(Messages.getMessage("beanCompatPkg00",
+                log.warn(Messages.getMessage("beanCompatPkg00",
                                                javaType.getName()));
                 beanCompatErrs.add(javaType);
             }
@@ -986,7 +986,7 @@ public class Types {
             } catch (java.lang.NoSuchMethodException e) {
                 if (issueErrors && 
                     !beanCompatErrs.contains(javaType)) {
-                    log.error(Messages.getMessage("beanCompatConstructor00",
+                    log.warn(Messages.getMessage("beanCompatConstructor00",
                                                    javaType.getName()));
                     beanCompatErrs.add(javaType);
                 }
@@ -1009,7 +1009,7 @@ public class Types {
 
                 if (issueErrors && 
                     !beanCompatErrs.contains(javaType)) {
-                    log.error(Messages.getMessage("beanCompatExtends00",
+                    log.warn(Messages.getMessage("beanCompatExtends00",
                                                    javaType.getName(),
                                                    superClass.getName(),
                                                     javaType.getName()));

@@ -1211,7 +1211,6 @@ public class SerializationContextImpl implements SerializationContext
                 // prefered xmlType
                 if (shouldSendType || 
                     (xmlType != null && 
-                     actualXMLType.value != null &&
                      (!xmlType.equals(actualXMLType.value)))) {
                     attributes = setTypeAttribute(attributes, 
                                                   actualXMLType.value);
@@ -1277,12 +1276,12 @@ public class SerializationContextImpl implements SerializationContext
      * getSerializer
      * Attempts to get a serializer for the indicated javaType and xmlType.
      * @param javaType is the type of the object
-     * @param preferXmlType is the preferred qname type.
+     * @param xmlType is the preferred qname type.
      * @param actualXmlType is set to a QNameHolder or null.  
      *                     If a QNameHolder, the actual xmlType is returned.
      * @return found class/serializer or null
      **/
-    private Serializer getSerializer(Class javaType, QName preferXMLType, 
+    private Serializer getSerializer(Class javaType, QName xmlType, 
                                      QNameHolder actualXMLType) {
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
@@ -1291,12 +1290,12 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         while (javaType != null) {
-            serFactory = (SerializerFactory) tm.getSerializer(javaType, preferXMLType);
+            serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
             if (serFactory != null)
                 break;
 
             // Walk my interfaces...
-            serFactory = getSerializerFactoryFromInterface(javaType, preferXMLType, tm);
+            serFactory = getSerializerFactoryFromInterface(javaType, xmlType, tm);
             
             // Finally, head to my superclass
             if (serFactory != null)
@@ -1321,7 +1320,7 @@ public class SerializationContextImpl implements SerializationContext
                 if (actualXMLType.value == null) {
                     actualXMLType.value = 
                         ((TypeMappingImpl) tm).getXMLType(javaType, 
-                                                          preferXMLType);
+                                                          xmlType);
                 }
             }
         }
