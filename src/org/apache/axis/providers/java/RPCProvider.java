@@ -143,6 +143,7 @@ public class RPCProvider extends JavaProvider
 
         if (body == null) {
             // throw something
+            throw new Exception();
         }
         String methodName = body.getMethodName();
         Vector args = body.getParams();
@@ -175,87 +176,85 @@ public class RPCProvider extends JavaProvider
         // Make sure we respect parameter ordering if we know about it
         // from metadata, and handle whatever conversions are necessary
         // (values -> Holders, etc)
-        if ( args != null && args.size() > 0 ) {
-            for ( int i = 0 ; i < numArgs ; i++ ) {
-                RPCParam rpcParam = (RPCParam)args.get(i);
-                Object value = rpcParam.getValue();
-                ParameterDesc paramDesc = rpcParam.getParamDesc();
-                if (paramDesc != null && paramDesc.getJavaType() != null) {
-                    value = JavaUtils.convert(value,
-                                              paramDesc.getJavaType());
-                    rpcParam.setValue(value);
-                    if (paramDesc.getMode() == ParameterDesc.INOUT)
-                        outs.add(rpcParam);
-                }
-                if (paramDesc == null || paramDesc.getOrder() == -1) {
-                    argValues[i]  = value;
+        for ( int i = 0 ; i < numArgs ; i++ ) {
+            RPCParam rpcParam = (RPCParam)args.get(i);
+            Object value = rpcParam.getValue();
+            ParameterDesc paramDesc = rpcParam.getParamDesc();
+            if (paramDesc != null && paramDesc.getJavaType() != null) {
+                value = JavaUtils.convert(value,
+                                          paramDesc.getJavaType());
+                rpcParam.setValue(value);
+                if (paramDesc.getMode() == ParameterDesc.INOUT)
+                    outs.add(rpcParam);
+            }
+            if (paramDesc == null || paramDesc.getOrder() == -1) {
+                argValues[i]  = value;
+            } else {
+                argValues[paramDesc.getOrder()] = value;
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("  " + JavaUtils.getMessage("value00",
+                                                      "" + argValues[i]) );
+            }
+        }
+
+        // Check if we can find a Method by this name
+        // FIXME : Shouldn't this type of thing have already occurred?
+        checkMethodName(msgContext, allowedMethods, operation.getName());
+
+        // Now create any out holders we need to pass in
+        if (numArgs < argValues.length) {
+            ArrayList outParams = operation.getOutParams();
+            for (int i = 0; i < outParams.size(); i++) {
+                ParameterDesc param = (ParameterDesc)outParams.get(i);
+                Class holderClass = param.getJavaType();
+                if (Holder.class.isAssignableFrom(holderClass)) {
+                    argValues[numArgs + i] = holderClass.newInstance();
+                    // Store an RPCParam in the outs collection so we
+                    // have an easy and consistent way to write these
+                    // back to the client below
+                    outs.add(new RPCParam(param.getQName(),
+                                          argValues[numArgs + i]));
                 } else {
-                    argValues[paramDesc.getOrder()] = value;
-                }
-
-                if (log.isDebugEnabled()) {
-                    log.debug("  " + JavaUtils.getMessage("value00",
-                                                          "" + argValues[i]) );
+                    // !!! Throw a fault here?
                 }
             }
+        }
 
-            // Check if we can find a Method by this name
-            // FIXME : Shouldn't this type of thing have already occurred?
-            checkMethodName(msgContext, allowedMethods, operation.getName());
+        // OK!  Now we can invoke the method
+        Object objRes = operation.getMethod().invoke(obj, argValues);
 
-            // Now create any out holders we need to pass in
-            if (numArgs < argValues.length) {
-                ArrayList outParams = operation.getOutParams();
-                for (int i = 0; i < outParams.size(); i++) {
-                    ParameterDesc param = (ParameterDesc)outParams.get(i);
-                    Class holderClass = param.getJavaType();
-                    if (Holder.class.isAssignableFrom(holderClass)) {
-                        argValues[numArgs + i] = holderClass.newInstance();
-                        // Store an RPCParam in the outs collection so we
-                        // have an easy and consistent way to write these
-                        // back to the client below
-                        outs.add(new RPCParam(param.getQName(),
-                                              argValues[numArgs + i]));
-                    } else {
-                        // !!! Throw a fault here?
-                    }
-                }
+        /* Now put the result in the result SOAPEnvelope */
+        /*************************************************/
+        RPCElement resBody = new RPCElement(methodName + "Response");
+        resBody.setPrefix( body.getPrefix() );
+        resBody.setNamespaceURI( body.getNamespaceURI() );
+        resBody.setEncodingStyle(msgContext.getEncodingStyle());
+
+        // Return first
+        if ( operation.getMethod().getReturnType() != Void.TYPE ) {
+            QName returnQName = operation.getReturnQName();
+            if (returnQName == null) {
+                returnQName = new QName("", methodName + "Return");
             }
+            RPCParam param = new RPCParam(returnQName, objRes);
+            param.setParamDesc(operation.getReturnParamDesc());
+            resBody.addParam(param);
+        }
 
-            // OK!  Now we can invoke the method
-            Object objRes = operation.getMethod().invoke(obj, argValues);
-
-            /* Now put the result in the result SOAPEnvelope */
-            /*************************************************/
-            RPCElement resBody = new RPCElement(methodName + "Response");
-            resBody.setPrefix( body.getPrefix() );
-            resBody.setNamespaceURI( body.getNamespaceURI() );
-            resBody.setEncodingStyle(msgContext.getEncodingStyle());
-
-            // Return first
-            if ( operation.getMethod().getReturnType() != Void.TYPE ) {
-                QName returnQName = operation.getReturnQName();
-                if (returnQName == null) {
-                    returnQName = new QName("", methodName + "Return");
-                }
-                RPCParam param = new RPCParam(returnQName, objRes);
-                param.setParamDesc(operation.getReturnParamDesc());
+        // Then any other out params
+        if (!outs.isEmpty()) {
+            for (Iterator i = outs.iterator(); i.hasNext();) {
+                // We know this has a holder, so just unwrap the value
+                RPCParam param = (RPCParam) i.next();
+                Holder holder = (Holder)param.getValue();
+                param.setValue(JavaUtils.getHolderValue(holder));
                 resBody.addParam(param);
             }
-
-            // Then any other out params
-            if (!outs.isEmpty()) {
-                for (Iterator i = outs.iterator(); i.hasNext();) {
-                    // We know this has a holder, so just unwrap the value
-                    RPCParam param = (RPCParam) i.next();
-                    Holder holder = (Holder)param.getValue();
-                    param.setValue(JavaUtils.getHolderValue(holder));
-                    resBody.addParam(param);
-                }
-            }
-
-            resEnv.addBodyElement(resBody);
         }
+
+        resEnv.addBodyElement(resBody);
     }
 
     protected Method[] getMethod(MessageContext msgContext,
