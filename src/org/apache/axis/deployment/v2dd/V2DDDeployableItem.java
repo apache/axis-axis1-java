@@ -58,6 +58,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.v2dd.providers.V2DDComProvider;
 import org.apache.axis.deployment.v2dd.providers.V2DDScriptProvider;
 import org.apache.axis.providers.BSFProvider;
@@ -126,5 +127,9 @@ public class V2DDDeployableItem implements DeployableItem, Serializable {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
     }
 }

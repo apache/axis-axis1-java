@@ -222,4 +222,17 @@ public abstract class WSDDTargetedChain
         }
         
     }
+    
+    public void deployToRegistry(DeploymentRegistry registry)
+        throws DeploymentException
+    {
+        // deploy any named subparts
+        if (requestFlow != null) {
+            requestFlow.deployToRegistry(registry);
+        }
+        
+        if (responseFlow != null) {
+            responseFlow.deployToRegistry(registry);
+        }
+    }
 }
