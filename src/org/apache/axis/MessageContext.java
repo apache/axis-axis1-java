@@ -137,6 +137,11 @@ public class MessageContext {
      * maintainSession iff session != null...
      */
     private boolean         maintainSession = false;
+    
+    /**
+     * Are we doing request stuff, or response stuff?
+     */
+    private boolean          havePassedPivot = false;
 
     /**
      *
@@ -254,6 +259,23 @@ public class MessageContext {
         responseMessage = respMsg ;
         if (responseMessage != null) responseMessage.setMessageContext(this);
     };
+    
+    /**
+     * Return the current (i.e. request before the pivot, response after)
+     * message.
+     */
+    public Message getCurrentMessage()
+    {
+        return (havePassedPivot ? responseMessage : requestMessage);
+    }
+    
+    /**
+     * Indicate when we've past the pivot
+     */
+    public void setPastPivot(boolean pastPivot)
+    {
+        havePassedPivot = pastPivot;
+    }
 
     public AxisClassLoader getClassLoader() {
         if ( classLoader == null )
