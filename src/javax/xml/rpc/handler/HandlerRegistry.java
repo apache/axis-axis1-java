@@ -57,7 +57,6 @@ package javax.xml.rpc.handler;
 
 import java.io.Serializable;
 
-import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.namespace.QName;
 
 /**
@@ -68,15 +67,17 @@ import javax.xml.rpc.namespace.QName;
 public interface HandlerRegistry extends Serializable {
 
     /**
-     *  Gets the request HandlerChain for the specified service endpoint.
+     * Gets the handler chain for the specified service endpoint. The returned
+     * List is used to configure this specific handler chain in this
+     * HandlerRegistry.
      *  @param   portName Qualified name of the target service
      *  @return  HandlerChain Returns the registered HandlerChain;
      *  @throws java.lang.IllegalArgumentException If an invalid portName is specified
      */
-    public abstract HandlerChain getRequestHandlerChain(QName portName);
+    public HandlerChain getHandlerChain(QName portName);
 
     /**
-     *  Sets the request HandlerChain for the specified service endpoint.
+     *  Sets the handler chain for the specified service endpoint.
      *  @param   portName Qualified name of the target service endpoint
      *  @param   chain Request HandlerChain instance
      *  @throws  JAXRPCException If any error in the setting of
@@ -89,29 +90,5 @@ public interface HandlerRegistry extends Serializable {
      *     portName is specified
      */
     public abstract void setRequestHandlerChain(
-        QName portName, HandlerChain chain) throws JAXRPCException;
-
-    /**
-     *  Gets the response HandlerChain for the specified service endpoint.
-     *  @param   portName  Qualified name of the target service endpoint
-     *  @return   HandlerChain Returns the registered HandlerChain;
-     *  @throws java.lang.IllegalArgumentException If an invalid portName is specified
-     */
-    public abstract HandlerChain getResponseHandlerChain(QName portName);
-
-    /**
-     *  Sets the response HandlerChain for the specified service endpoint.
-     *  @param   portName Qualified name of the target service endpoint
-     *  @param   chain Response HandlerChain instance.
-     *  @throws  JAXRPCException  If any error in the setting of
-     *            the HandlerChain
-     *  @throws java.lang.UnsupportedOperationException  If this
-     *     set operation is not supported. This is done to
-     *     avoid any overriding of a pre-configured handler
-     *     chain.
-     *  @throws java.lang.IllegalArgumentException If an invalid
-     *    portName is specified
-     */
-    public abstract void setResponseHandlerChain(
-        QName portName, HandlerChain chain) throws JAXRPCException;
+            QName portName, HandlerChain chain);
 }

@@ -60,6 +60,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.rpc.namespace.QName;
+
 /**
  * The <code>javax.xml.rpc.handler.HandlerInfo</code> represents
  * information about a handler in the HandlerChain. All elements
@@ -79,10 +81,14 @@ public class HandlerInfo implements Serializable {
      *  <p>
      *  @param  handlerClass Class for the Handler
      *  @param  config Handler Configuration as a java.util.Map
+     *  @param  headers QNames for the header blocks processed
+     *          by this Handler.  QName is the qualified name
+     *          of the outermost element of a header block
      */
-    public HandlerInfo(Class handlerClass, Map config) {
+    public HandlerInfo(Class handlerClass, Map config, QName[] headers) {
         this.handlerClass = handlerClass;
         this.config = config;
+        this.headers = headers;
     }
 
     /**
@@ -119,9 +125,26 @@ public class HandlerInfo implements Serializable {
         return config;
     }
 
+    /**
+     * Set the header blocks.
+     */
+    public void setHeaders(QName[] headers) {
+        this.headers = headers;
+    }
+
+    /**
+     * Get the header blocks.
+     */
+    public QName[] getHeaders() {
+        return headers;
+    }
+
     /** Handler Class */
     private Class handlerClass;
 
     /** Configuration Map */
     private Map config;
+
+    /** headers */
+    private QName[] headers;
 }
