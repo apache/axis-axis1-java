@@ -187,12 +187,6 @@ public abstract class AxisEngine extends BasicHandler
         tmr.setParent(new SOAPTypeMappingRegistry());
         _typeMappingRegistry = tmr;
         
-        /** ??? Why are we doing this??
-         */
-        Handler admin = getServiceRegistry().find("AdminService");
-        if (admin != null && admin instanceof SOAPService)
-          ((SOAPService)admin).setTypeMappingRegistry(tmr);
-
         Debug.Print( 1, "Exit: AxisEngine::init" );
     }
 
