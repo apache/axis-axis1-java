@@ -63,7 +63,7 @@ import java.math.BigInteger;
  */
 public final class BigIntegerHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public BigInteger value;
 
     /**
@@ -80,5 +80,4 @@ public final class BigIntegerHolder implements Holder {
         this.value = value;
     }
 }
-
 

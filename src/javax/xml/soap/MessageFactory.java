@@ -151,8 +151,8 @@ public abstract class MessageFactory {
     public static MessageFactory newInstance() throws SOAPException {
 
         try {
-            return (MessageFactory) FactoryFinder.
-                find(MESSAGE_FACTORY_PROPERTY, DEFAULT_MESSAGE_FACTORY);
+            return (MessageFactory) FactoryFinder.find(MESSAGE_FACTORY_PROPERTY,
+                                                       DEFAULT_MESSAGE_FACTORY);
         } catch (Exception exception) {
             throw new SOAPException(
                 "Unable to create message factory for SOAP: "

@@ -1,3 +1,4 @@
+
 /*
  * The Apache Software License, Version 1.1
  *
@@ -61,7 +62,7 @@ package javax.xml.rpc.holders;
  */
 public final class LongHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public long value;
 
     /**
@@ -78,5 +79,4 @@ public final class LongHolder implements Holder {
         this.value = value;
     }
 }
-
 

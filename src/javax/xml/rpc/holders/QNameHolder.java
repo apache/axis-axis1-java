@@ -63,7 +63,7 @@ import javax.xml.namespace.QName;
  */
 public final class QNameHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public QName value;
 
     /**
@@ -80,5 +80,3 @@ public final class QNameHolder implements Holder {
         this.value = value;
     }
 }
-
-

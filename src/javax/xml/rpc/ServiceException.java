@@ -55,58 +55,76 @@
 package javax.xml.rpc;
 
 /**
- * The javax.xml.rpc.ServiceException is thrown from the core JAX-RPC APIs to
- * indicate exceptions related to Service and ServiceFactory calls.
+ * The <code>javax.xml.rpc.ServiceException</code> is thrown from the
+ * methods in the <code>javax.xml.rpc.Service</code> interface and
+ * <code>ServiceFactory</code> class.
  *
- * @version 0.1
+ *
+ * @version 1.0
  */
 public class ServiceException extends Exception {
 
+    /** Field cause */
     Throwable cause;
-    
+
     /**
-     * Constructs a new exception with null as its detail message. 
+     * Constructs a new exception with <code>null</code> as its
+     * detail message. The cause is not initialized.
      */
     public ServiceException() {}
 
     /**
-     * Constructs a new exception with the specified detail message. 
+     * Constructs a new exception with the specified detail
+     * message.  The cause is not initialized.
      *
-     * @param message exception message
+     * @param message The detail message which is later
+     *            retrieved using the <code>getMessage</code> method
      */
     public ServiceException(String message) {
         super(message);
     }
-    
+
     /**
-     * Constructs a new exception which wraps another exception.
-     * 
-     * @param cause the exception to wrap
-     */ 
-    public ServiceException(Throwable cause) {
-        this.cause = cause;
-    }
-    
-    /**
-     * Contructs a new exception with the specified detail message and
-     * wraps another exception.
-     * 
-     * @param message exception message
-     * @param cause the exception to wrap
-     */ 
+     * Constructs a new exception with the specified detail
+     * message and cause.
+     *
+     * @param message The detail message which is later retrieved
+     *            using the <code>getMessage</code> method
+     * @param cause The cause which is saved for the later
+     *            retrieval throw by the <code>getCause</code>
+     *            method
+     */
     public ServiceException(String message, Throwable cause) {
+
         super(message);
+
         this.cause = cause;
     }
 
     /**
-     * Returns the exception wrapped by this ServiceException
-     * 
-     * @return exception or null if none.
-     */ 
+     * Constructs a new exception with the specified cause
+     * and a detail message of <tt>(cause==null ? null :
+     * cause.toString())</tt> (which typically contains the
+     * class and detail message of <tt>cause</tt>).
+     *
+     * @param cause The cause which is saved for the later
+     *            retrieval throw by the getCause method.
+     *            (A <tt>null</tt> value is permitted, and
+     *            indicates that the cause is nonexistent or
+     *          unknown.)
+     */
+    public ServiceException(Throwable cause) {
+        this.cause = cause;
+    }
+
+    /**
+     * Gets the Linked cause
+     *
+     * @return The cause of this Exception or <code>null</code>
+     *     if the cause is noexistent or unknown
+     */
     public Throwable getLinkedCause() {
         return cause;
     }
 }
-
 

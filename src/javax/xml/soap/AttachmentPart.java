@@ -224,9 +224,9 @@ public abstract class AttachmentPart {
      * the <CODE>Content-Type</CODE>. This depends on the particular
      * set of <CODE>DataContentHandler</CODE> objects in use.
      * @param  object  the Java object that makes up
-          the content for this attachment part
+     * the content for this attachment part
      * @param  contentType the MIME string that
-          specifies the type of the content
+     * specifies the type of the content
      * @throws java.lang.IllegalArgumentException if
      *     the contentType does not match the type of the content
      *     object, or if there was no <CODE>

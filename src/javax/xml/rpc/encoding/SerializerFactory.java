@@ -52,10 +52,8 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.encoding;
 
-import javax.xml.rpc.JAXRPCException;
 import java.util.Iterator;
 
 /**
@@ -86,5 +84,4 @@ public interface SerializerFactory extends java.io.Serializable {
      */
     public Iterator getSupportedMechanismTypes();
 }
-
 

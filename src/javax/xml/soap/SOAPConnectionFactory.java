@@ -67,13 +67,14 @@ public abstract class SOAPConnectionFactory {
      *     SOAPConnectionFactory</CODE> object
      * @throws  SOAPException  if there was an error creating
      *     the <CODE>SOAPConnectionFactory
+     * @throws UnsupportedOperationException
      */
     public static SOAPConnectionFactory newInstance()
             throws SOAPException, UnsupportedOperationException {
 
         try {
-            return (SOAPConnectionFactory) FactoryFinder.
-                find(SF_PROPERTY, DEFAULT_SOAP_CONNECTION_FACTORY);
+            return (SOAPConnectionFactory) FactoryFinder.find(SF_PROPERTY,
+                    DEFAULT_SOAP_CONNECTION_FACTORY);
         } catch (Exception exception) {
             throw new SOAPException("Unable to create SOAP connection factory: "
                                     + exception.getMessage());

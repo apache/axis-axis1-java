@@ -60,6 +60,5 @@ package javax.xml.rpc.holders;
  *
  * @version 1.0
  */
-public interface Holder {
-}
+public interface Holder {}
 

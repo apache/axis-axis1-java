@@ -55,22 +55,42 @@
 package javax.xml.rpc;
 
 /**
-* This class is a type safe enumeration for parameter modes:  in, inout, out.
-*/
-
+ * The <code>javax.xml.rpc.ParameterMode</code> is a type-safe
+ * enumeration for parameter mode. This class is used in the
+ * <code>Call</code>API to specify parameter passing modes.
+ *
+ * @version 1.0
+ */
 public class ParameterMode {
+
+    /** Field mode */
     private final String mode;
 
+    /** Field IN */
     public static final ParameterMode IN = new ParameterMode("IN");
+
+    /** Field INOUT */
     public static final ParameterMode INOUT = new ParameterMode("INOUT");
+
+    /** Field OUT */
     public static final ParameterMode OUT = new ParameterMode("OUT");
 
+    /**
+     * Constructor ParameterMode
+     *
+     * @param mode
+     */
     private ParameterMode(String mode) {
         this.mode = mode;
-    } // ctor
+    }    // ctor
 
+    /**
+     * Method toString
+     *
+     * @return
+     */
     public String toString() {
         return mode;
-    } // toString
-
+    }    // toString
 }
+

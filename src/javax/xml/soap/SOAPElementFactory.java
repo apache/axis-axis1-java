@@ -69,6 +69,11 @@ package javax.xml.soap;
  */
 public class SOAPElementFactory {
 
+    /**
+     * Constructor SOAPElementFactory
+     *
+     * @param soapfactory
+     */
     private SOAPElementFactory(SOAPFactory soapfactory) {
         sf = soapfactory;
     }
@@ -119,8 +124,8 @@ public class SOAPElementFactory {
      *     creating the <CODE>SOAPElement</CODE> object
      * @deprecated Use javax.xml.soap.SOAPFactory for creating SOAPElements.
      */
-    public SOAPElement create(
-            String localName, String prefix, String uri) throws SOAPException {
+    public SOAPElement create(String localName, String prefix, String uri)
+            throws SOAPException {
         return sf.createElement(localName, prefix, uri);
     }
 
@@ -134,13 +139,15 @@ public class SOAPElementFactory {
      * @deprecated
      */
     public static SOAPElementFactory newInstance() throws SOAPException {
+
         try {
             return new SOAPElementFactory(SOAPFactory.newInstance());
         } catch (Exception exception) {
             throw new SOAPException("Unable to create SOAP Element Factory: "
-                    + exception.getMessage());
+                                    + exception.getMessage());
         }
     }
 
+    /** Field sf           */
     private SOAPFactory sf;
 }

@@ -54,8 +54,6 @@
  */
 package javax.xml.soap;
 
-import javax.xml.messaging.Endpoint;
-
 /**
  * <P>A point-to-point connection that a client can use for
  *   sending messages directly to a remote party (represented by a

@@ -52,9 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.encoding;
-
 
 /**
  * The interface <code>javax.xml.rpc.encoding.TypeMappingRegistry</code>
@@ -85,7 +83,6 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      *              the specified <code>encodingStyleURI</code>.
      */
     public TypeMapping register(String encodingStyleURI, TypeMapping mapping);
-
 
     /**
      * Registers the <code>TypeMapping</code> instance that is default
@@ -177,7 +174,5 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      * from this TypeMappingRegistry.
      */
     public void clear();
-
 }
-
 

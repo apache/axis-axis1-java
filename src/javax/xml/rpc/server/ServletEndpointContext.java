@@ -56,7 +56,9 @@ package javax.xml.rpc.server;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+
 import javax.xml.rpc.handler.MessageContext;
+
 import java.security.Principal;
 
 /**
@@ -76,7 +78,6 @@ import java.security.Principal;
  *
  * @version 1.0
  */
-
 public interface ServletEndpointContext {
 
     /**

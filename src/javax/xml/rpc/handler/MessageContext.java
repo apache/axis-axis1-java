@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.handler;
 
 import java.util.Iterator;
@@ -100,6 +99,8 @@ public interface MessageContext {
     /**
      * Removes a property (name-value pair) from the <code>MessageContext</code>
      * @param  name Name of the property to be removed
+     *
+     * @param nae
      * @throws java.lang.IllegalArgumentException if an illegal
      *        property name is specified
      */
@@ -121,3 +122,4 @@ public interface MessageContext {
      */
     public abstract Iterator getPropertyNames();
 }
+

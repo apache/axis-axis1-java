@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.encoding;
 
 import javax.xml.namespace.QName;
@@ -69,75 +68,99 @@ public class XMLType {
      */
     public XMLType() {}
 
+    /** Field XSD_STRING           */
     public static final QName XSD_STRING =
         new QName("http://www.w3.org/2001/XMLSchema", "string");
 
+    /** Field XSD_FLOAT           */
     public static final QName XSD_FLOAT =
         new QName("http://www.w3.org/2001/XMLSchema", "float");
 
+    /** Field XSD_BOOLEAN           */
     public static final QName XSD_BOOLEAN =
         new QName("http://www.w3.org/2001/XMLSchema", "boolean");
 
+    /** Field XSD_DOUBLE           */
     public static final QName XSD_DOUBLE =
         new QName("http://www.w3.org/2001/XMLSchema", "double");
 
+    /** Field XSD_INTEGER           */
     public static final QName XSD_INTEGER =
         new QName("http://www.w3.org/2001/XMLSchema", "integer");
 
+    /** Field XSD_INT           */
     public static final QName XSD_INT =
         new QName("http://www.w3.org/2001/XMLSchema", "int");
 
+    /** Field XSD_LONG           */
     public static final QName XSD_LONG =
         new QName("http://www.w3.org/2001/XMLSchema", "long");
 
+    /** Field XSD_SHORT           */
     public static final QName XSD_SHORT =
         new QName("http://www.w3.org/2001/XMLSchema", "short");
 
+    /** Field XSD_DECIMAL           */
     public static final QName XSD_DECIMAL =
         new QName("http://www.w3.org/2001/XMLSchema", "decimal");
 
+    /** Field XSD_BASE64           */
     public static final QName XSD_BASE64 =
         new QName("http://www.w3.org/2001/XMLSchema", "base64Binary");
 
+    /** Field XSD_HEXBINARY           */
     public static final QName XSD_HEXBINARY =
         new QName("http://www.w3.org/2001/XMLSchema", "hexBinary");
 
+    /** Field XSD_BYTE           */
     public static final QName XSD_BYTE =
         new QName("http://www.w3.org/2001/XMLSchema", "byte");
 
+    /** Field XSD_DATETIME           */
     public static final QName XSD_DATETIME =
         new QName("http://www.w3.org/2001/XMLSchema", "dateTime");
 
+    /** Field XSD_QNAME           */
     public static final QName XSD_QNAME =
         new QName("http://www.w3.org/2001/XMLSchema", "QName");
 
+    /** Field SOAP_STRING           */
     public static final QName SOAP_STRING =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "string");
 
+    /** Field SOAP_BOOLEAN           */
     public static final QName SOAP_BOOLEAN =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean");
 
+    /** Field SOAP_DOUBLE           */
     public static final QName SOAP_DOUBLE =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "double");
 
+    /** Field SOAP_BASE64           */
     public static final QName SOAP_BASE64 =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "base64");
 
+    /** Field SOAP_FLOAT           */
     public static final QName SOAP_FLOAT =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "float");
 
+    /** Field SOAP_INT           */
     public static final QName SOAP_INT =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "int");
 
+    /** Field SOAP_LONG           */
     public static final QName SOAP_LONG =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "long");
 
+    /** Field SOAP_SHORT           */
     public static final QName SOAP_SHORT =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "short");
 
+    /** Field SOAP_BYTE           */
     public static final QName SOAP_BYTE =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "byte");
 
+    /** Field SOAP_ARRAY           */
     public static final QName SOAP_ARRAY =
         new QName("http://schemas.xmlsoap.org/soap/encoding/", "Array");
 }

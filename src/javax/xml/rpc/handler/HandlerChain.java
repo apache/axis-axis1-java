@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.handler;
 
 import java.util.List;
@@ -155,3 +154,4 @@ public interface HandlerChain extends List {
      */
     public java.lang.String[] getRoles();
 }
+

@@ -68,11 +68,24 @@ import java.util.Properties;
  */
 class FactoryFinder {
 
+    /**
+     * Constructor FactoryFinder
+     */
     FactoryFinder() {}
 
-    private static Object newInstance(String factoryClassName,
-                                      ClassLoader classloader)
-        throws SOAPException {
+    /**
+     * Method newInstance
+     *
+     * @param factoryClassName
+     * @param classloader
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
+    private static Object newInstance(
+            String factoryClassName, ClassLoader classloader)
+                throws SOAPException {
 
         try {
             Class factory;
@@ -85,19 +98,28 @@ class FactoryFinder {
 
             return factory.newInstance();
         } catch (ClassNotFoundException classnotfoundexception) {
-            throw new SOAPException("Provider " + factoryClassName +
-                                    " not found",
-                                    classnotfoundexception);
+            throw new SOAPException("Provider " + factoryClassName
+                                    + " not found", classnotfoundexception);
         } catch (Exception exception) {
-            throw new SOAPException("Provider " + factoryClassName +
-                                    " could not be instantiated: " +
-                                    exception,
-                                    exception);
+            throw new SOAPException("Provider " + factoryClassName
+                                    + " could not be instantiated: "
+                                    + exception, exception);
         }
     }
 
-    static Object find(String factoryPropertyName,
-                       String defaultFactoryClassName) throws SOAPException {
+    /**
+     * Method find
+     *
+     * @param factoryPropertyName
+     * @param defaultFactoryClassName
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
+    static Object find(
+            String factoryPropertyName, String defaultFactoryClassName)
+                throws SOAPException {
 
         ClassLoader classloader;
 
@@ -116,19 +138,20 @@ class FactoryFinder {
         } catch (SecurityException securityexception) {}
 
         try {
-            String propertiesFileName = System.getProperty("java.home") +
-                File.separator + "lib" + File.separator + "jaxm.properties";
-            File file = new File(propertiesFileName);
+            String propertiesFileName = System.getProperty("java.home")
+                                        + File.separator + "lib"
+                                        + File.separator + "jaxm.properties";
+            File   file               = new File(propertiesFileName);
 
             if (file.exists()) {
-                FileInputStream fileInput = new FileInputStream(file);
-                Properties properties = new Properties();
+                FileInputStream fileInput  = new FileInputStream(file);
+                Properties      properties = new Properties();
 
                 properties.load(fileInput);
                 fileInput.close();
 
-                String factoryClassName = properties.
-                    getProperty(factoryPropertyName);
+                String factoryClassName =
+                    properties.getProperty(factoryPropertyName);
 
                 return newInstance(factoryClassName, classloader);
             }
@@ -140,31 +163,29 @@ class FactoryFinder {
             java.io.InputStream inputstream = null;
 
             if (classloader == null) {
-                inputstream = ClassLoader.
-                    getSystemResourceAsStream(factoryResource);
+                inputstream =
+                    ClassLoader.getSystemResourceAsStream(factoryResource);
             } else {
                 inputstream = classloader.getResourceAsStream(factoryResource);
             }
 
             if (inputstream != null) {
-                BufferedReader bufferedreader =
+                BufferedReader bufferedreader   =
                     new BufferedReader(new InputStreamReader(inputstream,
-                                                             "UTF-8"));
-                String factoryClassName = bufferedreader.readLine();
+                        "UTF-8"));
+                String         factoryClassName = bufferedreader.readLine();
 
                 bufferedreader.close();
 
-                if ((factoryClassName != null) &&
-                    !"".equals(factoryClassName)) {
+                if ((factoryClassName != null) &&!"".equals(factoryClassName)) {
                     return newInstance(factoryClassName, classloader);
                 }
             }
         } catch (Exception exception2) {}
 
         if (defaultFactoryClassName == null) {
-            throw new SOAPException("Provider for " + factoryPropertyName +
-                                    " cannot be found",
-                                    null);
+            throw new SOAPException("Provider for " + factoryPropertyName
+                                    + " cannot be found", null);
         } else {
             return newInstance(defaultFactoryClassName, classloader);
         }

@@ -52,10 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.encoding;
-
-import javax.xml.rpc.JAXRPCException;
 
 /**
  * The javax.xml.rpc.encoding.DeserializerFactory is a factory of
@@ -85,5 +82,4 @@ public interface DeserializerFactory extends java.io.Serializable {
      */
     public java.util.Iterator getSupportedMechanismTypes();
 }
-
 
