@@ -24,7 +24,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getLength
      */
     public int getLength () {
-	return 0;
+        return 0;
     }
 
 
@@ -37,7 +37,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getURI
      */
     public String getURI (int index) {
-	return null;
+        return null;
     }
 
 
@@ -50,7 +50,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getLocalName
      */
     public String getLocalName (int index) {
-	return null;
+        return null;
     }
 
 
@@ -63,7 +63,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getQName
      */
     public String getQName (int index) {
-	return null;
+        return null;
     }
 
 
@@ -76,7 +76,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getType(int)
      */
     public String getType (int index) {
-	return null;
+        return null;
     }
 
 
@@ -88,7 +88,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getValue(int)
      */
     public String getValue (int index) {
-	return null;
+        return null;
     }
 
 
@@ -106,7 +106,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getIndex(java.lang.String,java.lang.String)
      */
     public int getIndex (String uri, String localName) {
-	return -1;
+        return -1;
     }
 
 
@@ -118,7 +118,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getIndex(java.lang.String)
      */
     public int getIndex (String qName) {
-	return -1;
+        return -1;
     }
 
 
@@ -133,7 +133,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getType(java.lang.String,java.lang.String)
      */
     public String getType (String uri, String localName) {
-	return null;
+        return null;
     }
 
 
@@ -146,7 +146,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getType(java.lang.String)
      */
     public String getType (String qName) {
-	return null;
+        return null;
     }
 
 
@@ -161,7 +161,7 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getValue(java.lang.String,java.lang.String)
      */
     public String getValue (String uri, String localName) {
-	return null;
+        return null;
     }
 
 
@@ -174,6 +174,6 @@ public class NullAttributes implements Attributes {
      * @see org.xml.sax.Attributes#getValue(java.lang.String)
      */
     public String getValue (String qName) {
-	return null;
+        return null;
     }
 }

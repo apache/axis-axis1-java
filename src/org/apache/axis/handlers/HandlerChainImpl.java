@@ -69,19 +69,19 @@ import java.util.List;
 import java.util.Map;
 
 public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler.HandlerChain {
-	
+
     private String[] _roles;
-	
+
     public String[] getRoles() {
-	return _roles;
+        return _roles;
     }
-	
+    
     public void setRoles(String[] roles) {
-	_roles = roles;
+        _roles = roles;
     }
-	
+    
     public void init(Map map) {
-	// DO SOMETHING WITH THIS
+        // DO SOMETHING WITH THIS
     }
 
     protected List handlerInfos = new ArrayList();

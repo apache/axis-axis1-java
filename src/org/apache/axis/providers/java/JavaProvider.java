@@ -268,9 +268,9 @@ public abstract class JavaProvider extends BasicProvider
                 msgContext.setResponseMessage( resMsg );
             }
 
-	    HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) service.getOption(Constants.ATTR_HANDLERINFOCHAIN); 
-	    HandlerChainImpl handlerImpl = null;
-	    if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain(); 
+        HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) service.getOption(Constants.ATTR_HANDLERINFOCHAIN); 
+        HandlerChainImpl handlerImpl = null;
+        if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain(); 
             if (handlerImpl != null) handlerImpl.handleRequest(msgContext);
 
             try {
@@ -288,8 +288,8 @@ public abstract class JavaProvider extends BasicProvider
             }
 
             if ( handlerImpl != null) {
-    	       	handlerImpl.handleResponse(msgContext);
-		        handlerImpl.destroy();
+                handlerImpl.handleResponse(msgContext);
+                handlerImpl.destroy();
             }
 
         }

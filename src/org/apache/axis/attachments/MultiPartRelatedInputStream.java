@@ -419,7 +419,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
     }
 
     /** Field READ_ALL           */
-    protected final static String[] READ_ALL = {
+    protected static final String[] READ_ALL = {
         " * \0 ".intern()};    // Shouldn't never match
 
     /**
@@ -450,7 +450,6 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
      * This will read streams in till the one that is needed is found.
      * @param The id is the stream being sought. 
      *         
-	 *
      * @param id
      *
      * @return

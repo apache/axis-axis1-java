@@ -88,7 +88,6 @@ public abstract class WSDDElement
     /**
      * Create an element in WSDD that wraps an extant DOM element
      * @param e (Element) XXX
-     * @param name (String) XXX
      * @throws WSDDException XXX
      */
     public WSDDElement(Element e)
@@ -100,7 +99,7 @@ public abstract class WSDDElement
     /**
      * Return the element name of a particular subclass.
      */ 
-    abstract protected QName getElementName();
+    protected abstract QName getElementName();
     
     /**
      * Make sure everything looks kosher with the element name.
@@ -164,6 +163,6 @@ public abstract class WSDDElement
     /**
      * Write this element out to a SerializationContext
      */ 
-    abstract public void writeToContext(SerializationContext context)
+    public abstract void writeToContext(SerializationContext context)
         throws IOException;
 }

@@ -391,7 +391,7 @@ public class WSDDDeployment
     }
 
     /**
-	 * Get our global configuration
+     * Get our global configuration
      *
      * @return XXX
      */

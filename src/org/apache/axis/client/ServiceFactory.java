@@ -122,8 +122,9 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
      * name so we find it next time.
      *
      * @param environment
+     * @return a service
      */
-    static public Service getService(Map environment)
+    public static Service getService(Map environment)
     {
         Service service = null;
         InitialContext context = null;

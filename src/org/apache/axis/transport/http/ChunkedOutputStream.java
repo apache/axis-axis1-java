@@ -85,8 +85,9 @@ public class ChunkedOutputStream extends FilterOutputStream {
             
         throws IOException {
         write(b, 0, b.length);
-    }       
-    final static byte[] crlf = "\r\n".getBytes();
+    }
+
+    static final byte[] crlf = "\r\n".getBytes();
 
     public void write(byte[] b,
         int off,

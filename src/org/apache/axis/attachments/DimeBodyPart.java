@@ -114,10 +114,10 @@ public class DimeBodyPart {
     protected DimeTypeNameFormat dtnf = null; 
     protected byte[] type = null; 
     protected byte[] id = null; 
-    final static byte POSITION_FIRST = (byte) 0x04;
-    final static byte POSITION_LAST = (byte) 0x02;
-    private final static byte CHUNK = 0x01; //Means set the chunk bit 
-    private final static byte CHUNK_NEXT = 0x2; //Means this was part of a CHUNK 
+    static final byte POSITION_FIRST = (byte) 0x04;
+    static final  byte POSITION_LAST = (byte) 0x02;
+    private static final byte CHUNK = 0x01; //Means set the chunk bit
+    private static final byte CHUNK_NEXT = 0x2; //Means this was part of a CHUNK
     private static int MAX_TYPE_LENGTH = (1 << 16) - 1;
     private static int MAX_ID_LENGTH = (1 << 16) - 1;
 
@@ -333,7 +333,7 @@ public class DimeBodyPart {
         os.write(pad, 0, dimePadding(length));
     }
 
-    final  static byte CURRENT_OPT_T = (byte) 0; 
+    static final  byte CURRENT_OPT_T = (byte) 0;
 
     protected void sendHeader(java.io.OutputStream os, 
     final byte position,
@@ -396,7 +396,7 @@ public class DimeBodyPart {
         }
     }
 
-    final static int dimePadding(long l) {
+    static final int dimePadding(long l) {
         return (int) ((4L - (l & 0x3L)) & 0x03L);
     }
 

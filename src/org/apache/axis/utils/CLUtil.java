@@ -18,16 +18,16 @@ package org.apache.axis.utils;
  */
 public final class CLUtil
 {
-    private final static int        MAX_DESCRIPTION_COLUMN_LENGTH = 60;
+    private static final int        MAX_DESCRIPTION_COLUMN_LENGTH = 60;
 
     /**
      * Format options into StringBuffer and return. This is typically used to
      * print "Usage" text in response to a "--help" or invalid option.
      *
-     * @param options[] the option descriptors
+     * @param options the option descriptors
      * @return the formatted description/help for options
      */
-    public final static StringBuffer describeOptions( final CLOptionDescriptor[] options )
+    public static final StringBuffer describeOptions( final CLOptionDescriptor[] options )
     {
         final StringBuffer sb = new StringBuffer();
 

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -736,7 +736,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (log.isDebugEnabled()) {
             log.debug("Enter: DeserializationContextImpl::endDocument()");
         }
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) 
             recorder.endDocument();
 
         doneParsing = true;
@@ -765,11 +765,13 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug("Enter: DeserializationContextImpl::startPrefixMapping(" + prefix + ", " + uri + ")");
         }
 
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) {
             recorder.startPrefixMapping(prefix, uri);
+        }
 
-        if (startOfMappingsPos == -1)
+        if (startOfMappingsPos == -1) {
             startOfMappingsPos = getCurrentRecordPos();
+        }
 
         if (prefix != null) {
             namespaces.add(uri, prefix);
@@ -777,8 +779,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             namespaces.add(uri, "");
         }
 
-        if (topHandler != null)
+        if (topHandler != null) {
             topHandler.startPrefixMapping(prefix, uri);
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: DeserializationContextImpl::startPrefixMapping()");
@@ -792,11 +795,13 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug("Enter: DeserializationContextImpl::endPrefixMapping(" + prefix + ")");
         }
 
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) {
             recorder.endPrefixMapping(prefix);
+        }
 
-        if (topHandler != null)
+        if (topHandler != null) {
             topHandler.endPrefixMapping(prefix);
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: DeserializationContextImpl::endPrefixMapping()");
@@ -805,8 +810,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
     public void setDocumentLocator(Locator locator)
     {
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) {
             recorder.setDocumentLocator(locator);
+        }
         this.locator = locator;
     }
 
@@ -815,17 +821,21 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     }
 
     public void characters(char[] p1, int p2, int p3) throws SAXException {
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) {
             recorder.characters(p1, p2, p3);
-        if (topHandler != null)
+        }
+        if (topHandler != null) {
             topHandler.characters(p1, p2, p3);
+        }
     }
 
     public void ignorableWhitespace(char[] p1, int p2, int p3) throws SAXException {
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) {
             recorder.ignorableWhitespace(p1, p2, p3);
-        if (topHandler != null)
+        }
+        if (topHandler != null) {
             topHandler.ignorableWhitespace(p1, p2, p3);
+        }
     }
 
     public void processingInstruction(String p1, String p2) throws SAXException {
@@ -835,8 +845,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     }
 
     public void skippedEntity(String p1) throws SAXException {
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) {
             recorder.skippedEntity(p1);
+        }
         topHandler.skippedEntity(p1);
     }
 
@@ -864,8 +875,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         String prefix = "";
         int idx = qName.indexOf(':');
-        if (idx > 0)
+        if (idx > 0) {
             prefix = qName.substring(0, idx);
+        }
 
         if (topHandler != null) {
             nextHandler = topHandler.onStartChild(namespace,
@@ -887,8 +899,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (!doneParsing && (recorder != null)) {
             recorder.startElement(namespace, localName, qName,
                                   attributes);
-            if (!doneParsing)
+            if (!doneParsing) {
                 curElement.setContentsIndex(recorder.getLength());
+            }
         }
 
         namespaces.push();
@@ -910,8 +923,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug("Enter: DeserializationContextImpl::endElement(" + namespace + ", " + localName + ")");
         }
 
-        if (!doneParsing && (recorder != null))
+        if (!doneParsing && (recorder != null)) {
             recorder.endElement(namespace, localName, qName);
+        }
 
         try {
             SOAPHandler handler = popElementHandler();
@@ -924,18 +938,19 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             }
 
         } finally {
-            if (curElement != null)
+            if (curElement != null) {
                 curElement = (MessageElement)curElement.getParentElement();
+            }
 
             namespaces.pop();
 
-	        if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 String name = curElement != null ?
                         curElement.getClass().getName() + ":" +
                         curElement.getName() : null;
                 log.debug("Popped element stack to " + name);
-    	        log.debug("Exit: DeserializationContextImpl::endElement()");
-        	}
+                log.debug("Exit: DeserializationContextImpl::endElement()");
+            }
         }
     }
 
@@ -951,8 +966,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
          */
         public void addReferencedObject(String id, Object referent)
         {
-            if (idMap == null)
+            if (idMap == null) {
                 idMap = new HashMap();
+            }
 
             idMap.put(id, referent);
         }
@@ -962,8 +978,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
          */
         public Object getReferencedObject(String href)
         {
-            if ((idMap == null) || (href == null))
+            if ((idMap == null) || (href == null)) {
                 return null;
+            }
             return idMap.get(href);
         }
     }
