@@ -45,6 +45,14 @@ Copyright:
   <target name="clean"/>
   <target name="copy"/>
   <target name="compile">
+    <condition property="jms.present" >
+      <available classname="javax.jms.Message" classpathref="classpath" />
+    </condition>
+
+<!-- ===================================================================
+   <echo message="jms.present=${jms.present}" />
+==================================================================== -->
+
     <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath>
         <path refid="classpath"/>
