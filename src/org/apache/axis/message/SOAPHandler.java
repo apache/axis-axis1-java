@@ -74,7 +74,7 @@ public class SOAPHandler extends DefaultHandler
         throws SAXException
     {
         // By default, make a new element
-        if (!context.doneParsing) {
+        if (!context.isDoneParsing()) {
             if (myElement == null)
                 myElement = new MessageElement(namespace, localName,
                                                qName, attributes, context);

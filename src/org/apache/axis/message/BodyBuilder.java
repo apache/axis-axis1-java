@@ -106,7 +106,7 @@ public class BodyBuilder extends SOAPHandler
          * description, which can then tell us what to create.
          */
         boolean isRoot = true;
-        String root = attributes.getValue(Constants.URI_SOAP_ENC,
+        String root = attributes.getValue(Constants.URI_CURRENT_SOAP_ENC,
                                         Constants.ATTR_ROOT);
         if ((root != null) && root.equals("0")) isRoot = false;
 
@@ -147,7 +147,7 @@ public class BodyBuilder extends SOAPHandler
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
             if (element.getFixupDeserializer() != null)
-                handler = element.getFixupDeserializer();
+                handler = (SOAPHandler) element.getFixupDeserializer();
         }
 
         if (handler == null)

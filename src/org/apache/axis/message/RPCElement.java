@@ -115,7 +115,7 @@ public class RPCElement extends SOAPBodyElement
         
         needDeser = false;
         
-        publishToHandler(context);
+        publishToHandler((org.xml.sax.ContentHandler) context);
     }
     
     /** This gets the FIRST param whose name matches.
@@ -167,13 +167,12 @@ public class RPCElement extends SOAPBodyElement
     {
 /*
         if (encodingStyle != null) {
-            QName qn = new QName(Constants.URI_SOAP_ENC,
+            QName qn = new QName(Constants.URI_CURRENT_SOAP_ENC, 
                                  Constants.ATTR_ENCODING_STYLE);
 
             if (attributes == null)
                 attributes = new AttributesImpl();
-
-            attributes.addAttribute(Constants.URI_SOAP_ENC,
+            attributes.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
                                     Constants.ATTR_ENCODING_STYLE,
                                     context.qName2String(qn),
                                     "CDATA",
