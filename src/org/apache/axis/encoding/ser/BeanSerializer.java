@@ -457,15 +457,13 @@ public class BeanSerializer implements Serializer, Serializable {
                 if (readMethod != null &&
                     readMethod.getParameterTypes().length == 0) {
                     // add to our attributes
-                    Object propValue = propertyDescriptor[i].
-                                        getReadMethod().invoke(value,noArgs);
+                    Object propValue = readMethod.invoke(value,noArgs);
                     // If the property value does not exist, don't serialize
                     // the attribute.  In the future, the decision to serializer
                     // the attribute may be more sophisticated.  For example, don't
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
-                        String propString = propValue != null ? propValue.toString() : "";
-
+                        String propString = propValue.toString();
                         String namespace = qname.getNamespaceURI();
                         String localName = qname.getLocalPart();
 
@@ -474,7 +472,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                            context.qName2String(qname),
                                            "CDATA",
                                            propString);
-                    }
+                    } 
                 }
             }
         } catch (Exception e) {

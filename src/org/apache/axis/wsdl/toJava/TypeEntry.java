@@ -318,6 +318,7 @@ public abstract class TypeEntry extends SymTabEntry {
             indent + "Class:         " + this.getClass().getName() + "\n" + 
             indent + "Base?:         " + isBaseType + "\n" + 
             indent + "Undefined?:    " + undefined + "\n" + 
+            indent + "isSimpleType?  " + isSimpleType + "\n" +
             indent + "Node:          " + getNode() + "\n" +
             indent + "Dims:          " + dims + "\n" +
             refString;

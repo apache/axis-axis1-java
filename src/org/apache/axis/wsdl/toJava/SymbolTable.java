@@ -556,47 +556,38 @@ public class SymbolTable {
                 // and element=.
                 createTypeFromDef(node, true, level > SCHEMA_LEVEL);
             }
-            else if (localPart.equals("part") &&
-                     Constants.isWSDL(nodeKind.getNamespaceURI())) {
-
-                // This is a wsdl part.  Create an TypeEntry representing the reference
-                createTypeFromRef(node);
-            }
-            else if (isXSD && localPart.equals("simpleContent")) {
-                // need to mark parent as a simple type
-                Node parent = node.getParentNode();
-                QName parentQName = Utils.getNodeNameQName(parent);
-                TypeEntry te = getTypeEntry(parentQName, false);
-                te.setSimpleType(true);
-            }
             else if (isXSD && localPart.equals("attribute")) {
-                // Create symbol table entry for attribute type
+                // If the attribute has a type/ref attribute, create
+                // a Type representing the referenced type.
+                if (Utils.getAttribute(node, "type") != null) {
+                    createTypeFromRef(node);
+                }
+
+                // Get the symbol table entry and make sure it is a simple 
+                // type
                 QName refQName = Utils.getNodeTypeRefQName(node, "type");
                 if (refQName != null) {
                     TypeEntry refType = getTypeEntry(refQName, false);
-                    if (refType == null) {
-                        // Not defined yet, add one
-                        // TODO: This check is too basic, we need to handle
-                        //       <simpleType> types also.
-                        String baseName = btm.getBaseName(refQName);
-                        if (baseName != null) {
-                            BaseType bt = new BaseType(refQName);
-                            symbolTablePut(bt);
-                        }
-                        else {
-                            throw new IOException(
-                                    JavaUtils.getMessage("AttrNotSimpleType01",
-                                                         refQName.toString()));
-                        }
-                    } else {
-                        // found a type entry, make sure we mark it referenced
-                        // XXX This isn't usefull assumming we only support base
-                        // XXX schema types (int, string), but in the future we
-                        // XXX need to support <simpleTypes> as attributes.
-                        refType.setIsReferenced(true);
+                    if (refType != null &&
+                        refType instanceof Undefined) {
+                        // Don't know what the type is.
+                        // It better be simple so set it as simple
+                        refType.setSimpleType(true);
+                    } else if (refType == null ||
+                               (!(refType instanceof BaseType) &&
+                                !refType.isSimpleType())) {
+                        // Problem if not simple
+                        throw new IOException(
+                                              JavaUtils.getMessage("AttrNotSimpleType01",
+                                                                   refQName.toString()));
                     }
                 }
+            }
+            else if (localPart.equals("part") &&
+                     Constants.isWSDL(nodeKind.getNamespaceURI())) {
                 
+                // This is a wsdl part.  Create an TypeEntry representing the reference
+                createTypeFromRef(node);
             }
         }
 
@@ -697,6 +688,9 @@ public class SymbolTable {
                         defType = new DefinedType(qName, refType, node, dims);
                     }
                     if (defType != null) {
+                        if (simpleQName != null) {
+                            defType.setSimpleType(true);
+                        }
                         symbolTablePut(defType);
                     }
                 }
@@ -707,14 +701,24 @@ public class SymbolTable {
                     if (baseName != null) {
                         symbolTablePut(new BaseType(qName));
                     }
-                    else if (!isElement) {
-                        symbolTablePut(new DefinedType(qName, node));
-                    }
                     else {
-                        // This is an element with an anonymous complex type
-                        // Create the element if it is a global element
-                        if (!belowSchemaLevel) {
-                            symbolTablePut(new DefinedElement(qName, node));
+
+                        // Create a type entry, set whether it should
+                        // be mapped as a simple type, and put it in the 
+                        // symbol table.
+                        TypeEntry te = null;
+                        if (!isElement) {
+                            te = new DefinedType(qName, node);
+                        } else {
+                            if (!belowSchemaLevel) {
+                                te = new DefinedElement(qName, node);
+                            }
+                        }
+                        if (te != null) {
+                            if (SchemaUtils.isSimpleTypeOrSimpleContent(node)) {
+                                te.setSimpleType(true);
+                            }
+                            symbolTablePut(te);
                         }
                     }
                 }
@@ -1589,10 +1593,21 @@ public class SymbolTable {
             }
             if (entry instanceof Type && 
                 get(name, UndefinedType.class) != null) {
+
                 // A undefined type  exists in the symbol table, which means
                 // that the type is used, but we don't yet have a definition for
                 // the type.  Now we DO have a definition for the type, so
                 // replace the existing undefined type with the real type.
+
+                if (((TypeEntry)get(name, UndefinedType.class)).isSimpleType() &&
+                    !((TypeEntry)entry).isSimpleType()) {
+                    // Problem if the undefined type was used in a 
+                    // simple type context.
+                    throw new IOException(
+                                          JavaUtils.getMessage("AttrNotSimpleType01",
+                                                               name.toString()));
+
+                }
                 Vector v = (Vector) symbolTable.get(name);
                 for (int i = 0; i < v.size(); ++i) {
                     Object oldEntry = v.elementAt(i);

@@ -105,7 +105,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
 
         // See if this class extends another class
         String extendsText = "";
-        if (extendType != null) {
+        if (extendType != null && !type.isSimpleType()) {
             extendsText = " extends " + extendType.getName() + " ";
         }
 
