@@ -114,6 +114,7 @@
     </operation>
   </binding>
 
+<!-- don't do this one just yet...
   <binding name="sharedName" type="tns:literalPort">
     <soap:binding
         style="rpc"
@@ -143,6 +144,7 @@
       </output>
     </operation>
   </binding>
+-->
 
   <binding name="anotherNonSharedName" type="tns:sharedName">
     <soap:binding
@@ -182,9 +184,11 @@
     <port name="anotherNonSharedName" binding="tns:anotherNonSharedName">
       <soap:address location="http://localhost:8080/axis/services/anotherNonSharedName"/>
     </port>
+<!-- don't do this just yet...
     <port name="sharedName" binding="tns:sharedName">
       <soap:address location="http://localhost:8080/axis/services/sharedName"/>
     </port>
+-->
   </service>
 
 </definitions>

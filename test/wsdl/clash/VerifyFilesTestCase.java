@@ -82,10 +82,6 @@ public class VerifyFilesTestCase extends FileGenTestCase {
         set.add("NonSharedNameImpl.java");
         set.add("NonSharedNameSkeleton.java");
         set.add("NonSharedNameStub.java");
-        set.add("SharedName_Binding.java");
-        set.add("SharedName_BindingImpl.java");
-        set.add("SharedName_BindingSkeleton.java");
-        set.add("SharedName_BindingStub.java");
         set.add("SharedName_Port.java");
         set.add("SharedName_Service.java");
         set.add("SharedName_ServiceLocator.java");
