@@ -17,12 +17,16 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.Namespaces;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
@@ -105,7 +109,7 @@ public class TypeMappingImpl implements TypeMapping
     protected TypeMapping delegate;   // Pointer to delegate or null
     private ArrayList namespaces;   // Supported namespaces
 
-    protected boolean doAutoTypes = false;
+    protected Boolean doAutoTypes = null;
 
     /**
      * Construct TypeMapping
@@ -560,7 +564,7 @@ public class TypeMappingImpl implements TypeMapping
          * register it's javaType and xmlType. List classes and derivitives
          * can't be used because they should be serialized as an anyType array.
          */
-        if ( doAutoTypes && 
+        if ( shouldDoAutoTypes() && 
              javaType != List.class &&
              !List.class.isAssignableFrom(javaType) &&
              xmlType != null &&
@@ -594,7 +598,7 @@ public class TypeMappingImpl implements TypeMapping
         /* If the class isn't an array or List and auto-typing is turned on,
          * register the class and it's type as beans.
          */
-        if (xmlType == null && doAutoTypes)
+        if (xmlType == null && shouldDoAutoTypes())
         {   
             xmlType = new QName(
                 Namespaces.makeNamespace( javaType.getName() ),
@@ -637,6 +641,23 @@ public class TypeMappingImpl implements TypeMapping
         }
 
         //log.debug("getClassForQName javaType =" + javaType);
+        if(javaType == null && shouldDoAutoTypes()) {
+            String pkg = Namespaces.getPackage(xmlType.getNamespaceURI());
+            if (pkg != null) {
+                String className = xmlType.getLocalPart();
+                if (pkg.length() > 0) {
+                    className = pkg + "." + className;
+                }
+                try {
+                    javaType = ClassUtils.forName(className);
+                    register(javaType,
+                            xmlType,
+                            new BeanSerializerFactory(javaType, xmlType),
+                            new BeanDeserializerFactory(javaType, xmlType));
+                } catch (ClassNotFoundException e) {
+                }
+            }
+        }
         return javaType;
     }
 
@@ -678,7 +699,27 @@ public class TypeMappingImpl implements TypeMapping
     }
 
     public void setDoAutoTypes(boolean doAutoTypes) {
-        this.doAutoTypes = doAutoTypes;
+        this.doAutoTypes = doAutoTypes ? Boolean.TRUE : Boolean.FALSE;
+    }
+    
+    public boolean shouldDoAutoTypes() {
+        if(doAutoTypes != null) {
+            return doAutoTypes.booleanValue();
+        }
+        MessageContext msgContext = MessageContext.getCurrentContext();
+        if(msgContext != null) {
+            if (msgContext.isPropertyTrue("axis.doAutoTypes") ||
+                    JavaUtils.isTrue(msgContext.getAxisEngine().getOption("axis.doAutoTypes"))) {
+                doAutoTypes = Boolean.TRUE;
+            }
+        } 
+        if(doAutoTypes == null){
+            doAutoTypes = AxisProperties.getProperty("axis.doAutoTypes",
+                    "false")
+                    .equals("true") ?
+                    Boolean.TRUE : Boolean.FALSE;
+        }
+        return doAutoTypes.booleanValue();
     }
 
     /**

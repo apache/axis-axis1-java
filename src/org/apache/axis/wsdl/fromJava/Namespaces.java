@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * <p>Description: A HashMap of packageNames and namespaces with some helper methods </p>
@@ -199,6 +201,38 @@ public class Namespaces extends HashMap {
         return makeNamespaceFromPackageName(packageName, protocol);
     }
 
+    /**
+     * Reverse the process. Get the package name from the namespace.
+     * @param namespace
+     * @return
+     */ 
+    public static String getPackage(String namespace) {
+        try {
+            URL url = new URL(namespace);
+            StringTokenizer st = new StringTokenizer(url.getHost(), ".");
+            String[] words = new String[st.countTokens()];
+            for (int i = 0; i < words.length; ++i) {
+                words[i] = st.nextToken();
+            }
+            StringBuffer sb = new StringBuffer(80);
+            for (int i = words.length - 1; i >= 0; --i) {
+                String word = words[i];
+                // seperate with dot
+                if (i != words.length - 1) {
+                    sb.append('.');
+                }
+                sb.append(word);
+            }
+            String pkg = sb.toString();
+            if (pkg.equals("DefaultNamespace")) {
+                return "";
+            }
+            return pkg;
+        } catch (MalformedURLException e) {
+        }
+        return null;
+    }
+    
     /**
      * Method makeNamespaceFromPackageName
      * 
