@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Handler;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -202,13 +203,16 @@ public class SerializationContextImpl implements SerializationContext
         this.writer = writer;
         this.msgContext = msgContext;
 
-        AxisEngine engine = null ;
+        Handler optionSource = null ;
         if ( msgContext != null ) {
+            // optionSource = msgContext.getService();
+            if (optionSource == null)
+                optionSource = msgContext.getAxisEngine();
+
             // Use whatever schema is associated with this MC
             schemaVersion = msgContext.getSchemaVersion();
 
-            engine = msgContext.getAxisEngine();
-            Boolean shouldSendDecl = (Boolean)engine.getOption(
+            Boolean shouldSendDecl = (Boolean)optionSource.getOption(
                                                   AxisEngine.PROP_XML_DECL);
             if (shouldSendDecl != null)
                 sendXMLDecl = shouldSendDecl.booleanValue();
@@ -218,7 +222,7 @@ public class SerializationContextImpl implements SerializationContext
 
             if (shouldSendMultiRefs == null)
                 shouldSendMultiRefs =
-                        (Boolean)engine.getOption(AxisEngine.PROP_DOMULTIREFS);
+                        (Boolean)optionSource.getOption(AxisEngine.PROP_DOMULTIREFS);
 
             if (shouldSendMultiRefs != null)
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
@@ -229,7 +233,7 @@ public class SerializationContextImpl implements SerializationContext
             if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ))
                 sendXSIType = false ;
 
-            Boolean opt = (Boolean)engine.getOption(AxisEngine.PROP_SEND_XSI);
+            Boolean opt = (Boolean)optionSource.getOption(AxisEngine.PROP_SEND_XSI);
             if ((opt != null) && (opt.equals(Boolean.FALSE))) {
                     sendXSIType = false ;
             }
@@ -435,7 +439,7 @@ public class SerializationContextImpl implements SerializationContext
      *  - There is no default namespace
      *  - any attribute in a namespace must have a prefix
      * 
-     * @param QName
+     * @param qName QName
      * @return prefixed qname representation for serialization.
      */
     public String attributeQName2String(QName qName) {
@@ -1051,7 +1055,7 @@ public class SerializationContextImpl implements SerializationContext
 
             SerializerInfo info = null;
 // If the javaType is abstract, try getting a
-            // serializer that matches the value's class. 
+            // serializer that matches the value's class.
             if (javaType != null &&
                 !javaType.isPrimitive() &&
                 !javaType.isArray() &&
@@ -1061,7 +1065,7 @@ public class SerializationContextImpl implements SerializationContext
                 if (info != null) {
                     // Successfully found a serializer for the derived object.
                     // Must serializer the type.
-                    sendType = true;  
+                    sendType = true;
                     xmlType = null;
                 }
             }

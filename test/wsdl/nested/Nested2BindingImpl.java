@@ -6,48 +6,48 @@
  */
 
 package test.wsdl.nested;
-import test.wsdl.nested.holders.PEADDRESSHolder;
 import test.wsdl.nested.holders.RETURNHolder;
+import test.wsdl.nested.holders.PE_ADDRESSHolder;
 
 public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
-    public void nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG, PEADDRESSHolder pEADDRESS, RETURNHolder rETURN) throws java.rmi.RemoteException {
-        PEADDRESS address = new PEADDRESS();
-        address.setFORMOFAD("Company");
-        address.setFIRSTNAME("");
+    public void nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG, PE_ADDRESSHolder pE_ADDRESS, RETURNHolder rETURN) throws java.rmi.RemoteException {
+        PE_ADDRESS address = new PE_ADDRESS();
+        address.setFORM_OF_AD("Company");
+        address.setFIRST_NAME("");
         address.setNAME("Becker Berlin");
-        address.setNAME3("");
-        address.setNAME4("");
-        address.setDATEBIRTH("0000-00-00");
+        address.setNAME_3("");
+        address.setNAME_4("");
+        address.setDATE_BIRTH("0000-00-00");
         address.setSTREET("Calvinstr. 36");
-        address.setPOSTLCODE("13467");
+        address.setPOSTL_CODE("13467");
         address.setCITY("Berlin");
         address.setREGION("");
         address.setCOUNTRY("");
         address.setCOUNTRNISO("");
         address.setCOUNTRAISO("");
         address.setINTERNET("");
-        address.setFAXNUMBER("030-8853-999");
+        address.setFAX_NUMBER("030-8853-999");
         address.setTELEPHONE("030-8853-0");
         address.setTELEPHONE2("");
         address.setLANGU("D");
-        address.setLANGUISO("DE");
+        address.setLANGU_ISO("DE");
         address.setCURRENCY("");
-        address.setCURRENCYISO("");
+        address.setCURRENCY_ISO("");
         address.setCOUNTRYISO("DE");
-        address.setONLYCHANGECOMADDRESS("X");
+        address.setONLY_CHANGE_COMADDRESS("X");
 
         RETURN ret = new RETURN();
         ret.setTYPE("");
         ret.setCODE("");
         ret.setMESSAGE("");
-        ret.setLOGNO("");
-        ret.setLOGMSGNO("123456");
-        ret.setMESSAGEV1("");
-        ret.setMESSAGEV2("");
-        ret.setMESSAGEV3("");
-        ret.setMESSAGEV4("");
+        ret.setLOG_NO("");
+        ret.setLOG_MSG_NO("123456");
+        ret.setMESSAGE_V1("");
+        ret.setMESSAGE_V2("");
+        ret.setMESSAGE_V3("");
+        ret.setMESSAGE_V4("");
 
-        pEADDRESS.value = address;
+        pE_ADDRESS.value = address;
         rETURN.value = ret;
     }
 

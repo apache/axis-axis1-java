@@ -7,12 +7,15 @@
 
 package test.wsdl.wrapped;
 
-public class CityBBBBindingImpl implements CityBBBBinding {
+import test.wsdl.wrapped.City_BBBBinding;
+import test.wsdl.wrapped.Attraction;
+
+public class City_BBBBindingImpl implements City_BBBBinding {
     public static final String OID_STRING = "Attraction@cityCF::1028:1028";
 
     public Attraction getAttraction(String attname) throws java.rmi.RemoteException {
         Attraction attraction = new Attraction();
-        attraction.setOID(OID_STRING);
+        attraction.set_OID(OID_STRING);
         attraction.setFacts("New Orleans at Christmastime is a city with the best food in the world, the best music" +
                             " in the world, international shopping, the French Quarter -- America&apos;s most " +
                             " romantic neighborhood, and the friendliest, most big-hearted people you&apos;d ever " +
