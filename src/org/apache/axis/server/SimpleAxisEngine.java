@@ -115,6 +115,7 @@ public class SimpleAxisEngine extends BasicHandler
 
         /** Make sure later Handlers can get this directly.
         */
+        msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
 
         /** We must have a Target Service to continue.  This tells us which 

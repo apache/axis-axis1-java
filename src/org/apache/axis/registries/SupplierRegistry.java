@@ -116,7 +116,7 @@ public class SupplierRegistry implements HandlerRegistry {
      * Given a 'key' return the corresponding Handler
      */
     public Handler find(String key) {
-        Debug.Print( 2, "Enter: SupplierRegistry::find" );
+        Debug.Print( 2, "Enter: SupplierRegistry::find(" + key + ")" );
         if ( suppliers == null ) {
           Debug.Print( 2, "Exit: SupplierRegistry::find - suppliers is null" );
           return( null );

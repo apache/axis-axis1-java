@@ -104,6 +104,8 @@ public class Admin {
 
   public Document AdminService(MessageContext msgContext, Document xml) {
     Debug.Print( 1, "Enter: Admin:AdminService" );
+    hr = (HandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
+    sr = (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
     process( xml );
     Document doc = new DocumentImpl();
     Element  root = doc.createElement( "Admin" );
@@ -120,7 +122,8 @@ public class Admin {
   public void process(Element root) {
     try {
       init();
-      String  action = root.getTagName();
+      ClassLoader   cl     = new AxisClassLoader();
+      String        action = root.getTagName();
 
       if ( !action.equals("deploy") && !action.equals("undeploy") ) 
         Error( "Root element must be 'deploy' or 'undeploy'" );
@@ -159,18 +162,18 @@ public class Admin {
             Supplier supplier;
 
             if ("factory".equals(lifeCycle)) {
-              supplier = new FactorySupplier(Class.forName(cls), new Hashtable());
+              supplier = new FactorySupplier(cl.loadClass(cls), new Hashtable());
             } else if ("static".equals(lifeCycle)) {
-              supplier = new SimpleSupplier((Handler)Class.forName(cls).newInstance());
+              supplier = new SimpleSupplier((Handler)cl.loadClass(cls).newInstance());
             } else {
               // Default to static for now
-              supplier = new SimpleSupplier((Handler)Class.forName(cls).newInstance());
+              supplier = new SimpleSupplier((Handler)cl.loadClass(cls).newInstance());
             }
             
             ((SupplierRegistry)hr).add(name, supplier);
           } else {
             h = hr.find( name );
-            if ( h == null ) h = (Handler) Class.forName(cls).newInstance();
+            if ( h == null ) h = (Handler) cl.loadClass(cls).newInstance();
             getOptions( elem, h );
             hr.add( name, h );
           }

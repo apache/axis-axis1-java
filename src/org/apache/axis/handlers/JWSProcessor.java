@@ -56,8 +56,9 @@ package org.apache.axis.handlers;
 
 import java.io.* ;
 
-import org.apache.axis.*;
-import org.apache.axis.utils.Debug;
+import org.apache.axis.* ;
+import org.apache.axis.utils.Debug ;
+import org.apache.axis.utils.AxisClassLoader ;
 
 /** 
  * This handler will use the JWSFileName property of the MsgContext to
@@ -132,11 +133,11 @@ public class JWSProcessor extends BasicHandler
 
       /* Load the class */
       /******************/
-      ClassLoader cl = ClassLoader.getSystemClassLoader();
       String clsName = f2.getName();
       clsName = clsName.substring( 0, clsName.length()-4 );
       Debug.Print( 2, "ClsName: " + clsName );
-      Class c = cl.loadClass( clsName );
+
+      (new AxisClassLoader()).registerClass( clsName, cFile );
 
       /* Create a new RPCDispatchHandler - this will be the "service"   */
       /* that we invoke.                                                */
