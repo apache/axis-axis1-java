@@ -77,6 +77,7 @@ import java.lang.reflect.Constructor;
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class BeanSerializer extends Deserializer
     implements Serializer, Serializable
