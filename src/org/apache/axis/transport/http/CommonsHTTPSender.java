@@ -278,9 +278,9 @@ public class CommonsHTTPSender extends BasicHandler {
         if (port == -1) {
             port = 80;          // even for https
         }
-        if (tcp.getProxyHost().length() == 0 ||
-        tcp.getProxyPort().length() == 0 ||
-        hostInNonProxyList) {
+        if (tcp.getProxyHost().length() > 0 &&
+        tcp.getProxyPort().length() > 0 &&
+        !hostInNonProxyList) {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
             if (tcp.getProxyUser().length() != 0) {
