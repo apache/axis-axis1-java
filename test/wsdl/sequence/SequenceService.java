@@ -66,7 +66,8 @@ import java.util.Vector;
 
 /**
  * Sequence test service.  This is a custom built message-style service
- * which confirms that
+ * which confirms that the XML it receives correctly contains ordered
+ * elements &lt;zero&gt; through &lt;five&gt;.
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
@@ -81,7 +82,8 @@ public class SequenceService {
      * This is a message-style service because we're just testing the
      * serialization.
      *
-     * @return
+     * @return a SOAP response in a DOM Element, either boolean true or false,
+     *         indicating the success/failure of the test.
      */
     public Element [] testSequence(Vector elems) {
         Element zero = null;
@@ -131,9 +133,9 @@ public class SequenceService {
     }
 
     /**
-     * Walk an XML tree, looking for a <zero> element
-     * @param start
-     * @return
+     * Walk an XML tree, looking for a &lt;zero&gt; element
+     * @param start the Element to walk down from
+     * @return an Element named &lt;zero&gt; or null
      */
     private Element findTheZero(Element start) {
         if (names[0].equals(start.getLocalName())) {
