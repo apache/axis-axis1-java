@@ -138,6 +138,10 @@ public class SymbolTable {
     private boolean debug = false;
 
     private BaseTypeMapping btm = null;
+
+    // should we attempt to treat document/literal WSDL as "rpc-style"
+    private boolean dotNet = true;
+    
     /**
      * Construct a symbol table with the given Namespaces.
      */
@@ -276,6 +280,20 @@ public class SymbolTable {
      */
     public String getPackage(QName qName) {
         return getPackage(qName.getNamespaceURI());
+    }
+
+    /**
+     * Are we trying to treat document/literal in an "rpc-style" manner.
+     */ 
+    public boolean isDotNet() {
+        return dotNet;
+    }
+
+    /**
+     * Turn on/off .NET strategy for literal soap body's.
+     */ 
+    public void setDotNet(boolean dotNet) {
+        this.dotNet = dotNet;
     }
 
     /**
@@ -543,6 +561,11 @@ public class SymbolTable {
 
                 // This is a wsdl part.  Create an TypeEntry representing the reference
                 createTypeFromRef(node);
+            }
+            else if (nodeKind.getLocalPart().equals("attribute") &&
+                     Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+                // we can no longer do .NET stuff and treat document as rpc style
+                this.dotNet = false;
             }
         }
 
@@ -1002,7 +1025,7 @@ public class SymbolTable {
             QName elementName = part.getElementName();
             QName typeName = part.getTypeName();
             
-            if (!literal) {
+            if (!literal || !dotNet) {
                 // not doing literal use, add this type or element name
                 if (typeName != null) {
                     v.add(getType(typeName));
@@ -1191,6 +1214,14 @@ public class SymbolTable {
         Iterator i = def.getServices().values().iterator();
         while (i.hasNext()) {
             Service service = (Service) i.next();
+
+            // do a bit of name validation
+            if (service.getQName() == null ||
+                service.getQName().getLocalPart() == null || 
+                service.getQName().getLocalPart().equals("")) {
+                throw new IOException(JavaUtils.getMessage("BadServiceName00"));
+            }
+            
             ServiceEntry sEntry = new ServiceEntry(service);
             symbolTablePut(sEntry);
         }
@@ -1260,16 +1291,18 @@ public class SymbolTable {
     private void setTypeReferences(TypeEntry entry, Document doc,
             boolean literal) {
 
-        // If this type is ONLY referenced from a literal usage in a binding,
-        // then isOnlyLiteralReferenced should return true.
-        if (!entry.isReferenced() && literal) {
-            entry.setOnlyLiteralReference(true);
-        }
-        // If this type was previously only referenced as a literal type,
-        // but now it is referenced in a non-literal manner, turn off the
-        // onlyLiteralReference flag.
-        else if (entry.isOnlyLiteralReferenced() && !literal) {
-            entry.setOnlyLiteralReference(false);
+        if (dotNet) {
+            // If this type is ONLY referenced from a literal usage in a binding,
+            // then isOnlyLiteralReferenced should return true.
+            if (!entry.isReferenced() && literal) {
+                entry.setOnlyLiteralReference(true);
+            }
+            // If this type was previously only referenced as a literal type,
+            // but now it is referenced in a non-literal manner, turn off the
+            // onlyLiteralReference flag.
+            else if (entry.isOnlyLiteralReferenced() && !literal) {
+                entry.setOnlyLiteralReference(false);
+            }
         }
 
         // If we don't want to emit stuff from imported files, only set the
