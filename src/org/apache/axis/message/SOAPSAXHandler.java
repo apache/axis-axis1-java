@@ -403,6 +403,9 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     public boolean needsStartElement(Attributes attributes)
         throws SAXException
     {
+        if (elementHandler instanceof ElementRecorder)
+            return true;
+        
         String href = attributes.getValue(Constants.ATTR_HREF);
         if (href != null) {
             if (DEBUG_LOG) {

@@ -88,7 +88,7 @@ public class MessageElement extends DeserializerBase
     
     protected ElementRecorder recorder = null;
     protected DeserializerBase deserializer = null;
-    protected boolean deserializing = true;
+    protected Boolean deserializing = null;
 
     /** No-arg constructor for building messages?
      */
@@ -128,6 +128,19 @@ public class MessageElement extends DeserializerBase
             
         href = attributes.getValue(Constants.ATTR_HREF);
       }
+    }
+    
+    public boolean isDeserializing()
+    {
+        boolean deser;
+        if (deserializing == null) {
+            ServiceDescription s = context.getServiceDescription();
+            deser = ((s == null) || (s.isRPC()));
+            deserializing = new Boolean(deser);
+        } else {
+            deser = deserializing.booleanValue();
+        }
+        return deser;
     }
     
     public boolean getRoot() { return isRoot; }
@@ -189,55 +202,57 @@ public class MessageElement extends DeserializerBase
         if (DEBUG_LOG) {
             System.err.println("Start element in MessageElement.");
         }
-        
-        if (typeQName == null)
-            typeQName = context.getTypeFromAttributes(attributes);
+    
+        if (isDeserializing()) {
+            if (typeQName == null)
+                typeQName = context.getTypeFromAttributes(attributes);
 
-        // !!! This check might not be complete; in the case of
-        //     a multi-ref, we might need to check BOTH the name
-        //     of the element with the href AND the referenced
-        //     one.  Right now this will just check the referenced one.
-        if (typeQName == null) {
-            QName myQName = new QName(namespace, localName);
-            if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
-                typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
-            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
-                typeQName = SOAPTypeMappingRegistry.XSD_INT;
-            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
-                typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
-            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
-                typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
+            // !!! This check might not be complete; in the case of
+            //     a multi-ref, we might need to check BOTH the name
+            //     of the element with the href AND the referenced
+            //     one.  Right now this will just check the referenced one.
+            if (typeQName == null) {
+                QName myQName = new QName(namespace, localName);
+                if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
+                    typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
+                } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
+                    typeQName = SOAPTypeMappingRegistry.XSD_INT;
+                } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
+                    typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
+                } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
+                    typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
+                }
             }
-        }
-        
-        if (typeQName == null) {
-            // No type inline, so check service description.
-            ServiceDescription serviceDesc = context.getServiceDescription();
-            if (serviceDesc != null) {
-                SOAPEnvelope env = getEnvelope();
-                if ( env != null )
-                  setType(serviceDesc.getParamTypeByName(env.getMessageType(),
-                                                             name));
+            
+            if (typeQName == null) {
+                // No type inline, so check service description.
+                ServiceDescription serviceDesc = context.getServiceDescription();
+                if (serviceDesc != null) {
+                    SOAPEnvelope env = getEnvelope();
+                    if (env != null)
+                        setType(serviceDesc.getParamTypeByName(
+                                                 env.getMessageType(), name));
+                }
             }
+
+            /** !!! If we have a service description and this is an
+            * explicitly-typed param, we might want to check here to
+            * see if the xsi:type val is indeed a subtype of the type
+            * we expect from the service description.
+            */
+
+            DeserializerBase dSer = getContentHandler();
+            
+            context.getSAXHandler().replaceElementHandler(dSer);
+            
+            if (dSer != this)
+                dSer.startElement(namespace,localName,qName,attributes);
         }
-        
-        /** !!! If we have a service description and this is an
-        * explicitly-typed param, we might want to check here to
-        * see if the xsi:type val is indeed a subtype of the type
-        * we expect from the service description.
-        */
-        
-        DeserializerBase dSer = getContentHandler();
-        
-        context.getSAXHandler().replaceElementHandler(dSer);
-        
-        if (dSer != this)
-            dSer.startElement(namespace,localName,qName,attributes);
     }
  
     public DeserializerBase getContentHandler()
     {
-        if (deserializing) {
+        if (isDeserializing()) {
             // Look up type and return an appropriate deserializer
             if ((typeQName != null) && (deserializer == null)) {
                 deserializer = context.getDeserializer(typeQName);
