@@ -766,6 +766,19 @@ public class SymbolTable {
                 if (includeName != null) {
                     URL url = getURL(context, includeName);
                     Document includeDoc = XMLUtils.newDocument(url.toString());
+					// Vidyanand : Fix for Bug #15124
+					org.w3c.dom.Element schemaEl = includeDoc.getDocumentElement();
+					if( !schemaEl.hasAttribute( "targetNamespace")){
+						org.w3c.dom.Element parentSchemaEl = (org.w3c.dom.Element) node.getParentNode();
+						if( parentSchemaEl.hasAttribute( "targetNamespace")) {
+							// we need to set two things in here
+							// 1. targetNamespace
+							// 2. setup the xmlns=<targetNamespace> attribute
+							String tns = parentSchemaEl.getAttribute( "targetNamespace");
+							schemaEl.setAttribute( "targetNamespace",tns  );
+							schemaEl.setAttribute( "xmlns", tns);
+						}
+					}
                     populate(url, null, includeDoc, url.toString());
                 }
             }
