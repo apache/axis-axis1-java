@@ -64,7 +64,11 @@ import org.jdom.input.SAXBuilder ;
 import org.jdom.output.XMLOutputter ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
-import org.apache.axis.message.* ;
+import org.apache.axis.message.RPCArg;
+import org.apache.axis.message.RPCBody;
+import org.apache.axis.message.SOAPBody;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.encoding.Base64 ;
 
