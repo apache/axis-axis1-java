@@ -200,7 +200,8 @@ public class AxisServlet extends HttpServlet
         if (context.getAttribute("AxisEngine") == null) {
             String webInfPath = context.getRealPath("/WEB-INF");
 
-            EngineConfiguration config = getEngineConfig(context);
+            EngineConfiguration config =
+                (new ServletEngineConfigurationFactory(context)).getServerEngineConfig();
 
             Map environment = new HashMap();
             environment.put(AxisEngine.ENV_SERVLET_CONTEXT, context);
@@ -489,8 +490,10 @@ public class AxisServlet extends HttpServlet
         ServletContext context = config.getServletContext();
         res.setBufferSize(1024 * 8); //provide performance boost.       
 
-        if (engine == null)
+        if (engine == null) {
+            log.debug("No engine, looking in servlet context");
             engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
+        }
 
         if (engine == null) {
             // !!! should return a SOAP fault...
@@ -684,14 +687,5 @@ public class AxisServlet extends HttpServlet
      */
     protected String getDefaultJWSClassDir() {
         return getWebInfPath() + File.separator +  "jwsClasses";
-    }
-
-    /**
-     * Provided to allow overload of default engine config
-     * by derived class.
-     */
-    protected static EngineConfiguration getEngineConfig(ServletContext context) {
-        return (new ServletEngineConfigurationFactory(context)).
-            getServerEngineConfig();
     }
 }
