@@ -89,6 +89,9 @@ import java.util.Vector;
  */
 public class SymbolTable {
 
+    // used to cache dervied types
+    protected HashMap derivedTypes = new HashMap();
+
     // Should the contents of imported files be added to the symbol table?
 
     /** Field addImports */
@@ -932,12 +935,11 @@ public class SymbolTable {
         }
 
         // Get the kind of node (complexType, wsdl:part, etc.)
-        QName nodeKind = Utils.getNodeQName(node);
+        String localPart = node.getLocalName();
 
-        if (nodeKind != null) {
-            String localPart = nodeKind.getLocalPart();
+        if (localPart != null) {
             boolean isXSD =
-                    Constants.isSchemaXSD(nodeKind.getNamespaceURI());
+                    Constants.isSchemaXSD(node.getNamespaceURI());
 
             if (((isXSD && localPart.equals("complexType"))
                     || localPart.equals("simpleType"))) {
@@ -1039,7 +1041,7 @@ public class SymbolTable {
                     symbolTablePut(type);
                 }
             } else if (localPart.equals("part")
-                    && Constants.isWSDL(nodeKind.getNamespaceURI())) {
+                    && Constants.isWSDL(node.getNamespaceURI())) {
 
                 // This is a wsdl part.  Create an TypeEntry representing the reference
                 createTypeFromRef(node);
@@ -1077,8 +1079,8 @@ public class SymbolTable {
         }
 
         if (level == ABOVE_SCHEMA_LEVEL) {
-            if ((nodeKind != null)
-                    && nodeKind.getLocalPart().equals("schema")) {
+            if ((localPart != null)
+                && localPart.equals("schema")) {
                 level = SCHEMA_LEVEL;
             }
         } else {

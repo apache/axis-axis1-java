@@ -225,17 +225,17 @@ public class Utils {
             Node search = node.getParentNode();
 
             while (search != null) {
-                QName kind = getNodeQName(search);
+                String ln = search.getLocalName();
 
-                if (kind.getLocalPart().equals("schema")) {
+                if (ln.equals("schema")) {
                     search = null;
-                } else if (kind.getLocalPart().equals("element")
-                        || kind.getLocalPart().equals("attribute")) {
+                } else if (ln.equals("element")
+                        || ln.equals("attribute")) {
                     localName = SymbolTable.ANON_TOKEN
                             + getNodeNameQName(search).getLocalPart();
                     search = null;
-                } else if (kind.getLocalPart().equals("complexType")
-                        || kind.getLocalPart().equals("simpleType")) {
+                } else if (ln.equals("complexType")
+                        || ln.equals("simpleType")) {
                     localName = getNodeNameQName(search).getLocalPart()
                             + SymbolTable.ANON_TOKEN + localName;
                     search = null;
@@ -296,13 +296,13 @@ public class Utils {
 
         // If not successful, try using the ref attribute.
         if (qName == null) {
-            QName nodeKind = getNodeQName(node);
+            String localName = node.getLocalName();
 
             // bug 23145: support attributeGroup (Brook Richan)
             // a ref can be for an element or attributeGroup
-            if ((nodeKind != null)
-                    && !(nodeKind.getLocalPart().equals("attributeGroup") ||
-                         nodeKind.getLocalPart().equals("group"))) {
+            if ((localName != null)
+                && !(localName.equals("attributeGroup") ||
+                     localName.equals("group"))) {
                 forElement.value = true;
             }
 
@@ -440,12 +440,12 @@ public class Utils {
                 }
 
                 // Try returning anyType
-                QName nodeName = getNodeQName(node);
-
-                if ((nodeName != null)
-                        && Constants.isSchemaXSD(nodeName.getNamespaceURI())
-                        && (nodeName.getLocalPart().equals("element")
-                        || nodeName.getLocalPart().equals("attribute"))) {
+                String localName = node.getLocalName();
+                
+                if ((localName != null)
+                    && Constants.isSchemaXSD(node.getNamespaceURI())
+                    && (localName.equals("element") || 
+                        localName.equals("attribute"))) {
                     return Constants.XSD_ANYTYPE;
                 }
             }
@@ -508,7 +508,15 @@ public class Utils {
     public static HashSet getDerivedTypes(TypeEntry type,
                                           SymbolTable symbolTable) {
 
-        HashSet types = new HashSet();
+        HashSet types = (HashSet)symbolTable.derivedTypes.get(type);
+
+        if (types != null) {
+            return types;
+        } 
+
+        types = new HashSet();
+
+        symbolTable.derivedTypes.put(type, types);
 
         if ((type != null) && (type.getNode() != null)) {
             getDerivedTypes(type, types, symbolTable);
