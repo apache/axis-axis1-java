@@ -729,6 +729,10 @@ public class Message extends javax.xml.soap.SOAPMessage
      *     object
      */
     public AttachmentPart createAttachmentPart() {
+        if (!isAttachmentSupportEnabled(getMessageContext())) {
+            throw new RuntimeException(Messages.getMessage("noAttachments"));
+        }
+        
         try {
             return (AttachmentPart) mAttachments.createAttachmentPart();
         } catch (AxisFault af){
