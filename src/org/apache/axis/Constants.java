@@ -103,7 +103,7 @@ public class Constants {
     public static final String URI_SOAP11_ENV =
                                 "http://schemas.xmlsoap.org/soap/envelope/" ;
     public static final String URI_SOAP12_ENV =
-                                   "http://www.w3.org/2002/12/soap-envelope";
+                                   "http://www.w3.org/2003/05/soap-envelope";
     public static final String URI_DEFAULT_SOAP_ENV =
         DEFAULT_SOAP_VERSION.getEnvelopeURI();
 
@@ -152,9 +152,9 @@ public class Constants {
     public static final String URI_SOAP11_ENC =
                                 "http://schemas.xmlsoap.org/soap/encoding/" ;
     public static final String URI_SOAP12_ENC =
-                                   "http://www.w3.org/2002/12/soap-encoding";
+                                   "http://www.w3.org/2003/05/soap-encoding";
     public static final String URI_SOAP12_NOENC =
-                     "http://www.w3.org/2002/12/soap-envelope/encoding/none";
+                     "http://www.w3.org/2003/05/soap-envelope/encoding/none";
     public static final String URI_DEFAULT_SOAP_ENC =
         DEFAULT_SOAP_VERSION.getEncodingURI();
 
@@ -275,22 +275,22 @@ public class Constants {
     public static final String URI_SOAP11_NEXT_ACTOR =
                                      "http://schemas.xmlsoap.org/soap/actor/next" ;
     public static final String URI_SOAP12_NEXT_ROLE =
-                                     "http://www.w3.org/2002/12/soap-envelope/role/next";
+                                     "http://www.w3.org/2003/05/soap-envelope/role/next";
     /** @deprecated use URI_SOAP12_NEXT_ROLE */
     public static final String URI_SOAP12_NEXT_ACTOR = URI_SOAP12_NEXT_ROLE;
 
     public static final String URI_SOAP12_RPC =
-                                     "http://www.w3.org/2002/12/soap-rpc";
+                                     "http://www.w3.org/2003/05/soap-rpc";
 
     public static final String URI_SOAP12_NONE_ROLE =
-                         "http://www.w3.org/2002/12/soap-envelope/role/none";
+                         "http://www.w3.org/2003/05/soap-envelope/role/none";
     public static final String URI_SOAP12_ULTIMATE_ROLE =
-             "http://www.w3.org/2002/12/soap-envelope/role/ultimateReceiver";
+             "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver";
 
     public static final String URI_SOAP11_HTTP =
                                      "http://schemas.xmlsoap.org/soap/http";
     public static final String URI_SOAP12_HTTP =
-                                    "http://www.w3.org/2002/12/http";
+                                    "http://www.w3.org/2003/05/http";
 
     public static final String NS_URI_XMLNS =
                                        "http://www.w3.org/2000/xmlns/";
