@@ -130,8 +130,6 @@ public class SOAPHeader extends MessageElement
 
         Vector result = new Vector();
 
-        ArrayList headers = super.getChildren();
-
         for(int i = 0; i < headers.size(); i++) {
             SOAPHeaderElement she = (SOAPHeaderElement)headers.get(i);
             if (she.getMustUnderstand()) {
@@ -145,12 +143,11 @@ public class SOAPHeader extends MessageElement
     }
 
     public Iterator examineAllHeaderElements() {
-        return super.getChildElements();
+        return headers.iterator();
     }
 
     public Iterator extractAllHeaderElements() {
         Vector result = new Vector();
-        ArrayList headers = super.getChildren();
         for(int i = 0; i < headers.size(); i++) {
             result.add(headers.get(i));
         }

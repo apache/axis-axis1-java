@@ -9,6 +9,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 public class TestHeaders extends junit.framework.TestCase {
 
@@ -60,5 +61,47 @@ public class TestHeaders extends junit.framework.TestCase {
         
         String xml = new String(baos.toByteArray());
         assertTrue(xml.indexOf(localName) != -1);
+    }
+    
+    public void testExtractAllHeaders() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage soapMessage = mf.createMessage();
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        SOAPHeader hdr = envelope.getHeader();
+        SOAPHeaderElement she1 = hdr.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
+        she1.setActor("actor-URI");
+
+        Iterator iterator = hdr.extractAllHeaderElements();
+        SOAPHeaderElement she = null;
+        int cnt = 0;
+        while (iterator.hasNext()) {
+            cnt++;
+            she = (SOAPHeaderElement) iterator.next();
+            assertEquals(she, she1);
+        }
+        assertEquals(1, cnt);
+        iterator = hdr.extractAllHeaderElements();
+        assertTrue(!iterator.hasNext());
+    }
+
+    public void testExamineAllHeaders() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage soapMessage = mf.createMessage();
+        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        SOAPHeader hdr = envelope.getHeader();
+        SOAPHeaderElement she1 = hdr.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
+        she1.setActor("actor-URI");
+
+        Iterator iterator = hdr.examineAllHeaderElements();
+        SOAPHeaderElement she = null;
+        int cnt = 0;
+        while (iterator.hasNext()) {
+            cnt++;
+            she = (SOAPHeaderElement) iterator.next();
+            assertEquals(she, she1);
+        }
+        assertEquals(1, cnt);
+        iterator = hdr.examineAllHeaderElements();
+        assertTrue(iterator.hasNext());
     }
 }
