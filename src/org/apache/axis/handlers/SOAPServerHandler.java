@@ -59,9 +59,6 @@ import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
 
-import javax.servlet.* ;
-import javax.servlet.http.* ;
-
 /** 
  * @author Doug Davis (dug@us.ibm.com)
  */
