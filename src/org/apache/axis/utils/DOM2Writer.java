@@ -99,18 +99,33 @@ public class DOM2Writer
     /**
      * Serialize this node into the writer as XML.
      */
-    public static void serializeAsXML(Node node, Writer writer, 
+    public static void serializeAsXML(Node node, Writer writer,
                                       boolean omitXMLDecl)
     {
         PrintWriter out = new PrintWriter(writer);
         if (!omitXMLDecl)
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        print(node, null, out);
+        print(node, null, out, false, 0);
+        out.flush();
+    }
+
+    /**
+     * Serialize this node into the writer as XML.
+     */
+    public static void serializeAsXML(Node node, Writer writer,
+                                      boolean omitXMLDecl,
+                                      boolean pretty)
+    {
+        PrintWriter out = new PrintWriter(writer);
+        if (!omitXMLDecl)
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        print(node, null, out, pretty, 0);
         out.flush();
     }
 
     private static void print(Node node, NSStack namespaceStack,
-                              PrintWriter out)
+                              PrintWriter out, boolean pretty,
+                              int indent)
     {
         if (node == null)
         {
@@ -132,7 +147,8 @@ public class DOM2Writer
 
                     for (int i = 0; i < numChildren; i++)
                     {
-                        print(children.item(i), namespaceStack, out);
+                        print(children.item(i), namespaceStack, out,
+                              pretty, indent);
                     }
                 }
                 break;
@@ -141,6 +157,11 @@ public class DOM2Writer
         case Node.ELEMENT_NODE :
             {
                 namespaceStack = new NSStack(namespaceStack);
+
+                if (pretty) {
+                    for (int i = 0; i < indent; i++)
+                        out.print(' ');
+                }
 
                 out.print('<' + node.getNodeName());
 
@@ -218,11 +239,14 @@ public class DOM2Writer
                     if (hasChildren)
                     {
                         out.print('>');
+                        if (pretty)
+                            out.print(lineSeparator);
                     }
 
                     for (int i = 0; i < numChildren; i++)
                     {
-                        print(children.item(i), namespaceStack, out);
+                        print(children.item(i), namespaceStack, out, pretty,
+                              indent + 1);
                     }
                 }
                 else
@@ -233,6 +257,8 @@ public class DOM2Writer
                 if (!hasChildren)
                 {
                     out.print("/>");
+                    if (pretty)
+                        out.print(lineSeparator);
                 }
                 break;
             }
@@ -264,6 +290,8 @@ public class DOM2Writer
                 out.print("<!--");
                 out.print(node.getNodeValue());
                 out.print("-->");
+                if (pretty)
+                    out.print(lineSeparator);
                 break;
             }
 
@@ -281,15 +309,23 @@ public class DOM2Writer
                 }
 
                 out.println("?>");
+                if (pretty)
+                    out.print(lineSeparator);
                 break;
             }
         }
 
         if (type == Node.ELEMENT_NODE && hasChildren == true)
         {
+            if (pretty) {
+                for (int i = 0; i < indent; i++)
+                    out.print(' ');
+            }
             out.print("</");
             out.print(node.getNodeName());
             out.print('>');
+            if (pretty)
+                out.print(lineSeparator);
             hasChildren = false;
         }
     }
