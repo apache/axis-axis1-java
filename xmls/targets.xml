@@ -213,7 +213,7 @@
     </condition>
 
     <condition property="bsf.present" >
-      <available classname="com.ibm.bsf.BSFManager" classpathref="classpath" />
+      <available classname="org.apache.bsf.BSFManager" classpathref="classpath" />
     </condition>
 
     <condition property="combridge.present" >
