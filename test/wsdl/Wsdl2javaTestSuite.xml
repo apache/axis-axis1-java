@@ -134,6 +134,8 @@
                location="http://localhost:8080/axis/services/RoundtripTest">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </java2wsdl>
+
+ 
     <!-- Delete the intermediate files so we recreate over a clean slate -->
     <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
     <!-- Recreate Java files from the new WSDL -->
@@ -146,7 +148,6 @@
                testcase="no">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </wsdl2java>
-
     <!-- Sequence Test -->
     <!-- Generate Java From WSDL -->
     <wsdl2java url="test/wsdl/sequence/SequenceTest.wsdl"
