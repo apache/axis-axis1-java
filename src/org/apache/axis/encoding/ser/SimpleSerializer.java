@@ -53,38 +53,82 @@
  * <http://www.apache.org/>.
  */
 
-
-package org.apache.axis.encoding;
+package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
+import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
 /**
- * This interface describes the AXIS Serializer.
- * An Axis compliant Serializer must provide one or more 
- * of the following methods:
+ * Serializer for primitives and anything simple whose value is obtained with toString()
  *
- * public <constructor>(Class javaType, QName xmlType)
- * public <constructor>()
- *
- * This will allow for construction of generic factories that introspect the class 
- * to determine how to construct a deserializer.
- * The xmlType, javaType arguments are filled in with the values known by the factory. 
+ * @author Rich Scheuerle <dims@yahoo.com>
  */
-public interface Serializer extends javax.xml.rpc.encoding.Serializer {
-    /**
-     * Serialize an element named name, with the indicated attributes 
-     * and value.  
-     * @param name is the element name
-     * @param attributes are the attributes...serialize is free to add more.
-     * @param value is the value
-     * @param context is the SerializationContext
+public class SimpleSerializer implements Serializer {
+
+    public QName xmlType;
+    public Class javaType;
+    public SimpleSerializer(Class javaType, QName xmlType) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+    }
+    /** 
+     * Serialize a primitive or simple value.
+     * If the object to serialize is a primitive, the Object value below
+     * is the associated java.lang class.  
+     * To determine if the original value is a java.lang class or a primitive, consult
+     * the javaType class.
      */
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
-        throws IOException;
+        throws IOException
+    {
+        if (value != null && value.getClass() == java.lang.Object.class) {
+            throw new IOException(JavaUtils.getMessage("cantSerialize02"));
+        } 
+        context.startElement(name, attributes);
+        if (value != null) {
+            // We could have separate serializers/deserializers to take
+            // care of Float/Double cases, but it makes more sence to 
+            // put them here with the rest of the java lang primitives.
+            if (value instanceof Float ||
+                value instanceof Double) {
+                double data = 0.0;
+                if (value instanceof Float) {
+                    data = ((Float) value).doubleValue();
+                } else {
+                    data = ((Double) value).doubleValue();
+                }
+                if (data == Double.NaN) {
+                    context.writeString("NaN");
+                } else if (data == Double.POSITIVE_INFINITY) {
+                    context.writeString("INF");
+                } else if (data == Double.NEGATIVE_INFINITY) {
+                    context.writeString("-INF");
+                } else {
+                    context.writeString(value.toString());
+                }
+            } else if (value instanceof String) {
+                context.writeString(
+                                    XMLUtils.xmlEncodeString(value.toString()));
+            } else {
+                context.writeString(value.toString());
+            }
+        }
+        context.endElement();
+    }
+    
+    public String getMechanismType() { return Constants.AXIS_SAX; }
 }
-
-

@@ -53,19 +53,56 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
+import java.io.IOException;
+
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.utils.JavaUtils;
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * SerializerFactory for Bean
+ *
+ * @author Rich Scheuerle <scheu@us.ibm.com>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public class BeanSerializerFactory extends BaseSerializerFactory {
+    short format = BeanSerializer.PROPERTY_NAME;
+
+    public BeanSerializerFactory(Class javaType, QName xmlType) {
+        super(BeanSerializer.class, false, xmlType, javaType);  
+        // Sometimes an Enumeration class is registered as a Bean.
+        // If this is the case, silently switch to the EnumSerializer
+        if (JavaUtils.isEnumClass(javaType)) {
+            serClass = EnumSerializer.class;
+        }
+    }
+    // Alternate constructor to set format flag
+    public BeanSerializerFactory(Class javaType, QName xmlType, short format) {
+        super(BeanSerializer.class, false, xmlType, javaType);  
+        // Sometimes an Enumeration class is registered as a Bean.
+        // If this is the case, silently switch to the EnumSerializer
+        if (JavaUtils.isEnumClass(javaType)) {
+            serClass = EnumSerializer.class;
+        }
+        this.format = format;
+    }
+
+    public javax.xml.rpc.encoding.Serializer getSerializerAs(String mechanismType)
+        throws JAXRPCException {
+        Serializer ser = (Serializer) super.getSerializerAs(mechanismType);
+        if (ser != null && ser instanceof BeanSerializer) {
+            ((BeanSerializer)ser).setElementPropertyFormat(format);
+        }
+        return ser;
+    }
 }
-
-

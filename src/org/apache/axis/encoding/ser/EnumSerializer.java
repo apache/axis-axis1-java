@@ -53,19 +53,65 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.InternalException;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.beans.IntrospectionException;
+
 
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * Serializer for a JAX-RPC enum.
+ *
+ * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Sam Ruby <rubys@us.ibm.com>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public class EnumSerializer extends SimpleSerializer implements Serializer {
+
+    private java.lang.reflect.Method toStringMethod = null;
+    public EnumSerializer(Class javaType, QName xmlType) {
+        super(javaType, xmlType);
+    }
+
+    /** 
+     * Serialize an enumeration
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        context.startElement(name, attributes);
+        
+        // Invoke the toString method on the enumeration class and
+        // write out the result as a string.
+        try {
+            if (toStringMethod == null) {
+                toStringMethod = javaType.getMethod("toString", null);
+            }
+            String propValue = (String) toStringMethod.invoke(value, null);
+            context.writeString(propValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException(e.toString());
+        }
+        
+        context.endElement();
+    }
+    
 }
-
-

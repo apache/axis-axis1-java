@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer. 
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
+ *    if any, must include the following acknowledgment:  
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
+ *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,19 +53,21 @@
  * <http://www.apache.org/>.
  */
 
-
 package org.apache.axis.encoding;
 
+import org.xml.sax.SAXException;
+
+
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * A deserializer constructs a value from the xml passed over the wire and
+ * sets a target.  The value is set on the target in a number of ways:
+ * setting a field, calling a method, setting an indexed property.
+ * The Target interface hides the complexity.  The set method is simply
+ * invoked with the value.  A class that implements the Target interface
+ * needs to supply enough information in the constructor to properly do the
+ * set (for example see MethodTarget)
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public interface Target         
+{
+    public void set(Object value) throws SAXException;
 }
-
-

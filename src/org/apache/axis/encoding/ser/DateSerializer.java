@@ -53,19 +53,72 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * Serializer for Dates.
+ *
+ * @author Sam Ruby <rubys@us.ibm.com>
+ * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">XML Schema 3.2.16</a>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public class DateSerializer implements Serializer {
+
+    private static SimpleDateFormat zulu = 
+       new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                         //  0123456789 0 123456789
+
+    private static Calendar calendar = new GregorianCalendar();
+
+    static {
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
+    /** 
+     * Serialize a Date.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        context.startElement(name, attributes);
+        String fdate;
+
+        synchronized (calendar) {
+            calendar.setTime((Date)value);
+            if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
+                context.writeString("-");
+                calendar.setTime((Date)value);
+                calendar.set(Calendar.ERA, GregorianCalendar.AD);
+                value = calendar.getTime();
+            }
+            fdate = zulu.format((Date)value);
+        }
+
+        context.writeString(fdate);
+        context.endElement();
+    }
+    
+    public String getMechanismType() { return Constants.AXIS_SAX; }
 }
-
-

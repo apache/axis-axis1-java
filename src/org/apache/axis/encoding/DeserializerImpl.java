@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer. 
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
+ *    if any, must include the following acknowledgment:  
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
+ *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,70 +53,71 @@
  * <http://www.apache.org/>.
  */
 
-
 package org.apache.axis.encoding;
 
-import java.io.IOException;
-import java.io.Writer;
+import org.apache.axis.Constants;
 
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-
-import org.apache.axis.encoding.Target;
-
-import org.apache.axis.message.IDResolver;
+import org.apache.axis.message.EnvelopeHandler;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
+import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.NSStack;
-import org.apache.axis.message.SOAPEnvelope;
-
-import org.w3c.dom.Element;
-
+import org.apache.axis.utils.JavaUtils;
+import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.SAXParser;
+import org.apache.axis.encoding.Target;
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Stack;
+import javax.xml.rpc.JAXRPCException;
+
+import java.io.StringWriter;
+import java.util.Enumeration;
 import java.util.Vector;
 
-/**
- * This interface describes the AXIS Deserializer. 
- * A compliant implementiation must extend either
- * the AXIS SoapHandler (org.apache.axis.message.SOAPHandler)
- * or the AXIS DeserializerImpl (org.apache.axis.encoding.DeserializerImpl)
+/** The Deserializer base class.
  * 
- * The DeserializerImpl provides a lot of the default behavior including the
- * support for id/href.  So you may want to try extending it as opposed to
- * extending SoapHandler.
- *
- * An Axis compliant Deserializer must provide one or more 
- * of the following methods:
- *
- * public <constructor>(Class javaType, QName xmlType)
- * public <constructor>()
- *
- * This will allow for construction of generic factories that introspect the class 
- * to determine how to construct a deserializer.
- * The xmlType, javaType arguments are filled in with the values known by the factory. 
-g */
-public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callback {
+ * @author Glen Daniels (gdaniels@allaire.com)
+ * Re-architected for JAX-RPC Compliance by
+ * @author Rich Scheuerle (sche@us.ibm.com)
+ */
+
+public class DeserializerImpl extends SOAPHandler implements Deserializer
+{
+    static Category category =
+            Category.getInstance(DeserializerImpl.class.getName());
+
+    protected Object value = null;
+
+    // isEnded is set when the endElement is called
+    protected boolean isEnded = false;
+
+    protected Vector targets = null;
+
+    /** 
+     * JAX-RPC compliant method which returns mechanism type.
+     */
+    public String getMechanismType() {
+        return Constants.AXIS_SAX;
+    }
     
     /** 
      * Get the deserialized value.
      * @return Object representing deserialized value or null
      */
-    public Object getValue();
-
+    public Object getValue()
+    {
+        return value;
+    }
     /** 
      * Set the deserialized value.
      * @param Object representing deserialized value
      */
-    public void setValue(Object value);
+    public void setValue(Object value)
+    {
+        this.value = value;
+    }
 
     /** 
      * If the deserializer has component values (like ArrayDeserializer)
@@ -124,7 +125,10 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * The default implementation returns null.
      * @return Object representing deserialized value or null
      */
-    public Object getValue(Object hint);
+    public Object getValue(Object hint)
+    {
+        return null;  
+    }
 
     /** 
      * If the deserializer has component values (like ArrayDeserializer)
@@ -132,7 +136,9 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * The default implementation does nothing.
      * @param Object representing deserialized value or null
      */
-    public void setValue(Object value, Object hint) throws SAXException;
+    public void setValue(Object value, Object hint) throws SAXException
+    {
+    }
 
     /**
      * For deserializers of non-primitives, the value may not be
@@ -144,15 +150,23 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * value.  See the Target interface for more info.
      * @param Target
      */
-    public void registerValueTarget(Target target);
-
+    public void registerValueTarget(Target target)
+    {
+        if (targets == null)
+            targets = new Vector();
+        
+        targets.addElement(target);
+    }
+    
     /**
      * Get the Value Targets of the Deserializer.
      * @return Vector of Target objects or null
      */
-    public Vector getValueTargets();
-
-   /**
+    public Vector getValueTargets() {
+        return targets;
+    }
+    
+    /**
      * Add someone else's targets to our own (see DeserializationContext)
      *
      * The DeserializationContext only allows one Deserializer to  
@@ -161,8 +175,20 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * to copy the Target objects to the waiting Deserializer.
      * @param other is the Deserializer to copy targets from.
      */
-    public void copyValueTargets(Deserializer other);
-
+    public void copyValueTargets(Deserializer other)
+    {
+        if ((other == null) || (other.getValueTargets() == null))
+            return;
+        
+        if (targets == null)
+            targets = new Vector();
+        
+        Enumeration e = other.getValueTargets().elements();
+        while (e.hasMoreElements()) {
+            targets.addElement(e.nextElement());
+        }
+    }
+    
     /**
      * Some deserializers (ArrayDeserializer) require
      * all of the component values to be known before the
@@ -175,7 +201,9 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * This routine is used to indicate when the components are ready.
      * The default (true) is useful for most Deserializers.
      */
-    public boolean componentsReady();
+    public boolean componentsReady() {
+        return true; 
+    }
 
     /** 
      * The valueComplete() method is invoked when the
@@ -188,13 +216,31 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * specific Deserializer will need to call valueComplete()
      * when your components are ready (See ArrayDeserializer)
      */
-    public void valueComplete() throws SAXException;
-
-
-    /**
-     * The following are the SAX specific methods.
-     * DeserializationImpl provides default behaviour, which
-     * in most cases is appropriate.
+    public void valueComplete() throws SAXException
+    {
+        if (componentsReady()) {            
+            if (targets != null) {
+                Enumeration e = targets.elements();
+                while (e.hasMoreElements()) {
+                    Target target = (Target)e.nextElement();
+                    target.set(value);
+                    if (category.isDebugEnabled()) {
+                        category.debug(JavaUtils.getMessage("setValueInTarget00",
+                                                            "" + value, "" + target));
+                    }
+                }
+            }
+        }
+    }
+    
+    private int startIdx = 0;
+    private int endIdx = -1;
+    protected boolean isHref = false;
+    protected boolean isNil  = false;  // xsd:nil attribute is set to true
+    protected String id = null;  // Set to the id of the element
+    
+    /** 
+     * Subclasses may override these
      */
 
     /**
@@ -226,8 +272,7 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      *      valueComplete method.
      * 
      * So the methods that you potentially want to override are:
-     *   onStartElement, onStartChild, componentsReady, set(object, hint)
-     *
+     *   onStartElement, onStartChild, componentsReady, setValue(object, hint)
      * You probably should not override startElement or endElement.
      * If you need specific behaviour at the end of the element consider overriding
      * onEndElement.
@@ -237,8 +282,70 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
-        throws SAXException;
-       
+        throws SAXException
+    {
+        // If the xsi:nil attribute, set the value to null and return since
+        // there is nothing to deserialize.
+        String nil = Constants.getValue(attributes, Constants.URI_CURRENT_SCHEMA_XSI, "nil");
+        if (nil != null && nil.equals("true")) {
+          value = null;
+          isNil = true;
+          return;
+        }
+
+        // If this element has an id, then associate the value with the id.
+        // (Prior to this association, the MessageElement of the element is
+        // associated with the id. Failure to replace the MessageElement at this
+        // point will cause an infinite loop during deserialization if the 
+        // current element contains child elements that cause an href back to this id.)
+        // Also note that that endElement() method is responsible for the final
+        // assoication of this id with the completed value.
+        id = attributes.getValue("id");
+        if (id != null) {
+            context.addObjectById(id, value);
+            if (category.isDebugEnabled()) {
+                category.debug(JavaUtils.getMessage("deserInitPutValueDebug00", "" + value, id));
+            }     
+        }
+
+        String href = attributes.getValue("href");
+        if (href != null) {
+            isHref = true;
+
+            Object ref = context.getObjectByRef(href);            
+            if (category.isDebugEnabled()) {
+                category.debug(JavaUtils.getMessage(
+                        "gotForID00",
+                        new String[] {"" + ref, href, "" + ref.getClass()}));
+            }
+            
+            if (ref == null) {
+                // Nothing yet... register for later interest.
+                context.registerFixup(href, this);
+            }
+            
+            if (ref instanceof MessageElement) {
+                context.replaceElementHandler(new EnvelopeHandler(this));
+
+                SAX2EventRecorder r = context.getRecorder();
+                context.setRecorder(null);
+                ((MessageElement)ref).publishToHandler((DefaultHandler) context);
+                context.setRecorder(r);
+            } else {
+                // If the ref is not a MessageElement, then it must be an
+                // element that has already been deserialized.  Use it directly.
+                value = ref;
+                valueComplete();
+            }
+            
+            // !!! INSERT DEALING WITH ATTACHMENTS STUFF HERE?
+        } else {
+            isHref = false;
+            onStartElement(namespace, localName, qName, attributes,
+                           context);
+        }
+    }
+
     /**
      * This method is invoked after startElement when the element requires
      * deserialization (i.e. the element is not an href and the value is not nil.)
@@ -246,15 +353,44 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * involves obtaining a correct Deserializer and plugging its handler.
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qname of the element
+     * @param qName is the prefixed qName of the element
      * @param attributes are the attributes on the element...used to get the type
      * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
-        throws SAXException;
-
+        throws SAXException
+    {
+        // If I'm the base class, try replacing myself with an
+        // appropriate deserializer gleaned from type info.
+        if (this.getClass().equals(DeserializerImpl.class)) {
+            QName type = context.getTypeFromAttributes(namespace,
+                                                       localName,
+                                                       attributes);
+            
+            if (category.isDebugEnabled()) {
+                category.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
+            }
+            
+            // We know we're deserializing, but we don't have
+            // a specific deserializer.  So create one using the
+            // attribute type qname.
+            if (type != null) {
+                Deserializer dser = context.getDeserializerForType(type);
+                if (dser != null) {
+                    dser.copyValueTargets(this);
+                    context.replaceElementHandler((org.apache.axis.message.SOAPHandler) dser);
+                    // And don't forget to give it the start event...
+                    dser.startElement(namespace, localName, qName,
+                                      attributes, context);
+                }
+            } else {
+                startIdx = context.getCurrentRecordPos();
+            }
+        }
+    }
+    
     /**
      * onStartChild is called on each child element.
      * The default behavior supplied by DeserializationImpl is to do nothing.
@@ -273,7 +409,12 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
     public SOAPHandler onStartChild(String namespace, String localName,
                              String prefix, Attributes attributes,
                              DeserializationContext context)
-        throws SAXException;
+        throws SAXException
+    {
+        return null;
+    }
+    
+    
 
     /** 
      * endElement is called when the end element tag is reached.
@@ -284,9 +425,33 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * @param localName is the local name of the child element
      * @param context is the deserialization context
      */
-    public void endElement(String namespace, String localName,
+    public final void endElement(String namespace, String localName,
                            DeserializationContext context)
-        throws SAXException;
+        throws SAXException
+    {
+
+        isEnded = true;
+        if (!isHref) {
+            onEndElement(namespace, localName, context);
+        }
+        
+        // Time to call valueComplete to copy the value to 
+        // the targets.  First a call is made to componentsReady
+        // to ensure that all components are ready.
+
+        if (componentsReady())
+            valueComplete();
+
+        // If this element has an id, then associate the value with the id.
+        // Subsequent hrefs to the id will obtain the value directly.
+        // This is necessary for proper multi-reference deserialization.
+        if (id != null) {
+            context.addObjectById(id, value);
+            if (category.isDebugEnabled()) {
+                category.debug(JavaUtils.getMessage("deserPutValueDebug00", "" + value, id));
+            }     
+        }
+    }
 
    /**
      * onEndElement is called by endElement.  It is not called
@@ -297,8 +462,30 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      */
     public void onEndElement(String namespace, String localName,
                            DeserializationContext context)
-        throws SAXException;
-
+        throws SAXException
+    {
+        // If we only have SAX events, but someone really wanted a
+        // value, try sending them the contents of this element
+        // as a String...
+        // ??? Is this the right thing to do here?
+        
+        if (this.getClass().equals(DeserializerImpl.class) &&
+            targets != null &&
+            !targets.isEmpty()) {
+            endIdx = context.getCurrentRecordPos();
+            
+            StringWriter writer = new StringWriter();
+            SerializationContextImpl serContext = 
+                        new SerializationContextImpl(writer,
+                                                 context.getMessageContext());
+            serContext.setSendDecl(false);
+            
+            SAXOutputter so = null;
+            so = new SAXOutputter(serContext);
+            context.getCurElement().publishContents(so);
+            
+            value = writer.getBuffer().toString();
+        }
+    }
+    
 }
-
-

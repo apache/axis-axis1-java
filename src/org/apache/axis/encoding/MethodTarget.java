@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer. 
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
+ *    if any, must include the following acknowledgment:  
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
+ *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,19 +53,40 @@
  * <http://www.apache.org/>.
  */
 
-
 package org.apache.axis.encoding;
 
-/**
- * This interface describes the AXIS TypeMappingRegistry.
- */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+import org.xml.sax.SAXException;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import org.apache.axis.encoding.Target;
+
+// Target is set via a method call.  The set method places the value in the field.
+public class MethodTarget implements Target {
+    private Object targetObject;
+    private Method targetMethod;
+    private static final Class [] objArg = new Class [] { Object.class };
+    
+    public MethodTarget(Object targetObject, String methodName)
+        throws NoSuchMethodException
+    {
+        this.targetObject = targetObject;
+        Class cls = targetObject.getClass();
+        targetMethod = cls.getMethod(methodName, objArg);
+    }
+    
+    public void set(Object value) throws SAXException {
+        try {
+            targetMethod.invoke(targetObject, new Object [] { value });
+        } catch (IllegalAccessException accEx) {
+            accEx.printStackTrace();
+            throw new SAXException(accEx);
+        } catch (IllegalArgumentException argEx) {
+            argEx.printStackTrace();
+            throw new SAXException(argEx);
+        } catch (InvocationTargetException targetEx) {
+            targetEx.printStackTrace();
+            throw new SAXException(targetEx);
+        }
+    }
 }
-
-

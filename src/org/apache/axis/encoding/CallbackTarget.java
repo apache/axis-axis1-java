@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer. 
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
+ *    if any, must include the following acknowledgment:  
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
+ *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,19 +53,26 @@
  * <http://www.apache.org/>.
  */
 
-
 package org.apache.axis.encoding;
 
-/**
- * This interface describes the AXIS TypeMappingRegistry.
- */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+import org.xml.sax.SAXException;
+import org.apache.axis.encoding.Deserializer;
+
+// Target is a Callback.  The set method invokes one of the setValue methods
+// of the callback using the hing.  The CallbackTarget
+// is used in situations when the Deserializer is expecting multiple values and cannot
+// be considered complete until all values are received.
+// (example is an ArrayDeserializer).
+public class CallbackTarget implements Target {
+    public Callback target;
+    public Object hint;
+    public CallbackTarget(Callback target, Object hint)
+    {
+        this.target = target;
+        this.hint = hint;
+    }
+    
+    public void set(Object value) throws SAXException {
+        target.setValue(value, hint);
+    }
 }
-
-

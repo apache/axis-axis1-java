@@ -53,38 +53,88 @@
  * <http://www.apache.org/>.
  */
 
-
-package org.apache.axis.encoding;
+package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.utils.JavaUtils;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.log4j.Category;
+
 /**
- * This interface describes the AXIS Serializer.
- * An Axis compliant Serializer must provide one or more 
- * of the following methods:
- *
- * public <constructor>(Class javaType, QName xmlType)
- * public <constructor>()
- *
- * This will allow for construction of generic factories that introspect the class 
- * to determine how to construct a deserializer.
- * The xmlType, javaType arguments are filled in with the values known by the factory. 
+ * A <code>MapSerializer</code> is be used to serialize and
+ * deserialize Maps using the <code>SOAP-ENC</code>
+ * encoding style.<p>
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
+ * Modified by @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public interface Serializer extends javax.xml.rpc.encoding.Serializer {
-    /**
-     * Serialize an element named name, with the indicated attributes 
-     * and value.  
-     * @param name is the element name
-     * @param attributes are the attributes...serialize is free to add more.
-     * @param value is the value
-     * @param context is the SerializationContext
+
+public class MapSerializer implements Serializer {
+
+    static Category category =
+            Category.getInstance(MapSerializer.class.getName());
+
+    // QNames we deal with
+    private static final QName QNAME_KEY = new QName("","key");
+    private static final QName QNAME_ITEM = new QName("", "item");
+    private static final QName QNAME_VALUE = new QName("", "value");
+
+    /** Serialize a Map
+     * 
+     * Walk the collection of keys, serializing each key/value pair
+     * inside an <item> element.
+     * 
+     * @param name the desired QName for the element
+     * @param attributes the desired attributes for the element
+     * @param value the Object to serialize
+     * @param context the SerializationContext in which to do all this
+     * @exception IOException
      */
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
-        throws IOException;
+        throws IOException
+    {
+        if (!(value instanceof Map))
+            throw new IOException(
+                JavaUtils.getMessage("noMap00", "MapSerializer", value.getClass().getName()));
+        
+        Map map = (Map)value;
+        
+        context.startElement(name, attributes);
+
+        for (Iterator i = map.keySet().iterator(); i.hasNext(); )
+        {
+            Object key = i.next();
+            Object val = map.get(key);
+
+            context.startElement(QNAME_ITEM, null);
+
+            context.serialize(QNAME_KEY,   null, key, (key!=null ? key.getClass(): null) );
+            context.serialize(QNAME_VALUE, null, val, (val!=null ? val.getClass(): null));
+
+            context.endElement();
+        }
+
+        context.endElement();
+    }
+    
+    public String getMechanismType() { return Constants.AXIS_SAX; }
 }
-
-

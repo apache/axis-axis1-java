@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,27 +53,24 @@
  * <http://www.apache.org/>.
  */
 
+
 package org.apache.axis.encoding;
 
-import java.beans.IntrospectionException;
-
 /**
- * DeserializerFactories produce preconfigured deserializers designed
- * to convert an XML Element into the desired Java Class.
+ * This interface describes the AXIS DeserializerFactory.
+ *
+ * An Axis compliant Serializer Factory must provide one or more 
+ * of the following methods:
+ *
+ * public static create(Class javaType, QName xmlType)
+ * public <constructor>(Class javaType, QName xmlType)
+ * public <constructor>()
+ *
+ * The deployment code will attempt to invoke these methods in the above order.
+ * The xmlType, javaType arguments are filled in with the values supplied during the
+ * deployment registration of the factory.
  */
-public interface DeserializerFactory extends java.io.Serializable {
-
-    /**
-     * Specifify the class to be returned by the deserializer produced
-     * by this factory.
-     * @param cls the desired class
-     * @exception IntrospectionException unable to introspect the desired
-     * class or the class has the wrong type signature for its intended use.
-     */
-    public void setJavaClass(Class cls) throws IntrospectionException;
-
-    /**
-     * Obtain the desired deserializer. 
-     */
-    public Deserializer getDeserializer();
+public interface DeserializerFactory extends javax.xml.rpc.encoding.DeserializerFactory { 
 }
+
+

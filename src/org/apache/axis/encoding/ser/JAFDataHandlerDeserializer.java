@@ -53,38 +53,78 @@
  * <http://www.apache.org/>.
  */
 
-
-package org.apache.axis.encoding;
+package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.Constants;
+import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.attachments.AttachmentUtils;
+import org.apache.log4j.Category;
+
 /**
- * This interface describes the AXIS Serializer.
- * An Axis compliant Serializer must provide one or more 
- * of the following methods:
- *
- * public <constructor>(Class javaType, QName xmlType)
- * public <constructor>()
- *
- * This will allow for construction of generic factories that introspect the class 
- * to determine how to construct a deserializer.
- * The xmlType, javaType arguments are filled in with the values known by the factory. 
+ * JAFDataHandler Serializer
+ * @author Rick Rineholt 
+ * Modified by Rich Scheuerle <scheu@us.ibm.com>
  */
-public interface Serializer extends javax.xml.rpc.encoding.Serializer {
+public class JAFDataHandlerDeserializer extends DeserializerImpl implements Deserializer  {
+
+    static Category category =
+            Category.getInstance(JAFDataHandlerDeserializer.class.getName());
+
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException{
+
+        QName type = context.getTypeFromAttributes(namespace,
+                                                   localName,
+                                                   attributes);
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
+        }
+        
+        String href = attributes.getValue("href");
+        category.debug("href=" + href);
+        if (href != null) {
+            Object ref = context.getObjectByRef(href);
+            try{
+                ref = AttachmentUtils.getActiviationDataHandler((org.apache.axis.Part)ref); 
+            }catch(org.apache.axis.AxisFault e){;}
+            
+            setValue(ref);
+        }
+    }
+
     /**
-     * Serialize an element named name, with the indicated attributes 
-     * and value.  
-     * @param name is the element name
-     * @param attributes are the attributes...serialize is free to add more.
-     * @param value is the value
-     * @param context is the SerializationContext
+     * Deserializer interface called on each child element encountered in
+     * the XML stream.
      */
-    public void serialize(QName name, Attributes attributes,
-                          Object value, SerializationContext context)
-        throws IOException;
+    public SOAPHandler onStartChild(String namespace,
+                                    String localName,
+                                    String prefix,
+                                    Attributes attributes,
+                                    DeserializationContext context)
+        throws SAXException {
+        throw new SAXException( "The element \"" + namespace + ":" + localName + "\" is an attachment"+
+          " with sub elements which is not supported." );
+
+
+    }
 }
-
-

@@ -53,19 +53,36 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.utils.JavaUtils;
 
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * DeserializerFactory for Bean
+ *
+ * @author Rich Scheuerle <scheu@us.ibm.com>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public class BeanDeserializerFactory extends BaseDeserializerFactory {
+    public BeanDeserializerFactory(Class javaType, QName xmlType) {
+        super(BeanDeserializer.class, false, xmlType, javaType);  // Can't share deserializers 
+        
+        // Sometimes an Enumeration class is registered as a Bean.
+        // If this is the case, silently switch to the EnumDeserializer
+        if (JavaUtils.isEnumClass(javaType)) {
+            deserClass = EnumDeserializer.class;
+        }
+    }
 }
-
-

@@ -53,19 +53,45 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Hex;
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * Serializer for hexBinary.
+ *
+ * @author Davanum Srinivas <dims@yahoo.com>
+ * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#hexBinary">XML Schema 3.2.16</a>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public class HexSerializer implements Serializer {
+
+    /** 
+     * Serialize a Hex quantity.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        Hex data = (Hex) value;
+
+        context.startElement(name, attributes);
+        context.writeString(data.toString());
+        context.endElement();
+    }
+    
+    public String getMechanismType() { return Constants.AXIS_SAX; }
 }
-
-
