@@ -54,9 +54,10 @@ Copyright:
     <!-- generate skeletons -->
     <wsdl2java url="${axis.home}/test/wsdl/interop4/groupG/dime/rpc/dime-rpc.wsdl"
                output="${root.dir}/build/work" 
-               skeletonDeploy="no"
+               skeletonDeploy="yes"
                testCase="yes"
-               serverSide="yes">
+               serverSide="yes"
+               timeout="-1">
         <mapping namespace="http://soapinterop.org/attachments/wsdl" package="test.wsdl.interop4.groupG.dime.rpc"/>
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop4.groupG.dime.rpc"/>
         <mapping namespace="http://soapinterop.org/attachments/xsd" package="test.wsdl.interop4.groupG.dime.rpc.xsd"/>
@@ -70,14 +71,12 @@ Copyright:
     </wsdl2java>
 
     <mkdir dir="${build.dest}"/>
-    <!--
-    <copy file="BaseTypesInteropTestsTestCase.java"
-         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
-         overwrite="yes"/>
-    <copy file="InteropTestsBindingImpl.java"
-         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
-         overwrite="yes"/>
-    -->
+    <copy file="${axis.home}/test/wsdl/interop4/groupG/dime/rpc/DimeRPCInteropTestCase.java"
+          todir="${root.dir}/build/work/test/wsdl/interop4/groupG/dime/rpc"
+          overwrite="yes"/>
+    <copy file="${axis.home}/test/wsdl/interop4/groupG/dime/rpc/AttachmentsBindingImpl.java"
+          todir="${root.dir}/build/work/test/wsdl/interop4/groupG/dime/rpc"
+          overwrite="yes"/>
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work"
       destdir="${build.dest}" debug="on">
