@@ -213,6 +213,9 @@ public class XMLUtils {
         }
         saxFactory.setNamespaceAware(namespaceAware);
         saxFactory.setValidating(validating);
+
+        // Discard existing parsers
+        saxParsers.clear();
     }
 
     private static DocumentBuilderFactory getDOMFactory() {
