@@ -116,6 +116,8 @@ public class XMLUtils {
                         break;
             case '<'  : strBuf.append("&lt;");
                         break;
+            case '\r' : strBuf.append("&#xd;");
+                        break;
             case '>'  : strBuf.append("&gt;");
                         break;
             default   : 
