@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT faultListener (#PCDATA)>
+<!ELEMENT java (#PCDATA)>
+<!ATTLIST java
+	class CDATA #REQUIRED
+	static CDATA #IMPLIED
+>
+<!ELEMENT map EMPTY>
+<!ATTLIST map
+	encodingStyle CDATA #REQUIRED
+	qname NMTOKEN #REQUIRED
+	javaType NMTOKEN #REQUIRED
+	java2XMLClassName CDATA #REQUIRED
+	xml2JavaClassName CDATA #REQUIRED
+>
+<!ELEMENT mappings (map*)>
+<!ELEMENT provider ((java | script)?, option*)>
+<!ATTLIST provider
+	type CDATA #REQUIRED
+	scope NMTOKEN #REQUIRED
+	methods NMTOKENS #REQUIRED
+>
+<!ELEMENT script (#PCDATA)>
+<!ATTLIST script
+	language CDATA #REQUIRED
+>
+<!ELEMENT service (provider, faultListener?, mappings?)>
+<!ATTLIST service
+	id CDATA #REQUIRED
+	type NMTOKEN #IMPLIED
+>
+<!ELEMENT option EMPTY>
+<!ATTLIST option
+	key NMTOKEN #REQUIRED
+	value CDATA #REQUIRED
+>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Apache SOAP v2.x Deployment Descriptor Schema -->
+<xsd:schema 	targetNamespace="http://xml.apache.org/xml-soap/deployment" 
+				xmlns:xsd="http://www.w3.org/2000/10/XMLSchema" 
+				xmlns:isd="http://xml.apache.org/xml-soap/deployment" 
+				elementFormDefault="qualified" 
+				attributeFormDefault="unqualified">
+	<xsd:element name="faultListener" type="xsd:string"/>
+	<xsd:element name="java">
+		<xsd:complexType mixed="true">
+			<xsd:attribute name="class" type="xsd:string" use="required"/>
+			<xsd:attribute name="static" type="xsd:boolean" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="map">
+		<xsd:complexType>
+			<xsd:attribute name="encodingStyle" type="xsd:uriReference" use="required"/>
+			<xsd:attribute name="qname" type="xsd:NMTOKEN" use="required"/>
+			<xsd:attribute name="javaType" type="xsd:NMTOKEN" use="required"/>
+			<xsd:attribute name="java2XMLClassName" type="xsd:string" use="required"/>
+			<xsd:attribute name="xml2JavaClassName" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="mappings">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="isd:map" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="provider">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0">
+					<xsd:element ref="isd:java"/>
+					<xsd:element ref="isd:script"/>
+				</xsd:choice>
+				<xsd:element name="option" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:attribute name="key" type="xsd:NMTOKEN" use="required"/>
+						<xsd:attribute name="value" type="xsd:string" use="required"/>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="type" type="xsd:string" use="required"/>
+			<xsd:attribute name="scope" type="xsd:NMTOKEN" use="required"/>
+			<xsd:attribute name="methods" type="xsd:NMTOKENS" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="service">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="isd:provider"/>
+				<xsd:element ref="isd:faultListener" minOccurs="0"/>
+				<xsd:element ref="isd:mappings" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:QName" use="required"/>
+			<xsd:attribute name="type" type="xsd:NMTOKEN" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="script">
+		<xsd:complexType mixed="true">
+			<xsd:attribute name="language" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

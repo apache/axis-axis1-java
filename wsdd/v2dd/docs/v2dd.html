@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<head>
+		<style type="text/css">
+			.textElement { font-family: Arial; font-size: 8pt; color: #800000; }
+			.textAttr { font-family: Arial; font-size: 8pt; color: #FF0000; }
+			.textContents { font-family: Arial; font-size: 8pt; color: #000000; }
+			.textOperator { font-family: Arial; font-size: 8pt; color: #0000FF; }
+			.schemaHeader { font-family: Arial; font-size: 11pt; color: #000000; }
+			.schemaHeader2 { font-family: Arial; font-size: 11pt; font-weight: bold; color: #000000; }
+			.elementHeader { font-family: Arial; font-size: 10pt; color: #000000; }
+			.elementHeader2 { font-family: Arial; font-size: 10pt; font-weight: bold; color: #000000; }
+			.schemaName { font-family: Arial; font-size: 8pt; font-weight: bold; color: #000000; }
+			.schemaSubTitle { font-family: Arial; font-size: 8pt; color: #808080; }
+			.schemaSubData { font-family: Arial; font-size: 8pt; color: #000000; }
+			pre { margin-bottom: 0 }
+			.header { font-family: Arial; font-size: 14pt; }
+		</style>
+	</head>
+	<body>
+	
+		<span class="header">Apache SOAP Version 2.x Deployment Descriptor</span> <br /><br />
+	
+		<span class="schemaHeader">Schema </span>
+		<span class="schemaHeader2">v2dd.xsd</span>
+		<br />
+		<br />
+		<br />
+		<table cellspacing="0" cellpadding="0">
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaSubTitle">targetNamespace:&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaName">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaSubTitle">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+		</table>
+		<table cellspacing="0" cellpadding="0">
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaSubTitle">Elements&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_faultListener_Link014F7158"><span class="schemaName">faultListener</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_java_Link014F6C40"><span class="schemaName">java</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_map_Link014F7040"><span class="schemaName">map</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_mappings_Link01559DE0"><span class="schemaName">mappings</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_provider_Link015840E0"><span class="schemaName">provider</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_script_Link0152DEE8"><span class="schemaName">script</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_service_Link0150FB40"><span class="schemaName">service</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+		</table>
+		<br />
+		<br />
+		<a name="element_faultListener_Link014F7158" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">faultListener</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="v2dd_p1.png" width="97" height="31" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaName">xsd:string</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_service_Link0150FB40"><span class="schemaName">service</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"faultListener</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"/&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_java_Link014F6C40" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">java</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="v2dd_p2.png" width="60" height="31" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_provider_Link015840E0"><span class="schemaName">provider</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_class_Link014DE368" /><span class="schemaSubData">class&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:string&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_static_Link014F4280" /><span class="schemaSubData">static&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:boolean&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"java</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textAttr"> mixed</span><span class="textOperator">=</span><span class="textContents">"true</span><span class="textOperator">"&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"class</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"static</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:boolean</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_map_Link014F7040" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">map</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="v2dd_p3.png" width="60" height="31" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_mappings_Link01559DE0"><span class="schemaName">mappings</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_encodingStyle_Link01520A38" /><span class="schemaSubData">encodingStyle&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:uriReference&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_qname_Link015209B0" /><span class="schemaSubData">qname&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKEN&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_javaType_Link01537880" /><span class="schemaSubData">javaType&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKEN&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_java2XMLClassName_Link01506598" /><span class="schemaSubData">java2XMLClassName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:string&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_xml2JavaClassName_Link0150A878" /><span class="schemaSubData">xml2JavaClassName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:string&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"map</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"encodingStyle</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:uriReference</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"qname</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"javaType</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"java2XMLClassName</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"xml2JavaClassName</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_mappings_Link01559DE0" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">mappings</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01559DE0"><area coords="151,5,211,43" href="#element_map_Link014F7040" /></map><img src="v2dd_p4.png" width="246" height="48" border="0" usemap="#Map01559DE0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_map_Link014F7040"><span class="schemaName">isd:map</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_service_Link0150FB40"><span class="schemaName">service</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"mappings</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"isd:map</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_provider_Link015840E0" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">provider</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map015840E0"><area coords="228,5,285,26" href="#element_java_Link014F6C40" /><area coords="228,38,296,59" href="#element_script_Link0152DEE8" /><area coords="158,71,209,109" href="#element_option_Link014CC3B0" /></map><img src="v2dd_p5.png" width="316" height="114" border="0" usemap="#Map015840E0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_java_Link014F6C40"><span class="schemaName">isd:java</span></a><span class="schemaName"> </span><a href="#element_script_Link0152DEE8"><span class="schemaName">isd:script</span></a><span class="schemaName"> </span><a href="#element_option_Link014CC3B0"><span class="schemaName">option</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_service_Link0150FB40"><span class="schemaName">service</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_type_Link014CBDD8" /><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:string&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_scope_Link0154B078" /><span class="schemaSubData">scope&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKEN&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_methods_Link01506010" /><span class="schemaSubData">methods&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKENS&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"provider</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:choice</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"isd:java</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"isd:script</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:choice</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"option</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"key</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"value</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"type</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"scope</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"methods</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKENS</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_option_Link014CC3B0" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">provider/option</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="v2dd_p6.png" width="61" height="31" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_key_Link01558B10" /><span class="schemaSubData">key&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKEN&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_value_Link01505DF8" /><span class="schemaSubData">value&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:string&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"option</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"key</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"value</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_script_Link0152DEE8" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">script</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="v2dd_p7.png" width="60" height="31" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_provider_Link015840E0"><span class="schemaName">provider</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_language_Link0153DD00" /><span class="schemaSubData">language&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:string&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"script</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textAttr"> mixed</span><span class="textOperator">=</span><span class="textContents">"true</span><span class="textOperator">"&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"language</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:string</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_service_Link0150FB40" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">service</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map0150FB40"><area coords="152,5,240,26" href="#element_provider_Link015840E0" /><area coords="152,38,259,59" href="#element_faultListener_Link014F7158" /><area coords="152,71,248,92" href="#element_mappings_Link01559DE0" /></map><img src="v2dd_p8.png" width="279" height="97" border="0" usemap="#Map0150FB40" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/xml-soap/deployment</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_provider_Link015840E0"><span class="schemaName">isd:provider</span></a><span class="schemaName"> </span><a href="#element_faultListener_Link014F7158"><span class="schemaName">isd:faultListener</span></a><span class="schemaName"> </span><a href="#element_mappings_Link01559DE0"><span class="schemaName">isd:mappings</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_id_Link014679A8" /><span class="schemaSubData">id&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_type_Link015B1510" /><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKEN&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"service</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"isd:provider</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"isd:faultListener</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"isd:mappings</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"id</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"type</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<br />
+		<span class="schemaSubTitle">XML Schema documentation generated with </span>
+		<a href="http://www.xmlspy.com">
+			<span class="schemaName">XML Spy</span>
+		</a>
+		<span class="schemaSubTitle"> Schema Editor </span>
+		<a href="http://www.xmlspy.com">
+			<span class="schemaName">www.xmlspy.com</span>
+		</a>
+	</body>
+</html>
