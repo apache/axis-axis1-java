@@ -189,6 +189,7 @@ Copyright:
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
 
      <!--  Build the new org.apache.axis.tools.ant stuff -->
+     <mkdir dir="${axis.home}/tools/lib" />
      <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" />
      <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" target="test"/>
 
