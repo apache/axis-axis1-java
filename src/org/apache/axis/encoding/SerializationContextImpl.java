@@ -16,6 +16,22 @@
 
 package org.apache.axis.encoding;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Stack;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.holders.QNameHolder;
+import javax.xml.soap.SOAPMessage;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
@@ -23,8 +39,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.description.TypeDesc;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -50,20 +66,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
-
-import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.holders.QNameHolder;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Stack;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
@@ -857,7 +859,17 @@ public class SerializationContextImpl implements SerializationContext
 
         if (startOfDocument && sendXMLDecl) {
             writer.write("<?xml version=\"1.0\" encoding=\"");
-            writer.write(XMLUtils.getEncoding());
+            // The origional logic is very simple
+            // writer.write(XMLUtils.getEncoding());
+            // The following logic is devised to utilize CHARACTER_SET_ENCODING property from SAAJ 1.2.
+            String encoding = null;
+            if (msgContext != null) {
+                encoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+            }
+            if (encoding == null) {
+                encoding = XMLUtils.getEncoding();
+            }
+            writer.write(encoding);
             writer.write("\"?>\n");
             startOfDocument = false;
         }
