@@ -161,7 +161,7 @@ public class JavaStubWriter extends JavaWriter {
         }
 
         pw.println("        }");
-        pw.println("        catch(Exception t) {");
+        pw.println("        catch(java.lang.Exception t) {");
         pw.println("            throw org.apache.axis.AxisFault.makeFault(t);");
         pw.println("        }");
 
@@ -690,7 +690,7 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("            try {");
             pw.println("                " + target +
                        getResponseString(type, source));
-            pw.println("            } catch (Exception e) {");
+            pw.println("            } catch (java.lang.Exception e) {");
             pw.println("                " + target +
                        getResponseString(type, 
                                          "org.apache.axis.utils.JavaUtils.convert(" +
