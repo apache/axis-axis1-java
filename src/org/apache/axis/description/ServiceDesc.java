@@ -57,7 +57,6 @@ package org.apache.axis.description;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.bytecode.ExtractorFactory;
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.wsdl.Skeleton;
 
 import javax.xml.rpc.namespace.QName;
@@ -471,6 +470,7 @@ public class ServiceDesc {
         // avoids future string compares.
         completedNames = null;
     }
+
     /**
      * Fill in a service description by introspecting the implementation
      * class.
