@@ -1990,13 +1990,18 @@ public class Emitter {
      * output documentation element as a Java comment
      */
     private void writeComment(PrintWriter pw, Element element) {
-        // This control how many characters per line
+        // This controls how many characters per line
         final int LINE_LENGTH = 65;
 
         if (element == null)
             return;
 
         String comment = element.getFirstChild().getNodeValue();
+
+        // Strip out stuff that will really mess up our comments
+        comment = comment.replace('\r', ' ');
+        comment = comment.replace('\n', ' ');
+
         if (comment != null) {
             int start = 0;
 
