@@ -2,7 +2,7 @@
   <property name="root.dir" value="../../../.."/>
 
   <path id="test-classpath">
-    <pathelement location="${root.dir}/${build.dest}" />
+    <pathelement location="${build.dest}" />
     <pathelement path="${java.class.path}" />
     <pathelement location="${java.home}/../lib/tools.jar"/>
     <fileset dir="${root.dir}/lib">
@@ -29,8 +29,8 @@
           todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
 
     <!-- compile the skeletons -->
-    <javac srcdir="${root.dir}/${build.dir}/work" 
-      destdir="${root.dir}/${build.dest}" debug="on">
+    <javac srcdir="${build.dir}/work" 
+      destdir="${build.dest}" debug="on">
       <classpath refid="test-classpath" />
       <include name="test/wsdl/interop3/${testname}/*.java" />
     </javac>

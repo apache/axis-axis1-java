@@ -8,7 +8,7 @@
 package test.wsdl.interop3.compound2;
 
 
-public class SoapInteropCompound2BindingImpl implements test.wsdl.interop3.compound2.SoapInteropCompound2Binding {
+public class SoapInteropCompound2BindingImpl implements test.wsdl.interop3.compound2.SoapInteropCompound2PortType {
     public test.wsdl.interop3.compound2.xsd.Employee echoEmployee(test.wsdl.interop3.compound2.xsd.Employee xEmployee) throws java.rmi.RemoteException {
         return xEmployee;
     }
