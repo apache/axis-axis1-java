@@ -643,7 +643,7 @@ public class Admin {
         if ( pivot  != null && pivot.equals("") )  pivot = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        category.info( JavaUtils.getMessage("deployService00", name) );
+        category.info( JavaUtils.getMessage("deployService01", name) );
         String            hName = null ;
         Handler            tmpH = null ;
         StringTokenizer      st = null ;

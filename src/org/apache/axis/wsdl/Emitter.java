@@ -513,7 +513,7 @@ public class Emitter {
                 Map allInputs = inputMsg.getParts();
                 Collection orderedInputs = inputMsg.getOrderedParts(parameterOrder);
                 if (allInputs.size() != orderedInputs.size()) {
-                    throw new IOException(JavaUtils.getMessage("emitFail00"));
+                    throw new IOException(JavaUtils.getMessage("emitFail00", operation.getName()));
                 }
             }
         }

@@ -207,7 +207,7 @@ public class AxisServer extends AxisEngine
                 SimpleTargetedChain transportChain = null;
 
                 if (category.isInfoEnabled())
-                    category.info(JavaUtils.getMessage("transport01", hName));
+                    category.info(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
 
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
@@ -242,7 +242,7 @@ public class AxisServer extends AxisEngine
                     h = msgContext.getServiceHandler();
                     if (h == null)
                         throw new AxisFault("Server.NoService",
-                            JavaUtils.getMessage("noService04",
+                            JavaUtils.getMessage("noService05",
                                     "" + msgContext.getTargetService()),
                             null, null );
                 }
@@ -347,7 +347,7 @@ public class AxisServer extends AxisEngine
                 SimpleTargetedChain transportChain = null;
 
                 if (category.isInfoEnabled())
-                    category.info(JavaUtils.getMessage("transport01", hName));
+                    category.info(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
@@ -383,7 +383,7 @@ public class AxisServer extends AxisEngine
                     }
                     if (h == null)
                         throw new AxisFault("Server.NoService",
-                                JavaUtils.getMessage("noService04",
+                                JavaUtils.getMessage("noService05",
                                         "" + msgContext.getTargetService()),
                                 null, null );
                 }

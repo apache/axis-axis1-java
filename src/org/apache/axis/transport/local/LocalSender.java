@@ -109,7 +109,7 @@ public class LocalSender extends BasicHandler {
         // exercise the serializers.
         String msgStr = clientContext.getRequestMessage().getSOAPPart().getAsString();
 
-        category.debug( JavaUtils.getMessage("sendingXML00"));
+        category.debug( JavaUtils.getMessage("sendingXML00", "LocalSender"));
         category.debug( msgStr);
 
         serverContext.setRequestMessage(new Message(msgStr));

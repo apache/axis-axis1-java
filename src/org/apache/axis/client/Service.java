@@ -264,12 +264,12 @@ public class Service implements javax.xml.rpc.Service {
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPort", "" + portName) );
+            throw new JAXRPCException( JavaUtils.getMessage("noPort00", "" + portName) );
 
         Binding   binding  = port.getBinding();
         PortType  portType = binding.getPortType();
         if ( portType == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPortType", "" + portName) );
+            throw new JAXRPCException( JavaUtils.getMessage("noPortType00", "" + portName) );
 
         org.apache.axis.client.Call call = new org.apache.axis.client.Call(this);
         call.setPortTypeName( portName );

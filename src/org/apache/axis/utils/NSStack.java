@@ -199,7 +199,7 @@ public class NSStack {
             return parent.getNamespaceURI(prefix);
 
         if (category.isDebugEnabled()){
-            category.debug(JavaUtils.getMessage("noPrefix00", prefix));
+            category.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
             dump();
         }
 
