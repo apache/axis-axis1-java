@@ -47,6 +47,15 @@ Contents
 <li>
 <a href="#test">Testing</a>
 </li>
+<li>
+    <a href="#advanced">Advanced Installation</a>
+</li>
+<li>
+    <a href="#broken">What if it doesn't work?</a>
+</li>
+<li>
+    <a href="#summary">Summary</a>
+</li>
 </ul>
 
     <a name="intro"/></a>
@@ -122,7 +131,7 @@ Contents
      until you have enough of a foundation to be able to work with
      Axis. It is also useful to have written a simple web application,
      as this will give you some knowledge of how HTTP works, and how
-     Java applications servers integrate with HTTP.
+     Java application servers integrate with HTTP.
      
      <p>
      
@@ -138,7 +147,9 @@ Contents
      written in arbitrary languages, across the Internet. SOAP usually
      exchanges messages over HTTP: the client POSTs a SOAP request, and
      receives either an HTTP error code or an HTTP success code and a
-     SOAP response. 
+     SOAP response. Open Source means that you get the source, but that
+     there is no formal support organisation to help you when things go
+     wrong. 
      
      <p>
      
@@ -185,45 +196,64 @@ Contents
      servlet container. Axis ships with some sample SOAP services. You
      can add your own by adding new compiled classes to the Axis webapp
      registering them.
+     </p>
      
      <p>
      Before you can do that, you have to install it and get it working.
+     </p>
      
     <a name="webapp"/></a>
-    <h2>Step 1: creating the webapps</h2>
+    
+    <h2>Step 1: Preparing the webapp</h2>
 
-    <p>In your servlet installation, you should find a directory into which web
-    applications ("webapps") are to be placed. Into this directory copy the
-    webapps/axis directory from the xml-axis distribution. You can actually name this
-    directory anything you want, just be aware that the name you choose will
-    form the basis for the URL by which clients will access your service.
-    The rest of this document assumes that the default webapp name,
-    "axis" has been used; rename these references if appropriate.
+    <p>
+    Here we assume that you have a web server up and running on the 
+    localhost, at port 8080. If your server is on a different port,
+    replace references to 8080 to your own port number. 
+    
+    </p>
+    
+    <p>In your Application Server installation, you should find a
+    directory into which web applications ("webapps") are to be placed.
+    Into this directory copy the webapps/axis directory from the
+    xml-axis distribution. You can actually name this directory anything
+    you want, just be aware that the name you choose will form the basis
+    for the URL by which clients will access your service. The rest of
+    this document assumes that the default webapp name, "axis" has been
+    used; rename these references if appropriate.
 
     <a name="depend"/></a>
     <h2>Step 2: setting up the libraries</h2>
 
-    <p>In the axis directory, you will find a WEB-INF sub-directory. 
+    <p>In the Axis directory, you will find a WEB-INF sub-directory. 
     This directory contains some basic configuration information, but
     can also be used to contain the dependencies and web services you wish to
     deploy.</p>
-      <p>In the WEB-INF directory, you'll find a &quot;lib&quot; directory.&nbsp;
-      </p>
-    <ul>
-        <li>In this directory, copy the jars associated with the JAXP 1.1 XML
-          compliant parser of your choice. We recommend xerces jars
-          from the <a href="http://xml.apache.org/dist/xerces-j/">xml-xerces distribution</a>,
-          though others work. If you omit this stage you may be able to
-          use the default XML parser provided by the web application.
-    </ul>
-
+    
+    <p>
+    Axis needs to have an XML parser in its classpath. If your
+    application server or Java runtime does not make one visible to web applications,
+    you need to download and add it. Java1.4 includes the Crimson
+    parser, so you <i>can</i> omit this stage, though the Axis team
+    prefer Xerces.
+    
+    <p>
+    
+    To add an XML parser, acquire theJAXP 1.1 XML compliant parser of
+    your choice. We recommend xerces jars from the <a
+    href="http://xml.apache.org/dist/xerces-j/">xml-xerces
+    distribution</a>, though others mostly work. Unless your JRE or app
+    server has its own specific requirements, you can add the parser's
+    libraries to axis/WEB-INF/lib. 
+    
+    
     <h3>Tomcat 4.x and Java1.4</h3>
       Java 1.4 changed the rules as to to how packages beginning in java.* and
       javax.* get loaded. Specifically, they only get loaded from
       <i>endorsed</i> directories. jaxrpc.jar and saaj.jar contain javax
       packages, so may not get picked up. If happyaxis.jsp 
-      (see below) cannot find the relevant packages, place them in 
-      CATALINA_HOME/common/lib and restart Tomcat. 
+      (see below) cannot find the relevant packages, copy them 
+      from axis/WEB-INF/lib to CATALINA_HOME/common/lib and restart Tomcat. 
     
     <a name="start"/></a>
     <h2>Step 3: starting the web server</h2>
@@ -248,33 +278,50 @@ Contents
     <h3>Validate Axis with happyaxis</h3>
       Follow the link <i>
       Validate the local installation's configuration</i><br>
-      This will bring you to <i>happyaxis.jsp</i> a test page that verifies that needed and
-      optional libraries are present. The URL for this will be something
-      like 
+
+      This will bring you to <i>happyaxis.jsp</i> a test page that
+      verifies that needed and optional libraries are present. The URL
+      for this will be something like
+
       <A
       href="http://localhost:8080/axis/happyaxis.jsp">
       http://localhost:8080/axis/happyaxis.jsp</A>
-      <p>
-      If any of the needed libraries are missing,
-      Axis will not work. <br><b>You must not proceed until all needed libraries
-      can be found, and this validation page is happy.</b> <br>
-      Optional components are optional; install them as your need arises.
-      If you see nothing but an internal server error and an exception
-      trace, then you probably have multiple XML parsers on the
-      classpath, and this is causing version confusion.
 
+      <p>
+      If any of the needed libraries are missing, Axis will not work.
+      <br><b>You must not proceed until all needed libraries can be
+      found, and this validation page is happy.</b> <br> Optional
+      components are optional; install them as your need arises. If you
+      see nothing but an internal server error and an exception trace,
+      then you probably have multiple XML parsers on the classpath, and
+      this is causing version confusion. Eliminate the extra parsers,
+      restart the app server and try again. 
+      </p>
+      
       <h3>Look for some services</h3>
+
+      <p>
+
       From the start page, select <i>View the list of deployed Web services</i>.
       This will list all registered Web Services, unless the servlet is configured
       not to do so. On this page, You should be able to click on <i>(wsdl)</i> for
       each deployed Web service to make sure that your web service is up and running.
-      
+
+      </p>
+      <p>
+      Note that the 'instant' JWS Web Services that Axis supports are
+      not listed in this listing -so when you get to these services, as
+      the user guide will, do not panic when the services are not
+      listed. 
+      </p>            
+     
       <h3>Test a SOAP Endpoint</h3>
+      
       Now it's time to test a service. Although SOAP1.1 uses HTTP POST
       to submit an XML request to the <i>endpoint</i>, Axis also
-      supports HTTP GET access, which is useful for testing. First let's
-      retrieve the version of Axis from the version endpoint, calling the 
-      getVersion method: 
+      supports a crude HTTP GET access mechanism, which is useful for
+      testing. First let's retrieve the version of Axis from the version
+      endpoint, calling the <code>getVersion</code> method:
       
       <a
       href="http://localhost:8080/axis/services/Version?method=getVersion">
@@ -292,13 +339,13 @@ Contents
           soapenv:encodingStyle=&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;&gt;
           &lt;getVersionReturn 
               xsi:type=&quot;xsd:string&quot;&gt;
-              Apache Axis version: 1.0 Built on Nov 04, 2002 (01:30:37 PST)
+              Apache Axis version: 1.1 Built on Apr 04, 2003 (01:30:37 PST)
           &lt;/getVersionReturn&gt; 
       &lt;/getVersionResponse&gt;
       &lt;/soapenv:Body&gt;
   &lt;/soapenv:Envelope&gt;
 </pre>  
-  The Axis version and build date will of course be different. 
+  The Axis version and build date may of course be different. 
 
     <h3>Test a JWS Endpoint</h3>
     
@@ -355,9 +402,18 @@ change URLs to correct host, port and webapp specifics.
      new service into the axis WAR directory tree, (2) tell the AxisEngine about 
      the new file. The latter is done by submitting an XML deployment descriptor
      to the service via the Admin web service, which is usually done with the 
-     AdminClient program or the &lt;axis-admin&gt; Ant task
-        
-        
+     AdminClient program or the &lt;axis-admin&gt; Ant task. Both of
+     these do the same thing: run the Axis SOAP client to talk to the
+     Axis adminstration service, which is of course a SOAP service in
+     its own right. It's a special SOAP service in one regard -to stop
+     random people from administrating your service it is restricted to
+     local callers only (not remote access) and is password protected.
+     There is a default password that the client knows; if you change it
+     then you need to pass the new password to the client.
+     </p>
+     <p> 
+     The first step is to add your code to the server.
+
       <p>In the WEB-INF directory, look for (or create) a &quot;classes&quot;
         directory (i.e. axis/WEB-INF/classes ). In this directory, copy the
         compiled Java classes you wish to install, being careful to 
@@ -380,7 +436,7 @@ change URLs to correct host, port and webapp specifics.
         the corresponding perms.lst and users.lst files into the WEB-INF directory.</p>
 
     <a name="deploy"/></a>
-    <h2>Step 6: deploying your own web services</h2>
+    <h2>Step 6: deploying your Web Service</h2>
     </table>
 
     <p>The various classes and JARs you have just set up implement your
@@ -390,34 +446,110 @@ change URLs to correct host, port and webapp specifics.
     describes in XML what the service is, what methods it exports and
     other aspects of the SOAP endpoint.
     <p>
-    The users guide covers these WSDD files; here we are going to use one from
-    the Axis samples; the stock quote service. 
-    <ul>
-        <li>Add axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar, saaj.jar,
+    
+    The users guide and reference guide cover these WSDD files; here we
+    are going to use one from the Axis samples; the stock quote service.
+    
+    <h3>Classpath setup</h3>
+    
+    Add axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar, saaj.jar,
           log4j-1.2.8.jar (or whatever is appropriate for your chosen logging implementation),
           and the XML parser jar file or files (e.g., xerces.jar) to your classpath.
-        <li>Look in axis/samples/stock for the file deploy.wsdd. This is the deployment 
-        descriptor we want to tell Axis about. 
+
+    On windows, this is something like the following, though of course
+    to fix it across the system in WinNT systems it is done through
+    dialog boxes:          
+<pre class="xml">
+    set AXIS_HOME=c:\tomcat\webapps\axis
+    set AXISLIB=%AXIS_HOME%\lib
+    set AXISCLASSPATH=%AXISLIB%\axis.jar;%AXISLIB%\commons-discovery.jar;
+          %AXISLIB%\commons-logging.jar;%AXISLIB%\jaxrpc.jar;%AXISLIB%\saaj.jar;
+          %AXISLIB%\log4j-1.2.8.jar;%AXISLIB%\xml-apis.jar;%AXISLIB%\xercesImpl.jar
+</pre>          
+    Unix users have to do something similar:
+<pre class="xml">
+    set AXIS_HOME=/usr/tomcat/webapps/axis
+    set AXISLIB=$AXIS_HOME/lib
+    set AXISCLASSPATH=$AXISLIB/axis.jar:$AXISLIB/commons-discovery.jar:
+          $AXISLIB/commons-logging.jar:$AXISLIB/jaxrpc.jar:$AXISLIB/saaj.jar:
+          $AXISLIB/log4j-1.2.8.jar:$AXISLIB/xml-apis.jar:$AXISLIB/xercesImpl.jar
+    export AXIS_HOME; export AXIS_LIB; export AXISCLASSPATH
+</pre>          
+
+      To use Axis client code, you can select the Axis classpath when invoking 
+      Java by going
+      
+      <pre class="xml">java -cp "%AXISCLASSPATH%" ...</pre>
+      or 
+      <pre class="xml">java -cp "$AXISCLASSPATH" ...</pre>
+      depending on the platform. Omit the quotes if your classpath
+      doesn't have spaces in it.
           
+    <h3>Find the deployment descriptor </h3>
+
+    <p>
+    
+    Look in axis/samples/stock for the file deploy.wsdd. This is the
+    deployment descriptor we want to tell Axis about. Deployment
+    descriptors are an Axis-specific XML file, that tells Axis how to
+    deploy (or undeploy) a Web Service, and how to configure Axis
+    itself. The Axis Administration Web Service lets the AdminClient
+    program and its Ant sibling submit a new WSDD file for
+    interpretation. The Axis 'engine' will update its configuration,
+    then save its state. 
+    
+    <p>
+    
+    By default Axis saves it state into the global configuration file, 
+    axis/WEB-INF/server-config.wsdd. Sometimes you see a warning message
+    about such a file not being found -don't worry about this, because 
+    Axis auto-creates the file after you deploy something to it.
+    You can check in the webapp to see what this file looks like -and
+    even copy it to other systems if you want to give them identical
+    configurations. Note that Axis needs an expanded webapplication
+    <i>and</i> write access to the WEB-INF dir to save its state to this
+    location. 
+    
+    <h3>Run the admin client</h3>      
           
-      <li>execute the following command from the samples/stock directory:
+    Execute the following command from the samples/stock directory:
           <blockquote>
-              <code class="java">java org.apache.axis.client.AdminClient <br>
+              <code class="java">java -cp %AXISCLASSPATH% org.apache.axis.client.AdminClient <br>
                 -lhttp://localhost:8080/axis/services/AdminService deploy.wsdd</code>
           </blockquote>
-        </li>
 
-    </ul>
-    The <a href="user-guide.html">user's guide</a> covers the
-    AdminClient in more detail, and there is also an 
-    <a href="ant/axis-admin.html">Ant task</a> to automate its use in your
-    build process.
-
+    If you get some java client error (like ClassNotFoundException),
+    then you haven't set up your classpath right, mistyped the
+    classname, or done some other standard error. Tracking down such
+    problems is foundation Java development skills -if you don't know
+    how to do it, learn them now. 
+    
     <p><span class="note">Note:</span>
     You may need to replace localhost with your host name, and 8080 with the
     port number used by your web server.If you have renamed the web application,
     something other than "axis" change the URL appropriately.</p>
 
+
+    <p>
+    If you get some AxisFault listing, then the client is working, but
+    the deployment was unsuccessful. This is where the knowledge of the
+    sockets API to TCP and the basics of the HTTP that Web Service 
+    development requires begins to be needed. If you got some socket
+    error like connection refused, well, clearly the thing at the far
+    end isnt talking to you, so find the cause of that fix it. If you
+    get any Http error code back, well, you know what the error codes
+    mean, right? If you are going to develop Web Services -you need to.  
+    
+    </p>
+    
+    <p>
+    
+    The <a href="user-guide.html">user's guide</a> covers the
+    AdminClient in more detail, and there is also an 
+    <a href="ant/axis-admin.html">Ant task</a> to automate its use in your
+    build process.
+
+    </p>
 
     <a name="test"/></a>
     <h2>Step 7: testing</h2>
@@ -426,14 +558,11 @@ change URLs to correct host, port and webapp specifics.
     purposes, it is presumed that you have installed and deployed the stockquote
     demo.</p>
     <ul>
-        <li>Add axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar, saaj.jar,
-          log4j-1.2.8.jar (or whatever is appropriate for your chosen logging implementation),
-          and the XML parser jar file or files (e.g., xerces.jar), as well as the Axis
-          installation directory to your classpath.
+        <li>
           Change directory to the distribution directory for xml-axis
-          and execute the following command:
+          and execute the following command (or its Unix equivalent):
           <blockquote>
-              <code  class="java">java samples.stock.GetQuote <br>
+              <code  class="java">java -cp "%AXISCLASSPATH%" samples.stock.GetQuote <br>
                -lhttp://localhost:8080/axis/servlet/AxisServlet -uuser1 -wpass1 XXX</code>
           </blockquote>
         </li>
@@ -443,7 +572,11 @@ change URLs to correct host, port and webapp specifics.
     <p><span class="note">Note:</span>
     Again, you may need to replace localhost with your host name, and 8080 with
     the port number used by your web server. If you have renamed the web application,
-    something other than "axis" change the URL appropriately.</p>
+    something other than "axis" change the URL appropriately. 
+    </p>
+ 
+    
+    <a name="advanced"/></a>
 
     <h2>Advanced Installation: adding Axis to your own Webapp</h2>
     
@@ -468,7 +601,137 @@ change URLs to correct host, port and webapp specifics.
     which can be downloaded as a 
     <A href="http://www.manning.com/hatcher/chap15.pdf">PDF file</A>.
 
-    <h3>Summary</h3>
+
+    <a name="broken"/></a>
+
+    <h2>What if it doesn't work?</h2>
+    
+    Axis is a complicated system to install. This is because it depends
+    on the underlying functionality of your app server, has a fairly
+    complex configuration, and, like all distributed applications, 
+    depends upon the network too. 
+    
+    <p>
+    
+    We see a lot of people posting their problems on the axis-user
+    mailing lists, and other axis users, and the developers do their
+    best to help when they can. But before you rush to post your own
+    problems to the mail list, a word of caution.
+    
+    <p>
+    
+    Axis is free. This means nobody gets paid to man the support lines.
+    All the help you get from the community is voluntary and
+    comes from the kindness of their hearts. They may be other users,
+    willing to help you get past the same hurdles they had to be helped
+    over, they may be the developers themselves. But it is all
+    voluntary, so keep your expectations low.
+    
+    <ol>
+    
+    <li>Post to the user mail list, not the developer list. You may
+    think the developer mail list is a short cut to higher quality
+    answers. Yet there are less people on that list, and we often ignore
+    questions that should go to the user group. We read that mailing
+    list too, see. 
+    
+    </li>
+
+    <li> 
+    Don't ask off-axis questions. The list is not the place to
+    ask about non-axis, non-soap, problems. Even questions about the MS
+    Soap toolkit or .NET client side, dont get many positive answers -we
+    avoid them. That also goes for the Sun Java Web Services Developer
+    Pack, or the Jboss.net stuff that they've done with Axis. 
+    </li>
+    
+    <li>Never bother posting to the soapbuilders mailing list
+    either, that is only for people developing SOAP toolkits, not using
+    them -all off-topic messages are pointedly ignored.
+    </li>
+    
+    <li>
+    There is no guarantee that anyone will be able to solve your
+    problem. The usual response in such a situation is silence, for 
+    a good reason: if everybody who didn't know the answer to a question
+    said "I don't know", the list would be overflowed with noise. Dont
+    take a silence personally.
+    
+    <li>
+    Never expect an immediate answer. Even if someone knows the answer,
+    it can take a day or two before they read their mail. So if you don't
+    get an answer in an hour or two, don't panic and resend. Be patient.
+    And put the time to use by trying to solve your problems yourself.
+    </li>
+    
+    <li>
+    Do your homework first. This document lists the foundational stuff
+    you need to understand. Its also warned you that it can take a day
+    to get a reply. Now imagine you get a Http Error '404' on a SOAP
+    call. Should you rush to post a 'help' request, or should you try
+    and find out what an HTTP error code is, what #404 usually means and
+    how to use a Java debugger. We provide the source to make that
+    debugging easier :)
+    </li>
+    
+    <li>
+    Post meaningful subject lines. You want your message read, not
+    deleted unread. 'Help' is not meaningful. 
+    </li>
+    
+    <li>
+    Use the <a
+    href="http://nagoya.apache.org/eyebrowse/SummarizeList?listId=49">
+    mailing list archive</a> to see if someone had the same problem.
+    This list is searchable. 
+    </li>
+    
+    <li>
+    Use the <a href="http://nagoya.apache.org/bugzilla/">bugzilla</a>
+    database to search for Axis bugs, both open and closed.
+    </li>
+    
+    <li>
+    
+    Don't email people for help directly, unless you know them. It's rude and
+    presumptious. Messages sent over the mail list benefit the whole
+    community -the readers and people who search the list. Personal
+    messages just take up the recipients time, and are unwelcome.
+    Usually, the recipients of personal requests just say 'ask the mail
+    list'. 
+    </li>
+    
+    <li>
+    Know that configuration problems are hard to replicate, so hard to 
+    get help on. We try with things like happyaxis.jsp to automate the
+    diagnostics, but its hard for people to help here, especially for
+    the obscure platforms. 
+    </li>
+    
+    <li>
+    Keep up to date with Axis releases, even the beta copies of
+    forthcoming releases. You dont want your problem to be a bug that is
+    already known and fixed? Often the common response to any question
+    is 'have you tried the latest release'.
+    
+    <li>
+    Use the source, fix it when you find defects. Even fix the
+    documentation when you find defects. It is only through the
+    participation of Axis's users that it will ever get better. 
+    
+    </ol>
+    
+    Has this put you off joining and participating in the Axis user
+    mail list? We hope not -this list belongs to the people who use Axis
+    and so will be your peers as your project proceeds. We just need for
+    you to be aware that it is not a 7x24 support line for people new to
+    server side Java development, and that you need to be somewhat self
+    sufficient. It is not a silver bullet. Knowing how to make effective
+    use of the list, will help you develop better with Axis. 
+    
+    
+    <a name="summary"/></a>
+    <h2>Summary</h2>
     
     Axis is simply an implementation of SOAP which can be added to your
     own webapp, and a webapp which can host your own web services.
@@ -476,6 +739,7 @@ change URLs to correct host, port and webapp specifics.
     stricter requirements. If you follow a methodical process, and test
     along the way, using happyaxis and the bundled test services, you
     will find it easier to get started with Axis. 
+    
     
 <hr size=1 noshade= />
 <div class=copyright align=center>Copyright &#169; 2001-2003, Apache Software Foundation</div>
