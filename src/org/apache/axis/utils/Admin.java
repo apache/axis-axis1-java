@@ -79,14 +79,19 @@ public class Admin {
 
   private void init() {
     if ( hr == null ) {
-      // hr = new SimpleRegistry("handlers.reg");
-      hr = new DefaultHandlerRegistry("handlers-supp.reg");
+      if ( onServer )
+        hr = new DefaultHandlerRegistry(Constants.SERVER_HANDLER_REGISTRY);
+      else
+        hr = new DefaultHandlerRegistry(Constants.CLIENT_HANDLER_REGISTRY);
       hr.setOnServer( onServer );
       hr.init();
     }
     if ( sr == null ) {
       // sr = new SimpleRegistry("services.reg");
-      sr = new DefaultServiceRegistry("services-supp.reg");
+      if ( onServer )
+        sr = new DefaultServiceRegistry(Constants.SERVER_SERVICE_REGISTRY);
+      else
+        sr = new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
       hr.setOnServer( onServer );
       sr.init();
     }

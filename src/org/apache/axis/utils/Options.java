@@ -250,7 +250,7 @@ public class Options {
       if ( port != null ) tmp += ":" + port ;
       if ( servlet != null ) tmp += servlet ;
     } else tmp = url.toString();
-    Debug.Print( 1, "getURL returned: " + tmp );
+    Debug.Print( 3, "getURL returned: " + tmp );
     return( tmp );
   }
 

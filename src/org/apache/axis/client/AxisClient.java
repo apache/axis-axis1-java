@@ -91,17 +91,15 @@ public class AxisClient extends BasicHandler
     public void init() {
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: AxisClient::init" );
-        //HandlerRegistry  hr = new SimpleRegistry("handlers.reg");
         DefaultHandlerRegistry  hr = 
-          new DefaultHandlerRegistry("handlers-supp.reg");
+          new DefaultHandlerRegistry(Constants.CLIENT_HANDLER_REGISTRY);
         hr.setOnServer( false );
         hr.init();
         addOption( Constants.HANDLER_REGISTRY, hr );
 
         // Load the simple deployed services registry and init it
-        //HandlerRegistry  sr = new SimpleRegistry("services.reg");
         DefaultServiceRegistry  sr = 
-          new DefaultServiceRegistry("services-supp.reg");
+          new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
         sr.setHandlerRegistry( hr ); // Needs to know about 'hr'
         sr.setOnServer( false );
         sr.init();
