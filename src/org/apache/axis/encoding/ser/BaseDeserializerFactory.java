@@ -83,7 +83,6 @@ public abstract class BaseDeserializerFactory
     protected Class javaType = null;
     protected Constructor deserClassConstructor = null;
     protected Method getDeserializer = null;
-    protected boolean firstCall = true;
 
     /**
      * Constructor
@@ -124,7 +123,6 @@ public abstract class BaseDeserializerFactory
         } catch (Exception e) {
             throw new JAXRPCException(e);
         }
-        firstCall = false;
         return deser;
     }
 
@@ -134,12 +132,8 @@ public abstract class BaseDeserializerFactory
      */
     protected Deserializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (deserClassConstructor == null && firstCall) {
-                try {
-                    deserClassConstructor = 
-                        deserClass.getConstructor(
-                            new Class[] {Class.class, QName.class});
-                } catch (NoSuchMethodException e) {}
+            if (deserClassConstructor == null) {
+                deserClassConstructor = getConstructor(deserClass); 
             }
             if (deserClassConstructor != null) {
                 try {
@@ -155,31 +149,24 @@ public abstract class BaseDeserializerFactory
     }
 
     /**
+     * return constructor for class if any
+     */ 
+     private Constructor getConstructor(Class clazz) {
+        try {
+           return clazz.getConstructor(
+                   new Class[] {Class.class, QName.class});
+        } catch (NoSuchMethodException e) {}
+        return null;
+     }
+
+    /**
      * Obtains a deserializer by invoking getDeserializer method in the 
      * javaType class or its Helper class.
      */
     protected Deserializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (getDeserializer == null && firstCall) {
-                try {
-                    getDeserializer = 
-                        javaType.getMethod("getDeserializer",
-                                           new Class[] {String.class, 
-                                                        Class.class, 
-                                                        QName.class});
-                } catch (NoSuchMethodException e) {}
-                if (getDeserializer == null) {
-                    try {
-                        Class helper = ClassUtils.forName(
-                            javaType.getName() + "_Helper");
-                        getDeserializer =
-                            helper.getMethod("getDeserializer", 
-                                             new Class[] {String.class, 
-                                                          Class.class, 
-                                                          QName.class});
-                    } catch (NoSuchMethodException e) {
-                    } catch (ClassNotFoundException e) {}
-                }
+            if (getDeserializer == null) {
+                getDeserializer = getDeserializerMethod(javaType);    
             }
             if (getDeserializer != null) {
                 try {
@@ -196,6 +183,33 @@ public abstract class BaseDeserializerFactory
         return null;
     }
 
+    /**
+     * Returns the "getDeserializer" method if any.
+     */
+    private Method getDeserializerMethod(Class clazz) {
+        Method method = null;
+        try {
+            method = 
+                clazz.getMethod("getDeserializer",
+                                   new Class[] {String.class, 
+                                                Class.class, 
+                                                QName.class});
+        } catch (NoSuchMethodException e) {}
+        if (method == null) {
+            try {
+                Class helper = ClassUtils.forName(
+                    clazz.getName() + "_Helper");
+                method =
+                    helper.getMethod("getDeserializer", 
+                                     new Class[] {String.class, 
+                                                  Class.class, 
+                                                  QName.class});
+            } catch (NoSuchMethodException e) {
+            } catch (ClassNotFoundException e) {}
+        }
+        return method;
+    }
+    
     /**
      * Returns a list of all XML processing mechanism types supported by this DeserializerFactory.
      *
