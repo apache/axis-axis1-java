@@ -415,8 +415,11 @@ public class Emitter {
                 defaultTM = DefaultSOAP12TypeMappingImpl.create();
             }
 
-            if (intfNS == null) 
-                intfNS = namespaces.getCreate(cls.getPackage().getName());
+            if (intfNS == null) {
+                Package pkg = cls.getPackage();
+                intfNS = namespaces.getCreate(
+                        pkg == null ? null : pkg.getName());
+            }
             if (implNS == null)
                 implNS = intfNS + "-impl";
 

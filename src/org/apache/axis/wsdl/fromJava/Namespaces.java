@@ -204,7 +204,7 @@ public class Namespaces extends HashMap {
     
     
     private static String makeNamespaceFromPackageName(String packageName, String protocol) {
-        if (packageName.equals("") ||packageName == null)
+        if (packageName == null || packageName.equals(""))
             return protocol + "://" + "DefaultNamespace";
         StringTokenizer st = new StringTokenizer( packageName, "." );
         String[] words = new String[ st.countTokens() ];
