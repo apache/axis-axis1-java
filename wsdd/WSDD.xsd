@@ -2,7 +2,7 @@
 <!--// 
             Web Services Deployment Descriptor (WSDD) Version 1.1 (Proposal)
 //-->
-<xsd:schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+<xsd:schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
     <!-- ==================================================================== -->
     <!-- DeployableItem-->
     <!-- ==================================================================== -->
@@ -359,23 +359,13 @@ The provider element describes the deployment of the Axis Engine implementation.
             <xsd:documentation>This is the root element for WSDD.</xsd:documentation>
         </xsd:annotation>
     </xsd:element>
+    <!-- ==================================================================== -->
+    <!-- undeployment -->
+    <!-- ==================================================================== -->
     <xsd:element name="undeployment" type="wsdd:DeploymentDescriptor">
         <xsd:annotation>
             <xsd:documentation>undeployment</xsd:documentation>
         </xsd:annotation>
-    </xsd:element>
-    <!-- ==================================================================== -->
-    <!-- undeployment -->
-    <!-- ==================================================================== -->
-    <xsd:element name="undeployment0">
-        <xsd:annotation>
-            <xsd:documentation>This is the other root element for WSDD.</xsd:documentation>
-        </xsd:annotation>
-        <xsd:complexType>
-            <xsd:complexContent>
-                <xsd:extension base="wsdd:DeployableItem"/>
-            </xsd:complexContent>
-        </xsd:complexType>
     </xsd:element>
     <!-- ==================================================================== -->
     <!-- namespace-->
