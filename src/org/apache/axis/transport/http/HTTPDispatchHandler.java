@@ -270,7 +270,6 @@ public class HTTPDispatchHandler extends BasicHandler {
 
       if ( b != -1 ) {
         if (Debug.getDebugLevel() > 0) {
-        {
           String contentLength = (String) headers.get("content-length");
           contentLength = contentLength.trim();
           byte[] data = new byte[Integer.parseInt(contentLength)];
