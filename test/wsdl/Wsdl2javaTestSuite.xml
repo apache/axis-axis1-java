@@ -15,12 +15,12 @@
                testcase="no">
         <mapping namespace="http://www.ibm.com/inout" package="test.inout"/>
     </wsdl2java>
-    <!--
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
                output="build/work"
                testcase="no">
         <mapping namespace="http://soapinterop.org/" package="soap.interop"/>
     </wsdl2java>
+    <!--
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl"
                output="build/work"
                testcase="no">
