@@ -144,7 +144,7 @@ public class SOAPPart extends Part {
     /* This could be rather costly with attachments.  
 
     public Object getOriginalMessage() {
-        return( originalMessage );
+        return originalMessage;
     }
     */
 
@@ -210,7 +210,7 @@ public class SOAPPart extends Part {
      * TODO: rename this for clarity; should be more like getContents.
      */
     public Object getCurrentMessage() {
-        return( currentMessage );
+        return currentMessage;
     }
 
     /**
@@ -236,7 +236,7 @@ public class SOAPPart extends Part {
         log.debug( "Enter: SOAPPart::getAsBytes" );
         if ( currentForm == FORM_BYTES ) {
             log.debug( "Exit: SOAPPart::getAsBytes" );
-            return( (byte[]) currentMessage );
+            return (byte[])currentMessage;
         }
 
         if ( currentForm == FORM_BODYINSTREAM ) {
@@ -263,13 +263,13 @@ public class SOAPPart extends Part {
                 // inp.read( buf );
                 setCurrentMessage( buf, FORM_BYTES );
                 log.debug( "Exit: SOAPPart::getAsByes" );
-                return( (byte[]) currentMessage );
+                return (byte[])currentMessage;
             }
             catch( Exception e ) {
                 e.printStackTrace( System.err );
             }
             log.debug( "Exit: SOAPPart::getAsByes" );
-            return( null );
+            return null;
         }
 
         if ( currentForm == FORM_SOAPENVELOPE ||
@@ -290,12 +290,13 @@ public class SOAPPart extends Part {
                                FORM_BYTES );
             }
             log.debug( "Exit: SOAPPart::getAsBytes" );
-            return( (byte[]) currentMessage );
+            return (byte[])currentMessage;
         }
 
-        System.err.println("Can't convert " + currentForm + " to Bytes" );
+        log.error("Can't convert " + currentForm + " to Bytes" );
+
         log.debug( "Exit: SOAPPart::getAsBytes" );
-        return( null );
+        return null;
     }
 
     /**
@@ -307,7 +308,7 @@ public class SOAPPart extends Part {
         if ( currentForm == FORM_STRING ) {
             log.debug( "Exit: SOAPPart::getAsString, currentMessage is "+
                             currentMessage );
-            return( (String) currentMessage );
+            return (String)currentMessage;
         }
 
         if ( currentForm == FORM_INPUTSTREAM ||
@@ -326,7 +327,7 @@ public class SOAPPart extends Part {
                         }
             log.debug( "Exit: SOAPPart::getAsString, currentMessage is "+
                             currentMessage );
-            return( (String) currentMessage );
+            return (String)currentMessage;
         }
 
         if ( currentForm == FORM_FAULT ) {
@@ -362,10 +363,10 @@ public class SOAPPart extends Part {
             return (String)currentMessage;
         }
 
-        System.err.println("Can't convert form " + currentForm +
-                           " to String" );
+        log.error("Can't convert form " + currentForm + " to String" );
+
         log.debug( "Exit: SOAPPart::getAsString" );
-        return( null );
+        return null;
     }
 
     /**
@@ -379,7 +380,7 @@ public class SOAPPart extends Part {
         log.debug( "Enter: SOAPPart::getAsSOAPEnvelope; currentForm is "+
                         formNames[currentForm] );
         if ( currentForm == FORM_SOAPENVELOPE )
-            return( (SOAPEnvelope) currentMessage );
+            return (SOAPEnvelope)currentMessage;
 
         if (currentForm == FORM_BODYINSTREAM) {
             InputStreamBody bodyEl =
@@ -412,7 +413,7 @@ public class SOAPPart extends Part {
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
         log.debug( "Exit: SOAPPart::getAsSOAPEnvelope" );
-        return( (SOAPEnvelope) currentMessage );
+        return (SOAPEnvelope)currentMessage;
     }
 
 }

@@ -232,23 +232,22 @@ public class NSStack {
         Enumeration e = stack.elements();
         while (e.hasMoreElements()) {
             ArrayList list = (ArrayList)e.nextElement();
-            System.out.println("----");
+            log.info("----");
             if (list == null) {
-                System.out.println(JavaUtils.getMessage("nullTable00"));
+                log.info(JavaUtils.getMessage("nullTable00"));
                 continue;
             }
             for (int i = 0; i < list.size(); i++) {
                 Mapping map = (Mapping)list.get(i);
-                System.out.println(map.getNamespaceURI() + " -> " +
-                                   map.getPrefix());
+                log.info(map.getNamespaceURI() + " -> " + map.getPrefix());
             }
         }
 
         if (parent != null) {
-            System.out.println("----" + JavaUtils.getMessage("parent00"));
+            log.info("----" + JavaUtils.getMessage("parent00"));
             parent.dump();
         }
 
-        System.out.println("----" + JavaUtils.getMessage("end00"));
+        log.info("----" + JavaUtils.getMessage("end00"));
     }
 }

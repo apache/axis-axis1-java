@@ -61,17 +61,24 @@
 package org.apache.axis.attachments;
 
 
+import org.apache.axis.transport.http.HTTPConstants ;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.activation.*;
-import org.apache.axis.transport.http.HTTPConstants ;
 
 /**
  * This class is defines utilities for mime.
  */
 
-public class MimeUtils {
+public class MimeUtils
+{
+    static Log log =
+            LogFactory.getLog(MimeUtils.class.getName());
 
     /**
     * Determine as efficiently as possible the content length for attachments in a mail Multipart.
@@ -145,7 +152,7 @@ public class MimeUtils {
             }
         }
         catch (Exception e) {
-            System.err.println(e);
+            log.error("Exception: ", e);
         }
         return dataSize + headerLength;
     }
@@ -193,11 +200,11 @@ public class MimeUtils {
 
         }
         catch (javax.mail.MessagingException e) {
-            System.err.println(e);
+            log.error("javax.mail.MessagingException: ", e);
             e.printStackTrace();
         }
         catch (java.io.IOException e) {
-            System.err.println(e);
+            log.error("java.io.IOException: ", e);
             e.printStackTrace();
         }
     }
@@ -276,7 +283,7 @@ public class MimeUtils {
             }
         }
         catch (javax.mail.MessagingException e) {
-            System.err.println(e);
+            log.error("javax.mail.MessagingException: ", e);
             e.printStackTrace();
         }
         return multipart ;
@@ -297,9 +304,10 @@ public class MimeUtils {
                 thisHost = java.net.InetAddress.getLocalHost().getHostName();
             } 
             catch (java.net.UnknownHostException e) {
-                System.err.println("exception:" + e);
-                thisHost = "localhost";
+                log.error("java.net.UknownHostException: ", e);
                 e.printStackTrace();
+
+                thisHost = "localhost";
             }
         }
 

@@ -54,6 +54,7 @@
  */
 
 package org.apache.axis.attachments;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -235,9 +236,9 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
                 new String(tb) + "\"");
                 
-//    System.err.println("Read " + bwritten +
-//                " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
-//                new String(tb) + "\"");
+//    log.debug("Read " + bwritten +
+//              " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
+//              new String(tb) + "\"");
             }
         }
 
@@ -318,7 +319,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
    private int[] skip= null;
    private int boundarySearch(final byte[]text,final int start, final int end ) {
-//System.err.println(">>>>" + start + "," + end);   
+//log.debug(">>>>" + start + "," + end);   
 
        int i, j, k;
       
@@ -330,23 +331,22 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
 
        for( k=start + boundaryLen-1; k <=end; k += skip[text[k] & (0xff)] ) {
-// System.err.println(">>>>" + k);   
+// log.debug(">>>>" + k);   
 //printarry(text, k-boundaryLen+1, end);
             for( j=boundaryLen-1, i=k; j>=0 && text[i] == boundary[j]; j-- ) i--;
             if( j == (-1) ) return i+1;
        }
 
-// System.err.println(">>>> not found" );   
+// log.debug(">>>> not found" );   
        return BOUNDARY_NOT_FOUND;
    }
 
-public static void printarry( byte[] b, int start , int end){
-                byte tb[] = new byte[end-start];
-
-                System.arraycopy(b, start, tb, 0, end-start);
-                
-    System.err.println("\"" + new String(tb) + "\"");
-    
-}
+    public static void printarry(byte[] b, int start , int end){
+        if (log.isDebugEnabled()) {
+            byte tb[] = new byte[end-start];
+            System.arraycopy(b, start, tb, 0, end-start);
+            log.debug("\"" + new String(tb) + "\"");
+        }
+    }
 
 }

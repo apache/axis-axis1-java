@@ -58,6 +58,9 @@ import org.apache.axis.encoding.SerializationContext;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -68,6 +71,9 @@ import java.lang.reflect.Field;
  */
 public class RPCParam
 {
+    static Log log =
+        LogFactory.getLog(RPCParam.class.getName());
+
     // Who's your daddy?
     RPCElement myCall;
     
@@ -81,7 +87,7 @@ public class RPCParam
         try {
             valueField = cls.getField("value");
         } catch (NoSuchFieldException e) {
-            System.err.println(JavaUtils.getMessage("noValue00", "" + e));
+            log.error(JavaUtils.getMessage("noValue00", "" + e));
             System.exit(-1);
         }
     }

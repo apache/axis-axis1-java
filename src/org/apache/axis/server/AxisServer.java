@@ -230,7 +230,7 @@ public class AxisServer extends AxisEngine
                 if ((h = hr.find( hName )) != null ) {
                 h.invoke(msgContext);
                 } else {
-                System.err.println("Couldn't find transport " + hName);
+                log.error("Couldn't find transport " + hName);
                 }
                 } else {
                 // No transport set, so use the default (probably just
@@ -379,7 +379,7 @@ public class AxisServer extends AxisEngine
                 if ((h = hr.find( hName )) != null ) {
                 h.editWSDL(msgContext);
                 } else {
-                System.err.println("Couldn't find transport " + hName);
+                log.error("Couldn't find transport " + hName);
                 }
                 } else {
                 // No transport set, so use the default (probably just

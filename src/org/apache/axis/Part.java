@@ -55,6 +55,9 @@
 
 package org.apache.axis;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
@@ -76,7 +79,10 @@ import java.util.Hashtable;
 
 import org.apache.axis.transport.http.HTTPConstants;
 
-public abstract class Part {
+public abstract class Part
+{
+    static Log log =
+            LogFactory.getLog(Part.class.getName());
 
     private Message msg;
     private Hashtable headers = new Hashtable();
@@ -227,9 +233,10 @@ public abstract class Part {
                 thisHost = java.net.InetAddress.getLocalHost().getHostName();
             } 
             catch (java.net.UnknownHostException e) {
-                System.err.println("exception:" + e);
-                thisHost = "localhost";
+                log.error("java.net.UnknownHostException: ", e);
                 e.printStackTrace();
+
+                thisHost = "localhost";
             }
         }
 
