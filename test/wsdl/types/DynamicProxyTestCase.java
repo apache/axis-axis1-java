@@ -77,7 +77,7 @@ public class DynamicProxyTestCase extends TestCase {
         try {
             Service service = ServiceFactory.newInstance().createService(null);
             Stub binding = (Stub) service.getPort(TypeTest.class);
-            binding._setProperty(Call.ENDPOINT_ADDRESS_PROPERTY,
+            binding._setProperty(Stub.ENDPOINT_ADDRESS_PROPERTY,
                     "http://localhost:8080/axis/services/TypeTest");
             return (TypeTest) binding;
             

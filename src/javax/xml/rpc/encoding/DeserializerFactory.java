@@ -68,16 +68,15 @@ public interface DeserializerFactory extends java.io.Serializable {
     /**
      * Returns a Deserializer for the specified XML processing mechanism type.
      *
-     * @param mechanismType - XML processing mechanism type [TBD: definition of valid constants]
+     * @param mechanismType XML processing mechanism type [TBD: definition of valid constants]
      *
      * @return Returns a Deserializer for the specified XML processing mechanism type.
      *
-     * @throws JAXRPCException - If DeserializerFactory does not support 
+     * @throws JAXRPCException If DeserializerFactory does not support
      * the specified XML processing mechanism
-     * java.lang.IllegalArgumentException - If an invalid mechanism type is specified.
+     * java.lang.IllegalArgumentException If an invalid mechanism type is specified.
      */
-    public Deserializer getDeserializerAs(String mechanismType)
-        throws JAXRPCException;
+    public Deserializer getDeserializerAs(String mechanismType);
 
     /**
      * Returns a list of all XML processing mechanism types supported by this DeserializerFactory.

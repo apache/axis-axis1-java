@@ -467,7 +467,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException - If this Service class does not have access
      * to the required WSDL metadata or if an illegal portName is specified.
      */
-    public javax.xml.rpc.Call[] getCalls() throws ServiceException {
+    public javax.xml.rpc.Call[] getCalls(QName portName) throws ServiceException {
         if (wsdlLocation == null) {
             throw new ServiceException();
         }

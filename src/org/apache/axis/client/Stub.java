@@ -140,7 +140,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
             }
             cachedPassword = (String) value;
         }
-        else if (name.equals(Call.ENDPOINT_ADDRESS_PROPERTY)) {
+        else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
                         JavaUtils.getMessage("badProp00", new String[] {
@@ -184,7 +184,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
             else if (name.equals(Call.PASSWORD_PROPERTY)) {
                 return cachedPassword;
             }
-            else if (name.equals(Call.ENDPOINT_ADDRESS_PROPERTY)) {
+            else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
                 return cachedEndpoint;
             }
             else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {

@@ -63,7 +63,7 @@ package javax.xml.rpc.encoding;
  *
  * @version 0.6
  */
-public interface Deserializer {
+public interface Deserializer extends java.io.Serializable {
     public String getMechanismType();
 }
 
