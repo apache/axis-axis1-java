@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "AXIS" and "Apache Software Foundation" must
+ * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -53,63 +53,22 @@
  * <http://www.apache.org/>.
  */
 
-import org.w3c.dom.* ;
-import org.apache.axis.AxisServiceConfig;
-import org.apache.axis.AxisServiceConfigImpl;
-import org.apache.axis.utils.XMLUtils ;
+import test.functional.GlobalBean;
 
 /**
- * See \samples\stock\readme for info.
+ * This is a JWS which demonstrates that indeed, global type mappings work
+ * in a JWS context.
  *
- * @author Sanjiva Weerawarana (sanjiva@watson.ibm.com)
- * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
-public class AltStockQuoteService {
-  private static AxisServiceConfigImpl myConfig;
-
-  static {
-    myConfig = new AxisServiceConfigImpl();
-    myConfig.setAllowedMethods("echo");
-  }
-
-  public static AxisServiceConfig getAxisServiceConfig() {
-    return myConfig;
-  }
-
-  public String echo(String s)
-  {
-    return s;
-  }
-
-  public float getQuote (String symbol) throws Exception {
-    // get a real (delayed by 20min) stockquote from
-    // http://www.xmltoday.com/examples/stockquote/. The IP addr
-    // below came from the host that the above form posts to ..
-
-    // NOTE THAT THIS RETURNS 66.25 WHERE THE ORDINARY EXAMPLE RETURNS 55.25!
-    if ( symbol.equals("XXX") ) return( (float) 66.25 );
-
-    Document doc = null ;
-
-    doc = XMLUtils.newDocument( "http://www.xmltoday.com/examples/" +
-                                "stockquote/getxmlquote.vep?s="+symbol );
-
-    Element  elem = doc.getDocumentElement();
-    NodeList list = elem.getElementsByTagName("stock_quote");
-
-    elem = (Element) list.item(0);
-    list = elem.getElementsByTagName( "price" );
-    elem = (Element) list.item( 0 );
-    String quoteStr = elem.getAttribute("value");
-    try {
-      return Float.valueOf(quoteStr).floatValue();
-    } catch (NumberFormatException e1) {
-      // maybe its an int?
-      try {
-        return Integer.valueOf(quoteStr).intValue() * 1.0F;
-      } catch (NumberFormatException e2) {
-        return -1.0F;
-      }
+public class GlobalTypeTest {
+    /**
+     * Echo a bean.
+     *
+     * @param bean
+     * @return the bean
+     */
+    public GlobalBean echo(GlobalBean bean) {
+        return bean;
     }
-  }
 }

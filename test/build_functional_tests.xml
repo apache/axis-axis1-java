@@ -75,6 +75,7 @@ Copyright:
     <mkdir dir="build/jws" />
     <copy file="samples/stock/StockQuoteService.jws" todir="build/jws" />
     <copy file="test/functional/AltStockQuoteService.jws" todir="build/jws" />
+    <copy file="test/functional/GlobalTypeTest.jws" todir="build/jws"/>
 
     <!--...not to mention the sample user list -->
     <copy file="samples/stock/users.lst" todir="build"/>
