@@ -173,12 +173,12 @@ public class TestSerializedRPC extends TestCase {
                                    ser);
         
         // invoke the service and verify the result
-        String arg = "<arg0 xmlns:foo=\"urn:foo\" xsi:type=\"foo:Data\">";
+        String arg = "<arg0 xmlns:foo=\"urn:foo\">";
         arg += "<field1>5</field1><field2>abc</field2><field3>3</field3>";
         arg += "</arg0>";
         
         // invoke the service and verify the result
-        assertEquals(arg, rpc("argAsDOM", arg, false));
+        assertEquals(arg, rpc("argAsDOM", arg, true));
     }
     
     public static void main(String args[]) {

@@ -124,10 +124,11 @@ public class RPCHandler extends SOAPHandler
             //
             if (type==null && defaultParamTypes!=null &&
                 params.size()<=defaultParamTypes.length) {
-                TypeMappingRegistry typeMap = context.
-                                                  getTypeMappingRegistry();
-                type = typeMap.getTypeQName(
-                                         defaultParamTypes[params.size()-1]);
+                TypeMappingRegistry typeMap = context.getTypeMappingRegistry();
+                int index = params.size()-1;
+                if (index+1<defaultParamTypes.length)
+                    if (defaultParamTypes[0]==MessageContext.class) index++;
+                type = typeMap.getTypeQName(defaultParamTypes[index]);
                 if (DEBUG_LOG) {
                     System.err.println("Type from default parms was " + type);
                 }
