@@ -205,13 +205,15 @@ public class JavaBeanWriter extends JavaClassWriter {
         // Write Full Constructor
         if (enableFullConstructor) {
             writeFullConstructor();
-        } else {
-            writeMinimalConstructor();
-        }
+        } 
 
         // Write SimpleConstructors
         if (enableSimpleConstructors) {
             writeSimpleConstructors();
+        }
+        
+        if(!enableFullConstructor && !enableSimpleConstructors && enableMemberFields) {
+            writeMinimalConstructor();
         }
 
         // Write ToString method
