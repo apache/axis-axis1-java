@@ -67,7 +67,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisEngine;
@@ -271,7 +270,7 @@ public class AxisServlet extends AxisServletBase {
                 // scenario rather than the actual host name.
                 //
                 // ? Still true?  For which JVM's?
-                String url = HttpUtils.getRequestURL(request).toString();
+                String url = request.getRequestURL().toString();
 
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 
@@ -604,7 +603,7 @@ public class AxisServlet extends AxisServletBase {
             /* Set the request(incoming) message field in the context */
             /**********************************************************/
             msgContext.setRequestMessage(requestMsg);
-            String url = HttpUtils.getRequestURL(req).toString();
+            String url = req.getRequestURL().toString();
             msgContext.setProperty(MessageContext.TRANS_URL, url);
 
             try {
@@ -681,8 +680,7 @@ public class AxisServlet extends AxisServletBase {
         if (responseMsg != null) {
             //determine content type from message response
             contentType = responseMsg.getContentType(msgContext.getSOAPConstants());
-            sendResponse(getProtocolVersion(req), contentType,
-                         res, responseMsg);
+            sendResponse(contentType, res, responseMsg);
         } else {
             // No content, so just indicate accepted
             res.setStatus(202);
@@ -766,15 +764,14 @@ public class AxisServlet extends AxisServletBase {
     /**
      * write a message to the response, set appropriate headers for content
      * type..etc.
-     * @param clientVersion client protocol, one of the HTTPConstants strings
      * @param res   response
      * @param responseMsg message to write
      * @throws AxisFault
      * @throws IOException if the response stream can not be written to
      */
-    private void sendResponse(final String clientVersion, 
-            String contentType,
-            HttpServletResponse res, Message responseMsg)
+    private void sendResponse(String contentType,
+                              HttpServletResponse res,
+                              Message responseMsg)
         throws AxisFault, IOException
     {
         if (responseMsg == null) {
@@ -947,26 +944,6 @@ public class AxisServlet extends AxisServletBase {
     }
 
     /**
-     * Return the HTTP protocol level 1.1 or 1.0
-     * by derived class.
-     * @return one of the HTTPConstants values
-     */
-    protected String getProtocolVersion(HttpServletRequest req){
-        String ret= HTTPConstants.HEADER_PROTOCOL_V10;
-        String prot= req.getProtocol();
-        if(prot!= null){
-            int sindex= prot.indexOf('/');
-            if(-1 != sindex){
-                String ver= prot.substring(sindex+1);
-                if(HTTPConstants.HEADER_PROTOCOL_V11.equals(ver.trim())){
-                    ret= HTTPConstants.HEADER_PROTOCOL_V11;
-                }
-            }
-        }
-        return ret;
-    }
-    
-    /**
      * Initialize a Handler for the transport defined in the Axis server config.
      * This includes optionally filling in query string handlers.
      */
@@ -1103,7 +1080,7 @@ public class AxisServlet extends AxisServletBase {
                               Class plugin = Class.forName ((String) this.transport.getOption (queryHandler));
                               Method pluginMethod = plugin.getDeclaredMethod ("invoke",
                                 new Class[] { msgContext.getClass() });
-                              String url = HttpUtils.getRequestURL (request).toString();
+                              String url = request.getRequestURL().toString();
                               
                               // Place various useful servlet-related objects in
                               // the MessageContext object being delivered to the
