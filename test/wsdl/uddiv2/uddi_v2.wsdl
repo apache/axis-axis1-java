@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    targetNamespace="urn:uddi-org"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:b1="urn:uddi-org:inquiry_v2"
+    >
+    <import
+        location="http://uddi.org/wsdl/inquire_v2.wsdl"
+        namespace="urn:uddi-org:inquiry_v2">
+    </import>
+    <service name="InquiryService">
+        <port name="InquiryService1" binding="b1:InquireSoap">
+            <soap:address location="http://uddi.microsoft.com/inquire"/>
+        </port>
+    </service>
+</definitions>
