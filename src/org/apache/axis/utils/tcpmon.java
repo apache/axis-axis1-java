@@ -392,9 +392,12 @@ public class tcpmon extends JFrame {
                                 int time = delayTime.getValue(0);
                                 slowLink=new SlowLinkSimulator(bytes,time);
                             }
+                            try {
                             l = new Listener( noteb, null, lPort, tHost, tPort,
                                            proxyButton.isSelected(), slowLink);
-
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
                             // Pick-up the HTTP Proxy settings
                             ///////////////////////////////////////////////////
                             text = HTTPProxyHost.getText();
@@ -1370,6 +1373,11 @@ public class tcpmon extends JFrame {
                     getMessage("request00", "Request...")
                 } , 0 );
 
+            tableModel.addRow( new Object[] {
+                    "---", getMessage("mostRecent00", "Most Recent"), "---", "---", "---"
+                }
+            );
+
             connectionTable = new JTable(1, 2);
             connectionTable.setModel( tableModel );
             connectionTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -1436,10 +1444,6 @@ public class tcpmon extends JFrame {
                         }
                         outPane.setDividerLocation(divLoc);
                     }
-                }
-            );
-            tableModel.addRow( new Object[] {
-                    "---", getMessage("mostRecent00", "Most Recent"), "---", "---", "---"
                 }
             );
 
