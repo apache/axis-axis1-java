@@ -348,7 +348,7 @@ public class JavaStubWriter extends JavaWriter {
     private boolean firstSer = true ;
 
     private void writeSerializationInit(Type type) throws IOException {
-        if (type.getBaseType() != null) {
+        if (type.getBaseType() != null || !type.getShouldEmit()) {
             return;
         }
         if ( firstSer ) {
