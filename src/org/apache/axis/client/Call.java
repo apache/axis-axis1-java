@@ -1564,18 +1564,13 @@ public class Call implements javax.xml.rpc.Call {
         try {
             body.setEncodingStyle(encodingStyle);
             reqEnv.setEncodingStyle(encodingStyle);
-        } catch (SOAPException e) {
-            log.debug( JavaUtils.getMessage("exception00"), e );
-            throw AxisFault.makeFault(e);
-        }
 
-        setRequestMessage(reqMsg);
+            setRequestMessage(reqMsg);
 
-        reqEnv.addBodyElement(body);
-        body.setParent(reqEnv);
-        reqEnv.setMessageType(Message.REQUEST);
+            reqEnv.addBodyElement(body);
+            body.setParent(reqEnv);
+            reqEnv.setMessageType(Message.REQUEST);
 
-        try {
             invoke();
         } catch (Exception e) {
             log.debug( JavaUtils.getMessage("exception00"), e );
