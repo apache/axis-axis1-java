@@ -233,9 +233,13 @@ public class Wsdl2java {
             }
 
             emitter.emit(wsdlURI);
+            
+            // everything is good
+            System.exit(0);
         }
         catch (Throwable t) {
             t.printStackTrace();
+            System.exit(1);
         }
 
     }
@@ -251,7 +255,7 @@ public class Wsdl2java {
         msg.append("Options: ").append(lSep);
         msg.append(CLUtil.describeOptions(Wsdl2java.options).toString());
         System.out.println(msg.toString());
-        System.exit(0);
+        System.exit(1);
     }
 
 }
