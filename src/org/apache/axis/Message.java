@@ -192,7 +192,7 @@ public class Message extends javax.xml.soap.SOAPMessage
     public Message(Object initialContents, boolean bodyInStream, MimeHeaders headers) {
         setup(initialContents, bodyInStream, null, null, headers);
     }
-    
+
     /**
      * Construct a Message, using the provided initialContents as the
      * contents of the Message's SOAPPart.
@@ -562,7 +562,9 @@ public class Message extends javax.xml.soap.SOAPMessage
      */
     public Iterator getAttachments(){
         try {
-            return mAttachments.getAttachments().iterator();
+					 	if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
+           		return mAttachments.getAttachments().iterator();
+					   }
         } catch (AxisFault af){
             log.error(Messages.getMessage("exception00"), af);
         }
