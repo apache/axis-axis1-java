@@ -170,6 +170,7 @@ public class Java2WSDL {
         String wsdlImplFilename = null;
         HashMap namespaceMap = new HashMap();
         int mode = Emitter.MODE_ALL;
+        boolean locationSet = false;
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -263,6 +264,7 @@ public class Java2WSDL {
 
                     case LOCATION_OPT:
                         emitter.setLocationUrl(option.getArgument());
+                        locationSet = true;
                         break;
 
                     case LOCATION_IMPORT_OPT:
@@ -273,6 +275,12 @@ public class Java2WSDL {
 
             // Can't proceed without a class name
             if ((className == null)) {
+                printUsage();
+            }
+
+            if (!locationSet && (mode == Emitter.MODE_ALL ||
+                                 mode == Emitter.MODE_IMPLEMENTATION)) {
+                System.out.println(JavaUtils.getMessage("j2wMissingLocation00"));
                 printUsage();
             }
 
