@@ -286,9 +286,10 @@ public class BeanUtils {
                                 ((BeanPropertyDescriptor)pd.get(j)).getName();
                             if (pName.length() == fName.length() &&
                                 pName.substring(0,1).equalsIgnoreCase(
-                                fName.substring(0,1))) {
-                                found = pName.length() == 1 ||
-                                    pName.substring(1).equals(fName.substring(1));
+                                    fName.substring(0,1))) {
+
+                                found = pName.length() == 1  ||
+                                        pName.substring(1).equals(fName.substring(1));
                             }
                         }
                         if (!found) {
