@@ -254,7 +254,8 @@ public class JavaUtils
         }
 
         // Convert an AttachmentPart to the given destination class.
-        if (arg instanceof AttachmentPart || arg instanceof DataHandler) {
+        if (isAttachmentSupported() &&
+                (arg instanceof AttachmentPart || arg instanceof DataHandler)) {
             try {
                 String destName = destClass.getName();
                 if (destClass == String.class
@@ -1120,4 +1121,34 @@ public class JavaUtils
             return null;
         }
     } // mimeToJava
+
+    //avoid testing and possibly failing everytime.
+    private static boolean checkForAttchmentSupport = true;
+    private static boolean attachmentSupportEnabled = false;
+
+    /**
+     * Determine whether attachments are supported by checking if the following
+     * classes are available:  javax.activation.DataHandler,
+     * javax.mail.internet.MimeMultipart.
+     */
+    public static synchronized boolean isAttachmentSupported() {
+
+        if (checkForAttchmentSupport) {
+            //aviod testing and possibly failing everytime.
+            checkForAttchmentSupport = false;
+            try {
+                // Attempt to resolve DataHandler and MimeMultipart and
+                // javax.xml.transform.Source, all necessary for full
+                // attachment support
+                ClassUtils.forName("javax.activation.DataHandler");
+                ClassUtils.forName("javax.mail.internet.MimeMultipart");
+                attachmentSupportEnabled = true;
+            } catch (Throwable t) {
+            }
+        }
+
+        log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
+                attachmentSupportEnabled);
+        return attachmentSupportEnabled;
+    } // isAttachmentSupported
 }

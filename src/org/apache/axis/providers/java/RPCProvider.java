@@ -70,6 +70,7 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -82,6 +83,7 @@ import javax.xml.rpc.holders.Holder;
 
 import java.io.IOException;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import java.util.Vector;
@@ -230,8 +232,9 @@ public class RPCProvider extends JavaProvider
                 value = JavaUtils.convert(value,
                                           sigType);
 
-                if (value instanceof DataHandler) {
-                    value = getDataFromDataHandler((DataHandler) value, paramDesc);
+                if (value != null && value.getClass().getName().equals(
+                        "javax.activation.DataHandler")) {
+                    value = getDataFromDataHandler(value, paramDesc);
                 }
 
                 rpcParam.setValue(value);
@@ -351,12 +354,16 @@ public class RPCProvider extends JavaProvider
                     if ("Image".equals(MIMEName)) {
                     }
                     else if ("PlainText".equals(MIMEName)) {
-                        value = new DataHandler(
-                                new PlainTextDataSource("out", (String) value));
+                        value = instantiateDataHandler(
+                            "org.apache.axis.attachments.PlainTextDataSource",
+                            "java.lang.String",
+                            value);
                     }
                     else if ("Multipart".equals(MIMEName)) {
-                        value = new DataHandler(new MimeMultipartDataSource(
-                                "out", (MimeMultipart) value));
+                        value = instantiateDataHandler(
+                            "org.apache.axis.attachments.MultipartDataSource",
+                            "javax.mail.internet.MimeMultipart",
+                            value);
                     }
                     else if ("Source".equals(MIMEName)) {
                     }
@@ -369,7 +376,43 @@ public class RPCProvider extends JavaProvider
         resEnv.addBodyElement(resBody);
     }
 
-    private Object getDataFromDataHandler(DataHandler handler, ParameterDesc paramDesc) {
+    /**
+     * This method is the same as:
+     *   new DataHandler(new DataSource("out", value));
+     * but we want to be able to instantiate an RPCProvider without
+     * requiring activation.jar and mail.jar.  If we use the raw
+     * new statement, we get an error on instantiation of RPCProvider.
+     */
+    private Object instantiateDataHandler(String dataSourceName,
+            String valueClass, Object value) {
+        try {
+            // Instantiate the DataSource
+            Class dataSource = ClassUtils.forName(dataSourceName);
+            Class[] dsFormalParms = {String.class,
+                    ClassUtils.forName(valueClass)};
+            Object[] dsActualParms = {"out", value};
+            Constructor ctor = dataSource.getConstructor(dsFormalParms);
+            Object ds = ctor.newInstance(dsActualParms);
+
+            // Instantiate the DataHandler
+            Class dataHandler = ClassUtils.forName(
+                    "javax.activation.DataHandler");
+            Class[] dhFormalParms = {ClassUtils.forName(
+                    "javax.activation.DataSource")};
+            Object[] dhActualParms = {ds};
+            ctor = dataHandler.getConstructor(dhFormalParms);
+            value = ctor.newInstance(dhActualParms);
+        }
+        catch (Throwable t) {
+            // If we have a problem, just return the input value
+        }
+        return value;
+    } // instantiateDataHandler
+
+    /**
+     * Get the data from the DataHandler.
+     */
+    private Object getDataFromDataHandler(Object handler, ParameterDesc paramDesc) {
         Object value = handler;
         QName qname = paramDesc.getTypeQName();
         if (qname != null &&
@@ -378,7 +421,7 @@ public class RPCProvider extends JavaProvider
                  qname.equals(Constants.MIME_MULTIPART) ||
                  qname.equals(Constants.MIME_SOURCE))) {
             try {
-                value = handler.getContent();
+                value = ((DataHandler) handler).getContent();
             }
             catch (IOException ioe) {
                 // If there are any problems, just return the DataHandler.
