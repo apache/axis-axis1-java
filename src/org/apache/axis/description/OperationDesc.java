@@ -59,6 +59,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.Method;
 import java.lang.reflect.Array;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An OperationDesc is an abstract description of an operation on a service.
@@ -68,6 +70,10 @@ import java.lang.reflect.Array;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class OperationDesc {
+
+    protected static Log log =
+        LogFactory.getLog(OperationDesc.class.getName());
+
     /** The service we're a part of */
     private ServiceDesc parent;
 
@@ -150,6 +156,7 @@ public class OperationDesc {
     }
 
     public void setReturnType(QName returnType) {
+        log.debug("@" + Integer.toHexString(hashCode())  + "setReturnType(" + returnType +")");
         this.returnType = returnType;
     }
 
@@ -215,6 +222,7 @@ public class OperationDesc {
             (param.getMode() == ParameterDesc.INOUT)) {
             param.setOrder(numInParams++);
         }
+       log.debug("@" + Integer.toHexString(hashCode())  + " added parameter >" + param + "@" + Integer.toHexString(param.hashCode()) + "<total parameters:" +getNumParams());
     }
 
     public ParameterDesc getParameter(int i)
@@ -236,7 +244,13 @@ public class OperationDesc {
      * @param parameters an ArrayList of ParameterDescs
      */
     void setParameters(ArrayList parameters) {
-        this.parameters = parameters;
+       // this.parameters = parameters;
+       parameters = new ArrayList(); //Keep numInParams correct.
+
+       for( java.util.ListIterator li= this.parameters.listIterator();
+         li.hasNext(); ){
+           addParameter((ParameterDesc) li.next());
+       }
     }
 
     public int getNumInParams() {

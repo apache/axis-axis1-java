@@ -174,7 +174,8 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
        return readFromStream(b, 0, b.length);
     }
     private final int readFromStream( final byte[] b, final int start, final int length) throws java.io.IOException{
-            int minRead= Math.min(boundaryBufLen *2, length); 
+            int minRead= Math.max(boundaryBufLen *2, length); 
+            minRead= Math.min(minRead, length-start); 
             int br= 0;
             int brTotal=0;
             do
@@ -360,22 +361,23 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
      * 
      */
     protected int boundaryPosition( byte[] searchbuf, int start, int end) {
-
         int foundAt = boundarySearch(searchbuf, start, end);
                                                //First find the boundary marker
 
         if (BOUNDARY_NOT_FOUND != foundAt) { //Something was found.
-
-            //If the marker has a "--" at the end then this is the last boundary.
-            if ( searchbuf[foundAt + boundaryLen] == '-' && 
-                                searchbuf[foundAt + boundaryLen + 1 ] == '-' ) {
-                theEnd = true;
-            }
-            else if ( searchbuf[foundAt + boundaryLen] != 13 ||
-                                  searchbuf[foundAt + boundaryLen + 1 ] != 10 ) {
-           //If there really was no crlf at then end then this is not a boundary.
-                foundAt = BOUNDARY_NOT_FOUND;
-            }
+           if(foundAt + boundaryLen +2 > end) foundAt= BOUNDARY_NOT_FOUND;
+           else{
+              //If the marker has a "--" at the end then this is the last boundary.
+              if ( searchbuf[foundAt + boundaryLen] == '-' && 
+                                  searchbuf[foundAt + boundaryLen + 1 ] == '-' ) {
+                  theEnd = true;
+              }
+              else if ( searchbuf[foundAt + boundaryLen] != 13 ||
+                                    searchbuf[foundAt + boundaryLen + 1 ] != 10 ) {
+             //If there really was no crlf at then end then this is not a boundary.
+                  foundAt = BOUNDARY_NOT_FOUND;
+              }
+           }
         }
         return foundAt;
     }
