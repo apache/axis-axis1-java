@@ -32,7 +32,9 @@ public class SAXAdapter extends SOAPSAXHandler
     public void parse()
     {
       try {
+        context.getMessageContext().setParsing(true);
         _parser.parse(inputSource, this);
+        context.getMessageContext().setParsing(false);
       } catch (Exception e) {
         e.printStackTrace();
       }
