@@ -4,7 +4,7 @@ package org.apache.axis.message;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@ package org.apache.axis.message;
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -20,7 +20,7 @@ package org.apache.axis.message;
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -28,7 +28,7 @@ package org.apache.axis.message;
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -83,7 +83,7 @@ import java.util.Vector;
 public class MessageElement
 {
     private static final boolean DEBUG_LOG = false;
-    
+
     protected String    name ;
     protected String    prefix ;
     protected String    namespaceURI ;
@@ -93,11 +93,11 @@ public class MessageElement
     protected boolean   _isRoot = true;
     protected SOAPEnvelope message = null;
     protected boolean   _isDirty = false;
-    
+
     protected DeserializationContext context;
-    
+
     protected QName typeQName = null;
-    
+
     protected Vector qNameAttrs = null;
 
     // Some message representations - as recorded SAX events...
@@ -105,13 +105,13 @@ public class MessageElement
     protected int startEventIndex = 0;
     protected int startContentsIndex = 0;
     protected int endEventIndex = -1;
-    
+
     // ...or as DOM
     protected Element elementRep = null;
-    
+
     protected MessageElement parent = null;
     // Do we need links to our children too?
-    
+
     public ArrayList namespaces = null;
 
     /** No-arg constructor for building messages?
@@ -119,20 +119,20 @@ public class MessageElement
     public MessageElement()
     {
     }
-    
+
     MessageElement(String namespace, String localPart)
     {
         namespaceURI = namespace;
         name = localPart;
     }
-    
+
     MessageElement(Element elem)
     {
         elementRep = elem;
         namespaceURI = elem.getNamespaceURI();
         name = elem.getTagName();
     }
-    
+
     public MessageElement(String namespace, String localPart, String qName,
                    Attributes attributes, DeserializationContext context)
     {
@@ -144,16 +144,16 @@ public class MessageElement
         }
         this.namespaceURI = namespace;
         this.name = localPart;
-        
+
         int idx = qName.indexOf(":");
         if (idx > 0)
             this.prefix = qName.substring(0, idx);
-        
+
         this.context = context;
         this.startEventIndex = context.getStartOfMappingsPos();
-        
+
         setNSMappings(context.getCurrentNSMappings());
-        
+
         this.recorder = context.getRecorder();
 
         if (attributes == null) {
@@ -163,70 +163,70 @@ public class MessageElement
             String rootVal = attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ROOT);
             if (rootVal != null)
                 _isRoot = rootVal.equals("1");
-            
+
             id = attributes.getValue(Constants.ATTR_ID);
             // Register this ID with the context.....
             if (id != null) {
                 context.registerElementByID(id, this);
             }
-            
+
             href = attributes.getValue(Constants.ATTR_HREF);
-            
+
             // If there's an arrayType attribute, we can pretty well guess that we're an Array???
             if (attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
                 typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
         }
     }
-    
+
     /** !!! TODO : Make sure this handles multiple targets
      */
     Deserializer fixupDeserializer;
-    
+
     public void setFixupDeserializer(Deserializer dser)
     {
         // !!! Merge targets here if already set?
         fixupDeserializer = dser;
     }
-    
+
     public Deserializer getFixupDeserializer()
     {
         return fixupDeserializer;
     }
-    
+
     public void setEndIndex(int endIndex)
     {
         endEventIndex = endIndex;
     }
-    
+
     public boolean isDirty() { return _isDirty; }
     public void setDirty(boolean dirty) { _isDirty = dirty; };
-    
+
     public boolean isRoot() { return _isRoot; }
     public String getID() { return id; }
-    
+
     public String getName() { return( name ); }
     public void setName(String name) { this.name = name; }
-    
+
     public String getPrefix() { return( prefix ); }
     public void setPrefix(String prefix) { this.prefix = prefix; }
-    
+
     public String getNamespaceURI() { return( namespaceURI ); }
     public void setNamespaceURI(String nsURI) { namespaceURI = nsURI; }
-    
+
     public QName getType() { return typeQName; }
     public void setType(QName qName) { typeQName = qName; }
-    
+
     public SAX2EventRecorder getRecorder() { return recorder; }
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
-    
+
     public MessageElement getParent() { return parent; }
     public void setParent(MessageElement parent) { this.parent = parent; }
-    
+
     public void setContentsIndex(int index)
     {
         startContentsIndex = index;
     }
-    
+
     public void setNSMappings(ArrayList namespaces)
     {
         this.namespaces = namespaces;
@@ -235,11 +235,11 @@ public class MessageElement
     public String getPrefix(String namespaceURI) {
         if ((namespaceURI == null) || (namespaceURI.equals("")))
             return null;
-        
+
         if (href != null) {
             return getRealElement().getPrefix(namespaceURI);
         }
-        
+
         if (namespaces != null) {
             for (int i = 0; i < namespaces.size(); i++) {
                 Mapping map = (Mapping)namespaces.get(i);
@@ -247,21 +247,21 @@ public class MessageElement
                     return map.getPrefix();
             }
         }
-        
+
         if (parent != null)
             return parent.getPrefix(namespaceURI);
-        
+
         return null;
     }
-    
+
     public String getNamespaceURI(String prefix) {
         if (prefix == null)
             prefix = "";
-        
+
         if (href != null) {
             return getRealElement().getNamespaceURI(prefix);
         }
-        
+
         if (namespaces != null) {
             for (int i = 0; i < namespaces.size(); i++) {
                 Mapping map = (Mapping)namespaces.get(i);
@@ -270,7 +270,7 @@ public class MessageElement
                 }
             }
         }
-        
+
         if (parent != null)
             return parent.getNamespaceURI(prefix);
 
@@ -280,42 +280,53 @@ public class MessageElement
 
         return null;
     }
-    
+
     public Object getValueAsType(QName type) throws Exception
     {
         if (context == null)
             throw new Exception(
              "No deserialization context to use in getValueAsType()!");
-        
+
         TypeMappingRegistry tmr = context.getTypeMappingRegistry();
         Deserializer dser = tmr.getDeserializer(type);
         if (dser == null)
             throw new Exception("No deserializer for requested type " +
                                 type);
-        
+
         context.pushElementHandler(new EnvelopeHandler(dser));
-        
+
         publishToHandler(context);
-        
+
         return dser.getValue();
     }
-    
+
     protected static class QNameAttr {
         QName name;
         QName value;
     }
-    
+
     public void addAttribute(String namespace, String localName,
                              QName value)
     {
         if (qNameAttrs == null)
             qNameAttrs = new Vector();
-        
+
         QNameAttr attr = new QNameAttr();
         attr.name = new QName(namespace, localName);
         attr.value = value;
-        
+
         qNameAttrs.addElement(attr);
+        // !!! Add attribute to attributes!
+    }
+
+    public void addAttribute(String namespace, String localName,
+                             String value)
+    {
+        if (attributes == null) {
+            attributes = new AttributesImpl();
+        }
+        attributes.addAttribute(namespace, localName, "", "CDATA",
+                                value);
     }
 
     public void setEnvelope(SOAPEnvelope env)
@@ -326,36 +337,36 @@ public class MessageElement
     {
         return message;
     }
-    
+
     public MessageElement getRealElement()
     {
         if (href == null)
             return this;
-        
+
         Object obj = context.getObjectByRef(href);
         if (obj == null)
             return null;
-        
+
         if (!(obj instanceof MessageElement))
             return null;
-        
+
         return (MessageElement)obj;
     }
-    
+
     public Element getAsDOM() throws Exception
     {
         MessageContext msgContext = context.getMessageContext();
-        
+
         StringWriter writer = new StringWriter();
         output(new SerializationContext(writer, msgContext));
         writer.close();
-        
+
         Reader reader = new StringReader(writer.getBuffer().toString());
         Document doc = XMLUtils.newDocument(new InputSource(reader));
         if (doc == null)
             throw new Exception("Couldn't get DOM document: XML was \"" +
                                 writer.getBuffer().toString() + "\"");
-        
+
         return doc.getDocumentElement();
     }
 
@@ -363,23 +374,23 @@ public class MessageElement
     {
         if (recorder == null)
             throw new SAXException("No event recorder inside element");
-        
+
         recorder.replay(startEventIndex, endEventIndex, handler);
     }
-    
+
     public void publishContents(ContentHandler handler) throws SAXException
     {
         if (recorder == null)
             throw new SAXException("No event recorder inside element");
-        
+
         recorder.replay(startContentsIndex, endEventIndex-1, handler);
     }
-    
+
     /** This is the public output() method, which will always simply use
      * the recorded SAX stream for this element if it is available.  If
      * not, this method calls outputImpl() to allow subclasses and
      * programmatically created messages to serialize themselves.
-     * 
+     *
      * @param context the SerializationContext we will write to.
      */
     public final void output(SerializationContext context) throws Exception
@@ -388,10 +399,22 @@ public class MessageElement
             recorder.replay(startEventIndex, endEventIndex, new SAXOutputter(context));
             return;
         }
-        
+
+        // Turn QName attributes into strings
+        if (qNameAttrs != null) {
+            for (int i = 0; i < qNameAttrs.size(); i++) {
+                QNameAttr attr = (QNameAttr)qNameAttrs.get(i);
+                QName attrName = attr.name;
+                addAttribute(attrName.getNamespaceURI(),
+                             attrName.getLocalPart(),
+                             context.qName2String(attr.value));
+            }
+            qNameAttrs = null;
+        }
+
         outputImpl(context);
     }
-    
+
     /** Subclasses can override
      */
     protected void outputImpl(SerializationContext context) throws Exception
@@ -400,12 +423,12 @@ public class MessageElement
             context.writeDOMElement(elementRep);
             return;
         }
-        
+
         if (prefix != null)
             context.registerPrefixForURI(prefix, namespaceURI);
-        
+
         context.startElement(new QName(namespaceURI, name), attributes);
         context.endElement();
     }
-    
+
 }
