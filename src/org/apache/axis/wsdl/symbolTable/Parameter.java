@@ -54,7 +54,7 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 /**
   * This class simply collects

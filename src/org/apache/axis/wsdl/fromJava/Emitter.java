@@ -519,7 +519,7 @@ public class Emitter {
         Binding binding = def.createBinding();
         binding.setUndefined(false);
         binding.setQName(
-          new javax.wsdl.QName(intfNS, getServicePortName() + "SoapBinding"));
+          new QName(intfNS, getServicePortName() + "SoapBinding"));
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
         String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
@@ -544,7 +544,7 @@ public class Emitter {
 
         Service service = def.createService();
 
-        service.setQName(new javax.wsdl.QName(implNS,
+        service.setQName(new QName(implNS,
                                               getServiceElementName()));
 
         def.addService(service);
@@ -577,7 +577,7 @@ public class Emitter {
         portType.setUndefined(false);
 
         // PortType name is the name of the class being processed
-        portType.setQName(new javax.wsdl.QName(intfNS, getPortTypeName()));
+        portType.setQName(new QName(intfNS, getPortTypeName()));
 
         ArrayList operations = serviceDesc.getOperations();
         for (Iterator i = operations.iterator(); i.hasNext();) {
@@ -821,8 +821,7 @@ public class Emitter {
     {
         Message msg = def.createMessage();
 
-        javax.wsdl.QName qName
-                = createMessageName(def, oper.getName(), "Request");
+        QName qName = createMessageName(def, oper.getName(), "Request");
 
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -846,8 +845,7 @@ public class Emitter {
     {
         Message msg = def.createMessage();
 
-        javax.wsdl.QName qName
-                = createMessageName(def, desc.getName(), "Response");
+        QName qName = createMessageName(def, desc.getName(), "Response");
 
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -901,7 +899,7 @@ public class Emitter {
 
         if (msg == null) {
             msg = def.createMessage();
-            javax.wsdl.QName qName = createMessageName(def, clsName, "");
+            QName qName = createMessageName(def, clsName, "");
 
             msg.setQName(qName);
             msg.setUndefined(false);
@@ -954,7 +952,7 @@ public class Emitter {
         QName elemQName = null;
         if (mode != MODE_RPC)
             elemQName = param.getQName();
-        javax.wsdl.QName typeQName = types.writePartType(param.getJavaType(),
+        QName typeQName = types.writePartType(param.getJavaType(),
                 elemQName);
         if (mode == MODE_RPC) {
             if (typeQName != null) {
@@ -968,7 +966,7 @@ public class Emitter {
                 def.addNamespace(namespaces.getCreatePrefix(namespaceURI),
                         namespaceURI);
             }
-            part.setElementName(Utils.getWSDLQName(elemQName));
+            part.setElementName(elemQName);
             part.setName(param.getName());
             msg.addPart(part);
         } else {
@@ -981,11 +979,11 @@ public class Emitter {
     /*
      * Return a message QName which has not already been defined in the WSDL
      */
-    private javax.wsdl.QName createMessageName(Definition def,
+    private QName createMessageName(Definition def,
                                                String methodName,
                                                String suffix) {
 
-        javax.wsdl.QName qName = new javax.wsdl.QName(intfNS,
+        QName qName = new QName(intfNS,
                                         methodName.concat(suffix));
 
         // Check the make sure there isn't a message with this name already
@@ -994,7 +992,7 @@ public class Emitter {
             StringBuffer namebuf =
                 new StringBuffer(methodName.concat(suffix));
             namebuf.append(messageNumber);
-            qName = new javax.wsdl.QName(intfNS, namebuf.toString());
+            qName = new QName(intfNS, namebuf.toString());
             messageNumber++;
         }
         return qName;

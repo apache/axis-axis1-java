@@ -57,7 +57,7 @@ package org.apache.axis.wsdl.symbolTable;
 
 import org.w3c.dom.Node;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 /**
  * This class represents a TypeEntry that is a type (complexType, simpleType, etc.

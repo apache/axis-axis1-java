@@ -67,7 +67,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Port;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.Constants;
@@ -335,7 +335,7 @@ public class JavaDeployWriter extends JavaWriter {
 
                     // Get the operation's return QName
                     if (params.returnName != null)
-                        returnQName = Utils.getWSDLQName(params.returnName);
+                        returnQName = params.returnName;
 
                     // Write the operation metadata
                     writeOperation(pw, javaOperName, elementQName, returnQName,

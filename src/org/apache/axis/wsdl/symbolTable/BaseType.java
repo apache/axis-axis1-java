@@ -54,7 +54,7 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 /**
  * This Type is for a QName represents a Base Type (i.e. xsd:string represents a java.lang.String) 

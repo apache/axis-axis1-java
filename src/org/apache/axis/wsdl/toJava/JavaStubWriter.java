@@ -73,7 +73,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
@@ -572,8 +572,7 @@ public class JavaStubWriter extends JavaClassWriter {
             QName q = p.getElementName();
             pw.println("        call.setOperationName(new javax.xml.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
         } else {
-            javax.xml.namespace.QName elementQName = Utils.getAxisQName(
-                    Utils.getOperationQName(operation));
+            QName elementQName = Utils.getOperationQName(operation);
             if (elementQName != null) {
                 pw.println("        call.setOperationName(" +
                         Utils.getNewQName(elementQName) + ");" );
@@ -629,8 +628,7 @@ public class JavaStubWriter extends JavaClassWriter {
                         p = (Parameter) parms.list.get(++i);
                     }
                     String javifiedName = Utils.xmlNameToJava(p.getName());
-                    String qnameName = Utils.getNewQName(
-                                       Utils.getAxisQName(p.getQName()));
+                    String qnameName = Utils.getNewQName(p.getQName());
                                
                     pw.println("            java.util.Map output;");
                     pw.println("            output = call.getOutputParams();");
@@ -652,8 +650,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
                     String javifiedName = Utils.xmlNameToJava(p.getName());
-                    String qnameName = Utils.getNewQName(
-                            Utils.getAxisQName(p.getQName()));
+                    String qnameName = Utils.getNewQName(p.getQName());
                     if (p.getMode() != Parameter.IN) {
                         writeOutputAssign(pw, javifiedName + ".value =",
                                           p.getType(),

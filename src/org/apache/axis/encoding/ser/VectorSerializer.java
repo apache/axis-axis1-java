@@ -142,8 +142,7 @@ public class VectorSerializer implements Serializer
     public boolean writeSchema(Types types) throws Exception {
         Element complexType = types.createElement("complexType");
         complexType.setAttribute("name", "Vector");
-        types.writeSchemaElement(types.getWsdlQName(Constants.SOAP_VECTOR),
-                                 complexType);
+        types.writeSchemaElement(Constants.SOAP_VECTOR, complexType);
         Element seq = types.createElement("sequence");
         complexType.appendChild(seq);
 

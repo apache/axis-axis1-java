@@ -260,9 +260,9 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             this.wsdlDefinition = def ;
 
             // grrr!  Too many flavors of QName
-            String           ns = serviceName.getNamespaceURI();
-            String           lp = serviceName.getLocalPart();
-            javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
+            String ns = serviceName.getNamespaceURI();
+            String lp = serviceName.getLocalPart();
+            QName  qn = new QName( ns, lp );
 
             this.wsdlService    = def.getService( qn );
             if ( this.wsdlService == null )
@@ -550,7 +550,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public QName getServiceName() {
         if ( wsdlService == null ) return( null );
-        javax.wsdl.QName  qn = wsdlService.getQName();
+        QName  qn = wsdlService.getQName();
         return( new QName( qn.getNamespaceURI(), qn.getLocalPart() ) );
     }
 

@@ -75,7 +75,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
 import javax.wsdl.Definition;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -153,16 +153,15 @@ public class Types {
             // Still need to write any element declaration...
             if (qname != null) {
                 String elementType = writeType(type);
-                Element element = createElementDecl(Utils.getWSDLQName(qname),
-                        elementType, false);
+                Element element = createElementDecl(qname, elementType, false);
                 if (element != null)
-                    writeSchemaElement(Utils.getWSDLQName(qname),element);
+                    writeSchemaElement(qname,element);
             }
-            return getWsdlQName(typeQName);
+            return typeQName;
         }else {
             if (wsdlTypesElem == null)
                 writeWsdlTypesElement();
-            return writeTypeAsElement(type, Utils.getWSDLQName(qname));
+            return writeTypeAsElement(type, qname);
         }
     }
 
@@ -198,7 +197,7 @@ public class Types {
         String pref = def.getPrefix(qName.getNamespaceURI());
         if (pref == null)
           def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()), qName.getNamespaceURI());
-        return getWsdlQName(qName);
+        return qName;
     }
 
     /**
@@ -361,7 +360,7 @@ public class Types {
 
         // Quick return if schema type
         if (isSimpleType(type)) {
-            QName qName = getWsdlQName(getTypeQName(type));
+            QName qName = getTypeQName(type);
             if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
                 return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
                     qName.getLocalPart();
@@ -604,15 +603,6 @@ public class Types {
             element.setAttribute("nillable", "true");
         element.setAttribute("type", elementType);
         return element;
-    }
-
-    /**
-     * convert from JAX-RPC QName to WSDL QName
-     * @param qName JAX-RPC QName
-     * @return WSDL QName
-     */
-    public QName getWsdlQName (javax.xml.namespace.QName qName) {
-        return new QName(qName.getNamespaceURI(), qName.getLocalPart());
     }
 
     /**

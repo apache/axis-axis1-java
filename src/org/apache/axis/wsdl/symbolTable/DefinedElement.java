@@ -57,7 +57,7 @@ package org.apache.axis.wsdl.symbolTable;
 
 import org.w3c.dom.Node;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 /**
  * This Type is for a QName that is an element, these types are only emitted if 

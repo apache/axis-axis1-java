@@ -58,7 +58,7 @@ import java.io.IOException;
 
 import java.util.Vector;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 import org.w3c.dom.Node;
 

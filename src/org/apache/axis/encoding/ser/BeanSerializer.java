@@ -244,12 +244,10 @@ public class BeanSerializer implements Serializer, Serializable {
      */
     public boolean writeSchema(Types types) throws Exception {
 
-        javax.wsdl.QName qName = types.getWsdlQName(xmlType);
-
         // ComplexType representation of bean class
         Element complexType = types.createElement("complexType");
-        types.writeSchemaElement(qName, complexType);
-        complexType.setAttribute("name", qName.getLocalPart());
+        types.writeSchemaElement(xmlType, complexType);
+        complexType.setAttribute("name", xmlType.getLocalPart());
 
         // See if there is a super class, stop if we hit a stop class
         Element e = null;

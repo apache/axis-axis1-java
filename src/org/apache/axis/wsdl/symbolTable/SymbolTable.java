@@ -83,7 +83,7 @@ import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 
@@ -658,7 +658,7 @@ public class SymbolTable {
             else if (isXSD && localPart.equals("any")) {
                 // Map xsd:any element to any xsd:any so that
                 // it gets serialized using the ElementSerializer.
-                QName anyQName = Utils.getWSDLQName(Constants.XSD_ANY);
+                QName anyQName = Constants.XSD_ANY;
                 if (getType(anyQName) == null) {
                     symbolTablePut(new BaseType(anyQName));
                 }
@@ -1012,11 +1012,10 @@ public class SymbolTable {
             Parameter returnParam = (Parameter)outputs.get(0);
             parameters.returnType = returnParam.getType();
             if (parameters.returnType instanceof DefinedElement) {
-                parameters.returnName = Utils.getAxisQName( 
-                        ((DefinedElement)parameters.returnType).getQName());
-            } else {
                 parameters.returnName = 
-                        Utils.getAxisQName(returnParam.getQName()); 
+                        ((DefinedElement)parameters.returnType).getQName();
+            } else {
+                parameters.returnName = returnParam.getQName(); 
             }
             ++parameters.outputs;
         }
@@ -1213,7 +1212,7 @@ public class SymbolTable {
                 for (int j = 0; j < vTypes.size(); j++) {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                     Parameter p = new Parameter();
-                    p.setQName(Utils.getWSDLQName(elem.getName()));
+                    p.setQName(elem.getName());
                     p.setType(elem.getType());
                     v.add(p);
                 }

@@ -63,7 +63,7 @@ import java.util.Map;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.deployment.wsdd.WSDDConstants;

@@ -236,13 +236,10 @@ public class SimpleSerializer implements Serializer {
         if (!SimpleType.class.isAssignableFrom(javaType))
             return false;
         
-        // Emit WSDL for simpleContent
-        javax.wsdl.QName qName = types.getWsdlQName(xmlType);
-
         // ComplexType representation of SimpleType bean class
         Element complexType = types.createElement("complexType");
-        types.writeSchemaElement(qName, complexType);
-        complexType.setAttribute("name", qName.getLocalPart());
+        types.writeSchemaElement(xmlType, complexType);
+        complexType.setAttribute("name", xmlType.getLocalPart());
 
         // Produce simpleContent extending base type.
         Element simpleContent = types.createElement("simpleContent");
