@@ -322,7 +322,10 @@ public class DeserializerImpl extends SOAPHandler
         // there is nothing to deserialize.
         if (JavaUtils.isTrueExplicitly(Constants.getValue(attributes,
                                         Constants.URIS_SCHEMA_XSI,
-                                        "nil"))) {
+                                        "nil")) ||
+            JavaUtils.isTrueExplicitly(Constants.getValue(attributes,
+                                        Constants.URIS_SCHEMA_XSI,
+                                        "null"))) {
           value = null;
           isNil = true;
           return;
