@@ -25,14 +25,46 @@ public class EncodingTest extends TestCase {
         try {
             XMLEncoderFactory.getEncoder("XYZ");
             fail("A UnsupportedEncodingException should have been thrown.");
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException expected) {
             // expected
         }
+        assertInvalidStringsDetected(INVALID_XML_STRING);
+        //run through the first 32 chars
+        for(int i=0;i<31;i++) {
+            char c=(char)i;
+            //ignore legit whitespace
+            if ("\t\n\r".indexOf(c) == 1) {
+                //verify the others are caught
+                String s=Character.toString(c);
+                assertInvalidStringsDetected(s);
+            }
+        }
+        assertInvalidStringsDetected("foo");
+    }
+
+    /**
+     * try a string through the two encoders we have, verify it is invalid
+     * @param invalidXmlString string we expect to fail
+     * @throws Exception
+     */
+    private void assertInvalidStringsDetected(String invalidXmlString) throws Exception {
+        assertInvalidStringsDetected(XMLEncoderFactory.ENCODING_UTF_16,invalidXmlString);
+        assertInvalidStringsDetected(XMLEncoderFactory.ENCODING_UTF_8, invalidXmlString);
+    }
+
+
+
+    /**
+     * try a string through the two encoders we have, verify it is invalid
+     * @param encoderChoice name of the encoder to use
+     * @param invalidXmlString string we expect to fail
+     */
+    private void assertInvalidStringsDetected(String encoderChoice, String invalidXmlString) throws Exception {
         try {
-            XMLEncoder encoder = XMLEncoderFactory.getEncoder(XMLEncoderFactory.ENCODING_UTF_8);
-            encoder.encode(INVALID_XML_STRING);
+            XMLEncoder encoder = XMLEncoderFactory.getEncoder(encoderChoice);
+            encoder.encode(invalidXmlString);
             fail("A UnsupportedEncodingException should have been thrown.");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException expected) {
             // expected
         }
     }
@@ -45,7 +77,8 @@ public class EncodingTest extends TestCase {
         assertEquals(XMLEncoderFactory.ENCODING_UTF_8, encoder.getEncoding());
         assertEquals(ENCODED_XML_SPECIAL_CHARS, encodedXMLChars);
         assertEquals(GERMAN_UMLAUTS, new String(encodedUmlauts.getBytes(), XMLEncoderFactory.ENCODING_UTF_8));
-        assertEquals(ENCODED_SUPPORT_CHARS_LESS_HEX_20, encoder.encode(SUPPORT_CHARS_LESS_HEX_20));
+        //assert that the whitespace chars are not touched
+        assertEquals(SUPPORT_CHARS_LESS_HEX_20, encoder.encode(SUPPORT_CHARS_LESS_HEX_20));
     }
 
     public void testUTF16() throws Exception {
@@ -58,7 +91,8 @@ public class EncodingTest extends TestCase {
         assertEquals(ENCODED_XML_SPECIAL_CHARS, encodedXMLChars);
         // java uses UTF-16 internally, should be equal
         assertEquals(GERMAN_UMLAUTS, encodedUmlauts);
-        assertEquals(ENCODED_SUPPORT_CHARS_LESS_HEX_20, encoder.encode(SUPPORT_CHARS_LESS_HEX_20));
+        //assert that the whitespace chars are not touched
+        assertEquals(SUPPORT_CHARS_LESS_HEX_20, encoder.encode(SUPPORT_CHARS_LESS_HEX_20));
     }
 
     public static void main(String[] args) {
