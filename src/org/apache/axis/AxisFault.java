@@ -58,6 +58,7 @@ package org.apache.axis ;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.commons.logging.Log;
@@ -208,15 +209,9 @@ public class AxisFault extends java.rmi.RemoteException {
             faultDetails.add(el);        
         }
         
-        // get the stack trace of the target exception
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream( stream );
-        target.printStackTrace(ps);
-        ps.close();
-        
         el =  XMLUtils.StringToElement(Constants.NS_URI_AXIS, 
                                        "stackTrace", 
-                                       stream.toString());
+                                       JavaUtils.stackToString(target));
 
         faultDetails.add(el);
     }

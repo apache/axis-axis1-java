@@ -1179,7 +1179,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         catch( Exception exp ) {
             //if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
-            exp.printStackTrace();
+            log.info(JavaUtils.getMessage("toAxisFault00"), exp);
             throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
@@ -1232,6 +1232,7 @@ public class Call implements javax.xml.rpc.Call {
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
+            log.info(JavaUtils.getMessage("toAxisFault00"), exp);
             throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
@@ -1690,7 +1691,7 @@ public class Call implements javax.xml.rpc.Call {
 
             invoke();
         } catch (Exception e) {
-            log.debug( JavaUtils.getMessage("exception00"), e );
+            log.info(JavaUtils.getMessage("toAxisFault00"), e);
             throw AxisFault.makeFault(e);
         }
 

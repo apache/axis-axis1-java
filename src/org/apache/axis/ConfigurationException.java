@@ -55,6 +55,8 @@
 
 package org.apache.axis;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -93,7 +95,7 @@ public class ConfigurationException extends IOException {
      */
     public ConfigurationException(Exception e) {
         super(e.toString()  + (copyStackByDefault? ("\n"
-           + stackToString(e)) : "" ));
+           + JavaUtils.stackToString(e)) : "" ));
 
         // Log the exception the first time it appears.
         if (!(e instanceof ConfigurationException)) {
@@ -108,19 +110,11 @@ public class ConfigurationException extends IOException {
      */
     public ConfigurationException(Exception e, final boolean copyStack) {
         super(e.toString()  + (copyStack ? "\n"
-           + stackToString(e) : "" ));
+           + JavaUtils.stackToString(e) : "" ));
 
         // Log the exception the first time it appears.
         if (!(e instanceof ConfigurationException)) {
             log.debug("Exception: ", e);
         }
-    }
-
-    protected static String stackToString(Exception e){
-      java.io.StringWriter sw= new java.io.StringWriter(1024); 
-      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
-      e.printStackTrace(pw);
-      pw.close();
-      return sw.toString();
     }
 }
