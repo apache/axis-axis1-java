@@ -5,6 +5,17 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
+import javax.xml.messaging.URLEndpoint;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
+
 import java.net.URL;
 
 /**
@@ -64,7 +75,7 @@ public class TestEncoding extends TestCase {
     }
 
     public void testFrenchAccents2() throws Exception {
-        runtest("Une chaîne avec des caractères accentués");
+        runtest("Une cha?ne avec des caract?res accentu?s");
     }
 
     public void testGermanUmlauts() throws Exception {
@@ -77,5 +88,30 @@ public class TestEncoding extends TestCase {
                 "Chinese (trad.) : \u6b61\u8fce  \n" +
                 "Greek : \u03ba\u03b1\u03bb\u03ce\u03c2 \u03bf\u03c1\u03af\u03c3\u03b1\u03c4\u03b5 \n" +
                 "Japanese : \u3088\u3046\u3053\u305d");
+    }
+
+    public void testSynchronization() throws Exception {
+        SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection con = scFactory.createConnection();
+
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage message = factory.createMessage();
+        String requestEncoding = "UTF-16";
+        message.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestEncoding);
+
+        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+        SOAPBody body = envelope.getBody();
+
+        Name bodyName = envelope.createName("echo");
+        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
+
+        Name name = envelope.createName("arg0");
+        SOAPElement symbol = bodyElement.addChildElement(name);
+        symbol.addTextNode("Hello");
+
+        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/jws/EchoHeaders.jws");
+        SOAPMessage response = con.call(message, endpoint);
+        String responseEncoding = (String) response.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+        assertEquals(requestEncoding, responseEncoding);
     }
 }
