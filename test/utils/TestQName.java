@@ -53,7 +53,7 @@ public class TestQName extends TestCase
 
     public void testEquals()
     {
-        QName qname1 = new QName(null, null);
+        QName qname1 = new QName("", "");
         QName qname2 = new QName("PREFIX", "LOCALPART");
         QName qname3 = new QName("PREFIX", "LOCALPART");
         QName qname4 = new QName("PREFIX", "DIFFLOCALPART");
