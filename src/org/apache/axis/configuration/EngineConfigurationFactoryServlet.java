@@ -194,6 +194,7 @@ public class EngineConfigurationFactoryServlet
         }
 
         if (config == null) {
+            log.warn(Messages.getMessage("servletEngineWebInfWarn00"));
             try {
                 InputStream is = ClassUtils.getResourceAsStream(AxisEngine.class, SERVER_CONFIG_FILE);
                 config = new FileProvider(is);
