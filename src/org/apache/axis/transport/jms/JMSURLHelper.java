@@ -55,8 +55,11 @@
 
 package org.apache.axis.transport.jms;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -75,9 +78,12 @@ public class JMSURLHelper
 
     // vendor-specific properties
     private HashMap properties;
-
+    
     // required properties
     private Vector requiredProperties;
+
+    //application-specific JMS message properties
+    private Vector appProperties;
 
     public JMSURLHelper(java.net.URL url) throws java.net.MalformedURLException {
         this(url, null);
@@ -86,6 +92,7 @@ public class JMSURLHelper
     public JMSURLHelper(java.net.URL url, String[] requiredProperties) throws java.net.MalformedURLException {
         this.url = url;
         properties = new HashMap();
+        appProperties = new Vector();
 
         // the path should be something like '/SampleQ1'
         // clip the leading '/' if there is one
@@ -106,6 +113,11 @@ public class JMSURLHelper
             {
                 String key = keyValue.substring(0, eqIndex);
                 String value = keyValue.substring(eqIndex+1);
+                if (key.startsWith(JMSConstants._MSG_PROP_PREFIX)) {
+                    key = key.substring(
+                        JMSConstants._MSG_PROP_PREFIX.length());
+                    addAppplicationProperty(key);
+                }
                 properties.put(key, value);
             }
         }
@@ -117,6 +129,10 @@ public class JMSURLHelper
 
     public String getDestination() {
         return destination;
+    }
+    
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
     public String getVendor() {
@@ -158,6 +174,60 @@ public class JMSURLHelper
 
     public Vector getRequiredProperties() {
         return requiredProperties;
+    }
+
+    /** Adds the name of a property from the url properties that should
+     * be added to the JMS message.
+     */
+    public void addAppplicationProperty(String property) {
+        if (property == null)
+            return;
+
+        if (appProperties == null)
+            appProperties = new Vector();
+
+        appProperties.addElement(property);
+    }
+
+    /** Returns a collection of properties that are defined within the
+     * JMS URL to be added directly to the JMS messages.
+        @return collection or null depending on presence of elements
+     */
+    public Vector getApplicationProperties() {
+        return appProperties;
+    }
+    
+    
+    /**
+        Returns a URL formatted String. The properties of the URL may not 
+        end up in the same order as the JMS URL that was originally used to
+        create this object.
+    */
+    public String getURLString() {
+        StringBuffer text = new StringBuffer("jms:/");
+        text.append(getDestination());
+        text.append("?");
+        Map props = (Map)properties.clone();
+        boolean firstEntry = true;
+        for(Iterator itr=properties.keySet().iterator(); itr.hasNext();) {
+            String key = (String)itr.next();
+            if (!firstEntry) {
+                text.append("&");
+            }
+            if (appProperties.contains(key)) {
+                text.append(JMSConstants._MSG_PROP_PREFIX);
+            }
+            text.append(key);
+            text.append("=");
+            text.append(props.get(key));
+            firstEntry = false;
+        }
+        return text.toString();
+    }
+    
+    /** Returns a formatted URL String with the assigned properties */
+    public String toString() {
+        return getURLString();
     }
 
     private void validateURL()

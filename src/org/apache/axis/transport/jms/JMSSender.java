@@ -63,6 +63,7 @@ import org.apache.axis.handlers.BasicHandler;
 import javax.jms.Destination;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -137,15 +138,12 @@ public class JMSSender extends BasicHandler
 
     private HashMap createSendProperties(MessageContext context)
     {
+        //I'm not sure why this helper method is private, but 
+        //we need to delegate to factory method that can build the
+        //application-specific map of properties so make a change to
+        //delegate here. 
+        HashMap props = createApplicationProperties(context);
 
-        if(!context.containsProperty(JMSConstants.PRIORITY) &&
-           !context.containsProperty(JMSConstants.DELIVERY_MODE) &&
-           !context.containsProperty(JMSConstants.TIME_TO_LIVE))
-        {
-            return null;
-        }
-
-        HashMap props = new HashMap();
         if(context.containsProperty(JMSConstants.PRIORITY))
             props.put(JMSConstants.PRIORITY,
             context.getProperty(JMSConstants.PRIORITY));
@@ -158,5 +156,17 @@ public class JMSSender extends BasicHandler
         return props;
     }
 
-
+    /** Return a map of properties that makeup the application-specific
+        for the JMS Messages.
+     */
+    protected HashMap createApplicationProperties(MessageContext context) {
+        HashMap props = null;
+        if (context.containsProperty(
+            JMSConstants.JMS_APPLICATION_MSG_PROPS)) {
+            props = new HashMap();
+            props.putAll((Map)context.getProperty(
+                JMSConstants.JMS_APPLICATION_MSG_PROPS));
+        }
+        return props;
+    }
 }

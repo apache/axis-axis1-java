@@ -102,6 +102,10 @@ public interface JMSConstants
     final static String _INTERACT_RETRY_INTERVAL      = "interactRetryInterval";
     final static String _TIMEOUT_TIME                 = "timeoutTime";
     final static String _MIN_TIMEOUT_TIME             = "minTimeoutTime";
+    /** Defines a prefix added to each application-specific property in the 
+     * JMS URL that should be added to the JMS Message when issued.
+     */
+    final static String _MSG_PROP_PREFIX              = "msgProp.";
 
     public static String JMS_PROPERTY_PREFIX = "transport.jms.";
 
@@ -291,6 +295,12 @@ public interface JMSConstants
 
     // key used to store the JMS URL string in the message context
     final static String JMS_URL         = JMS_PROPERTY_PREFIX + "EndpointAddress";
+    
+    /** A property that carries a Map of application-specific properties to be
+     * added to the JMS messages when issued. 
+     */
+    final static String JMS_APPLICATION_MSG_PROPS = 
+        JMS_PROPERTY_PREFIX + "msgProps";
 
     final static String ADAPTER_POSTFIX = "VendorAdapter";
 }

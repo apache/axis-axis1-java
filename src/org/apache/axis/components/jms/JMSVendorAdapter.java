@@ -57,6 +57,7 @@ package org.apache.axis.components.jms;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.jms.InvalidDestinationException;
 import javax.jms.JMSException;
@@ -325,5 +326,38 @@ public abstract class JMSVendorAdapter
             else
                 context.removeProperty(JMSConstants.WAIT_FOR_RESPONSE);
         }
+        setupApplicationProperties(context, call, jmsurl);
+    }
+    
+    public void setupApplicationProperties(MessageContext context,
+                                    Call call,
+                                    JMSURLHelper jmsurl)
+    {
+        //start with application properties from the URL
+        Map appProps = new HashMap();
+        if (jmsurl != null && jmsurl.getApplicationProperties() != null) {
+            for(Iterator itr=jmsurl.getApplicationProperties().iterator();
+                itr.hasNext();) {
+                String name = (String)itr.next();
+                appProps.put(name,jmsurl.getPropertyValue(name));
+            }
+        }
+        
+        //next add application properties from the message context
+        Map ctxProps = 
+           (Map)context.getProperty(JMSConstants.JMS_APPLICATION_MSG_PROPS);
+        if (ctxProps != null) {
+            appProps.putAll(ctxProps);
+        }
+        
+        //finally add the properties from the call
+        Map callProps = 
+            (Map)call.getProperty(JMSConstants.JMS_APPLICATION_MSG_PROPS);
+        if (callProps != null) {
+            appProps.putAll(callProps);
+        }
+        
+        //now tore these properties within the context
+        context.setProperty(JMSConstants.JMS_APPLICATION_MSG_PROPS,appProps);
     }
 }
