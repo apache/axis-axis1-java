@@ -357,7 +357,7 @@ public class Admin {
                 String newPassword = root.getFirstChild().getNodeValue();
                 engine.setAdminPassword(newPassword);
                 doc = XMLUtils.newDocument();
-                doc.appendChild( root = doc.createElement( "Admin" ) );
+                doc.appendChild( root = doc.createElementNS("", "Admin" ) );
                 root.appendChild( doc.createTextNode( "Done processing" ) );
                 return doc;
             }
@@ -370,7 +370,7 @@ public class Admin {
                     msgContext.setProperty(msgContext.QUIT_REQUESTED, "true");
                 }
                 doc = XMLUtils.newDocument();
-                doc.appendChild( root = doc.createElement( "Admin" ) );
+                doc.appendChild( root = doc.createElementNS("", "Admin" ) );
                 root.appendChild( doc.createTextNode( "Quitting" ) );
                 return doc;
             }
@@ -440,7 +440,7 @@ public class Admin {
             engine.saveConfiguration();
 
             doc = XMLUtils.newDocument();
-            doc.appendChild( root = doc.createElement( "Admin" ) );
+            doc.appendChild( root = doc.createElementNS("", "Admin" ) );
             root.appendChild( doc.createTextNode( "Done processing" ) );
         }
         catch( Exception e ) {

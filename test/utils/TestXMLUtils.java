@@ -170,7 +170,7 @@ public class TestXMLUtils extends TestCase
     {
         Document doc = XMLUtils.newDocument();
 
-        Element elem = doc.createElement("svg");
+        Element elem = doc.createElementNS("", "svg");
         elem.setAttribute("xmlns:svg", "\"http://www.w3.org/2000/svg\"");
         elem.setAttribute("xmlns:xlink", "\"http://www.w3.org/1999/xlink\"");
         elem.setAttribute("xmlns:xhtml", "\"http://www.w3.org/1999/xhtml\"");
