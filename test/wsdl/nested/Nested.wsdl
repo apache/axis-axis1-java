@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Nested2" targetNamespace="urn:Nested"
+		xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+		xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+		xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+		xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+		xmlns:tns="urn:Nested">
+    <wsdl:message name="NestedSvc2Input">
+            <wsdl:part name="CUSTOMERNO" element="tns:CUSTOMERNO"/>
+            <wsdl:part name="PI_DISTR_CHAN" element="tns:PI_DISTR_CHAN"/>
+            <wsdl:part name="PI_DIVISION" element="tns:PI_DIVISION"/>
+            <wsdl:part name="PI_PASS_BUFFER" element="tns:PI_PASS_BUFFER"/>
+            <wsdl:part name="PI_SALESORG" element="tns:PI_SALESORG"/>
+    </wsdl:message>
+    <wsdl:message name="NestedSvc2Output">
+	    <wsdl:part name="composite" type="tns:Out"/>
+    </wsdl:message>
+    <wsdl:portType name="Nested2PortType">
+	    <wsdl:operation name="NestedSvc2">
+		    <wsdl:input name="NestedSvc2Input" message="tns:NestedSvc2Input"/>
+		    <wsdl:output name="NestedSvc2Output" message="tns:NestedSvc2Output"/>
+	    </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="Nested2Binding" type="tns:Nested2PortType">
+	    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+	    <wsdl:operation name="NestedSvc2">
+		    <wsdl:input>
+			    <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="Nested2" use="encoded"/>
+		    </wsdl:input>
+		    <wsdl:output>
+			    <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="Nested2" use="encoded"/>
+		    </wsdl:output>
+	    </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Nested2Service">
+	    <wsdl:port name="Nested" binding="tns:Nested2Binding">
+            <soap:address location="http://localhost:8080/axis/services/Nested"/>
+	    </wsdl:port>
+    </wsdl:service>
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:Nested">
+            <xsd:complexType name="In">
+	            <xsd:sequence>
+		            <xsd:element ref="CUSTOMERNO" minOccurs="1" maxOccurs="1"/>
+		            <xsd:element ref="PI_DISTR_CHAN" minOccurs="0" maxOccurs="1"/>
+		            <xsd:element ref="PI_DIVISION" minOccurs="0" maxOccurs="1"/>
+		            <xsd:element ref="PI_PASS_BUFFER" minOccurs="0" maxOccurs="1"/>
+		            <xsd:element ref="PI_SALESORG" minOccurs="1" maxOccurs="1"/>
+		            <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+	            </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="CUSTOMERNO" type="xsd:string"/>
+            <xsd:element name="PI_DISTR_CHAN" type="xsd:string"/>
+            <xsd:element name="PI_DIVISION" type="xsd:string"/>
+            <xsd:element name="PI_PASS_BUFFER" type="xsd:string"/>
+            <xsd:element name="PI_SALESORG" type="xsd:string"/>
+            <xsd:complexType name="Out">
+	            <xsd:sequence>
+		            <xsd:element ref="PE_ADDRESS" minOccurs="1" maxOccurs="1"/>
+		            <xsd:element ref="RETURN" minOccurs="1" maxOccurs="1"/>
+		            <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+	            </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="PE_ADDRESS">
+	            <xsd:complexType>
+		            <xsd:sequence>
+			            <xsd:element name="FORM_OF_AD" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="FIRST_NAME" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="NAME" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="NAME_3" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="NAME_4" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="DATE_BIRTH" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="STREET" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="POSTL_CODE" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="CITY" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="REGION" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="COUNTRY" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="COUNTRNISO" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="COUNTRAISO" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="INTERNET" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="FAX_NUMBER" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="TELEPHONE" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="TELEPHONE2" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="LANGU" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="LANGU_ISO" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="CURRENCY" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="CURRENCY_ISO" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="COUNTRYISO" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="ONLY_CHANGE_COMADDRESS" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		            </xsd:sequence>
+		            <xsd:anyAttribute processContents="lax"/>
+	            </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="RETURN">
+	            <xsd:complexType>
+		            <xsd:sequence>
+			            <xsd:element name="TYPE" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="CODE" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="MESSAGE" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="LOG_NO" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="LOG_MSG_NO" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="MESSAGE_V1" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="MESSAGE_V2" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="MESSAGE_V3" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:element name="MESSAGE_V4" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			            <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		            </xsd:sequence>
+		            <xsd:anyAttribute processContents="lax"/>
+	            </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+</wsdl:definitions>
