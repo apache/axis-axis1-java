@@ -566,6 +566,25 @@ public class SymbolTable {
                      Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
                 // we can no longer do .NET stuff and treat document as rpc style
                 this.dotNet = false;
+                // Create symbol table entry for attribute type
+                QName refQName = Utils.getNodeTypeRefQName(node, "type");
+                if (refQName == null) {
+                    TypeEntry refType = getTypeEntry(refQName, false);
+                    if (refType != null) {
+                        // Not defined yet, add one
+                        String baseName = btm.getBaseName(refQName);
+                        if (baseName != null) {
+                            BaseType bt = new BaseType(refQName);
+                            bt.setIsReferenced(true);
+                            symbolTablePut(bt);
+                        }
+                        else {
+                            throw new IOException(
+                                    "Attribute type is not simple:" + refQName.toString());
+                        }
+                    }
+                }
+                
             }
         }
 

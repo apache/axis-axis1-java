@@ -852,5 +852,58 @@ public class SchemaUtils {
         return null;
     }
 
+    /**
+     * Return the attribute names and types if any in the node
+     * The even indices are the element types (TypeEntry) and
+     * the odd indices are the corresponding names (Strings).
+     * 
+     * Example:
+     * <complexType name="Person">
+     *   <sequence>
+     *     <element minOccurs="1" maxOccurs="1" name="Age" type="double" />
+     *     <element minOccurs="1" maxOccurs="1" name="ID" type="xsd:float" />
+     *   </sequence>
+     *   <attribute name="Name" type="string" />
+     *   <attribute name="Male" type="boolean" />
+     * </complexType>
+     * 
+     */ 
+    public static Vector getComplexElementAttributes(Node node, 
+                                                     SymbolTable symbolTable) 
+    {
+        Vector v = null;    // return value
+        
+        if (node == null) {
+            return null;
+        }
+        
+        // examine children of the node for <attribute> elements
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            QName nodeKind = Utils.getNodeQName(child);
+            if (nodeKind == null ||
+                ! nodeKind.getLocalPart().equals("attribute"))
+                continue;
+            
+            // we have an attribute node
+            if (v == null)
+                v = new Vector();
+            
+            // type
+            QName typeAttr = Utils.getNodeTypeRefQName(child, "type");
+            TypeEntry type = symbolTable.getTypeEntry(typeAttr, false);
+            // name
+            QName name = Utils.getNodeNameQName(child);
+            // add type and name to vector, skip it if we couldn't parse it
+            // XXX - this may need to be revisited.
+            if (type != null && name != null) {
+                v.add(type);
+                v.add(name.getLocalPart());
+            }
+        }
+        
+        return v;
+    }
 
 }

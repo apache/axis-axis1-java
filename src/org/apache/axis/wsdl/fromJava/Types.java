@@ -57,10 +57,13 @@
 package org.apache.axis.wsdl.fromJava;
 
 import org.apache.axis.Constants;
+import org.apache.axis.AxisFault;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -338,14 +341,7 @@ public class Types {
      * @throws Exception
      */
     public String writeType(Class type) throws Exception {
-        Serializer ser = null;
-        if (tm != null) {
-        SerializerFactory factory = (SerializerFactory)tm.getSerializer(type);
-        if (factory != null) {
-            ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
-        }
-        }
-
+      
         // Quick return if schema type
         if (isSimpleSchemaType(type))
             return Constants.NSPREFIX_SCHEMA_XSD + ":" +
@@ -354,7 +350,27 @@ public class Types {
             return Constants.NSPREFIX_SOAP_ENC + ":" +
                     getTypeQName(type).getLocalPart();
 
-        // Write the namespace
+        // look up the serializer in the TypeMappingRegistry
+        Serializer ser = null;
+        SerializerFactory factory = null;
+        if (tm != null) {
+            factory = (SerializerFactory)tm.getSerializer(type);
+        } else {
+            factory = (SerializerFactory)defaultTM.getSerializer(type);
+        }
+        if (factory == null) {
+            factory = new BeanSerializerFactory(type, getTypeQName(type));
+        }
+        if (factory != null) {
+            ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
+        }
+        
+        // if we can't get a serializer, that is bad.
+        if (ser == null)
+            throw new AxisFault(
+                    JavaUtils.getMessage("NoSerializer00", type.getName()));
+        
+          // Write the namespace
         QName qName = writeTypeNamespace(type);
 
         // If an array the component type should be processed first
@@ -397,10 +413,7 @@ public class Types {
             if (isEnumClass(type)) {
                 writeEnumType(qName, type);
             } else {
-                if (ser != null)
-                    ser.writeSchema(this);
-                else
-                    writeBeanClassType(qName, type);
+                ser.writeSchema(this);
             }
         }
         return prefixedName;
@@ -508,83 +521,13 @@ public class Types {
     }
 
     /**
-     * Write Bean Class Complex Type
-     * @param qname QName of type.
-     * @param type class of type
-     */
-    public void writeBeanClassType(javax.wsdl.QName qName, Class cls)
-            throws Exception  {
-        // ComplexType representation of bean class
-        Element complexType = docHolder.createElement("complexType");
-        writeSchemaElement(qName, complexType);
-        complexType.setAttribute("name", qName.getLocalPart());
-
-        // See if there is a super class, stop if we hit a stop class
-        Element e = null;
-        Class superClass = cls.getSuperclass();
-        if (superClass != null &&
-                superClass != java.lang.Object.class &&
-                (stopClasses == null || !stopClasses.contains(superClass.getName()))) {
-            // Write out the super class
-            String base = writeType(superClass);
-            Element complexContent = docHolder.createElement("complexContent");
-            complexType.appendChild(complexContent);
-            Element extension = docHolder.createElement("extension");
-            complexContent.appendChild(extension);
-            extension.setAttribute("base", base);
-            e = extension;
-        } else {
-            e = complexType;
-        }
-
-        // Add fields under all element
-        Element all = docHolder.createElement("all");
-        e.appendChild(all);
-
-        // Build a ClassRep that represents the bean class.  This
-        // allows users to provide their own field mapping.
-        ClassRep clsRep = beanBuilder.build(cls);
-
-        // Write out fields
-        Vector fields = clsRep.getFields();
-        for (int i=0; i < fields.size(); i++) {
-            FieldRep field = (FieldRep) fields.elementAt(i);
-
-            writeField(field.getName(), field.getType(), field.getIndexed(), all);
-        }
-    }
-
-    /**
-     * write a schema representation of the given Class field and append it to the where Node     * recurse on complex types
-     * @param fieldName name of the field
-     * @param fieldType type of the field
-     * @param isUnbounded causes maxOccurs="unbounded" if set
-     * @param where location for the generated schema node
-     * @throws Exception
-     */
-    private void writeField(String fieldName,
-                            Class fieldType,
-                            boolean isUnbounded,
-                            Element where) throws Exception {
-        String elementType = writeType(fieldType);
-        Element elem = createElement(fieldName,
-                                     elementType,
-                                     isNullable(fieldType),
-                                     where.getOwnerDocument());
-        if (isUnbounded) {
-            elem.setAttribute("maxOccurs", "unbounded");
-        }
-        where.appendChild(elem);
-    }
-
-    /**
      * Create Element with a given name and type
      * @param elementName the name of the created element
      * @param elementType schema type representation of the element
      * @param nullable nullable attribute of the element
      * @return the created Element
      */
-    private Element createElement(String elementName,
+    public Element createElement(String elementName,
                                   String elementType,
                                   boolean nullable,
                                   Document docHolder) {
@@ -612,7 +555,7 @@ public class Types {
      * @param type input Class
      * @return true if the type is a simple schema type
      */
-    boolean isSimpleSchemaType(Class type) {
+    public boolean isSimpleSchemaType(Class type) {
       return (type == java.lang.String.class ||
               type == java.lang.Boolean.TYPE  ||
               type == java.lang.Byte.TYPE ||
@@ -752,7 +695,7 @@ public class Types {
      * @param type input Class
      * @return true if nullable
      */
-    private boolean isNullable(Class type) {
+    public boolean isNullable(Class type) {
         if (type.isPrimitive() ||
             (type.isArray() && type.getComponentType() == byte.class))
             return false;
@@ -783,6 +726,20 @@ public class Types {
                           doc.importNode(wsdlTypesElem, true),
                           doc.getDocumentElement().getFirstChild());
         }
+    }
+
+    /**
+     * Return the list of classes that we should not emit WSDL for.
+     */ 
+    public Vector getStopClasses() {
+        return stopClasses;
+    }
+
+    /**
+     * Return the class rep that allows users to build their own beans
+     */ 
+    public BuilderBeanClassRep getBeanBuilder() {
+        return beanBuilder;
     }
 
     /**
