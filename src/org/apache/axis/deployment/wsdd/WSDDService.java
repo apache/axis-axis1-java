@@ -56,11 +56,9 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
-import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.FaultableHandler;
 import org.apache.axis.Handler;
-import org.apache.axis.MessageContext;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -80,7 +78,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;

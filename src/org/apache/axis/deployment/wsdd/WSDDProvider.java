@@ -54,22 +54,15 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.Handler;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
+import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaEJBProvider;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
+import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
-
 import java.util.Hashtable;
 
 

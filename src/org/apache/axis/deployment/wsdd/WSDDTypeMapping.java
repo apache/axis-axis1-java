@@ -59,12 +59,11 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
-
 import java.io.IOException;
 
 

@@ -54,22 +54,16 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.apache.axis.Constants;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
-
-import java.util.Vector;
-import java.util.Iterator;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 /**

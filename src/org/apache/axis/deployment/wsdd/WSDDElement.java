@@ -54,19 +54,15 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
-import org.w3c.dom.Document;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.namespace.QName;
-
-import java.io.Serializable;
 import java.io.IOException;
-import java.util.Hashtable;
+import java.io.Serializable;
 import java.util.Vector;
 
 
