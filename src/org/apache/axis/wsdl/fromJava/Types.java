@@ -1294,6 +1294,8 @@ public class Types {
             types = new ArrayList();
 
             types.add(qName.getLocalPart());
+            
+            writeTypeNamespace(namespaceURI);
             schemaTypes.put(namespaceURI, types);
 
             added = true;
