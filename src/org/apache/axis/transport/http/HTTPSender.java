@@ -153,11 +153,8 @@ public class HTTPSender extends BasicHandler {
             BooleanHolder useFullURL)
             throws Exception {
 
-        String userID = null;
-        String passwd = null;
-
-        userID = msgContext.getUsername();
-        passwd = msgContext.getPassword();
+        String userID = msgContext.getUsername();
+        String passwd = msgContext.getPassword();
 
         // Get SOAPAction, default to ""
         String action = msgContext.useSOAPAction()
@@ -370,6 +367,9 @@ public class HTTPSender extends BasicHandler {
             header2.append("\r\n");
         }
 
+        getSocket(sockHolder, msgContext, targetURL.getProtocol(),
+                  host, port, timeout, otherHeaders, useFullURL);
+        
         if (null != otherHeaders) {
             //Add other headers to the end.
             //for pre java1.4 support, we have to turn the string buffer argument into
@@ -377,12 +377,8 @@ public class HTTPSender extends BasicHandler {
             header2.append(otherHeaders.toString());
         }
 
-
         header2.append("\r\n"); //The empty line to start the BODY.
 
-        getSocket(sockHolder, msgContext, targetURL.getProtocol(), 
-                  host, port, timeout, otherHeaders, useFullURL);
-        
         StringBuffer header = new StringBuffer();
         
         // If we're SOAP 1.2, allow the web method to be set from the
