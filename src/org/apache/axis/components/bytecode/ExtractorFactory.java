@@ -71,10 +71,14 @@ import org.apache.commons.logging.Log;
 public class ExtractorFactory {
     protected static Log log =
             LogFactory.getLog(ExtractorFactory.class.getName());
+    
+    // The built in Extractor, used by default
+    public static final String defaultExtractor = Builtin.class.getName();
 
     public static Extractor getExtractor() {
         String extractorClassName =
-                System.getProperty("axis.Extractor",org.apache.axis.components.bytecode.TechTrader.class.getName());
+                System.getProperty("axis.Extractor", defaultExtractor);
+        
         log.debug("axis.Extractor:" + extractorClassName);
         Extractor extractor = null;
         try {
@@ -82,9 +86,15 @@ public class ExtractorFactory {
             if (Extractor.class.isAssignableFrom(extractorClass))
                 return (Extractor) extractorClass.newInstance();
         } catch (Exception e) {
-            // If something goes wrong here, should we just fall
-            // through and use the default one?
+            // If something goes wrong here, log the error
+            // and use the builtin one.
             log.error(JavaUtils.getMessage("exception00"), e);
+
+            try {
+                return (Extractor) Builtin.class.newInstance();
+            } catch (Exception e1) {
+                // not much we can do here, fall through and return null
+            }
         }
         return extractor;
     }
