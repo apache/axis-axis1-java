@@ -196,9 +196,7 @@ public class Wsdl2javaAntTask extends Task
     public void execute() throws BuildException {
         //before we get any further, if the user didnt spec a namespace mapping
         //file, we load in the default
-        if(namespaceMappingFile==null) {
-            namespaceMappingFile = getProject().resolveFile("NStoPkg.properties");
-        }
+     
         traceParams(Project.MSG_VERBOSE);
         validate();
         try {
@@ -234,7 +232,9 @@ public class Wsdl2javaAntTask extends Task
             emitter.setVerbose(verbose);
             emitter.setDebug(debug);
             emitter.setTypeMappingVersion(typeMappingVersion);
-            emitter.setNStoPkg(namespaceMappingFile);
+	        if (namespaceMappingFile != null) {
+	            emitter.setNStoPkg(namespaceMappingFile.toString());
+	        }    
             emitter.setTimeout(timeout);
 
             Authenticator.setDefault(new DefaultAuthenticator(username,password));
@@ -432,7 +432,7 @@ public class Wsdl2javaAntTask extends Task
 
     }
     */
-
+    
     /**
      * should the task fail the build if there is a network error?
      * optional: defaults to false
@@ -459,7 +459,6 @@ public class Wsdl2javaAntTask extends Task
     public void setUsername(String username) {
         this.username = username;
     }
-
 
     /**
      * set any password required for BASIC authenticated access to the WSDL;
