@@ -493,6 +493,7 @@ public class tcpmon extends JFrame {
                     }
                     this.sleep(3);  // Let other threads have a chance to run
                 }
+                this.sleep(3);  // Let other threads have a chance to run
                 // halt();
                 done = true ;
             }
@@ -707,12 +708,12 @@ public class tcpmon extends JFrame {
                 rr2 = new SocketRR( outSocket, tmpIn2, inSocket, 
                                     tmpOut1, outputText, format );
 
-                // while( rr1.isAlive() || rr2.isAlive() ) {
+                while( !rr1.isDone() && !rr2.isDone() ) {
                 // Only loop as long as the connection to the target
                 // machine is available - once that's gone we can stop.
                 // The old way, loop until both are closed, left us
                 // looping forever since no one closed the 1st one.
-                while( !rr2.isDone() ) {
+                // while( !rr2.isDone() ) {
                     Thread.sleep( 10 );
                 }
                 rr1.halt();
