@@ -7,6 +7,7 @@
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+             xmlns:soapy="http://xml.apache.org/xml-soap"
              xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
@@ -104,6 +105,14 @@
   <message name="testFooArrayResponse">
     <part name="out" type="typens:Array3F"/>
   </message>
+
+  <message name="testMapFooArrayRequest">
+    <part name="in" type="soapy:Map"/>
+  </message>
+  <message name="testMapFooArrayResponse">
+    <part name="out" type="soapy:Map"/>
+  </message>
+
   <!-- port type declns -->
   <portType name="MArrayTests">
     <operation name="testIntArray">
@@ -113,6 +122,10 @@
     <operation name="testFooArray">
       <input message="tns:testFooArrayRequest"/>
       <output message="tns:testFooArrayResponse"/>
+    </operation>
+    <operation name="testMapFooArray">
+      <input message="tns:testMapFooArrayRequest"/>
+      <output message="tns:testMapFooArrayResponse"/>
     </operation>
   </portType>
 
@@ -134,6 +147,19 @@
       </output>
     </operation>
     <operation name="testFooArray">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:MArrayTests"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MArrayTests"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testMapFooArray">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded"

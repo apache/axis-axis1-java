@@ -7,6 +7,9 @@
 
 package test.wsdl.marrays;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
     public MArrayTestsServiceTestCase(String name) {
         super(name);
@@ -125,6 +128,25 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         */
+
+        try {
+            // Test 3F: Some of the Foo elements are multi-referenced.   
+            HashMap map = new HashMap();
+            Foo[] array = new Foo[1];
+            array[0] = new Foo();
+            array[0].setValue(123);
+            map.put("hello", array);
+            
+            HashMap rc;
+
+            rc = binding.testMapFooArray(map);
+            assertTrue("Test Map Failed (a)", rc != null);
+            assertTrue("Test Map Failed (b)", rc.get("hello").getClass().isArray());
+            Foo[] rcArray = (Foo[]) rc.get("hello");
+            assertTrue("Test Map Failed (c)", rcArray.length == 1 && rcArray[0].getValue() == 123);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
     }
 
     public void fill(int[][][] array) {

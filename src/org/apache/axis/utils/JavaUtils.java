@@ -113,7 +113,10 @@ public class JavaUtils
             category.debug( getMessage("convert00",
                 arg.getClass().getName(), destClass.getName()));
         }
-        
+
+        if (destClass == null) {
+            return arg;
+        }
 
         // See if a previously converted value is stored in the argument.
         Object destValue = null;
@@ -141,7 +144,8 @@ public class JavaUtils
 
 
         // Return if no conversion is available
-        if (!(arg instanceof List) && 
+        if (!(arg instanceof List || 
+              (arg != null && arg.getClass().isArray())) && 
             ((destHeldType == null && argHeldType == null) ||
              (destHeldType != null && argHeldType != null))) {
             return arg;
@@ -186,16 +190,31 @@ public class JavaUtils
             }
         }
             
-        List list = (List)arg;
-        int length = list.size();
-        
+        if (arg == null) {
+            return arg;
+        }
+
+        // The arg may be an array or List
+        int length = 0;
+        if (arg.getClass().isArray()) {
+            length = Array.getLength(arg);
+        } else {
+            length = ((List) arg).size();
+        }
         if (destClass.isArray()) {
             if (destClass.getComponentType().isPrimitive()) {
                 
                 Object array = Array.newInstance(destClass.getComponentType(),
                                                  length);
-                for (int i = 0; i < length; i++) {
-                    Array.set(array, i, list.get(i));
+                // Assign array elements
+                if (arg.getClass().isArray()) {
+                    for (int i = 0; i < length; i++) {
+                        Array.set(array, i, Array.get(arg, i));
+                    }                                
+                } else {  
+                    for (int i = 0; i < length; i++) {
+                        Array.set(array, i, ((List) arg).get(i));
+                    }
                 }
                 destValue = array;
                 
@@ -208,10 +227,18 @@ public class JavaUtils
                     return arg;
                 }
 
-                // Use convert to assign array elements.                        
-                for (int i=0; i < length; i++) {
-                    array[i] = convert(list.get(i), destClass.getComponentType()); 
-                }
+                // Use convert to assign array elements.
+                if (arg.getClass().isArray()) {
+                    for (int i = 0; i < length; i++) {
+                        array[i] = convert(Array.get(arg, i), 
+                                           destClass.getComponentType());
+                    }                                
+                } else {  
+                    for (int i = 0; i < length; i++) {
+                        array[i] = convert(((List) arg).get(i), 
+                                           destClass.getComponentType());
+                    }
+                }   
                 destValue = array;
             }
         }
@@ -223,10 +250,16 @@ public class JavaUtils
                 // Couldn't build one for some reason... so forget it.
                 return arg;
             }
-            
-            for (int j = 0; j < ((List)arg).size(); j++) {
-                newList.add(list.get(j));
-            }
+
+            if (arg.getClass().isArray()) {
+                for (int j = 0; j < length; j++) {
+                    newList.add(Array.get(arg, j));
+                }                                
+            } else {
+                for (int j = 0; j < length; j++) {
+                    newList.add(((List) arg).get(j));
+                }                
+            }                
             destValue = newList;
         }
         else {
