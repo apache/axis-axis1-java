@@ -55,13 +55,11 @@
 
 package samples.echo ;
 
+import org.apache.axis.encoding.Hex;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-
-import org.apache.axis.encoding.Hex;
-import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
 
 /**
  * Test implementation of the echo interop service.  Original description of
@@ -72,237 +70,15 @@ import javax.xml.rpc.namespace.QName;
  * @author Simon Fell <simon@zaks.demon.co.uk>
  */
 
-public class EchoService implements org.apache.axis.wsdl.Skeleton {
-
-    private static org.apache.axis.wsdl.SkeletonImpl skel = null;
-    
+public class EchoService {
     public EchoService() {
-        init() ;
-    }
-    
-    public QName getParameterName(String opName, int i) {
-        return skel.getParameterName(opName, i);
     }
 
-    public static QName getParameterNameStatic(String opName, int i) {
-        init();
-        return skel.getParameterName(opName, i);
-    }
-
-    public ParameterMode getParameterMode(String opName, int i) {
-        return skel.getParameterMode(opName, i);
-    }
-
-    public static ParameterMode getParameterModeStatic(String opName, int i) {
-        init();
-        return skel.getParameterMode(opName, i);
-    }
-
-    protected static void init() {
-        if (skel != null) 
-            return;
-        skel = new org.apache.axis.wsdl.SkeletonImpl();
-        skel.add("echoString",
-                 new String[] {
-                     "return",
-                     "inputString"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoStringArray",
-                 new String[] {
-                     "return",
-                     "inputStringArray"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoInteger",
-                 new String[] {
-                     "return",
-                     "inputInteger"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoIntegerArray",
-                 new String[] {
-                     "return",
-                     "inputIntegerArray"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoFloat",
-                 new String[] {
-                     "return",
-                     "inputFloat"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoFloatArray",
-                 new String[] {
-                     "return",
-                     "inputFloatArray"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoStruct",
-                 new String[] {
-                     "return",
-                     "inputStruct"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoStructArray",
-                 new String[] {
-                     "return",
-                     "inputStructArray"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoVoid",
-                 new String[] {
-                 },
-                 new ParameterMode[] {}, null, null, null);
-        skel.add("echoBase64",
-                 new String[] {
-                     "return",
-                     "inputBase64"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoHexBinary",
-                 new String[] {
-                     "return",
-                     "inputHexBinary"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoDate",
-                 new String[] {
-                     "return",
-                     "inputDate"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoDecimal",
-                 new String[] {
-                     "return",
-                     "inputDecimal"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoBoolean",
-                 new String[] {
-                     "return",
-                     "inputBoolean"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoMap",
-                 new String[] {
-                     "return",
-                     "inputMap"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoMapArray",
-                 new String[] {
-                     "return",
-                     "inputMapArray"
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoStructAsSimpleTypes",
-                 new String[] {
-                 null,
-                 "inputStruct",
-                 "outputString",
-                 "outputInteger",
-                 "outputFloat",
-                 },
-                 new ParameterMode[] {
-                     null,
-                     ParameterMode.IN,                     
-                     ParameterMode.OUT,
-                     ParameterMode.OUT,
-                     ParameterMode.OUT,
-                 }, null, null, null);
-        skel.add("echoSimpleTypesAsStruct",
-                 new String[] {
-                 "return",
-                 "inputString",
-                 "inputInteger",
-                 "inputFloat",
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN,                     
-                     ParameterMode.IN,                     
-                     ParameterMode.IN,                     
-                 }, null, null, null);
-        skel.add("echo2DStringArray",
-                 new String[] {
-                 "return",
-                 "input2DStringArray",
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoNestedStruct",
-                 new String[] {
-                 "return",
-                 "inputStruct",
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-        skel.add("echoNestedArray",
-                 new String[] {
-                 "return",
-                 "inputStruct",
-                 },
-                 new ParameterMode[] {
-                     ParameterMode.OUT,
-                     ParameterMode.IN                     
-                 }, null, null, null);
-    }
-    
     /**
      * This method accepts a single string and echoes it back to the client.
      */
     public String echoString(String input) {
-        return input;    
+        return input;
     }
 
     /**
@@ -311,7 +87,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
     public String[] echoStringArray(String[] input) {
         return input;
     }
-    
+
     /**
      * This method accepts an single integer and echoes it back to the client.
      */
@@ -320,7 +96,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
     }
 
     /**
-     * This method accepts an array of integers and echoes it back to the 
+     * This method accepts an array of integers and echoes it back to the
      * client.
      */
     public int[] echoIntegerArray(int[] input) {
@@ -342,16 +118,16 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
     }
 
     /**
-     * This method accepts a single structure and echoes it back to the 
-     * client.  
+     * This method accepts a single structure and echoes it back to the
+     * client.
      */
     public SOAPStruct echoStruct(SOAPStruct input) {
         return input;
     }
 
     /**
-     * This method accepts an array of structures and echoes it back to the 
-     * client.  The structure used is the same defined in the description of 
+     * This method accepts an array of structures and echoes it back to the
+     * client.  The structure used is the same defined in the description of
      * the "echoStruct" method.
      */
     public SOAPStruct[] echoStructArray(SOAPStruct[] input) {
@@ -359,7 +135,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
     }
 
     /**
-     * This method exists to test the "void" return case.  It accepts no 
+     * This method exists to test the "void" return case.  It accepts no
      * arguments, and returns no arguments.
      */
     public void echoVoid() {
@@ -399,7 +175,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
     public boolean echoBoolean(boolean input) {
         return input;
     }
-    
+
     /**
      * This method accepts a Map and echoes it back to the client.
      */
@@ -413,10 +189,10 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
     public HashMap [] echoMapArray(HashMap [] input) {
         return input;
     }
-    
-    public void echoStructAsSimpleTypes(SOAPStruct inputStruct, 
-                                        javax.xml.rpc.holders.StringHolder outputString, 
-                                        javax.xml.rpc.holders.IntHolder outputInteger, 
+
+    public void echoStructAsSimpleTypes(SOAPStruct inputStruct,
+                                        javax.xml.rpc.holders.StringHolder outputString,
+                                        javax.xml.rpc.holders.IntHolder outputInteger,
                                         javax.xml.rpc.holders.FloatHolder outputFloat) {
         outputString.value = inputStruct.getVarString() ;
         outputInteger.value = inputStruct.getVarInt() ;

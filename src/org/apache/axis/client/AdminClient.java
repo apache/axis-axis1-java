@@ -144,7 +144,7 @@ public class AdminClient
 
     public String list() throws Exception { 
         log.debug( JavaUtils.getMessage("doList00") );
-        String               str   = "<m:list xmlns:m=\"AdminService\"/>" ;
+        String               str   = "<m:list xmlns:m=\"http://xml.apache.org/axis/wsdd/\"/>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
@@ -156,14 +156,14 @@ public class AdminClient
 
     public String quit() throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:quit xmlns:m=\"AdminService\"/>";
+        String               str   = "<m:quit xmlns:m=\"http://xml.apache.org/axis/wsdd/\"/>";
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
     public String undeployHandler(String handlerName) throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:undeploy xmlns:m=\"AdminService\">" +
+        String               str   = "<m:undeployment xmlns:m=\"http://xml.apache.org/axis/wsdd/\">" +
                                      "<handler name=\"" + handlerName + "\"/>"+
                                      "</m:undeploy>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
@@ -172,7 +172,7 @@ public class AdminClient
 
     public String undeployService(String serviceName) throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:undeploy xmlns:m=\"AdminService\">" +
+        String               str   = "<m:undeployment xmlns:m=\"http://xml.apache.org/axis/wsdd/\">" +
                                      "<service name=\"" + serviceName + "\"/>"+
                                      "</m:undeploy>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
@@ -241,7 +241,7 @@ public class AdminClient
                     log.error(JavaUtils.getMessage("needPwd00"));
                     return null;
                 }
-                String str = "<m:passwd xmlns:m=\"AdminService\">";
+                String str = "<m:passwd xmlns:m=\"http://xml.apache.org/axis/wsdd/\">";
                 str += args[i + 1];
                 str += "</m:passwd>";
                 input = new ByteArrayInputStream(str.getBytes());
