@@ -69,7 +69,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
-import org.apache.axis.utils.DOM2Writer;
+import org.apache.axis.utils.XMLUtils;
 import java.util.*;
 import java.io.*;
 
@@ -252,6 +252,18 @@ public class MessageElement
             return null;
         
         return (MessageElement)obj;
+    }
+    
+    public Element getAsDOM() throws Exception
+    {
+        MessageContext msgContext = context.getMessageContext();
+        
+        StringWriter writer = new StringWriter();
+        output(new SerializationContext(writer, msgContext));
+        
+        Reader reader = new StringReader(writer.getBuffer().toString());
+        Document doc = XMLUtils.newDocument(new InputSource(reader));
+        return doc.getDocumentElement();
     }
 
     public void publishToHandler(ContentHandler handler) throws SAXException
