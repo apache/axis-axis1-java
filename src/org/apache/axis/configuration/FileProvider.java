@@ -195,8 +195,14 @@ public class FileProvider implements EngineConfiguration {
                     myInputStream = new FileInputStream(configFile);
                 } catch (Exception e) {
                     if (searchClasspath) {
-                        myInputStream = engine.getClass().
-                            getResourceAsStream(filename);
+                        // look for custom configuration files outside of engine package
+                        myInputStream = engine.getClass().getClassLoader().
+                                getResourceAsStream(filename);
+                        if (myInputStream == null) { 
+                            // if not found in classpath fall back to default config file in engine package
+                            myInputStream = engine.getClass().
+                                getResourceAsStream(filename);
+                        }
                     }
                 }
             }
