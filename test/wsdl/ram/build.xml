@@ -68,8 +68,7 @@ Copyright:
       </fileset>
     </copy>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
-           debug="${debug}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/ram/*.java" />
     </javac>

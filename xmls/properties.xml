@@ -92,3 +92,4 @@ them.
 <property name="http.proxyUser" value=""/>
 <property name="http.proxyPassword" value=""/>
 
+<property name="javac.fork" value="yes"/>

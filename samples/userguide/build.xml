@@ -48,7 +48,7 @@ Copyright:
 <target name="copy"/>
 
 <target name="compile">
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+  <javac srcdir="." destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
     </classpath>

@@ -68,7 +68,7 @@ Copyright:
       </fileset>
     </copy>
 
-    <javac srcdir="${axis.home}" destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/include/*.java" />

@@ -72,7 +72,7 @@ Copyright:
       </fileset>
     </copy>
     <!-- Compile the Web Service -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/inheritance/**.java" />
       <exclude name="test/wsdl/inheritance/*TestCase.java" />
@@ -102,7 +102,7 @@ Copyright:
 
     <!-- inheritance test (cont): Test the stopClass and exclude switches -->
     <!-- Compile class files -->
-    <javac srcdir="${test.dir}/wsdl/inheritance" destdir="${build.dest}" debug="${debug}">
+    <javac srcdir="${test.dir}/wsdl/inheritance" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
         <classpath refid="classpath" />
         <include name="Baby*.java"/>
         <include name="Child*.java"/>
@@ -127,7 +127,7 @@ Copyright:
       </fileset>
     </copy>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/inheritance/*.java" />
