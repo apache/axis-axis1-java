@@ -4,7 +4,6 @@
   <handler name="debug" class="org.apache.axis.handlers.DebugHandler"/>
   <handler name="MsgDispatcher" class="org.apache.axis.providers.java.MsgProvider"/>
   <handler name="RPCDispatcher" class="org.apache.axis.providers.java.RPCProvider"/>
-  <handler name="HTTPSender" class="org.apache.axis.transport.http.HTTPSender"/>
   <handler name="EchoHandler" class="org.apache.axis.handlers.EchoHandler"/>
   <handler name="JWSProcessor" class="org.apache.axis.handlers.JWSProcessor"/>
   <handler name="JWSHandler" class="org.apache.axis.handlers.JWSHandler"/>
