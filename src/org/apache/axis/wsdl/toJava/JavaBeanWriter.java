@@ -66,7 +66,7 @@ import java.util.Iterator;
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
  */
-public class JavaComplexTypeWriter extends JavaWriter {
+public class JavaBeanWriter extends JavaWriter {
     private TypeEntry type;
     private Vector elements;
     private Vector attributes;
@@ -80,7 +80,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
      * @param elements    Vector containing the Type and name of each property
      * @param extendType  The type representing the extended class (or null)
      */
-    protected JavaComplexTypeWriter(
+    protected JavaBeanWriter(
             Emitter emitter,
             TypeEntry type,
             Vector elements,
@@ -367,4 +367,4 @@ public class JavaComplexTypeWriter extends JavaWriter {
         pw.close();
     } // writeOperation
 
-} // class JavaComplexTypeWriter
+} // class JavaBeanWriter
