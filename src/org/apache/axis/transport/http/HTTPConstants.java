@@ -74,6 +74,7 @@ public class HTTPConstants {
     public static final String HEADER_PROTOCOL_V11 = "1.1".intern();
     public static final String HEADER_POST = "POST";
     public static final String HEADER_HOST = "Host";
+    public static final String HEADER_CONTENT_DESCRIPTION = "Content-Description";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
     public static final String HEADER_CONTENT_TYPE_JMS = "ContentType";
