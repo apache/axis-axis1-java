@@ -173,7 +173,7 @@ Copyright:
 
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
-      <include name="log4j.properties"/>
+      <include name="log4j.properties" unless="exclude.log4j.configuration"/>
       <include name="simplelog.properties"/>
     </jar>
     <jar jarfile="${build.lib}/${jaxrpc}.jar" basedir="${build.dest}" >
