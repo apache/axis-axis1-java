@@ -89,12 +89,7 @@ public class MimeMultipartDataHandlerDeserializer extends JAFDataHandlerDeserial
                 setValue(mmp);
             }
             catch (Exception e) {
-                // FIXME bug 15148 - we need to propigate these errors,
-                // but this breaks the test.wsdl/attachments multi-part tests,
-                // which pass empty stuff over the wire, which seems to screw
-                // up the MimeMultipart class.  Why did this ever work?
-                // throw new SAXException(e);
-                setValue(null);
+                throw new SAXException(e);
             }
         }
     } // startElement
