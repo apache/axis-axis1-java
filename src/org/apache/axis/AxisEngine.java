@@ -92,6 +92,7 @@ public abstract class AxisEngine extends BasicHandler
     protected String _serviceRegFilename;
     
     private boolean readRegistryFiles = true;
+    private boolean dontSaveYet = false;
     
     /** This Engine's global type mappings     */
     protected TypeMappingRegistry _typeMappingRegistry =
@@ -196,6 +197,9 @@ public abstract class AxisEngine extends BasicHandler
         
         String propVal = props.getProperty("debugLevel", "0");
         Debug.setDebugLevel(Integer.parseInt(propVal));
+        
+        propVal = props.getProperty("debugFile");
+        Debug.setToFile(propVal != null);
 
         initializeHandlers();
         initializeServices();
@@ -208,6 +212,8 @@ public abstract class AxisEngine extends BasicHandler
         TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
         tmr.setParent(new SOAPTypeMappingRegistry());
         _typeMappingRegistry = tmr;
+        
+        tmr.init();
         
         Debug.Print( 1, "Exit: AxisEngine::init" );
     }
@@ -251,7 +257,9 @@ public abstract class AxisEngine extends BasicHandler
       }
       
       Debug.Print(2, "Deploying default handlers...");
+      dontSaveYet = true;
       deployDefaultHandlers();
+      dontSaveYet = false;
       saveHandlerRegistry();
     }
     
@@ -293,7 +301,9 @@ public abstract class AxisEngine extends BasicHandler
       }
       
       Debug.Print(2, "Deploying default services...");
+      dontSaveYet = true;
       deployDefaultServices();
+      dontSaveYet = false;
       saveServiceRegistry();
     }
 
@@ -339,6 +349,9 @@ public abstract class AxisEngine extends BasicHandler
     
     public void saveHandlerRegistry()
     {
+      if (dontSaveYet || (_handlerRegFilename == null))
+        return;
+      
       try {
         FileOutputStream fos = new FileOutputStream(_handlerRegFilename);
         Document doc = XMLUtils.newDocument();
@@ -353,6 +366,9 @@ public abstract class AxisEngine extends BasicHandler
     
     public void saveServiceRegistry()
     {
+      if (dontSaveYet || (_serviceRegFilename == null))
+        return;
+      
       try {
         FileOutputStream fos = new FileOutputStream(_serviceRegFilename);
         Document doc = XMLUtils.newDocument();
