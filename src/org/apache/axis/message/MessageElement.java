@@ -778,6 +778,13 @@ public class MessageElement implements SOAPElement, Serializable
         if (prefix != null)
             context.registerPrefixForURI(prefix, namespaceURI);
 
+        if (namespaces != null) {
+            for (Iterator i = namespaces.iterator(); i.hasNext();) {
+                Mapping mapping = (Mapping) i.next();
+                context.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
+            }
+        }
+
         if (objectValue != null) {
             context.serialize(new QName(namespaceURI, name),
                               attributes,
