@@ -278,6 +278,10 @@ public class MessageElement
         
         Reader reader = new StringReader(writer.getBuffer().toString());
         Document doc = XMLUtils.newDocument(new InputSource(reader));
+        if (doc == null)
+            throw new Exception("Couldn't get DOM document: XML was \"" +
+                                writer.getBuffer().toString() + "\"");
+        
         return doc.getDocumentElement();
     }
 
