@@ -111,12 +111,7 @@ public class HTTPSender extends BasicHandler {
             Socket sock = null;
 
 
-            // create socket based on the url protocol type
-            if (targetURL.getProtocol().equalsIgnoreCase("https")) {
-                sock = getSecureSocket(host, port, otherHeaders, useFullURL);
-            } else {
-                sock = getSocket(host, port, otherHeaders, useFullURL);
-            }
+            sock = getSocket(targetURL.getProtocol(), host, port, otherHeaders, useFullURL);
 
             // optionally set a timeout for the request
             if (msgContext.getTimeout() != 0) {
@@ -140,25 +135,9 @@ public class HTTPSender extends BasicHandler {
     }
 
     /**
-     * getSecureSocket is used when we need a secure SSL connection to the SOAP Server
+     * Creates a socket connection to the SOAP server
      *
-     * @param host host name
-     * @param port port that we need to connect to
-     *
-     * @return a secure socket
-     *
-     * @throws Exception
-     */
-    private Socket getSecureSocket(
-            String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
-            throws Exception {
-        SocketFactory factory = SocketFactoryFactory.getSecureFactory(getOptions());
-        return factory.create(host, port, otherHeaders, useFullURL);
-    }
-
-    /**
-     * Creates a non-ssl socket connection to the SOAP server
-     *
+     * @param protocol "http" for standard, "https" for ssl.
      * @param host host name
      * @param port port to connect to
      * @param otherHeaders buffer for storing additional headers that need to be sent
@@ -169,9 +148,10 @@ public class HTTPSender extends BasicHandler {
      * @throws IOException
      */
     private Socket getSocket(
+            String protocol,
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws Exception {
-        SocketFactory factory = SocketFactoryFactory.getFactory(getOptions());
+        SocketFactory factory = SocketFactoryFactory.getFactory(protocol, getOptions());
         return factory.create(host, port, otherHeaders, useFullURL);
     }
 

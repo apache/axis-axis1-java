@@ -81,7 +81,7 @@ import java.util.Hashtable;
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class JSSESocketFactory extends DefaultSocketFactory {
+public class SunJSSESocketFactory extends DefaultSocketFactory {
 
     /** Field keystoreType           */
     private String keystoreType;
@@ -116,7 +116,7 @@ public class JSSESocketFactory extends DefaultSocketFactory {
      *
      * @param attributes
      */
-    public JSSESocketFactory(Hashtable attributes) {
+    public SunJSSESocketFactory(Hashtable attributes) {
         super(attributes);
     }
 
@@ -281,7 +281,7 @@ public class JSSESocketFactory extends DefaultSocketFactory {
      * @return SSLContext
      * @throws Exception
      */
-    protected com.sun.net.ssl.SSLContext getContext() throws Exception {
+    protected SSLContext getContext() throws Exception {
         // Please don't change the name of the attribute - other
         // software may depend on it ( j2ee for sure )
         String keystoreFile = (String) attributes.get("keystore");
@@ -342,7 +342,7 @@ public class JSSESocketFactory extends DefaultSocketFactory {
 
         // Create a SSLContext ( to create the ssl factory )
         // This is the only way to use server sockets with JSSE 1.0.1
-        com.sun.net.ssl.SSLContext context =
+        SSLContext context =
                 com.sun.net.ssl.SSLContext.getInstance(protocol);    // SSL
 
         // init context with the key managers

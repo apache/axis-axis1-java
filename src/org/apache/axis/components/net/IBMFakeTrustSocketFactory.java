@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,70 +54,111 @@
  */
 package org.apache.axis.components.net;
 
-import org.apache.axis.AxisProperties;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
-import org.apache.commons.discovery.tools.SPInterface;
-
-import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.Messages;
+import org.apache.commons.logging.Log;
+
+import com.ibm.net.ssl.SSLContext;
+import com.ibm.net.ssl.TrustManager;
+import com.ibm.net.ssl.X509TrustManager;
+
 /**
- * Class SocketFactoryFactory
- *
- * @author
- * @version %I%, %G%
+ * Hook for Axis sender, allowing unsigned server certs
  */
-public class SocketFactoryFactory {
+public class IBMFakeTrustSocketFactory extends IBMJSSESocketFactory {
 
     /** Field log           */
     protected static Log log =
-            LogFactory.getLog(SocketFactoryFactory.class.getName());
+            LogFactory.getLog(IBMFakeTrustSocketFactory.class.getName());
 
-    /** socket factory */
-    private static Hashtable factories = new Hashtable();
-
-    private static final Class classes[] = new Class[] { Hashtable.class };
-    
     /**
-     * Returns a copy of the environment's default socket factory.
-     * 
-     * @param protocol Today this only supports "http" & "https".
+     * Constructor FakeTrustSocketFactory
+     *
      * @param attributes
+     */
+    public IBMFakeTrustSocketFactory(Hashtable attributes) {
+        super(attributes);
+    }
+
+    /**
+     * Method getContext
      *
      * @return
+     *
+     * @throws Exception
      */
-    public static synchronized SocketFactory getFactory(String protocol,
-                                                        Hashtable attributes) {
-        SocketFactory theFactory = (SocketFactory)factories.get(protocol);
+    protected SSLContext getContext() throws Exception {
 
-        if (theFactory == null) {
-            Object objects[] = new Object[] { attributes };
-    
-            if (protocol.equalsIgnoreCase("http")) {
-                theFactory = (SocketFactory)AxisProperties.newInstance(
-                         new SPInterface(SocketFactory.class,
-                                         "axis.socketFactory",
-                                         classes,
-                                         objects),
-                         "org.apache.axis.components.net.DefaultSocketFactory");
-            } else if (protocol.equalsIgnoreCase("https")) {
-                theFactory = (SocketFactory)AxisProperties.newInstance(
-                         new SPInterface(SecureSocketFactory.class,
-                                         "axis.socketSecureFactory",
-                                         classes,
-                                         objects),
-                         "org.apache.axis.components.net.DefaultSecureSocketFactory");
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+
+            sc.init(null, // we don't need no stinkin KeyManager
+                    new TrustManager[]{new FakeX509TrustManager()},
+                    new java.security.SecureRandom());
+            if (log.isDebugEnabled()) {
+                log.debug(Messages.getMessage("ftsf00"));
             }
-            
-            if (theFactory != null) {
-                factories.put(protocol, theFactory);
-            }
+            return sc;
+        } catch (Exception exc) {
+            log.error(Messages.getMessage("ftsf01"), exc);
+            throw new Exception(Messages.getMessage("ftsf02"));
         }
-        return theFactory;
+    }
+
+    /**
+     * Class FakeX509TrustManager
+     */
+    public static class FakeX509TrustManager implements X509TrustManager {
+
+        /** Field log           */
+        protected static Log log =
+                LogFactory.getLog(FakeX509TrustManager.class.getName());
+
+        /**
+         * Method isClientTrusted
+         *
+         * @param chain
+         *
+         * @return
+         */
+        public boolean isClientTrusted(java.security.cert
+                .X509Certificate[] chain) {
+
+            if (log.isDebugEnabled()) {
+                log.debug(Messages.getMessage("ftsf03"));
+            }
+            return true;
+        }
+
+        /**
+         * Method isServerTrusted
+         *
+         * @param chain
+         *
+         * @return
+         */
+        public boolean isServerTrusted(java.security.cert
+                .X509Certificate[] chain) {
+
+            if (log.isDebugEnabled()) {
+                log.debug(Messages.getMessage("ftsf04"));
+            }
+            return true;
+        }
+
+        /**
+         * Method getAcceptedIssuers
+         *
+         * @return
+         */
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+
+            if (log.isDebugEnabled()) {
+                log.debug(Messages.getMessage("ftsf05"));
+            }
+            return null;
+        }
     }
 }

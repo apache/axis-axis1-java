@@ -61,15 +61,16 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.net.SocketFactory;
 import org.apache.axis.utils.Messages;
+import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.resource.names.DiscoverNamesInAlternateManagedProperties;
 import org.apache.commons.discovery.tools.DefaultClassHolder;
 import org.apache.commons.discovery.tools.DiscoverClass;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 
@@ -106,6 +107,8 @@ import org.apache.commons.logging.Log;
 public class AxisProperties {
     protected static Log log =
         LogFactory.getLog(AxisProperties.class.getName());
+
+    private static DiscoverNamesInAlternateManagedProperties altNameDiscoverer;
     
     public static Object newInstance(Class spiClass, String defaultClass)
     {
@@ -216,6 +219,21 @@ public class AxisProperties {
         return ManagedProperties.getProperties();
     }
 
+
+    public static final ResourceNameDiscover getAlternatePropertyNameDiscoverer() {
+        if (altNameDiscoverer == null) {
+            altNameDiscoverer = new DiscoverNamesInAlternateManagedProperties();
+            altNameDiscoverer.addClassToPropertyNameMapping(
+                    EngineConfigurationFactory.class.getName(),
+                    EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
+                    
+            altNameDiscoverer.addClassToPropertyNameMapping(
+                    SocketFactory.class.getName(),
+                    "axis.socketFactory");
+        }
+        
+        return altNameDiscoverer;
+    }
 
     /**
      * !WARNING!

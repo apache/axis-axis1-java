@@ -54,11 +54,10 @@
  */
 package org.apache.axis.components.net;
 
-import com.ibm.net.ssl.SSLContext;
-import com.ibm.net.ssl.KeyManagerFactory;
-import com.ibm.net.ssl.TrustManager;
-import com.ibm.net.ssl.TrustManagerFactory;
-import com.ibm.jsse.JSSEProvider;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
@@ -83,10 +82,12 @@ import java.util.Hashtable;
 /**
  * SSL socket factory. It _requires_ a valid RSA key and
  * JSSE. (borrowed code from tomcat)
+ * 
+ * THIS CODE STILL HAS DEPENDENCIES ON sun.* and com.sun.*
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class IBMJSSESocketFactory extends DefaultSocketFactory {
+public class JDK14JSSESocketFactory extends DefaultSocketFactory {
 
     /** Field keystoreType           */
     private String keystoreType;
@@ -98,7 +99,7 @@ public class IBMJSSESocketFactory extends DefaultSocketFactory {
     static String defaultProtocol = "TLS";
 
     /** Field defaultAlgorithm           */
-    static String defaultAlgorithm = "IbmX509";
+    static String defaultAlgorithm = "SunX509";
 
     /** Field defaultClientAuth           */
     static boolean defaultClientAuth = false;
@@ -117,11 +118,11 @@ public class IBMJSSESocketFactory extends DefaultSocketFactory {
     static String defaultKeyPass = "changeit";
 
     /**
-     * Constructor IBMJSSESocketFactory
+     * Constructor JSSESocketFactory
      *
      * @param attributes
      */
-    public IBMJSSESocketFactory(Hashtable attributes) {
+    public JDK14JSSESocketFactory(Hashtable attributes) {
         super(attributes);
     }
 
@@ -258,11 +259,11 @@ public class IBMJSSESocketFactory extends DefaultSocketFactory {
      *
      * @throws IOException
      */
-    protected void initFactory() throws IOException {
+    private void initFactory() throws IOException {
 
         try {
-            Security.addProvider(new com.ibm.jsse.JSSEProvider());
-            Security.addProvider(new com.ibm.crypto.provider.IBMJCA());
+            Security.addProvider(new sun.security.provider.Sun());
+            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 
             if(attributes == null) {
                 //No configuration specified. Get the default.
