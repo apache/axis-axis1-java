@@ -11,9 +11,9 @@ To run the attachments sample, you must do the following:
     containing the samples subdirectory.
 
 2.  Start a server.
-    To run the sample, you will first need to run a server.  To run a very
-    simple server you could run, in a separate window:
-        java org.apache.axis.transport.http.SimpleAxisServer -p 8080
+    You must have a server running (ie., Tomcat) with the AXIS samples
+    available to it.  For this test, the AXIS SimplAxisServer is not enough.
+    See the documentation for your server for details.
 
 3.  Deploy the sample.
     To deploy the sample, run:
