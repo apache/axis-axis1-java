@@ -89,27 +89,6 @@ public class DeserializerBase extends DefaultHandler
         this.value = value;
     }
 
-    class CallbackTarget {
-        public ValueReceiver target;
-        public Object hint;
-        CallbackTarget(ValueReceiver target, Object hint)
-        {
-            this.target = target;
-            this.hint = hint;
-        }
-    }
-    protected Vector callbacks = null;
-
-    public void registerCallback(ValueReceiver target, Object hint)
-    {
-        if (target == null)
-            return;
-        
-        if (callbacks == null)
-            callbacks = new Vector();
-        callbacks.addElement(new CallbackTarget(target, hint));
-    }
-    
     /////////////////////////////////////////////////////////////
     //  Reflection-based insertion of values into target objects
     //  once deserialization is complete.
@@ -141,6 +120,29 @@ public class DeserializerBase extends DefaultHandler
             }
         }
     }
+
+    class CallbackTarget implements Target {
+        public ValueReceiver target;
+        public Object hint;
+        CallbackTarget(ValueReceiver target, Object hint)
+        {
+            this.target = target;
+            this.hint = hint;
+        }
+        
+        public void set(Object value) throws SAXException {
+            target.valueReady(value, hint);
+        }
+    }
+
+    public void registerCallback(ValueReceiver target, Object hint)
+    {
+        if (target == null)
+            return;
+        
+        registerValueTarget(new CallbackTarget(target, hint));
+    }
+    
 
     protected Vector targets = null;
     public void registerValueTarget(Target target)
@@ -184,14 +186,6 @@ public class DeserializerBase extends DefaultHandler
     public void valueComplete() throws SAXException
     {
         isComplete = true;
-        
-        if (callbacks != null) {
-            Enumeration e = callbacks.elements();
-            while (e.hasMoreElements()) {
-                CallbackTarget target = (CallbackTarget)e.nextElement();
-                target.target.valueReady(value, target.hint);
-            }
-        }
         
         if (targets != null) {
             Enumeration e = targets.elements();

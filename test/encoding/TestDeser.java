@@ -53,12 +53,21 @@ public class TestDeser extends TestCase {
     private static boolean equals(Object obj1, Object obj2) {
        if (obj1 == null) return (obj2 == null);
        if (obj1.equals(obj2)) return true;
-       if (!obj2.getClass().isArray()) return false;
-       if (!obj1.getClass().isArray()) return false;
-       if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
-       for (int i=0; i<Array.getLength(obj1); i++)
-           if (!equals(Array.get(obj1,i),Array.get(obj2,i))) return false;
-       return true;
+       if (obj2.getClass().isArray() && obj1.getClass().isArray()) {
+           if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
+           for (int i=0; i<Array.getLength(obj1); i++)
+               if (!equals(Array.get(obj1,i),Array.get(obj2,i))) return false;
+           return true;
+       }
+       if ((obj1 instanceof List) && (obj2 instanceof List)) {
+           List list1 = (List)obj1;
+           List list2 = (List)obj2;
+           if (list1.size() != list2.size()) return false;
+           for (int i=0; i < list1.size(); i++) {
+               if (!equals(list1.get(i), list2.get(i))) return false;
+           }
+       }
+       return false;
     }
 
     /**
@@ -121,12 +130,15 @@ public class TestDeser extends TestCase {
     }
 
     public void testArray() {
+        Vector v = new Vector();
+        v.addElement("abc");
+        v.addElement("def");
         deserialize("<result xsi:type=\"soapenc:Array\" " +
                             "soapenc:arrayType=\"xsd:string[2]\"> " +
                        "<item xsi:type=\"xsd:string\">abc</item>" + 
                        "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
-                    new String[] {"abc", "def"});
+                    v);
     }
 
     public void testUntyped() {

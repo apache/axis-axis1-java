@@ -63,6 +63,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import java.lang.reflect.Array;
 import java.io.IOException;
 import java.util.List;
+import java.util.Vector;
 import java.util.Hashtable;
 
 /** An ArraySerializer handles serializing and deserializing SOAP
@@ -159,10 +160,15 @@ public class ArraySerializer extends DeserializerBase
                     throw new SAXException("No component type for " + arrayItemType);
                 
                 // Replace wrapper classes with primitive equivalents
+                /*
                 Object primitive = primitives.get(componentType);
                 if (primitive != null) componentType = (Class) primitive;
 
                 value = Array.newInstance(componentType, length);
+                */
+                
+                value = new Vector(length);
+                ((Vector)value).setSize(length);
 
             }
             catch (NumberFormatException e)
@@ -180,14 +186,17 @@ public class ArraySerializer extends DeserializerBase
     {
         // !!! Check position attribute, type attribute....
         QName itemType = context.getTypeFromAttributes(attributes);
-        
+        /*
         if (itemType != null) {
             if (!arrayItemType.equals(itemType))
                 throw new SAXException("Item type (" + itemType + ") didn't match ArrayType (" +
-                                        itemType + ")");
+                                        arrayItemType + ")");
         }
+        */
+        if (itemType == null)
+          itemType = arrayItemType;
         
-        DeserializerBase dSer = context.getDeserializer(arrayItemType);
+        DeserializerBase dSer = context.getDeserializer(itemType);
         dSer.registerCallback(this, new Integer(curIndex++));
         context.pushElementHandler(dSer);
     }
@@ -199,7 +208,10 @@ public class ArraySerializer extends DeserializerBase
     
     public void valueReady(Object value, Object hint)
     {
+      /*
         Array.set(this.value, ((Integer)hint).intValue(), value);
+      */
+      ((Vector)this.value).set(((Integer)hint).intValue(), value);
     }
 
     public void serialize(QName name, Attributes attributes,
@@ -214,7 +226,7 @@ public class ArraySerializer extends DeserializerBase
         
         if (!cls.isArray()) {
           if (!(value instanceof List)) {
-            throw new IOException("Can't seialize a " + cls.getName() +
+            throw new IOException("Can't serialize a " + cls.getName() +
                                   " with the ArraySerializer!");
           }
           list = (List)value;
