@@ -117,9 +117,7 @@ public class MimeUtils {
 
     /**
      * Determine the length for the individual part.
-     * @param mp is the part to be serarched.
-     *
-     * @param bp
+     * @param bp is the part to be searched.
      * @return the length in bytes.
      */
     protected static long getContentLength(
@@ -177,9 +175,7 @@ public class MimeUtils {
 
     /**
      * Gets the header length for any part.
-     * @param the part to determine the header length for.
-     *
-     * @param bp
+     * @param bp the part to determine the header length for.
      * @return the length in bytes.
      *
      * @throws javax.mail.MessagingException
@@ -220,8 +216,7 @@ public class MimeUtils {
      * the System properties.
      * </p>
      * @param os is the output stream to write to.
-     * @param the multipart that needs to be written to the stream.
-     * @param mp
+     * @param mp the multipart that needs to be written to the stream.
      */
     public static void writeToMultiPartStream(
             java.io.OutputStream os, javax.mail.internet.MimeMultipart mp) {
@@ -271,11 +266,8 @@ public class MimeUtils {
 
     /**
      * This routine will create a multipart object from the parts and the SOAP content.
-     * @param the env should be the text for the main root part.
-     * @param the parts contain a collection of the message parts.
-     *
-     * @param env
-     * @param parts
+     * @param env should be the text for the main root part.
+     * @param parts contain a collection of the message parts.
      *
      * @return a new MimeMultipart object
      *
@@ -296,7 +288,7 @@ public class MimeUtils {
             javax.mail.internet.MimeBodyPart messageBodyPart =
                     new javax.mail.internet.MimeBodyPart();
 
-            messageBodyPart.setText(env);
+            messageBodyPart.setText(env, "UTF-8");
             messageBodyPart.setHeader("Content-Type",
                     "text/xml; charset=UTF-8");
             messageBodyPart.setHeader("Content-Id", "<" + rootCID + ">");
