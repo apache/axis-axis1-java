@@ -84,9 +84,12 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_DEBUG_LEVEL = "debugLevel";
     public static final String PROP_DEBUG_FILE = "debugFile";
     public static final String PROP_DOMULTIREFS = "sendMultiRefs";
-    
+    public static final String PROP_PASSWORD = "adminPassword";
+
+    protected String sep = System.getProperty("file.separator");
     
     protected String engineConfigFilename = "engine-config.xml";
+    protected String engineBasePath;
     
     /** The handler registry this Engine uses. */
     protected HandlerRegistry _handlerRegistry = new SupplierRegistry();
@@ -102,6 +105,9 @@ public abstract class AxisEngine extends BasicHandler
                                                  new TypeMappingRegistry();
     
     protected Properties props = new Properties();
+    
+    /** Has the user changed the password yet? */
+    protected boolean _hasSafePassword = false;
     
     //protected SupplierRegistry listenerRegistry = new SupplierRegistry();
     
@@ -123,8 +129,12 @@ public abstract class AxisEngine extends BasicHandler
         Debug.Print( 1, "Exit: AxisEngine no-arg constructor");
     }
     
-    public AxisEngine(String fileName)
+    public AxisEngine(String basePath, String fileName)
     {
+        if ((basePath == null) || (basePath.equals("")))
+            basePath = ".";
+        
+        engineBasePath = basePath;
         engineConfigFilename = fileName;
         init();
     }
@@ -137,7 +147,8 @@ public abstract class AxisEngine extends BasicHandler
         * set ASAP.
         */
         try {
-            File propFile = new File("axis.properties");
+            File propFile = new File(engineBasePath + sep +
+                                     "axis.properties");
             if (propFile.exists()) {
                 FileInputStream propFileInputStream =
                                                new FileInputStream(propFile);
@@ -162,6 +173,16 @@ public abstract class AxisEngine extends BasicHandler
         // Should we send multi-ref serializations in our messages?
         propVal = props.getProperty(PROP_DOMULTIREFS, "true");
         addOption(PROP_DOMULTIREFS, new Boolean(propVal.equals("true")));
+        
+        // The admin password (if it hasn't been set, we're "unsafe", and
+        // we shouldn't do anything in the admin but change it)
+        propVal = props.getProperty(PROP_PASSWORD);
+        if (propVal != null) {
+            addOption(PROP_PASSWORD, propVal);
+            _hasSafePassword = true;
+        } else {
+            addOption(PROP_PASSWORD, "admin");
+        }
         
         _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
         
@@ -190,7 +211,8 @@ public abstract class AxisEngine extends BasicHandler
     {
         InputStream is;
         try {
-            is = new FileInputStream(engineConfigFilename);
+            is = new FileInputStream(engineBasePath + sep +
+                                     engineConfigFilename);
         } catch (Exception e) {
             is = getResourceStream(engineConfigFilename);
         }
@@ -220,9 +242,15 @@ public abstract class AxisEngine extends BasicHandler
     {
         try {
             Document doc = Admin.listConfig(this);
-            FileOutputStream fos = new FileOutputStream(engineConfigFilename);
+            FileOutputStream fos = new FileOutputStream(
+                                            engineBasePath + sep +
+                                            engineConfigFilename);
             XMLUtils.DocumentToStream(doc, fos);
             fos.close();
+            
+            props.store(new FileOutputStream(engineBasePath + sep +
+                                             "axis.properties"),
+                        "Axis engine properties");
         } catch (Exception e) {
             System.err.println("Coudn't write engine config!");
             e.printStackTrace();
@@ -234,6 +262,18 @@ public abstract class AxisEngine extends BasicHandler
         return this.getClass().getResourceAsStream(name);
     }
     
+    public boolean hasSafePassword()
+    {
+        return _hasSafePassword;
+    }
+    
+    public void setAdminPassword(String pw)
+    {
+        addOption(PROP_PASSWORD, pw);
+        props.put(PROP_PASSWORD, pw);
+        _hasSafePassword = true;
+        saveConfiguration();
+    }
 
     public HandlerRegistry getHandlerRegistry()
     {

@@ -75,6 +75,9 @@ public class AdminServlet extends HttpServlet {
     private AxisServer server;
     
     public void init() {
+        // Set the base path for the AxisServer to our WEB-INF directory
+        // (so the config files can't get snooped by a browser)
+        AxisServer.setBasePath(getServletContext().getRealPath("WEB-INF"));
         server = AxisServer.getSingleton();
     }
 

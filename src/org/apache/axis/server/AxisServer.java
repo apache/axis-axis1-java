@@ -85,16 +85,27 @@ public class AxisServer extends AxisEngine
     
     public AxisServer()
     {
-        super(Constants.SERVER_CONFIG_FILE);
+        super(null, Constants.SERVER_CONFIG_FILE);
+    }
+    
+    public AxisServer(String basePath)
+    {
+        super(basePath, Constants.SERVER_CONFIG_FILE);
     }
     
     /** Lifecycle routines for managing a static AxisServer
      */
     private static AxisServer singleton = null;
+    private static String basePath = null;
+    
+    public static void setBasePath(String path)
+    {
+        basePath = path;
+    }
     public static synchronized AxisServer getSingleton()
     {
         if (singleton == null) {
-            singleton = new AxisServer();
+            singleton = new AxisServer(basePath);
         }
         return singleton;
     }
@@ -128,7 +139,7 @@ public class AxisServer extends AxisEngine
      */
     public synchronized AxisEngine getClientEngine () {
         if (clientEngine == null) {
-            clientEngine = new AxisClient();
+            clientEngine = new AxisClient(basePath);
         }
         return clientEngine;
     }

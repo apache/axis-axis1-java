@@ -76,7 +76,12 @@ public class AxisClient extends AxisEngine
 {
     public AxisClient()
     {
-        super(Constants.CLIENT_CONFIG_FILE);
+        super(null, Constants.CLIENT_CONFIG_FILE);
+    }
+    
+    public AxisClient(String basePath)
+    {
+        super(basePath, Constants.CLIENT_CONFIG_FILE);
     }
     
     /**

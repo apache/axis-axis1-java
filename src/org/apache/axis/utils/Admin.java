@@ -56,6 +56,7 @@
 package org.apache.axis.utils ;
 
 import java.io.* ;
+import java.net.*;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.registries.* ;
@@ -67,8 +68,10 @@ import org.apache.axis.encoding.*;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.Transport;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.transport.http.HTTPConstants;
 
 import org.w3c.dom.* ;
+import javax.servlet.http.*;
 
 /**
  * Handy static utility functions for turning XML into
@@ -258,11 +261,50 @@ public class Admin {
 
             if ( !action.equals("clientdeploy") && !action.equals("deploy") &&
                  !action.equals("undeploy") &&
-                 !action.equals("list") && !action.equals("quit") )
+                 !action.equals("list") &&
+                 !action.equals("quit") &&
+                 !action.equals("passwd"))
                 throw new AxisFault( "Admin.error",
                     "Root element must be 'clientdeploy', 'deploy', 'undeploy', " +
-                    "'list', or 'quit'",
+                    "'list', 'passwd', or 'quit'",
                     null, null );
+            
+            /** Might do something like this once security is a little more
+             * integrated.
+            if (!engine.hasSafePassword() &&
+                !action.equals("passwd"))
+                throw new AxisFault("Server.MustSetPassword",
+              "You must change the admin password before administering Axis!",
+                                     null, null);
+             */
+            
+            /** For now, though - make sure we can only admin from our own
+             * IP.
+             */
+            HttpServletRequest req =
+                     (HttpServletRequest)msgContext.
+                          getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+            if (req != null) {
+                String remoteIP = req.getRemoteAddr();
+                if (!remoteIP.equals("127.0.0.1")) {
+                    InetAddress myAddr = InetAddress.getLocalHost();
+                    InetAddress remoteAddr = InetAddress.getByName(remoteIP);
+             
+                    if (!myAddr.equals(remoteAddr))
+                        throw new AxisFault("Server.Unauthorized",
+                            "Remote admin access is not allowed! ",
+                            null, null);
+                }
+            }
+            
+            if (action.equals("passwd")) {
+                String newPassword = root.getFirstChild().getNodeValue();
+                engine.setAdminPassword(newPassword);
+                doc = XMLUtils.newDocument();
+                doc.appendChild( root = doc.createElement( "Admin" ) );
+                root.appendChild( doc.createTextNode( "Done processing" ) );
+                return doc;
+            }
 
             if (action.equals("quit")) {
                 System.err.println("Admin service requested to quit, quitting.");
