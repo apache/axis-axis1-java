@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -57,76 +57,34 @@ package samples.security;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
-import org.apache.axis.MessageContext;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.utils.Constants;
 import org.apache.xpath.CachedXPathAPI;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.util.Date;
 
 public class LogHandler extends BasicHandler {
     static Category category =
             Category.getInstance(LogHandler.class.getName());
 
-    long start = 0;
-
-    public void invoke(MessageContext msgContext) throws AxisFault
-    {
-        /** Log an access each time we get invoked.
-         */
+    public void invoke(MessageContext msgContext) throws AxisFault {
         try {
-System.out.println("Starting Server verification");            
-            Handler serviceHandler = msgContext.getServiceHandler();
-            String filename = (String)getOption("filename");
-
-            if ((filename == null) || (filename.equals("")))
-                throw new AxisFault("Server.NoLogFile",
-                                 "No log file configured for the LogHandler!",
-                                    null, null);
-            FileOutputStream fos = new FileOutputStream(filename, true);
-            
-	    PrintWriter writer = new PrintWriter(fos);
-            
-            Integer numAccesses = null;
-
-            try {
-                 numAccesses = (Integer)serviceHandler.getOption("accesses");
-            } catch (ClassCastException cce) {
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (numAccesses == null)
-                numAccesses = new Integer(0);
-            
-            numAccesses = new Integer(numAccesses.intValue() + 1);
-
-            Date date = new Date();
-            String result = date + ": service " +
-                            msgContext.getTargetService() +
-                            " accessed " + numAccesses + " time(s).";
-            serviceHandler.setOption("accesses", numAccesses);
-            writer.println(result);
+            System.out.println("Starting Server verification");
 
             Message inMsg = msgContext.getRequestMessage();
             Message outMsg = msgContext.getResponseMessage();
 
-	    // verify signed message
-	       
-	    Document doc = inMsg.getSOAPPart().getAsSOAPEnvelope().getAsDocument();
+            // verify signed message
+
+            Document doc = inMsg.getSOAPPart().getAsSOAPEnvelope().getAsDocument();
             String BaseURI = "http://xml-security";
             CachedXPathAPI xpathAPI = new CachedXPathAPI();
 
@@ -134,60 +92,44 @@ System.out.println("Starting Server verification");
             nsctx.setAttribute("xmlns:ds", Constants.SignatureSpecNS);
 
             Element signatureElem = (Element) xpathAPI.selectSingleNode(doc,
-									"//ds:Signature", nsctx);
+                    "//ds:Signature", nsctx);
 
-	    // check to make sure that the document claims to have been signed
-	    if (signatureElem == null) {
-		writer.println("The document is not signed"); writer.flush();
-		return;
-	    }
+            // check to make sure that the document claims to have been signed
+            if (signatureElem == null) {
+                System.out.println("The document is not signed");
+                return;
+            }
 
             XMLSignature sig = new XMLSignature(signatureElem, BaseURI);
-	    
+
             boolean verify = sig.checkSignatureValue(sig.getKeyInfo().getPublicKey());
-System.out.println("Server verification complete.");            
+            System.out.println("Server verification complete.");
 
-            writer.println("The signature is" + (verify
-                                               ? " "
-                                               : " not ") + "valid");
-	    // end verify
-
-            writer.println( "=======================================================" );
-            writer.println( "= " + JavaUtils.getMessage("elapsed00",
-                 "" + (System.currentTimeMillis() - start)));
-            writer.println( "= " + JavaUtils.getMessage("inMsg00",
-                 (inMsg == null ? "null" : inMsg.getSOAPPart().getAsString())));
-            writer.println( "= " + JavaUtils.getMessage("outMsg00",
-                 (outMsg == null ? "null" : outMsg.getSOAPPart().getAsString())));
-            writer.println( "=======================================================" );
-
-            // Here you can also use outMsg.getSOAPEnvelope().getAsDOM() 
-            // instead of outMsg.getSOAPPart().getAsString()
-
-            writer.close();
+            System.out.println("The signature is" + (verify
+                    ? " "
+                    : " not ") + "valid");
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
-	}
-	
+        }
+
     }
-    
-    public void undo(MessageContext msgContext)
-    {
+
+    public void undo(MessageContext msgContext) {
         try {
             Handler serviceHandler = msgContext.getServiceHandler();
-            String filename = (String)getOption("filename");
+            String filename = (String) getOption("filename");
             if ((filename == null) || (filename.equals("")))
                 throw new AxisFault("Server.NoLogFile",
-                                 "No log file configured for the LogHandler!",
-                                    null, null);
-            FileWriter  fw   = new FileWriter( filename, true );
-            PrintWriter pw   = new PrintWriter( fw );
-            pw.println( "=====================" );
-            pw.println( "= " + JavaUtils.getMessage("fault00") );
-            pw.println( "=====================" );
+                        "No log file configured for the LogHandler!",
+                        null, null);
+            FileWriter fw = new FileWriter(filename, true);
+            PrintWriter pw = new PrintWriter(fw);
+            pw.println("=====================");
+            pw.println("= " + JavaUtils.getMessage("fault00"));
+            pw.println("=====================");
             pw.close();
-        } catch( Exception e ) {
-            category.error( e );
+        } catch (Exception e) {
+            category.error(e);
         }
     }
 }
