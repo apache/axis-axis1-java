@@ -78,6 +78,7 @@ import java.io.IOException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Date;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
@@ -112,6 +113,8 @@ public class WSDL2Java {
 
     // The emitter framework Emitter class.
     private Emitter emitter;
+    // Timeout, in milliseconds, to let the Emitter do its work
+    private long timeoutms = 45000; // 45 sec default
 
     JavaWriterFactory writerFactory = null;
 
@@ -208,7 +211,7 @@ public class WSDL2Java {
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
-     */ 
+     */
     public boolean getGenerateServerSide() {
         return emitter.getGenerateServerSide();
     }
@@ -223,7 +226,7 @@ public class WSDL2Java {
 
     /**
      * Indicate if we should be deploying skeleton or implementation
-     */ 
+     */
     public boolean getDeploySkeleton() {
         return emitter.getDeploySkeleton();
     }
@@ -238,11 +241,11 @@ public class WSDL2Java {
 
     /**
      * Return the current definition
-     */ 
+     */
     public Definition getCurrentDefinition() {
         return emitter.getCurrentDefinition();
     }
-    
+
     /**
      * Turn on/off generation of elements from imported files.
      * @param boolean generateImports
@@ -287,14 +290,14 @@ public class WSDL2Java {
 
     /**
      * Return the status of the verbose switch
-     */ 
+     */
     public boolean getVerbose() {
         return emitter.getVerbose();
     }
 
     /**
      * Set a map of namespace -> Java package names
-     */ 
+     */
     public void setNamespaceMap(HashMap map) {
         emitter.setNamespaceMap(map);
     }
@@ -309,25 +312,25 @@ public class WSDL2Java {
 
     /**
      * Get global package name to use instead of mapping namespaces
-     */ 
+     */
     public String getPackageName() {
         return emitter.getPackageName();
     }
 
     /**
      * Set a global package name to use instead of mapping namespaces
-     */ 
+     */
     public void setPackageName(String packageName) {
         emitter.setPackageName(packageName);
     }
-    
+
     /**
      * Get the output directory to use for emitted source files
      */
     public String getOutputDir() {
         return emitter.getOutputDir();
     }
-    
+
     /**
      * Set the scope for the deploy.xml file.
      * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.
@@ -357,6 +360,19 @@ public class WSDL2Java {
         emitter.setNStoPkg(NStoPkgFile);
     } // setNStoPkg
 
+    /**
+     * Return the current timeout setting
+     */
+    public long getTimeout() {
+        return timeoutms;
+    }
+
+    /**
+     * Set the timeout, in milliseconds
+     */
+    public void setTimeout(long timeout) {
+        this.timeoutms = timeout;
+    }
     //
     // Command line switches
     //
@@ -365,10 +381,10 @@ public class WSDL2Java {
     /**
      * Returns an object which contains of information on all generated files
      * including the class name, filename and a type string.
-     * 
+     *
      * @return A org.apache.axis.wsdl.toJava.GeneratedFileInfo object
      * @see org.apache.axis.wsdl.toJava.GeneratedFileInfo
-     */ 
+     */
     public GeneratedFileInfo getGeneratedFileInfo()
     {
         return emitter.getGeneratedFileInfo();
@@ -376,7 +392,7 @@ public class WSDL2Java {
 
     /**
      * Return a list of all generated class names.
-     * 
+     *
      * @return list of class names (strings)
      */
     public List getGeneratedClassNames() {
@@ -385,21 +401,45 @@ public class WSDL2Java {
 
     /**
      * Return a list of all generated file names.
-     * 
+     *
      * @return list of relative path names (strings)
      */
     public List getGeneratedFileNames() {
         return emitter.getGeneratedFileNames();
     }
 
-    
+
     /**
-     * Call this method if you have a uri for the WSDL document
+     * Emit appropriate Java files for a WSDL at a given URL.
+     *
+     * This method will time out after the number of milliseconds specified
+     * by our timeoutms member.
+     *
      * @param String wsdlURI the location of the WSDL file.
      */
-    public void emit(String wsdlURI)
-            throws IOException, WSDLException {
-        emitter.emit(wsdlURI);
+    public void emit(String wsdlURL)
+            throws Exception {
+
+        // We run the actual Emitter in a thread that we can kill
+        WSDLRunnable runnable = new WSDLRunnable(emitter, wsdlURL);
+        Thread wsdlThread = new Thread(runnable);
+
+        long timeout = new Date().getTime() + timeoutms;
+
+        wsdlThread.start();
+
+        while (!runnable.isDone()) {
+            // Check at one-second intervals
+            Thread.sleep(1000);
+            if (new Date().getTime() > timeout) {
+                wsdlThread.interrupt();
+                throw new Exception(JavaUtils.getMessage("timedOut"));
+            }
+        }
+
+        if (runnable.getFailure() != null) {
+            throw runnable.getFailure();
+        }
     } // emit
 
     /**
@@ -533,10 +573,10 @@ public class WSDL2Java {
                         } else {
                             System.out.println(JavaUtils.getMessage("badTypeMappingOption00"));
                         }
-                        break;                
+                        break;
                 }
             }
-            
+
             // validate argument combinations
             //
             if (wsdlURI == null) {
@@ -557,7 +597,7 @@ public class WSDL2Java {
 
             wsdl2java.setTypeMappingVersion(typeMappingVersion);
             wsdl2java.emit(wsdlURI);
-            
+
             // everything is good
             System.exit(0);
         }
@@ -567,39 +607,68 @@ public class WSDL2Java {
         }
     }
 
+    private class WSDLRunnable implements Runnable {
+        private Emitter emitter;
+        private String uri;
+        private boolean done = false;
+        private Exception failure = null;
+
+        public WSDLRunnable(Emitter emitter, String uri) {
+            this.emitter = emitter;
+            this.uri = uri;
+        }
+
+        public void run() {
+            try {
+                emitter.emit(uri);
+            } catch (Exception e) {
+                failure = e;
+            }
+            done = true;
+        }
+
+        public boolean isDone() {
+            return done;
+        }
+
+        public Exception getFailure() {
+            return failure;
+        }
+    }
+
     public void setTypeMappingVersion(String typeMappingVersion) {
         if (typeMappingVersion.equals("1.1")) {
             writerFactory.setBaseTypeMapping(
                     new BaseTypeMapping() {
                         final TypeMapping defaultTM = DefaultTypeMappingImpl.create();
                         public String getBaseName(QName qNameIn) {
-                            javax.xml.rpc.namespace.QName qName = 
+                            javax.xml.rpc.namespace.QName qName =
                                 new javax.xml.rpc.namespace.QName(
-                                  qNameIn.getNamespaceURI(),                                 
+                                  qNameIn.getNamespaceURI(),
                                   qNameIn.getLocalPart());
                             Class cls = defaultTM.getClassForQName(qName);
                             if (cls == null)
                                 return null;
-                            else 
+                            else
                                 return JavaUtils.getTextClassName(cls.getName());
                         }
-                    }); 
+                    });
         } else {
             writerFactory.setBaseTypeMapping(
                     new BaseTypeMapping() {
                         final TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
                         public String getBaseName(QName qNameIn) {
-                            javax.xml.rpc.namespace.QName qName = 
+                            javax.xml.rpc.namespace.QName qName =
                                 new javax.xml.rpc.namespace.QName(
-                                  qNameIn.getNamespaceURI(),                                 
+                                  qNameIn.getNamespaceURI(),
                                   qNameIn.getLocalPart());
                             Class cls = defaultTM.getClassForQName(qName);
                             if (cls == null)
                                 return null;
-                            else 
+                            else
                                 return JavaUtils.getTextClassName(cls.getName());
                         }
-                    }); 
+                    });
         }
     }
     /**
