@@ -181,6 +181,7 @@ public class Emitter {
     public void emit(Document doc) throws IOException {
         try {
             WSDLReader reader = new WSDLReader();
+            reader.setVerbose(bVerbose);
             def = reader.readWSDL(null, doc);
             namespaces = new Namespaces(outputDir);
             if (delaySetMap != null) {
