@@ -58,17 +58,13 @@ import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 import javax.wsdl.Binding;
-import javax.wsdl.Input;
 import javax.wsdl.Operation;
-import javax.wsdl.Output;
 import javax.wsdl.Port;
-import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
@@ -77,14 +73,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
  * This sample shows how to use Axis for completely dynamic invocations
- * as it is completely stubless execution. This sample does not support
- * complex types (it could if there was defined a to encode complex
- * values as command line arguments).
+ * as it is completely stubless execution. It supports both doc/lit and rpc/encoded
+ * services. But this sample does not support complex types 
+ * (it could if there was defined a to encode complex values as command line arguments).
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
@@ -113,7 +108,7 @@ public class DynamicInvoker {
     private static void usage() {
         System.err.println(
                 "Usage: java " + DynamicInvoker.class.getName() + " wsdlLocation "
-                + "operationName[(portName)]:[inputMessageName]:[outputMessageName] "
+                + "operationName[(portName)] "
                 + "[argument1 ...]");
         System.exit(1);
     }
@@ -132,51 +127,24 @@ public class DynamicInvoker {
         String wsdlLocation = (args.length > 0)
                 ? args[0]
                 : null;
-        String operationKey = (args.length > 1)
+        String operationName = (args.length > 1)
                 ? args[1]
                 : null;
         String portName = null;
-        String operationName = null;
-        String inputName = null;
-        String outputName = null;
-        StringTokenizer st = new StringTokenizer(operationKey, ":");
-        int tokens = st.countTokens();
-        int specType = 0;
-
-        if (tokens == 2) {
-            specType = operationKey.endsWith(":")
-                    ? 1
-                    : 2;
-        } else if ((tokens != 1) && (tokens != 3)) {
-            usage();
-        }
-        while (st.hasMoreTokens()) {
-            if (operationName == null) {
-                operationName = st.nextToken();
-            } else if ((inputName == null) && (specType != 2)) {
-                inputName = st.nextToken();
-            } else if (outputName == null) {
-                outputName = st.nextToken();
-            } else {
-                break;
-            }
-        }
-        
         try {
             portName = operationName.substring(operationName.indexOf("(") + 1,
                                                operationName.indexOf(")"));
             operationName = operationName.substring(0, operationName.indexOf("("));
         } catch (Exception ignored) {
         }
-        
+
         DynamicInvoker invoker = new DynamicInvoker(wsdlLocation);
-        HashMap map = invoker.invokeMethod(operationName, inputName, outputName, portName, args);
+        HashMap map = invoker.invokeMethod(operationName, portName, args);
 
         // print result
         System.out.println("Result:");
         for (Iterator it = map.keySet().iterator(); it.hasNext();) {
             String name = (String) it.next();
-
             System.out.println(name + "=" + map.get(name));
         }
         System.out.println("\nDone!");
@@ -197,58 +165,19 @@ public class DynamicInvoker {
      * @throws Exception
      */
     public HashMap invokeMethod(
-            String operationName, String inputName, String outputName, String portName, String[] args)
+            String operationName, String portName, String[] args)
             throws Exception {
         String serviceNS = null;
         String serviceName = null;
-        String portTypeNS = null;
-        String portTypeName = null;
         String operationQName = null;
 
         System.out.println("Preparing Axis dynamic invocation");
         Service service = selectService(serviceNS, serviceName);
-        PortType portType = selectPortType(portTypeNS, portTypeName);
         Operation operation = null;
         org.apache.axis.client.Service dpf = new org.apache.axis.client.Service(wsdlParser, service.getQName());
 
-        if ((inputName == null) && (outputName == null)) {
-
-            // retrieve list of operations
-            List operationList = portType.getOperations();
-
-            // try to find input and output names for the operation specified
-            boolean found = false;
-
-            for (Iterator i = operationList.iterator(); i.hasNext();) {
-                Operation op = (Operation) i.next();
-                String name = op.getName();
-
-                if (!name.equals(operationName)) {
-                    continue;
-                }
-                if (found) {
-                    throw new RuntimeException(
-                            "Operation '" + operationName + "' is overloaded. "
-                            + "Please specify the operation in the form "
-                            + "'operationName:inputMessageName:outputMesssageName' to distinguish it");
-                }
-                found = true;
-                operation = op;
-                Input opInput = op.getInput();
-
-                inputName = (opInput.getName() == null)
-                        ? null
-                        : opInput.getName();
-                Output opOutput = op.getOutput();
-
-                outputName = (opOutput.getName() == null)
-                        ? null
-                        : opOutput.getName();
-            }
-        }
         Vector inputs = new Vector();
         Port port = selectPort(service.getPorts(), portName);
-
         if (portName == null) {
             portName = port.getName();
         }
@@ -271,15 +200,14 @@ public class DynamicInvoker {
 
         while (i.hasNext()) {
             Operation o = (Operation) i.next();
-
             if (o.getName().equals(operationName)) {
+                operation = o;
                 parameters = (Parameters) bEntry.getParameters().get(o);
+                break;
             }
         }
         if ((operation == null) || (parameters == null)) {
-            throw new RuntimeException("no operation " + operationName
-                                       + " was found in port type "
-                                       + portType.getQName());
+            throw new RuntimeException(operationName + " was not found.");
         }
 
         // loop over paramters and set up in/out params
@@ -305,7 +233,6 @@ public class DynamicInvoker {
 
         // set output type
         if (parameters.returnParam != null) {
-
             // Get the QName for the return Type
             QName returnType = org.apache.axis.wsdl.toJava.Utils.getXSIType(
                     parameters.returnParam);
@@ -314,28 +241,19 @@ public class DynamicInvoker {
             outNames.add(returnQName.getLocalPart());
             addTypeClass(outTypes, returnType.getLocalPart());
         }
+
+        if (inNames.size() != args.length - 2)
+            throw new RuntimeException("Need " + inNames.size() + " arguments!!!");
+
         for (int pos = 0; pos < inNames.size(); ++pos) {
             String arg = args[pos + 2];
-            Object value = null;
             Class c = (Class) inTypes.get(pos);
-
-            if (c.equals(String.class)) {
-                value = arg;
-            } else if (c.equals(Double.TYPE)) {
-                value = new Double(arg);
-            } else if (c.equals(Float.TYPE)) {
-                value = new Float(arg);
-            } else if (c.equals(Integer.TYPE)) {
-                value = new Integer(arg);
-            } else if (c.equals(Boolean.TYPE)) {
-                value = new Boolean(arg);
-            } else {
-                throw new RuntimeException("not know how to convert '" + arg
-                                           + "' into " + c);
-            }
-            inputs.add(value);
+            inputs.add(getParamData(c, arg));
         }
-        System.out.println("Executing operation " + operationName);
+        System.out.println("Executing operation " + operationName + " with parameters:");
+        for (int j = 0; j < inputs.size(); j++) {
+            System.out.println(inNames.get(j) + "=" + inputs.get(j));
+        }
         Object ret = call.invoke(inputs.toArray());
         Map outputs = call.getOutputParams();
         HashMap map = new HashMap();
@@ -351,6 +269,31 @@ public class DynamicInvoker {
             }
         }
         return map;
+    }
+
+    /**
+     * Method getParamData
+     *
+     * @param c
+     * @param arg
+     */
+    private Object getParamData(Class c, String arg) {
+        Object value;
+        if (c.equals(String.class)) {
+            value = arg;
+        } else if (c.equals(Double.TYPE)) {
+            value = new Double(arg);
+        } else if (c.equals(Float.TYPE)) {
+            value = new Float(arg);
+        } else if (c.equals(Integer.TYPE)) {
+            value = new Integer(arg);
+        } else if (c.equals(Boolean.TYPE)) {
+            value = new Boolean(arg);
+        } else {
+            throw new RuntimeException("not know how to convert '" + arg
+                                       + "' into " + c);
+        }
+        return value;
     }
 
     /**
@@ -389,14 +332,12 @@ public class DynamicInvoker {
      */
     public Service selectService(String serviceNS, String serviceName)
             throws Exception {
-
         QName serviceQName = (((serviceNS != null)
                 && (serviceName != null))
                 ? new QName(serviceNS, serviceName)
                 : null);
         ServiceEntry serviceEntry = (ServiceEntry) getSymTabEntry(serviceQName,
                                                                   ServiceEntry.class);
-
         return serviceEntry.getService();
     }
 
@@ -409,7 +350,6 @@ public class DynamicInvoker {
      * @return
      */
     public SymTabEntry getSymTabEntry(QName qname, Class cls) {
-
         HashMap map = wsdlParser.getSymbolTable().getHashMap();
         Iterator iterator = map.entrySet().iterator();
 
@@ -429,30 +369,6 @@ public class DynamicInvoker {
             }
         }
         return null;
-    }    // get
-
-    /**
-     * Method selectPortType
-     *
-     * @param def
-     * @param portTypeNS
-     * @param portTypeName
-     *
-     * @return
-     *
-     * @throws Exception
-     */
-    public PortType selectPortType(String portTypeNS, String portTypeName)
-            throws Exception {
-
-        QName portTypeQName = (((portTypeNS != null)
-                && (portTypeName != null))
-                ? new QName(portTypeNS, portTypeName)
-                : null);
-        PortTypeEntry portTypeEntry =
-                (PortTypeEntry) getSymTabEntry(portTypeQName, PortTypeEntry.class);
-
-        return portTypeEntry.getPortType();
     }
 
     /**
@@ -466,9 +382,7 @@ public class DynamicInvoker {
      * @throws Exception
      */
     public Port selectPort(Map ports, String portName) throws Exception {
-
         Iterator valueIterator = ports.keySet().iterator();
-
         while (valueIterator.hasNext()) {
             String name = (String) valueIterator.next();
 
@@ -478,13 +392,11 @@ public class DynamicInvoker {
 
                 for (int i = 0; (list != null) && (i < list.size()); i++) {
                     Object obj = list.get(i);
-
                     if (obj instanceof SOAPAddress) {
                         return port;
                     }
                 }
-            }
-            if ((name != null) && name.equals(portName)) {
+            } else if ((name != null) && name.equals(portName)) {
                 return (Port) ports.get(name);
             }
         }
