@@ -59,6 +59,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
@@ -133,7 +134,7 @@ public class MsgProvider extends JavaProvider {
         if (params.length != 1) {
             // Must have exactly one argument in all cases.
             throw new AxisFault(
-                    JavaUtils.getMessage("msgMethodMustHaveOneParam",
+                    Messages.getMessage("msgMethodMustHaveOneParam",
                                          method.getName(),
                                          ""+params.length));
 
@@ -180,7 +181,7 @@ public class MsgProvider extends JavaProvider {
             } else {
                 // Neither - must be a bad method.
                 throw new AxisFault(
-                        JavaUtils.getMessage("badMsgMethodParam",
+                        Messages.getMessage("badMsgMethodParam",
                                              method.getName(),
                                              params[0].getName()));
             }
@@ -188,7 +189,7 @@ public class MsgProvider extends JavaProvider {
             // pass *just* the MessageContext (maybe don't even parse!!!)
             if (params[0] != MessageContext.class) {
                 throw new AxisFault(
-                        JavaUtils.getMessage("needMessageContextArg",
+                        Messages.getMessage("needMessageContextArg",
                                              method.getName(),
                                              params[0].getName()));
             }

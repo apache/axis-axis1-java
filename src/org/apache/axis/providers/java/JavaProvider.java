@@ -71,6 +71,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.wsdl.fromJava.Emitter;
@@ -247,7 +248,7 @@ public abstract class JavaProvider extends BasicProvider
 
         if ((clsName == null) || clsName.equals("")) {
             throw new AxisFault("Server.NoClassForService",
-                JavaUtils.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
+                Messages.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
                 null, null);
         }
 
@@ -287,7 +288,7 @@ public abstract class JavaProvider extends BasicProvider
             }
         }
         catch( Exception exp ) {
-            entLog.debug( JavaUtils.getMessage("toAxisFault00"), exp);
+            entLog.debug( Messages.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
         }
 
@@ -416,10 +417,10 @@ public abstract class JavaProvider extends BasicProvider
 
             msgContext.setProperty("WSDL", doc);
         } catch (NoClassDefFoundError e) {
-            entLog.info( JavaUtils.getMessage("toAxisFault00"), e );
+            entLog.info( Messages.getMessage("toAxisFault00"), e );
             throw new AxisFault(e.toString(), e);
         } catch (Exception e) {
-            entLog.info( JavaUtils.getMessage("toAxisFault00"), e );
+            entLog.info( Messages.getMessage("toAxisFault00"), e );
             throw AxisFault.makeFault(e);
         }
 
@@ -499,16 +500,16 @@ public abstract class JavaProvider extends BasicProvider
                 JavaClass jc = cache.lookup(clsName, cl);
                 serviceClass = jc.getJavaClass();
             } catch (ClassNotFoundException e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
-                throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
+                log.error(Messages.getMessage("exception00"), e);
+                throw new AxisFault(Messages.getMessage("noClassForService00", clsName), e);
             }
         } else {
             // if no engine, we don't have a cache, use Class.forName instead.
             try {
                 serviceClass = ClassUtils.forName(clsName, true, cl);
             } catch (ClassNotFoundException e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
-                throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
+                log.error(Messages.getMessage("exception00"), e);
+                throw new AxisFault(Messages.getMessage("noClassForService00", clsName), e);
             }
         }
         return serviceClass;
@@ -527,7 +528,7 @@ public abstract class JavaProvider extends BasicProvider
 
         String clsName = getServiceClassName(service);
         if (clsName == null) {
-            throw new AxisFault(JavaUtils.getMessage("noServiceClass"));
+            throw new AxisFault(Messages.getMessage("noServiceClass"));
         }
         Class cls = getServiceClass(clsName, service, msgContext);
         ServiceDesc serviceDescription = service.getServiceDescription();

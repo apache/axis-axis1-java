@@ -66,6 +66,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -92,9 +93,9 @@ public class SimpleAxisWorker implements Runnable {
     private static String transportName = "SimpleHTTP";
 
     // HTTP status codes
-    private static byte OK[] = ("200 " + JavaUtils.getMessage("ok00")).getBytes();
-    private static byte UNAUTH[] = ("401 " + JavaUtils.getMessage("unauth00")).getBytes();
-    private static byte ISE[] = ("500 " + JavaUtils.getMessage("internalError01")).getBytes();
+    private static byte OK[] = ("200 " + Messages.getMessage("ok00")).getBytes();
+    private static byte UNAUTH[] = ("401 " + Messages.getMessage("unauth00")).getBytes();
+    private static byte ISE[] = ("500 " + Messages.getMessage("internalError01")).getBytes();
 
     // HTTP prefix
     private static byte HTTP[] = "HTTP/1.0 ".getBytes();
@@ -116,7 +117,7 @@ public class SimpleAxisWorker implements Runnable {
     private static final String responseStr =
             "<html><head><title>SimpleAxisServer</title></head>" +
             "<body><h1>SimpleAxisServer</h1>" +
-            JavaUtils.getMessage("reachedServer00") +
+            Messages.getMessage("reachedServer00") +
             "</html>";
     private static byte cannedHTMLResponse[] = responseStr.getBytes();
 
@@ -259,9 +260,9 @@ public class SimpleAxisWorker implements Runnable {
                     String params = fileName.substring(paramIdx + 1);
                     fileName.setLength(paramIdx);
 
-                    log.debug(JavaUtils.getMessage("filename00",
+                    log.debug(Messages.getMessage("filename00",
                             fileName.toString()));
-                    log.debug(JavaUtils.getMessage("params00",
+                    log.debug(Messages.getMessage("params00",
                             params));
 
                     if ("wsdl".equalsIgnoreCase(params))
@@ -304,7 +305,7 @@ public class SimpleAxisWorker implements Runnable {
                     }
 
                     if (log.isDebugEnabled()) {
-                        log.debug(JavaUtils.getMessage("user00",
+                        log.debug(Messages.getMessage("user00",
                                 userBuf.toString()));
                     }
 
@@ -409,14 +410,14 @@ public class SimpleAxisWorker implements Runnable {
                 // Retrieve the response from Axis
                 responseMsg = msgContext.getResponseMessage();
                 if (responseMsg == null) {
-                    throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+                    throw new AxisFault(Messages.getMessage("nullResponse00"));
                 }
 
             } catch (Exception e) {
                 AxisFault af;
                 if (e instanceof AxisFault) {
                     af = (AxisFault) e;
-                    log.debug(JavaUtils.getMessage("serverFault00"), af);
+                    log.debug(Messages.getMessage("serverFault00"), af);
 
                     if ("Server.Unauthorized".equals(af.getFaultCode())) {
                         status = UNAUTH; // SC_UNAUTHORIZED
@@ -473,7 +474,7 @@ public class SimpleAxisWorker implements Runnable {
             // out.write(response);
             out.flush();
         } catch (Exception e) {
-            log.debug(JavaUtils.getMessage("exception00"), e);
+            log.debug(Messages.getMessage("exception00"), e);
         } finally {
             try {
                 if (socket != null) socket.close();
@@ -520,7 +521,7 @@ public class SimpleAxisWorker implements Runnable {
         n = this.readLine(is, buf, 0, buf.length);
         if (n < 0) {
             // nothing!
-            throw new java.io.IOException(JavaUtils.getMessage("unexpectedEOS00"));
+            throw new java.io.IOException(Messages.getMessage("unexpectedEOS00"));
         }
 
         // which does it begin with?
@@ -537,7 +538,7 @@ public class SimpleAxisWorker implements Runnable {
                     break;
                 fileName.append(c);
             }
-            log.debug(JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
+            log.debug(Messages.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");
@@ -547,9 +548,9 @@ public class SimpleAxisWorker implements Runnable {
                     break;
                 fileName.append(c);
             }
-            log.debug(JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
+            log.debug(Messages.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
         } else {
-            throw new java.io.IOException(JavaUtils.getMessage("badRequest00"));
+            throw new java.io.IOException(Messages.getMessage("badRequest00"));
         }
 
         while ((n = readLine(is, buf, 0, buf.length)) > 0) {
@@ -616,7 +617,7 @@ public class SimpleAxisWorker implements Runnable {
                     }
                 } else {
                     throw new java.io.IOException(
-                            JavaUtils.getMessage("badAuth00"));
+                            Messages.getMessage("badAuth00"));
                 }
             } else if (endHeaderIndex == locationLen && matches(buf, locationHeader)) {
                 while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {

@@ -55,6 +55,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.text.SimpleDateFormat;
 import java.text.Format;
@@ -99,14 +100,14 @@ public class YearMonth {
         }
         if (source.length() < (7 + negative)) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badYearMonth00"));
+                    Messages.getMessage("badYearMonth00"));
         }
         
         // look for first '-'
         int pos = source.substring(negative).indexOf('-');
         if (pos < 0) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badYearMonth00"));
+                    Messages.getMessage("badYearMonth00"));
         }
         if (negative > 0) pos++;    //adjust index for orginal string
         
@@ -123,7 +124,7 @@ public class YearMonth {
         // validate year, more than 4 digits are allowed!
         if (year == 0) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badYearMonth00"));
+                    Messages.getMessage("badYearMonth00"));
         }
         
         this.year = year;
@@ -137,7 +138,7 @@ public class YearMonth {
         // validate month
         if (month < 1 || month > 12) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badYearMonth00"));
+                    Messages.getMessage("badYearMonth00"));
         }
         this.month = month;
     }
@@ -158,11 +159,11 @@ public class YearMonth {
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
                         throw new NumberFormatException(
-                                JavaUtils.getMessage("badTimezone00"));
+                                Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badTimezone00"));
+                        Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;

@@ -76,6 +76,7 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
@@ -397,7 +398,7 @@ public class WSDDService
             }
             if (providerHandler == null)
                 throw new WSDDException(
-                          JavaUtils.getMessage("couldntConstructProvider00"));
+                          Messages.getMessage("couldntConstructProvider00"));
         }
 
         Handler respHandler = null;

@@ -61,6 +61,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -108,15 +109,15 @@ public class MethodTarget implements Target
         try {
             targetMethod.invoke(targetObject, new Object [] { value });
         } catch (IllegalAccessException accEx) {
-            log.error(JavaUtils.getMessage("illegalAccessException00"),
+            log.error(Messages.getMessage("illegalAccessException00"),
                       accEx);
             throw new SAXException(accEx);
         } catch (IllegalArgumentException argEx) {
-            log.error(JavaUtils.getMessage("illegalArgumentException00"),
+            log.error(Messages.getMessage("illegalArgumentException00"),
                       argEx);
             throw new SAXException(argEx);
         } catch (InvocationTargetException targetEx) {
-            log.error(JavaUtils.getMessage("invocationTargetException00"),
+            log.error(Messages.getMessage("invocationTargetException00"),
                       targetEx);
             throw new SAXException(targetEx);
         }

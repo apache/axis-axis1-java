@@ -55,6 +55,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.text.SimpleDateFormat;
 import java.text.Format;
@@ -98,7 +99,7 @@ public class Year {
         }
         if (source.length() < (4 + negative)) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badYear00"));
+                    Messages.getMessage("badYear00"));
         }
         
         // calculate how many more than 4 digits (if any) in the year
@@ -119,7 +120,7 @@ public class Year {
         // validate year, more than 4 digits are allowed!
         if (year == 0) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badYear00"));
+                    Messages.getMessage("badYear00"));
         }
         
         this.year = year;
@@ -141,11 +142,11 @@ public class Year {
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
                         throw new NumberFormatException(
-                                JavaUtils.getMessage("badTimezone00"));
+                                Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badTimezone00"));
+                        Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;

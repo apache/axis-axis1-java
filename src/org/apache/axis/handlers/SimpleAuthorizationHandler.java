@@ -61,6 +61,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -100,13 +101,13 @@ public class SimpleAuthorizationHandler extends BasicHandler {
 
         if (user == null)
             throw new AxisFault("Server.NoUser",
-                    JavaUtils.getMessage("needUser00"), null, null);
+                    Messages.getMessage("needUser00"), null, null);
 
         String userID = user.getName();
         Handler serviceHandler = msgContext.getService();
 
         if (serviceHandler == null)
-            throw new AxisFault(JavaUtils.getMessage("needService00"));
+            throw new AxisFault(Messages.getMessage("needService00"));
 
         String serviceName = serviceHandler.getName();
 
@@ -114,16 +115,16 @@ public class SimpleAuthorizationHandler extends BasicHandler {
         if (allowedRoles == null) {
             if (allowByDefault) {
                 if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage( "noRoles00"));
+                    log.debug(Messages.getMessage( "noRoles00"));
                 }
             }
             else {
                 if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage( "noRoles01"));
+                    log.debug(Messages.getMessage( "noRoles01"));
                 }
 
                 throw new AxisFault( "Server.Unauthorized",
-                    JavaUtils.getMessage("notAuth00", userID, serviceName),
+                    Messages.getMessage("notAuth00", userID, serviceName),
                     null, null );
             }
 
@@ -135,7 +136,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
 
         SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
         if (provider == null)
-            throw new AxisFault(JavaUtils.getMessage("noSecurity00"));
+            throw new AxisFault(Messages.getMessage("noSecurity00"));
 
         StringTokenizer st = new StringTokenizer(allowedRoles, ",");
         while (st.hasMoreTokens()) {
@@ -143,7 +144,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             if (provider.userMatches(user, thisRole)) {
 
                 if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("auth01", 
+                    log.debug(Messages.getMessage("auth01", 
                         userID, serviceName));
                 }
 
@@ -155,7 +156,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
         }
 
         throw new AxisFault( "Server.Unauthorized",
-            JavaUtils.getMessage("cantAuth02", userID, serviceName),
+            Messages.getMessage("cantAuth02", userID, serviceName),
             null, null );
     }
 

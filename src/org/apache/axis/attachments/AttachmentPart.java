@@ -57,6 +57,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.Part;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -292,7 +293,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      */
     public DataHandler getDataHandler() throws SOAPException {
         if(datahandler == null) {
-            throw new SOAPException(JavaUtils.getMessage("noContent"));
+            throw new SOAPException(Messages.getMessage("noContent"));
         }
         return datahandler;
     }
@@ -314,7 +315,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     public void setDataHandler(DataHandler datahandler) {
         if(datahandler == null)
             throw new java.lang.IllegalArgumentException(
-                JavaUtils.getMessage("illegalArgumentException00"));
+                Messages.getMessage("illegalArgumentException00"));
         this.datahandler = datahandler;
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
     }
@@ -357,7 +358,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
             return contentObject;
 
         if(datahandler == null) {
-            throw new SOAPException(JavaUtils.getMessage("noContent"));
+            throw new SOAPException(Messages.getMessage("noContent"));
         }
 
         javax.activation.DataSource ds = datahandler.getDataSource();
@@ -373,7 +374,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
 
                     return new String(bytes);
                 } catch (java.io.IOException io) {
-                    log.error(JavaUtils.getMessage("javaIOException00"), io);
+                    log.error(Messages.getMessage("javaIOException00"), io);
                 }
             }
         }
@@ -409,9 +410,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                 contentObject = object;
                 return;
             } catch (java.io.IOException io) {
-                log.error(JavaUtils.getMessage("javaIOException00"), io);
+                log.error(Messages.getMessage("javaIOException00"), io);
                 throw new java.lang.IllegalArgumentException(
-                        JavaUtils.getMessage("illegalArgumentException00"));
+                        Messages.getMessage("illegalArgumentException00"));
             }
         } else if (object instanceof java.io.InputStream) {
                 try {
@@ -420,13 +421,13 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                     contentObject = object;
                     return;
                 } catch (java.io.IOException io) {
-                    log.error(JavaUtils.getMessage("javaIOException00"), io);
+                    log.error(Messages.getMessage("javaIOException00"), io);
                     throw new java.lang.IllegalArgumentException(
-                            JavaUtils.getMessage("illegalArgumentException00"));
+                            Messages.getMessage("illegalArgumentException00"));
                 }
         } else {
             throw new java.lang.IllegalArgumentException(
-                    JavaUtils.getMessage("illegalArgumentException00"));
+                    Messages.getMessage("illegalArgumentException00"));
         }
     }
 
@@ -456,8 +457,8 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         try {
             datahandler.writeTo(bout);
         } catch (java.io.IOException ex) {
-            log.error(JavaUtils.getMessage("javaIOException00"), ex);
-            throw new SOAPException(JavaUtils.getMessage("javaIOException01", ex.getMessage()), ex);
+            log.error(Messages.getMessage("javaIOException00"), ex);
+            throw new SOAPException(Messages.getMessage("javaIOException01", ex.getMessage()), ex);
         }
         byte bytes[] = bout.getBytes();
         if (bytes != null)

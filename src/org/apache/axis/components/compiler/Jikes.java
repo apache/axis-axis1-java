@@ -56,6 +56,7 @@
 package org.apache.axis.components.compiler;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -275,9 +276,9 @@ public class Jikes extends AbstractCompiler
             endcolumn = Integer.parseInt(tokens.nextToken());
         } catch (Exception e) {
             // FIXME: VG: This is not needed anymore?
-            message.append(JavaUtils.getMessage("compilerFail00"));
+            message.append(Messages.getMessage("compilerFail00"));
             type="error";
-            log.error(JavaUtils.getMessage("compilerFail00"), e);
+            log.error(Messages.getMessage("compilerFail00"), e);
         }
 
         if ("".equals(message)) {
@@ -292,6 +293,6 @@ public class Jikes extends AbstractCompiler
     }
 
     public String toString() {
-        return JavaUtils.getMessage("ibmJikes");
+        return Messages.getMessage("ibmJikes");
     }
 }

@@ -68,6 +68,7 @@ import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -99,7 +100,7 @@ public class AxisServer extends AxisEngine
                 } catch (Exception e) {
                     // If something goes wrong here, should we just fall
                     // through and use the default one?
-                    log.error(JavaUtils.getMessage("exception00"), e);
+                    log.error(Messages.getMessage("exception00"), e);
                 }
             }
             
@@ -178,7 +179,7 @@ public class AxisServer extends AxisEngine
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
-                                JavaUtils.getMessage("serverDisabled00"),
+                                Messages.getMessage("serverDisabled00"),
                                 null, null);
         }
 
@@ -197,7 +198,7 @@ public class AxisServer extends AxisEngine
                 if ( (h = getHandler(hName)) == null ) {
                     ClassLoader cl = msgContext.getClassLoader();
                     try {
-                        log.debug( JavaUtils.getMessage("tryingLoad00", hName) );
+                        log.debug( Messages.getMessage("tryingLoad00", hName) );
                         Class cls = ClassUtils.forName(hName, true, cl);
                         h = (Handler) cls.newInstance();
                     }
@@ -212,7 +213,7 @@ public class AxisServer extends AxisEngine
                     h.invoke(msgContext);
                 else
                     throw new AxisFault( "Server.error",
-                                         JavaUtils.getMessage("noHandler00", hName),
+                                         Messages.getMessage("noHandler00", hName),
                                          null, null );
                 if( tlog.isDebugEnabled() ) {
                     t2=System.currentTimeMillis();
@@ -238,7 +239,7 @@ public class AxisServer extends AxisEngine
 
                 // When do we call init/cleanup??
                 if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("defaultLogic00") );
+                    log.debug(Messages.getMessage("defaultLogic00") );
                 }
 
                 /*  This is what the entirety of this logic might evolve to:
@@ -248,7 +249,7 @@ public class AxisServer extends AxisEngine
                 if ((h = hr.find( hName )) != null ) {
                 h.invoke(msgContext);
                 } else {
-                log.error(JavaUtils.getMessage("noTransport02", hName));
+                log.error(Messages.getMessage("noTransport02", hName));
                 }
                 } else {
                 // No transport set, so use the default (probably just
@@ -264,7 +265,7 @@ public class AxisServer extends AxisEngine
                 SimpleTargetedChain transportChain = null;
 
                 if (log.isDebugEnabled())
-                    log.debug(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
+                    log.debug(Messages.getMessage("transport01", "AxisServer.invoke", hName));
 
                 if( tlog.isDebugEnabled() ) {
                     t1=System.currentTimeMillis();
@@ -304,7 +305,7 @@ public class AxisServer extends AxisEngine
                     h = msgContext.getService();
                     if (h == null)
                         throw new AxisFault("Server.NoService",
-                                            JavaUtils.getMessage("noService05",
+                                            Messages.getMessage("noService05",
                                                                  "" + msgContext.getTargetService()),
                                             null, null );
                 }
@@ -371,7 +372,7 @@ public class AxisServer extends AxisEngine
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
-                                JavaUtils.getMessage("serverDisabled00"),
+                                Messages.getMessage("serverDisabled00"),
                                 null, null);
         }
 
@@ -390,14 +391,14 @@ public class AxisServer extends AxisEngine
                 if ( (h = getHandler(hName)) == null ) {
                     ClassLoader cl = msgContext.getClassLoader();
                     try {
-                        log.debug( JavaUtils.getMessage("tryingLoad00", hName) );
+                        log.debug( Messages.getMessage("tryingLoad00", hName) );
                         Class cls = ClassUtils.forName(hName, true, cl);
                         h = (Handler) cls.newInstance();
                     }
                     catch( Exception e ) {
                         throw new AxisFault(
                                 "Server.error",
-                                JavaUtils.getMessage("noHandler00", hName),
+                                Messages.getMessage("noHandler00", hName),
                                 null, null );
                     }
                 }
@@ -419,7 +420,7 @@ public class AxisServer extends AxisEngine
                 /**************************************************************/
 
                 // When do we call init/cleanup??
-                log.debug( JavaUtils.getMessage("defaultLogic00") );
+                log.debug( Messages.getMessage("defaultLogic00") );
 
                 /*  This is what the entirety of this logic might evolve to:
 
@@ -428,7 +429,7 @@ public class AxisServer extends AxisEngine
                 if ((h = hr.find( hName )) != null ) {
                 h.generateWSDL(msgContext);
                 } else {
-                log.error(JavaUtils.getMessage("noTransport02", hName));
+                log.error(Messages.getMessage("noTransport02", hName));
                 }
                 } else {
                 // No transport set, so use the default (probably just
@@ -444,7 +445,7 @@ public class AxisServer extends AxisEngine
                 SimpleTargetedChain transportChain = null;
 
                 if (log.isDebugEnabled())
-                    log.debug(JavaUtils.getMessage("transport01",
+                    log.debug(Messages.getMessage("transport01",
                                                    "AxisServer.generateWSDL",
                                                    hName));
                 if ( hName != null && (h = getTransport( hName )) != null ) {
@@ -481,7 +482,7 @@ public class AxisServer extends AxisEngine
                     }
                     if (h == null)
                         throw new AxisFault(Constants.QNAME_NO_SERVICE_FAULT_CODE,
-                                            JavaUtils.getMessage("noService05",
+                                            Messages.getMessage("noService05",
                                                                  "" + msgContext.getTargetService()),
                                             null, null );
                 }

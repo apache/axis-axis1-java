@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
 * Emitter knows about WSDL writers, one each for PortType, Binding, Service,
@@ -209,8 +210,8 @@ public abstract class JavaClassWriter extends JavaWriter {
         pw.println("/**");
         pw.println(" * " + localFile);
         pw.println(" *");
-        pw.println(" * " + JavaUtils.getMessage("wsdlGenLine00"));
-        pw.println(" * " + JavaUtils.getMessage("wsdlGenLine01"));
+        pw.println(" * " + Messages.getMessage("wsdlGenLine00"));
+        pw.println(" * " + Messages.getMessage("wsdlGenLine01"));
         pw.println(" */");
         pw.println();
     } // writeHeaderComments

@@ -271,7 +271,7 @@ public class BeanUtils {
                 myPd[i] = (BeanPropertyDescriptor) pd.get(i);
             }
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("badPropertyDesc00",
+            log.error(Messages.getMessage("badPropertyDesc00",
                                            cls.getName()), e);
             throw new InternalException(e);
         }

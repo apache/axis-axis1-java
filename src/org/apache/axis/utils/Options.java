@@ -103,7 +103,7 @@ public class Options {
         try {
             getURL();
         } catch( MalformedURLException e ) {
-            log.error( JavaUtils.getMessage("cantDoURL00") );
+            log.error( Messages.getMessage("cantDoURL00") );
             throw e ;
         }
         getUser();
@@ -304,7 +304,7 @@ public class Options {
             if ( port != null && !port.equals("-1")) tmp += ":" + port ;
             if ( servlet != null ) tmp += servlet ;
         } else tmp = url.toString();
-        log.debug( JavaUtils.getMessage("return02", "getURL", tmp) );
+        log.debug( Messages.getMessage("return02", "getURL", tmp) );
         return( tmp );
     }
     

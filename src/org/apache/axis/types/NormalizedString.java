@@ -55,6 +55,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting XSD data type NormalizedString.
@@ -89,7 +90,7 @@ public class NormalizedString extends Object {
      */
     public void setValue(String stValue) throws Exception {
         if (isValid(stValue) == false)
-            throw new Exception(JavaUtils.getMessage("badNormalizedString00") +
+            throw new Exception(Messages.getMessage("badNormalizedString00") +
                     " data=[" + stValue + "]");
         m_value = stValue;
     }

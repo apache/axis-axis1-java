@@ -56,6 +56,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 
@@ -107,11 +108,11 @@ public class DateDeserializer extends SimpleDeserializer {
             
             if (source.length() < 10) 
                 throw new NumberFormatException(
-                           JavaUtils.getMessage("badDate00"));
+                           Messages.getMessage("badDate00"));
     
             if (source.charAt(4) != '-' || source.charAt(7) != '-')
                 throw new NumberFormatException(
-                                                JavaUtils.getMessage("badDate00"));
+                                                Messages.getMessage("badDate00"));
             
         }
         

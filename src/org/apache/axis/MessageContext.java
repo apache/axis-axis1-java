@@ -68,6 +68,7 @@ import org.apache.axis.soap.SOAP11Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.schema.SchemaVersion;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -219,7 +220,7 @@ public class MessageContext implements SOAPMessageContext {
         if (serviceHandler == null) {
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("dispatching00",
+                    log.debug(Messages.getMessage("dispatching00",
                                                    qname.getNamespaceURI()));
                 }
 
@@ -635,7 +636,7 @@ public class MessageContext implements SOAPMessageContext {
                 List ops = sd.getOperations();
                 if (ops.size() != 1) {
                     throw new AxisFault(
-                            JavaUtils.getMessage("onlyOneMessageOp",
+                            Messages.getMessage("onlyOneMessageOp",
                                                  targetService,
                                                  ""+ops.size()));
                 }
@@ -753,7 +754,7 @@ public class MessageContext implements SOAPMessageContext {
         else if (name.equals(Call.USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setUsername((String) value);
@@ -761,7 +762,7 @@ public class MessageContext implements SOAPMessageContext {
         else if (name.equals(Call.PASSWORD_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setPassword((String) value);
@@ -769,7 +770,7 @@ public class MessageContext implements SOAPMessageContext {
         else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.Boolean",
                         value.getClass().getName()}));
@@ -779,7 +780,7 @@ public class MessageContext implements SOAPMessageContext {
         else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setOperationStyle(Style.getStyle((String)value, Style.DEFAULT));
@@ -787,7 +788,7 @@ public class MessageContext implements SOAPMessageContext {
         else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.Boolean",
                         value.getClass().getName()}));
@@ -797,7 +798,7 @@ public class MessageContext implements SOAPMessageContext {
         else if (name.equals(Call.SOAPACTION_URI_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
                         value.getClass().getName()}));
@@ -807,7 +808,7 @@ public class MessageContext implements SOAPMessageContext {
         else if (name.equals(Call.ENCODINGSTYLE_URI_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
                         value.getClass().getName()}));

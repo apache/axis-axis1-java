@@ -59,6 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 
@@ -123,7 +124,7 @@ public class AdminClient
             }
             call = (Call) service.createCall();
         } catch (ServiceException e) {
-            log.fatal(JavaUtils.getMessage("couldntCall00"), e);
+            log.fatal(Messages.getMessage("couldntCall00"), e);
             call = null;
         }
     }
@@ -142,7 +143,7 @@ public class AdminClient
     }
 
     public String list() throws Exception { 
-        log.debug( JavaUtils.getMessage("doList00") );
+        log.debug( Messages.getMessage("doList00") );
         String               str   = "<m:list xmlns:m=\"" + WSDDConstants.URI_WSDD + "\"/>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
@@ -156,14 +157,14 @@ public class AdminClient
     protected static final String ROOT_UNDEPLOY= WSDDConstants.QNAME_UNDEPLOY.getLocalPart(); 
 
     public String quit() throws Exception { 
-        log.debug(JavaUtils.getMessage("doQuit00"));
+        log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:quit xmlns:m=\"" + WSDDConstants.URI_WSDD + "\"/>";
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
     public String undeployHandler(String handlerName) throws Exception { 
-        log.debug(JavaUtils.getMessage("doQuit00"));
+        log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.URI_WSDD + "\">" +
                                      "<handler name=\"" + handlerName + "\"/>"+
                                      "</m:"+ROOT_UNDEPLOY +">" ;
@@ -172,7 +173,7 @@ public class AdminClient
     }
 
     public String undeployService(String serviceName) throws Exception { 
-        log.debug(JavaUtils.getMessage("doQuit00"));
+        log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.URI_WSDD + "\">" +
                                      "<service name=\"" + serviceName + "\"/>"+
                                      "</m:"+ROOT_UNDEPLOY +">" ;
@@ -225,7 +226,7 @@ public class AdminClient
         args = opts.getRemainingArgs();
 
         if ( args == null ) {
-            log.info(JavaUtils.getMessage("usage00","AdminClient xml-files | list"));
+            log.info(Messages.getMessage("usage00","AdminClient xml-files | list"));
             return null;
         }
 
@@ -237,9 +238,9 @@ public class AdminClient
             else if (args[i].equals("quit")) 
               sb.append( quit(opts) );
             else if (args[i].equals("passwd")) {
-                log.info(JavaUtils.getMessage("changePwd00"));
+                log.info(Messages.getMessage("changePwd00"));
                 if (args[i + 1] == null) {
-                    log.error(JavaUtils.getMessage("needPwd00"));
+                    log.error(Messages.getMessage("needPwd00"));
                     return null;
                 }
                 String str = "<m:passwd xmlns:m=\"http://xml.apache.org/axis/wsdd/\">";
@@ -251,7 +252,7 @@ public class AdminClient
             }
             else {
                 if(args[i].indexOf(java.io.File.pathSeparatorChar)==-1){
-                    log.info( JavaUtils.getMessage("processFile00", args[i]) );
+                    log.info( Messages.getMessage("processFile00", args[i]) );
                     sb.append( process(opts, args[i] ) );
                 } else {
                     java.util.StringTokenizer tokenizer = null ;
@@ -259,7 +260,7 @@ public class AdminClient
                                                  java.io.File.pathSeparator);
                     while(tokenizer.hasMoreTokens()) {
                         String file = tokenizer.nextToken();
-                        log.info( JavaUtils.getMessage("processFile00", file) );
+                        log.info( Messages.getMessage("processFile00", file) );
                         sb.append( process(opts, file) );
                         if(tokenizer.hasMoreTokens())
                             sb.append("\n");
@@ -273,7 +274,7 @@ public class AdminClient
 
     public void processOpts(Options opts) throws Exception {
         if (call == null) 
-            throw new Exception(JavaUtils.getMessage("nullCall00"));
+            throw new Exception(Messages.getMessage("nullCall00"));
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) );
         call.setUsername( opts.getUser() );
@@ -306,7 +307,7 @@ public class AdminClient
 
     public String process(Options opts, InputStream input)  throws Exception {
         if (call == null) 
-            throw new Exception(JavaUtils.getMessage("nullCall00"));
+            throw new Exception(Messages.getMessage("nullCall00"));
 
         if ( opts != null ) processOpts( opts );
         
@@ -320,7 +321,7 @@ public class AdminClient
         input.close();
 
         if (result == null || result.isEmpty()) 
-            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+            throw new AxisFault(Messages.getMessage("nullResponse00"));
 
         SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
         return body.toString();
@@ -343,7 +344,7 @@ public class AdminClient
             else
                 System.exit(1);
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
             System.exit(1);
         }
     }

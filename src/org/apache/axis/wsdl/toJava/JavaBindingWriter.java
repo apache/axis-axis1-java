@@ -59,6 +59,7 @@ import java.io.IOException;
 import javax.wsdl.Binding;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.gen.Generator;
 
@@ -183,7 +184,7 @@ public class JavaBindingWriter implements Generator {
                     if (Utils.fileExists(fileName,
                             binding.getQName().getNamespaceURI(),
                             emitter.getNamespaces())) {
-                        System.out.println(JavaUtils.getMessage(
+                        System.out.println(Messages.getMessage(
                                 "wontOverwrite", fileName));
                     }
                     else {
@@ -193,7 +194,7 @@ public class JavaBindingWriter implements Generator {
                 }
                 catch (IOException ioe) {
                     System.err.println(
-                            JavaUtils.getMessage("fileExistError00", fileName));
+                            Messages.getMessage("fileExistError00", fileName));
                 }
             }
         }

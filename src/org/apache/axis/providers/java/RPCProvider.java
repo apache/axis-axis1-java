@@ -70,6 +70,7 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -123,8 +124,8 @@ public class RPCProvider extends JavaProvider
 
         Vector          bodies = reqEnv.getBodyElements();
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("bodyElems00", "" + bodies.size()));
-            log.debug(JavaUtils.getMessage("bodyIs00", "" + bodies.get(0)));
+            log.debug(Messages.getMessage("bodyElems00", "" + bodies.size()));
+            log.debug(Messages.getMessage("bodyIs00", "" + bodies.get(0)));
         }
 
         RPCElement   body = null;
@@ -161,7 +162,7 @@ public class RPCProvider extends JavaProvider
         if (body == null) {
             // throw an error if this isn't a document style service
             if (!serviceDesc.getStyle().equals(Style.DOCUMENT)) {
-                throw new Exception(JavaUtils.getMessage("noBody00"));
+                throw new Exception(Messages.getMessage("noBody00"));
             }
 
             // look for a method in the service that has no arguments,
@@ -181,7 +182,7 @@ public class RPCProvider extends JavaProvider
 
             // If we still didn't find anything, report no body error.
             if (body == null) {
-                throw new Exception(JavaUtils.getMessage("noBody00"));
+                throw new Exception(Messages.getMessage("noBody00"));
             }
         }
 
@@ -200,7 +201,7 @@ public class RPCProvider extends JavaProvider
         }
 
         if (operation == null) {
-            throw new AxisFault(JavaUtils.getMessage("noSuchOperation",
+            throw new AxisFault(Messages.getMessage("noSuchOperation",
                                                      methodName));
         }
 
@@ -250,7 +251,7 @@ public class RPCProvider extends JavaProvider
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("  " + JavaUtils.getMessage("value00",
+                log.debug("  " + Messages.getMessage("value00",
                                                       "" + argValues[i]) );
             }
         }
@@ -276,7 +277,7 @@ public class RPCProvider extends JavaProvider
                     outs.add(new RPCParam(param.getQName(),
                                           argValues[numArgs + i]));
                 } else {
-                    throw new AxisFault(JavaUtils.getMessage("badOutParameter00",
+                    throw new AxisFault(Messages.getMessage("badOutParameter00",
                                                              "" + param.getQName(),
                                                              operation.getName()));
                 }
@@ -302,10 +303,10 @@ public class RPCProvider extends JavaProvider
                     argClasses += ",";
                 }
             }
-            log.info(JavaUtils.getMessage("dispatchIAE00",
+            log.info(Messages.getMessage("dispatchIAE00",
                                           new String[] {methodSig, argClasses}),
                      e);
-            throw new AxisFault(JavaUtils.getMessage("dispatchIAE00",
+            throw new AxisFault(Messages.getMessage("dispatchIAE00",
                                           new String[] {methodSig, argClasses}),
                                 e);
         }

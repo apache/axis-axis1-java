@@ -59,6 +59,7 @@ import org.apache.axis.server.AxisServer;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -143,7 +144,7 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        log.info(JavaUtils.getMessage("start00", "SimpleAxisServer",
+        log.info(Messages.getMessage("start00", "SimpleAxisServer",
                 new Integer(getServerSocket().getLocalPort()).toString()));
 
         // Accept and process requests from the socket
@@ -153,7 +154,7 @@ public class SimpleAxisServer implements Runnable {
                 socket = serverSocket.accept();
             } catch (java.io.InterruptedIOException iie) {
             } catch (Exception e) {
-                log.debug(JavaUtils.getMessage("exception00"), e);
+                log.debug(Messages.getMessage("exception00"), e);
                 break;
             }
             if (socket != null) {
@@ -167,7 +168,7 @@ public class SimpleAxisServer implements Runnable {
                 }
             }
         }
-        log.info(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
+        log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
     }
 
     // per thread socket information
@@ -227,10 +228,10 @@ public class SimpleAxisServer implements Runnable {
         try {
             serverSocket.close();
         } catch (Exception e) {
-            log.info(JavaUtils.getMessage("exception00"), e);
+            log.info(Messages.getMessage("exception00"), e);
         }
 
-        log.info(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
+        log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
 
         // Kill the JVM, which will interrupt pending accepts even on linux.
         System.exit(0);
@@ -247,7 +248,7 @@ public class SimpleAxisServer implements Runnable {
         try {
             opts = new Options(args);
         } catch (MalformedURLException e) {
-            log.error(JavaUtils.getMessage("malformedURLException00"), e);
+            log.error(Messages.getMessage("malformedURLException00"), e);
             return;
         }
 
@@ -262,13 +263,12 @@ public class SimpleAxisServer implements Runnable {
                     ss = new ServerSocket(port);
                     break;
                 } catch (java.net.BindException be){
-                    log.debug(JavaUtils.getMessage("exception00"), be);
+                    log.debug(Messages.getMessage("exception00"), be);
                     if (i < 4) {
                         // At 3 second intervals.
                         Thread.sleep(3000);
                     } else {
-                        throw new Exception(JavaUtils.
-                                getMessage("unableToStartServer00",
+                        throw new Exception(Messages.getMessage("unableToStartServer00",
                                            Integer.toString(port)));
                     }
                 }
@@ -276,7 +276,7 @@ public class SimpleAxisServer implements Runnable {
             sas.setServerSocket(ss);
             sas.start();
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
             return;
         }
 

@@ -56,6 +56,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 
@@ -110,16 +111,16 @@ public class CalendarDeserializer extends SimpleDeserializer {
 
             if (source.length() < 19)
                 throw new NumberFormatException(
-                           JavaUtils.getMessage("badDateTime00"));
+                           Messages.getMessage("badDateTime00"));
 
             if (source.charAt(4) != '-' || source.charAt(7) != '-' ||
                 source.charAt(10) != 'T')
                 throw new NumberFormatException(
-                                                JavaUtils.getMessage("badDate00"));
+                                                Messages.getMessage("badDate00"));
 
             if (source.charAt(13) != ':' || source.charAt(16) != ':')
                 throw new NumberFormatException(
-                                                JavaUtils.getMessage("badTime00"));
+                                                Messages.getMessage("badTime00"));
         }
 
         // convert what we have validated so far
@@ -168,7 +169,7 @@ public class CalendarDeserializer extends SimpleDeserializer {
                         !Character.isDigit(source.charAt(pos+4)) ||
                         !Character.isDigit(source.charAt(pos+5)))
                         throw new NumberFormatException(
-                                                        JavaUtils.getMessage("badTimezone00"));
+                                                        Messages.getMessage("badTimezone00"));
 
                     int hours = (source.charAt(pos+1)-'0')*10
                         +source.charAt(pos+2)-'0';
@@ -189,7 +190,7 @@ public class CalendarDeserializer extends SimpleDeserializer {
 
             if (pos < source.length())
                 throw new NumberFormatException(
-                                                JavaUtils.getMessage("badChars00"));
+                                                Messages.getMessage("badChars00"));
         }
 
         calendar.setTime(date);

@@ -58,6 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -250,11 +251,11 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         if (mapping == null || 
             !(mapping instanceof TypeMapping)) {
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("badTypeMapping"));
+                    Messages.getMessage("badTypeMapping"));
         } 
         if (namespaceURI == null) {
             throw new java.lang.IllegalArgumentException(
-                    JavaUtils.getMessage("nullNamespaceURI"));
+                    Messages.getMessage("nullNamespaceURI"));
         }
         // Get or create a TypeMappingDelegate and set it to 
         // delegate to the new mapping.
@@ -282,7 +283,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         if (mapping == null || 
             !(mapping instanceof TypeMapping)) {
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("badTypeMapping"));
+                    Messages.getMessage("badTypeMapping"));
         }
 
         /* Don't allow this call after the delegate() method since
@@ -291,7 +292,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
          */
         if (defaultDelTM.getDelegate() instanceof TypeMappingDelegate) {
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("defaultTypeMappingSet"));
+                    Messages.getMessage("defaultTypeMappingSet"));
         }
 
         defaultDelTM.setDelegate((TypeMapping) mapping);

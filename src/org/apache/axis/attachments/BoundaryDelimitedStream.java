@@ -55,6 +55,7 @@
 package org.apache.axis.attachments;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -122,7 +123,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      */
     protected static synchronized int newStreamNo() {
 
-        log.debug(JavaUtils.getMessage("streamNo", "" + (streamCount + 1)));
+        log.debug(Messages.getMessage("streamNo", "" + (streamCount + 1)));
 
         return ++streamCount;
     }
@@ -289,7 +290,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
             throws java.io.IOException {
 
         if (closed) {
-            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+            throw new java.io.IOException(Messages.getMessage("streamClosed"));
         }
 
         if (eos) {
@@ -306,7 +307,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 finalClose();
 
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("eosBeforeMarker"));
+                        Messages.getMessage("eosBeforeMarker"));
             }
 
             readBufPos = 0;
@@ -335,7 +336,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
             if (readBufPos == boundaryPos) {
                 eos = true;                 // hit the boundary so it the end of the stream.
 
-                log.debug(JavaUtils.getMessage("atEOS", "" + streamNo));
+                log.debug(Messages.getMessage("atEOS", "" + streamNo));
             } else if (bwritten < len) {    // need to get more data.
                 byte[] dstbuf = readbuf;
 
@@ -358,7 +359,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                     finalClose();
 
                     throw new java.io.IOException(
-                            JavaUtils.getMessage("eosBeforeMarker"));
+                            Messages.getMessage("eosBeforeMarker"));
                 }
 
                 readBufEnd = readcnt + movecnt;
@@ -384,7 +385,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 byte tb[] = new byte[bwritten];
 
                 System.arraycopy(b, off, tb, 0, bwritten);
-                log.debug(JavaUtils.getMessage("readBStream",
+                log.debug(Messages.getMessage("readBStream",
                         new String[]{"" + bwritten,
                                      "" + streamNo,
                                      new String(tb)}));
@@ -439,7 +440,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
             return;
         }
 
-        log.debug(JavaUtils.getMessage("bStreamClosed", "" + streamNo));
+        log.debug(Messages.getMessage("bStreamClosed", "" + streamNo));
 
         closed = true;    // mark it closed.
 
@@ -474,7 +475,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      */
     public void reset() throws java.io.IOException {
         throw new java.io.IOException(
-                JavaUtils.getMessage("attach.bounday.mns"));
+                Messages.getMessage("attach.bounday.mns"));
     }
 
     /**
@@ -595,7 +596,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 sb.append("boundary.length=" + boundary.length);
                 sb.append("j=" + j);
                 sb.append("end=" + end);
-                log.warn(JavaUtils.getMessage("exception01",sb.toString()));
+                log.warn(Messages.getMessage("exception01",sb.toString()));
                 throw e;
             }
 

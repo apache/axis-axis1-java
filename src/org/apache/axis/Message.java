@@ -61,6 +61,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -282,7 +283,7 @@ public class Message extends javax.xml.soap.SOAPMessage
             } catch (java.lang.NoClassDefFoundError ex) {
                 // no support for it, leave mAttachments null.
             }
-            log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
+            log.debug(Messages.getMessage("attachEnabled") + "  " +
                     attachmentSupportEnabled);
         }
         return attachmentSupportEnabled;
@@ -322,15 +323,15 @@ public class Message extends javax.xml.soap.SOAPMessage
                 //If it can't support it, it wont have a root part.
                 mSOAPPart = (SOAPPart) mAttachments.getRootPart();
             } catch (InvocationTargetException ex) {
-                log.fatal(JavaUtils.getMessage("invocationTargetException00"),
+                log.fatal(Messages.getMessage("invocationTargetException00"),
                           ex);
                 throw new RuntimeException(ex.getMessage());
             } catch (InstantiationException ex) {
-                log.fatal(JavaUtils.getMessage("instantiationException00"),
+                log.fatal(Messages.getMessage("instantiationException00"),
                           ex);
                 throw new RuntimeException(ex.getMessage());
             } catch (IllegalAccessException ex) {
-                log.fatal(JavaUtils.getMessage("illegalAccessException00"),
+                log.fatal(Messages.getMessage("illegalAccessException00"),
                           ex);
                 throw new RuntimeException(ex.getMessage());
             }
@@ -440,13 +441,13 @@ public class Message extends javax.xml.soap.SOAPMessage
                 mSOAPPart.writeTo(writer);
                 writer.flush();
             } catch (java.io.IOException e) {
-                log.error(JavaUtils.getMessage("javaIOException00"), e);
+                log.error(Messages.getMessage("javaIOException00"), e);
             }
         } else {
             try {
                 mAttachments.writeContentToStream(os);
             } catch (java.lang.Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
             }
         }
     }
@@ -558,7 +559,7 @@ public class Message extends javax.xml.soap.SOAPMessage
         try {
             return mAttachments.getAttachments().iterator();
         } catch (AxisFault af){
-            log.error(JavaUtils.getMessage("exception00"), af);
+            log.error(Messages.getMessage("exception00"), af);
         }
         return null;
     }
@@ -592,7 +593,7 @@ public class Message extends javax.xml.soap.SOAPMessage
         try {
             mAttachments.addAttachmentPart((org.apache.axis.Part)attachmentpart);
         } catch (AxisFault af){
-            log.error(JavaUtils.getMessage("exception00"), af);
+            log.error(Messages.getMessage("exception00"), af);
         }
     }
 
@@ -610,7 +611,7 @@ public class Message extends javax.xml.soap.SOAPMessage
         try {
             return (AttachmentPart) mAttachments.createAttachmentPart();
         } catch (AxisFault af){
-            log.error(JavaUtils.getMessage("exception00"), af);
+            log.error(Messages.getMessage("exception00"), af);
         }
         return null;
     }

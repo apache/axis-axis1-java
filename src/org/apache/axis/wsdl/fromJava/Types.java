@@ -64,6 +64,7 @@ import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -529,7 +530,7 @@ public class Types {
         // if we can't get a serializer, that is bad.
         if (ser == null) {
             throw new AxisFault(
-                    JavaUtils.getMessage("NoSerializer00", type.getName()));
+                    Messages.getMessage("NoSerializer00", type.getName()));
         }
 
         // Write the namespace
@@ -586,7 +587,7 @@ public class Types {
                     ser.writeSchema(this);
                 }
             } catch (Exception e) {
-                throw new AxisFault(JavaUtils.getMessage("writeSchemaProblem00", type.getName()), e);
+                throw new AxisFault(Messages.getMessage("writeSchemaProblem00", type.getName()), e);
             }
         }
         return prefixedName;
@@ -952,7 +953,7 @@ public class Types {
             javaType.isPrimitive()) {
             if (issueErrors && 
                 !beanCompatErrs.contains(javaType)) {
-                log.error(JavaUtils.getMessage("beanCompatType00",
+                log.error(Messages.getMessage("beanCompatType00",
                                                javaType.getName()));
                 beanCompatErrs.add(javaType);
             }
@@ -965,7 +966,7 @@ public class Types {
             javaType.getName().startsWith("javax.")) {
             if (issueErrors && 
                 !beanCompatErrs.contains(javaType)) {
-                log.error(JavaUtils.getMessage("beanCompatPkg00",
+                log.error(Messages.getMessage("beanCompatPkg00",
                                                javaType.getName()));
                 beanCompatErrs.add(javaType);
             }
@@ -985,7 +986,7 @@ public class Types {
             } catch (java.lang.NoSuchMethodException e) {
                 if (issueErrors && 
                     !beanCompatErrs.contains(javaType)) {
-                    log.error(JavaUtils.getMessage("beanCompatConstructor00",
+                    log.error(Messages.getMessage("beanCompatConstructor00",
                                                    javaType.getName()));
                     beanCompatErrs.add(javaType);
                 }
@@ -1008,7 +1009,7 @@ public class Types {
 
                 if (issueErrors && 
                     !beanCompatErrs.contains(javaType)) {
-                    log.error(JavaUtils.getMessage("beanCompatExtends00",
+                    log.error(Messages.getMessage("beanCompatExtends00",
                                                    javaType.getName(),
                                                    superClass.getName(),
                                                     javaType.getName()));

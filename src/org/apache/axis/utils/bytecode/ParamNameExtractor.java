@@ -56,6 +56,7 @@ package org.apache.axis.utils.bytecode;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import java.io.IOException;
@@ -106,7 +107,7 @@ public class ParamNameExtractor {
                 paramCache.put(c, pr);
             } catch (IOException e) {
                 // log it and leave
-                log.info(JavaUtils.getMessage("error00") + ":" + e);
+                log.info(Messages.getMessage("error00") + ":" + e);
                 return null;
             }
         }

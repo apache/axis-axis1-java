@@ -55,6 +55,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.text.SimpleDateFormat;
 import java.text.Format;
@@ -93,7 +94,7 @@ public class Month {
     public Month(String source) throws NumberFormatException {
         if (source.length() < (6)) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonth00"));
+                    Messages.getMessage("badMonth00"));
         }
         
         if (source.charAt(0) != '-' ||
@@ -101,7 +102,7 @@ public class Month {
             source.charAt(4) != '-' ||
             source.charAt(5) != '-' ) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonth00"));
+                    Messages.getMessage("badMonth00"));
         }
         
         setValue(Integer.parseInt(source.substring(2,4)),
@@ -116,7 +117,7 @@ public class Month {
         // validate month
         if (month < 1 || month > 12) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonth00"));
+                    Messages.getMessage("badMonth00"));
         }
         this.month = month;
     }
@@ -137,11 +138,11 @@ public class Month {
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
                         throw new NumberFormatException(
-                                JavaUtils.getMessage("badTimezone00"));
+                                Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badTimezone00"));
+                        Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;

@@ -60,6 +60,7 @@ import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -217,7 +218,7 @@ public class TypeMappingImpl implements TypeMapping
             // REMOVED_FOR_TCK
             // return false;
             throw new JAXRPCException(
-                    JavaUtils.getMessage(javaType == null ?
+                    Messages.getMessage(javaType == null ?
                                          "badJavaType" : "badXmlType"));
         }
         if (pair2SF.keySet().contains(new Pair(javaType, xmlType))) {
@@ -248,14 +249,14 @@ public class TypeMappingImpl implements TypeMapping
         // Both javaType and xmlType must be specified.
         if (javaType == null || xmlType == null) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage(javaType == null ?
+                    Messages.getMessage(javaType == null ?
                                          "badJavaType" : "badXmlType"));
         }
 
         // At least a serializer or deserializer factory must be specified.
         if (sf == null && dsf == null) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage(sf == null ?
+                    Messages.getMessage(sf == null ?
                                          "badSerFac" : "badDeserFac"));
         }
 
@@ -478,7 +479,7 @@ public class TypeMappingImpl implements TypeMapping
         throws JAXRPCException {
         if (javaType == null || xmlType == null) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage(javaType == null ?
+                    Messages.getMessage(javaType == null ?
                                          "badJavaType" : "badXmlType"));
         }
 
@@ -500,7 +501,7 @@ public class TypeMappingImpl implements TypeMapping
         throws JAXRPCException {
         if (javaType == null || xmlType == null) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage(javaType == null ?
+                    Messages.getMessage(javaType == null ?
                                          "badJavaType" : "badXmlType"));
         }
         Pair pair = new Pair(javaType, xmlType);

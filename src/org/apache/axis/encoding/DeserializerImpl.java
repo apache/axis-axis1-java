@@ -63,6 +63,7 @@ import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -258,7 +259,7 @@ public class DeserializerImpl extends SOAPHandler
                     Target target = (Target)e.nextElement();
                     target.set(value);
                     if (log.isDebugEnabled()) {
-                        log.debug(JavaUtils.getMessage("setValueInTarget00",
+                        log.debug(Messages.getMessage("setValueInTarget00",
                                                             "" + value, "" + target));
                     }
                 }
@@ -338,7 +339,7 @@ public class DeserializerImpl extends SOAPHandler
         if (id != null) {
             context.addObjectById(id, value);
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("deserInitPutValueDebug00", "" + value, id));
+                log.debug(Messages.getMessage("deserInitPutValueDebug00", "" + value, id));
             }
             context.registerFixup("#" + id, this);
         }
@@ -349,7 +350,7 @@ public class DeserializerImpl extends SOAPHandler
 
             Object ref = context.getObjectByRef(href);            
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage(
+                log.debug(Messages.getMessage(
                         "gotForID00",
                         new String[] {"" + ref, href, (ref == null ? "*null*" : ref.getClass().toString())}));
             }
@@ -427,7 +428,7 @@ public class DeserializerImpl extends SOAPHandler
             }
             
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
+                log.debug(Messages.getMessage("gotType00", "Deser", "" + type));
             }
             
             // We know we're deserializing, but we don't have
@@ -444,7 +445,7 @@ public class DeserializerImpl extends SOAPHandler
                                       attributes, context);
                 } else {
                     throw new SAXException(
-                                           JavaUtils.getMessage("noDeser00", "" + type));
+                                           Messages.getMessage("noDeser00", "" + type));
                 }
             }
         }
@@ -507,7 +508,7 @@ public class DeserializerImpl extends SOAPHandler
         if (id != null) {
             context.addObjectById(id, value);
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("deserPutValueDebug00", "" + value, id));
+                log.debug(Messages.getMessage("deserPutValueDebug00", "" + value, id));
             }     
         }
     }

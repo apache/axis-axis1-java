@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -200,18 +201,18 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("                    _call.setScopedProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0 || hasMIME) {
-            pw.println("            // " + JavaUtils.getMessage("typeMap00"));
-            pw.println("            // " + JavaUtils.getMessage("typeMap01"));
-            pw.println("            // " + JavaUtils.getMessage("typeMap02"));
-            pw.println("            // " + JavaUtils.getMessage("typeMap03"));
-            pw.println("            // " + JavaUtils.getMessage("typeMap04"));
+            pw.println("            // " + Messages.getMessage("typeMap00"));
+            pw.println("            // " + Messages.getMessage("typeMap01"));
+            pw.println("            // " + Messages.getMessage("typeMap02"));
+            pw.println("            // " + Messages.getMessage("typeMap03"));
+            pw.println("            // " + Messages.getMessage("typeMap04"));
             pw.println("            synchronized (this) {");
             pw.println("                if (firstCall()) {");
             
             // Hack alert - we need to establish the encoding style before we register type mappings due
             // to the fact that TypeMappings key off of encoding style
             pw.println("                    // "
-                    + JavaUtils.getMessage("mustSetStyle"));
+                    + Messages.getMessage("mustSetStyle"));
             if (bEntry.hasLiteral()) {
                 pw.println("                    _call.setEncodingStyle(null);");
             } else {
@@ -235,7 +236,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("        }");
         pw.println("        catch (Throwable t) {");
         pw.println("            throw new org.apache.axis.AxisFault(\""
-                + JavaUtils.getMessage("badCall01") + "\", t);");
+                + Messages.getMessage("badCall01") + "\", t);");
         pw.println("        }");
         pw.println("    }");
         pw.println();

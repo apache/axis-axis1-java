@@ -222,7 +222,7 @@ public class JavaUtils
         if (log.isDebugEnabled()) {
             String clsName = "null";
             if (arg != null) clsName = arg.getClass().getName();
-            log.debug( getMessage("convert00", clsName, destClass.getName()));
+            log.debug( Messages.getMessage("convert00", clsName, destClass.getName()));
         }
 
         // See if a previously converted value is stored in the argument.
@@ -286,7 +286,7 @@ public class JavaUtils
                                 return getImageFromStream(is);
                             }
                             else {
-                                log.info(JavaUtils.getMessage("needImageIO"));
+                                log.info(Messages.getMessage("needImageIO"));
                                 return arg;
                             }
                         }
@@ -792,129 +792,6 @@ public class JavaUtils
     } // isPunctuation
 
 
-    /********************************************************************/
-    /*********************** i18n Message Support ***********************/
-     
-    // Message resource bundle.
-    private static Vector bundleNames = null;        // String
-    private static Vector messageBundles = null;     // ResourceBundle
-    
-
-    /**
-     * Get the resource bundle that contains all
-     * of the AXIS translatable messages.
-     * 
-     * This is currently ONLY used by TestMessages... which verifies
-     * axisNLS.properties.  So, it will return the first in the message
-     * list (axisNLS.properties)... name changed to reflect.
-     */
-    public static ResourceBundle getFirstMessageResourceBundle() {
-        if (messageBundles == null) {
-            initializeMessageBundles();
-        }
-        return (ResourceBundle)messageBundles.get(0);
-    } // getMessageResourceBundle
-
-    /**
-     * Get the message with the given key.
-     * There are no arguments for this message.
-     */
-    public static String getMessage(String key)
-            throws MissingResourceException {
-        if (messageBundles == null) {
-            initializeMessageBundles();
-        }
-        
-        String msg = null;
-        for (int i = 0; msg == null  &&  i < messageBundles.size(); i++) {
-            msg = ((ResourceBundle)messageBundles.get(i)).getString(key);
-        }
-        return msg;
-    } // getMessage
-
-    /**
-     * Get the message with the given key.  If an argument is specified
-     * in the message (in the format of "{0}") then fill in that argument
-     * with the value of var.
-     */
-    public static String getMessage(String key, String var)
-            throws MissingResourceException {
-        String[] args = {var};
-        return MessageFormat.format(getMessage(key), args);
-    } // getMessage
-
-    /**
-     * Get the message with the given key.  If arguments are specified
-     * in the message (in the format of "{0} {1}") then fill them in
-     * with the values of var1 and var2, respectively.
-     */
-    public static String getMessage(String key, String var1, String var2)
-            throws MissingResourceException {
-        String[] args = {var1, var2};
-        return MessageFormat.format(getMessage(key), args);
-    } // getMessage
-
-    /**
-     * Get the message with the given key.  If arguments are specified
-     * in the message (in the format of "{0} {1}") then fill them in
-     * with the values of var1 and var2, respectively.
-     */
-    public static String getMessage(String key, String var1, String var2, String var3)
-            throws MissingResourceException {
-        return MessageFormat.format(getMessage(key), new String[]{var1, var2, var3});
-    } // getMessage
-
-    /**
-     * Get the message with the given key.  Replace each "{X}" in the
-     * message with vars[X].  If there are more vars than {X}'s, then
-     * the extra vars are ignored.  If there are more {X}'s than vars,
-     * then a java.text.ParseException (subclass of RuntimeException)
-     * is thrown.
-     */
-    public static String getMessage(String key, String[] vars)
-            throws MissingResourceException {
-        return MessageFormat.format(getMessage(key), vars);
-    } // getMessage
-
-    /**
-     * Add a ResourceBundle to list.
-     * ResourceBundle is not opened until needed.
-     */    
-    public static void addMessages(String resourceBundleName) {
-        if (bundleNames == null) {
-            initializeBundleNames();
-        }
-        bundleNames.add(resourceBundleName);
-        if (messageBundles != null) {
-            messageBundles.add(ResourceBundle.getBundle(resourceBundleName));
-        }
-    }
-    
-    /**
-     * Load the resource bundle messages from the properties file.
-     * This is ONLY done when it is needed.  If no messages are
-     * printed (for example, only Wsdl2java is being run in non-
-     * verbose mode) then there is no need to read the properties file.
-     */
-    private static void initializeMessageBundles() {
-        if (bundleNames == null) {
-            initializeBundleNames();
-        }
-        messageBundles = new Vector();
-        for (int i = 0; i < bundleNames.size(); i++) {
-            messageBundles.add(ResourceBundle.getBundle((String)bundleNames.get(i)));
-        }
-    } // initializeMessageBundles
-    
-    private static void initializeBundleNames() {
-        bundleNames = new Vector();
-        bundleNames.add("org.apache.axis.utils.axisNLS");
-    }
-
-    /********************* END i18n Message Support *********************/
-    /********************************************************************/
-
-
     /**
      * replace:
      * Like String.replace except that the old new items are strings.
@@ -992,13 +869,13 @@ public class JavaUtils
      */
     public static Object getHolderValue(Object holder) throws HolderException {
         if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
-            throw new HolderException(getMessage("badHolder00"));
+            throw new HolderException(Messages.getMessage("badHolder00"));
         }
         try {
             Field valueField = holder.getClass().getField("value");
             return valueField.get(holder);
         } catch (Exception e) {
-          throw new HolderException(getMessage("exception01", e.getMessage()));
+          throw new HolderException(Messages.getMessage("exception01", e.getMessage()));
         }
     }
 
@@ -1009,7 +886,7 @@ public class JavaUtils
      */
     public static void setHolderValue(Object holder, Object value) throws HolderException {
         if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
-            throw new HolderException(getMessage("badHolder00"));
+            throw new HolderException(Messages.getMessage("badHolder00"));
         }
         try {
             Field valueField = holder.getClass().getField("value");
@@ -1022,7 +899,7 @@ public class JavaUtils
                 valueField.set(holder, value);
             }
         } catch (Exception e) {
-          throw new HolderException(getMessage("exception01", e.getMessage()));
+          throw new HolderException(Messages.getMessage("exception01", e.getMessage()));
         }
     }
     public static class HolderException extends Exception
@@ -1240,7 +1117,7 @@ public class JavaUtils
                 attachmentSupportEnabled = true;
             } catch (Throwable t) {
             }
-            log.debug(JavaUtils.getMessage("attachEnabled") + "  " +
+            log.debug(Messages.getMessage("attachEnabled") + "  " +
                     attachmentSupportEnabled);
         }
 

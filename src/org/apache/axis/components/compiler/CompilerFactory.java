@@ -58,6 +58,7 @@ package org.apache.axis.components.compiler;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.commons.discovery.tools.SPInterface;
 
@@ -83,7 +84,7 @@ public class CompilerFactory {
                          Javac.class);
         
         if (compiler == null) {
-            log.debug(JavaUtils.getMessage("defaultCompiler"));
+            log.debug(Messages.getMessage("defaultCompiler"));
             compiler = new Javac();
         }
 

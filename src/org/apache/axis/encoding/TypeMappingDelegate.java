@@ -57,6 +57,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -103,7 +104,7 @@ class TypeMappingDelegate extends TypeMappingImpl {
         throws JAXRPCException {        
 
         throw new JAXRPCException(
-                JavaUtils.getMessage("delegatedTypeMapping"));
+                Messages.getMessage("delegatedTypeMapping"));
     }
     
     public javax.xml.rpc.encoding.SerializerFactory 
@@ -141,13 +142,13 @@ class TypeMappingDelegate extends TypeMappingImpl {
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {
         throw new JAXRPCException(
-                JavaUtils.getMessage("delegatedTypeMapping"));
+                Messages.getMessage("delegatedTypeMapping"));
     }
 
     public void removeDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
         throw new JAXRPCException(
-                JavaUtils.getMessage("delegatedTypeMapping"));
+                Messages.getMessage("delegatedTypeMapping"));
     }
 
    public boolean isRegistered(Class javaType, QName xmlType) {

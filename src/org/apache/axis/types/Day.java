@@ -55,6 +55,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.text.SimpleDateFormat;
 import java.text.Format;
@@ -93,14 +94,14 @@ public class Day {
     public Day(String source) throws NumberFormatException {
         if (source.length() < 5) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badDay00"));
+                    Messages.getMessage("badDay00"));
         }
         
         if (source.charAt(0) != '-' ||
             source.charAt(1) != '-' ||
             source.charAt(2) != '-' ) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badDay00"));
+                    Messages.getMessage("badDay00"));
         }
         
         setValue(Integer.parseInt(source.substring(3,5)),
@@ -118,7 +119,7 @@ public class Day {
         // validate day
         if (day < 1 || day > 31) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badDay00"));
+                    Messages.getMessage("badDay00"));
         }
         this.day = day;
     }
@@ -139,11 +140,11 @@ public class Day {
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
                         throw new NumberFormatException(
-                                JavaUtils.getMessage("badTimezone00"));
+                                Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badTimezone00"));
+                        Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;

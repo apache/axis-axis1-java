@@ -58,6 +58,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
@@ -121,9 +122,9 @@ public class SOAPHeaderElement extends MessageElement
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if(parent == null)
-            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
+            throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
         if(!(parent instanceof SOAPHeader))
-            throw new IllegalArgumentException(JavaUtils.getMessage("illegalArgumentException00")); 
+            throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00")); 
         try {
             super.setParentElement((SOAPHeader)parent);
         } catch (Throwable t) {

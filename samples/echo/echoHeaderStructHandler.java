@@ -62,7 +62,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -115,7 +115,7 @@ public class echoHeaderStructHandler extends BasicHandler
             // Request. look for the header
             Message msg = context.getRequestMessage();
             if (msg == null)
-                throw new AxisFault(JavaUtils.getMessage("noRequest00"));
+                throw new AxisFault(Messages.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPEnvelope();
             SOAPHeaderElement header = env.getHeaderByName(HEADER_NS,

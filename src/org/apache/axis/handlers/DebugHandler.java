@@ -62,6 +62,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -90,16 +91,16 @@ public class DebugHandler extends BasicHandler {
                 Integer i = ((Integer)header
                              .getValueAsType(Constants.XSD_INT));
                 if (i == null)
-                    throw new AxisFault(JavaUtils.getMessage("cantConvert03"));
+                    throw new AxisFault(Messages.getMessage("cantConvert03"));
 
                 int debugVal = i.intValue();
-                log.debug(JavaUtils.getMessage("debugLevel00", "" + debugVal) );
+                log.debug(Messages.getMessage("debugLevel00", "" + debugVal) );
                 //Debug.setDebugLevel(debugVal);
                 header.setProcessed(true);
             }
         }
         catch( Exception e ) {
-            log.error( JavaUtils.getMessage("exception00"), e );
+            log.error( Messages.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
         log.debug("Exit: DebugHandler::invoke");

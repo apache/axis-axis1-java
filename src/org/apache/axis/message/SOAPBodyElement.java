@@ -55,6 +55,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
@@ -108,10 +109,10 @@ public class SOAPBodyElement extends MessageElement
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if(parent == null)
-            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
+            throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
         // migration aid
         if (parent instanceof SOAPEnvelope) {
-            log.warn(JavaUtils.getMessage("bodyElementParent"));
+            log.warn(Messages.getMessage("bodyElementParent"));
             parent = ((SOAPEnvelope)parent).getBody();
         }
         try {

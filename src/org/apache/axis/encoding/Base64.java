@@ -59,6 +59,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  *
@@ -105,7 +106,7 @@ public class Base64 {
             obuf[wp] = (byte)(b2 << 6 & 0xc0 | b3 & 0x3f);
             return 3;
         default:
-            throw new RuntimeException(JavaUtils.getMessage("internalError00"));
+            throw new RuntimeException(Messages.getMessage("internalError00"));
         }
     }
 

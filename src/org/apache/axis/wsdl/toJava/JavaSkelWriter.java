@@ -80,6 +80,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
@@ -169,7 +170,7 @@ public class JavaSkelWriter extends JavaClassWriter {
                             break;
                         default:
                             throw new IOException(
-                                JavaUtils.getMessage("badParmMode00", 
+                                Messages.getMessage("badParmMode00", 
                                         (new Byte(p.getMode())).toString()));
                     }
 

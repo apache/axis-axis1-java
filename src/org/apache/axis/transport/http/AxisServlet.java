@@ -85,6 +85,7 @@ import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -296,9 +297,9 @@ public class AxisServlet extends AxisServletBase {
                             response.setStatus(java.net.HttpURLConnection.HTTP_NOT_FOUND);
                             response.setContentType("text/html");
                             writer.println("<h2>" +
-                                           JavaUtils.getMessage("error00") + "</h2>");
+                                           Messages.getMessage("error00") + "</h2>");
                             writer.println("<p>" +
-                                           JavaUtils.getMessage("noService06") +
+                                           Messages.getMessage("noService06") +
                                            "</p>");
                         } else {
                             //print a snippet of service info.
@@ -306,25 +307,25 @@ public class AxisServlet extends AxisServletBase {
                         }
                     }
                 } catch (AxisFault fault) {
-                    log.error(JavaUtils.getMessage("exception00"), fault);
+                    log.error(Messages.getMessage("exception00"), fault);
                     response.setContentType("text/html");
                     response.setStatus(500);
                     writer.println("<h2>" +
-                                   JavaUtils.getMessage("error00") + "</h2>");
+                                   Messages.getMessage("error00") + "</h2>");
                     writer.println("<p>" +
-                                   JavaUtils.getMessage("somethingWrong00") +
+                                   Messages.getMessage("somethingWrong00") +
                                    "</p>");
                     writer.println("<pre>Fault - " + fault.toString() + " </pre>");
                     writer.println("<pre>" + fault.dumpToString() + " </pre>");
                 } catch (Exception e) {
-                    log.error(JavaUtils.getMessage("exception00"), e);
+                    log.error(Messages.getMessage("exception00"), e);
                     response.setContentType("text/html");
                     response.setStatus(500);
                     writer.println("<h2>" +
-                                   JavaUtils.getMessage("error00") +
+                                   Messages.getMessage("error00") +
                                    "</h2>");
                     writer.println("<p>" +
-                                   JavaUtils.getMessage("somethingWrong00") +
+                                   Messages.getMessage("somethingWrong00") +
                                    "</p>");
                     writer.println("<pre>Exception - " + e + "<br>");
                     //dev systems only give fault dumps
@@ -342,10 +343,10 @@ public class AxisServlet extends AxisServletBase {
 
                 response.setContentType("text/html");
                 writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
-                writer.println( JavaUtils.getMessage("reachedServlet00"));
+                writer.println( Messages.getMessage("reachedServlet00"));
 
                 writer.println("<p>" +
-                               JavaUtils.getMessage("transportName00",
+                               Messages.getMessage("transportName00",
                                          "<b>" + transportName + "</b>"));
                 writer.println("</html>");
             }
@@ -388,12 +389,12 @@ public class AxisServlet extends AxisServletBase {
             response.setContentType("text/html");
             //TODO: what error code should we send back for no method?
             writer.println("<h2>" +
-                           JavaUtils.getMessage("error00") +
+                           Messages.getMessage("error00") +
                            ":  " +
-                           JavaUtils.getMessage("invokeGet00") +
+                           Messages.getMessage("invokeGet00") +
                            "</h2>");
             writer.println("<p>" +
-                           JavaUtils.getMessage("noMethod01") +
+                           Messages.getMessage("noMethod01") +
                            "</p>");
         } else {
             invokeEndpointFromGet(msgContext, response, writer, method, args);
@@ -470,7 +471,7 @@ public class AxisServlet extends AxisServletBase {
         } else {
             //TODO: error code
             writer.println("<p>" +
-                   JavaUtils.getMessage("noResponse01") +
+                   Messages.getMessage("noResponse01") +
                            "</p>");
         }
     }
@@ -490,11 +491,11 @@ public class AxisServlet extends AxisServletBase {
                 +"</h1>");
         writer.println(
                 "<p>" +
-                JavaUtils.getMessage("axisService00") +
+                Messages.getMessage("axisService00") +
                 "</p>");
         writer.println(
                 "<i>" +
-                JavaUtils.getMessage("perhaps00") +
+                Messages.getMessage("perhaps00") +
                 "</i>");
     }
 
@@ -518,10 +519,10 @@ public class AxisServlet extends AxisServletBase {
                 response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
                 response.setContentType("text/html");
                 writer.println("<h2>" +
-                               JavaUtils.getMessage("error00") +
+                               Messages.getMessage("error00") +
                                "</h2>");
                 writer.println("<p>" +
-                               JavaUtils.getMessage("noDeploy00") +
+                               Messages.getMessage("noDeploy00") +
                                "</p>");
             }
         } else {
@@ -530,10 +531,10 @@ public class AxisServlet extends AxisServletBase {
             response.setStatus(HttpURLConnection.HTTP_FORBIDDEN);
             response.setContentType("text/html");
             writer.println("<h2>" +
-                           JavaUtils.getMessage("error00") +
+                           Messages.getMessage("error00") +
                            "</h2>");
             writer.println("<p><i>?list</i>" +
-                           JavaUtils.getMessage("disabled00") +
+                           Messages.getMessage("disabled00") +
                            "</p>");
         }
     }
@@ -547,10 +548,10 @@ public class AxisServlet extends AxisServletBase {
         res.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
         res.setContentType("text/html");
         writer.println("<h2>" +
-                       JavaUtils.getMessage("error00") +
+                       Messages.getMessage("error00") +
                        "</h2>");
         writer.println("<p>" +
-                       JavaUtils.getMessage("noWSDL00") +
+                       Messages.getMessage("noWSDL00") +
                        "</p>");
     }
 
@@ -625,7 +626,7 @@ public class AxisServlet extends AxisServletBase {
             if (engine == null) {
                 // !!! should return a SOAP fault...
                 ServletException se =
-                    new ServletException(JavaUtils.getMessage("noEngine00"));
+                    new ServletException(Messages.getMessage("noEngine00"));
                 log.debug("No Engine!", se);
                 throw se;
             }
@@ -694,7 +695,7 @@ public class AxisServlet extends AxisServletBase {
 
                 responseMsg = msgContext.getResponseMessage();
             } catch (AxisFault e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
                 // It's been suggested that a lack of SOAPAction
                 // should produce some other error code (in the 400s)...
                 int status = getHttpServletResponseStatus(e);
@@ -704,12 +705,12 @@ public class AxisServlet extends AxisServletBase {
                 res.setStatus(status);
                 responseMsg = new Message(e);
             } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 responseMsg = new Message(AxisFault.makeFault(e));
             }
         } catch (AxisFault fault) {
-            log.error(JavaUtils.getMessage("axisFault00"), fault);
+            log.error(Messages.getMessage("axisFault00"), fault);
             responseMsg = new Message(fault);
         }
         if( tlog.isDebugEnabled() ) {
@@ -773,7 +774,7 @@ public class AxisServlet extends AxisServletBase {
         if (responseMsg == null) {
             res.setStatus(HttpServletResponse.SC_NO_CONTENT);
             if(isDebug) log.debug("NO AXIS MESSAGE TO RETURN!");
-            //String resp = JavaUtils.getMessage("noData00");
+            //String resp = Messages.getMessage("noData00");
             //res.setContentLength((int) resp.getBytes().length);
             //res.getWriter().print(resp);
         } else {
@@ -802,7 +803,7 @@ public class AxisServlet extends AxisServletBase {
 
                 responseMsg.writeTo(res.getOutputStream());
             } catch (SOAPException e){
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
             }
         }
 
@@ -909,11 +910,11 @@ public class AxisServlet extends AxisServletBase {
          */
         if (soapAction == null) {
             AxisFault af = new AxisFault("Client.NoSOAPAction",
-                                         JavaUtils.getMessage("noHeader00",
+                                         Messages.getMessage("noHeader00",
                                                               "SOAPAction"),
                                          null, null);
 
-            log.error(JavaUtils.getMessage("genFault00"), af);
+            log.error(Messages.getMessage("genFault00"), af);
 
             throw af;
         }

@@ -205,7 +205,7 @@ public class XMLUtils {
                                        factoryClassName);
                 }
             } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
                 saxFactory = null;
             }
        } else {
@@ -225,7 +225,7 @@ public class XMLUtils {
             dbf.setNamespaceAware(true);
         }
         catch( Exception e ) {
-            log.error(JavaUtils.getMessage("exception00"), e );
+            log.error(Messages.getMessage("exception00"), e );
             dbf = null;
         }
         return( dbf );
@@ -249,10 +249,10 @@ public class XMLUtils {
                             false);
             return parser;
         } catch (ParserConfigurationException e) {
-            log.error(JavaUtils.getMessage("parserConfigurationException00"), e);
+            log.error(Messages.getMessage("parserConfigurationException00"), e);
             return null;
         } catch (SAXException se) {
-            log.error(JavaUtils.getMessage("SAXException00"), se);
+            log.error(Messages.getMessage("SAXException00"), se);
             return null;
         }
     }
@@ -304,7 +304,7 @@ public class XMLUtils {
             return( db.parse( inp ) );
         }
         catch( Exception e ) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }
         return( null );
     }
@@ -335,7 +335,7 @@ public class XMLUtils {
             }
             return doc;
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }
         return null;
     }
@@ -543,7 +543,7 @@ public class XMLUtils {
 
         public void warning(SAXParseException spe) throws SAXException {
             if (log.isDebugEnabled())
-                log.debug( JavaUtils.getMessage("warning00", getParseExceptionInfo(spe)));
+                log.debug( Messages.getMessage("warning00", getParseExceptionInfo(spe)));
         }
         
         public void error(SAXParseException spe) throws SAXException {

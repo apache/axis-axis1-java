@@ -83,7 +83,7 @@ public class FieldPropertyDescriptor extends BeanPropertyDescriptor {
          }
          if (_field == null || _name == null) {
              throw new IllegalArgumentException(
-                     JavaUtils.getMessage(_field == null ?
+                     Messages.getMessage(_field == null ?
                                           "badField00" : "badProp03"));
          }
      }

@@ -55,6 +55,7 @@
 package org.apache.axis.utils.bytecode;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -103,7 +104,7 @@ public class ParamReader
         // check the magic number
         if (readInt() != 0xCAFEBABE) {
             // not a class file!
-            throw new IOException(JavaUtils.getMessage("badClassFile00"));
+            throw new IOException(Messages.getMessage("badClassFile00"));
         }
 
         readShort(); // minor version

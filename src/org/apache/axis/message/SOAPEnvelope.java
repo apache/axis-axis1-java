@@ -66,6 +66,7 @@ import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -230,7 +231,7 @@ public class SOAPEnvelope extends MessageElement
             header.setParentElement(this);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
-            log.fatal(JavaUtils.getMessage("exception00"), ex);
+            log.fatal(Messages.getMessage("exception00"), ex);
         }
     }
 
@@ -252,7 +253,7 @@ public class SOAPEnvelope extends MessageElement
             body.setParentElement(this);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
-            log.fatal(JavaUtils.getMessage("exception00"), ex);
+            log.fatal(Messages.getMessage("exception00"), ex);
         }
     }
 
@@ -267,7 +268,7 @@ public class SOAPEnvelope extends MessageElement
     public void removeTrailer(MessageElement element)
     {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("removeTrailer00"));
+            log.debug(Messages.getMessage("removeTrailer00"));
         trailers.removeElement(element);
         _isDirty = true;
     }
@@ -283,7 +284,7 @@ public class SOAPEnvelope extends MessageElement
     public void addTrailer(MessageElement element)
     {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("removeTrailer00"));
+            log.debug(Messages.getMessage("removeTrailer00"));
         element.setEnvelope(this);
         trailers.addElement(element);
         _isDirty = true;
@@ -425,7 +426,7 @@ public class SOAPEnvelope extends MessageElement
             body = new SOAPBody(this, soapConstants);
             return body;
         } else {
-            throw new SOAPException(JavaUtils.getMessage("bodyPresent"));
+            throw new SOAPException(Messages.getMessage("bodyPresent"));
         }
     }
 
@@ -434,7 +435,7 @@ public class SOAPEnvelope extends MessageElement
             header = new SOAPHeader(this, soapConstants);
             return header;
         } else {
-            throw new SOAPException(JavaUtils.getMessage("headerPresent"));
+            throw new SOAPException(Messages.getMessage("headerPresent"));
         }
     }
 

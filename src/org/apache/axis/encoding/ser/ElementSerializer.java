@@ -67,6 +67,7 @@ import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Serializer for DOM elements
@@ -84,7 +85,7 @@ public class ElementSerializer implements Serializer {
         throws IOException
     {
         if (!(value instanceof Element))
-            throw new IOException(JavaUtils.getMessage("cantSerialize01"));
+            throw new IOException(Messages.getMessage("cantSerialize01"));
 
         // suppress xsd:any namespace="##any" elements
         boolean suppressElement = (!context.getMessageContext().isEncoded() && 

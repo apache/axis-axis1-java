@@ -59,6 +59,7 @@ import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.fromJava.Emitter;
 
@@ -113,91 +114,91 @@ public class Java2WSDL {
         new CLOptionDescriptor("help",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
-                JavaUtils.getMessage("j2wopthelp00")),
+                Messages.getMessage("j2wopthelp00")),
         new CLOptionDescriptor("input",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 INPUT_OPT,
-                JavaUtils.getMessage("j2woptinput00")),
+                Messages.getMessage("j2woptinput00")),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
-                JavaUtils.getMessage("j2woptoutput00")),
+                Messages.getMessage("j2woptoutput00")),
         new CLOptionDescriptor("location",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_OPT,
-                JavaUtils.getMessage("j2woptlocation00")),
+                Messages.getMessage("j2woptlocation00")),
         new CLOptionDescriptor("portTypeName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PORTTYPE_NAME_OPT,
-                JavaUtils.getMessage("j2woptportTypeName00")),
+                Messages.getMessage("j2woptportTypeName00")),
         new CLOptionDescriptor("bindingName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 BINDING_NAME_OPT,
-                JavaUtils.getMessage("j2woptbindingName00")),
+                Messages.getMessage("j2woptbindingName00")),
         new CLOptionDescriptor("serviceElementName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SERVICE_ELEMENT_NAME_OPT,
-                JavaUtils.getMessage("j2woptserviceElementName00")),
+                Messages.getMessage("j2woptserviceElementName00")),
         new CLOptionDescriptor("servicePortName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SERVICE_PORT_NAME_OPT,
-                JavaUtils.getMessage("j2woptservicePortName00")),
+                Messages.getMessage("j2woptservicePortName00")),
         new CLOptionDescriptor("namespace",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_OPT,
-                JavaUtils.getMessage("j2woptnamespace00")),
+                Messages.getMessage("j2woptnamespace00")),
         new CLOptionDescriptor("PkgtoNS",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 PACKAGE_OPT,
-                JavaUtils.getMessage("j2woptPkgtoNS00")),
+                Messages.getMessage("j2woptPkgtoNS00")),
         new CLOptionDescriptor("methods",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_ALLOWED_OPT,
-                JavaUtils.getMessage("j2woptmethods00")),
+                Messages.getMessage("j2woptmethods00")),
         new CLOptionDescriptor("all",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 INHERITED_CLASS_OPT,
-                JavaUtils.getMessage("j2woptall00")),
+                Messages.getMessage("j2woptall00")),
         new CLOptionDescriptor("outputWsdlMode",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_WSDL_MODE_OPT,
-                JavaUtils.getMessage("j2woptoutputWsdlMode00")),
+                Messages.getMessage("j2woptoutputWsdlMode00")),
         new CLOptionDescriptor("locationImport",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_IMPORT_OPT,
-                JavaUtils.getMessage("j2woptlocationImport00")),
+                Messages.getMessage("j2woptlocationImport00")),
         new CLOptionDescriptor("namespaceImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_IMPL_OPT,
-                JavaUtils.getMessage("j2woptnamespaceImpl00")),
+                Messages.getMessage("j2woptnamespaceImpl00")),
         new CLOptionDescriptor("outputImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_IMPL_OPT,
-                JavaUtils.getMessage("j2woptoutputImpl00")),
+                Messages.getMessage("j2woptoutputImpl00")),
         new CLOptionDescriptor("implClass",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 IMPL_CLASS_OPT,
-                JavaUtils.getMessage("j2woptimplClass00")),
+                Messages.getMessage("j2woptimplClass00")),
         new CLOptionDescriptor("exclude",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_NOTALLOWED_OPT,
-                 JavaUtils.getMessage("j2woptexclude00")),
+                 Messages.getMessage("j2woptexclude00")),
         new CLOptionDescriptor("stopClasses",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
                 STOP_CLASSES_OPT,
-                JavaUtils.getMessage("j2woptstopClass00")),
+                Messages.getMessage("j2woptstopClass00")),
         new CLOptionDescriptor("typeMappingVersion",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 TYPEMAPPING_OPT,
-                JavaUtils.getMessage("j2wopttypeMapping00")),
+                Messages.getMessage("j2wopttypeMapping00")),
         new CLOptionDescriptor("soapAction",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SOAPACTION_OPT,
-                JavaUtils.getMessage("j2woptsoapAction00")),
+                Messages.getMessage("j2woptsoapAction00")),
         new CLOptionDescriptor("style",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 STYLE_OPT,
-                JavaUtils.getMessage("j2woptStyle00"))
+                Messages.getMessage("j2woptStyle00"))
         
     };
 
@@ -250,7 +251,7 @@ public class Java2WSDL {
         switch (option.getId()) {
         case CLOption.TEXT_ARGUMENT:
             if (className != null) {
-                System.out.println(JavaUtils.getMessage("j2wDuplicateClass00", 
+                System.out.println(Messages.getMessage("j2wDuplicateClass00", 
                                                         className, 
                                                         option.getArgument()));
                 printUsage();
@@ -284,7 +285,7 @@ public class Java2WSDL {
                 mode = Emitter.MODE_IMPLEMENTATION;
             else {
                 mode = Emitter.MODE_ALL; 
-                System.err.println(JavaUtils.getMessage("j2wmodeerror", modeArg));
+                System.err.println(Messages.getMessage("j2wmodeerror", modeArg));
             }
             break;
             
@@ -356,7 +357,7 @@ public class Java2WSDL {
                 emitter.setDefaultTypeMapping(
                                               DefaultSOAP12TypeMappingImpl.create());
             } else {
-                System.out.println(JavaUtils.getMessage("j2wBadTypeMapping00"));
+                System.out.println(Messages.getMessage("j2wBadTypeMapping00"));
             }
             break;
             
@@ -369,7 +370,7 @@ public class Java2WSDL {
             } else if (value.equalsIgnoreCase("NONE")) {
                 emitter.setSoapAction("NONE");
             } else {
-                System.out.println(JavaUtils.getMessage("j2wBadSoapAction00"));
+                System.out.println(Messages.getMessage("j2wBadSoapAction00"));
             }
             break;
 
@@ -380,7 +381,7 @@ public class Java2WSDL {
                 } else if (value.equalsIgnoreCase("RPC")) {
                     emitter.setMode(Emitter.MODE_RPC);
                 } else {
-                    System.out.println(JavaUtils.getMessage("j2woptBadStyle00"));
+                    System.out.println(Messages.getMessage("j2woptBadStyle00"));
                 }
             break;
 
@@ -398,13 +399,13 @@ public class Java2WSDL {
     protected void validateOptions() {
         // Can't proceed without a class name
         if ((className == null)) {
-            System.out.println(JavaUtils.getMessage("j2wMissingClass00"));
+            System.out.println(Messages.getMessage("j2wMissingClass00"));
             printUsage();
         }
         
         if (!locationSet && (mode == Emitter.MODE_ALL ||
                              mode == Emitter.MODE_IMPLEMENTATION)) {
-            System.out.println(JavaUtils.getMessage("j2wMissingLocation00"));
+            System.out.println(Messages.getMessage("j2wMissingLocation00"));
             printUsage();
         }
         
@@ -426,7 +427,7 @@ public class Java2WSDL {
         // Print parser errors, if any
         if (null != argsParser.getErrorString()) {
             System.err.println(
-                    JavaUtils.getMessage("j2werror00", argsParser.getErrorString()));
+                    Messages.getMessage("j2werror00", argsParser.getErrorString()));
             printUsage();
         }
 
@@ -475,12 +476,12 @@ public class Java2WSDL {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
         msg.append("Java2WSDL " 
-                   + JavaUtils.getMessage("j2wemitter00")).append(lSep);
-        msg.append(JavaUtils.getMessage("j2wusage00", 
+                   + Messages.getMessage("j2wemitter00")).append(lSep);
+        msg.append(Messages.getMessage("j2wusage00", 
                    "java " + Java2WSDL.class.getName() + " [options] class-of-portType")).append(lSep);
-        msg.append(JavaUtils.getMessage("j2woptions00")).append(lSep);
+        msg.append(Messages.getMessage("j2woptions00")).append(lSep);
         msg.append(CLUtil.describeOptions(options).toString());
-        msg.append(JavaUtils.getMessage("j2wdetails00")).append(lSep);
+        msg.append(Messages.getMessage("j2wdetails00")).append(lSep);
         System.out.println(msg.toString());
         System.exit(0);
     }

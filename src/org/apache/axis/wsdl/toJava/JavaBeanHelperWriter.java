@@ -62,6 +62,7 @@ import java.util.Vector;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -223,7 +224,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 //}
             }
         }
-        pw.println("    // " + JavaUtils.getMessage("typeMeta"));
+        pw.println("    // " + Messages.getMessage("typeMeta"));
         pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
         pw.println("        new org.apache.axis.description.TypeDesc(" +
                    Utils.getJavaLocalName(type.getName()) + ".class);");
@@ -286,7 +287,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
             pw.println();
 
             pw.println("    /**");
-            pw.println("     * " + JavaUtils.getMessage("returnTypeMeta"));
+            pw.println("     * " + Messages.getMessage("returnTypeMeta"));
             pw.println("     */");
             pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
             pw.println("        return typeDesc;");

@@ -71,6 +71,7 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.activation.DataHandler;
 import org.apache.axis.Part;
@@ -116,7 +117,7 @@ public class JAFDataHandlerSerializer implements Serializer {
             // Attachments apparently aren't supported.
             // Instead of throwing NullPointerException like
             // we used to do, throw something meaningful.
-            throw new IOException(JavaUtils.getMessage("noAttachments"));
+            throw new IOException(Messages.getMessage("noAttachments"));
         }
 
         Part attachmentPart= attachments.createAttachmentPart(dh);

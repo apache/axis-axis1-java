@@ -57,6 +57,7 @@ package org.apache.axis.message;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Element;
@@ -258,7 +259,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      */
     public javax.xml.soap.Detail addDetail() throws SOAPException {
         if(getDetail()!=null){
-            throw new SOAPException(JavaUtils.getMessage("valuePresent"));
+            throw new SOAPException(Messages.getMessage("valuePresent"));
         }
         Detail detail = new Detail(fault);
         addChildElement(detail);

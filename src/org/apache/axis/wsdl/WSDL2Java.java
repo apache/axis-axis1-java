@@ -59,6 +59,7 @@ import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.enum.Scope;
 
@@ -106,59 +107,59 @@ public class WSDL2Java extends WSDL2 {
         new CLOptionDescriptor("server-side",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 SERVER_OPT,
-                JavaUtils.getMessage("optionSkel00")),
+                Messages.getMessage("optionSkel00")),
         new CLOptionDescriptor("skeletonDeploy",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SKELETON_DEPLOY_OPT,
-                JavaUtils.getMessage("optionSkeletonDeploy00")),
+                Messages.getMessage("optionSkeletonDeploy00")),
         new CLOptionDescriptor("NStoPkg",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 NAMESPACE_OPT,
-                JavaUtils.getMessage("optionNStoPkg00")),
+                Messages.getMessage("optionNStoPkg00")),
         new CLOptionDescriptor("fileNStoPkg",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_FILE_OPT,
-                JavaUtils.getMessage("optionFileNStoPkg00")),
+                Messages.getMessage("optionFileNStoPkg00")),
         new CLOptionDescriptor("package",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PACKAGE_OPT,
-                JavaUtils.getMessage("optionPackage00")),
+                Messages.getMessage("optionPackage00")),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
-                JavaUtils.getMessage("optionOutput00")),
+                Messages.getMessage("optionOutput00")),
         new CLOptionDescriptor("deployScope",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SCOPE_OPT,
-                JavaUtils.getMessage("optionScope00")),
+                Messages.getMessage("optionScope00")),
         new CLOptionDescriptor("testCase",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 TEST_OPT,
-                JavaUtils.getMessage("optionTest00")),
+                Messages.getMessage("optionTest00")),
         new CLOptionDescriptor("all",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 ALL_OPT,
-                JavaUtils.getMessage("optionAll00")),
+                Messages.getMessage("optionAll00")),
         new CLOptionDescriptor("typeMappingVersion",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 TYPEMAPPING_OPT,
-                JavaUtils.getMessage("optionTypeMapping00")),
+                Messages.getMessage("optionTypeMapping00")),
         new CLOptionDescriptor("factory",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 FACTORY_CLASS_OPT,
-                JavaUtils.getMessage("optionFactory00")),
+                Messages.getMessage("optionFactory00")),
         new CLOptionDescriptor("helperGen",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELPER_CLASS_OPT,
-                JavaUtils.getMessage("optionHelper00")),
+                Messages.getMessage("optionHelper00")),
         new CLOptionDescriptor("user",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 USERNAME_OPT,
-                JavaUtils.getMessage("optionUsername")),
+                Messages.getMessage("optionUsername")),
         new CLOptionDescriptor("password",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PASSWORD_OPT,
-                JavaUtils.getMessage("optionPassword"))
+                Messages.getMessage("optionPassword"))
     };
 
     /**
@@ -230,7 +231,7 @@ public class WSDL2Java extends WSDL2 {
                     emitter.setScope(scope);
                 } else {
                     System.err.println(
-                            JavaUtils.getMessage("badScope00", arg));
+                            Messages.getMessage("badScope00", arg));
                 }
 
                 break;
@@ -250,7 +251,7 @@ public class WSDL2Java extends WSDL2 {
                 } else if (tmValue.equals("1.2")) {
                     emitter.setTypeMappingVersion("1.2");
                 } else {
-                    System.out.println(JavaUtils.getMessage("badTypeMappingOption00"));
+                    System.out.println(Messages.getMessage("badTypeMappingOption00"));
                 }
                 break;
 
@@ -277,11 +278,11 @@ public class WSDL2Java extends WSDL2 {
 
         // validate argument combinations
         if (emitter.isSkeletonWanted() && !emitter.isServerSide()) {
-            System.out.println(JavaUtils.getMessage("badSkeleton00"));
+            System.out.println(Messages.getMessage("badSkeleton00"));
             printUsage();
         }
         if (!emitter.getNamespaceMap().isEmpty() && bPackageOpt) {
-            System.out.println(JavaUtils.getMessage("badpackage00"));
+            System.out.println(Messages.getMessage("badpackage00"));
             printUsage();
         }
     } // validateOptions

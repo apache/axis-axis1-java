@@ -62,6 +62,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.commons.logging.Log;
 
@@ -95,7 +96,7 @@ public class SourceDataHandlerSerializer extends JAFDataHandlerSerializer {
     {
         if (value != null) {
             if (!(value instanceof StreamSource)) {
-                throw new IOException(JavaUtils.getMessage("badSource",
+                throw new IOException(Messages.getMessage("badSource",
                         value.getClass().getName()));
             }
             DataHandler dh = new DataHandler(new SourceDataSource("source",

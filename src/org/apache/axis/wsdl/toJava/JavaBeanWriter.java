@@ -60,6 +60,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
@@ -409,7 +410,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println();
             }
 
-            pw.println("    // " + JavaUtils.getMessage("needStringCtor"));
+            pw.println("    // " + Messages.getMessage("needStringCtor"));
             pw.println("    public " + className + "(java.lang.String value) {");
             // Make sure we wrap base types with its Object type
             String wrapper = JavaUtils.getWrapper(simpleValueType);
@@ -447,7 +448,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected void writeToStringMethod() {
         // If this is a simple type, emit a toString
         if (type.isSimpleType() && simpleValueType != null) {
-            pw.println("    // " + JavaUtils.getMessage("needToString"));
+            pw.println("    // " + Messages.getMessage("needToString"));
             String wrapper = JavaUtils.getWrapper(simpleValueType);
             pw.println("    public java.lang.String toString() {");
             if (wrapper != null) {

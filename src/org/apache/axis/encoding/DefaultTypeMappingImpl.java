@@ -80,6 +80,7 @@ import org.apache.axis.encoding.ser.SimplePrimitiveSerializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -621,7 +622,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Don't allow anyone but init to modify us.
         if (doneInit) {
-            throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
+            throw new JAXRPCException(Messages.getMessage("fixedTypeMapping"));
         }
         else {
             super.register(javaType, xmlType, sf, dsf);
@@ -629,11 +630,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
     }
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
+        throw new JAXRPCException(Messages.getMessage("fixedTypeMapping"));
     }
     public void removeDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
+        throw new JAXRPCException(Messages.getMessage("fixedTypeMapping"));
     }
     public void setSupportedEncodings(String[] namespaceURIs) {
     }

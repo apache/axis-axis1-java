@@ -57,6 +57,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -89,7 +90,7 @@ public class InputStreamBody extends SOAPBodyElement
             throw ex;
         }
         catch( Exception e ) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }        
     }
 }

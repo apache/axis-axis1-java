@@ -55,6 +55,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.text.SimpleDateFormat;
 import java.text.Format;
@@ -94,14 +95,14 @@ public class MonthDay {
     public MonthDay(String source) throws NumberFormatException {
         if (source.length() < 6) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonthDay00"));
+                    Messages.getMessage("badMonthDay00"));
         }
         
         if (source.charAt(0) != '-' ||
             source.charAt(1) != '-' ||
             source.charAt(4) != '-' ) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonthDay00"));
+                    Messages.getMessage("badMonthDay00"));
         }
         
         setValue(Integer.parseInt(source.substring(2,4)),
@@ -117,7 +118,7 @@ public class MonthDay {
         // validate month
         if (month < 1 || month > 12) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonthDay00"));
+                    Messages.getMessage("badMonthDay00"));
         }
         this.month = month;
     }
@@ -134,14 +135,14 @@ public class MonthDay {
         // validate day
         if (day < 1 || day > 31) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonthDay00"));
+                    Messages.getMessage("badMonthDay00"));
         }
         // 30 days has September... All the rest have 31 (except Feb!)
         // NOTE: if month isn't set, we don't validate day.
         if ((month == 2 && day > 29) ||
            ((month == 9 || month == 4 || month == 6 || month == 11) && day > 30)) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badMonthDay00"));
+                    Messages.getMessage("badMonthDay00"));
         }
         this.day = day;
     }
@@ -162,11 +163,11 @@ public class MonthDay {
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
                         throw new NumberFormatException(
-                                JavaUtils.getMessage("badTimezone00"));
+                                Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badTimezone00"));
+                        Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;

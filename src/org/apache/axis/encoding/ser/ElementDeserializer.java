@@ -60,6 +60,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -104,7 +105,7 @@ public class ElementDeserializer extends DeserializerImpl
             }
         }
         catch( Exception exp ) {
-            log.error(JavaUtils.getMessage("exception00"), exp);
+            log.error(Messages.getMessage("exception00"), exp);
             throw new SAXException( exp );
         }
     }

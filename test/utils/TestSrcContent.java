@@ -21,7 +21,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.MalformedPatternException;
 
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * This TestCase verifies that content of the source files adheres
@@ -35,9 +35,9 @@ import org.apache.axis.utils.JavaUtils;
  *   in wsdl to/from java tooling.
  *
  * - Verify that log.info(), log.warn(), log.error(), and log.fatal()
- *   use JavaUtils.getMessage() (i18n).
+ *   use Messages.getMessage() (i18n).
  *
- * - Verify that exceptions are created with JavaUtils.getMessage() (i18n).
+ * - Verify that exceptions are created with Messages.getMessage() (i18n).
  *
  * To add new patterns, search for and append to the
  * private attribute 'avoidPatterns'.
@@ -190,7 +190,7 @@ public class TestSrcContent extends TestCase {
                                        + "[^\\\\/]+\\.java",
                                        "log\\.(info|warn|error|fatal)"
                                        + "[ \\t]*\\("
-                                       + "(?![ \\t]*JavaUtils\\.getMessage)",
+                                       + "(?![ \\t]*Messages\\.getMessage)",
                                        false),
 
             // Verify that exceptions are built with messages.

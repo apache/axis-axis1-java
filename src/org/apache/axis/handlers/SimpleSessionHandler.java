@@ -64,6 +64,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -164,7 +165,7 @@ public class SimpleSessionHandler extends BasicHandler
                 SimpleSession session = (SimpleSession) entry.getValue();
                 if ((curTime - session.getLastAccessTime()) >
                      (session.getTimeout() * 1000)) {
-                    log.debug(JavaUtils.getMessage("timeout00",
+                    log.debug(Messages.getMessage("timeout00",
                                                         key.toString()));
 
                     // Don't modify the hashtable while we're iterating.
@@ -237,7 +238,7 @@ public class SimpleSessionHandler extends BasicHandler
             // We have a session ID, so insert the header
             Message msg = context.getRequestMessage();
             if (msg == null)
-                throw new AxisFault(JavaUtils.getMessage("noRequest00"));
+                throw new AxisFault(Messages.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPEnvelope();
             SOAPHeaderElement header = new SOAPHeaderElement(SESSION_NS,
@@ -271,7 +272,7 @@ public class SimpleSessionHandler extends BasicHandler
             // Request.  Set up the session if we find the header.
             Message msg = context.getRequestMessage();
             if (msg == null)
-                throw new AxisFault(JavaUtils.getMessage("noRequest00"));
+                throw new AxisFault(Messages.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPEnvelope();
             SOAPHeaderElement header = env.getHeaderByName(SESSION_NS,

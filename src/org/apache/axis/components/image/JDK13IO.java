@@ -56,6 +56,7 @@
 package org.apache.axis.components.image;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.awt.Component;
 import java.awt.Graphics;
@@ -108,7 +109,7 @@ public class JDK13IO extends Component implements ImageIO {
             j.encode(rendImage);
         }
         else {
-            throw new IOException(JavaUtils.getMessage("jpegOnly", mimeType));
+            throw new IOException(Messages.getMessage("jpegOnly", mimeType));
         }
     } // saveImage
 

@@ -71,6 +71,7 @@ import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
 
@@ -413,7 +414,7 @@ public class SerializationContextImpl implements SerializationContext
     public void registerPrefixForURI(String prefix, String uri)
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("register00", prefix, uri));
+            log.debug(Messages.getMessage("register00", prefix, uri));
         }
 
         if ((uri != null) && (prefix != null)) {
@@ -882,7 +883,7 @@ public class SerializationContextImpl implements SerializationContext
     {
         java.util.ArrayList vecQNames = null;
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("startElem00",
+            log.debug(Messages.getMessage("startElem00",
                     "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
         }
 
@@ -977,7 +978,7 @@ public class SerializationContextImpl implements SerializationContext
         String elementQName = (String)elementStack.pop();
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("endElem00", "" + elementQName));
+            log.debug(Messages.getMessage("endElem00", "" + elementQName));
         }
 
         nsStack.pop();
@@ -1173,7 +1174,7 @@ public class SerializationContextImpl implements SerializationContext
 
             if (tm == null) {
                 throw new IOException(
-                        JavaUtils.getMessage("noSerializer00",
+                        Messages.getMessage("noSerializer00",
                                              value.getClass().getName(),
                                              "" + this));
             }
@@ -1209,7 +1210,7 @@ public class SerializationContextImpl implements SerializationContext
                 return;
             }
 
-            throw new IOException(JavaUtils.getMessage("noSerializer00",
+            throw new IOException(Messages.getMessage("noSerializer00",
                     value.getClass().getName(), "" + tm));
         }
         // !!! Write out a generic null, or get type info from somewhere else?
@@ -1288,7 +1289,7 @@ public class SerializationContextImpl implements SerializationContext
         Serializer ser = getSerializer(value.getClass(), xmlType);
         if (!(ser instanceof SimpleValueSerializer)) {
             throw new IOException(
-                    JavaUtils.getMessage("needSimpleValueSer",
+                    Messages.getMessage("needSimpleValueSer",
                                          ser.getClass().getName()));
         }
         SimpleValueSerializer simpleSer = (SimpleValueSerializer)ser;

@@ -59,6 +59,7 @@ import java.util.Vector;
 import java.util.Hashtable;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -184,7 +185,7 @@ public abstract class Enum implements java.io.Serializable {
             Enum e = getEnum(enumName, null);
             
             if (e == null) {
-                log.error(JavaUtils.getMessage("badEnum02", name, enumName));
+                log.error(Messages.getMessage("badEnum02", name, enumName));
             }
     
             return e;

@@ -54,11 +54,10 @@
  */
 package org.apache.axis.types;
 
-import java.lang.Comparable;
-import java.lang.Number;
 
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type UnsignedInt
@@ -94,7 +93,7 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
      */
     public void setValue(long iValue) throws Exception {
       if (isValid(iValue) == false)
-            throw new Exception(JavaUtils.getMessage("badUnsignedInt00") +
+            throw new Exception(Messages.getMessage("badUnsignedInt00") +
                     String.valueOf(iValue) + "]");
       lValue = new Long(iValue);
     }

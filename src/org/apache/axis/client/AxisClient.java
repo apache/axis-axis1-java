@@ -63,6 +63,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -130,7 +131,7 @@ public class AxisClient extends AxisEngine {
                     h.invoke(msgContext);
                 else
                     throw new AxisFault( "Client.error",
-                                        JavaUtils.getMessage("noHandler00", hName),
+                                        Messages.getMessage("noHandler00", hName),
                                         null, null );
             }
             else {
@@ -182,7 +183,7 @@ public class AxisClient extends AxisEngine {
                 }
                 else {
                     throw new AxisFault(
-                        JavaUtils.getMessage("noTransport00", hName));
+                        Messages.getMessage("noTransport00", hName));
                 }
 
                 /* Process the JAXRPC Handlers */
@@ -207,7 +208,7 @@ public class AxisClient extends AxisEngine {
 
         } catch ( Exception e ) {
             // Should we even bother catching it ?
-            log.debug(JavaUtils.getMessage("exception00"), e);
+            log.debug(Messages.getMessage("exception00"), e);
             throw AxisFault.makeFault(e);
 
         } finally {

@@ -64,6 +64,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -97,7 +98,7 @@ public class LocalSender extends BasicHandler {
             (AxisServer)clientContext.getProperty(LocalTransport.LOCAL_SERVER);
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("usingServer00", 
+            log.debug(Messages.getMessage("usingServer00", 
                 "LocalSender", "" + targetServer));
         }
 
@@ -116,7 +117,7 @@ public class LocalSender extends BasicHandler {
         String msgStr = clientContext.getRequestMessage().getSOAPPartAsString();
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("sendingXML00", "LocalSender"));
+            log.debug(Messages.getMessage("sendingXML00", "LocalSender"));
             log.debug(msgStr);
         }
 

@@ -143,7 +143,7 @@ public class BeanPropertyDescriptor
         if (myPD.getReadMethod() != null) {
             return myPD.getReadMethod().invoke(obj, noArgs);
         }
-        throw new IllegalAccessException(JavaUtils.getMessage("badGetter00"));
+        throw new IllegalAccessException(Messages.getMessage("badGetter00"));
     }
     /**
      * Set the property value
@@ -155,7 +155,7 @@ public class BeanPropertyDescriptor
         if (myPD.getWriteMethod() != null) {
             myPD.getWriteMethod().invoke(obj, new Object[] {newValue});
         } else {
-            throw new IllegalAccessException(JavaUtils.getMessage("badSetter00"));
+            throw new IllegalAccessException(Messages.getMessage("badSetter00"));
         }
     }    
     /** 

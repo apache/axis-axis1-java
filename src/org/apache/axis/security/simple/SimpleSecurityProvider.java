@@ -60,6 +60,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -113,7 +114,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
                         String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
                         if (log.isDebugEnabled()) {
-                            log.debug( JavaUtils.getMessage("fromFile00", 
+                            log.debug( Messages.getMessage("fromFile00", 
                                 userID, passwd) );
                         }
 
@@ -124,7 +125,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
                 lnr.close();
 
             } catch( Exception e ) {
-                log.error( JavaUtils.getMessage("exception00"), e );
+                log.error( Messages.getMessage("exception00"), e );
                 return;
             }
         }
@@ -148,7 +149,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
 
         if (users != null) {
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("user00", username) );
+                log.debug( Messages.getMessage("user00", username) );
             }
 
             // in order to authenticate, the user must exist
@@ -160,7 +161,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
             String valid = (String) users.get(username);
 
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("password00", password) );
+                log.debug( Messages.getMessage("password00", password) );
             }
 
             // if a password is defined, then it must match
@@ -168,7 +169,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
                 return null;
 
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("auth00", username) );
+                log.debug( Messages.getMessage("auth00", username) );
             }
 
             return new SimpleAuthenticatedUser(username);

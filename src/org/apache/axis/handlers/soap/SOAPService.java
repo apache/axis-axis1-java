@@ -74,6 +74,7 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
@@ -168,7 +169,7 @@ public class SOAPService extends SimpleTargetedChain
         public void invoke(MessageContext msgContext) throws AxisFault {
             // Do SOAP semantics here
             if (this.log.isDebugEnabled()) {
-                this.log.debug( JavaUtils.getMessage("semanticCheck00"));
+                this.log.debug( Messages.getMessage("semanticCheck00"));
             }
 
             ArrayList acts = getActors();
@@ -219,7 +220,7 @@ public class SOAPService extends SimpleTargetedChain
                 }
 
                 throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
-                                    JavaUtils.getMessage("noUnderstand00"),
+                                    Messages.getMessage("noUnderstand00"),
                                     null, null);
             }
         }
@@ -386,7 +387,7 @@ public class SOAPService extends SimpleTargetedChain
     public void enableTransport(String transportName)
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage(
+            log.debug(Messages.getMessage(
                 "enableTransport00", "" + this, transportName));
         }
 

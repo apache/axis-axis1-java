@@ -63,6 +63,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.bytecode.ParamNameExtractor;
 import org.apache.axis.wsdl.Skeleton;
 import org.apache.commons.logging.Log;
@@ -241,7 +242,7 @@ public class ServiceDesc {
     public void setImplClass(Class implClass) {
         if (this.implClass != null)
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("implAlreadySet"));
+                    Messages.getMessage("implAlreadySet"));
 
         this.implClass = implClass;
         if (Skeleton.class.isAssignableFrom(implClass)) {
@@ -654,7 +655,7 @@ public class ServiceDesc {
         // Exception if sync fails to find method for operation
         if (oper.getMethod() == null) {
             InternalException ie =
-                new InternalException(JavaUtils.getMessage("serviceDescOperSync00",
+                new InternalException(Messages.getMessage("serviceDescOperSync00",
                                                            oper.getName(),
                                                            implClass.getName()));
             throw ie;

@@ -57,6 +57,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.activation.DataHandler;
 
@@ -85,12 +86,12 @@ public class AttachmentUtils {
             throws AxisFault {
 
         if (null == part) {
-            throw new AxisFault(JavaUtils.getMessage("gotNullPart"));
+            throw new AxisFault(Messages.getMessage("gotNullPart"));
         }
 
         if (!(part instanceof AttachmentPart)) {
             throw new AxisFault(
-                    JavaUtils.getMessage(
+                    Messages.getMessage(
                             "unsupportedAttach", part.getClass().getName(),
                             AttachmentPart.class.getName()));
         }

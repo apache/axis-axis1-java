@@ -57,6 +57,7 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.handler.Handler;
@@ -104,7 +105,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
             handlerInfos.add(handlerInfo);
             add(newHandler(handlerInfo));
         } catch (Exception ex) {
-            String messageText = JavaUtils.getMessage("NoJAXRPCHandler00", className);
+            String messageText = Messages.getMessage("NoJAXRPCHandler00", className);
             throw new JAXRPCException(messageText, ex);
         }
     }
@@ -164,7 +165,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
             handler.init(handlerInfo);
             return handler;
         } catch (Exception ex) {
-            String messageText = JavaUtils.getMessage("NoJAXRPCHandler00", handlerInfo.getHandlerClass().toString());
+            String messageText = Messages.getMessage("NoJAXRPCHandler00", handlerInfo.getHandlerClass().toString());
             throw new JAXRPCException(messageText, ex);
         }
     }

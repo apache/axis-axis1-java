@@ -59,6 +59,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -102,7 +103,7 @@ public class JNDIAxisServerFactory extends DefaultAxisServerFactory {
         try {
             context = new InitialContext();
         } catch (NamingException e) {
-            log.warn(JavaUtils.getMessage("jndiNotFound00"), e);
+            log.warn(Messages.getMessage("jndiNotFound00"), e);
         }
         
         ServletContext servletContext = null;
@@ -110,7 +111,7 @@ public class JNDIAxisServerFactory extends DefaultAxisServerFactory {
             servletContext =
                 (ServletContext)environment.get(AxisEngine.ENV_SERVLET_CONTEXT);
         } catch (ClassCastException e) {
-            log.warn(JavaUtils.getMessage("servletContextWrongClass00"), e);
+            log.warn(Messages.getMessage("servletContextWrongClass00"), e);
             // Fall through
         }
 

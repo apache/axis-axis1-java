@@ -63,6 +63,7 @@ import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -190,7 +191,7 @@ public class ArrayDeserializer extends DeserializerImpl
                 || rightBracketIndex < leftBracketIndex)
                 {
                     throw new IllegalArgumentException(
-                      JavaUtils.getMessage("badArrayType00", 
+                      Messages.getMessage("badArrayType00", 
                                            "" + arrayTypeValue));
                 }
             
@@ -246,7 +247,7 @@ public class ArrayDeserializer extends DeserializerImpl
                         dims));
                 } catch (Exception e) {
                     throw new SAXException(
-                       JavaUtils.getMessage("noComponent00",  
+                       Messages.getMessage("noComponent00",  
                                             "" + defaultItemType));
                 }
             }
@@ -254,7 +255,7 @@ public class ArrayDeserializer extends DeserializerImpl
 
         if (arrayClass == null) {
             throw new SAXException(
-               JavaUtils.getMessage("noComponent00",  "" + defaultItemType));
+               Messages.getMessage("noComponent00",  "" + defaultItemType));
         }
 
         if (dimString == null || dimString.length() == 0) {
@@ -299,7 +300,7 @@ public class ArrayDeserializer extends DeserializerImpl
             catch (NumberFormatException e)
             {
                 throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badInteger00", dimString));
+                        Messages.getMessage("badInteger00", dimString));
             }
         }
 
@@ -316,7 +317,7 @@ public class ArrayDeserializer extends DeserializerImpl
                 || rightBracketIndex < leftBracketIndex)
             {
                 throw new SAXException(
-                        JavaUtils.getMessage("badOffset00", offset));
+                        Messages.getMessage("badOffset00", offset));
             }
 
             curIndex = 
@@ -369,7 +370,7 @@ public class ArrayDeserializer extends DeserializerImpl
                     || rightBracketIndex < leftBracketIndex)
                 {
                     throw new SAXException(
-                            JavaUtils.getMessage("badPosition00", pos));
+                            Messages.getMessage("badPosition00", pos));
                 }
                 
                 curIndex = 
@@ -563,7 +564,7 @@ public class ArrayDeserializer extends DeserializerImpl
                 index = Integer.parseInt(tokenizer.nextToken());
                 if (tokenizer.hasMoreTokens()) {
                     throw new SAXException(
-                        JavaUtils.getMessage(exceptKey, text));
+                        Messages.getMessage(exceptKey, text));
                 }
             }
             else {
@@ -576,7 +577,7 @@ public class ArrayDeserializer extends DeserializerImpl
                     dim++;
                     if (dim >= mDimLength.size()) {
                         throw new SAXException(
-                            JavaUtils.getMessage(exceptKey, text));
+                            Messages.getMessage(exceptKey, text));
                     }
                     // Get the next token and convert to integer
                     int workIndex = Integer.parseInt(tokenizer.nextToken());
@@ -586,7 +587,7 @@ public class ArrayDeserializer extends DeserializerImpl
                         workIndex >= 
                             ((Integer)mDimLength.get(dim)).intValue()) {
                         throw new SAXException(
-                            JavaUtils.getMessage(exceptKey, text));
+                            Messages.getMessage(exceptKey, text));
                     }
                     work.add(new Integer(workIndex));
                 }
@@ -595,7 +596,7 @@ public class ArrayDeserializer extends DeserializerImpl
         } catch (SAXException e) {
             throw e;
         } catch (Exception e) {
-            throw new SAXException(JavaUtils.getMessage(exceptKey, text));
+            throw new SAXException(Messages.getMessage(exceptKey, text));
         }
         return index;
     } 

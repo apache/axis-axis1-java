@@ -65,6 +65,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -185,7 +186,7 @@ public class SimpleDeserializer extends DeserializerImpl {
         throws SAXException
     {
         throw new SAXException(
-                JavaUtils.getMessage("cantHandle00", "SimpleDeser"));
+                Messages.getMessage("cantHandle00", "SimpleDeser"));
     }
     
     /**
@@ -247,7 +248,7 @@ public class SimpleDeserializer extends DeserializerImpl {
 
                 default:
                    throw new NumberFormatException(
-                           JavaUtils.getMessage("badBool00"));
+                           Messages.getMessage("badBool00"));
             }
             
         }
@@ -318,16 +319,16 @@ public class SimpleDeserializer extends DeserializerImpl {
                 QName qn = tm.getTypeQName(type);
                 if (qn == null)
                     throw new SAXException(
-                            JavaUtils.getMessage("unregistered00", type.toString()));
+                            Messages.getMessage("unregistered00", type.toString()));
 
                 // get the deserializer
                 Deserializer dSer = context.getDeserializerForType(qn);
                 if (dSer == null)
                     throw new SAXException(
-                            JavaUtils.getMessage("noDeser00", type.toString()));
+                            Messages.getMessage("noDeser00", type.toString()));
                 if (! (dSer instanceof SimpleDeserializer))
                     throw new SAXException(
-                            JavaUtils.getMessage("AttrNotSimpleType00",
+                            Messages.getMessage("AttrNotSimpleType00",
                                                  bpd.getName(),
                                                  type.toString()));
 

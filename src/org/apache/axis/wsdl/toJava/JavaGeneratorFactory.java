@@ -78,6 +78,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.gen.Generator;
@@ -304,7 +305,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 }
                 catch (Throwable t) {
                     throw new IOException(
-                        JavaUtils.getMessage("exception01", t.getMessage()));
+                        Messages.getMessage("exception01", t.getMessage()));
                 }
                 gen.generate();
             }
@@ -858,15 +859,15 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         String name = operation.getName();
                         Parameters parameters = bEntry.getParameters(operation);
                         if (type == OperationType.SOLICIT_RESPONSE) {
-                            parameters.signature = "    // " + JavaUtils.getMessage(
+                            parameters.signature = "    // " + Messages.getMessage(
                                     "invalidSolResp00", name);
-                            System.err.println(JavaUtils.getMessage(
+                            System.err.println(Messages.getMessage(
                                     "invalidSolResp00", name));
                         }
                         else if (type == OperationType.NOTIFICATION) {
-                            parameters.signature = "    // " + JavaUtils.getMessage(
+                            parameters.signature = "    // " + Messages.getMessage(
                                     "invalidNotif00", name);
-                            System.err.println(JavaUtils.getMessage(
+                            System.err.println(Messages.getMessage(
                                     "invalidNotif00", name));
                         }
                         else { // ONE_WAY or REQUEST_RESPONSE

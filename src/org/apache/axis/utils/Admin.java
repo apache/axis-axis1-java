@@ -125,12 +125,12 @@ public class Admin
             engine.setAdminPassword(newPassword);
             doc = XMLUtils.newDocument();
             doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-            root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
+            root.appendChild( doc.createTextNode( Messages.getMessage("done00") ) );
             return doc;
         }
 
         if (action.equals("quit")) {
-            log.error(JavaUtils.getMessage("quitRequest00"));
+            log.error(Messages.getMessage("quitRequest00"));
             if (msgContext != null) {
                 // put a flag into message context so listener will exit after
                 // sending response
@@ -138,7 +138,7 @@ public class Admin
             }
             doc = XMLUtils.newDocument();
             doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-            root.appendChild( doc.createTextNode( JavaUtils.getMessage("quit00", "") ) );
+            root.appendChild( doc.createTextNode( Messages.getMessage("quit00", "") ) );
             return doc;
         }
 
@@ -164,7 +164,7 @@ public class Admin
         
         doc = XMLUtils.newDocument();
         doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-        root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
+        root.appendChild( doc.createTextNode( Messages.getMessage("done00") ) );
         
         return doc;
     }
@@ -209,11 +209,11 @@ public class Admin
                     
                     if (!myAddr.equals(remoteAddr))
                         throw new AxisFault("Server.Unauthorized",
-                           JavaUtils.getMessage("noAdminAccess00"),
+                           Messages.getMessage("noAdminAccess00"),
                            null, null);
                 } catch (UnknownHostException e) {
                     throw new AxisFault("Server.UnknownHost",
-                        JavaUtils.getMessage("unknownHost00"),
+                        Messages.getMessage("unknownHost00"),
                         null, null);
                 }
             }
@@ -254,7 +254,7 @@ public class Admin
             // If the engine config isn't a FileProvider, or we have no
             // engine config for some odd reason, we'll end up here.
 
-            throw new AxisFault(JavaUtils.getMessage("noEngineWSDD"));
+            throw new AxisFault(Messages.getMessage("noEngineWSDD"));
         }
 
         try {
@@ -270,9 +270,9 @@ public class Admin
 
         if ( args.length < 2 || !(args[0].equals("client") ||
                                   args[0].equals("server")) ) {
-            log.error( JavaUtils.getMessage("usage00", "Admin client|server <xml-file>") );
+            log.error( Messages.getMessage("usage00", "Admin client|server <xml-file>") );
 
-            log.error( JavaUtils.getMessage("where00", "<xml-file>") );
+            log.error( Messages.getMessage("where00", "<xml-file>") );
             log.error( "<deploy>" );
             /*
             log.error( "  <transport name=a request=\"a,b,c\" sender=\"s\"");
@@ -295,7 +295,7 @@ public class Admin
             // throw an Exception which will go uncaught!  this way, a test
             // suite can invoke main() and detect the exception
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("usage00", 
+                    Messages.getMessage("usage00", 
                                          "Admin client|server <xml-file>"));
             // System.exit( 1 );
         }
@@ -314,14 +314,14 @@ public class Admin
         try {
             for ( i = 1 ; i < args.length ; i++ ) {
                 if (log.isDebugEnabled())
-                    log.debug( JavaUtils.getMessage("process00", args[i]) );
+                    log.debug( Messages.getMessage("process00", args[i]) );
 
                 Document doc = XMLUtils.newDocument( new FileInputStream( args[i] ) );
                 admin.process(msgContext, doc.getDocumentElement());
             }
         }
         catch( Exception e ) {
-            log.error( JavaUtils.getMessage("errorProcess00", args[i]), e );
+            log.error( Messages.getMessage("errorProcess00", args[i]), e );
             //System.exit( 1 );
             throw e;
         }

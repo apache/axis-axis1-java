@@ -122,7 +122,7 @@ public class NSStack {
 
         if (top == 0) {
             if (log.isTraceEnabled())
-                log.trace("NSPop (" + JavaUtils.getMessage("empty00") + ")");
+                log.trace("NSPop (" + Messages.getMessage("empty00") + ")");
 
             return;
         }
@@ -282,7 +282,7 @@ public class NSStack {
             Mapping map = stack[cursor];
 
             if (map == null) {
-                log.trace(dumpPrefix + JavaUtils.getMessage("stackFrame00"));
+                log.trace(dumpPrefix + Messages.getMessage("stackFrame00"));
             } else {
                 log.trace(dumpPrefix + map.getNamespaceURI() + " -> " + map.getPrefix());
             }

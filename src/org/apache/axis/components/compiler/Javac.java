@@ -57,6 +57,7 @@ package org.apache.axis.components.compiler;
 
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -101,16 +102,16 @@ public class Javac extends AbstractCompiler
             ClassUtils.forName(MODERN_CLASS, true, cl);
             modern = true;
         } catch (ClassNotFoundException e) {
-            log.debug(JavaUtils.getMessage("noModernCompiler"));
+            log.debug(Messages.getMessage("noModernCompiler"));
             try {
                 ClassUtils.forName(CLASSIC_CLASS, true, cl);
                 modern = false;
             } catch (Exception ex) {
-                log.error(JavaUtils.getMessage("noCompiler00"), ex);
-                throw new RuntimeException(JavaUtils.getMessage("noCompiler00"));
+                log.error(Messages.getMessage("noCompiler00"), ex);
+                throw new RuntimeException(Messages.getMessage("noCompiler00"));
             }
         }
-        log.debug(JavaUtils.getMessage("compilerClass",
+        log.debug(Messages.getMessage("compilerClass",
                 (modern ? MODERN_CLASS : CLASSIC_CLASS)));
     }
 
@@ -139,8 +140,8 @@ public class Javac extends AbstractCompiler
                                         new Object[] {toStringArray(fillArguments(new ArrayList()))});
             result = ok.booleanValue();
         } catch (Exception cnfe){
-            log.error(JavaUtils.getMessage("noCompiler00"), cnfe);
-            throw new RuntimeException(JavaUtils.getMessage("noCompiler00"));
+            log.error(Messages.getMessage("noCompiler00"), cnfe);
+            throw new RuntimeException(Messages.getMessage("noCompiler00"));
         }
 
         this.errors = new ByteArrayInputStream(err.toByteArray());
@@ -221,9 +222,9 @@ public class Javac extends AbstractCompiler
             if (endcolumn == -1) endcolumn = context.length();
             return new CompilerError(file, false, line, startcolumn, line, endcolumn, message);
         } catch(NoSuchElementException nse) {
-            return new CompilerError(JavaUtils.getMessage("noMoreTokens", error));
+            return new CompilerError(Messages.getMessage("noMoreTokens", error));
         } catch(Exception nse) {
-            return new CompilerError(JavaUtils.getMessage("cantParse", error));
+            return new CompilerError(Messages.getMessage("cantParse", error));
         }
     }
 
@@ -292,14 +293,14 @@ public class Javac extends AbstractCompiler
             return new CompilerError(srcDir + File.separator + file, true,
                     line, startcolumn, line, endcolumn, message);
         } catch(NoSuchElementException nse) {
-            return new CompilerError(JavaUtils.getMessage("noMoreTokens",
+            return new CompilerError(Messages.getMessage("noMoreTokens",
                     error));
         } catch(Exception nse) {
-            return new CompilerError(JavaUtils.getMessage("cantParse", error));
+            return new CompilerError(Messages.getMessage("cantParse", error));
         }
     }
 
     public String toString() {
-        return JavaUtils.getMessage("sunJavac");
+        return Messages.getMessage("sunJavac");
     }
 }

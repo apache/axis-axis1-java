@@ -61,6 +61,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.handlers.soap.SOAPService;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -99,7 +100,7 @@ public class SOAPHeader extends MessageElement
             setParentElement(env);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
-            log.fatal(JavaUtils.getMessage("exception00"), ex);
+            log.fatal(Messages.getMessage("exception00"), ex);
         }
     }
 
@@ -112,7 +113,7 @@ public class SOAPHeader extends MessageElement
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if(parent == null)
-            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
+            throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
         try {
             // cast to force exception if wrong type
             super.setParentElement((SOAPEnvelope)parent);
@@ -178,18 +179,18 @@ public class SOAPHeader extends MessageElement
 
     void addHeader(SOAPHeaderElement header) {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("addHeader00"));
+            log.debug(Messages.getMessage("addHeader00"));
         try {
             header.setParentElement(this);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPHeader
-            log.fatal(JavaUtils.getMessage("exception00"), ex);
+            log.fatal(Messages.getMessage("exception00"), ex);
         }
     }
 
     void removeHeader(SOAPHeaderElement header) {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("removeHeader00"));
+            log.debug(Messages.getMessage("removeHeader00"));
         headers.removeElement(header);
     }
 
@@ -304,7 +305,7 @@ public class SOAPHeader extends MessageElement
 
         if (log.isDebugEnabled())
             log.debug(headers.size() + " "
-                    + JavaUtils.getMessage("headers00"));
+                    + Messages.getMessage("headers00"));
 
         if (!headers.isEmpty()) {
             // Output <SOAP-ENV:Header>

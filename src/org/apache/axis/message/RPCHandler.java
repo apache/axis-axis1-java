@@ -69,6 +69,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.MethodTarget;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -189,7 +190,7 @@ public class RPCHandler extends SOAPHandler
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
+            log.debug(Messages.getMessage("typeFromAttr00", "" + type));
         }
         
 
@@ -261,7 +262,7 @@ public class RPCHandler extends SOAPHandler
           if (type != null) {
               dser = context.getDeserializerForType(type);
               if (dser == null) {
-                  throw new SAXException(JavaUtils.getMessage(
+                  throw new SAXException(Messages.getMessage(
                           "noDeser01", localName,"" + type));
               }
               if (paramDesc != null && paramDesc.getJavaType() != null) {
@@ -277,7 +278,7 @@ public class RPCHandler extends SOAPHandler
           } else {
               dser = new DeserializerImpl();
               if (dser == null) {
-                  throw new SAXException(JavaUtils.getMessage(
+                  throw new SAXException(Messages.getMessage(
                           "noDeser01", localName,"" + type));
               }
           }
@@ -300,7 +301,7 @@ public class RPCHandler extends SOAPHandler
         throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("setProp00",
+            log.debug(Messages.getMessage("setProp00",
                     "MessageContext", "RPCHandler.endElement()."));
         }
         context.getMessageContext().setProperty("RPC", rpcElem);

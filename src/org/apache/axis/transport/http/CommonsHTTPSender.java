@@ -62,6 +62,7 @@ import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.components.net.TransportClientProperties;
 import org.apache.axis.components.net.TransportClientPropertiesFactory;
 import org.apache.commons.httpclient.Credentials;
@@ -99,7 +100,7 @@ public class CommonsHTTPSender extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00",
+            log.debug(Messages.getMessage("enter00",
                     "CommonsHTTPSender::invoke"));
         }
         try {
@@ -164,7 +165,7 @@ public class CommonsHTTPSender extends BasicHandler {
                         + statusMessage, null,
                         null);
 
-                fault.setFaultDetailString(JavaUtils.getMessage("return01",
+                fault.setFaultDetailString(Messages.getMessage("return01",
                         "" + returnCode, method.getResponseBodyAsString()));
                 throw fault;
             }
@@ -176,9 +177,9 @@ public class CommonsHTTPSender extends BasicHandler {
             if (log.isDebugEnabled()) {
                 if (null == contentLength) {
                     log.debug("\n"
-                            + JavaUtils.getMessage("no00", "Content-Length"));
+                            + Messages.getMessage("no00", "Content-Length"));
                 }
-                log.debug("\n" + JavaUtils.getMessage("xmlRecd00"));
+                log.debug("\n" + Messages.getMessage("xmlRecd00"));
                 log.debug("-----------------------------------------------");
                 log.debug((String) outMsg.getSOAPPartAsString());
             }
@@ -199,7 +200,7 @@ public class CommonsHTTPSender extends BasicHandler {
             throw AxisFault.makeFault(e);
         }
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00",
+            log.debug(Messages.getMessage("exit00",
                     "CommonsHTTPSender::invoke"));
         }
     }
@@ -427,7 +428,7 @@ public class CommonsHTTPSender extends BasicHandler {
             String pattern = tokenizer.nextToken();
 
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("match00",
+                log.debug(Messages.getMessage("match00",
                         new String[]{"HTTPSender",
                                      host,
                                      pattern}));

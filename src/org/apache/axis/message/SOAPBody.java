@@ -61,6 +61,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -94,7 +95,7 @@ public class SOAPBody extends MessageElement
             setParentElement(env);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
-            log.fatal(JavaUtils.getMessage("exception00"), ex);
+            log.fatal(Messages.getMessage("exception00"), ex);
         }
     }
 
@@ -107,7 +108,7 @@ public class SOAPBody extends MessageElement
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if(parent == null)
-            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
+            throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
         try {
             // cast to force exception if wrong type
             super.setParentElement((SOAPEnvelope)parent);
@@ -167,19 +168,19 @@ public class SOAPBody extends MessageElement
     void addBodyElement(SOAPBodyElement element)
     {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("addBody00"));
+            log.debug(Messages.getMessage("addBody00"));
         try {
             element.setParentElement(this);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPBody
-            log.fatal(JavaUtils.getMessage("exception00"), ex);
+            log.fatal(Messages.getMessage("exception00"), ex);
         }
     }
 
     void removeBodyElement(SOAPBodyElement element)
     {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("removeBody00"));
+            log.debug(Messages.getMessage("removeBody00"));
         bodyElements.removeElement(element);
     }
 
@@ -234,7 +235,7 @@ public class SOAPBody extends MessageElement
         try {
             return (javax.xml.soap.SOAPFault)getBodyByName(Constants.URI_SOAP11_ENV, Constants.ELEM_FAULT);
         } catch(AxisFault af){
-            log.fatal(JavaUtils.getMessage("exception00"), af);
+            log.fatal(Messages.getMessage("exception00"), af);
             return null;
         }
     }
@@ -244,7 +245,7 @@ public class SOAPBody extends MessageElement
             if(getBodyByName(Constants.URI_SOAP11_ENV, Constants.ELEM_FAULT)!=null)
                 return true;
         } catch(AxisFault af){
-            log.fatal(JavaUtils.getMessage("exception00"), af);
+            log.fatal(Messages.getMessage("exception00"), af);
         }
         return false;
     }

@@ -59,6 +59,7 @@ import java.math.BigInteger;
 import java.util.Random;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type nonNegativeInteger
@@ -105,7 +106,7 @@ public class NonNegativeInteger extends BigInteger {
     private void checkValidity() {
         if (compareTo(zero) < 0) {
             throw new NumberFormatException(
-                    JavaUtils.getMessage("badNonNegInt00")
+                    Messages.getMessage("badNonNegInt00")
                     + ":  " + this);
         }
     } // checkValidity

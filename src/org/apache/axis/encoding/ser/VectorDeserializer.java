@@ -62,6 +62,7 @@ import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -140,7 +141,7 @@ public class VectorDeserializer extends DeserializerImpl
         }
         
         if (attributes == null)
-            throw new SAXException(JavaUtils.getMessage("noType01"));
+            throw new SAXException(Messages.getMessage("noType01"));
 
         // If the xsi:nil attribute, set the value to null and return since
         // there is nothing to deserialize.
@@ -183,7 +184,7 @@ public class VectorDeserializer extends DeserializerImpl
     public void setValue(Object value, Object hint) throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("gotValue00", "VectorDeserializer", "" + value));
+            log.debug(Messages.getMessage("gotValue00", "VectorDeserializer", "" + value));
         }
         int offset = ((Integer)hint).intValue();
         Vector v = (Vector)this.value;

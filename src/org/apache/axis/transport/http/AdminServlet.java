@@ -63,6 +63,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -105,26 +106,26 @@ public class AdminServlet extends AxisServletBase {
             if (isDevelopment()) {
                 //only in dev mode do these command work
                 if (cmd.equals("start")) {
-                    log.info(JavaUtils.getMessage("adminServiceStart", callerIP));
+                    log.info(Messages.getMessage("adminServiceStart", callerIP));
                     server.start();
                 }
                 else if (cmd.equals("stop")) {
-                    log.info(JavaUtils.getMessage("adminServiceStop", callerIP));
+                    log.info(Messages.getMessage("adminServiceStop", callerIP));
                     server.stop();
                 }
             } else {
                 //in production we log a hostile probe. Remember: logs can be
                 //used for DoS attacks themselves.
-                log.info(JavaUtils.getMessage("adminServiceDeny", callerIP));
+                log.info(Messages.getMessage("adminServiceDeny", callerIP));
             }
         }
 
         // display status
         if (server.isRunning()) {
-            buffer.append(JavaUtils.getMessage("serverRun00"));
+            buffer.append(Messages.getMessage("serverRun00"));
         }
         else {
-            buffer.append(JavaUtils.getMessage("serverStop00"));
+            buffer.append(Messages.getMessage("serverStop00"));
         }
         //add commands
         if(isDevelopment()) {
@@ -133,7 +134,7 @@ public class AdminServlet extends AxisServletBase {
         }
         //print load
         buffer.append("<p>");
-        buffer.append(JavaUtils.getMessage("adminServiceLoad",
+        buffer.append(Messages.getMessage("adminServiceLoad",
                 Integer.toString(getLoadCounter())));
         buffer.append("\n</body></html>\n");
         response.getWriter().print( new String(buffer) );

@@ -62,6 +62,7 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
 import org.apache.axis.transport.http.HTTPConstants;
 
@@ -263,7 +264,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             try {
                 env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
                 throw env;
             }
             return;
@@ -308,7 +309,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             } else {
                 msgStr = currMsg.getClass().getName();
             }
-            log.debug(JavaUtils.getMessage("setMsgForm", formNames[form],
+            log.debug(Messages.getMessage("setMsgForm", formNames[form],
                     "" + msgStr));
         }
         currentMessage = currMsg ;
@@ -330,7 +331,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             try {
                 getAsSOAPEnvelope();
             } catch (Exception e) {
-                log.fatal(JavaUtils.getMessage("makeEnvFail00"), e);
+                log.fatal(Messages.getMessage("makeEnvFail00"), e);
                 log.debug("Exit: SOAPPart::getAsBytes");
                 return null;
             }
@@ -359,7 +360,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 return (byte[])currentMessage;
             }
             catch( Exception e ) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
             }
             log.debug("Exit: SOAPPart::getAsBytes");
             return null;
@@ -406,7 +407,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             return (byte[])currentMessage;
         }
 
-        log.error(JavaUtils.getMessage("cantConvert00", ""+currentForm));
+        log.error(Messages.getMessage("cantConvert00", ""+currentForm));
 
         log.debug("Exit: SOAPPart::getAsBytes");
         return null;
@@ -464,7 +465,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             try {
                 this.writeTo(writer);
             } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
                 return null;
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
@@ -489,7 +490,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             return (String)currentMessage;
         }
 
-        log.error( JavaUtils.getMessage("cantConvert01", ""+currentForm));
+        log.error( Messages.getMessage("cantConvert01", ""+currentForm));
 
         log.debug("Exit: SOAPPart::getAsString()");
         return null;
@@ -505,7 +506,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     {
         if (log.isDebugEnabled()) {
             log.debug("Enter: SOAPPart::getAsSOAPEnvelope()");
-            log.debug(JavaUtils.getMessage("currForm", formNames[currentForm]));
+            log.debug(Messages.getMessage("currForm", formNames[currentForm]));
         }
         if ( currentForm == FORM_SOAPENVELOPE )
             return (SOAPEnvelope)currentMessage;
@@ -636,7 +637,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      */
     public void setContent(Source source) throws SOAPException {
         if(source == null)
-            throw new SOAPException(JavaUtils.getMessage("illegalArgumentException00"));
+            throw new SOAPException(Messages.getMessage("illegalArgumentException00"));
 
         contentSource = source;
         InputSource in = org.apache.axis.utils.XMLUtils.sourceToInputSource(contentSource);
