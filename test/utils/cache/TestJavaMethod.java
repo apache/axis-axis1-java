@@ -21,15 +21,15 @@ public class TestJavaMethod extends TestCase
     {
         Class vector = new java.util.Vector().getClass(); 
         JavaMethod jmAdd = new JavaMethod(vector, "add");
-        assertNotNull(jmAdd);
+        assertNotNull("jmAdd was null", jmAdd);
         
         Method methodWithOneParam = jmAdd.getMethod(1);
-        assertEquals("add", methodWithOneParam.getName());
+        assertEquals("Method with one param was not 'add'", "add", methodWithOneParam.getName());
         Method methodWithTwoParams = jmAdd.getMethod(2);
-        assertEquals("add", methodWithTwoParams.getName());
+        assertEquals("Method with two params was not 'add'", "add", methodWithTwoParams.getName());
 
-        assertEquals("boolean", methodWithOneParam.getReturnType().getName());
-        assertEquals("void", methodWithTwoParams.getReturnType().getName());
+        assertEquals("Method with one param return type was not 'boolean'", "boolean", methodWithOneParam.getReturnType().getName());
+        assertEquals("Method with two params return type was not 'void'", "void", methodWithTwoParams.getReturnType().getName());
         
         boolean gotError = false;
         try {
@@ -44,22 +44,22 @@ public class TestJavaMethod extends TestCase
         //on the other hand, make sure methods with 0 params work...
         JavaMethod jmCapacity = new JavaMethod(vector, "capacity");
         Method methodWithNoParams = jmCapacity.getMethod(0);
-        assertEquals("capacity", methodWithNoParams.getName());
+        assertEquals("Method with no params was not 'capacity'", "capacity", methodWithNoParams.getName());
     }
     
     public void testGetMethodWithOverloadedStringValueOf()
     {
         Class str = new String().getClass(); 
         JavaMethod jm = new JavaMethod(str, "valueOf");
-        assertNotNull(jm);
+        assertNotNull("JavaMethod is null", jm);
         
         Method methodWithOneParam = jm.getMethod(1);
-        assertEquals("valueOf",methodWithOneParam.getName());
+        assertEquals("Method with one param is not 'valueOf'", "valueOf",methodWithOneParam.getName());
         Method methodWithThreeParams = jm.getMethod(3);
-        assertEquals("valueOf",methodWithThreeParams.getName());
+        assertEquals("Method with two params is not 'valueOf'", "valueOf",methodWithThreeParams.getName());
 
-        assertEquals("java.lang.String", methodWithOneParam.getReturnType().getName());
-        assertEquals("java.lang.String", methodWithThreeParams.getReturnType().getName());
+        assertEquals("Method with one param return type is not 'java.lang.String'", "java.lang.String", methodWithOneParam.getReturnType().getName());
+        assertEquals("Method with two parama return type is not 'java.lang.String'", "java.lang.String", methodWithThreeParams.getReturnType().getName());
         
         boolean gotError = false;
         try {
