@@ -55,7 +55,9 @@
 
 package org.apache.axis.components.logger;
 
-import org.apache.axis.AxisProperties;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 
@@ -68,12 +70,21 @@ public class LogFactory {
      * Override group context..
      */
     private static final org.apache.commons.logging.LogFactory logFactory =
-        (org.apache.commons.logging.LogFactory)
-            DiscoverSingleton.find(org.apache.commons.logging.LogFactory.class,
-                                   org.apache.commons.logging.LogFactory.FACTORY_PROPERTIES,
-                                   org.apache.commons.logging.LogFactory.FACTORY_DEFAULT);
+        getLogFactory();
 
     public static Log getLog(String name) {
         return logFactory.getLog(name);
+    }
+    
+    private static final org.apache.commons.logging.LogFactory getLogFactory() {
+        return (org.apache.commons.logging.LogFactory)
+            AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return DiscoverSingleton.find(org.apache.commons.logging.LogFactory.class,
+                                       org.apache.commons.logging.LogFactory.FACTORY_PROPERTIES,
+                                       org.apache.commons.logging.LogFactory.FACTORY_DEFAULT);
+                    }
+                });
     }
 }
