@@ -57,6 +57,8 @@
 
 package samples.addr;
 
+import org.apache.axis.AxisFault;
+
 import org.apache.axis.utils.Options;
 
 import java.net.URL;
@@ -123,39 +125,49 @@ public class Main {
     }
     
     public static void main (String[] args) throws Exception {
-        Options opts = new Options(args);
-        
-        System.err.println ("Using proxy without session maintenance.");
-        System.err.println ("(queries without session should say:  \"ADDRESS NOT FOUND!\")");
+        try {
+            Options opts = new Options(args);
 
-        AddressBookService abs = new AddressBookServiceLocator();
-        opts.setDefaultURL( abs.getAddressBookAddress() );
-        URL serviceURL = new URL(opts.getURL());
+            System.err.println ("Using proxy without session maintenance.");
+            System.err.println ("(queries without session should say:  \"ADDRESS NOT FOUND!\")");
 
-        AddressBook ab1 = null;
-        if (serviceURL == null) {
-            ab1 = abs.getAddressBook();
-        }
-        else {
-            ab1 = abs.getAddressBook(serviceURL);
-        }
-        Object ret = doit (ab1);
-        if (ret != null) {
-            throw new Exception("non-session test expected null response, got "+ret);
-        }
+            AddressBookService abs = new AddressBookServiceLocator();
+            opts.setDefaultURL( abs.getAddressBookAddress() );
+            URL serviceURL = new URL(opts.getURL());
 
-        System.err.println ("\n\nUsing proxy with session maintenance.");
-        AddressBook ab2 = null;
-        if (serviceURL == null) {
-            ab2 = abs.getAddressBook();
+            AddressBook ab1 = null;
+            if (serviceURL == null) {
+                ab1 = abs.getAddressBook();
+            }
+            else {
+                ab1 = abs.getAddressBook(serviceURL);
+            }
+            Object ret = doit (ab1);
+            if (ret != null) {
+                throw new Exception("non-session test expected null response, got "+ret);
+            }
+
+            System.err.println ("\n\nUsing proxy with session maintenance.");
+            AddressBook ab2 = null;
+            if (serviceURL == null) {
+                ab2 = abs.getAddressBook();
+            }
+            else {
+                ab2 = abs.getAddressBook(serviceURL);
+            }
+            ((AddressBookSOAPBindingStub) ab2).setMaintainSession (true);
+            ret = doit (ab2);
+            if (ret == null) {
+                throw new Exception("session test expected non-null response, got "+ret);
+            }
         }
-        else {
-            ab2 = abs.getAddressBook(serviceURL);
-        }
-        ((AddressBookSOAPBindingStub) ab2).setMaintainSession (true);
-        ret = doit (ab2);
-        if (ret == null) {
-            throw new Exception("session test expected non-null response, got "+ret);
+        catch (Exception e) {
+            if (e instanceof AxisFault) {
+                System.err.println(((AxisFault) e).dumpToString());
+            }
+            else {
+                e.printStackTrace();
+            }
         }
     }
 }
