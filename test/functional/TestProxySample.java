@@ -88,7 +88,7 @@ public class TestProxySample extends TestCase {
             category.info("Testing deployment...");
             
             // deploy the proxy service
-            String[] args = { "samples/proxy/deploy.xml" };
+            String[] args = { "samples/proxy/deploy.wsdd" };
             AdminClient.main(args);
             
             category.info("Testing server-side client deployment...");
