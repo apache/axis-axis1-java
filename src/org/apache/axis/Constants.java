@@ -675,6 +675,11 @@ public class Constants {
     // OperationDesc during deserialization.  Set this property to any non-null
     // value to prevent this behavior (only used by test.soap12.
     public static final String MC_NO_OPERATION_OK = "NoOperationOK";
+    
+    // This property indicates we're supporting only a single SOAP version.
+    // If set (by the service or engine), we'll only accept envelopes of the
+    // specified version.  Value should be an org.apache.axis.soap.SOAPConstants
+    public static final String MC_SINGLE_SOAP_VERSION = "SingleSOAPVersion";
 
     /**
      * what the extension of JWS files is. If changing this, note that

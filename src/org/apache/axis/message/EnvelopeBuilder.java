@@ -61,6 +61,8 @@ import org.apache.axis.utils.Messages;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -106,6 +108,14 @@ public class EnvelopeBuilder extends SOAPHandler
         if (!localName.equals(Constants.ELEM_ENVELOPE))
             throw new SAXException(
                     Messages.getMessage("badTag00", localName));
+        
+        // See if we're only supporting a single SOAP version at this endpoint
+        MessageContext msgContext = context.getMessageContext();
+        SOAPConstants singleVersion = null;
+        if (msgContext != null) {
+            singleVersion = (SOAPConstants)msgContext.getProperty(
+                                            Constants.MC_SINGLE_SOAP_VERSION); 
+        }
 
         if (namespace.equals(Constants.URI_SOAP11_ENV)) {
             // SOAP 1.1
@@ -114,8 +124,19 @@ public class EnvelopeBuilder extends SOAPHandler
             // SOAP 1.2
             soapConstants = SOAPConstants.SOAP12_CONSTANTS;
         } else {
-            soapConstants = Constants.DEFAULT_SOAP_VERSION;
-
+            soapConstants = null;
+        }
+        
+        if ((soapConstants == null) ||
+                (singleVersion != null && soapConstants != singleVersion)) {
+            // Mismatch of some sort, either an unknown namespace or not
+            // the one we want.  Send back an appropriate fault.
+            
+            // Right now we only send back SOAP 1.1 faults for this case.  Do
+            // we want to send SOAP 1.2 faults back to SOAP 1.2 endpoints?
+            soapConstants = SOAPConstants.SOAP11_CONSTANTS;
+            if (singleVersion == null) singleVersion = soapConstants;
+            
             try {
                 AxisFault fault = new AxisFault(soapConstants.getVerMismatchFaultCodeQName(),
                     null, Messages.getMessage("versionMissmatch00"), null, null, null);
@@ -130,7 +151,7 @@ public class EnvelopeBuilder extends SOAPHandler
                                 MessageElement(soapConstants.getEnvelopeURI(),
                                                   Constants.ELEM_SUPPORTEDENVELOPE);
                 innerHeader.addAttribute(null, Constants.ATTR_QNAME,
-                    new QName(soapConstants.getEnvelopeURI(), Constants.ELEM_ENVELOPE));
+                    new QName(singleVersion.getEnvelopeURI(), Constants.ELEM_ENVELOPE));
 
                 newHeader.addChildElement(innerHeader);
                 fault.addHeader(newHeader);
