@@ -183,7 +183,7 @@ public class ForeachTask extends Task {
     }
 
     private void executeForkedAntTask() {
-        if (callee == null) {
+        /* if (callee2 == null) { */
             callee2 = (Java) getProject().createTask("java");
             callee2.setOwningTarget(getOwningTarget());
             callee2.setTaskName(getTaskName());
@@ -191,7 +191,7 @@ public class ForeachTask extends Task {
             callee2.setClassname("org.apache.tools.ant.Main");
             callee2.setAppend(true);
             callee2.setFork(true);
-        }
+        /* }                      */
         String systemClassPath = System.getProperty("java.class.path");
         callee2.setClasspath(new Path(getProject(), systemClassPath));
         String args = "-buildfile " + properties.get("file");
@@ -206,12 +206,12 @@ public class ForeachTask extends Task {
     }
 
     private void executeAntTask() {
-        if (callee == null) {
+        /* if (callee == null) { */
             callee = (Ant) getProject().createTask("ant");
             callee.setOwningTarget(getOwningTarget());
             callee.setTaskName(getTaskName());
             callee.init();
-        }
+        /* }                     */
 
         callee.setAntfile(getProject().getProperty("ant.file"));
         callee.setTarget(subTarget);
