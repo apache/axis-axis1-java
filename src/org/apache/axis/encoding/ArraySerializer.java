@@ -115,10 +115,6 @@ public class ArraySerializer extends Deserializer
             category.debug(JavaUtils.getMessage("enter00", "ArraySerializer.startElement()"));
         }
 
-        if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
-            return;
-        }
-
         QName arrayTypeValue = context.getQNameFromString(
                                   attributes.getValue(Constants.URI_SOAP_ENC,
                                                    Constants.ATTR_ARRAY_TYPE));
@@ -245,6 +241,16 @@ public class ArraySerializer extends Deserializer
                 curIndex = 
                        Integer.parseInt(pos.substring(leftBracketIndex + 1,
                                                       rightBracketIndex));
+            }
+
+            // If the xsi:nil attribute, set the value to null and return since
+            // there is nothing to deserialize.
+            String nil = null;
+            for (int i=0; i<Constants.URIS_SCHEMA_XSI.length && nil==null; i++)
+                nil = attributes.getValue(Constants.URIS_SCHEMA_XSI[i], "nil");
+            if (nil != null && nil.equals("true")) {
+              valueReady(null, new Integer(curIndex++));
+              return null;
             }
         }
         
