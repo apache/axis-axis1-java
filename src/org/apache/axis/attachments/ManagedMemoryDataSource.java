@@ -265,7 +265,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             0;
 
     /** The total size in bytes in this data source. */
-    protected int totalsz = 0;
+    protected long totalsz = 0;
 
     /** This is the cached disk stream. */
     protected java.io.BufferedOutputStream cachediskstream =
@@ -578,8 +578,8 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                 throw new java.io.IOException(
                         Messages.getMessage("streamClosed"));
             }
-
-            int ret = totalsz - bread;
+            // Will return neg. value when totalsz > 2Gb 
+            int ret = new Long(totalsz - bread).intValue();
 
             if (debugEnabled) {
                 is_log.debug("available() = " + ret + ".");
@@ -763,12 +763,14 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                 }
 
                 java.util.List ml = memorybuflist;
-
-                len = Math.min(
-                        len,
+                
+                long longlen = len;
+                longlen = Math.min(
+                        longlen,
                         totalsz
                         - bread);    // Only return the number of bytes in the data store that is left.
-
+                len = new Long(longlen).intValue();
+                
                 if (debugEnabled) {
                     is_log.debug("len = " + len);
                 }
