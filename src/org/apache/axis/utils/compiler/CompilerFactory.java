@@ -66,8 +66,9 @@ import org.apache.commons.logging.LogFactory;
  * @since 2.0
  */
 public class CompilerFactory {
-    static Log log =
-            LogFactory.getLog(CompilerFactory.class.getName());
+    protected static Log log =
+        LogFactory.getLog(CompilerFactory.class.getName());
+
         public static Compiler getCompiler()
         {
             String compilerClassName = System.getProperty("axis.Compiler");
@@ -80,7 +81,6 @@ public class CompilerFactory {
                 } catch (Exception e) {
                     // If something goes wrong here, should we just fall
                     // through and use the default one?
-                    e.printStackTrace(System.err);
                     log.error(e.getLocalizedMessage(),e);
                 }
             }

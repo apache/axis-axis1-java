@@ -71,6 +71,9 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.InternalException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.beans.IntrospectionException;
@@ -82,9 +85,13 @@ import java.beans.IntrospectionException;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class EnumSerializer extends SimpleSerializer implements Serializer {
+public class EnumSerializer extends SimpleSerializer implements Serializer
+{
+    protected static Log log =
+        LogFactory.getLog(EnumSerializer.class.getName());
 
     private java.lang.reflect.Method toStringMethod = null;
+
     public EnumSerializer(Class javaType, QName xmlType) {
         super(javaType, xmlType);
     }
@@ -107,7 +114,7 @@ public class EnumSerializer extends SimpleSerializer implements Serializer {
             String propValue = (String) toStringMethod.invoke(value, null);
             context.writeString(propValue);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception: transforming to IOException: ", e);
             throw new IOException(e.toString());
         }
         

@@ -92,10 +92,10 @@ import org.w3c.dom.Document;
  * Modified by @author Rich Scheuerle (scheu@us.ibm.com)
  */
 
-public class MapSerializer implements Serializer {
-
-    static Log log =
-            LogFactory.getLog(MapSerializer.class.getName());
+public class MapSerializer implements Serializer
+{
+    protected static Log log =
+        LogFactory.getLog(MapSerializer.class.getName());
 
     // QNames we deal with
     private static final QName QNAME_KEY = new QName("","key");

@@ -66,8 +66,8 @@ import java.util.Stack;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class NSStack {
-    static Log log =
-            LogFactory.getLog(NSStack.class.getName());
+    protected static Log log =
+        LogFactory.getLog(NSStack.class.getName());
     
     private static final ArrayList EMPTY = new ArrayList();
 
@@ -206,9 +206,9 @@ public class NSStack {
             return parent.getNamespaceURI(prefix);
 
         if (log.isDebugEnabled()){
-            log.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
-
-            dump();
+            log.debug("--" + JavaUtils.getMessage("noPrefix00", "" + this, prefix));
+            dump("--");
+            log.debug("--" + JavaUtils.getMessage("end00"));
         }
 
         return null;
@@ -234,29 +234,26 @@ public class NSStack {
         return false;
     }
     
-    public void dump()
+    public void dump(String dumpPrefix)
     {
         Enumeration e = stack.elements();
         while (e.hasMoreElements()) {
             ArrayList list = (ArrayList)e.nextElement();
-            log.debug("----");
 
             if (list == null) {
-                log.debug(JavaUtils.getMessage("nullTable00"));
+                log.debug(dumpPrefix + JavaUtils.getMessage("nullTable00"));
                 continue;
             }
 
             for (int i = 0; i < list.size(); i++) {
                 Mapping map = (Mapping)list.get(i);
-                log.debug(map.getNamespaceURI() + " -> " + map.getPrefix());
+                log.debug(dumpPrefix + map.getNamespaceURI() + " -> " + map.getPrefix());
             }
         }
 
         if (parent != null) {
-            log.debug("----" + JavaUtils.getMessage("parent00"));
-            parent.dump();
+            log.debug(dumpPrefix + "--" + JavaUtils.getMessage("parent00"));
+            parent.dump(dumpPrefix + "--");
         }
-
-        log.debug("----" + JavaUtils.getMessage("end00"));
     }
 }

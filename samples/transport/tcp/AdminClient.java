@@ -89,7 +89,7 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
 
         try {
             org.apache.axis.client.AdminClient client =
-                new org.apache.axis.client.AdminClient(System.err);
+                new org.apache.axis.client.AdminClient();
 
             System.out.println(client.process(args));
         }

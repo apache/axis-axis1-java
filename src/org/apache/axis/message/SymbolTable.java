@@ -68,8 +68,8 @@ import java.util.HashMap;
  */
 public class SymbolTable
 {
-    static Log log =
-            LogFactory.getLog(SymbolTable.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SymbolTable.class.getName());
 
     protected static final int TABLE_SIZE = 101;
     protected Entry[] fBuckets = new Entry[TABLE_SIZE];

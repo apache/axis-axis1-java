@@ -60,6 +60,10 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.utils.QFault;
 import org.apache.axis.utils.XMLUtils;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -78,6 +82,11 @@ import java.util.Vector;
  */
 
 public class AxisFault extends java.rmi.RemoteException {
+    protected static Log log =
+        LogFactory.getLog(AxisFault.class.getName());
+
+    private static final String LS = System.getProperty("line.separator");
+
     protected QFault    faultCode ;
     protected String    faultString = "";
     protected String    faultActor ;
@@ -207,31 +216,33 @@ public class AxisFault extends java.rmi.RemoteException {
         el =  XMLUtils.StringToElement(Constants.AXIS_NS, 
                                        "stackTrace", 
                                        stream.toString());
-        
-        
+
         faultDetails.add(el);
     }
     
-    public void dump() {
-        System.out.println(dumpToString());
+    public void dump()
+    {
+        log.debug(dumpToString());
     }
-    
+
     public String dumpToString()
     {
         String details = new String();
+
         if (faultDetails != null) {
             for (int i=0; i < faultDetails.size(); i++) {
                 Element e = (Element) faultDetails.get(i);
                 Text text = (Text)e.getFirstChild();
-                details += "\n\t" +  e.getLocalName() + ": " + text.getData();
+                details += LS + "\t" +  e.getLocalName() + ": " + text.getData();
             }
         }
         
-        return "AxisFault\n" +
-                "  faultCode: " + faultCode + "\n" +
-                "  faultString: " + faultString + "\n" +
-                "  faultActor: " + faultActor + "\n" +
-                "  faultDetail: " + details + "\n";
+        return "AxisFault" + LS
+            + " faultCode: " + faultCode + LS
+            + " faultString: " + faultString + LS
+            + " faultActor: " + faultActor + LS
+            + " faultDetail: " + details + LS
+            ;
     }
 
     public void setFaultCode(QFault code) {

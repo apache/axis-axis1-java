@@ -65,8 +65,10 @@ import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -79,8 +81,8 @@ import java.util.Vector;
 
 public class SOAPEnvelope extends MessageElement
 {
-    static Log log =
-            LogFactory.getLog(SOAPEnvelope.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SOAPEnvelope.class.getName());
     
     public Vector headers = new Vector();
     public Vector bodyElements = new Vector();
@@ -127,7 +129,7 @@ public class SOAPEnvelope extends MessageElement
             dser.parse();
         }
         catch( Exception e ) {
-            e.printStackTrace();
+            log.error("Exception: transforming to RuntimeException: ", e);
             throw new RuntimeException( e.toString() );
         }
     }

@@ -97,8 +97,8 @@ import java.util.Stack;
  */
 public class SerializationContextImpl implements SerializationContext
 {
-    static Log log =
-            LogFactory.getLog(SerializationContextImpl.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SerializationContextImpl.class.getName());
 
     private NSStack nsStack = new NSStack();
     private boolean writingStartTag = false;

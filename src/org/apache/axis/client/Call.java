@@ -134,8 +134,8 @@ import java.util.HashMap;
  */
 
 public class Call implements javax.xml.rpc.Call {
-    static Log log =
-            LogFactory.getLog(Call.class.getName());
+    protected static Log log =
+        LogFactory.getLog(Call.class.getName());
 
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
@@ -563,10 +563,10 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
         catch( Exception exp ) {
-            exp.printStackTrace();
+            log.error("Exception: ", exp);
             // do what?
             // throw new AxisFault("Call.setTargetEndpointAddress",
-                    //"Malformed URL Exception: " + e.getMessage(), null, null);
+            //"Malformed URL Exception: " + e.getMessage(), null, null);
         }
     }
 
@@ -1620,7 +1620,7 @@ public class Call implements javax.xml.rpc.Call {
                 reqEnv.output(ctx);
                 writer.close();
             } catch (Exception e) {
-                e.printStackTrace(new PrintWriter(writer));
+                log.debug("Exception caught while printing request message", e);
             } finally {
                 log.debug(writer.getBuffer().toString());
             }

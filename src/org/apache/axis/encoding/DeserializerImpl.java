@@ -86,7 +86,7 @@ import java.util.Vector;
 
 public class DeserializerImpl extends SOAPHandler implements Deserializer
 {
-    static Log log =
+    protected static Log log =
             LogFactory.getLog(DeserializerImpl.class.getName());
 
     protected Object value = null;

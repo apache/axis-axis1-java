@@ -74,8 +74,8 @@ import java.util.Hashtable;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class FaultableHandler extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(FaultableHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(FaultableHandler.class.getName());
 
     protected Handler    workHandler ;
 

@@ -71,8 +71,8 @@ import java.io.PrintWriter;
  */
 public class InternalException extends RuntimeException {
 
-    private static Log log =
-                LogFactory.getLog(InternalException.class.getName());
+    protected static Log log =
+        LogFactory.getLog(InternalException.class.getName());
 
     /**
      * Attribute which controls whether or not logging of such events should
@@ -115,17 +115,10 @@ public class InternalException extends RuntimeException {
         if (shouldLog) {
             // if the exception is merely bubbling up the stack, only log the
             // event if debug is turned on.
-            if (!(e instanceof InternalException)) {
-                log.fatal(e);
+            if (e instanceof InternalException) {
+                log.debug("InternalException: ", e);
             } else {
-                log.debug(e);
-            }
-
-            // if the debug is enabled, add a stack trace.
-            if (log.isDebugEnabled()) {
-                StringWriter writer = new StringWriter();
-                e.printStackTrace(new PrintWriter(writer));
-                log.debug(writer.getBuffer().toString());
+                log.fatal("Unknown Exception: ", e);
             }
         }
     }

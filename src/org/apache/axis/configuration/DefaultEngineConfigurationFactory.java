@@ -59,6 +59,9 @@ import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Constants;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -75,7 +78,11 @@ import java.io.InputStream;
  *
  * @author Glyn Normington (glyn@apache.org)
  */
-public class DefaultEngineConfigurationFactory implements EngineConfigurationFactory {
+public class DefaultEngineConfigurationFactory implements EngineConfigurationFactory
+{
+    protected static Log log =
+        LogFactory.getLog(DefaultEngineConfigurationFactory.class.getName());
+
     protected static final String CLIENT_CONFIG_FILE = "client-config.wsdd";
     protected static final String SERVER_CONFIG_FILE = "server-config.wsdd";
 
@@ -98,7 +105,7 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
                     forName(fClassName).newInstance();
             } catch (Exception e) {
                 // Report diagnostics but use the default factory.
-                e.printStackTrace(System.err);
+                log.error("Exception: ", e);
             }
         }
 

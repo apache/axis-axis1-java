@@ -79,8 +79,8 @@ import java.util.HashMap;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class ServletSecurityProvider implements SecurityProvider {
-    static Log log =
-            LogFactory.getLog(ServletSecurityProvider.class.getName());
+    protected static Log log =
+        LogFactory.getLog(ServletSecurityProvider.class.getName());
 
     static HashMap users = null;
 

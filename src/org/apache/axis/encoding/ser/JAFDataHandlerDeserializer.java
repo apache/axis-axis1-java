@@ -86,8 +86,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JAFDataHandlerDeserializer extends DeserializerImpl implements Deserializer  {
 
-    static Log log =
-            LogFactory.getLog(JAFDataHandlerDeserializer.class.getName());
+    protected static Log log =
+        LogFactory.getLog(JAFDataHandlerDeserializer.class.getName());
 
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,

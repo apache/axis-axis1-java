@@ -93,8 +93,8 @@ import java.beans.IntrospectionException;
  */
 public class SOAPService extends SimpleTargetedChain
 {
-    static Log log =
-            LogFactory.getLog(SOAPService.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SOAPService.class.getName());
 
     public static final int STYLE_RPC = 0;
     public static final int STYLE_DOCUMENT = 1;
@@ -125,8 +125,8 @@ public class SOAPService extends SimpleTargetedChain
 
         public void invoke(MessageContext msgContext) throws AxisFault {
             // Do SOAP semantics here
-            if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("semanticCheck00"));
+            if (this.log.isDebugEnabled()) {
+                this.log.debug( JavaUtils.getMessage("semanticCheck00"));
             }
 
             // This needs to be set to the merged list of service-specific and

@@ -76,8 +76,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class AxisClient extends AxisEngine {
-    static Log log =
-            LogFactory.getLog(AxisClient.class.getName());
+    protected static Log log =
+        LogFactory.getLog(AxisClient.class.getName());
 
     public AxisClient(EngineConfiguration config) {
         super(config);

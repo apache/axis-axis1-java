@@ -71,7 +71,7 @@ import java.lang.reflect.Field;
  */
 public class RPCParam
 {
-    static Log log =
+    protected static Log log =
         LogFactory.getLog(RPCParam.class.getName());
 
     // Who's your daddy?

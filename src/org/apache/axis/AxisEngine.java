@@ -89,8 +89,8 @@ import java.beans.IntrospectionException;
  */
 public abstract class AxisEngine extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(AxisEngine.class.getName());
+    protected static Log log =
+        LogFactory.getLog(AxisEngine.class.getName());
 
     // Engine property names
     public static final String PROP_XML_DECL = "sendXMLDeclaration";
@@ -221,8 +221,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             config.writeEngineConfig(this);
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("saveConfigFail00"));
-            e.printStackTrace();
+            log.error(JavaUtils.getMessage("saveConfigFail00"), e);
         }
     }
 

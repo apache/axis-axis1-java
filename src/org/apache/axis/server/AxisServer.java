@@ -76,8 +76,8 @@ import java.util.Map;
  */
 public class AxisServer extends AxisEngine
 {
-    static Log log =
-            LogFactory.getLog(AxisServer.class.getName());
+    protected static Log log =
+        LogFactory.getLog(AxisServer.class.getName());
 
     private static AxisServerFactory factory = null;
     
@@ -93,7 +93,7 @@ public class AxisServer extends AxisEngine
                 } catch (Exception e) {
                     // If something goes wrong here, should we just fall
                     // through and use the default one?
-                    e.printStackTrace(System.err);
+                    log.error("Exception: ", e);
                 }
             }
             

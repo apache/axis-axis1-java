@@ -78,9 +78,10 @@ import java.util.Vector;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class RPCProvider extends JavaProvider {
-    static Log log =
-            LogFactory.getLog(RPCProvider.class.getName());
+public class RPCProvider extends JavaProvider
+{
+    protected static Log log =
+        LogFactory.getLog(RPCProvider.class.getName());
 
     public void processMessage (MessageContext msgContext,
                                 String serviceName,

@@ -66,8 +66,8 @@ import java.io.IOException;
 
 public class SAXOutputter extends DefaultHandler
 {
-    static Log log =
-            LogFactory.getLog(SAXOutputter.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SAXOutputter.class.getName());
     
     SerializationContext context;
     

@@ -61,10 +61,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Vector;
+
 import org.apache.axis.encoding.Target;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 // Target is a field.  The set method places the value in the field.
-public class FieldTarget implements Target {
+public class FieldTarget implements Target
+{
+    protected static Log log =
+        LogFactory.getLog(FieldTarget.class.getName());
+
     private Object targetObject;
     private Field targetField;
     
@@ -86,10 +94,12 @@ public class FieldTarget implements Target {
         try {
             targetField.set(targetObject, value);
         } catch (IllegalAccessException accEx) {
-            accEx.printStackTrace();
+            log.error("IllegalAccessException: transforming to SAXException: ",
+                      accEx);
             throw new SAXException(accEx);
         } catch (IllegalArgumentException argEx) {
-            argEx.printStackTrace();
+            log.error("IllegalArgumentException: transforming to SAXException: ",
+                      argEx);
             throw new SAXException(argEx);
         }
     }

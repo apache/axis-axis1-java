@@ -98,8 +98,8 @@ import java.util.Vector;
  */
 public class Admin
 {
-    static Log log =
-            LogFactory.getLog(Admin.class.getName());
+    protected static Log log =
+        LogFactory.getLog(Admin.class.getName());
 
     /**
      * Fill in options for a given handler.
@@ -391,7 +391,7 @@ public class Admin
             root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
         }
         catch( Exception e ) {
-            e.printStackTrace();
+            log.error(JavaUtils.getMessage("exception00"), e);
             throw AxisFault.makeFault(e);
         }
         return doc;
@@ -798,14 +798,12 @@ public class Admin
                 admin.process(msgContext, doc.getDocumentElement());
             }
         }
-        catch( AxisFault e ) {
-            e.dump();
-            //System.exit(1);
-            throw e;
+        catch( AxisFault af ) {
+            log.error( af.dumpToString() );
+            throw af;
         }
         catch( Exception e ) {
-            log.error( JavaUtils.getMessage("errorProcess00", args[i]) );
-            e.printStackTrace( System.err );
+            log.error( JavaUtils.getMessage("errorProcess00", args[i]), e );
             //System.exit( 1 );
             throw e;
         }

@@ -57,11 +57,17 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 public class InputStreamBody extends SOAPBodyElement
 {
+    protected static Log log =
+        LogFactory.getLog(InputStreamBody.class.getName());
+
     protected InputStream inputStream;
     
     public InputStreamBody(InputStream inputStream)
@@ -81,7 +87,7 @@ public class InputStreamBody extends SOAPBodyElement
             throw ex;
         }
         catch( Exception e ) {
-            e.printStackTrace( System.err );
+            log.error("outputImpl: caught Exception: ", e);
         }        
     }
 }

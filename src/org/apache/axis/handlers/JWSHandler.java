@@ -73,8 +73,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JWSHandler extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(JWSHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(JWSHandler.class.getName());
 
     // Keep the processor Handler around so we can make it the service
     // Handler for this request if appropriate.

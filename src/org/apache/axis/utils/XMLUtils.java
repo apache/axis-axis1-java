@@ -56,8 +56,10 @@
 package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -85,6 +87,9 @@ import java.util.Hashtable;
 import java.util.Stack;
 
 public class XMLUtils {
+    protected static Log log =
+        LogFactory.getLog(XMLUtils.class.getName());
+
     private static DocumentBuilderFactory dbf = initDOMFactory();
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
@@ -169,7 +174,7 @@ public class XMLUtils {
             dbf.setNamespaceAware(true);
         }
         catch( Exception e ) {
-            e.printStackTrace();
+            log.error(JavaUtils.getMessage("exception00"), e );
         }
         return( dbf );
     }
@@ -186,11 +191,11 @@ public class XMLUtils {
                 return (SAXParser)saxParsers.pop();
             }
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            log.error(JavaUtils.getMessage("parserConfigurationException00"), e);
             return null;
         } catch (SAXException se) {
-              se.printStackTrace();
-              return null;
+            log.error(JavaUtils.getMessage("SAXException00"), se);
+            return null;
         }
     }
 
@@ -216,7 +221,7 @@ public class XMLUtils {
             return( db.parse( inp ) );
         }
         catch( Exception e ) {
-            e.printStackTrace();
+            log.error(JavaUtils.getMessage("exception00"), e);
         }
         return( null );
     }
@@ -446,9 +451,10 @@ public class XMLUtils {
     return strBuf.toString();
   }
     
-    public static class ParserErrorHandler implements ErrorHandler {
-        static Log log =
-                LogFactory.getLog(ParserErrorHandler.class.getName());
+    public static class ParserErrorHandler implements ErrorHandler
+    {
+        protected static Log log =
+            LogFactory.getLog(ParserErrorHandler.class.getName());
         /**
          * Returns a string describing parse exception details
          */

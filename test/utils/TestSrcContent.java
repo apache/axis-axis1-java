@@ -48,7 +48,7 @@ public class TestSrcContent extends TestCase {
         return new TestSuite(TestSrcContent.class);
     }
 
-    private final String LS = System.getProperty("line.separator");
+    private static final String LS = System.getProperty("line.separator");
 
     private String errors = "";
 
@@ -150,9 +150,7 @@ public class TestSrcContent extends TestCase {
             //
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
-                                       + "(?!AxisFault\\.java"
-                                       + "|client\\1AdminClient\\.java"
-                                       + "|utils\\1tcpmon\\.java"
+                                       + "(?!utils\\1tcpmon\\.java"
                                        + "|providers\\1BSFProvider\\.java"
                                        + "|Version\\.java"
                                        + "|wsdl\\1)"

@@ -93,8 +93,8 @@ import java.io.File;
  * @author Jacek Kopecky (jacek@idoox.com)
  */
 public class MessageContext {
-    static Log log =
-            LogFactory.getLog(MessageContext.class.getName());
+    protected static Log log =
+        LogFactory.getLog(MessageContext.class.getName());
 
     /**
      * The request message.  If we're on the client, this is the outgoing

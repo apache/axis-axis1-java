@@ -78,8 +78,8 @@ import java.util.Hashtable;
  * @author Doug Davis (dug@us.ibm.com
  */
 public abstract class BasicHandler implements Handler {
-    static Log log =
-            LogFactory.getLog(BasicHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(BasicHandler.class.getName());
 
     protected Hashtable  options ;
     protected String name;

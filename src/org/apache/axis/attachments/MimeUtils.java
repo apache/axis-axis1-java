@@ -77,8 +77,8 @@ import javax.activation.*;
 
 public class MimeUtils
 {
-    static Log log =
-            LogFactory.getLog(MimeUtils.class.getName());
+    protected static Log log =
+        LogFactory.getLog(MimeUtils.class.getName());
 
     /**
     * Determine as efficiently as possible the content length for attachments in a mail Multipart.
@@ -201,11 +201,9 @@ public class MimeUtils
         }
         catch (javax.mail.MessagingException e) {
             log.error("javax.mail.MessagingException: ", e);
-            e.printStackTrace();
         }
         catch (java.io.IOException e) {
             log.error("java.io.IOException: ", e);
-            e.printStackTrace();
         }
     }
     /**
@@ -284,7 +282,6 @@ public class MimeUtils
         }
         catch (javax.mail.MessagingException e) {
             log.error("javax.mail.MessagingException: ", e);
-            e.printStackTrace();
         }
         return multipart ;
     }
@@ -305,7 +302,6 @@ public class MimeUtils
             } 
             catch (java.net.UnknownHostException e) {
                 log.error("java.net.UknownHostException: ", e);
-                e.printStackTrace();
 
                 thisHost = "localhost";
             }

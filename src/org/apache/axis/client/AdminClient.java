@@ -60,6 +60,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,10 +76,7 @@ import java.util.Vector;
 
 /**
  * An admin client object that can be used both from the command line
- * and programmatically. The admin client supports simple logging that
- * allows the output of its operations to be inspected in environments
- * where <code>System.out</code> and <code>System.err</code> should
- * not be used.
+ * and programmatically.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
@@ -87,8 +85,8 @@ import java.util.Vector;
 
 public class AdminClient
 {
-    static Log log =
-            LogFactory.getLog(AdminClient.class.getName());
+    protected static Log log =
+        LogFactory.getLog(AdminClient.class.getName());
 
     private static ThreadLocal defaultConfiguration = new ThreadLocal();
 
@@ -105,7 +103,6 @@ public class AdminClient
         defaultConfiguration.set(config);
     }
 
-    protected PrintWriter _log;
     protected Call call;
 
     /**
@@ -133,36 +130,6 @@ public class AdminClient
     }
 
     /**
-     * Construct an admin client with a logger
-     */
-    public AdminClient(PrintWriter log)
-    {
-        this();
-        _log = log;
-    }
-
-    /**
-     * Construct an admin client with a logger
-     */
-    public AdminClient(OutputStream out)
-    {
-        this();
-        _log = new PrintWriter(out);
-    }
-
-    /**
-     * Logs a message if a logger has been provided
-     */
-    protected void log(String msg) throws IOException
-    {
-        if (_log != null)
-        {
-            _log.println(msg);
-            _log.flush();
-        }
-    }
-
-    /**
      * External access to our Call object
      */
     public Call getCall()
@@ -176,7 +143,7 @@ public class AdminClient
     }
 
     public String list() throws Exception { 
-        log( JavaUtils.getMessage("doList00") );
+        log.debug( JavaUtils.getMessage("doList00") );
         String               str   = "<m:list xmlns:m=\"AdminService\"/>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
@@ -188,14 +155,14 @@ public class AdminClient
     }
 
     public String quit() throws Exception { 
-        log(JavaUtils.getMessage("doQuit00"));
+        log.debug(JavaUtils.getMessage("doQuit00"));
         String               str   = "<m:quit xmlns:m=\"AdminService\"/>";
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
     public String undeployHandler(String handlerName) throws Exception { 
-        log(JavaUtils.getMessage("doQuit00"));
+        log.debug(JavaUtils.getMessage("doQuit00"));
         String               str   = "<m:undeploy xmlns:m=\"AdminService\">" +
                                      "<handler name=\"" + handlerName + "\"/>"+
                                      "</m:undeploy>" ;
@@ -204,7 +171,7 @@ public class AdminClient
     }
 
     public String undeployService(String serviceName) throws Exception { 
-        log(JavaUtils.getMessage("doQuit00"));
+        log.debug(JavaUtils.getMessage("doQuit00"));
         String               str   = "<m:undeploy xmlns:m=\"AdminService\">" +
                                      "<service name=\"" + serviceName + "\"/>"+
                                      "</m:undeploy>" ;
@@ -257,7 +224,7 @@ public class AdminClient
         args = opts.getRemainingArgs();
 
         if ( args == null ) {
-            log(JavaUtils.getMessage("usage00","AdminClient xml-files | list"));
+            log.info(JavaUtils.getMessage("usage00","AdminClient xml-files | list"));
             return null;
         }
 
@@ -269,9 +236,9 @@ public class AdminClient
             else if (args[i].equals("quit")) 
               sb.append( quit(opts) );
             else if (args[i].equals("passwd")) {
-                log(JavaUtils.getMessage("changePwd00"));
+                log.info(JavaUtils.getMessage("changePwd00"));
                 if (args[i + 1] == null) {
-                    log(JavaUtils.getMessage("needPwd00"));
+                    log.error(JavaUtils.getMessage("needPwd00"));
                     return null;
                 }
                 String str = "<m:passwd xmlns:m=\"AdminService\">";
@@ -283,7 +250,7 @@ public class AdminClient
             }
             else {
                 if(args[i].indexOf(java.io.File.pathSeparatorChar)==-1){
-                    log( JavaUtils.getMessage("processFile00", args[i]) );
+                    log.info( JavaUtils.getMessage("processFile00", args[i]) );
                     sb.append( process(opts, args[i] ) );
                 } else {
                     java.util.StringTokenizer tokenizer = null ;
@@ -291,7 +258,7 @@ public class AdminClient
                                                  java.io.File.pathSeparator);
                     while(tokenizer.hasMoreTokens()) {
                         String file = tokenizer.nextToken();
-                        log( JavaUtils.getMessage("processFile00", file) );
+                        log.info( JavaUtils.getMessage("processFile00", file) );
                         sb.append( process(opts, file) );
                         if(tokenizer.hasMoreTokens())
                             sb.append("\n");
@@ -361,24 +328,24 @@ public class AdminClient
     /**
      * Creates in instance of <code>AdminClient</code> and
      * invokes <code>process(args)</code>.
-     * <p>Diagnostic output goes to <code>System.out</code>.</p>
+     * <p>Diagnostic output goes to <code>log.info</code>.</p>
      * @param args Commands to process
      */
     public static void main (String[] args)
     {
         try {
-            AdminClient admin = new AdminClient(System.err);
+            AdminClient admin = new AdminClient();
+
             String result = admin.process(args);
             if (result != null)
-                System.out.println(result);
+                log.info(result);
             else
                 System.exit(1);
+        } catch (AxisFault af) {
+            log.error(af.dumpToString());
+            System.exit(1);
         } catch (Exception e) {
-            if (e instanceof AxisFault) {
-                ((AxisFault)e).dump();
-            } else {
-                e.printStackTrace();
-            }
+            log.error("Exception: ", e);
             System.exit(1);
         }
     }

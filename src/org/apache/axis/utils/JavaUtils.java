@@ -79,8 +79,8 @@ import org.apache.axis.encoding.Hex;
  */
 public class JavaUtils
 {
-    static Log log =
-            LogFactory.getLog(JavaUtils.class.getName());
+    protected static Log log =
+        LogFactory.getLog(JavaUtils.class.getName());
 
     /**
      * It the argument to the convert(...) method implements

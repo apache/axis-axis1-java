@@ -67,8 +67,8 @@ import org.apache.axis.encoding.Target;
  * Class which knows how to update a bean property
  */
 class BeanPropertyTarget implements Target {
-    static Log log =
-            LogFactory.getLog(BeanPropertyTarget.class.getName());
+    protected static Log log =
+        LogFactory.getLog(BeanPropertyTarget.class.getName());
 
     private Object object;
     private BeanPropertyDescriptor pd;

@@ -61,6 +61,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,8 +86,10 @@ import java.io.*;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class SOAPPart extends Part {
-    static Log log = LogFactory.getLog(Message.class.getName());
+public class SOAPPart extends Part
+{
+    protected static Log log =
+        LogFactory.getLog(SOAPPart.class.getName());
 
     private static final int FORM_STRING       = 1;
     private static final int FORM_INPUTSTREAM  = 2;
@@ -266,7 +269,7 @@ public class SOAPPart extends Part {
                 return (byte[])currentMessage;
             }
             catch( Exception e ) {
-                e.printStackTrace( System.err );
+                log.error(JavaUtils.getMessage("exception00"), e);
             }
             log.debug( "Exit: SOAPPart::getAsByes" );
             return null;
@@ -336,7 +339,7 @@ public class SOAPPart extends Part {
             try {
                 env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(JavaUtils.getMessage("exception00"), e);
                 return null;
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);

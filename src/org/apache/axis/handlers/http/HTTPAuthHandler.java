@@ -73,8 +73,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class HTTPAuthHandler extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(HTTPAuthHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(HTTPAuthHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {

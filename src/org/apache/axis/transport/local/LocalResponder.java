@@ -69,8 +69,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class LocalResponder extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(LocalResponder.class.getName());
+    protected static Log log =
+        LogFactory.getLog(LocalResponder.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {

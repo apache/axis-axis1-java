@@ -86,8 +86,8 @@ public class WSDDDeployment
     extends WSDDElement
     implements WSDDTypeMappingContainer, EngineConfiguration
 {
-    static Log log =
-            LogFactory.getLog(WSDDDeployment.class.getName());
+    protected static Log log =
+        LogFactory.getLog(WSDDDeployment.class.getName());
 
     private HashMap handlers = new HashMap();
     private HashMap services = new HashMap();

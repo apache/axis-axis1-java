@@ -91,8 +91,8 @@ import java.util.HashMap;
  */
 public class TypeMappingImpl implements TypeMapping
 {
-    static Log log =
-            LogFactory.getLog(TypeMappingImpl.class.getName());
+    protected static Log log =
+        LogFactory.getLog(TypeMappingImpl.class.getName());
 
     public class Pair {
         public Class javaType;

@@ -70,6 +70,7 @@ import org.w3c.dom.Element;
  */
 public class Transport extends SimpleTargetedChain
 {
-    static Log log = LogFactory.getLog(Transport.class.getName());
+    protected static Log log =
+        LogFactory.getLog(Transport.class.getName());
 
 }

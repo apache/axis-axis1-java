@@ -77,9 +77,9 @@ import java.util.StringTokenizer;
  * @since 2.0
  */
 
-public class Jikes extends AbstractCompiler {
-
-    static Log log =
+public class Jikes extends AbstractCompiler
+{
+    protected static Log log =
             LogFactory.getLog(Jikes.class.getName());
     
     static final int OUTPUT_BUFFER_SIZE = 1024;

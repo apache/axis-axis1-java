@@ -93,8 +93,9 @@ import java.util.HashMap;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  * @author Tom Jordahl <tomj@macromedia.com>
  */
-public class BeanDeserializer extends DeserializerImpl implements Deserializer, Serializable  {
-    static Log log =
+public class BeanDeserializer extends DeserializerImpl implements Deserializer, Serializable
+{
+    protected static Log log =
         LogFactory.getLog(BeanDeserializer.class.getName());
 
     QName xmlType;
