@@ -244,7 +244,7 @@ public class TestDeser extends TestCase {
                        "<item xsi:type=\"xsd:string\">abc</item>" +
                        "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
-                    v);
+                    v, true);
     }
     
     public void testSparseArray1() throws Exception {
@@ -259,7 +259,7 @@ public class TestDeser extends TestCase {
                        "<item xsi:type=\"xsd:string\">abc</item>" +
                        "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
-                    list);
+                    list, true);
     }
     
     public void testSparseArray2() throws Exception {
@@ -273,7 +273,7 @@ public class TestDeser extends TestCase {
       "<item soapenc:position=\"[0]\" xsi:type=\"xsd:string\">abc</item>" +
       "<item soapenc:position=\"[2]\" xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
-                    list);
+                    list, true);
     }
 
     public void testArrayWithNilInt() throws Exception {
@@ -287,7 +287,7 @@ public class TestDeser extends TestCase {
                        "<item xsi:nil=\"true\"/>" +
                        "<item xsi:type=\"xsd:int\">3</item>" +
                     "</result>",
-                    list);
+                    list, true);
     }
     
     public void testArrayWithNilString() throws Exception {
@@ -301,7 +301,7 @@ public class TestDeser extends TestCase {
                        "<item xsi:nil=\"true\"/>" +
                        "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
-                    list);
+                    list, true);
     }
     
     public void testMap() throws Exception {

@@ -96,7 +96,8 @@ import java.beans.IntrospectionException;
  * Multi-reference stuff:
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class ArrayDeserializer extends DeserializerImpl implements Deserializer  {
+public class ArrayDeserializer extends DeserializerImpl 
+    implements Deserializer  {
 
     static Category category =
             Category.getInstance(ArrayDeserializer.class.getName());
@@ -107,19 +108,19 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
     int length;
     Class arrayClass = null;
     ArrayList mDimLength = null;  // If set, array of multi-dim lengths 
-    ArrayList mDimFactor = null;  // If set, array of factors for multi-dim arrays
+    ArrayList mDimFactor = null;  // If set, array of factors for multi-dim []
     HashSet waiting = new HashSet();  // List of indices waiting for completion
 
 
     /**
      * This method is invoked after startElement when the element requires
-     * deserialization (i.e. the element is not an href and the value is not nil.)
+     * deserialization (i.e. the element is not an href & the value is not nil)
      * DeserializerImpl provides default behavior, which simply
      * involves obtaining a correct Deserializer and plugging its handler.
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
      * @param qName is the prefixed qname of the element
-     * @param attributes are the attributes on the element...used to get the type
+     * @param attributes are the attrs on the element...used to get the type
      * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
@@ -154,7 +155,8 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
         // default xsi:type value is used.
 
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "ArrayDeserializer.startElement()"));
+            category.debug(JavaUtils.getMessage(
+               "enter00", "ArrayDeserializer.startElement()"));
         }
 
         // Get the qname for the array type=, set it to null if
@@ -163,9 +165,9 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                                                         localName,
                                                         attributes);
         if (typeQName != null && 
-            Constants.isSOAP_ENC(typeQName.getNamespaceURI()) &&
-            typeQName.getLocalPart().equals("Array"))
+            Constants.equals(Constants.SOAP_ARRAY, typeQName)) {
             typeQName = null;
+        }
 
         // Now get the arrayType value 
         QName arrayTypeValue = context.getQNameFromString(
@@ -173,20 +175,28 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                                          Constants.URI_CURRENT_SOAP_ENC,
                                          Constants.ATTR_ARRAY_TYPE));
 
-        // The first part of the arrayType expression is the default item type qname.
+        // The first part of the arrayType expression is 
+        // the default item type qname.
         // The second part is the dimension information
         String dimString = null;
+        QName innerQName = null;
+        String innerDimString = "";
         if (arrayTypeValue != null) {
-            String arrayTypeValueNamespaceURI = arrayTypeValue.getNamespaceURI();
-            String arrayTypeValueLocalPart = arrayTypeValue.getLocalPart();
-            int leftBracketIndex = arrayTypeValueLocalPart.lastIndexOf('[');
-            int rightBracketIndex = arrayTypeValueLocalPart.lastIndexOf(']');
+            String arrayTypeValueNamespaceURI = 
+                arrayTypeValue.getNamespaceURI();
+            String arrayTypeValueLocalPart = 
+                arrayTypeValue.getLocalPart();
+            int leftBracketIndex = 
+                arrayTypeValueLocalPart.lastIndexOf('[');
+            int rightBracketIndex = 
+                arrayTypeValueLocalPart.lastIndexOf(']');
             if (leftBracketIndex == -1
                 || rightBracketIndex == -1
                 || rightBracketIndex < leftBracketIndex)
                 {
                     throw new IllegalArgumentException(
-                      JavaUtils.getMessage("badArrayType00", "" + arrayTypeValue));
+                      JavaUtils.getMessage("badArrayType00", 
+                                           "" + arrayTypeValue));
                 }
             
             dimString = 
@@ -197,7 +207,14 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
             
             // If multi-dim array set to soapenc:Array
             if (arrayTypeValueLocalPart.endsWith("]")) {
-                defaultItemType = new QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
+                defaultItemType = 
+                    new QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
+                innerQName = new QName(
+                    arrayTypeValueNamespaceURI,
+                    arrayTypeValueLocalPart.substring(0,
+                        arrayTypeValueLocalPart.indexOf("["))); 
+                innerDimString = arrayTypeValueLocalPart.substring(
+                    arrayTypeValueLocalPart.indexOf("["));
             } else {
                 defaultItemType = new QName(arrayTypeValueNamespaceURI,
                                             arrayTypeValueLocalPart);
@@ -205,9 +222,10 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
         }
 
         // If no type QName and no defaultItemType qname, use xsd:anyType
-        if (defaultItemType == null && typeQName == null)
-            defaultItemType = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "anyType");
-        
+        if (defaultItemType == null && typeQName == null) {
+            defaultItemType = 
+                new QName(Constants.URI_CURRENT_SCHEMA_XSD, "anyType");
+        }
         
         // Determine the class type for the array.
         arrayClass = null;
@@ -215,19 +233,31 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
             arrayClass = context.getTypeMapping().
                 getClassForQName(typeQName);
         } else {
-            Class arrayItemClass = context.getTypeMapping().
-                getClassForQName(defaultItemType);
+            // type= information is not sufficient.
+            // Get an array of the default item type.
+            Class arrayItemClass = null;
+            QName compQName = defaultItemType;
+            String dims = "[]";
+            // Nested array, use the innermost qname
+            if (innerQName != null) {
+                compQName = innerQName;
+                dims += innerDimString;                
+            }
+            arrayItemClass = context.getTypeMapping().
+                getClassForQName(compQName);
             if (arrayItemClass != null) {
                 try {
                     ClassLoader cl = 
-                            context.getMessageContext().getClassLoader();
+                        context.getMessageContext().getClassLoader();
                     arrayClass = Class.forName(
                       JavaUtils.getLoadableClassName(
-                         JavaUtils.getTextClassName(arrayItemClass.getName()) + "[]"),
-                         true, cl);   
+                        JavaUtils.getTextClassName(arrayItemClass.getName()) +
+                        dims),
+                      true, cl);   
                 } catch (Exception e) {
                     throw new SAXException(
-                       JavaUtils.getMessage("noComponent00",  "" + defaultItemType));
+                       JavaUtils.getMessage("noComponent00",  
+                                            "" + defaultItemType));
                 }
             }
         }
@@ -244,21 +274,25 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
         else {
             try
             {
-                StringTokenizer tokenizer = new StringTokenizer(dimString, "[],");
+                StringTokenizer tokenizer = new StringTokenizer(dimString,
+                                                                "[],");
 
                 length = Integer.parseInt(tokenizer.nextToken());
 
                 if (tokenizer.hasMoreTokens())
                     {
                         // If the array is passed as a multi-dimensional array
-                        // (i.e. int[2][3]) then store all of the mult-dim lengths.
+                        // (i.e. int[2][3]) then store all of the 
+                        // mult-dim lengths.
                         // The valueReady method uses this array to set the
                         // proper mult-dim element.
                         mDimLength = new ArrayList();
                         mDimLength.add(new Integer(length));
                         
                         while(tokenizer.hasMoreTokens()) {
-                            mDimLength.add(new Integer(Integer.parseInt(tokenizer.nextToken())));
+                            mDimLength.add(
+                                new Integer(
+                                    Integer.parseInt(tokenizer.nextToken())));
                         }
                     }
 
@@ -295,12 +329,16 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                         JavaUtils.getMessage("badOffset00", offset));
             }
 
-            curIndex = convertToIndex(offset.substring(leftBracketIndex + 1,rightBracketIndex),
-                                      "badOffset00");
+            curIndex = 
+                convertToIndex(offset.substring(leftBracketIndex + 1,
+                                                rightBracketIndex),
+                               "badOffset00");
         }
         
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "ArrayDeserializer.startElement()"));
+            category.debug(
+                JavaUtils.getMessage("exit00",
+                                     "ArrayDeserializer.startElement()"));
         }
     }
     
@@ -324,10 +362,13 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "ArrayDeserializer.onStartChild()"));
+            category.debug(
+                JavaUtils.getMessage("enter00", 
+                                     "ArrayDeserializer.onStartChild()"));
         }
 
-        // If the position attribute is set, use it to update the current index
+        // If the position attribute is set, 
+        // use it to update the current index
         if (attributes != null) {
             String pos =
                 Constants.getValue(attributes,
@@ -345,12 +386,14 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                             JavaUtils.getMessage("badPosition00", pos));
                 }
                 
-                curIndex = convertToIndex(pos.substring(leftBracketIndex + 1,rightBracketIndex),
-                                          "badPosition00");
+                curIndex = 
+                    convertToIndex(pos.substring(leftBracketIndex + 1,
+                                                 rightBracketIndex),
+                                   "badPosition00");
             }
 
-            // If the xsi:nil attribute, set the value to null and return since
-            // there is nothing to deserialize.
+            // If the xsi:nil attribute, set the value to null 
+            // and return since there is nothing to deserialize.
             if (context.isNil(attributes)) {
                 setValue(null, new Integer(curIndex++));
                 return null;
@@ -388,13 +431,16 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
 
         // Register the callback value target, and
         // keep track of this index so we know when it has been set.
-        dSer.registerValueTarget(new DeserializerTarget(this, new Integer(curIndex)));
+        dSer.registerValueTarget(
+            new DeserializerTarget(this, new Integer(curIndex)));
         waiting.add(new Integer(curIndex));
 
         curIndex++;
         
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "ArrayDeserializer.onStartChild()"));
+            category.debug(
+                JavaUtils.getMessage("exit00", 
+                                     "ArrayDeserializer.onStartChild()"));
         }
         return (SOAPHandler) dSer;
     }
@@ -424,8 +470,10 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
     public void setValue(Object value, Object hint) throws SAXException
     { 
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("gotValue00", "ArrayDeserializer", "[" + hint +
-                               "] = " + value));
+            category.debug(
+                JavaUtils.getMessage("gotValue00", 
+                                     "ArrayDeserializer", "[" + hint +
+                                     "] = " + value));
         }
         ArrayList list = (ArrayList)this.value;
         int offset = ((Integer)hint).intValue();
@@ -465,21 +513,30 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
             }
         }
         // If all indices are accounted for, the array is complete.
-        // Try converting the value (probably an ArrayListExtension)
-        // into the expected array.
-        // valueComplete is invoked to inform all referents that the
-        // value of the array is ready.
         waiting.remove(hint);
         if (isEnded && waiting.size()==0) {
-            try {
-                if (arrayClass != null) {
-                    value = JavaUtils.convert(value, arrayClass);
-                }
-            } catch (Exception e) {}
             valueComplete();
         }
     }
-    
+
+    /**
+     * When valueComplete() is invoked on the array, 
+     * first convert the array value into the expected array.
+     * Then call super.valueComplete() to inform referents
+     * that the array value is ready.
+     **/
+    public void valueComplete() throws SAXException
+    { 
+        if (componentsReady()) {
+           try {
+                if (arrayClass != null) {
+                    value = JavaUtils.convert(value, arrayClass);
+                } 
+           } catch (Exception e) {}
+        }     
+         super.valueComplete();
+    }
+
     /**
      * Converts the given string to an index.
      * Assumes the string consists of a brackets surrounding comma 
@@ -492,15 +549,18 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
      * @param exceptKey exception message key
      * @return index 
      */
-    private int convertToIndex(String text, String exceptKey) throws SAXException {
+    private int convertToIndex(String text, String exceptKey)
+        throws SAXException {
         StringTokenizer tokenizer = new StringTokenizer(text, "[],");
         int index = 0;
         try {
             if (mDimLength == null) {
                 // Normal Case: Single dimension
                 index = Integer.parseInt(tokenizer.nextToken());
-                if (tokenizer.hasMoreTokens())
-                    throw new SAXException(JavaUtils.getMessage(exceptKey, text));
+                if (tokenizer.hasMoreTokens()) {
+                    throw new SAXException(
+                        JavaUtils.getMessage(exceptKey, text));
+                }
             }
             else {
                 // Multiple Dimensions: 
@@ -510,17 +570,20 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                     // Problem if the number of dimensions specified exceeds
                     // the number of dimensions of arrayType
                     dim++;
-                    if (dim >= mDimLength.size())
-                        throw new SAXException(JavaUtils.getMessage(exceptKey, text));
-
+                    if (dim >= mDimLength.size()) {
+                        throw new SAXException(
+                            JavaUtils.getMessage(exceptKey, text));
+                    }
                     // Get the next token and convert to integer
                     int workIndex = Integer.parseInt(tokenizer.nextToken());
 
                     // Problem if the index is out of range.                     
                     if (workIndex < 0 || 
-                        workIndex >= ((Integer)mDimLength.get(dim)).intValue())
-                        throw new SAXException(JavaUtils.getMessage(exceptKey, text));
-                    
+                        workIndex >= 
+                            ((Integer)mDimLength.get(dim)).intValue()) {
+                        throw new SAXException(
+                            JavaUtils.getMessage(exceptKey, text));
+                    }
                     work.add(new Integer(workIndex));
                 }
                 index = toSingleIndex(work); // Convert to single index
@@ -586,7 +649,8 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
 
         int single = 0;
         for (int i=0; i < indexArray.size(); i++) {
-            single += ((Integer)mDimFactor.get(i)).intValue()*((Integer)indexArray.get(i)).intValue();
+            single += ((Integer)mDimFactor.get(i)).intValue()*
+                ((Integer)indexArray.get(i)).intValue();
         }
         return single;
     }
@@ -598,7 +662,8 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
      * converted array values.  This class is essential to support
      * arrays that are multi-referenced.
      **/
-    public class ArrayListExtension extends ArrayList implements JavaUtils.ConvertCache {
+    public class ArrayListExtension extends ArrayList 
+        implements JavaUtils.ConvertCache {
         private HashMap table = null;
         private Class arrayClass = null;  // The array class.
         /**
@@ -607,20 +672,24 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
         ArrayListExtension(Class arrayClass) {
             super();
             this.arrayClass = arrayClass;
-            // Don't use the array class as a hint if it can't be instantiated
+            // Don't use the array class as a hint 
+            // if it can't be instantiated
             if (arrayClass == null ||
                 arrayClass.isInterface() ||
-                java.lang.reflect.Modifier.isAbstract(arrayClass.getModifiers())) {
+                java.lang.reflect.Modifier.isAbstract(
+                    arrayClass.getModifiers())) {
                 arrayClass = null;
             }                
         }
         ArrayListExtension(Class arrayClass, int length) {
             super(length);
             this.arrayClass = arrayClass;
-            // Don't use the array class as a hint if it can't be instantiated
+            // Don't use the array class as a hint 
+            // if it can't be instantiated
             if (arrayClass == null ||
                 arrayClass.isInterface() ||
-                java.lang.reflect.Modifier.isAbstract(arrayClass.getModifiers())) {
+                java.lang.reflect.Modifier.isAbstract(
+                    arrayClass.getModifiers())) {
                 arrayClass = null;
             } 
         }

@@ -196,7 +196,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new Base64DeserializerFactory(byte[].class,
                                            Constants.XSD_BASE64),true);
 
-
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
         myRegister(Constants.XSD_STRING,     java.lang.String.class, 
                    null, null, true); 
