@@ -595,11 +595,9 @@ public class SerializationContextImpl implements SerializationContext
      * The attributes are additional attribute to be serialized on the element.
      * The value is the object being serialized.  (It may be serialized
      * directly or serialized as an mult-ref'd item)
-     * The value is an Object, which may be a wrapped primitive, the
-     * javaType is the actual unwrapped object type.
+     * The value is an Object, which may be a wrapped primitive.
      * The xmlType (if specified) is the QName of the type that is used to set
-     * xsi:type.  If not specified, xsi:type is set by using the javaType to
-     * find an appopriate xmlType from the TypeMappingRegistry.
+     * xsi:type.
      * The sendNull flag indicates whether null values should be sent over the
      * wire (default is to send such values with xsi:nil="true").
      * The sendType flag indicates whether the xsi:type flag should be sent

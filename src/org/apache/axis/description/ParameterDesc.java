@@ -125,12 +125,20 @@ public class ParameterDesc implements Serializable {
     }
 
     public String toString() {
-        return "name:  " + name
-                + "\ntypeEntry:  " + typeEntry
-                + "\nmode:  " + (mode == IN ? "IN" : mode == INOUT ? "INOUT" : "OUT:  " + "position:" + order)
-                + "\nisReturn:" + isReturn
-                + "\ntypeQName:  " + typeQName
-                + "\njavaType:  " + javaType;
+        return toString("");
+    }
+    public String toString(String indent) {
+        String text="";
+        text+=indent + "name:       " + name + "\n";
+        text+=indent + "typeEntry:  " + typeEntry + "\n";
+        text+=indent + "mode:       " + (mode == IN ? 
+                                         "IN" : mode == INOUT ? 
+                                         "INOUT" : "OUT:  " 
+                                         + "position:" + order) + "\n";
+        text+=indent + "isReturn:   " + isReturn + "\n";
+        text+=indent + "typeQName:  " + typeQName+ "\n";
+        text+=indent + "javaType:   " + javaType+ "\n";
+        return text;
     } // toString
     
     /**
