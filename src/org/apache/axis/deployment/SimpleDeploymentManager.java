@@ -237,7 +237,7 @@ public class SimpleDeploymentManager
             return item.getInstance(this);
         }
         catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e.toString());
         }
     }
 
