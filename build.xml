@@ -58,6 +58,8 @@ Copyright:
        (and without typing -D each time it compiles it) -->
   <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
+  
+  <property name="axis.version" value="alpha 3"/>
 
   <property name="name" value="axis"/>
   <property name="Name" value="Axis"/>
@@ -218,6 +220,15 @@ Copyright:
           toDir="${build.dest}"/>
     <copy file="${src.dir}/org/apache/axis/utils/resources.properties"
           toDir="${build.dest}/org/apache/axis/utils"/>
+
+    <tstamp>
+      <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)"/>
+    </tstamp>
+    <replace file="${build.dest}/org/apache/axis/utils/resources.properties"
+             token="#today#" value="${build.time}"/>
+    <replace file="${build.dest}/org/apache/axis/utils/resources.properties"
+             token="#axisVersion#" value="${axis.version}"/>
+  
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
       <include name="javax/**"/>
