@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
 
 <definitions name="urn:AddressFetcher"
-             targetNamespace="multithread.wsdl.test"
-             xmlns:tns="multithread.wsdl.test"
-             xmlns:typens="multithread.wsdl.test"
+             targetNamespace="urn:multithread.wsdl.test"
+             xmlns:tns="urn:multithread.wsdl.test"
+             xmlns:typens="urn:multithread.wsdl.test"
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
   <types>
-    <xsd:schema targetNamespace="multithread.wsdl.test"
+    <xsd:schema targetNamespace="urn:multithread.wsdl.test"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
 
       <xsd:simpleType name="stateType">

@@ -90,8 +90,8 @@
                noimports="no"
                verbose="no"
                testcase="no">
-        <mapping namespace="ref.types.test" package="test.wsdl.refattr"/>
-        <mapping namespace="ref.types" package="test.wsdl.refattr"/>
+        <mapping namespace="urn:ref.types.test" package="test.wsdl.refattr"/>
+        <mapping namespace="urn:ref.types" package="test.wsdl.refattr"/>
     </wsdl2java>
 
     <!-- Sequence Test -->
