@@ -53,8 +53,7 @@ public class TestRPC extends TestCase {
      * @param request XML body of the request
      * @return Deserialized result
      */
-    private final Object rpc(String method, Object[] parms,
-                             boolean setService)
+    private final Object rpc(String method, Object[] parms)
         throws AxisFault
     {
 
@@ -65,11 +64,7 @@ public class TestRPC extends TestCase {
 
         // Set the dispatch either by SOAPAction or methodNS
         String methodNS = null;
-        if (setService) {
-            msgContext.setTargetService(SOAPAction);
-        } else {
-            methodNS = SOAPAction;
-        }
+        msgContext.setTargetService(SOAPAction);
 
         // Construct the soap request
         SOAPEnvelope envelope = new SOAPEnvelope();
@@ -99,7 +94,7 @@ public class TestRPC extends TestCase {
         // Extract the list of parameters from the body
         Vector arglist = body.getParams();
         assertNotNull("arglist", arglist);
-        assert("param.size()>0", arglist.size()>0);
+        if (arglist.size()==0) return null;
 
         // Return the first parameter
         RPCParam param = (RPCParam) arglist.get(0);
@@ -117,21 +112,8 @@ public class TestRPC extends TestCase {
         sr.add(SOAPAction, reverse);
 
         // invoke the service and verify the result
-        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}, true));
+        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}));
     }
-
-    /*
-    public void testReverseBodyDispatch() throws Exception {
-        // Register the reverseString service
-        SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
-        reverse.addOption("className", "test.RPCDispatch.Service");
-        reverse.addOption("methodName", "reverseString");
-        sr.add(SOAPAction, reverse);
-
-        // invoke the service and verify the result
-        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}, false));
-    }
-    */
 
     /**
      * Test a method that reverses a data structure
@@ -146,21 +128,35 @@ public class TestRPC extends TestCase {
         // invoke the service and verify the result
         Data input    = new Data(5, "abc", 3);
         Data expected = new Data(3, "cba", 5);
-        assertEquals(expected, rpc("reverseData", new Object[] {input}, true));
+        assertEquals(expected, rpc("reverseData", new Object[] {input}));
     }
 
     /**
      * Test a simple method that returns a field from the message context
      */
     public void testMessageContext() throws Exception {
-        // Register the reverseString service
-        SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
-        reverse.addOption("className", "test.RPCDispatch.Service");
-        reverse.addOption("methodName", "targetService");
-        sr.add(SOAPAction, reverse);
+        // Register the targetService service
+        SOAPService tgtSvc = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        tgtSvc.addOption("className", "test.RPCDispatch.Service");
+        tgtSvc.addOption("methodName", "targetService");
+        sr.add(SOAPAction, tgtSvc);
 
         // invoke the service and verify the result
-        assertEquals(SOAPAction, rpc("targetService", new Object[] {}, true));
+        assertEquals(SOAPAction, rpc("targetService", new Object[] {}));
+    }
+
+    /**
+     * Test a simple method that accepts and returns a null
+     */
+    public void testNull() throws Exception {
+        // Register the echoInt service
+        SOAPService echoInt = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        echoInt.addOption("className", "test.RPCDispatch.Service");
+        echoInt.addOption("methodName", "echoInt");
+        sr.add(SOAPAction, echoInt);
+
+        // invoke the service and verify the result
+        assertNull(rpc("echoInt", new Object[] {null}));
     }
     
     public static void main(String args[])

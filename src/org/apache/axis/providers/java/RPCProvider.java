@@ -183,19 +183,24 @@ public class RPCProvider extends JavaProvider {
               objRes = method.invoke( obj, argValues );
             } catch (IllegalArgumentException e) {
               
-              // Hm - maybe we can help this with a conversion or two...
-              for (int i = 0; i < params.length; i++) {
-                Object thisArg = argValues[i];
-                if (!params[i].isAssignableFrom(thisArg.getClass())) {
-                  // Attempt conversion for each non-assignable argument
-                  Object newArg = JavaUtils.convert(thisArg, params[i]);
-                  if (newArg != thisArg)
-                    argValues[i] = newArg;
+              if (argValues == null || argValues.length != params.length) {
+                // Sorry, you are on your own...
+                throw e;
+              } else {
+                // Hm - maybe we can help this with a conversion or two...
+                for (int i = 0; i < params.length; i++) {
+                  Object thisArg = argValues[i];
+                  if (!params[i].isAssignableFrom(thisArg.getClass())) {
+                    // Attempt conversion for each non-assignable argument
+                    Object newArg = JavaUtils.convert(thisArg, params[i]);
+                    if (newArg != thisArg)
+                      argValues[i] = newArg;
+                  }
                 }
+                
+                // OK, now try again...
+                objRes = method.invoke( obj, argValues );
               }
-              
-              // OK, now try again...
-              objRes = method.invoke( obj, argValues );
             }
 
             /* Now put the result in the result SOAPEnvelope */

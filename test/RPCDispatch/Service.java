@@ -33,4 +33,11 @@ public class Service {
     public String targetService(MessageContext mc) throws Exception {
        return mc.getTargetService();
     }
+
+    /**
+     * Return the value passed (including nulls!)
+     */
+    public Integer echoInt(Integer value) throws Exception {
+       return value;
+    }
 }
