@@ -62,6 +62,7 @@ import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -70,7 +71,9 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.Base64;
- 
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+
 /**
  * Serializer for Base64
  *
@@ -87,7 +90,7 @@ public class Base64Serializer implements Serializer {
         this.javaType = javaType;
     }
 
-    /** 
+    /**
      * Serialize a base64 quantity.
      */
     public void serialize(QName name, Attributes attributes,
@@ -105,11 +108,24 @@ public class Base64Serializer implements Serializer {
                     data[i] = b.byteValue();
             }
         }
-        
+
         context.startElement(name, attributes);
         context.writeString(Base64.encode(data, 0, data.length));
         context.endElement();
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
+    }
 }

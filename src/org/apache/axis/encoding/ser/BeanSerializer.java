@@ -70,17 +70,24 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.InternalException;
+import org.apache.axis.wsdl.fromJava.ClassRep;
+import org.apache.axis.wsdl.fromJava.FieldRep;
+import org.apache.axis.wsdl.fromJava.Types;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.beans.IntrospectionException;
 import org.apache.log4j.Category;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ObjectStreamField;
 import java.io.Serializable;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
@@ -147,15 +154,15 @@ public class BeanSerializer implements Serializer, Serializable {
         try {
             // Serialize each property
             for (int i=0; i<pd.length; i++) {
-                String propName = pd[i].getName();                
+                String propName = pd[i].getName();
                 if (propName.equals("class")) continue;
                 propName = format(propName, elementPropertyFormat);
-                
+
                 Method readMethod = pd[i].getReadMethod();
                 if (readMethod.getParameterTypes().length == 0) {
                     // Normal case: serialize the value
                     Object propValue = pd[i].getReadMethod().invoke(value,noArgs);
-                    context.serialize(new QName("", propName), null, 
+                    context.serialize(new QName("", propName), null,
                                       propValue,
                                       pd[i].getReadMethod().getReturnType());
                 } else {
@@ -171,7 +178,7 @@ public class BeanSerializer implements Serializer, Serializable {
                             j = -1;
                         }
                         if (j >= 0) {
-                            context.serialize(new QName("", propName), null, 
+                            context.serialize(new QName("", propName), null,
                                               propValue,
                                               pd[i].getReadMethod().getReturnType());
                         }
@@ -203,13 +210,13 @@ public class BeanSerializer implements Serializer, Serializable {
         return pd;
     }
 
-    /** 
+    /**
      * Get the format of the elements for the properties
      */
     public short getElementPropertyFormat() {
         return elementPropertyFormat;
     }
-    /** 
+    /**
      * Set the format of the elements for the properties
      */
     public void setElementPropertyFormat(short format) {
@@ -222,7 +229,7 @@ public class BeanSerializer implements Serializer, Serializable {
      * Returns the property name string formatted in the specified manner
      * @param name to format
      * @param fmt (PROPERTY_NAME, FORCE_LOWER, FORCE_UPPER)
-     * @return formatted name 
+     * @return formatted name
      */
     static String format(String name, short fmt) {
         if (fmt == PROPERTY_NAME)
@@ -237,4 +244,19 @@ public class BeanSerializer implements Serializer, Serializable {
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        types.writeBeanClassType(types.getWsdlQName(xmlType), javaType);
+        return true;
+    }
+
 }
