@@ -221,18 +221,18 @@ Copyright:
 
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
       testTarget="junit-functional"
-      stopTarget="stop-functional-test-http-server" />
+      httpStopTarget="stop-functional-test-http-server" />
 
     <!-- now run security test -->
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server-secure"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server-secure"
       testTarget="junit-functional-secure"
-      stopTarget="stop-functional-test-http-server-secure" />
+      httpStopTarget="stop-functional-test-http-server-secure" />
 
   </target>
 
@@ -243,10 +243,10 @@ Copyright:
 
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
       testTarget="junit-functional-secure"
-      stopTarget="stop-functional-test-http-server-secure" />
+      httpStopTarget="stop-functional-test-http-server-secure" />
 
   </target>
 
@@ -256,10 +256,10 @@ Copyright:
   <target name="simple-tests" depends="setenv" if="junit.present" >
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
       testTarget="printEnv"
-      stopTarget="stop-functional-test-http-server" />
+      httpStopTarget="stop-functional-test-http-server" />
   </target>
 
   <!-- =================================================================== -->
@@ -300,10 +300,10 @@ Copyright:
   <target name="batchTest" depends="transport-layer">
     <runaxisfunctionaltests
       url="http://localhost:${test.functional.TCPListenerPort}"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
       testTarget="batch-junit-functional"
-      stopTarget="stop-functional-test-http-server" />
+      httpStopTarget="stop-functional-test-http-server" />
 
     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test/functional" antfile="build.xml" target="run"/>
    </target>

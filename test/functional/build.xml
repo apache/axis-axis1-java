@@ -63,16 +63,16 @@ Copyright:
 </target>
 
 <target name="junit-functional-prepare" if="junit.present">
-   <mkdir dir="${axis.home}/${test.functional.reportdir}" />
+   <mkdir dir="${test.functional.reportdir}" />
    <path id="deploy.xml.files">
        <fileset dir="${build.dir}">
-          <include name="work/**/deploy.wsdd"/>
+          <include name="work/samples/**/deploy.wsdd"/>
        </fileset>
    </path>
 
    <path id="undeploy.xml.files">
        <fileset dir="${build.dir}">
-          <include name="work/**/undeploy.wsdd"/>
+          <include name="work/samples/**/undeploy.wsdd"/>
        </fileset>
    </path>
 
@@ -100,16 +100,15 @@ Copyright:
       <classpath refid="classpath" />
       <arg line="${undeploy.xml.property}"/>
     </java>
-
 </target>
 
 <target name="run"  depends="setenv" >
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
       testTarget="junit-functional"
-      stopTarget="stop-functional-test-http-server" />
+      httpStopTarget="stop-functional-test-http-server" />
 </target>
 
 </project>

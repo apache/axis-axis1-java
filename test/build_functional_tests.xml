@@ -297,18 +297,18 @@ Copyright:
     <!-- This pattern taken from Cactus, http://jakarta.apache.org/commons/cactus -->
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
       testTarget="junit-functional"
-      stopTarget="stop-functional-test-http-server" />
+      httpStopTarget="stop-functional-test-http-server" />
 
     <!-- now run security test -->
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
-      testTarget="junit-functional-secure"
-      stopTarget="stop-functional-test-http-server-secure" />
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
+      testTarget="junit-functional"
+      httpStopTarget="stop-functional-test-http-server" />
 
     <delete file="GetQuote.wsdl"/>
   </target>
@@ -322,10 +322,10 @@ Copyright:
     <!-- This pattern taken from Cactus, http://jakarta.apache.org/commons/cactus -->
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
-      testTarget="junit-functional-tests-only"
-      stopTarget="stop-functional-test-http-server" />
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
+      testTarget="junit-functional"
+      httpStopTarget="stop-functional-test-http-server" />
   </target>
 
   <!-- =================================================================== -->
@@ -335,10 +335,10 @@ Copyright:
 
     <runaxisfunctionaltests
       url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
-      testTarget="junit-functional-secure"
-      stopTarget="stop-functional-test-http-server-secure" />
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
+      testTarget="junit-functional"
+      httpStopTarget="stop-functional-test-http-server" />
   </target>
 
   <!-- =================================================================== -->

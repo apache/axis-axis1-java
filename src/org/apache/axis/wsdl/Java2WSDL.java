@@ -100,6 +100,7 @@ public class Java2WSDL {
     protected static final int SOAPACTION_OPT = 'A';
     protected static final int STYLE_OPT = 'y';
     protected static final int USE_OPT = 'u';
+    protected static final int EXTRA_CLASSES_OPT = 'e';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -202,7 +203,11 @@ public class Java2WSDL {
         new CLOptionDescriptor("use",   
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 USE_OPT,
-                Messages.getMessage("j2woptUse00"))
+                Messages.getMessage("j2woptUse00")),
+        new CLOptionDescriptor("extraClasses",
+             CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
+             EXTRA_CLASSES_OPT, 
+             Messages.getMessage("j2woptExtraClasses00"))
         
     };
 
@@ -386,18 +391,24 @@ public class Java2WSDL {
                     emitter.setStyle(value);
                 } else {
                     System.out.println(Messages.getMessage("j2woptBadStyle00"));                }
-            break;
+                break;
         case USE_OPT:
                 value = option.getArgument();
                 if (value.equalsIgnoreCase("LITERAL") ||
-                    value.equalsIgnoreCase("ENCODED")) {
+                        value.equalsIgnoreCase("ENCODED")) {
                     emitter.setUse(value);
                 } else {
                     System.out.println(Messages.getMessage("j2woptBadUse00"));
                 }
-            break;
-
-                
+                break;
+        case EXTRA_CLASSES_OPT:
+                try {
+                    emitter.setExtraClasses(option.getArgument());
+                } catch (ClassNotFoundException e) {
+                    System.out.println(Messages.getMessage("j2woptBadClass00", e.toString()));
+                }
+                break;
+            
         default: 
             break;
         }
