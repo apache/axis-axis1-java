@@ -168,9 +168,10 @@ public class Admin
     /**
      * Process a given XML document - needs cleanup.
      */
-    public Element[] AdminService(MessageContext msgContext, Vector xml)
+    public Element[] AdminService(Vector xml)
         throws Exception
     {
+        MessageContext msgContext = MessageContext.getCurrentContext();
         log.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
         Document doc = process( msgContext, (Element) xml.get(0) );
         Element[] result = new Element[1];

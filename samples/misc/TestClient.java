@@ -84,7 +84,7 @@ public class TestClient {
      * Send a hardcoded message to the server, and print the response.
      *
      * @param args the command line arguments (mainly for specifying URL)
-     * @param service an optional service argument, which will be used for
+     * @param op an optional service argument, which will be used for
      * specifying the transport-level service
      */
     public static String doTest (String args[], String op) throws Exception {
