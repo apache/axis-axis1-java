@@ -252,18 +252,26 @@ public class TestSerializedRPC extends TestCase {
                      expected,
                      rpc("overloaded", arg, true));
     }
+    
+    public void testEncodedArrayConversion() throws Exception {
+        String arg = "<arg0>a simple string</arg0>";
+        AxisFault fault = (AxisFault)rpc("arrayMethod", arg, true);
+        assertTrue("Erroneous conversion occurred!",
+                !fault.getFaultString().equals("You shouldn't have called me!"));
+    }
 
     public static void main(String args[]) {
-      try {
-        TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");
-        tester.testSerReverseString();
-        tester.testSerReverseData();
-        tester.testReverseDataWithUntypedParam();
-        tester.testArgAsDOM();
-        tester.testOverloadedMethodDispatch();
-          tester.testOutOfOrderParams();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+        try {
+            TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");
+            tester.testEncodedArrayConversion();
+            tester.testSerReverseString();
+            tester.testSerReverseData();
+            tester.testReverseDataWithUntypedParam();
+            tester.testArgAsDOM();
+            tester.testOverloadedMethodDispatch();
+            tester.testOutOfOrderParams();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

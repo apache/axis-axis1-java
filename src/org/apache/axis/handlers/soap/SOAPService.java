@@ -161,6 +161,8 @@ public class SOAPService extends SimpleTargetedChain
         }
         return acts;
     }
+    
+    
 
     /**
      * SOAPResponseHandler is used to inject SOAP semantics just before
@@ -245,7 +247,6 @@ public class SOAPService extends SimpleTargetedChain
         initHashtable();
 
         // For now, always assume we're the ultimate destination.
-        // TODO : Handle SOAP 1.2 ultimateDestination actor as well
         actors.add("");
     }
 
@@ -271,7 +272,7 @@ public class SOAPService extends SimpleTargetedChain
     {
         init(null, null, serviceHandler, new SOAPResponseHandler(), null);
     }
-
+    
     /** Tell this service which engine it's deployed to.
      *
      */
@@ -475,6 +476,7 @@ public class SOAPService extends SimpleTargetedChain
         if (handlerImpl != null) {
             result = handlerImpl.handleRequest(msgContext);
         }
+        
         if (result) {
             super.invoke(msgContext);
         } else {

@@ -59,6 +59,8 @@ package org.apache.axis.wsdl.fromJava;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
+import org.apache.axis.enum.Style;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
@@ -119,6 +121,7 @@ public class Types {
     HashMap wrapperMap = new HashMap();
     List stopClasses = null;
     List beanCompatErrs = new ArrayList();
+    ServiceDesc serviceDesc = null;
 
     /**
      * This class serailizes a <code>Class</code> to XML Schema. The constructor
@@ -134,8 +137,10 @@ public class Types {
                  TypeMapping defaultTM,
                  Namespaces namespaces,
                  String targetNamespace,
-                 List stopClasses) {
+                 List stopClasses,
+                 ServiceDesc serviceDesc) {
         this.def = def;
+        this.serviceDesc = serviceDesc;
         createDocumentFragment();
         this.tm = tm;
         this.defaultTM = defaultTM;
@@ -671,11 +676,13 @@ public class Types {
             schemaElem.setAttribute("xmlns", Constants.URI_DEFAULT_SCHEMA_XSD);
             schemaElem.setAttribute("targetNamespace", namespaceURI);
 
-            // Add SOAP-ENC namespace import
-            Element importElem = docHolder.createElement("import");
-            schemaElem.appendChild(importElem);
-            importElem.setAttribute("namespace", Constants.URI_DEFAULT_SOAP_ENC);
-
+            // Add SOAP-ENC namespace import if necessary
+            if (serviceDesc.getStyle() == Style.RPC) {
+                Element importElem = docHolder.createElement("import");
+                schemaElem.appendChild(importElem);
+                importElem.setAttribute("namespace", Constants.URI_DEFAULT_SOAP_ENC);
+            }
+            
             writeTypeNamespace(qName);
         }
         schemaElem.appendChild(element);
