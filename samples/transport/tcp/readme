@@ -1,4 +1,4 @@
-To run the echo sample, you must do the following:
+To run the encoding samples, you must do the following:
 1.  Set up your CLASSPATH.
 2.  Start a server.
 3.  Deploy the service.
@@ -16,11 +16,8 @@ To run the echo sample, you must do the following:
 
 3.  Deploy the service.
     To deploy the service, run:
-        java org.apache.axis.client.AdminClient deploy.wsdd 
+        java samples.transport.tcp.AdminClient deploy.wsdd 
 
 4.  Run the sample.
     Finally, to run the client, run:
-        java samples.echo.TestClient
-
-InteropTest.wsdl is the WSDL file that was used to create the implementation
-template that became InteropTestSoapBindingImpl.java.
+	java samples.transport.tcp.GetQuote XXX
