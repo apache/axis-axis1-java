@@ -53,68 +53,66 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding;
+package test.functional;
 
-import org.apache.axis.utils.JavaUtils;
+import junit.framework.TestCase;
+import org.apache.axis.AxisFault;
+import org.apache.axis.client.AdminClient;
+import org.apache.log4j.Category;
+import samples.encoding.testElement;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Element;
-
-import org.apache.axis.message.MessageElement ;
-import org.apache.axis.message.SOAPHandler ;
-
-import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-import java.util.ArrayList;
-
-/**
- * Serializer for DOM elements
- *
- * @author Glen Daniels (gdaniels@macromedia.com)
+/** Test the ElementService sample code.
  */
-public class ElementSerializer extends Deserializer implements Serializer {
-    /** 
-     * Serialize a DOM Element
-     */
-    public void serialize(QName name, Attributes attributes,
-                          Object value, SerializationContext context)
-        throws IOException
-    {
-        if (!(value instanceof Element))
-            throw new IOException(JavaUtils.getMessage("cantSerialize01"));
+public class TestElementSample extends TestCase {
+    static Category category =
+            Category.getInstance(TestElementSample.class.getName());
 
-        context.startElement(name, attributes);
-        context.writeDOMElement((Element)value);
-        context.endElement();
+    public TestElementSample(String name) {
+        super(name);
+    }
+    
+    public void doTestElement () throws Exception {
+        String[] args = {};
+        String   xml = "<x:hello xmlns:x=\"urn:foo\">a string</x:hello>";
+        System.out.println("Sending : " + xml );
+        String res = new testElement().doit(args, xml);
+        System.out.println("Received: " + res );
+        assertEquals("TestElementSample.doit(): xml must match", res, xml);
+    }
+    
+    public void doTestDeploy () throws Exception {
+        String[] args = { "samples/encoding/deploy.wsdd" };
+        AdminClient.main(args);
+    }
+    
+    public void doTestUndeploy () throws Exception {
+        String[] args = { "samples/encoding/undeploy.wsdd" };
+        AdminClient.main(args);
     }
 
-    // Our static deserializer factory
-    public static class Factory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {
-            return new ElementSerializer();
-        }
+    public static void main(String args[]) throws Exception {
+        TestElementSample tester = new TestElementSample("tester");
+        tester.testElementService();
     }
-    public static DeserializerFactory factory = new Factory();
 
-    public final void onEndElement(String namespace, String localName,
-                           DeserializationContext context)
-                               throws SAXException
-    {
+    public void testElementService () throws Exception {
         try {
-            MessageElement msgElem = context.getCurElement();
-            if ( msgElem != null ) {
-                ArrayList children = msgElem.getChildren();
-                if ( children != null ) {
-                    msgElem = (MessageElement) children.get(0);
-                    if ( msgElem != null )
-                        value = msgElem.getAsDOM();
-                }
-            }
+            category.info("Testing element sample.");
+            category.info("Testing deployment...");
+            doTestDeploy();
+            category.info("Testing service...");
+            doTestElement();
+            category.info("Testing undeployment...");
+            doTestUndeploy();
+            category.info("Test complete.");
         }
-        catch( Exception exp ) {
-            exp.printStackTrace();
-            throw new SAXException( exp );
+        catch( Exception e ) {
+            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+            e.printStackTrace();
+            throw new Exception("Fault returned from test: "+e);
         }
     }
+    
 }
+
+
