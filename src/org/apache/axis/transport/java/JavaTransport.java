@@ -74,8 +74,8 @@ public class JavaTransport extends Transport
     
     /**
      * Set up any transport-specific derived properties in the message context.
-     * @param context the context to set up
-     * @param message the client service instance
+     * @param mc the context to set up
+     * @param call the Call object
      * @param engine the engine containing the registries
      */
     public void setupMessageContextImpl(MessageContext mc,

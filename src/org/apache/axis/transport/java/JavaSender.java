@@ -57,20 +57,16 @@ package org.apache.axis.transport.java;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
-import org.apache.axis.Handler;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider ;
 import org.apache.axis.providers.java.MsgProvider ;
-import org.apache.axis.providers.java.JavaProvider ;
 import org.apache.axis.client.Call ;
 import org.apache.axis.enum.Scope ;
 import org.apache.axis.description.OperationDesc ;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
-import java.net.URL;
 
 public class JavaSender extends BasicHandler {
     protected static Log log =
@@ -91,7 +87,7 @@ public class JavaSender extends BasicHandler {
   
         msgContext.setService( null );
         msgContext.setOperation( null );
-  
+
         if ( msgContext.getProperty(msgContext.IS_MSG) == null ) 
           service   = new SOAPService(new RPCProvider());
         else
