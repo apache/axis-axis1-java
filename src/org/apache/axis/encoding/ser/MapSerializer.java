@@ -56,6 +56,8 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
@@ -64,6 +66,7 @@ import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -86,6 +89,7 @@ public class MapSerializer implements Serializer
 
     // QNames we deal with
     private static final QName QNAME_KEY = new QName("","key");
+    private static final QName QNAME_ITEMS = new QName("", "items");
     private static final QName QNAME_ITEM = new QName("", "item");
     private static final QName QNAME_VALUE = new QName("", "value");
 
@@ -111,6 +115,16 @@ public class MapSerializer implements Serializer
         Map map = (Map)value;
 
         context.startElement(name, attributes);
+        
+        AttributesImpl itemsAttributes = new AttributesImpl();
+        String encodingURI = context.getMessageContext().getSOAPConstants().getEncodingURI();
+        String encodingPrefix = context.getPrefixForURI(encodingURI);
+        String soapPrefix = context.getPrefixForURI(Constants.SOAP_MAP.getNamespaceURI());
+        itemsAttributes.addAttribute(encodingURI, "type", encodingPrefix + ":type",
+                                   "CDATA", encodingPrefix + ":Array");        
+        itemsAttributes.addAttribute(encodingURI, "arrayType", encodingPrefix + ":arrayType",
+                                   "CDATA", soapPrefix + ":item["+map.size()+"]");        
+        context.startElement(QNAME_ITEMS, itemsAttributes);
 
         for (Iterator i = map.entrySet().iterator(); i.hasNext(); )
         {
@@ -126,6 +140,7 @@ public class MapSerializer implements Serializer
             context.endElement();
         }
 
+        context.endElement();
         context.endElement();
     }
 
@@ -145,32 +160,43 @@ public class MapSerializer implements Serializer
     public Element writeSchema(Class javaType, Types types) throws Exception {
         Element complexType = types.createElement("complexType");
         complexType.setAttribute("name", "Map");
-        types.writeSchemaElement(Constants.SOAP_MAP, complexType);
         Element seq = types.createElement("sequence");
         complexType.appendChild(seq);
-
         Element element = types.createElement("element");
-        element.setAttribute("name", "item");
-        element.setAttribute("minOccurs", "0");
-        element.setAttribute("maxOccurs", "unbounded");
+        element.setAttribute("name", "items");
+        element.setAttribute("nillable", "true");
+        element.setAttribute("type", types.getQNameString(new QName(Constants.NS_URI_XMLSOAP,"ArrayOfitem")));
         seq.appendChild(element);
+        types.writeSchemaElement(Constants.SOAP_MAP, complexType);
+    
+        Element arrayType = types.createElement("complexType");
+        arrayType.setAttribute("name", "ArrayOfitem");
+        Element complexContent = types.createElement("complexContent");
+        arrayType.appendChild(complexContent);
+        Element restriction = types.createElement("restriction");
+        restriction.setAttribute("base", "soapenc:Array");
+        complexContent.appendChild(restriction);
+        Element attribute = types.createElement("attribute");
+        attribute.setAttribute("ref","soapenc:arrayType");
+        attribute.setAttribute("wsdl:arrayType",types.getQNameString(new QName(Constants.NS_URI_XMLSOAP,"item[]")));
+        restriction.appendChild(attribute);
+        types.writeSchemaElement(Constants.SOAP_MAP, arrayType);
 
-        Element subType = types.createElement("complexType");
-        element.appendChild(subType);
-
-        Element all = types.createElement("all");
-        subType.appendChild(all);
-
-        Element key = types.createElement("element");
-        key.setAttribute("name", "key");
-        key.setAttribute("type", "xsd:anyType");
-        all.appendChild(key);
-
-        Element value = types.createElement("element");
-        value.setAttribute("name", "value");
-        value.setAttribute("type", "xsd:anyType");
-        all.appendChild(value);
-
+        Element itemType = types.createElement("complexType");
+        itemType.setAttribute("name", "item");
+        Element seq2 = types.createElement("sequence");
+        itemType.appendChild(seq2);
+        Element element2 = types.createElement("element");
+        element2.setAttribute("name", "key");
+        element2.setAttribute("nillable", "true");
+        element2.setAttribute("type", "xsd:string");
+        seq2.appendChild(element2);
+        Element element3 = types.createElement("element");
+        element3.setAttribute("name", "value");
+        element3.setAttribute("nillable", "true");
+        element3.setAttribute("type", "xsd:string");
+        seq2.appendChild(element3);
+        types.writeSchemaElement(Constants.SOAP_MAP, itemType);
         return complexType;
     }
 }

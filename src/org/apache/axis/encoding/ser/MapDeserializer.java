@@ -143,16 +143,20 @@ public class MapDeserializer extends DeserializerImpl {
             log.debug("Enter: MapDeserializer::onStartChild()");
         }
 
-        ItemHandler handler = new ItemHandler(this);
-        
-        // This item must be complete before we're complete...
-        addChildDeserializer(handler);
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: MapDeserializer::onStartChild()");
+        if(localName.equals("item")) {
+            ItemHandler handler = new ItemHandler(this);
+            
+            // This item must be complete before we're complete...
+            addChildDeserializer(handler);
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: MapDeserializer::onStartChild()");
+            }
+    
+            return handler;
         }
-
-        return handler;
+        
+        return this;
     }
     
     /**
