@@ -365,7 +365,7 @@ public class Call implements javax.xml.rpc.Call {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(OPERATION_STYLE_PROPERTY)) {
-                return ServiceDesc.getStringFromStyle(operationStyle);
+                return ServiceDesc.getStringFromStyle(getOperationStyle());
             }
             else if (name.equals(SOAPACTION_USE_PROPERTY)) {
                 return new Boolean(useSOAPAction());
@@ -515,10 +515,9 @@ public class Call implements javax.xml.rpc.Call {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
-        if (namespaceURI == null)
-            namespaceURI = "";
-
-        encodingStyle = namespaceURI;
+        encodingStyle = (namespaceURI == null)
+                        ? ""
+                        : namespaceURI;
     }
 
     /**
@@ -1851,8 +1850,8 @@ public class Call implements javax.xml.rpc.Call {
 
         msgContext.setOperation(operation);
 
-        operation.setStyle(operationStyle);
-        msgContext.setOperationStyle(operationStyle);
+        operation.setStyle(getOperationStyle());
+        msgContext.setOperationStyle(getOperationStyle());
 
         if (useSOAPAction) {
             msgContext.setUseSOAPAction(true);
