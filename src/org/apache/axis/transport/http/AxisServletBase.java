@@ -347,7 +347,7 @@ public class AxisServletBase extends HttpServlet {
      * extract the base of our webapp from an inbound request
      *
      * @param request request containing http://foobar/axis/services/something
-     * @return http://foobar/axis/services/
+     * @return some URL like http://foobar:8080/axis/
      */
     protected String getWebappBase(HttpServletRequest request) {
         StringBuffer baseURL=new StringBuffer(128);
