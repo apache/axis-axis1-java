@@ -37,6 +37,7 @@ Table of Contents</h3>
 <br><a href="#Exception Handling">Exception Handling</a>
 <br><a href="#Compile And Run">Compile and Run</a>
 <br><a href="#Internationalization">Internationalization</a>
+<br>&nbsp;&nbsp;&nbsp;<a href="#Extending Message Files">Extending Message Files</a>
 <br><a href="#Adding Testcases">Adding Testcases</a>
 <br><a href="#TestStructure">Test and Samples Structure</a>
 <br><a href="#CodeChecks">Adding Source Code Checks</a>
@@ -132,14 +133,14 @@ org.apache.axis.components.&lt;componentType>.&lt;factoryClassName>
 For example, <code>org.apache.axis.components.logger.LogFactory</code> is the factory,
 or discovery mechanism, for the logger component/service.
 <p>
-The <code>org.apache.axis.components.bytecode</code> package demonstrates
-both a factory, and supporting classes for different bytecode tools used
-by axis.  This is representative of a pluggable component that uses
-external tooling, but isolates them behind a 'thin' wrapper to AXIS,
-providing only the limited interface required by AXIS.
+The <code>org.apache.axis.components.image</code> package demonstrates
+both a factory, and supporting classes for different image tools used
+by AXIS.  This is representative of a pluggable component that uses
+external tooling, isolating it behind a 'thin' wrapper to AXIS that
+provides only a limited interface to meet AXIS minimal requirements.
 This allows future designers
 and implementors to gain an explicit understanding of the AXIS's
-requirements on these tools.
+specific requirements on these tools.
 <h3>
 <a NAME="Logging/Tracing"></a>Logging/Tracing</h3>
 AXIS logging and tracing is based on the Logging component of the
@@ -358,8 +359,8 @@ while limiting console output to INFO (and higher).
 AXIS is in the process of moving away from using system properties
 as the primary point of internal configuration.
 Avoid calling <code>System.getProperty()</code>,
-and instead call <code>AxisEngine.getGlobalProperty</code>.
-<code>AxisEngine.getGlobalProperty</code> will
+and instead call <code>AxisProperties.getProperty</code>.
+<code>AxisProperties.getProperty</code> will
 call <code>System.getProperty</code>, and will (eventually)
 query other sources of configuration information.
 <p>
@@ -367,11 +368,6 @@ Using this central point of access will allow the
 global configuration system to be redesigned
 to better support multiple AXIS engines in a
 single JVM.
-<p>
-A <code>getGlobalProperty()</code> method has also been added
-to <code>BasicHandler</code>.
-Handlers (ancestors of <code>BasicHandler</code>) should use this local method
-rather than accessing <code>AxisEngine.getGlobalProperty</code>.
 
 <h2>
 <a NAME="Exception Handling"></a>Exception Handling</h2>
@@ -574,17 +570,20 @@ in new code.</b>
 If you make changes to the source code that results in the generation of
 text (error messages or debug information), you must follow the following
 guidelines to ensure that your text is properly translated.
-<br>&nbsp;
+<h3>
+<a NAME="Developer Guidelines"></a>Developer Guidelines</h3>
 <ol>
 <li>
 Your text string should be added as a property to the resource.properties
-file (xml-axis/java/src/org/apache/axis/utils/resource.properties).&nbsp;
+file (xml-axis/java/src/org/apache/axis/i18n/resource.properties).&nbsp;
 Note that some of the utility applications (i.e. tcpmon) have their own
-resource property files (tcpmon.properties).</li>
-
+resource property files (tcpmon.properties).
+</li>
 <br>&nbsp;
 <li>
 The resource.properties file contains translation and usage instructions.&nbsp;
+Entries in a message resource file are of the form
+<font color="#009900">&lt;key&gt;=&lt;message&gt;</font>.
 Here is an example message:</li>
 <p>
 <p><font color="#009900">sample00=My name is {0}, and my title is {1}.</font>
@@ -601,11 +600,12 @@ for inserts.</li>
 </ol>
 <li>
 The code should use the
-static method org.apache.axis.utils.JavaUtils.getMessage
+static method org.apache.axis.i18n.Messages.getMessage
 to obtain the text and add inserts.&nbsp; Here is an example usage:</li>
 <p>
-<p><font color="#009900">JavaUtils.getMessage("sample00", "Rich Scheuerle",
+<p><font color="#009900">Messages.getMessage("sample00", "Rich Scheuerle",
 "Software Developer");</font>
+
 <br>&nbsp;
 <li>
 <font color="#000000">All keys in the properties file should use the syntax
@@ -627,8 +627,104 @@ create a new entry with an incremented 2-digit suffix.</font></li>
 <li>
 <font color="#000000">All new entries should be placed at the bottom of
 the file to ease translation.</font></li>
+
+<br>&nbsp;
+<li>
+<font color="#000000">We may occasionally want to trim the properties file of old data, but this should only be done on major releases. </font></li>
 </ol>
 </ol>
+
+<h4>
+<a NAME="Example"></a>Example</h4>
+
+Consider the following statement:
+<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if ( operationName == null )</code>
+<br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+throw new AxisFault( "No operation name specified" );</code>
+<p>
+We will add an entry into
+org/apache/axis/i18n/resource.properties:
+<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noOperation=No operation name specified.</code>
+<p>And change the code to read:
+<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if ( operationName == null )</code>
+<br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+throw new AxisFault(Messages.getMessage("noOperation"));</code>
+
+<h3>
+<a NAME="Interface"></a>Interface</h3>
+
+AXIS uses the standard Java internationalization class
+<code>java.util.ResourceBundle</code>
+to access property files and message strings,
+and uses <code>java.text.MessageFormat</code>
+to format the strings using variables.
+AXIS provides a single class <code>org.apache.axis.i18n.Messages</code>
+that manages both ResourceBundle and MessageFormat classes.
+Messages methods are:
+
+<p><code>public static java.util.ResourceBundle getResourceBundle();</code>
+<p><code>public static String getMessage(String key) throws java.util.MissingResourceException;</code>
+<p><code>public static String getMessage(String key, String var) throws java.util.MissingResourceException;</code>
+<p><code>public static String getMessage(String key, String var1, String var2) throws java.util.MissingResourceException;</code>
+<p><code>public static String getMessage(String key, String[] vars) throws java.util.MissingResourceException;</code>
+
+<p>AXIS programmers can work with the resource bundle directly via a call
+to <code>Messages.getResourceBundle()</code>,
+but the <code>getMessage()</code>
+methods should be used instead for two reasons:
+<ol>
+<li>
+It's a shortcut.  It is cleaner to call</li>
+
+<ol><code>Messages.getMessage("myMsg00");</code></ol>
+than
+<ol><code>Messages.getResourceBundle().getString("myMsg00");</code></ol>
+
+<br>
+<li>
+The <code>getMessage</code> methods enable messages with variables.</li>
+</ol>
+
+<h4>
+The getMessage methods</h4>
+If you have a message with no variables
+<ol><code>myMsg00=This is a string.</code></ol>
+then simply call
+<ol><code>Messages.getMessage("myMsg00");</code></ol>
+
+<p><br>If you have a message with variables, use the syntax
+<font face="Courier New,Courier">"{X}"</font>
+where <code>X</code> is
+the number of the variable, starting at 0. For example:
+<ol><code>myMsg00=My {0} is {1}.</code></ol>
+then call:
+<ol><code>Messages.getMessage("myMsg00","name", "Russell");</code></ol>
+and the resulting string will be:&nbsp; "My name is Russell."
+<p>You could also call the String array version of <font face="Courier New,Courier"><font size=-1>getMessage</font></font>:
+<ol><code>Messages.getMessage("myMsg00", new String[] {"name", "Russell"});</code></ol>
+
+<p><br>The String array version of <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
+is all that is necessary, but the vast majority of messages will have 0,
+1 or 2 variables, so the other <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
+methods are provided as a convenience to avoid the complexity of the String
+array version.
+<p>Note that the <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
+methods throw <font face="Courier New,Courier"><font size=-1>MissingResourceException</font></font>
+if the resource cannot be found.&nbsp; And ParseException if there are
+more {X} entries than arguments.&nbsp; These exceptions are <font face="Courier New,Courier"><font size=-1>RuntimeException'</font></font>s,
+so the caller doesn't have to explicitly catch them.
+<p>The resource bundle properties file is org/apache/axis/i18n/resource.properties.
+
+<h3>
+<a NAME="Extending Message Files"></a>Extending Message Files</h3>
+Generally,
+within AXIS all messages are placed in
+org.apache.axis.i18n.resource.properties.
+There are facilities for extending the messages without
+modifying this file for integration or 3rd party extensions to AXIS.
+See the <a href="integration-guide.html#Extending Message Files"/>Integration Guide</a> for details.
 
 <h2>
 <a NAME="Adding Testcases"></a><font color="#000000">Adding Testcases</font></h2>
