@@ -186,7 +186,7 @@ public class Admin {
         if (config instanceof FileProvider) {
             FileProvider wsddProvider = (FileProvider)config;
             WSDDDeployment deployment = wsddProvider.getDeployment();
-            wsddDoc.getDeployment().deployToRegistry(deployment);
+            wsddDoc.deploy(deployment);
         }
         engine.refreshGlobalOptions();
 
