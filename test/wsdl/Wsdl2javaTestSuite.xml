@@ -101,6 +101,56 @@
         <mapping namespace="urn:ref.types" package="test.wsdl.refattr"/>
     </wsdl2java>
 
+    <!-- Roundtrip Test -->
+    <!-- Bootstrap to generate Java From WSDL to get stubs/skeletons -->
+    <wsdl2java url="test/wsdl/roundtrip/Roundtrip.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </wsdl2java>
+    <!-- To test Java Value Types, copy over the base and subclasses -->
+    <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/roundtrip">
+        <include name="RoundtripPortType.java"/>
+        <include name="Investment.java"/>
+        <include name="StockInvestment.java"/>
+        <include name="BondInvestment.java"/>
+        <include name="PreferredStockInvestment.java"/>
+        <include name="CallOptions.java"/>
+      </fileset>
+    </copy>
+    <!-- Compile the Web Service -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="test-classpath" />
+      <include name="test/wsdl/roundtrip/**.java" />
+      <exclude name="test/wsdl/roundtrip/*TestCase.java" />
+      <exclude name="test/wsdl/roundtrip/*Impl.java" />
+    </javac>
+    <!-- Now create the WSDL file -->
+    <java2wsdl output="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               className= "test.wsdl.roundtrip.RoundtripPortType"
+               useInheritedMethods="false"
+               namespace="http://roundtrip.wsdl.test"
+               location="http://localhost:8080/axis/services/RoundtripTest">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </java2wsdl>
+    <!-- Delete the intermediate files so we recreate over a clean slate -->
+    <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
+    <!-- Recreate Java files from the new WSDL -->
+    <wsdl2java url="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </wsdl2java>
+
     <!-- Sequence Test -->
     <!-- Generate Java From WSDL -->
     <wsdl2java url="test/wsdl/sequence/SequenceTest.wsdl"
