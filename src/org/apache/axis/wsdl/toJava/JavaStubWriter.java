@@ -149,6 +149,20 @@ public class JavaStubWriter extends JavaWriter {
 
         pw.println("    }");
         pw.println();
+        pw.println("    /**");
+        pw.println("     * Sets the value for a named property. JAX-RPC 1.0 specification"); 
+        pw.println("     * specifies a standard set of properties that may be passed ");
+        pw.println("     * <UL>");
+        pw.println("     * <LI>http.auth.username: Username for the HTTP Basic Authentication");
+        pw.println("     * <LI>http.auth.password: Password for the HTTP Basic Authentication");
+        pw.println("     * <LI>security.auth.subject: JAAS Subject that carries client principal and its credentials");
+        pw.println("     * <LI>encodingstyle.namespace.uri: Encoding style specified as a namespace URI");
+        //pw.println("     * <LI>[TBD: Additional properties]");
+        pw.println("     * </UL>");
+        pw.println("     *");
+        pw.println("     * @param name - Name of the property");
+        pw.println("     * @param value - Value of the property");
+        pw.println("     */");
         pw.println("    public void _setProperty(String name, Object value) {");
         pw.println("        properties.put(name, value);");
         pw.println("    }");
@@ -402,10 +416,22 @@ public class JavaStubWriter extends JavaWriter {
             pw.println();
         }
 
-        pw.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
+        // username and password
+        pw.println("        call.setProperty(\"http.auth.username\", _getProperty(\"http.auth.username\"));");
+        pw.println("        call.setProperty(\"http.auth.password\", _getProperty(\"http.auth.password\"));");
+
+        // SoapAction and Namespace
+        if (soapAction != null) {
+            pw.println("        call.setProperty(\"soap.http.soapaction.use\", new Boolean(true));");
+            pw.println("        call.setProperty(\"soap.http.soapaction.uri\", \"" + soapAction + "\");");
+        }
         pw.println("        call.setProperty(call.NAMESPACE, \"" + namespace
                                                  + "\");" );
-        pw.println("        call.setOperationName( \"" + operation.getName() + "\");" );
+        // Operation name
+        pw.println("        call.setOperationName(\"" + operation.getName() + "\");" );
+        
+        // Invoke the operation
+        pw.println();
         pw.print("        Object resp = call.invoke(");
         pw.print("new Object[] {");
 
