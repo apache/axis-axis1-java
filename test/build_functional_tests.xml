@@ -98,6 +98,7 @@ Copyright:
   <!-- Runs the JUnit functional test  -->
   <!-- =================================================================== -->
   <target name="junit-functional" if="junit.present" depends="junit-functional-prepare">
+    <mkdir dir="${test.functional.reportdir}" />
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
       <arg line="${deploy.xml.property}"/>
