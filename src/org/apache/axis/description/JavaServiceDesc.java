@@ -170,13 +170,19 @@ public class JavaServiceDesc implements ServiceDesc {
         if (!useSet) {
             // Use hasn't been explicitly set, so track style
             use = style == Style.RPC ? Use.ENCODED : Use.LITERAL;
-            if (!tmSet && use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
-                tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-            } else {
-                tm = DefaultTypeMappingImpl.getSingleton();
+
+            // If we haven't been given an explicit type mapping, make
+            // sure we have the right one for the use
+            if (!tmSet) {
+                if (use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
+                    tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+                } else {
+                    tm = DefaultTypeMappingImpl.getSingleton();
+                }
             }
         }
     }
+
 
     /**
      * What kind of use is this?
@@ -189,10 +195,15 @@ public class JavaServiceDesc implements ServiceDesc {
     public void setUse(Use use) {
         useSet = true;
         this.use = use;
-        if (!tmSet && use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
-            tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-        } else {
-            tm = DefaultTypeMappingImpl.getSingleton();
+
+        // If we haven't been given an explicit type mapping, make
+        // sure we have the right one for the use
+        if (!tmSet) {
+            if (use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
+                tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else {
+                tm = DefaultTypeMappingImpl.getSingleton();
+            }
         }
     }
 
@@ -1249,7 +1260,7 @@ public class JavaServiceDesc implements ServiceDesc {
     }
 
     private QName getTypeQName(Class javaClass) {
-        QName typeQName = null;
+        QName typeQName;
         if (style == Style.RPC) {
             typeQName = tm.getTypeQName(javaClass);
         } else {
@@ -1265,8 +1276,7 @@ public class JavaServiceDesc implements ServiceDesc {
 
     private void createFaultMetadata(Method method, OperationDesc operation) {
         // Create Exception Types
-        Class[] exceptionTypes = new Class[method.getExceptionTypes().length];
-        exceptionTypes = method.getExceptionTypes();
+        Class[] exceptionTypes = method.getExceptionTypes();
 
         for (int i=0; i < exceptionTypes.length; i++) {
             // Every remote method declares a java.rmi.RemoteException
