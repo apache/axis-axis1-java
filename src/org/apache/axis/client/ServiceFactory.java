@@ -299,10 +299,10 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
     }
 
     private Service createService(String serviceImplementationName) throws ServiceException {
+        if(serviceImplementationName == null) {
+            throw new IllegalArgumentException(Messages.getMessage("serviceFactoryInvalidServiceName"));
+        }
         try {
-            if(serviceImplementationName == null) {
-                throw new IllegalArgumentException(Messages.getMessage("serviceFactoryInvalidServiceName"));
-            }
             Class serviceImplementationClass;
             serviceImplementationClass = Thread.currentThread().getContextClassLoader().loadClass(serviceImplementationName);
             if (!(org.apache.axis.client.Service.class).isAssignableFrom(serviceImplementationClass)) {
@@ -315,6 +315,8 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
             } else {
                 throw new ServiceException(Messages.getMessage("serviceFactoryInvalidServiceName"));
             }
+        } catch (ServiceException e) {
+            throw e;
         } catch (Exception e){
             throw new ServiceException(e);
         }
