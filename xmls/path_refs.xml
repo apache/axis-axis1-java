@@ -11,10 +11,11 @@
     </fileset>
     <pathelement path="${java.class.path}"/>
     <pathelement location="${build.dest}" />
+    <pathelement location="${build.lib}/axis-ant.jar" />
 <!--
     <pathelement location="${build.dir}/work" />
--->
     <pathelement location="${test.dir}/foreachTask/bsf.jar" />
     <pathelement location="${test.dir}/foreachTask/js.jar" />
+-->
   </path>
 
