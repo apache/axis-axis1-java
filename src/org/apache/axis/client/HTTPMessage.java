@@ -153,16 +153,36 @@ public class HTTPMessage {
     // For testing - skip HTTP layer
     if ( doLocal ) {
       client = new org.apache.axis.server.AxisServer();
+      client.init();
       msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.input" );
       msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
       msgContext.setTargetService( action );
     }
     else {
+      /* Ok, this might seem strange, but here it is...                    */
+      /* Create a new AxisClient Engine and init it.  This will load any   */
+      /* registries that *might* be there.  We set the target service to   */
+      /* the service so that if it is registered here on the client        */
+      /* we'll find it's request/response chains and invoke them.  Next we */
+      /* check to see if there is any ServiceRegistry at all, or if there  */
+      /* is one, check to see if a chain called HTTP.input is there.  If   */
+      /* not then we need to default to just the simple HTTPDispatchHandler*/
+      /* to call the server.                                               */
+      /* The hard part about the client is that we can't assume *any*      */
+      /* configuration has happened at all so hard-coded defaults are      */
+      /* required.                                                         */
+      /*********************************************************************/
       client = new AxisClient();
+      client.init();
       msgContext.setTargetService( action );
-      msgContext.setProperty( 
+      HandlerRegistry sr = client.getOption( Constants.SERVICE_REGISTRY );
+      if ( sr == null || sr.find("HTTP.input") == null )
+        msgContext.setProperty( 
                       MessageContext.TRANS_INPUT,
                       "org.apache.axis.transport.http.HTTPDispatchHandler" );
+      else
+        msgContext.setProperty( MessageContext.TRANS_INPUT, "HTTP.input" );
+      msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
     }
 
     if ( true ) { // Debug.getDebugLevel() > 0  ) {
@@ -185,7 +205,6 @@ public class HTTPMessage {
     }
 
     try {
-      client.init();
       client.invoke( msgContext );
       client.cleanup();
     }
