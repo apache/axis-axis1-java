@@ -242,7 +242,7 @@ public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
         ////////////////////////////////////////////////////////////////////////
         // echoMultipleFaults4
         int intParam = 66;
-        Enum enumParam = new Enum(1);
+        _enum enumParam = new _enum(1);
         for (int i=1; i < 3; i++) {
             try {
                 binding.echoMultipleFaults4(i, intParam, enumParam);
