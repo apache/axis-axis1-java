@@ -250,7 +250,7 @@ public class XMLUtils {
 
         try {
             SAXParser parser = saxFactory.newSAXParser();
-parser.getParser().setEntityResolver(new DefaultEntityResolver());
+            parser.getParser().setEntityResolver(new DefaultEntityResolver());
             XMLReader reader = parser.getXMLReader(); 
             reader.setEntityResolver(new DefaultEntityResolver());
             reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
@@ -380,10 +380,20 @@ parser.getParser().setEntityResolver(new DefaultEntityResolver());
         return DOM2Writer.nodeToString(element, omitXMLDecl);
     }
 
+    /**
+     * turn an element into an XML fragment
+     * @param element
+     * @return stringified element
+     */
     public static String ElementToString(Element element) {
         return privateElementToString(element, true);
     }
 
+    /**
+     * turn a whole DOM document into XML
+     * @param doc DOM document
+     * @return string representation of the document, including XML declaration
+     */
     public static String DocumentToString(Document doc) {
         return privateElementToString(doc.getDocumentElement(), false);
     }
@@ -461,7 +471,14 @@ parser.getParser().setEntityResolver(new DefaultEntityResolver());
             throw new InternalException(e);
         }
     }
-    
+
+    /**
+     * get the inner XML inside an element as a string. This is done by
+     * converting the XML to its string representation, then extracting the
+     * subset between beginning and end tags.
+     * @param element
+     * @return textual body of the element, or null for no inner body
+     */
     public static String getInnerXMLString(Element element) {
         String elementString = ElementToString(element);
         int start, end;
