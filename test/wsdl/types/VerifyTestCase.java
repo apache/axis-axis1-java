@@ -729,13 +729,11 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         
         try {
-            org.apache.axis.types.URI sendValue = new org.apache.axis.types.URI("urn:this-is-a-simple-test");
-            org.apache.axis.holders.URIHolder ch = new org.apache.axis.holders.URIHolder(sendValue);
-            org.apache.axis.types.URI actual = binding.methodSimpleAnyURI(sendValue, ch);
+            test.wsdl.types.comprehensive_types2.SimpleAnyURIType sendValue = new test.wsdl.types.comprehensive_types2.SimpleAnyURIType("urn:this-is-a-simple-test");
+            test.wsdl.types.comprehensive_types2.holders.SimpleAnyURITypeHolder ch = new test.wsdl.types.comprehensive_types2.holders.SimpleAnyURITypeHolder(sendValue);
+            test.wsdl.types.comprehensive_types2.SimpleAnyURIType actual = binding.methodSimpleAnyURI(sendValue, ch);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodAnyURI Exception caught: " + re );
-        } catch (MalformedURIException mue) {
-            throw new junit.framework.AssertionFailedError("methodAnyURI Exception caught: " + mue );
         }
         
         try {
