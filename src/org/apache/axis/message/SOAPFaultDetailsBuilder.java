@@ -92,8 +92,12 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         // Look up this element in our faultMap
         // if we find a match, this element is the fault data
         MessageContext msgContext = context.getMessageContext();
-        SOAPConstants soapConstants = msgContext.getSOAPConstants();
-        OperationDesc op = msgContext.getOperation();
+        SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
+        OperationDesc op = null;
+        if (msgContext != null) {
+            soapConstants = msgContext.getSOAPConstants();
+            op = msgContext.getOperation();
+        }
         Class faultClass = null;
         QName faultXmlType = null;
         if (op != null) {
