@@ -21,8 +21,8 @@
 <target name="copy">
   <echo message="Compiling test.utils"/>
   <ant inheritAll="true" antfile="buildTest.xml" target="utils"/>
-  <echo message="Compiling test.RFCDispatch"/>
-  <ant inheritAll="true" antfile="buildTest.xml" target="RFCDispatch"/>
+  <echo message="Compiling test.RPCDispatch"/>
+  <ant inheritAll="true" antfile="buildTest.xml" target="RPCDispatch"/>
 </target>
 
 <target name="compile" depends="copy">
