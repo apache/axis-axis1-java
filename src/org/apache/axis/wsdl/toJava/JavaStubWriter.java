@@ -613,7 +613,16 @@ public class JavaStubWriter extends JavaClassWriter {
             Map partsMap = operation.getOperation().getInput().getMessage().getParts();
             Part p = (Part)partsMap.values().iterator().next();
             QName q = p.getElementName();
-            pw.println("        _call.setOperationName(new javax.xml.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
+            pw.println("        _call.setOperationName(" + Utils.getNewQName(q) + ");" );
+            
+            // Special return info for wrapped - the QName of the element
+            // which is the return type
+            if (parms.returnParam != null) {
+                QName returnQName = parms.returnParam.getQName();
+                if (returnQName != null) {
+                    pw.println("        _call.setReturnQName(" + Utils.getNewQName(returnQName) + ");" );
+                }
+            }
         } else {
             QName elementQName = Utils.getOperationQName(operation);
             if (elementQName != null) {
