@@ -67,6 +67,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.FieldTarget;
+import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -214,7 +215,7 @@ public class RPCHandler extends SOAPHandler
                                            "nil");
 
         if ( isNil != null && isNil.equals("true") )
-          return( new Deserializer() );
+          return( new DeserializerImpl() );
         
         Deserializer dser = null;
         if ((type == null) && (namespace != null) && (!namespace.equals(""))) {
@@ -224,7 +225,7 @@ public class RPCHandler extends SOAPHandler
           if (type != null) {
               dser = context.getDeserializerForType(type);
           } else {
-              dser = new Deserializer();
+              dser = new DeserializerImpl();
           }
         }
 
@@ -240,7 +241,7 @@ public class RPCHandler extends SOAPHandler
         if (log.isDebugEnabled()) {
             log.debug("Exit: RPCHandler.onStartChild()");
         }
-        return dser;
+        return (SOAPHandler)dser;
     }
 
     public void endElement(String namespace, String localName,

@@ -55,31 +55,16 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-import org.w3c.dom.Element;
-
-import java.util.ArrayList;
-
 import org.apache.axis.MessageContext;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.SOAPHandler;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
-
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.JavaUtils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.SAXException;
+
+import java.util.ArrayList;
 
 /**
  * Deserializer for DOM elements
@@ -87,7 +72,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Glen Daniels (gdaniels@macromedia.com)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class ElementDeserializer extends Deserializer
+public class ElementDeserializer extends DeserializerImpl
 {
     protected static Log log =
         LogFactory.getLog(ElementDeserializer.class.getName());

@@ -55,19 +55,12 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
 
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.Base64;
 
 /**
@@ -77,7 +70,7 @@ import org.apache.axis.encoding.Base64;
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#base64Binary">XML Schema 3.2.16</a>
  */
-public class Base64Deserializer extends Deserializer  {
+public class Base64Deserializer extends DeserializerImpl  {
 
     public QName xmlType;
     public Class javaType;

@@ -2,7 +2,7 @@ package test.encoding;
 
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.FieldTarget;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
@@ -12,7 +12,7 @@ import org.xml.sax.SAXException;
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 
-public class DataDeser extends Deserializer
+public class DataDeser extends DeserializerImpl
 {
     public static final String STRINGMEMBER = "stringMember";
     public static final String FLOATMEMBER = "floatMember";
@@ -59,6 +59,6 @@ public class DataDeser extends Deserializer
         if (dSer == null)
             throw new SAXException("No deserializer for a " + typeQName + "???");
         
-        return dSer;
+        return (SOAPHandler)dSer;
     }
 }

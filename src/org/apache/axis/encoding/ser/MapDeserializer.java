@@ -55,30 +55,21 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.DeserializerTarget;
+import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerTarget;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.Constants;
-import org.apache.axis.message.SOAPHandler;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /*
  * A <code>MapSerializer</code> is be used to deserialize
@@ -88,7 +79,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Glen Daniels (gdaniels@macromedia.com)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class MapDeserializer extends Deserializer {
+public class MapDeserializer extends DeserializerImpl {
 
     protected static Log log =
         LogFactory.getLog(MapDeserializer.class.getName());
@@ -186,7 +177,7 @@ public class MapDeserializer extends Deserializer {
      * the values into the HashMap we're building.
      * 
      */
-    class ItemHandler extends Deserializer {
+    class ItemHandler extends DeserializerImpl {
         Object key;
         Object myValue;
         int numSet = 0;
@@ -228,7 +219,7 @@ public class MapDeserializer extends Deserializer {
 
             // If no deserializer, use the base DeserializerImpl.
             if (dser == null)
-                dser = new Deserializer();
+                dser = new DeserializerImpl();
 
             // When the child value is ready, we
             // want our set method to be invoked.
@@ -247,7 +238,7 @@ public class MapDeserializer extends Deserializer {
             if (dt != null) {
                 dser.registerValueTarget(dt);
             }
-            return dser;
+            return (SOAPHandler)dser;
         }
     }
 }

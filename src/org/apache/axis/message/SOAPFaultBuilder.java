@@ -158,7 +158,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
             }
         }
         
-        return currentDeser;
+        return (SOAPHandler)currentDeser;
     }
 
     public void onEndChild(String namespace, String localName,
