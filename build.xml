@@ -203,21 +203,24 @@ Copyright:
       classpathref="classpath">
       <exclude name="**/old/**/*" />
       <exclude name="**/bak/**"/>
-      <exclude name="org/apache/axis/attachments/AttachmentsImpl.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/attachments/AttachmentPart.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/attachments/AttachmentUtils.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/attachments/MimeUtils.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/encoding/JAFDataHandlerSerializer.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/attachments/ManagedMemoryDataSource.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/handlers/MD5AttachHandler.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/attachments/MultiPartRelatedInputStream.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/encoding/JAFDataHandlerDeserializer.java" unless="attachments.present"/>
-      <exclude name="org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
-      <exclude name="org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
-      <exclude name="org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
-      <exclude name="org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
-      <exclude name="org/apache/axis/security/servlet/*" unless="servlet.present"/>
-      <exclude name="javax/xml/soap/*.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/AttachmentsImpl.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/AttachmentPart.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/AttachmentUtils.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/MimeUtils.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/ManagedMemoryDataSource.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/MultiPartRelatedInputStream.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/BoundaryDelimitedStream.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerSerializer.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerDeserializerFactory.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerSerializerFactory.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerDeserializer.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/handlers/MD5AttachHandler.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
+      <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>
       <exclude name="**/*TestSuite.java" unless="junit.present"/>
     </javac>
     <copy file="${src.dir}/org/apache/axis/server/server-config.wsdd"
