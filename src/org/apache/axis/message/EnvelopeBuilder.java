@@ -89,4 +89,12 @@ public class EnvelopeBuilder extends SOAPHandler
             context.getEnvelope().addTrailer(element);
         }
     }
+
+    public void endElement(String namespace, String localName,
+                           DeserializationContext context)
+        throws SAXException
+    {
+        // Envelope isn't dirty yet by default...
+        context.getEnvelope().setDirty(false);
+    }
 }
