@@ -706,7 +706,7 @@ public class Emitter {
      * @param map packagename/namespace <code>Map</code>
      */
     public void setNamespaceMap(Map map) {
-        if ((map != null) && (map.isEmpty()))
+        if (map != null)
             namespaces.putAll(map);
     }
 
