@@ -47,7 +47,8 @@ public class TestSOAPFaultDetail extends junit.framework.TestCase
         Reader reader = new StringReader(xmlString);
         InputSource src = new InputSource(reader);
         SOAPBodyElement bodyItem = getFirstBody(src);
-        assertTrue("The SOAPBodyElement I got was not a SOAPFault", bodyItem instanceof SOAPFault);
+        assertTrue("The SOAPBodyElement I got was not a SOAPFault, it was a " +
+                bodyItem.getClass().getName(), bodyItem instanceof SOAPFault);
         SOAPFault flt = (SOAPFault)bodyItem;
         flt.addDetail();
         javax.xml.soap.Detail d = flt.getDetail();
