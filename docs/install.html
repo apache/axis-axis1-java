@@ -62,7 +62,7 @@ Contents
       <h2>Introduction</h2>
 
       <p>This document describes how to install Apache Axis. It assumes
-      you already know how to write and run Java code and not be scared
+      you already know how to write and run Java code and are not afraid
       of XML. You should also have an application server or servlet
       engine and be familiar with operating and deploying to it. If you
       need an application server, we recommend <a
@@ -76,16 +76,16 @@ Contents
       <p>For more details on using Axis, please see the 
       <a href="user-guide.html">user guide</a>.
         
-     <h2>Things you have to Know </h2>
+     <h2>Things you have to know</h2>
      
      A lot of problems with Axis are encountered by people who are new
-     to Java, Server-side Java and SOAP. While you can learn about SOAP
-     as you go along, writing Axis clients and serves is not the right
+     to Java, server-side Java and SOAP. While you can learn about SOAP
+     as you go along, writing Axis clients and servers is not the right
      time to be learning foundational Java concepts, such as what an
-     array is, or foundation App server concepts such as how Servlets
+     array is, or basic application server concepts such as how servlets
      work, and the basics of the HTTP protocol. 
      <p>
-     Things you need to know to begin to write a Web Service:
+     Things you need to know before writing a Web Service:
      <ol>
      
      <li> Core Java datatypes, classes and programming concepts.
@@ -93,8 +93,8 @@ Contents
      <li> What threads are, race conditions, thread safety and
      sychronization. 
      
-     <li> What a classloader is, and what hierarchical classloaders are,
-     or 'common causes of a ClassNotFoundException'.
+     <li> What a classloader is, what hierarchical classloaders are,
+     and the common causes of a "ClassNotFoundException".
      
      <li> How to diagnose trouble from exception traces, what a
      NullPointerException (NPE) and other common exceptions are, and how
@@ -112,7 +112,7 @@ Contents
      <li> What HTTP is. The core protocol and error codes, HTTP headers and
      perhaps the details of basic authentication.
      
-     <li> What XML is. Not how to parse it or anything, just what
+     <li> What XML is. Not necessarily how to parse it or anything, just what
      constitutes well-formed and valid XML.
      
      </ol>
@@ -125,7 +125,7 @@ Contents
      <p>
      
      If you are completely new to Java, we recommend you start off with
-     things like the Java Tutorials on Sun's web sites, and perhaps a
+     things like the Java Tutorials on Sun's web site, and perhaps a
      classic book like <a
      href="http://www.mindview.net/Books/TIJ/">Thinking in Java</a>,
      until you have enough of a foundation to be able to work with
@@ -135,10 +135,10 @@ Contents
      
      <p>
      
-     Be aware that there is a lot more to know to use Axis and SOAP
-     effectively than the listing above. The other big area is "how to
-     write internet scale distributed applications". Nobody knows how to
-     do that properly yet, so that you have to learn by doing.  
+     Be aware that there is a lot more needed to be learned in order to 
+	 use Axis and SOAP effectively than the listing above. The other 
+	 big area is "how to write internet scale distributed applications". 
+	 Nobody knows how to do that properly yet, so that you have to learn this by doing.
      
      <h2>Step 0: Concepts</h2>
      
@@ -146,8 +146,8 @@ Contents
      mechanism for inter-application communication between systems
      written in arbitrary languages, across the Internet. SOAP usually
      exchanges messages over HTTP: the client POSTs a SOAP request, and
-     receives either an HTTP error code or an HTTP success code and a
-     SOAP response. Open Source means that you get the source, but that
+     receives either an HTTP success code and a SOAP response or an HTTP error code. 
+	 Open Source means that you get the source, but that
      there is no formal support organisation to help you when things go
      wrong. 
      
@@ -157,11 +157,11 @@ Contents
      information between SOAP systems. Messages consist of one or more
      SOAP elements inside an envelope, Headers and the SOAP Body.  
      SOAP has two syntaxes for describing the data in these elements,
-     <i>Section 5</i>, which is a clear descendent of the XML RPC
+     <i>Section 5</i>, which is a clear descendant of the XML RPC
      system, and <i>XML Schema</i>, which is the newer (and usually
      better) system. Axis handles the magic of converting Java objects
      to SOAP data when it sends it over the wire or receives results.
-     SOAP Faults are sent by the server when something goes wrong; Again
+     SOAP Faults are sent by the server when something goes wrong; 
      Axis converts these to Java exceptions. 
      
      <p>
@@ -182,20 +182,21 @@ Contents
      Sun's web site, you will understand the API. If you code to the
      API, your programs will work with other implementations of the API,
      such as those by Sun and BEA. Axis also provides extension
-     features, and many ways that extend the JAX-RPC API. You can use
-     these to write better programs, ones that only work with Axis. But
-     since Axis is free and you get the source, that should not matter. 
+     features that in many ways extends the JAX-RPC API. You can use
+     these to write better programs, but these will only work with the Axis
+	 implementation. But since Axis is free and you get the source, that 
+	 should not matter. 
      
      <p>
      
-     Axis is implemented in the JAR file <i>axis.jar</i>; implementing
+     Axis is compiled in the JAR file <i>axis.jar</i>; it implements
      the JAX-RPC API declared in the JAR files <i>jaxrpc.jar</i> and
      <i>saaj.jar</i>. It needs various helper libraries, for logging,
      WSDL processing and introspection. All these files can be packaged
      into a web application, <i>axis.war</i>, that can be dropped into a
      servlet container. Axis ships with some sample SOAP services. You
      can add your own by adding new compiled classes to the Axis webapp
-     registering them.
+     and registering them.
      </p>
      
      <p>
@@ -208,7 +209,7 @@ Contents
 
     <p>
     Here we assume that you have a web server up and running on the 
-    localhost, at port 8080. If your server is on a different port,
+    localhost at port 8080. If your server is on a different port,
     replace references to 8080 to your own port number. 
     
     </p>
@@ -223,7 +224,7 @@ Contents
     used; rename these references if appropriate.
 
     <a name="depend"/></a>
-    <h2>Step 2: setting up the libraries</h2>
+    <h2>Step 2: Setting up the libraries</h2>
 
     <p>In the Axis directory, you will find a WEB-INF sub-directory. 
     This directory contains some basic configuration information, but
@@ -251,7 +252,7 @@ Contents
       Java 1.4 changed the rules as to to how packages beginning in java.* and
       javax.* get loaded. Specifically, they only get loaded from
       <i>endorsed</i> directories. jaxrpc.jar and saaj.jar contain javax
-      packages, so may not get picked up. If happyaxis.jsp 
+      packages, so they may not get picked up. If happyaxis.jsp 
       (see below) cannot find the relevant packages, copy them 
       from axis/WEB-INF/lib to CATALINA_HOME/common/lib and restart Tomcat. 
     
@@ -350,14 +351,14 @@ Contents
     <h3>Test a JWS Endpoint</h3>
     
     Now let's test a JWS web service. Axis' JWS Web Services are java files
-    you save into the axis webapp <i>anywhere but the WEB-INF tree</i>,
-    giving them the .jws extension. When some requests the .jws file by
+    you save into the Axis webapp <i>anywhere but the WEB-INF tree</i>,
+    giving them the .jws extension. When someone requests the .jws file by
     giving its URL, it is compiled and executed. The user guide covers
     JWS pages in detail.
     
     <p>
     
-    To test the JWS service, we make a request against a built in
+    To test the JWS service, we make a request against a built-in
     example, EchoHeaders.jws (look for this in the axis/ directory).
     <p>
     Point your browser at 
@@ -390,24 +391,24 @@ Contents
 
 </pre>
 Again, the exact return values will be different, and you may need to
-change URLs to correct host, port and webapp specifics. 
+change URLs to correct any host, port and webapp specifics. 
 
     <a name="websvc"/></a>
-    <h2>Step 5: installing new Web Services</h2>
+    <h2>Step 5: Installing new Web Services</h2>
 
-    <p>So far you have got Axis installed and working, now it is time to add
+    <p>So far you have got Axis installed and working--now it is time to add
         your own Web Service.
      <p>
-     The process here boils down to (1) get the classes and libraries of this
-     new service into the axis WAR directory tree, (2) tell the AxisEngine about 
+     The process here boils down to (1) get the classes and libraries of your
+     new service into the Axis WAR directory tree, and (2) tell the AxisEngine about 
      the new file. The latter is done by submitting an XML deployment descriptor
      to the service via the Admin web service, which is usually done with the 
      AdminClient program or the &lt;axis-admin&gt; Ant task. Both of
-     these do the same thing: run the Axis SOAP client to talk to the
-     Axis adminstration service, which is of course a SOAP service in
-     its own right. It's a special SOAP service in one regard -to stop
-     random people from administrating your service it is restricted to
-     local callers only (not remote access) and is password protected.
+     these do the same thing: they run the Axis SOAP client to talk to the
+     Axis adminstration service, which is a SOAP service in
+     its own right. It's also a special SOAP service in one regard--it is restricted to
+     local callers only (not remote access) and is password protected to stop
+     random people from administrating your service.
      There is a default password that the client knows; if you change it
      then you need to pass the new password to the client.
      </p>
@@ -436,19 +437,19 @@ change URLs to correct host, port and webapp specifics.
         the corresponding users.lst file into the WEB-INF directory.</p>
 
     <a name="deploy"/></a>
-    <h2>Step 6: deploying your Web Service</h2>
+    <h2>Step 6: Deploying your Web Service</h2>
     </table>
 
     <p>The various classes and JARs you have just set up implement your
     new Web Service. 
     What remains to be done is to tell Axis how to expose this web service.
-    Axis takes a Web Service Deployment Descriptor, (a WSDD file), that
+    Axis takes a Web Service Deployment Descriptor (WSDD) file that
     describes in XML what the service is, what methods it exports and
     other aspects of the SOAP endpoint.
     <p>
     
     The users guide and reference guide cover these WSDD files; here we
-    are going to use one from the Axis samples; the stock quote service.
+    are going to use one from the Axis samples: the stock quote service.
     
     <h3>Classpath setup</h3>
     
@@ -456,9 +457,9 @@ change URLs to correct host, port and webapp specifics.
           log4j-1.2.8.jar (or whatever is appropriate for your chosen logging implementation),
           and the XML parser jar file or files (e.g., xerces.jar) to your classpath.
 
-    On windows, this is something like the following, though of course
-    to fix it across the system in WinNT systems it is done through
-    dialog boxes:          
+    On Windows, this can be done via something like the following, though of course
+    to store this information permanently in WinNT systems dialog boxes
+    would be used:
 <pre class="xml">
     set AXIS_HOME=c:\tomcat\webapps\axis
     set AXIS_LIB=%AXIS_HOME%\lib
@@ -477,37 +478,37 @@ change URLs to correct host, port and webapp specifics.
 </pre>          
 
       To use Axis client code, you can select the Axis classpath when invoking 
-      Java by going
+      Java by entering
       
       <pre class="xml">java -cp "%AXISCLASSPATH%" ...</pre>
       or 
       <pre class="xml">java -cp "$AXISCLASSPATH" ...</pre>
-      depending on the platform. Omit the quotes if your classpath
+      depending on the platform. You may omit the quotes if your classpath
       doesn't have spaces in it.
           
-    <h3>Find the deployment descriptor </h3>
+    <h3>Find the deployment descriptor</h3>
 
     <p>
     
     Look in axis/samples/stock for the file deploy.wsdd. This is the
     deployment descriptor we want to tell Axis about. Deployment
-    descriptors are an Axis-specific XML file, that tells Axis how to
+    descriptors are an Axis-specific XML file that tells Axis how to
     deploy (or undeploy) a Web Service, and how to configure Axis
     itself. The Axis Administration Web Service lets the AdminClient
-    program and its Ant sibling submit a new WSDD file for
+    program and its Ant task counterpart submit a new WSDD file for
     interpretation. The Axis 'engine' will update its configuration,
     then save its state. 
     
     <p>
     
-    By default Axis saves it state into the global configuration file, 
+    By default Axis saves it state into the global configuration file 
     axis/WEB-INF/server-config.wsdd. Sometimes you see a warning message
-    about such a file not being found -don't worry about this, because 
+    about such a file not being found--don't worry about this, because 
     Axis auto-creates the file after you deploy something to it.
-    You can check in the webapp to see what this file looks like -and
+    You can check in the webapp to see what this file looks like--and
     even copy it to other systems if you want to give them identical
-    configurations. Note that Axis needs an expanded webapplication
-    <i>and</i> write access to the WEB-INF dir to save its state to this
+    configurations. Note that Axis needs an expanded web application
+    <i>and</i> write access to the WEB-INF dir to save its state in this
     location. 
     
     <h3>Run the admin client</h3>      
@@ -520,14 +521,14 @@ change URLs to correct host, port and webapp specifics.
 
     If you get some java client error (like ClassNotFoundException),
     then you haven't set up your classpath right, mistyped the
-    classname, or done some other standard error. Tracking down such
-    problems is foundation Java development skills -if you don't know
-    how to do it, learn them now. 
+    classname, or did some other standard error. Tracking down such
+    problems are foundational Java development skills--if you don't know
+    how to do these things, learn them now!
     
     <p><span class="note">Note:</span>
     You may need to replace localhost with your host name, and 8080 with the
-    port number used by your web server.If you have renamed the web application,
-    something other than "axis" change the URL appropriately.</p>
+    port number used by your web server. If you have renamed the web application
+    to something other than "axis" change the URL appropriately.</p>
 
 
     <p>
@@ -535,10 +536,10 @@ change URLs to correct host, port and webapp specifics.
     the deployment was unsuccessful. This is where the knowledge of the
     sockets API to TCP and the basics of the HTTP that Web Service 
     development requires begins to be needed. If you got some socket
-    error like connection refused, well, clearly the thing at the far
-    end isnt talking to you, so find the cause of that fix it. If you
-    get any Http error code back, well, you know what the error codes
-    mean, right? If you are going to develop Web Services -you need to.  
+    error like connection refused, well, clearly the computer at the far
+    end isn't talking to you, so find the cause of that and fix it. If you
+    get an HTTP error code back, well, you know what the error codes
+    mean, right? If you are going to develop Web Services--you will need to!
     
     </p>
     
@@ -546,16 +547,16 @@ change URLs to correct host, port and webapp specifics.
     
     The <a href="user-guide.html">user's guide</a> covers the
     AdminClient in more detail, and there is also an 
-    <a href="ant/axis-admin.html">Ant task</a> to automate its use in your
-    build process.
+    <a href="ant/axis-admin.html">Ant task</a> to automate the use of Axis in your
+    Ant build scripts.
 
     </p>
 
     <a name="test"/></a>
-    <h2>Step 7: testing</h2>
+    <h2>Step 7: Testing</h2>
 
     <p>This step is optional, but highly recommended. For illustrative
-    purposes, it is presumed that you have installed and deployed the stockquote
+    purposes, it is presumed that you have installed and deployed the stock quote
     demo.</p>
     <ul>
         <li>
@@ -571,7 +572,7 @@ change URLs to correct host, port and webapp specifics.
 
     <p><span class="note">Note:</span>
     Again, you may need to replace localhost with your host name, and 8080 with
-    the port number used by your web server. If you have renamed the web application,
+    the port number used by your web server. If you have renamed the web application to
     something other than "axis" change the URL appropriately. 
     </p>
  
@@ -580,10 +581,10 @@ change URLs to correct host, port and webapp specifics.
 
     <h2>Advanced Installation: adding Axis to your own Webapp</h2>
     
-    If you are experienced in webapp development, and especially if you
-    want to add web services to an existing or complex webapp, you can
+    If you are experienced in web application development, and especially if you
+    wish to add web services to an existing or complex webapp, you can
     take an alternate approach to running Axis. Instead of adding your
-    classes to the axis webapp, you can add Axis to your application. 
+    classes to the Axis webapp, you can add Axis to your application.
     <p>
     The core concepts are
     <ol>
@@ -596,7 +597,7 @@ change URLs to correct host, port and webapp specifics.
     Axis, by changing the URL you invoke it with.
     </ol>
 
-    The process is also covered in chapter 15 of 
+    The process is also covered in Chapter 15 of 
     <A href="http://manning.com/antbook">Java Development with Ant</A>,
     which can be downloaded as a 
     <A href="http://www.manning.com/hatcher/chap15.pdf">PDF file</A>.
@@ -614,9 +615,9 @@ change URLs to correct host, port and webapp specifics.
     <p>
     
     We see a lot of people posting their problems on the axis-user
-    mailing lists, and other axis users, and the developers do their
+    mailing list, and other Axis users as well as the Axis developers do their
     best to help when they can. But before you rush to post your own
-    problems to the mail list, a word of caution.
+    problems to the mailing list, a word of caution:
     
     <p>
     
@@ -624,39 +625,40 @@ change URLs to correct host, port and webapp specifics.
     All the help you get from the community is voluntary and
     comes from the kindness of their hearts. They may be other users,
     willing to help you get past the same hurdles they had to be helped
-    over, they may be the developers themselves. But it is all
-    voluntary, so keep your expectations low.
+    over, or they may be the developers themselves. But it is all
+    voluntary, so you may need to keep your expectations low!
     
     <ol>
 
     
     <li>Post to the user mail list, not the developer list. You may
     think the developer mail list is a short cut to higher quality
-    answers. Yet there are less people on that list, and we often ignore
-    questions that should go to the user group. We read that mailing
-    list too, see. 
+    answers.  But the developers are also on the user list along with many
+	other skilled users--so more people will be able to answer your questions.
+	Also, it is helpful for all user issues to be on one list to help build
+	the searchable mailing list archive.
     
     </li>
 
     <li> 
-    Don't ask off-axis questions. The list is not the place to
-    ask about non-axis, non-soap, problems. Even questions about the MS
-    Soap toolkit or .NET client side, dont get many positive answers -we
+    Don't ask non-Axis-related questions. The list is not the place to
+    ask about non-Axis, non-SOAP, problems. Even questions about the MS
+    Soap toolkit or .NET client side, don't get many positive answers--we
     avoid them. That also goes for the Sun Java Web Services Developer
     Pack, or the Jboss.net stuff that they've done with Axis. 
     </li>
     
     <li>Never bother posting to the soapbuilders mailing list
     either, that is only for people developing SOAP toolkits, not using
-    them -all off-topic messages are pointedly ignored.
+    them--all off-topic messages are pointedly ignored.
     </li>
     
     <li>
     There is no guarantee that anyone will be able to solve your
     problem. The usual response in such a situation is silence, for 
     a good reason: if everybody who didn't know the answer to a question
-    said "I don't know", the list would be overflowed with noise. Dont
-    take a silence personally.
+    said "I don't know", the list would be overflowed with noise. Don't
+    take silence personally.
     
     <li>
     Never expect an immediate answer. Even if someone knows the answer,
@@ -667,8 +669,8 @@ change URLs to correct host, port and webapp specifics.
     
     <li>
     Do your homework first. This document lists the foundational stuff
-    you need to understand. Its also warned you that it can take a day
-    to get a reply. Now imagine you get a Http Error '404' on a SOAP
+    you need to understand. It has also warned you that it can take a day
+    to get a reply. Now imagine you get a HTTP Error '404' on a SOAP
     call. Should you rush to post a 'help' request, or should you try
     and find out what an HTTP error code is, what #404 usually means and
     how to use a Java debugger. We provide the source to make that
@@ -677,14 +679,16 @@ change URLs to correct host, port and webapp specifics.
     
     <li>
     Post meaningful subject lines. You want your message read, not
-    deleted unread. 'Help' is not meaningful. 
+    deleted unread. A subject line of 'Axis problem', 'Help with Axis', etc. 
+	is not meaningful, and is not likely to get many readers.
     </li>
     
     <li>
-    Use the <a
+    Search the <a
     href="http://nagoya.apache.org/eyebrowse/SummarizeList?listId=49">
-    mailing list archive</a> to see if someone had the same problem.
-    This list is searchable. 
+    mailing list archives</a> FIRST to see if someone had the same problem.
+    This list is searchable--and may save you much time in getting an answer
+	to your problem.
     </li>
     
     <li>
@@ -703,39 +707,39 @@ change URLs to correct host, port and webapp specifics.
     
     Don't email people for help directly, unless you know them. It's rude and
     presumptious. Messages sent over the mail list benefit the whole
-    community -the readers and people who search the list. Personal
+    community--both the original posters and people who search the list. Personal
     messages just take up the recipients time, and are unwelcome.
-    Usually, the recipients of personal requests just say 'ask the mail
-    list'. 
+    Usually, if not ignored outright, recipients of personal requests will just
+	respond 'ask the mail list' anyway! 
     </li>
     
     <li>
-    Know that configuration problems are hard to replicate, so hard to 
-    get help on. We try with things like happyaxis.jsp to automate the
-    diagnostics, but its hard for people to help here, especially for
-    the obscure platforms. 
+    Know that configuration problems are hard to replicate, and so can be difficult to 
+    get help on. We have tried with the happyaxis.jsp demo to automate the
+    diagnostics gathering for you, but it can be hard for people to be of help here, 
+	especially for obscure platforms. 
     </li>
     
     <li>
     Keep up to date with Axis releases, even the beta copies of
-    forthcoming releases. You dont want your problem to be a bug that is
-    already known and fixed? Often the common response to any question
-    is 'have you tried the latest release'.
+    forthcoming releases. You wouldn't want your problem to be a bug that was
+    already known and fixed in a more recent release. Often the common response to 
+	any question is 'have you tried the latest release'.
     
     <li>
-    Use the source, fix it when you find defects. Even fix the
-    documentation when you find defects. It is only through the
-    participation of Axis's users that it will ever get better. 
+    Study and use the source, and fix it when you find defects. Even fix the
+    documentation when you find defects. It is only through the participation 
+    of Axis' users that it will ever get better. 
     
     </ol>
     
     Has this put you off joining and participating in the Axis user
-    mail list? We hope not -this list belongs to the people who use Axis
+    mail list? We hope not--this list belongs to the people who use Axis
     and so will be your peers as your project proceeds. We just need for
-    you to be aware that it is not a 7x24 support line for people new to
-    server side Java development, and that you need to be somewhat self
-    sufficient. It is not a silver bullet. Knowing how to make effective
-    use of the list, will help you develop better with Axis. 
+    you to be aware that it is not a 24x7 support line for people new to
+    server side Java development, and that you will need to be somewhat self
+    sufficient in this regard. It is not a silver bullet. However, knowing how to 
+    make effective use of the list will help you develop better with Axis. 
     
     
     <a name="summary"/></a>
@@ -743,8 +747,8 @@ change URLs to correct host, port and webapp specifics.
     
     Axis is simply an implementation of SOAP which can be added to your
     own webapp, and a webapp which can host your own web services.
-    Installing it can be a bit fiddly, especially given Java1.4's
-    stricter requirements. If you follow a methodical process, and test
+    Installing it can be a bit fiddly, especially given Java 1.4's
+    stricter requirements. If you follow a methodical process, including testing
     along the way, using happyaxis and the bundled test services, you
     will find it easier to get started with Axis. 
     
