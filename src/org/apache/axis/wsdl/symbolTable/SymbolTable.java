@@ -2156,7 +2156,14 @@ public class SymbolTable {
                 }
                 
                 if (!SchemaUtils.isWrappedType(node)) {
-                  wrapped = false;
+                    // mark the type entry as not just literal referenced
+                    // This doesn't work, but it may help in the future.
+                    // The problem is "wrapped" is a symbol table wide flag,
+                    // which means if one operation breaks the rules
+                    // implemented in isWrappedType(), then everything goes bad
+                    // For example, see bug Axis-1900.
+                    typeEntry.setOnlyLiteralReference(false);
+                    wrapped = false;
                 }
 
                 // Get the nested type entries.

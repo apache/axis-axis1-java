@@ -174,6 +174,23 @@ public class SchemaUtils {
                       String sequenceLocalName = sequenceKid.getLocalName();
                       if (sequenceLocalName != null &&
                           Constants.isSchemaXSD(sequenceKid.getNamespaceURI())) {
+                          // allow choice with element children
+                          if (sequenceLocalName.equals("choice")) {
+                              Node choiceNode = sequenceKid;
+                              NodeList choiceChildren = choiceNode.getChildNodes();
+                              int choiceLen = choiceChildren.getLength();
+                              for (int l = 0; l < choiceLen; l++) {
+                                  Node choiceKid = choiceChildren.item(l);
+                                  String choiceLocalName = choiceKid.getLocalName();
+                                  if (choiceLocalName != null &&
+                                      Constants.isSchemaXSD(choiceKid.getNamespaceURI())) {
+                                      if (!choiceLocalName.equals("element")) {
+                                          return false;
+                                      }
+                                  }
+                              }
+                          }
+                          else
                           if (!sequenceLocalName.equals("element")) {
                               return false;
                           }
