@@ -71,6 +71,10 @@ public class Use extends Enum {
         return type.getEnumNames();
     }
     
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return type.getUse(value);
+    }
+
     public static class Type extends Enum.Type {
         private Type() {
             super("style", new Enum[] {

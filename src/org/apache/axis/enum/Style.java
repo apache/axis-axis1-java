@@ -128,6 +128,10 @@ public class Style extends Enum {
         return type.getEnumNames();
     }
     
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return type.getStyle(value);
+    }
+
     public static class Type extends Enum.Type {
         private Type() {
             super("style", new Enum[] {

@@ -79,10 +79,6 @@ public abstract class Enum implements java.io.Serializable {
                 obj.value == value);
     }
 
-    private Object readResolve() throws java.io.ObjectStreamException {
-        return getType().getEnum(value);
-    }
-    
     public abstract static class Type implements java.io.Serializable {
         private final String name;
         private final Enum[] enums;

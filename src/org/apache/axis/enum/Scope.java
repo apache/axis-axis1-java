@@ -69,6 +69,9 @@ public class Scope extends Enum {
         return type.getEnumNames();
     }
     
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return type.getScope(value);
+    }
     public static class Type extends Enum.Type {
         private Type() {
             super("scope", new Enum[] {
