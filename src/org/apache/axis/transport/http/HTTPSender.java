@@ -59,6 +59,11 @@ public class HTTPSender extends BasicHandler {
      * the url; used for error reporting
      */
     URL targetURL;
+    
+    /**
+     * Socket
+     */ 
+    Socket sock;
 
     /**
      * invoke creates a socket connection, sends the request SOAP message and then
@@ -79,24 +84,15 @@ public class HTTPSender extends BasicHandler {
             targetURL = new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
             String host = targetURL.getHost();
             int port = targetURL.getPort();
-            Socket sock = null;
-
-
-            sock = getSocket(targetURL.getProtocol(), host, port, otherHeaders, useFullURL);
-
-            // optionally set a timeout for the request
-            if (msgContext.getTimeout() != 0) {
-                sock.setSoTimeout(msgContext.getTimeout());
-            }
 
             // Send the SOAP request to the server
-            InputStream inp = writeToSocket(sock, msgContext, targetURL,
+            InputStream inp = writeToSocket(msgContext, targetURL,
                         otherHeaders, host, port, useFullURL);
 
             // Read the response back from the server
             Hashtable headers = new Hashtable();
-            inp = readHeadersFromSocket(sock, msgContext, inp, headers);
-            readFromSocket(sock, msgContext, inp, headers);
+            inp = readHeadersFromSocket(msgContext, inp, headers);
+            readFromSocket(msgContext, inp, headers);
         } catch (Exception e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
@@ -131,7 +127,6 @@ public class HTTPSender extends BasicHandler {
     /**
      * Send the soap request message to the server
      *
-     * @param sock socket
      * @param msgContext message context
      * @param tmpURL url to connect to
      * @param otherHeaders other headers if any
@@ -141,11 +136,10 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws IOException
      */
-    private InputStream writeToSocket(
-            Socket sock, MessageContext msgContext, URL tmpURL,
+    private InputStream writeToSocket(MessageContext msgContext, URL tmpURL,
             StringBuffer otherHeaders, String host, int port,
             BooleanHolder useFullURL)
-            throws IOException {
+            throws Exception {
 
         String userID = null;
         String passwd = null;
@@ -382,6 +376,13 @@ public class HTTPSender extends BasicHandler {
 
         header.append("\r\n"); //The empty line to start the BODY.
 
+        sock = getSocket(targetURL.getProtocol(), host, port, otherHeaders, useFullURL);
+
+        // optionally set a timeout for the request
+        if (msgContext.getTimeout() != 0) {
+            sock.setSoTimeout(msgContext.getTimeout());
+        }
+
         OutputStream out = sock.getOutputStream();
 
         if (!posting) {
@@ -402,7 +403,7 @@ public class HTTPSender extends BasicHandler {
             // it wants us send anything more.
             out.flush();
             Hashtable cheaders= new Hashtable ();
-            inp = readHeadersFromSocket(sock, msgContext, null, cheaders);
+            inp = readHeadersFromSocket(msgContext, null, cheaders);
             int returnCode= -1;
             Integer Irc= (Integer)msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
             if(null != Irc) {
@@ -463,8 +464,7 @@ public class HTTPSender extends BasicHandler {
         return inp;
     }
 
-    private InputStream readHeadersFromSocket(Socket sock,
-                                              MessageContext msgContext,
+    private InputStream readHeadersFromSocket(MessageContext msgContext,
                                               InputStream inp,
                                               Hashtable headers)
             throws IOException {
@@ -565,13 +565,11 @@ public class HTTPSender extends BasicHandler {
     /**
      * Reads the SOAP response back from the server
      *
-     * @param sock socket
      * @param msgContext message context
      *
      * @throws IOException
      */
-    private InputStream readFromSocket(Socket sock,
-                                       MessageContext msgContext,
+    private InputStream readFromSocket(MessageContext msgContext,
                                        InputStream inp,
                                        Hashtable headers)
             throws IOException {
