@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -369,6 +370,9 @@ public class SchemaUtils {
             if (minOccurs != null && minOccurs.equals("0")) {
                 elem.setMinOccursIs0(true);
             }
+            
+            elem.setNillable(JavaUtils.isTrueExplicitly(Utils.getAttribute(elementNode,"nillable")));
+            
             return elem;
         }
         
@@ -626,7 +630,6 @@ public class SchemaUtils {
         }
 
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
         if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
             for (int j = 0; j < children.getLength(); j++) {
@@ -690,7 +693,6 @@ public class SchemaUtils {
         // If the node kind is an element, dive into it.
         if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
-            Node node2 = null;
             for (int j = 0; j < children.getLength(); j++) {
                 Node n = children.item(j);
                 if (isXSDNode(n, "simpleType") || isXSDNode(n, "complexType") || isXSDNode(n, "simpleContent")) {
