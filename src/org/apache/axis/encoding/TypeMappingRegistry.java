@@ -323,7 +323,7 @@ public class TypeMappingRegistry implements Serializer {
             QName elementQName;
 
             if (desc.factory.getClass() ==
-                    BeanSerializer.BeanSerFactory.class) {
+                    BeanSerializer.BeanDeserFactory.class) {
                 elementQName = WSDDConstants.BEANMAPPING_QNAME;
             } else {
                 elementQName = WSDDConstants.TYPE_QNAME;
