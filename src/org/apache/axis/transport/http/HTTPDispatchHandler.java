@@ -117,7 +117,7 @@ public class HTTPDispatchHandler extends BasicHandler {
                          tmpURL.getFile() + " HTTP/1.0\n" +
                        HTTPConstants.HEADER_CONTENT_LENGTH + ": " + 
                                           + reqEnv.length() + "\n" +
-                       HTTPConstants.HEADER_CONTENT_TYPE + ": text.xml\n" +
+                       HTTPConstants.HEADER_CONTENT_TYPE + ": text/xml\n" +
                        (otherHeaders == null ? "" : otherHeaders) + 
                        HTTPConstants.HEADER_SOAP_ACTION + ":" + action + "\n\n" ;
 
