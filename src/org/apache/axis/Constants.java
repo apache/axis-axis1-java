@@ -406,8 +406,8 @@ public class Constants {
     //////////////////////////////////////////////////////////////////////////
     public static final String URI_DEBUG = "http://xml.apache.org/axis/debug";
 
-    // Absolute path of our home directory (if we can determine one)
-    public static final String MC_HOME_DIR = "homeDir" ;
+    // Where to put those pesky JWS classes
+    public static final String MC_JWS_CLASSDIR = "jws.classDir" ;
 
     // Relative path of the request URL (ie. http://.../axis/a.jws = /a.jws
     public static final String MC_RELATIVE_PATH = "path";
