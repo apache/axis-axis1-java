@@ -52,6 +52,7 @@
  *  <http://www.apache.org/>.
  */
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 
@@ -103,7 +104,25 @@ public class EchoHeaders {
     public String echo(String param) {
         return param;
     }
+    
+    /**
+     * throw an axis fault with the text included
+     */
+    public void throwAxisFault(String param) throws AxisFault {
+        throw new AxisFault(param);
+    }
+    
+    public void throwException(String param) throws Exception { 
+        throw new Exception(param);
+    }
 
+    /**
+     * thow a runtime exception
+     */
+    public void throwRuntimeException(String param) { 
+        throw new RuntimeException(param);
+    }
+    
     /**
      * helper
      * @return
