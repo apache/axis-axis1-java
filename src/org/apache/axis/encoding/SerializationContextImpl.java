@@ -1137,7 +1137,6 @@ public class SerializationContextImpl implements SerializationContext
                                              "" + this));
             }
 
-            SerializerInfo info = null;
             // if we're looking for xsd:anyType, accept anything...
             if (Constants.XSD_ANYTYPE.equals(xmlType)) {
                 xmlType = null;
@@ -1145,12 +1144,13 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             // Try getting a serializer for the prefered xmlType
-            info = getSerializer(javaType, xmlType);
+            Serializer ser = getSerializer(javaType, xmlType);
 
-            if ( info != null ) {
+            if ( ser != null ) {
                 // Send the xmlType if indicated.
                 if (shouldSendType) {
-                    xmlType = ((TypeMappingImpl)tm).getXMLType(info.javaType, xmlType);
+                    xmlType = ((TypeMappingImpl)tm).getXMLType(javaType,
+                                                               xmlType);
                     attributes = setTypeAttribute(attributes, xmlType);
                 }
                 // The multiref QName is our own fake name.
@@ -1159,7 +1159,7 @@ public class SerializationContextImpl implements SerializationContext
                 // in the interop tests.
                 //if (name.equals(multirefQName) && type != null)
                 //    name = type;
-                info.ser.serialize(elemQName, attributes, value, this);
+                ser.serialize(elemQName, attributes, value, this);
                 return;
             }
 
@@ -1169,11 +1169,6 @@ public class SerializationContextImpl implements SerializationContext
         // !!! Write out a generic null, or get type info from somewhere else?
     }
 
-    class SerializerInfo {
-        Serializer ser;
-        Class javaType;
-    }
-
     /**
      * getSerializer
      * Attempts to get a serializer for the indicated javaType and xmlType.
@@ -1181,8 +1176,7 @@ public class SerializationContextImpl implements SerializationContext
      * @param xmlType is the preferred qname type.
      * @return found class/serializer or null
      **/
-    private SerializerInfo getSerializer(Class javaType, QName xmlType) {
-        SerializerInfo info = null;
+    private Serializer getSerializer(Class javaType, QName xmlType) {
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
 
@@ -1215,17 +1209,18 @@ public class SerializationContextImpl implements SerializationContext
         if ( serFactory != null ) {
             ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
         }
-        if (ser != null) {
-            info = new SerializerInfo();
-            info.ser = ser;
-            info.javaType = javaType;
-        }
-        return info;
+
+        return ser;
     }
 
     public String getValueAsString(Object value, QName xmlType) throws IOException {
-        SerializerInfo info = getSerializer(value.getClass(), xmlType);
-        SimpleValueSerializer ser = (SimpleValueSerializer)info.ser;
-        return ser.getValueAsString(value, this);
+        Serializer ser = getSerializer(value.getClass(), xmlType);
+        if (!(ser instanceof SimpleValueSerializer)) {
+            throw new IOException(
+                    JavaUtils.getMessage("needSimpleValueSer",
+                                         ser.getClass().getName()));
+        }
+        SimpleValueSerializer simpleSer = (SimpleValueSerializer)ser;
+        return simpleSer.getValueAsString(value, this);
     }
 }

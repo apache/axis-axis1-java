@@ -74,8 +74,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.namespace.QName;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
@@ -83,14 +81,6 @@ import java.util.TimeZone;
  * @author Rich Scheuerle <dims@yahoo.com>
  */
 public class SimpleSerializer implements SimpleValueSerializer {
-    private static SimpleDateFormat zulu =
-       new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                         //  0123456789 0 123456789
-
-    static {
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
     public QName xmlType;
     public Class javaType;
 

@@ -39,13 +39,6 @@ public class TestAttributes extends TestCase {
 
     public static final String myNS = "urn:myNS";
 
-    public static void main(String [] args) throws Exception
-    {
-        TestAttributes tester = new TestAttributes("TestAttributes");
-        tester.testBean();
-        tester.testSimpleType();
-    }
-
     public TestAttributes(String name) {
         super(name);
     }
