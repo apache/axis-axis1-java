@@ -69,7 +69,7 @@ Copyright:
 
   <property name="junit.jar" value="lib/junit.jar"/>
 
-  <property name="packages" value="org.*"/>
+  <property name="packages" value="org.*,javax.*"/>
 
   <property name="build.file" value="build.xml"/>
 
