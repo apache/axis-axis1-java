@@ -55,11 +55,11 @@
 
 package org.apache.axis.utils.compiler;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class implements a factory to instantiate a Compiler.
@@ -70,7 +70,7 @@ import org.apache.commons.logging.Log;
  */
 public class CompilerFactory {
     protected static Log log =
-        AxisInternalServices.getLog(CompilerFactory.class.getName());
+        LogFactory.getLog(CompilerFactory.class.getName());
 
         public static Compiler getCompiler()
         {

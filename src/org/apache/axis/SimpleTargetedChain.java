@@ -55,11 +55,11 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -76,7 +76,7 @@ import java.util.Enumeration;
 public class SimpleTargetedChain extends SimpleChain implements TargetedChain
 {
    protected static Log log =
-      AxisInternalServices.getLog(SimpleTargetedChain.class.getName());
+      LogFactory.getLog(SimpleTargetedChain.class.getName());
 
    protected Handler    requestHandler ;
    protected Handler    pivotHandler ;

@@ -55,7 +55,6 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.ServiceDesc;
@@ -72,6 +71,7 @@ import org.apache.axis.utils.compiler.CompilerError;
 import org.apache.axis.utils.compiler.CompilerFactory;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -101,7 +101,7 @@ import java.util.HashMap;
 public class JWSProcessor extends BasicHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(JWSProcessor.class.getName());
+        LogFactory.getLog(JWSProcessor.class.getName());
 
     protected static HashMap soapServices = new HashMap();
 

@@ -56,17 +56,16 @@
 package test.functional;
 
 import junit.framework.TestCase;
-
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.client.AdminClient;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.echo.TestClient;
 
 /** Test the stock sample code.
  */
 public class TestEchoSample extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestEchoSample.class.getName());
+            LogFactory.getLog(TestEchoSample.class.getName());
 
     public TestEchoSample(String name) {
         super(name);

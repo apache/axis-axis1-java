@@ -55,13 +55,13 @@
 
 package org.apache.axis.transport.http;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
@@ -79,7 +79,7 @@ import java.util.Hashtable;
  */
 public class SimpleAxisServer implements Runnable {
     protected static Log log =
-            AxisInternalServices.getLog(SimpleAxisServer.class.getName());
+            LogFactory.getLog(SimpleAxisServer.class.getName());
 
     // session state.
     // This table maps session keys (random numbers) to SimpleAxisSession objects.

@@ -56,19 +56,18 @@
 package test.functional;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.utils.Options;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.attachments.EchoAttachment;
 
 /** Test the attachments sample code.
  */
 public class TestAttachmentsSample extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestAttachmentsSample.class.getName());
+            LogFactory.getLog(TestAttachmentsSample.class.getName());
 
     public TestAttachmentsSample(String name) {
         super(name);

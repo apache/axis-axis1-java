@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 
 import org.apache.axis.message.EnvelopeHandler;
@@ -66,6 +65,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -87,7 +87,7 @@ public class DeserializerImpl extends SOAPHandler
         implements javax.xml.rpc.encoding.Deserializer, Deserializer
 {
     protected static Log log =
-            AxisInternalServices.getLog(DeserializerImpl.class.getName());
+            LogFactory.getLog(DeserializerImpl.class.getName());
 
     protected Object value = null;
 

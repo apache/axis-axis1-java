@@ -62,8 +62,8 @@ package org.apache.axis.utils ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,7 +72,7 @@ import java.util.Vector;
 
 public class Options {
     protected static Log log =
-        AxisInternalServices.getLog(Options.class.getName());
+        LogFactory.getLog(Options.class.getName());
 
     String  args[]     = null ;
     Vector  usedArgs   = null ;

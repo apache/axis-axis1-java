@@ -63,6 +63,7 @@ import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.server.ServiceLifecycle;
@@ -81,7 +82,7 @@ import java.util.Enumeration;
 public abstract class AxisEngine extends BasicHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(AxisEngine.class.getName());
+        LogFactory.getLog(AxisEngine.class.getName());
 
     // Engine property names
     public static final String PROP_XML_DECL = "sendXMLDeclaration";
@@ -183,7 +184,7 @@ public abstract class AxisEngine extends BasicHandler
 
         /*Set the default attachment implementation */
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION,
-                         AxisInternalServices.getGlobalProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
+                         AxisEngine.getGlobalProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
 
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
 
@@ -397,6 +398,14 @@ public abstract class AxisEngine extends BasicHandler
         return classCache;
     }
     
+    /**
+     * Central access point for AXIS to obtain "global" configuration properties.
+     * To be extended in the future... or replaced with non-global properties.
+     */
+    public static String getGlobalProperty(String property) {
+        return System.getProperty(property);
+    }
+
     protected void invokeJAXRPCHandlers(MessageContext context){
         org.apache.axis.client.Service service = (org.apache.axis.client.Service) context.getProperty(org.apache.axis.client.Call.JAXRPC_SERVICE);
         if(service == null)

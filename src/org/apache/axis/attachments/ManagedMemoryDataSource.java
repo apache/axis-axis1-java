@@ -54,11 +54,11 @@
  */
 package org.apache.axis.attachments;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 
@@ -73,7 +73,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
     /** Field log           */
     protected static Log log =
-         AxisInternalServices.getLog(ManagedMemoryDataSource.class.getName());
+            LogFactory.getLog(ManagedMemoryDataSource.class.getName());
 
     /** Field contentType           */
     protected String contentType = "application/octet-stream";    // Is the default.
@@ -523,8 +523,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     // inner classes cannot have static declarations...
 
     /** Field is_log           */
-    protected static Log is_log =
-        AxisInternalServices.getLog(Instream.class.getName());
+    protected static Log is_log = LogFactory.getLog(Instream.class.getName());
 
     /**
      * Inner class to handle getting an input stream to this data source

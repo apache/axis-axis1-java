@@ -56,7 +56,6 @@
 package org.apache.axis.handlers ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
@@ -64,6 +63,7 @@ import org.apache.axis.security.simple.SimpleSecurityProvider;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -79,7 +79,7 @@ import org.apache.commons.logging.Log;
  */
 public class SimpleAuthenticationHandler extends BasicHandler {
     protected static Log log =
-        AxisInternalServices.getLog(SimpleAuthenticationHandler.class.getName());
+        LogFactory.getLog(SimpleAuthenticationHandler.class.getName());
 
     /**
      * Authenticate the user and password from the msgContext

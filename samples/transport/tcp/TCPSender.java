@@ -56,11 +56,11 @@
 package samples.transport.tcp;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
@@ -74,7 +74,7 @@ import java.net.Socket;
  */
 public class TCPSender extends BasicHandler {
     static Log log =
-            AxisInternalServices.getLog(TCPSender.class.getName());
+            LogFactory.getLog(TCPSender.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.info( "Enter: TCPSender::invoke" );

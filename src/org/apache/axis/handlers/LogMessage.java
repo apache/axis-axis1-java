@@ -55,11 +55,11 @@
 
 package org.apache.axis.handlers;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /** This handler simply prints a custom message to the debug log.
@@ -69,7 +69,7 @@ import org.apache.commons.logging.Log;
 public class LogMessage extends BasicHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(LogMessage.class.getName());
+        LogFactory.getLog(LogMessage.class.getName());
 
     public void invoke(MessageContext context)
     {

@@ -56,18 +56,17 @@
 package samples.security;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.commons.logging.Log;
-
+import org.apache.commons.logging.LogFactory;
 
 public class ClientSigningHandler extends BasicHandler {
     static Log log =
-            AxisInternalServices.getLog(ClientSigningHandler.class.getName());
+            LogFactory.getLog(ClientSigningHandler.class.getName());
 
     static {
         org.apache.xml.security.Init.init();

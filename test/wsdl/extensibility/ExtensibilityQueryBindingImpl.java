@@ -6,7 +6,6 @@
 package test.wsdl.extensibility;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -21,6 +20,8 @@ import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.ser.BeanDeserializer;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.client.Call;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -76,8 +77,9 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryBinding 
 }
 
 class ObjectSerializer {
+
     static Log logger =
-           AxisInternalServices.getLog(ObjectSerializer.class.getName());
+              LogFactory.getLog(ObjectSerializer.class.getName());
 
     static Object toObject(Element element) throws Exception {
        MessageContext currentContext = MessageContext.getCurrentContext();

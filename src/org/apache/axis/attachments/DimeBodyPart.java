@@ -65,9 +65,9 @@ import java.util.StringTokenizer;
 
 import javax.activation.*;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.axis.utils.JavaUtils;
 
 
@@ -107,7 +107,7 @@ import org.apache.axis.utils.JavaUtils;
  */
 public class DimeBodyPart {
     protected static Log log =
-        AxisInternalServices.getLog(DimeBodyPart.class.getName());
+        LogFactory.getLog(DimeBodyPart.class.getName());
 
     protected Object data = null;  
     protected DimeTypeNameFormat dtnf = null; 

@@ -62,6 +62,8 @@ import javax.activation.DataHandler;
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
 import javax.mail.internet.MimeUtility;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**

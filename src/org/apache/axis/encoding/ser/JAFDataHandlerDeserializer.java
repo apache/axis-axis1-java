@@ -55,13 +55,13 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.attachments.AttachmentUtils;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -74,7 +74,7 @@ import javax.xml.namespace.QName;
  */
 public class JAFDataHandlerDeserializer extends DeserializerImpl {
     protected static Log log =
-            AxisInternalServices.getLog(JAFDataHandlerDeserializer.class.getName());
+        LogFactory.getLog(JAFDataHandlerDeserializer.class.getName());
 
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
