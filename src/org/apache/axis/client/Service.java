@@ -105,8 +105,7 @@ import java.util.Vector;
 
 public class Service implements javax.xml.rpc.Service, Serializable, Referenceable {
     private transient AxisEngine          engine = null;
-    private transient EngineConfiguration config =
-        EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig();
+    private transient EngineConfiguration config = null;
 
     private QName               serviceName     = null ;
     private URL                 wsdlLocation    = null ;
@@ -138,7 +137,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     
     protected AxisClient getAxisClient()
     {
-        return new AxisClient(config);
+        return new AxisClient(getEngineConfiguration());
     }
 
     /**
@@ -724,6 +723,16 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         this.config = config;
     }
 
+    /**
+     * Constructs a EngineConfig if one is not available.
+     */ 
+    protected EngineConfiguration getEngineConfiguration() {
+        if (this.config == null) {
+            this.config = EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig(); 
+        }
+        return config;
+    }
+    
     /**
      * Determine whether we'd like to track sessions or not.
      * This information is passed to all Call objects created
