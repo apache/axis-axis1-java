@@ -68,6 +68,7 @@ import java.io.*;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class TypeMappingRegistry implements Serializer { 
 
@@ -91,9 +92,21 @@ public class TypeMappingRegistry implements Serializer {
         }
     }
     
+    TypeMappingRegistry parent = null;
     Hashtable s;
     Hashtable d;
     
+    /**
+     * Define a "parent" TypeMappingRegistry that will be used to service
+     * any requests that are not satisfied by this this instance.  This
+     * enables a chain of TypeMappingRegistries to be employed that contain,
+     * say, a transient set of types, followed by a persistent set of
+     * deployed types, followed by the system defined SOAPTypes
+     */
+    public void setParent(TypeMappingRegistry parent) {
+        this.parent = parent;
+    }
+
     public void addSerializer(Class _class,
                               QName qName,
                               Serializer serializer) {
@@ -109,40 +122,40 @@ public class TypeMappingRegistry implements Serializer {
     }
 
     public Serializer getSerializer(Class _class) {
-        if (s == null)
-            return null;
-        SerializerDescriptor desc = (SerializerDescriptor)s.get(_class);
-        if (desc != null) return desc.serializer;
+        if (s != null) {
+            SerializerDescriptor desc = (SerializerDescriptor)s.get(_class);
+            if (desc != null) return desc.serializer;
+        }
+        if (parent != null) return parent.getSerializer(_class);
         return null;
     }
     
     public QName getTypeQName(Class _class) {
-        if (s == null)
-            return null;
-        SerializerDescriptor desc = (SerializerDescriptor)s.get(_class);
-        if (desc != null) return desc.typeQName;
+        if (s != null) {
+            SerializerDescriptor desc = (SerializerDescriptor)s.get(_class);
+            if (desc != null) return desc.typeQName;
+        }
+        if (parent != null) return parent.getTypeQName(_class);
         return null;
     }
     
-    public Class getClassForQName(QName type)
-    {
-        if (d == null)
-            return null;
-        DeserializerDescriptor desc = (DeserializerDescriptor)d.get(type);
-        if (desc != null) return desc.cls;
+    public Class getClassForQName(QName type) {
+        if (d != null) {
+            DeserializerDescriptor desc = (DeserializerDescriptor)d.get(type);
+            if (desc != null) return desc.cls;
+        }
+        if (parent != null) return parent.getClassForQName(type);
         return null;
     }
     
     public DeserializerBase getDeserializer(QName qname) {
-        if (d == null)
-            return null;
-        
-        DeserializerDescriptor desc = (DeserializerDescriptor)d.get(qname);
-        if ((desc == null) || (desc.factory == null))
-            return null;
-        
-        DeserializerBase dSer = desc.factory.getDeserializer();
-        return dSer;
+        if (d != null) {
+            DeserializerDescriptor desc = (DeserializerDescriptor)d.get(qname);
+            if ((desc != null) && (desc.factory != null))
+               return desc.factory.getDeserializer();
+        }
+        if (parent != null) return parent.getDeserializer(qname);
+        return null;
     }
     
     public void removeSerializer(Class _class) {
@@ -154,12 +167,14 @@ public class TypeMappingRegistry implements Serializer {
     }
     
     public boolean hasSerializer(Class _class) {
-        if (s != null) return s.containsKey(_class);
+        if (s != null && s.containsKey(_class)) return true;
+        if (parent != null) return parent.hasSerializer(_class);
         return false;
     }
     
     public boolean hasDeserializer(QName qname) {
-        if (d != null) return d.containsKey(qname);
+        if (d != null && d.containsKey(qname)) return true;
+        if (parent != null) return parent.hasDeserializer(qname);
         return false;
     }
     
