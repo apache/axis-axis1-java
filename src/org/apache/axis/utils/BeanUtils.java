@@ -69,9 +69,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
 public class BeanUtils {
 
     public static final Object[] noArgs = new Object[] {}; 
+    protected static Log log =
+        LogFactory.getLog(BeanUtils.class.getName());
 
     /**
      * Create a BeanPropertyDescriptor array for the indicated class.
@@ -191,8 +196,14 @@ public class BeanUtils {
         }
 
         try {
-            // Create a new pd array and index into the array
-            int index = 0;
+
+            // Create an Array List
+            ArrayList pd = new ArrayList();
+            for (int i=0; i < myPd.length; i++) {
+                if (myPd[i] != null) {
+                    pd.add(myPd[i]);
+                }
+            }
 
             // Build a new pd array
             // defined by the order of the set methods.
@@ -200,40 +211,74 @@ public class BeanUtils {
             // is not required to return the methods in the declared order;
             // however it seems to be the case most of the time.  The only way
             // to guarantee the correct ordering is if TypeDesc meta-data is available.
-            BeanPropertyDescriptor[] newPd = new BeanPropertyDescriptor[rawPd.length];
+            int index = 0;            
+            ArrayList newPd = new ArrayList();
+            for (int i=0; i <pd.size(); i++) {
+                newPd.add(null);
+            }
             Method[] methods = cls.getMethods();
             for (int i=0; i < methods.length; i++) {
                 Method method = methods[i];
                 if (method.getName().startsWith("set")) {
                     boolean found = false;
-                    for (int j=0; j < myPd.length && !found; j++) {
-                        if (myPd[j] != null &&
-                            myPd[j].getWriteMethod() != null &&
-                            myPd[j].getWriteMethod().equals(method)) {
+                    for (int j=0; j < pd.size() && !found; j++) {
+                        if (pd.get(j) != null &&
+                            ((BeanPropertyDescriptor)pd.get(j)).getWriteMethod() != null &&
+                            ((BeanPropertyDescriptor)pd.get(j)).getWriteMethod().equals(method)) {
                             found = true;
-                            newPd[index] = myPd[j];
+                            newPd.set(index,pd.get(j));
                             index++;
                         }
                     }
                 }
             }
             // Now if there are any additional property descriptors, add them to the end.
-            if (index < myPd.length) {
-                for (int m=0; m < myPd.length && index < myPd.length; m++) {
+            if (index < pd.size()) {
+                for (int m=0; m < pd.size() && index < pd.size(); m++) {
                     boolean found = false;
                     for (int n=0; n < index && !found; n++) {
-                        found = (myPd[m]==newPd[n]);
+                        found = (pd.get(m)==newPd.get(n));
                     }
                     if (!found) {
-                        newPd[index] = myPd[m];
+                        newPd.set(index,  pd.get(m));
                         index++;
                     }
                 }
             }
-            // If newPd has same number of elements as myPd, use newPd.
-            if (index == myPd.length) {
-                myPd = newPd;
+            // If newPd has same number of elements as pd, use newPd.
+            if (index == pd.size()) {
+                pd = newPd;
             }
+            myPd = new BeanPropertyDescriptor[pd.size()];
+            for (int i=0; i <pd.size(); i++) {
+                myPd[i] = (BeanPropertyDescriptor) pd.get(i);
+            }
+            // If the javaType is Throwable, add the getter methods to the list.
+            if (Throwable.class.isAssignableFrom(cls)) {
+                for (int i=0; i < methods.length; i++) {
+                    Method method = methods[i];
+                    if (method.getParameterTypes().length == 0 &&
+                        method.getReturnType() != void.class &&
+                        (method.getName().startsWith("get") ||
+                         ((method.getName().startsWith("is") &&
+                           method.getReturnType() == boolean.class))) &&
+                        // Specifically prevent the Throwable get methods
+                        !(method.getName().equals("getMessage") ||
+                          method.getName().equals("getLocalizedMessage"))) {
+                        boolean found = false;
+                        for (int j=0; j < pd.size() && !found; j++) {
+                            BeanPropertyDescriptor bpd = (BeanPropertyDescriptor) pd.get(j);
+                            found = method.equals(bpd.getReadMethod());
+                        }
+                        if (!found) {
+                            pd.add(new BeanPropertyDescriptor(
+                               getPropNameFromReadMethod(method),
+                               method));
+                        }
+                    }
+                }
+            }
+
 
             // Get the methods of the class and look for the special set and
             // get methods for property "collections"
@@ -247,29 +292,26 @@ public class BeanUtils {
                             methods[j].getReturnType() == methods[i].getParameterTypes()[1] &&
                             methods[j].getParameterTypes()[0] == int.class &&
                             methods[i].getParameterTypes()[0] == int.class) {
-                            for (int k=0; k < myPd.length; k++) {
-                                if (myPd[k] != null &&
-                                    myPd[k].getReadMethod() != null &&
-                                    myPd[k].getWriteMethod() != null &&
-                                    myPd[k].getReadMethod().getName().equals(methods[j].getName()) &&
-                                    myPd[k].getWriteMethod().getName().equals(methods[i].getName())) {
-                                    myPd[k] = new BeanPropertyDescriptor(myPd[k].getName(),
-                                                                         myPd[k].getReadMethod(),
-                                                                         myPd[k].getWriteMethod(),
+                            for (int k=0; k < pd.size(); k++) {
+                                BeanPropertyDescriptor bpd = 
+                                    (BeanPropertyDescriptor) pd.get(k);
+                                if (bpd != null &&
+                                    bpd.getReadMethod() != null &&
+                                    bpd.getWriteMethod() != null &&
+                                    bpd.getReadMethod().getName().equals(methods[j].getName()) &&
+                                    bpd.getWriteMethod().getName().equals(methods[i].getName())) {
+                                    pd.set(k, new BeanPropertyDescriptor(bpd.getName(),
+                                                                         bpd.getReadMethod(),
+                                                                         bpd.getWriteMethod(),
                                                                          methods[j],
-                                                                         methods[i]);
+                                                                         methods[i]));
                                 }
                             }
                         }
                     }
                 }
             }
-            ArrayList pd = new ArrayList();
-            for (int i=0; i < myPd.length; i++) {
-                if (myPd[i] != null) {
-                    pd.add(myPd[i]);
-                }
-            }
+
             // Now look for public fields
             Field fields[] = cls.getFields();
             if (fields != null && fields.length > 0) {    
@@ -300,7 +342,7 @@ public class BeanUtils {
                     }
                 }
             }
-            
+
             // If typeDesc meta data exists, re-order according to the fields
             if (typeDesc != null && 
                 typeDesc.getFields() != null) {
@@ -330,16 +372,35 @@ public class BeanUtils {
                 pd = ordered;
             }
 
-
             myPd = new BeanPropertyDescriptor[pd.size()];
             for (int i=0; i <pd.size(); i++) {
                 myPd[i] = (BeanPropertyDescriptor) pd.get(i);
             }
-
         } catch (Exception e) {
-            // Don't process Property Descriptors if problems occur
-            return myPd;
+            log.error(JavaUtils.getMessage("badPropertyDesc00", cls.getName()), e);
+            throw new InternalException(e);
         }
-        return myPd;
+        return myPd; 
+    }
+
+    /**
+     * Given a read Method (i.e. is or get Method) 
+     * returns the name of the property.
+     */
+    private static String getPropNameFromReadMethod(Method method) {
+        String name = method.getName();
+        if (name.startsWith("is")) {
+            name = name.substring(2);
+        } else {
+            name = name.substring(3);
+        }
+        if (name.length() == 0) {
+            return null;
+        } else if (name.length() == 1) {
+            return Character.toLowerCase(name.charAt(0)) + "";
+        } else {
+            return Character.toLowerCase(name.charAt(0)) + name.substring(1);
+        } 
+        
     }
 }
