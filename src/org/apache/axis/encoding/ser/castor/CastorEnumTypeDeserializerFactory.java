@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,13 +60,13 @@ import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import javax.xml.namespace.QName;
 
 /**
- * A CastorDeserializer Factory
+ * A CastorEnumTypeDeserializer Factory
  * 
- * @author Olivier Brand (olivier.brand@vodafone.com)
+ * @author Ozzie Gurkan
  */
-public class CastorDeserializerFactory extends BaseDeserializerFactory {
+public class CastorEnumTypeDeserializerFactory extends BaseDeserializerFactory {
 
-    public CastorDeserializerFactory(Class javaType, QName xmlType) {
-        super(CastorDeserializer.class, xmlType, javaType);
+    public CastorEnumTypeDeserializerFactory(Class javaType, QName xmlType) {
+        super(CastorEnumTypeDeserializer.class, xmlType, javaType);
     }
 }

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,30 +62,27 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.ValidationException;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.lang.reflect.Method;
+import java.util.Enumeration;
 
 /**
  * Castor serializer
  * 
- * @author Olivier Brand (olivier.brand@vodafone.com)
- * @author Steve Loughran
+ * @author Ozzie Gurkan
  * @version 1.0
  */
-public class CastorSerializer implements Serializer {
+public class CastorEnumTypeSerializer implements Serializer {
 
     protected static Log log =
-            LogFactory.getLog(CastorSerializer.class.getName());
+            LogFactory.getLog(CastorEnumTypeSerializer.class.getName());
 
     /**
-     * Serialize a Castor object.
+     * Serialize a Castor Enum Type object.
      * 
      * @param name       
      * @param attributes 
@@ -100,32 +97,23 @@ public class CastorSerializer implements Serializer {
             Object value,
             SerializationContext context)
             throws IOException {
-        String fdate;
-        StringWriter writer = null;
+        context.startElement(name, attributes);
 
         try {
-            writer = new StringWriter();
+            //get the value of the object
+            Method method = value.getClass().getMethod("toString", new Class[]{});
+            
+            //call the method to return the string
+            String string = (String) method.invoke(value, new Object[]{});
 
-            // Create a Castor Marshaller initialized with the output stream
-            Marshaller marshaller = new Marshaller(writer);
+            //write the string
+            context.writeString(string);
 
-            // Don't include the DOCTYPE, otherwise an exception occurs due to
-            //2 DOCTYPE defined in the document. The XML fragment is included in
-            //an XML document containing already a DOCTYPE
-            marshaller.setMarshalAsDocument(false);
-
-            // Marshall the Castor object into the stream (sink)
-            marshaller.marshal(value);
-
-            context.writeString(writer.toString());
-        } catch (MarshalException me) {
-            log.error(Messages.getMessage("castorMarshalException00"), me);
-            throw new IOException(Messages.getMessage("castorMarshalException00")
-                    + me.getLocalizedMessage());
-        } catch (ValidationException ve) {
-            log.error(Messages.getMessage("castorValidationException00"), ve);
-            throw new IOException(Messages.getMessage("castorValidationException00")
-                    + ve.getLocalizedMessage());
+        } catch (Exception me) {
+            log.error(Messages.getMessage("exception00"), me);
+            throw new IOException("Castor object error: " + me.getLocalizedMessage());
+        } finally {
+            context.endElement();
         }
     }
 
@@ -145,6 +133,32 @@ public class CastorSerializer implements Serializer {
      * @see org.apache.axis.wsdl.fromJava.Types
      */
     public Element writeSchema(Class javaType, Types types) throws Exception {
-        return null;
+        /*
+        <simpleType>
+            <restriction base="xsd:string">
+                <enumeration value="OK"/>
+                <enumeration value="ERROR"/>
+                <enumeration value="WARNING"/>
+            </restriction>
+        </simpleType>
+        */
+        Element simpleType = types.createElement("simpleType");
+        Element restriction = types.createElement("restriction");
+        simpleType.appendChild(restriction);
+        restriction.setAttribute("base", Constants.NS_PREFIX_SCHEMA_XSD + ":string");
+
+        Method enumerateMethod = javaType.getMethod("enumerate", new Class[0]);
+        Enumeration en = (Enumeration) enumerateMethod.invoke(null, new Object[0]);
+        while (en.hasMoreElements()) {
+            Object obj = (Object) en.nextElement();
+            Method toStringMethod = obj.getClass().getMethod("toString", new Class[0]);
+            String value = (String) toStringMethod.invoke(obj, new Object[0]);
+
+            Element enumeration = types.createElement("enumeration");
+            restriction.appendChild(enumeration);
+            enumeration.setAttribute("value", value);
+        }
+
+        return simpleType;
     }
 }

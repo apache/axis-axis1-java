@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,18 +55,17 @@
 
 package org.apache.axis.encoding.ser.castor;
 
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
 
 import javax.xml.namespace.QName;
 
 /**
- * A CastorDeserializer Factory
+ * SerializerFactory for Castor Enum Type objects
  * 
- * @author Olivier Brand (olivier.brand@vodafone.com)
+ * @author Ozzie Gurkan
  */
-public class CastorDeserializerFactory extends BaseDeserializerFactory {
-
-    public CastorDeserializerFactory(Class javaType, QName xmlType) {
-        super(CastorDeserializer.class, xmlType, javaType);
+public class CastorEnumTypeSerializerFactory extends BaseSerializerFactory {
+    public CastorEnumTypeSerializerFactory(Class javaType, QName xmlType) {
+        super(CastorEnumTypeSerializer.class, xmlType, javaType);
     }
 }

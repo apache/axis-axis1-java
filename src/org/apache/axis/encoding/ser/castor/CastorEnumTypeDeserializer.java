@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,18 +55,50 @@
 
 package org.apache.axis.encoding.ser.castor;
 
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.utils.Messages;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
+import java.lang.reflect.Method;
 
 /**
- * A CastorDeserializer Factory
+ * Castor deserializer
  * 
- * @author Olivier Brand (olivier.brand@vodafone.com)
+ * @author Ozzie Gurkan
+ * @version 1.0
  */
-public class CastorDeserializerFactory extends BaseDeserializerFactory {
+public class CastorEnumTypeDeserializer
+        extends DeserializerImpl
+        implements Deserializer {
 
-    public CastorDeserializerFactory(Class javaType, QName xmlType) {
-        super(CastorDeserializer.class, xmlType, javaType);
+    public QName xmlType;
+    public Class javaType;
+
+    public CastorEnumTypeDeserializer(Class javaType, QName xmlType) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+    }
+
+    public void onEndElement(
+            String namespace,
+            String localName,
+            DeserializationContext context)
+            throws SAXException {
+
+        try {
+            MessageElement msgElem = context.getCurElement();
+            if (msgElem != null) {
+                Method method = javaType.getMethod("valueOf", new Class[]{String.class});
+                value = method.invoke(null, new Object[]{msgElem.getValue()});
+            }
+        } catch (Exception exp) {
+            log.error(Messages.getMessage("exception00"), exp);
+            throw new SAXException(exp);
+        }
+
     }
 }
