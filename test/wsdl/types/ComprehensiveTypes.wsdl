@@ -379,7 +379,7 @@
           </xsd:sequence>
         </xsd:complexType>
 
-	<!-- Test for a WS-I-like type that we used to fail on. -->
+  <!-- Test for a WS-I-like type that we used to fail on. -->
         <xsd:complexType name="SimpleAnyURIType">
           <xsd:simpleContent>
             <xsd:extension base="xsd:anyURI">
@@ -423,6 +423,9 @@
     <part name="unsignedShort" type="xsd:unsignedShort"/>
     <part name="unsignedByte" type="xsd:unsignedByte"/>
     <part name="nonNegativeInteger" type="xsd:nonNegativeInteger"/>
+    <part name="positiveInteger" type="xsd:positiveInteger"/>
+    <part name="nonPositiveInteger" type="xsd:nonPositiveInteger"/>
+    <part name="negativeInteger" type="xsd:negativeInteger"/>
     <part name="anyURI" type="xsd:anyURI"/>
     <part name="gYear" type="xsd:gYear"/>
     <part name="gMonth" type="xsd:gMonth"/>
@@ -628,6 +631,36 @@
   <message name="outputNonNegativeInteger">
     <part name="outNonNegativeInteger" type="xsd:nonNegativeInteger"/>
     <part name="NonNegativeInteger" type="xsd:nonNegativeInteger"/>
+  </message>
+
+  <message name="inputPositiveInteger">
+    <part name="inPositiveInteger" type="xsd:positiveInteger"/>
+    <part name="PositiveInteger" type="xsd:positiveInteger"/>
+  </message>
+
+  <message name="outputPositiveInteger">
+    <part name="outPositiveInteger" type="xsd:positiveInteger"/>
+    <part name="PositiveInteger" type="xsd:positiveInteger"/>
+  </message>
+
+  <message name="inputNonPositiveInteger">
+    <part name="inNonPositiveInteger" type="xsd:nonPositiveInteger"/>
+    <part name="NonPositiveInteger" type="xsd:nonPositiveInteger"/>
+  </message>
+
+  <message name="outputNonPositiveInteger">
+    <part name="outNonPositiveInteger" type="xsd:nonPositiveInteger"/>
+    <part name="NonPositiveInteger" type="xsd:nonPositiveInteger"/>
+  </message>
+
+  <message name="inputNegativeInteger">
+    <part name="inNegativeInteger" type="xsd:negativeInteger"/>
+    <part name="NegativeInteger" type="xsd:negativeInteger"/>
+  </message>
+
+  <message name="outputNegativeInteger">
+    <part name="outNegativeInteger" type="xsd:negativeInteger"/>
+    <part name="NegativeInteger" type="xsd:negativeInteger"/>
   </message>
 
   <message name="inputAnyURI">
@@ -1132,6 +1165,18 @@
     <operation name="methodNonNegativeInteger">
       <input message="tns:inputNonNegativeInteger"/>
       <output message="tns:outputNonNegativeInteger"/>
+    </operation>    
+    <operation name="methodPositiveInteger">
+      <input message="tns:inputPositiveInteger"/>
+      <output message="tns:outputPositiveInteger"/>
+    </operation>    
+    <operation name="methodNonPositiveInteger">
+      <input message="tns:inputNonPositiveInteger"/>
+      <output message="tns:outputNonPositiveInteger"/>
+    </operation>    
+    <operation name="methodNegativeInteger">
+      <input message="tns:inputNegativeInteger"/>
+      <output message="tns:outputNegativeInteger"/>
     </operation>    
     <operation name="methodAnyURI">
       <input message="tns:inputAnyURI"/>
@@ -2285,6 +2330,52 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+    <operation name="methodPositiveInteger">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodNonPositiveInteger">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodNegativeInteger">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    
     <operation name="methodAnyURI">
       <soap:operation soapAction=""/>
       <input>

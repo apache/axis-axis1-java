@@ -52,63 +52,79 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.types;
 
-import java.math.BigInteger;
+package test.types;
 
-import java.util.Random;
+import junit.framework.TestCase;
 
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
+import org.apache.axis.types.NonPositiveInteger;
 
 /**
- * Custom class for supporting primitive XSD data type nonNegativeInteger
- *
- * @author Russell Butek <butek@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger">XML Schema 3.3.20</a>
+ * Test validation of types.NonNegativeInteger
  */
-public class NonNegativeInteger extends BigInteger {
+public class TestNonPositiveInteger extends TestCase {
 
-    public NonNegativeInteger(byte[] val) {
-        super(val);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(int signum, byte[] magnitude) {
-        super(signum, magnitude);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(int bitLength, int certainty, Random rnd) {
-        super(bitLength, certainty, rnd);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(int numBits, Random rnd) {
-        super(numBits, rnd);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(String val) {
-        super(val);
-        checkValidity();
+    public TestNonPositiveInteger(String name) {
+        super(name);
     }
 
-    public NonNegativeInteger(String val, int radix) {
-        super(val, radix);
-        checkValidity();
-    } // ctor
+    /**
+     * Run a failure test.  value should be invalid.
+     */
+    private void runFailTest(String value) throws Exception {
+        NonPositiveInteger oNonPositiveInteger = null;
+        try {
+            oNonPositiveInteger = new NonPositiveInteger(value);
+        }
+        catch (Exception e) { // catch the validation exception
+        }
+        // object is not iNstantiated on bad data value
+        assertNull("validation restriction failed [" +
+                value + "]. did not restrict bad value.", oNonPositiveInteger);
+    }
 
     /**
-     * validate the value against the xsd definition
+     * Run a successful test.  value should be valid.
      */
-    private BigInteger zero = new BigInteger("0");
-    private void checkValidity() {
-        if (compareTo(zero) < 0) {
-            throw new NumberFormatException(
-                    Messages.getMessage("badNonNegInt00")
-                    + ":  " + this);
+    private void runPassTest(String value) throws Exception {
+        NonPositiveInteger oNonPositiveInteger = null;
+        try {
+            oNonPositiveInteger = new NonPositiveInteger(value);
         }
-    } // checkValidity
+        catch (Exception e) { // catch the validation exception
+        }
+        assertEquals("unsigned int not equal" +
+                value, oNonPositiveInteger.toString(), value);
+    }
 
-} // class NonNegativeInteger
+    /**
+     * Test that a Negative value succeeeds
+     */
+    public void testnonPositiveValue() throws Exception {
+        runPassTest("-12345678901234567890");
+    }
+
+    /**
+     * Test that a positive number fails
+     */
+    public void testPositiveValue() throws Exception {
+        runFailTest("123");
+    }
+
+
+    /**
+    * Test that a number at MaxInclusive succeeds
+    */
+    public void testMaxInclusive() throws Exception {
+       runPassTest("0");
+    }
+
+    /**
+    * Test that a number above MaxInclusive fails
+    */
+    public void testAboveMaxInclusive() throws Exception {
+       runFailTest("1");
+    }
+
+
+}

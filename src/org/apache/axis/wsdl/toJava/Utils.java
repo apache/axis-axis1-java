@@ -764,6 +764,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         constructorThrowMap.put("org.apache.axis.types.UnsignedShort", "new org.apache.axis.types.UnsignedShort(0)");
         constructorThrowMap.put("org.apache.axis.types.UnsignedByte", "new org.apache.axis.types.UnsignedByte(0)");
         constructorThrowMap.put("org.apache.axis.types.NonNegativeInteger", "new org.apache.axis.types.NonNegativeInteger(\"0\")");
+        constructorThrowMap.put("org.apache.axis.types.PositiveInteger", "new org.apache.axis.types.PositiveInteger(\"1\")");
+        constructorThrowMap.put("org.apache.axis.types.NonPositiveInteger", "new org.apache.axis.types.NonPositiveInteger(\"0\")");
+        constructorThrowMap.put("org.apache.axis.types.NegativeInteger", "new org.apache.axis.types.NegativeInteger(\"-1\")");
         constructorThrowMap.put("org.apache.axis.types.URI", "new org.apache.axis.types.URI(\"urn:testing\")");
         constructorThrowMap.put("org.apache.axis.types.Year", "new org.apache.axis.types.Year(2000)");
         constructorThrowMap.put("org.apache.axis.types.Month", "new org.apache.axis.types.Month(1)");

@@ -73,7 +73,10 @@ import test.wsdl.types.comprehensive_types2.holders.SimpleAnyURITypeHolder;
 
 import test.wsdl.types.comprehensive_service.TypeTest;
 import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
+import org.apache.axis.types.NegativeInteger;
 import org.apache.axis.types.NonNegativeInteger;
+import org.apache.axis.types.NonPositiveInteger;
+import org.apache.axis.types.PositiveInteger;
 import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedInt;
 import org.apache.axis.types.UnsignedShort;
@@ -85,7 +88,10 @@ import org.apache.axis.types.Day;
 import org.apache.axis.types.YearMonth;
 import org.apache.axis.types.MonthDay;
 import org.apache.axis.holders.TimeHolder;
+import org.apache.axis.holders.NegativeIntegerHolder;
 import org.apache.axis.holders.NonNegativeIntegerHolder;
+import org.apache.axis.holders.NonPositiveIntegerHolder;
+import org.apache.axis.holders.PositiveIntegerHolder;
 import org.apache.axis.holders.UnsignedLongHolder;
 import org.apache.axis.holders.UnsignedByteHolder;
 import org.apache.axis.holders.UnsignedShortHolder;
@@ -118,6 +124,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
         UnsignedShort ushort = null;
         UnsignedByte ubyte = null;
         NonNegativeInteger nnint = null;
+        PositiveInteger pint = null;
+        NonPositiveInteger npint = null;
+        NegativeInteger nint = null;
         URI uri = null;
         Year year = null;
         Month month = null;
@@ -131,6 +140,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
             ushort = new UnsignedShort(77);
             ubyte = new UnsignedByte(7);
             nnint = new NonNegativeInteger("7");
+            pint = new PositiveInteger("7");
+            npint = new NonPositiveInteger("-7");
+            nint = new NegativeInteger("-7");
             uri = new URI("urn:this-is-a-test");
             year =  new Year(1995);
             month = new Month(7);
@@ -172,6 +184,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     ushort,
                     ubyte,
                     nnint,
+                    pint,
+                    npint,
+                    nint,
                     uri,
                     year,
                     month,
@@ -212,6 +227,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new UnsignedShortHolder(ushort),
                     new UnsignedByteHolder(ubyte),
                     new NonNegativeIntegerHolder(nnint),
+                    new PositiveIntegerHolder(pint),
+                    new NonPositiveIntegerHolder(npint),
+                    new NegativeIntegerHolder(nint),
                     new URIHolder(uri),
                     new YearHolder(year),
                     new MonthHolder(month),
@@ -252,6 +270,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new UnsignedShortHolder(),
                     new UnsignedByteHolder(),
                     new NonNegativeIntegerHolder(),
+                    new PositiveIntegerHolder(),
+                    new NonPositiveIntegerHolder(),
+                    new NegativeIntegerHolder(),
                     new URIHolder(),
                     new YearHolder(),
                     new MonthHolder(),
@@ -730,6 +751,39 @@ public class VerifyTestCase extends junit.framework.TestCase {
             NonNegativeInteger actual = binding.methodNonNegativeInteger(sendValue, nnih);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodNonNegativeInteger Exception caught: " + re );
+        }
+        try {
+            PositiveInteger sendValue = null;
+            try {
+                sendValue = new PositiveInteger("246802468024680");
+            } catch (Exception e) {
+            }
+            PositiveIntegerHolder pih = new PositiveIntegerHolder(sendValue);
+            PositiveInteger actual = binding.methodPositiveInteger(sendValue, pih);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("methodPositiveInteger Exception caught: " + re );
+        }
+        try {
+            NonPositiveInteger sendValue = null;
+            try {
+                sendValue = new NonPositiveInteger("-246802468024680");
+            } catch (Exception e) {
+            }
+            NonPositiveIntegerHolder npih = new NonPositiveIntegerHolder(sendValue);
+            NonPositiveInteger actual = binding.methodNonPositiveInteger(sendValue, npih);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("methodNonPositiveInteger Exception caught: " + re );
+        }
+        try {
+            NegativeInteger sendValue = null;
+            try {
+                sendValue = new NegativeInteger("-246802468024680");
+            } catch (Exception e) {
+            }
+            NegativeIntegerHolder nih = new NegativeIntegerHolder(sendValue);
+            NegativeInteger actual = binding.methodNegativeInteger(sendValue, nih);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("methodNegativeInteger Exception caught: " + re );
         }
         try {
             URI sendValue = null;

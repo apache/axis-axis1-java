@@ -259,6 +259,27 @@
   <message name="echoNonNegativeIntegerResponse">
     <part name="return" type="xsd:nonNegativeInteger"/>
   </message>
+  
+  <message name="echoPositiveIntegerRequest">
+    <part name="inputPositiveInteger" type="xsd:positiveInteger"/>
+  </message>
+  <message name="echoPositiveIntegerResponse">
+    <part name="return" type="xsd:positiveInteger"/>
+  </message>
+
+  <message name="echoNonPositiveIntegerRequest">
+    <part name="inputNonPositiveInteger" type="xsd:nonPositiveInteger"/>
+  </message>
+  <message name="echoNonPositiveIntegerResponse">
+    <part name="return" type="xsd:nonPositiveInteger"/>
+  </message>
+
+  <message name="echoNegativeIntegerRequest">
+    <part name="inputNegativeInteger" type="xsd:negativeInteger"/>
+  </message>
+  <message name="echoNegativeIntegerResponse">
+    <part name="return" type="xsd:negativeInteger"/>
+  </message>
 
   <portType name="InteropTestPortType">
     <operation name="echoString" parameterOrder="inputString">
@@ -379,6 +400,18 @@
     <operation name="echoNonNegativeInteger">
       <input message="tns:echoNonNegativeIntegerRequest"/>
       <output message="tns:echoNonNegativeIntegerResponse"/>
+    </operation>
+    <operation name="echoPositiveInteger">
+      <input message="tns:echoPositiveIntegerRequest"/>
+      <output message="tns:echoPositiveIntegerResponse"/>
+    </operation>
+    <operation name="echoNonPositiveInteger">
+      <input message="tns:echoNonPositiveIntegerRequest"/>
+      <output message="tns:echoNonPositiveIntegerResponse"/>
+    </operation>
+    <operation name="echoNegativeInteger">
+      <input message="tns:echoNegativeIntegerRequest"/>
+      <output message="tns:echoNegativeIntegerResponse"/>
     </operation>
   </portType>
 
@@ -634,6 +667,33 @@
       </output>
     </operation>
     <operation name="echoNonNegativeInteger">
+      <soap:operation soapAction="http://soapinterop.org/"/>
+      <input>
+        <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+      <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="echoPositiveInteger">
+      <soap:operation soapAction="http://soapinterop.org/"/>
+      <input>
+        <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+      <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="echoNonPositiveInteger">
+      <soap:operation soapAction="http://soapinterop.org/"/>
+      <input>
+        <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+      <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="echoNegativeInteger">
       <soap:operation soapAction="http://soapinterop.org/"/>
       <input>
         <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>

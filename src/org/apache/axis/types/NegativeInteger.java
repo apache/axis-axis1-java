@@ -58,43 +58,50 @@ import java.math.BigInteger;
 
 import java.util.Random;
 
+import org.apache.axis.types.NonPositiveInteger;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 /**
- * Custom class for supporting primitive XSD data type nonNegativeInteger
+ * Custom class for supporting primitive XSD data type negativeinteger
  *
- * @author Russell Butek <butek@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger">XML Schema 3.3.20</a>
+ * negativeInteger is derived from nonPositiveInteger by setting the
+ * value of maxInclusive to be -1. This results in the standard 
+ * mathematical concept of the negative integers. The value space of 
+ * negativeInteger is the infinite set {...,-2,-1}. 
+ * The base type of negativeInteger is nonPositiveInteger. 
+ *
+ * @author Chris Haddad <haddadc@apache.org>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#negativeInteger">XML Schema 3.3.15</a>
  */
-public class NonNegativeInteger extends BigInteger {
+public class NegativeInteger extends NonPositiveInteger {
 
-    public NonNegativeInteger(byte[] val) {
+    public NegativeInteger(byte[] val) {
         super(val);
         checkValidity();
     } // ctor
 
-    public NonNegativeInteger(int signum, byte[] magnitude) {
+    public NegativeInteger(int signum, byte[] magnitude) {
         super(signum, magnitude);
         checkValidity();
     } // ctor
 
-    public NonNegativeInteger(int bitLength, int certainty, Random rnd) {
+    public NegativeInteger(int bitLength, int certainty, Random rnd) {
         super(bitLength, certainty, rnd);
         checkValidity();
     } // ctor
 
-    public NonNegativeInteger(int numBits, Random rnd) {
+    public NegativeInteger(int numBits, Random rnd) {
         super(numBits, rnd);
         checkValidity();
     } // ctor
 
-    public NonNegativeInteger(String val) {
+    public NegativeInteger(String val) {
         super(val);
         checkValidity();
     }
 
-    public NonNegativeInteger(String val, int radix) {
+    public NegativeInteger(String val, int radix) {
         super(val, radix);
         checkValidity();
     } // ctor
@@ -104,9 +111,9 @@ public class NonNegativeInteger extends BigInteger {
      */
     private BigInteger zero = new BigInteger("0");
     private void checkValidity() {
-        if (compareTo(zero) < 0) {
+        if (compareTo(zero) >= 0) {
             throw new NumberFormatException(
-                    Messages.getMessage("badNonNegInt00")
+                    Messages.getMessage("badnegInt00")
                     + ":  " + this);
         }
     } // checkValidity

@@ -58,8 +58,11 @@ package samples.echo ;
 import org.apache.axis.AxisFault;
 
 import org.apache.axis.types.HexBinary;
+import org.apache.axis.types.NegativeInteger;
 import org.apache.axis.types.NonNegativeInteger;
+import org.apache.axis.types.NonPositiveInteger;
 import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.PositiveInteger;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedInt;
@@ -297,6 +300,45 @@ public abstract class TestClient {
         } catch (Exception e) {
             if (!testMode) {
                 verify("echoNonNegativeInteger", nniInput, e);
+            } else {
+                throw e;
+            }
+        }
+
+        // Test xsd:positiveInteger
+        PositiveInteger piInput = new PositiveInteger("12345678901234567890");
+        try {
+            output = binding.echoPositiveInteger(piInput);
+            verify("echoPositiveInteger", piInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoPositiveInteger", piInput, e);
+            } else {
+                throw e;
+            }
+        }
+
+        // Test xsd:nonPositiveInteger
+        NonPositiveInteger npiInput = new NonPositiveInteger("-12345678901234567890");
+        try {
+            output = binding.echoNonPositiveInteger(npiInput);
+            verify("echoNonPositiveInteger", npiInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoNonPositiveInteger", npiInput, e);
+            } else {
+                throw e;
+            }
+        }
+        
+        // Test xsd:negativeInteger
+        NegativeInteger niInput = new NegativeInteger("-12345678901234567890");
+        try {
+            output = binding.echoNegativeInteger(niInput);
+            verify("echoNegativeInteger", niInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoNegativeInteger", niInput, e);
             } else {
                 throw e;
             }

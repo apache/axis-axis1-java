@@ -3,8 +3,11 @@ package test.encoding;
 import org.apache.axis.Constants;
 
 import org.apache.axis.types.HexBinary;
+import org.apache.axis.types.NegativeInteger;
 import org.apache.axis.types.NonNegativeInteger;
+import org.apache.axis.types.NonPositiveInteger;
 import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.PositiveInteger;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedInt;
@@ -201,6 +204,21 @@ public class TestDeser2001 extends TestDeser {
     public void testNonNegativeInteger() throws Exception {
         deserialize("<result xsi:type=\"xsd:nonNegativeInteger\">12345678901234567890</result>",
                     new NonNegativeInteger("12345678901234567890"), true);
+    }
+
+    public void testNonPositiveInteger() throws Exception {
+        deserialize("<result xsi:type=\"xsd:nonPositiveInteger\">-12345678901234567890</result>",
+                    new NonPositiveInteger("-12345678901234567890"), true);
+    }
+
+    public void testNegativeInteger() throws Exception {
+        deserialize("<result xsi:type=\"xsd:negativeInteger\">-12345678901234567890</result>",
+                    new NegativeInteger("-12345678901234567890"), true);
+    }
+
+    public void testPositiveInteger() throws Exception {
+        deserialize("<result xsi:type=\"xsd:positiveInteger\">12345678901234567890</result>",
+                    new PositiveInteger("12345678901234567890"), true);
     }
 
     public void testName() throws Exception {
