@@ -76,8 +76,6 @@ import org.apache.axis.utils.JavaUtils;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class BeanSerializerFactory extends BaseSerializerFactory {
-    short format = BeanSerializer.PROPERTY_NAME;
-
     public BeanSerializerFactory(Class javaType, QName xmlType) {
         super(BeanSerializer.class, false, xmlType, javaType);  
         // Sometimes an Enumeration class is registered as a Bean.
@@ -86,23 +84,9 @@ public class BeanSerializerFactory extends BaseSerializerFactory {
             serClass = EnumSerializer.class;
         }
     }
-    // Alternate constructor to set format flag
-    public BeanSerializerFactory(Class javaType, QName xmlType, short format) {
-        super(BeanSerializer.class, false, xmlType, javaType);  
-        // Sometimes an Enumeration class is registered as a Bean.
-        // If this is the case, silently switch to the EnumSerializer
-        if (JavaUtils.isEnumClass(javaType)) {
-            serClass = EnumSerializer.class;
-        }
-        this.format = format;
-    }
 
     public javax.xml.rpc.encoding.Serializer getSerializerAs(String mechanismType)
         throws JAXRPCException {
-        Serializer ser = (Serializer) super.getSerializerAs(mechanismType);
-        if (ser != null && ser instanceof BeanSerializer) {
-            ((BeanSerializer)ser).setElementPropertyFormat(format);
-        }
-        return ser;
+        return (Serializer) super.getSerializerAs(mechanismType);
     }
 }
