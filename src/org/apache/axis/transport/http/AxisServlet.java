@@ -280,8 +280,26 @@ public class AxisServlet extends HttpServlet
             if (realpath == null) {
                 realpath = req.getServletPath();
             }
-            if ((pathInfo == null || pathInfo.equals("")) &&
-                !realpath.endsWith(".jws")) {
+            
+            boolean wsdlRequested = false;
+            boolean listRequested = false;
+
+            // check first if we are doing WSDL or a list operation
+            String queryString = req.getQueryString();
+            if (queryString != null) {
+                if (queryString.equalsIgnoreCase("wsdl")) {
+                    wsdlRequested = true;
+                } else if (queryString.equalsIgnoreCase("list")) {
+                    listRequested = true;
+                }
+            }
+
+            // If the user requested the servlet (i.e. /axis/services/)
+            // with no service name, present the user with a list of deployed 
+            // services to be helpful
+            // Don't do this if we are doing WSDL or list.
+            if (!wsdlRequested && !listRequested &&
+                (pathInfo == null || pathInfo.equals(""))) {
                 res.setContentType("text/html");
                 writer.println("<h2>And now... Some Services</h2>");
                 Iterator i = engine.getConfig().getDeployedServices();
@@ -307,9 +325,9 @@ public class AxisServlet extends HttpServlet
                 }
                 writer.println("</ul>");
             } else if (realpath != null) {
-                /**
-                 * get message context w/ various properties set
-                 */
+                // We have a pathname, so now we perform WSDL or list operations 
+                
+                // get message context w/ various properties set
                 MessageContext msgContext = createMessageContext(engine, req, res);
     
                 try {
@@ -325,20 +343,9 @@ public class AxisServlet extends HttpServlet
                     String url = HttpUtils.getRequestURL(req).toString();
 
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
-
-                    boolean wsdlRequested = false;
-                    boolean listRequested = false;
-
-                    String queryString = req.getQueryString();
-                    if (queryString != null) {
-                        if (queryString.equalsIgnoreCase("wsdl")) {
-                            wsdlRequested = true;
-                        } else if (queryString.equalsIgnoreCase("list")) {
-                            listRequested = true;
-                        }
-                    }
-
+                    
                     if (wsdlRequested) {
+                        // Do WSDL generation
                         engine.generateWSDL(msgContext);
                         Document doc = (Document) msgContext.getProperty("WSDL");
                         if (doc != null) {
@@ -354,6 +361,7 @@ public class AxisServlet extends HttpServlet
                                            "</p>");
                         }
                     } else if (listRequested) {
+                        // Do list, if it is enabled
                         if (enableList) {
                             Document doc = Admin.listConfig(engine);
                             if (doc != null) {
@@ -369,6 +377,7 @@ public class AxisServlet extends HttpServlet
                                                "</p>");
                             }
                         } else {
+                            // list not enable, return error
                             res.setContentType("text/html");
                             writer.println("<h2>" +
                                            JavaUtils.getMessage("error00") +
@@ -378,6 +387,10 @@ public class AxisServlet extends HttpServlet
                                            "</p>");
                         }
                     } else if (req.getParameterNames().hasMoreElements()) {
+                        // If we have ?method=x&param=y in the URL, make a stab
+                        // at invoking the method with the parameters specified
+                        // in the URL
+                        
                         res.setContentType("text/html");
                         Enumeration enum = req.getParameterNames();
                         String method = null;
@@ -491,6 +504,10 @@ public class AxisServlet extends HttpServlet
             }
             else
             {
+                // We didn't have a real path in the request, so just
+                // print a message informing the user that they reached
+                // the servlet.
+                
                 res.setContentType("text/html");
                 writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
                 writer.println( JavaUtils.getMessage("reachedServlet00"));
@@ -644,7 +661,7 @@ public class AxisServlet extends HttpServlet
      * @param af Axis Fault
      * @return HTTP Status code.
      */
-    private int getHttpServletResponseStatus(AxisFault af) {
+    protected int getHttpServletResponseStatus(AxisFault af) {
         // Should really be doing this with explicit AxisFault
         // subclasses... --Glen
         return af.getFaultCode().getLocalPart().equals("Server.Unauthorized")
