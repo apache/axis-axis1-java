@@ -166,5 +166,19 @@ public class WSDDConstants
     public static final String ATTR_DESERIALIZER = "deserializer";
     public static final String ATTR_ENCSTYLE = "encodingStyle";
     
+    public static final String ATTR_SCOPE_REQUEST = "Request";
+    public static final String ATTR_SCOPE_APPLICATION = "Application";
+    public static final String ATTR_SCOPE_SESSION = "Session";
+    
+    
+    public static boolean isValidScope(String scope)
+    {
+        return scope == null  ||
+               scope.length() == 0  ||
+               scope.equalsIgnoreCase(ATTR_SCOPE_REQUEST)  ||
+               scope.equalsIgnoreCase(ATTR_SCOPE_APPLICATION)  ||
+               scope.equalsIgnoreCase(ATTR_SCOPE_SESSION);
+    }
+    
     public static final String NL = System.getProperty("line.separator");
 }
