@@ -86,7 +86,6 @@ import org.apache.axis.encoding.SerializationContext;
 
 
 // Need to add proxy, ssl.... other cool things - but it's a start
-// Only supports String
 
 public class HTTPCall {
   private String  url ;
@@ -147,6 +146,14 @@ public class HTTPCall {
   public String getEncodingStyleURI() {
     return( encodingStyleURI );
   }
+
+  public void setTransportInput(String handlerName) {
+    msgContext.setProperty( MessageContext.TRANS_INPUT, handlerName );
+  }
+
+  public void setTransportOutput(String handlerName) {
+    msgContext.setProperty( MessageContext.TRANS_OUTPUT, handlerName );
+  }
   
   public void setServiceDescription(ServiceDescription serviceDesc)
   {
@@ -173,7 +180,8 @@ public class HTTPCall {
     return( ahc.invoke( null, m, args ) );
   }
 
-  public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
+  public Object invoke( String namespace, String method, Object[] args ) 
+      throws AxisFault {
     RPCElement  body  = new RPCElement( method, args );
     body.setNamespaceURI(namespace);
     return( invoke( body ) );

@@ -93,17 +93,15 @@ public class AxisServer extends BasicHandler
     public void init() {
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: AxisServer::init" );
-        //HandlerRegistry  hr = new SimpleRegistry("handlers.reg");
         DefaultHandlerRegistry  hr = 
-          new DefaultHandlerRegistry("handlers-supp.reg");
+          new DefaultHandlerRegistry(Constants.SERVER_HANDLER_REGISTRY);
         hr.setOnServer( true );
         hr.init();
         addOption( Constants.HANDLER_REGISTRY, hr );
 
         // Load the simple deployed services registry and init it
-        //HandlerRegistry  sr = new SimpleRegistry("services.reg");
         DefaultServiceRegistry  sr = 
-          new DefaultServiceRegistry("services-supp.reg");
+          new DefaultServiceRegistry(Constants.SERVER_SERVICE_REGISTRY);
         sr.setHandlerRegistry( hr ); // needs to know about 'hr'
         sr.setOnServer( true );
         sr.init();
