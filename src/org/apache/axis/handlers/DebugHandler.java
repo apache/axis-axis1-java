@@ -59,9 +59,7 @@ import java.util.* ;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
-import org.apache.axis.message.RPCArg;
-import org.apache.axis.message.RPCBody;
-import org.apache.axis.message.SOAPBody;
+import org.apache.axis.message.DebugHeader;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 
@@ -77,6 +75,16 @@ public class DebugHandler extends BasicHandler {
         Debug.Print( 1, "Enter: DebugHandler::invoke" );
         try {
             Message       msg = msgContext.getRequestMessage();
+            
+            SOAPEnvelope message = (SOAPEnvelope)msg.getAs("SOAPEnvelope");
+            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, "Debug");
+            if ((header != null) && (header instanceof DebugHeader)) {
+                int debugVal = ((DebugHeader)header).getDebugLevel();
+                Debug.Print( 1, "Setting debug level to: " + debugVal );
+                Debug.setDebugLevel(debugVal);
+                header.setProcessed(true);
+            }
+            /*
             SOAPEnvelope  env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
             Vector        headers = null ;
             int           i ;
@@ -89,13 +97,13 @@ public class DebugHandler extends BasicHandler {
                 String      value = root.getFirstChild().getNodeValue();
                 if ( value != null ) {
                     int     debugVal = Integer.parseInt( value );
-                    Debug.Print( 1, "Setting debug level to: " + debugVal );
                     Debug.setDebugLevel( debugVal );
                     header.setProcessed( true );
                 }
             }
             if ( i == 0 )
               Debug.setDebugLevel( 0 );
+            */
         }
         catch( Exception e ) {
             Debug.Print( 1, e );

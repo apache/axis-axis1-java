@@ -59,11 +59,7 @@ import java.util.* ;
 import java.lang.reflect.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
-import org.apache.axis.message.RPCArg;
-import org.apache.axis.message.RPCBody;
-import org.apache.axis.message.SOAPBody;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.* ;
 
 /**
  *
@@ -94,7 +90,7 @@ public class RPCDispatchHandler extends BasicHandler {
       Message         inMsg  = msgContext.getRequestMessage();
       Message         outMsg = msgContext.getResponseMessage();
       SOAPEnvelope    env    = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
-      Vector          bodies = env.getAsRPCBody();
+      Vector          bodies = env.getBodyElements();
       SOAPEnvelope    resEnv = (outMsg == null) ?
                                 new SOAPEnvelope() :
                                 (SOAPEnvelope)outMsg.getAs("SOAPEnvelope");
@@ -103,9 +99,12 @@ public class RPCDispatchHandler extends BasicHandler {
       /* RPC call.                                                      */
       /******************************************************************/
       for ( int bNum = 0 ; bNum < bodies.size() ; bNum++ ) {
-        RPCBody      body  = (RPCBody) bodies.get( bNum );
+        if (!(bodies.get(bNum) instanceof RPCElement))
+            continue;
+        
+        RPCElement   body  = (RPCElement) bodies.get( bNum );
         String       mName = body.getMethodName();
-        Vector       args  = body.getArgs();        //RPCArg's
+        Vector       args  = body.getParams();
   
         if ( methodName != null && !methodName.equals(mName) )
           throw new AxisFault( "AxisServer.error", 
@@ -123,7 +122,7 @@ public class RPCDispatchHandler extends BasicHandler {
           argValues = new Object[ args.size()];
           for ( i = 0 ; i < args.size() ; i++ ) {
             argClasses[i] = cl.loadClass("java.lang.String") ;
-            argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // String 4now
+            argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
             Debug.Print( 2, "  class: " + argClasses[i] );
             Debug.Print( 2, "  value: " + argValues[i] == null ? 
                                              "null" :
@@ -136,17 +135,14 @@ public class RPCDispatchHandler extends BasicHandler {
   
         /* Now put the result in the result SOAPEnvelope */
         /*************************************************/
-        RPCBody resBody = new RPCBody();
-        resBody.setMethodName( mName + "Response" );
+        RPCElement resBody = new RPCElement(mName + "Response");
         resBody.setPrefix( body.getPrefix() );
         resBody.setNamespaceURI( body.getNamespaceURI() );
         if ( objRes != null ) {
-          RPCArg  arg = new RPCArg();
-          arg.setName( "return" );
-          arg.setValue( objRes.toString() );
-          resBody.addArg( arg );
+          RPCParam param = new RPCParam("return", objRes);
+          resBody.addParam(param);
         }
-        resEnv.addBody( resBody.getAsSOAPBody() );
+        resEnv.addBodyElement( resBody );
       }
 
       if (outMsg == null) {
