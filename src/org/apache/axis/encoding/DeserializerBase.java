@@ -57,23 +57,23 @@ package org.apache.axis.encoding;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+import org.apache.axis.message.*;
 
-/** A convenience base class for deserializers, which handles throwing
- * exceptions when unexpected events occur.
+import java.util.*;
+import java.lang.reflect.*;
+import java.lang.*;
+
+/** The Deserializer base class.
  * 
- * !!! Can probably simplify this by just having all methods throw in
- * here, then people can just overload what they allow.
- * 
- * The "value" object needs to be kept somewhere.  We can either do it
- * here, which necessitates a deserializer instance for each deserialization,
- * or could somehow store the state in the MessageElement which is
- * being blessed with a value.  Might bear some investigating.
+ * Still needs some work.
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
 public class DeserializerBase extends DefaultHandler
 {
+    private static final boolean DEBUG_LOG = false;
+    
     protected Object value = null;
     protected DeserializationContext context = null;
     
@@ -81,10 +81,140 @@ public class DeserializerBase extends DefaultHandler
     {
         return value;
     }
+    public void setValue(Object value)
+    {
+        this.value = value;
+    }
+
+    /////////////////////////////////////////////////////////////
+    //  Reflection-based insertion of values into target objects
+    //  once deserialization is complete.
+    //
+    //  !!! This needs to be expanded to deal with accessor methods
+    //      (i.e. Beans) as well, not to mention primitive types.
+    //
+    //
+    class FieldTarget {
+        public Object targetObject;
+        public Field targetField;
+        public FieldTarget(Object targetObject, Field targetField)
+        {
+            this.targetObject = targetObject;
+            this.targetField = targetField;
+        }
+    }
+    protected Vector targets = null;
+    public void registerValueTarget(Object target, Field field)
+    {
+        if (targets == null)
+            targets = new Vector();
+        
+        targets.addElement(new FieldTarget(target,field));
+    }
+    
+    public void registerValueTarget(Object target, String fieldName)
+    {
+        try {
+            Class cls = target.getClass();
+            Field field = cls.getField(fieldName);
+        
+            registerValueTarget(target, field);
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    /** Add someone else's targets to our own (see DeserializationContext)
+     * 
+     */
+    public void copyValueTargets(DeserializerBase other)
+    {
+        if (other.targets == null)
+            return;
+        
+        Enumeration e = other.targets.elements();
+        while (e.hasMoreElements()) {
+            targets.addElement(e.nextElement());
+        }
+    }
+    
+    /** !!! Only works with object values right now.
+     * TODO: Get primitives working
+     */
+    public void valueComplete() throws SAXException
+    {
+        if (targets == null)
+            return;
+        
+        Enumeration e = targets.elements();
+        while (e.hasMoreElements()) {
+            FieldTarget target = (FieldTarget)e.nextElement();
+            Field field = target.targetField;
+            Object object = target.targetObject;
+            
+            try {
+                field.set(object, value);
+            } catch (IllegalAccessException accEx) {
+                accEx.printStackTrace();
+                throw new SAXException(accEx);
+            } catch (IllegalArgumentException argEx) {
+                argEx.printStackTrace();
+                throw new SAXException(argEx);
+            }
+        }
+    }
     
     public void setDeserializationContext(DeserializationContext context)
     {
         this.context = context;
+    }
+    
+    /** Base-class startElement() handler.  Deals with HREFs
+     */
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes)
+        throws SAXException
+    {
+        String href = attributes.getValue("href");
+        if (href != null) {
+            if (DEBUG_LOG) {
+                System.err.println("looking for href " + href);
+            }
+            
+            MessageElement target = context.getElementByID(href.substring(1));
+            if (target != null) {
+                if (DEBUG_LOG)
+                    System.out.println("found target " + target);
+                
+                DeserializerBase rec = target.getContentHandler();
+                if (rec == null)
+                    throw new SAXException("No handler in target element?");
+                
+                if (rec instanceof ElementRecorder) {
+                    ((ElementRecorder)rec).publishChildrenToHandler(context.getSAXHandler());
+                } else {
+                    this.value = rec.value;
+                }
+                
+                // Might want to somehow write deserialized version
+                // back to the IDmapping table...
+                
+                return;
+            }
+            
+            context.addFixupHandler(href.substring(1), this);
+        }
+    }
+    
+    public void endElement(String namespace, String localName,
+                           String qName)
+        throws SAXException
+    {
+        // By default, we're done when we're out of XML...
+        // If the end element REALLY matters to subclasses, they should remember
+        // to call valueComplete()...
+        
+        valueComplete();
     }
     
     /** Deserialization structure handlers

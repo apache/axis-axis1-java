@@ -68,7 +68,7 @@ import java.io.*;
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-class ElementRecorder extends DeserializerBase
+public class ElementRecorder extends DeserializerBase
 {
     private static final boolean DEBUG_LOG = false;
     
@@ -77,6 +77,8 @@ class ElementRecorder extends DeserializerBase
     
     public ElementRecorder()
     {
+        if (DEBUG_LOG)
+            System.out.println("New ElementRecorder " + this);
     }
     
     public void startElement(String namespace, String localName,
@@ -85,17 +87,6 @@ class ElementRecorder extends DeserializerBase
     {
         if (DEBUG_LOG) {
             System.err.println("(rec) startElement ['" + namespace + "' " +
-                           localName + "]");
-        }
-        
-        _events.addElement(new StartElementEvent(namespace, localName, qName, attributes));
-    }
-    
-    public void onStartChild(String namespace, String localName,
-                             String qName, Attributes attributes)
-    {
-        if (DEBUG_LOG) {
-            System.err.println("(rec) startChild ['" + namespace + "' " +
                            localName + "]");
         }
         
@@ -138,6 +129,27 @@ class ElementRecorder extends DeserializerBase
                 System.err.println("Publishing : " + event);
             }
             event.publishToHandler(handler);
+        }
+    }
+
+    public void publishChildrenToHandler(ContentHandler handler)
+        throws SAXException
+    {
+        Enumeration e = _events.elements();
+        SAXEvent event = null;
+        
+        // read the first element
+        if (e.hasMoreElements()) e.nextElement();
+
+        // read the second element
+        if (e.hasMoreElements()) event = (SAXEvent)e.nextElement();
+
+        while (e.hasMoreElements()) {
+            if (DEBUG_LOG) {
+                System.err.println("Publishing : " + event);
+            }
+            event.publishToHandler(handler);
+            event = (SAXEvent)e.nextElement();
         }
     }
 

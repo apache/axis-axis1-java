@@ -324,6 +324,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         
         if (!handlerContexts.empty()) {
             HandlerContext context = (HandlerContext)handlerContexts.pop();
+            
             elementHandler = context.handler;
             recordingDepth = context.recordingDepth;
             //System.out.println("Popping handler (" + recordingDepth + ") " + elementHandler);
@@ -416,7 +417,12 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         }
         
         if (elementHandler != null) {
+            // This lets elements handle struct-like processing, and potentially
+            // push another handler onto the element stack.
             elementHandler.onStartChild(namespace, localName, qName, attributes);
+            
+            // This may, therefore, refer to a different handler than the last line.
+            elementHandler.startElement(namespace, localName, qName, attributes);
             
             recordingDepth++;
             
@@ -519,8 +525,22 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                 }
                 
                 element.setEnvelope(envelope);
-                pushElementHandler(element.getContentHandler());
                 element.setPrefix(namespaces.getPrefix(namespace));
+                
+                DeserializerBase handler = null;
+                if (context.unresolvedHrefs() && (element.getID() != null)) {
+                    handler = context.getHandlerForID(element.getID());
+                    if (handler == null) {
+                        handler = element.getContentHandler();
+                    } /* else {
+                        System.out.println("found it " + handler);
+                    } */
+                } else {
+                    handler = element.getContentHandler();
+                }
+                
+                pushElementHandler(handler);
+
                 elementHandler.setDeserializationContext(context);
                 elementHandler.startElement(namespace, localName, qName, attributes);
             }

@@ -84,40 +84,7 @@ public class RPCElement extends SOAPBodyElement
         return new RPCElementFactory();
     }
     
-    class RPCContentHandler extends DeserializerBase
-    {
-        public void onStartChild(String namespace, String name, String qName,
-                                 Attributes attributes)
-            throws SAXException
-        {
-            // Start of an arg...
-            RPCParam param = new RPCParam(namespace, name, attributes, context);
-            
-            params.addElement(param);
-            if (param.getType() == null) {
-                // No type inline, so check service description.
-                ServiceDescription serviceDesc = getEnvelope().getServiceDescription();
-                if (serviceDesc != null) {
-                    param.setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
-                                                                 param.getName()));
-                }
-            } else {
-                /** !!! If we have a service description and this is an
-                 * explicitly-typed param, we might want to check here to
-                 * see if the xsi:type val is indeed a subtype of the type
-                 * we expect from the service description.
-                 */
-                
-            }
-            
-            DeserializerBase handler = param.getContentHandler(context);
-            
-            handler.startElement(namespace, name, qName, attributes);
-            
-            context.pushElementHandler(handler);
-        }
-    }
-    public DeserializerBase getContentHandler() { return new RPCContentHandler(); }
+    public DeserializerBase getContentHandler() { return this; }
     
     ///////////////////////////////////////////////////////////////
     
@@ -164,7 +131,40 @@ public class RPCElement extends SOAPBodyElement
         this.methodName = methodName;
         this.name = methodName;
     }
-    
+
+    /** *******************************************************
+     *  Deserialization
+     *  *******************************************************
+     */
+    public void onStartChild(String namespace, String name, String qName,
+                             Attributes attributes)
+        throws SAXException
+    {
+        // Start of an arg...
+        RPCParam param = new RPCParam(namespace, name, attributes, context);
+        
+        params.addElement(param);
+        if (param.getType() == null) {
+            // No type inline, so check service description.
+            ServiceDescription serviceDesc = getEnvelope().getServiceDescription();
+            if (serviceDesc != null) {
+                param.setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
+                                                             param.getName()));
+            }
+        } else {
+            /** !!! If we have a service description and this is an
+            * explicitly-typed param, we might want to check here to
+            * see if the xsi:type val is indeed a subtype of the type
+            * we expect from the service description.
+            */
+            
+        }
+        
+        DeserializerBase handler = param.getContentHandler(context);
+        
+        context.pushElementHandler(handler);
+    }
+
     public void output(SerializationContext context)
         throws IOException
     {
