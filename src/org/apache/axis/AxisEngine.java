@@ -312,6 +312,7 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void deployService(String key, SOAPService service)
     {
+        Debug.Print(2, "Deploying service '" + key + "' into " + this);
         service.setName(key);
         service.setEngine(this);
         

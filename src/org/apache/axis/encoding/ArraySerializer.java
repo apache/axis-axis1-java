@@ -62,6 +62,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import java.lang.reflect.Array;
 import java.io.IOException;
+import java.util.List;
 
 /** An ArraySerializer handles serializing and deserializing SOAP
  * arrays.
@@ -192,17 +193,29 @@ public class ArraySerializer extends DeserializerBase
             throw new IOException("Can't serialize null Arrays just yet...");
     
         Class cls = value.getClass();
-        if (!cls.isArray())
+        List list = null;
+        
+        if (!cls.isArray()) {
+          if (!(value instanceof List)) {
             throw new IOException("Can't seialize a " + cls.getName() +
                                   " with the ArraySerializer!");
+          }
+          list = (List)value;
+        }
         
-        Class componentType = cls.getComponentType();
+        Class componentType;
+        if (list == null) {
+          componentType = cls.getComponentType();
+        } else {
+          componentType = list.get(0).getClass();
+        }
+        
         QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null)
             throw new IOException("No mapped schema type for " + componentType.getName());
         String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());
         String arrayType = prefix + ":" + componentQName.getLocalPart();
-        int len = Array.getLength(value);
+        int len = (list == null) ? Array.getLength(value) : list.size();
         
         arrayType += "[" + len + "]";
         
@@ -224,7 +237,9 @@ public class ArraySerializer extends DeserializerBase
         context.startElement(name, attrs);
         
         for (int index = 0; index < len; index++)
-            context.serialize(new QName("","item"), null, Array.get(value, index));
+            context.serialize(new QName("","item"), null,
+                              (list == null) ? Array.get(value, index) :
+                                              list.get(index));
         
         context.endElement();
     }

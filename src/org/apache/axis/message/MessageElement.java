@@ -102,7 +102,7 @@ public class MessageElement extends DeserializerBase
     {
         if (DEBUG_LOG) {
             System.out.println("New MessageElement named " + localPart);
-            for (int i = 0; i < attributes.getLength(); i++) {
+            for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
                 System.out.println("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }
         }
