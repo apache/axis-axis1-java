@@ -275,6 +275,28 @@ public class SimpleDeploymentManager
 
 
     /**
+     * remove the given item
+     * @param qname XXX
+     * @throws DeploymentException XXX
+     */
+    public void undeployService(QName qname)
+        throws DeploymentException
+    {
+        services.remove(qname);
+    }
+
+    /**
+     * remove the given item
+     * @param qname XXX
+     * @throws DeploymentException XXX
+     */
+    public void undeployTransport(QName qname)
+        throws DeploymentException
+    {
+        transports.remove(qname);
+    }
+
+    /**
      * return the named mapping registry
      * @param encodingStyle XXX
      * @return XXX
