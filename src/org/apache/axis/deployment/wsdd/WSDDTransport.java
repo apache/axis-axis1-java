@@ -122,8 +122,8 @@ public class WSDDTransport
     }
 
     public void deployToRegistry(WSDDDeployment registry)
-            throws WSDDException {
-        registry.deployTransport(this);
+    {
+        registry.addTransport(this);
         
         super.deployToRegistry(registry);
     }

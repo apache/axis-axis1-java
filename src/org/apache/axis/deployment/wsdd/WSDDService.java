@@ -86,6 +86,9 @@ public class WSDDService
     private Vector faultFlows = new Vector();
     private Vector typeMappings = new Vector();
     
+    /** Which namespaces should auto-dispatch to this service? */
+    private Vector namespaces = new Vector();
+    
     private String descriptionURL;
 
     private SOAPService cachedService = null;
@@ -125,6 +128,13 @@ public class WSDDService
             WSDDBeanMapping mapping =
                     new WSDDBeanMapping(beanMappingElements[i]);
             typeMappings.add(mapping);
+        }
+        
+        Element [] namespaceElements = getChildElements(e, "namespace");
+        for (int i = 0; i < namespaceElements.length; i++) {
+            // Register a namespace for this service
+            String ns = XMLUtils.getChildCharacterData(namespaceElements[i]);
+            namespaces.add(ns);
         }
 
         String typeStr = e.getAttribute("provider");
@@ -184,6 +194,16 @@ public class WSDDService
         WSDDFaultFlow[] t = new WSDDFaultFlow[faultFlows.size()];
         faultFlows.toArray(t);
         return t;
+    }
+    
+    /**
+     * Obtain the list of namespaces registered for this service
+     * @return a Vector of namespaces (Strings) which should dispatch to
+     *         this service
+     */ 
+    public Vector getNamespaces()
+    {
+        return namespaces;
     }
 
     /**
@@ -355,6 +375,12 @@ public class WSDDService
         for (int i=0; i < typeMappings.size(); i++) {
             ((WSDDTypeMapping) typeMappings.elementAt(i)).writeToContext(context);
         }
+        
+        for (int i=0; i < namespaces.size(); i++ ) {
+            context.startElement(new QName("", "namespace"), null);
+            context.writeString((String)namespaces.get(i));
+            context.endElement();
+        }
 
         context.endElement();
     }
@@ -365,9 +391,26 @@ public class WSDDService
     }
 
     public void deployToRegistry(WSDDDeployment registry)
-            throws WSDDException {
-        registry.deployService(this);
+    {
+        registry.addService(this);
+        
+        // Register the name of the service as a valid namespace, just for
+        // backwards compatibility
+        registry.registerNamespaceForService(getQName().getLocalPart(), this);
+        
+        for (int i = 0; i < namespaces.size(); i++) {
+            String namespace = (String) namespaces.elementAt(i);
+            registry.registerNamespaceForService(namespace, this);            
+        }
         
         super.deployToRegistry(registry);
+    }
+    
+    public void removeNamespaceMappings(WSDDDeployment registry)
+    {
+        for (int i = 0; i < namespaces.size(); i++) {
+            String namespace = (String) namespaces.elementAt(i);
+            registry.removeNamespaceMapping(namespace);
+        }
     }
 }

@@ -234,7 +234,6 @@ public abstract class WSDDTargetedChain
     }
     
     public void deployToRegistry(WSDDDeployment registry)
-        throws WSDDException
     {
         // deploy any named subparts
         if (requestFlow != null) {

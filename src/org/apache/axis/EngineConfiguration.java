@@ -112,6 +112,15 @@ public interface EngineConfiguration {
      * @throws ConfigurationException XXX
      */
     public Handler getService(QName qname) throws ConfigurationException;
+    
+    /**
+     * Get a service which has been mapped to a particular namespace
+     * 
+     * @param namespace a namespace URI
+     * @return an instance of the appropriate Service, or null
+     */ 
+    public Handler getServiceByNamespaceURI(String namespace)
+        throws ConfigurationException;
 
      /**
      * retrieve an instance of the named transport

@@ -63,6 +63,8 @@ package org.apache.axis.message;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Handler;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
@@ -110,17 +112,24 @@ public class BodyBuilder extends SOAPHandler
                                         Constants.ATTR_ROOT);
         if ((root != null) && root.equals("0")) isRoot = false;
 
+        MessageContext msgContext = context.getMessageContext();
+
         if (isRoot &&
-            context.getMessageContext().getServiceHandler() == null) {
+            msgContext.getServiceHandler() == null) {
 
             if (category.isDebugEnabled()) {
                 category.debug(JavaUtils.getMessage("dispatching00",namespace));
             }
 
             try {
-                context.getMessageContext().setTargetService(namespace);
-            } catch (AxisFault fault) {
-                throw new SAXException(fault);
+                Handler serviceHandler = msgContext.
+                                           getAxisEngine().
+                                           getConfig().
+                                           getServiceByNamespaceURI(namespace);
+                if (serviceHandler != null)
+                    msgContext.setServiceHandler(serviceHandler);
+            } catch (ConfigurationException e) {
+                // oh well...
             }
         }
         
@@ -128,7 +137,6 @@ public class BodyBuilder extends SOAPHandler
          * a) have an non-root element, or
          * b) have a non-RPC service
          */
-        MessageContext msgContext = context.getMessageContext();
 
         if (localName.equals(Constants.ELEM_FAULT) &&
             namespace.equals(Constants.URI_SOAP_ENV)) {

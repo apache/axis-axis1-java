@@ -87,6 +87,29 @@ public class WSDDDeployment
     private HashMap transports = new HashMap();
     private Vector typeMappings = new Vector();
     private WSDDGlobalConfiguration globalConfig = null;
+    
+    /** Mapping of namespaces -> services */
+    private HashMap namespaceToServices = new HashMap();
+    
+    void addHandler(WSDDHandler handler)
+    {
+        handlers.put(handler.getQName(), handler);
+    }
+    
+    void addService(WSDDService service)
+    {
+        WSDDService oldService = (WSDDService)services.get(service.getQName());
+        if (oldService != null) {
+            oldService.removeNamespaceMappings(this);
+        }
+        services.put(service.getQName(), service);
+    }
+    
+    void addTransport(WSDDTransport transport)
+    {
+        transports.put(transport.getQName(), transport);
+    }
+    
 
     /**
      * Put a WSDDHandler into this deployment, replacing any other
@@ -96,7 +119,7 @@ public class WSDDDeployment
      */
     public void deployHandler(WSDDHandler handler)
     {
-        handlers.put(handler.getQName(), handler);
+        handler.deployToRegistry(this);
     }
 
     /**
@@ -107,7 +130,7 @@ public class WSDDDeployment
      */
     public void deployTransport(WSDDTransport transport)
     {
-        transports.put(transport.getQName(), transport);
+        transport.deployToRegistry(this);
     }
 
     /**
@@ -118,7 +141,7 @@ public class WSDDDeployment
      */
     public void deployService(WSDDService service)
     {
-        services.put(service.getQName(), service);
+        service.deployToRegistry(this);
     }
 
     /**
@@ -186,19 +209,19 @@ public class WSDDDeployment
         elements = getChildElements(e, "chain");
         for (i = 0; i < elements.length; i++) {
             WSDDChain chain = new WSDDChain(elements[i]);
-            chain.deployToRegistry(this);
+            deployHandler(chain);
         }
 
         elements = getChildElements(e, "transport");
         for (i = 0; i < elements.length; i++) {
             WSDDTransport transport = new WSDDTransport(elements[i]);
-            transport.deployToRegistry(this);
+            deployTransport(transport);
         }
 
         elements = getChildElements(e, "service");
         for (i = 0; i < elements.length; i++) {
             WSDDService service = new WSDDService(elements[i]);
-            service.deployToRegistry(this);
+            deployService(service);
         }
 
         elements = getChildElements(e, "typeMapping");
@@ -248,7 +271,7 @@ public class WSDDDeployment
         i = services.values().iterator();
         while (i.hasNext()) {
             WSDDService service = (WSDDService) i.next();
-            target.deployService(service);
+            service.deployToRegistry(target);
         }
 
         i = typeMappings.iterator();
@@ -435,6 +458,16 @@ public class WSDDDeployment
         return null;
     }
 
+    public Handler getServiceByNamespaceURI(String namespace)
+        throws ConfigurationException
+    {
+        WSDDService s = (WSDDService)namespaceToServices.get(namespace);
+        if (s != null) {
+            return s.getInstance(this);
+        }
+        
+        return null;
+    }
     public void configureEngine(AxisEngine engine)
             throws ConfigurationException {
 
@@ -482,5 +515,28 @@ public class WSDDDeployment
 
     public Hashtable getGlobalOptions() throws ConfigurationException {
         return globalConfig.getParametersTable();
+    }
+    
+    /**
+     * Register a particular namepsace which maps to a given WSDDService.
+     * This will be used for namespace-based dispatching.
+     * 
+     * @param namespace a namespace URI
+     * @param service the target WSDDService
+     */ 
+    public void registerNamespaceForService(String namespace,
+                                            WSDDService service)
+    {
+        namespaceToServices.put(namespace, service);
+    }
+    
+    /**
+     * Remove a namespace -> WSDDService mapping.
+     * 
+     * @param namespace the namespace URI to unmap
+     */ 
+    public void removeNamespaceMapping(String namespace)
+    {
+        namespaceToServices.remove(namespace);
     }
 }

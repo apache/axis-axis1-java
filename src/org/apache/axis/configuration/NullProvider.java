@@ -108,6 +108,11 @@ public class NullProvider implements EngineConfiguration
         return null;
     }
 
+    public Handler getServiceByNamespaceURI(String namespace)
+            throws ConfigurationException {
+        return null;
+    }
+
     public Handler getHandler(QName qname) throws ConfigurationException {
         return null;
     }
