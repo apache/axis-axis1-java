@@ -242,7 +242,226 @@
     <part name="soapShort" type="soapenc:short"/>
     <part name="soapBase64" type="soapenc:base64"/>
   </message>
+  <message name="inputBoolean">
+    <part name="inBoolean" type="xsd:boolean"/>
+    <part name="boolean" type="xsd:boolean"/>
+  </message>
 
+  <message name="outputBoolean">
+    <part name="outBoolean" type="xsd:boolean"/>
+    <part name="boolean" type="xsd:boolean"/>
+  </message> 
+
+  <message name="inputByte">
+    <part name="inByte" type="xsd:byte"/>
+    <part name="byte" type="xsd:byte"/>
+  </message>
+
+  <message name="outputByte">
+    <part name="outByte" type="xsd:byte"/>
+    <part name="byte" type="xsd:byte"/>
+  </message> 
+
+  <message name="inputShort">
+    <part name="inShort" type="xsd:short"/>
+    <part name="short" type="xsd:short"/>
+  </message>
+
+  <message name="outputShort">
+    <part name="outShort" type="xsd:short"/>
+    <part name="short" type="xsd:short"/>
+  </message>
+
+  <message name="inputInt">
+    <part name="inInt" type="xsd:int"/>
+    <part name="int" type="xsd:int"/>
+  </message>
+
+  <message name="outputInt">
+    <part name="outInt" type="xsd:int"/>
+    <part name="int" type="xsd:int"/>
+  </message>
+
+  <message name="inputLong">
+    <part name="inLong" type="xsd:long"/>
+    <part name="long" type="xsd:long"/>
+  </message>
+
+  <message name="outputLong">
+    <part name="outLong" type="xsd:long"/>
+    <part name="long" type="xsd:long"/>
+  </message>
+
+  <message name="inputFloat">
+    <part name="inFloat" type="xsd:float"/>
+    <part name="float" type="xsd:float"/>
+  </message>
+
+  <message name="outputFloat">
+    <part name="outFloat" type="xsd:float"/>
+    <part name="float" type="xsd:float"/>
+  </message>
+
+  <message name="inputDouble">
+    <part name="inDouble" type="xsd:double"/>
+    <part name="double" type="xsd:double"/>
+  </message>
+
+  <message name="outputDouble">
+    <part name="outDouble" type="xsd:double"/>
+    <part name="double" type="xsd:double"/>
+  </message>
+
+  <message name="inputString">
+    <part name="inString" type="xsd:string"/>
+    <part name="string" type="xsd:string"/>
+  </message>
+
+  <message name="outputString">
+    <part name="outString" type="xsd:string"/>
+    <part name="string" type="xsd:string"/>
+  </message> 
+
+  <message name="inputInteger">
+    <part name="inInteger" type="xsd:integer"/>
+    <part name="integer" type="xsd:integer"/>
+  </message>
+
+  <message name="outputInteger">
+    <part name="outInteger" type="xsd:integer"/>
+    <part name="integer" type="xsd:integer"/>
+  </message>
+
+  <message name="inputDecimal">
+    <part name="inDecimal" type="xsd:decimal"/>
+    <part name="decimal" type="xsd:decimal"/>
+  </message>
+
+  <message name="outputDecimal">
+    <part name="outDecimal" type="xsd:decimal"/>
+    <part name="decimal" type="xsd:decimal"/>
+  </message>
+
+  <message name="inputDateTime">
+    <part name="inDateTime" type="xsd:dateTime"/>
+    <part name="dateTime" type="xsd:dateTime"/>
+  </message>
+
+  <message name="outputDateTime">
+    <part name="outDateTime" type="xsd:dateTime"/>
+    <part name="dateTime" type="xsd:dateTime"/>
+  </message>
+
+  <message name="inputBase64Binary">
+    <part name="inBase64Binary" type="xsd:base64Binary"/>
+    <part name="base64Binary" type="xsd:base64Binary"/>
+  </message>
+
+  <message name="outputBase64Binary">
+    <part name="outBase64Binary" type="xsd:base64Binary"/>
+    <part name="base64Binary" type="xsd:base64Binary"/>
+  </message>
+
+  <message name="inputQName">
+    <part name="inQName" type="xsd:QName"/>
+    <part name="qName" type="xsd:QName"/>
+  </message>
+
+  <message name="outputQName">
+    <part name="outQName" type="xsd:QName"/>
+    <part name="qName" type="xsd:QName"/>
+  </message>
+
+  <message name="inputHexBinary">
+    <part name="inHexBinary" type="xsd:hexBinary"/>
+    <part name="hexBinary" type="xsd:hexBinary"/>
+  </message>
+
+  <message name="outputHexBinary">
+    <part name="outHexBinary" type="xsd:hexBinary"/>
+    <part name="hexBinary" type="xsd:hexBinary"/>
+  </message>
+
+  <message name="inputSoapString">
+    <part name="inSoapString" type="soapenc:string"/>
+    <part name="soapencString" type="soapenc:string"/>
+  </message>
+
+  <message name="outputSoapString">
+    <part name="outSoapString" type="soapenc:string"/>
+    <part name="soapencString" type="soapenc:string"/>
+  </message>
+
+  <message name="inputSoapBoolean">
+    <part name="inSoapBoolean" type="soapenc:boolean"/>
+    <part name="soapencBoolean" type="soapenc:boolean"/>
+  </message>
+
+  <message name="outputSoapBoolean">
+    <part name="outSoapBoolean" type="soapenc:boolean"/>
+    <part name="soapencBoolean" type="soapenc:boolean"/>
+  </message>
+
+  <message name="inputSoapFloat">
+    <part name="inSoapFloat" type="soapenc:float"/>
+    <part name="soapencFloat" type="soapenc:float"/>
+  </message>
+
+  <message name="outputSoapFloat">
+    <part name="outSoapFloat" type="soapenc:float"/>
+    <part name="soapencFloat" type="soapenc:float"/>
+  </message>
+
+  <message name="inputSoapDouble">
+    <part name="inSoapDouble" type="soapenc:double"/>
+    <part name="soapencDouble" type="soapenc:double"/>
+  </message>
+
+  <message name="outputSoapDouble">
+    <part name="outSoapDouble" type="soapenc:double"/>
+    <part name="soapencDouble" type="soapenc:double"/>
+  </message>
+
+  <message name="inputSoapDecimal">
+    <part name="inSoapDecimal" type="soapenc:decimal"/>
+    <part name="soapencDecimal" type="soapenc:decimal"/>
+  </message>
+
+  <message name="outputSoapDecimal">
+    <part name="outSoapDecimal" type="soapenc:decimal"/>
+    <part name="soapencDecimal" type="soapenc:decimal"/>
+  </message>
+
+  <message name="inputSoapInt">
+    <part name="inSoapInt" type="soapenc:int"/>
+    <part name="soapencInt" type="soapenc:int"/>
+  </message>
+
+  <message name="outputSoapInt">
+    <part name="outSoapInt" type="soapenc:int"/>
+    <part name="soapencInt" type="soapenc:int"/>
+  </message>
+
+  <message name="inputSoapShort">
+    <part name="inSoapShort" type="soapenc:short"/>
+    <part name="soapencShort" type="soapenc:short"/>
+  </message>
+
+  <message name="outputSoapShort">
+    <part name="outSoapShort" type="soapenc:short"/>
+    <part name="soapencShort" type="soapenc:short"/>
+  </message>
+
+  <message name="inputSoapBase64">
+    <part name="inSoapBase64" type="soapenc:base64"/>
+    <part name="soapencBase64" type="soapenc:base64"/>
+  </message>
+
+  <message name="outputSoapBase64">
+    <part name="outSoapBase64" type="soapenc:base64"/>
+    <part name="soapencBase64" type="soapenc:base64"/>
+  </message>
+                     
   <message name="enum">
     <part name="enum" type="typens:enum"/>
   </message>
@@ -419,6 +638,100 @@
       <input message="tns:empty"/>
       <output message="tns:cat"/>
     </operation>
+        <operation name="methodBoolean">
+      <input message="tns:inputBoolean"/>
+      <output message="tns:outputBoolean"/>
+    </operation>
+    <operation name="methodByte">
+      <input message="tns:inputByte"/>
+      <output message="tns:outputByte"/>
+    </operation>
+    <operation name="methodShort">
+      <input message="tns:inputShort"/>
+      <output message="tns:outputShort"/>
+    </operation>
+    <operation name="methodInt">
+      <input message="tns:inputInt"/>
+      <output message="tns:outputInt"/>
+    </operation>
+    <operation name="methodLong">
+      <input message="tns:inputLong"/>
+      <output message="tns:outputLong"/>
+    </operation>
+    <operation name="methodFloat">
+      <input message="tns:inputFloat"/>
+      <output message="tns:outputFloat"/>
+    </operation>
+    <operation name="methodDouble">
+      <input message="tns:inputDouble"/>
+      <output message="tns:outputDouble"/>
+    </operation>
+    <operation name="methodString">
+      <input message="tns:inputString"/>
+      <output message="tns:outputString"/>
+    </operation>
+    <operation name="methodInteger">
+      <input message="tns:inputInteger"/>
+      <output message="tns:outputInteger"/>
+    </operation>
+    <operation name="methodDecimal">
+      <input message="tns:inputDecimal"/>
+      <output message="tns:outputDecimal"/>
+    </operation>
+    <operation name="methodDateTime">
+      <input message="tns:inputDateTime"/>
+      <output message="tns:outputDateTime"/>
+    </operation>    
+    <!-- Comment out for now because causes compile errors
+    <operation name="methodBase64Binary">
+      <input message="tns:inputBase64Binary"/>
+      <output message="tns:outputBase64Binary"/>
+    </operation>
+    -->
+    <operation name="methodQName">
+      <input message="tns:inputQName"/>
+      <output message="tns:outputQName"/>
+    </operation>    
+    <!-- Comment out for now because causes compile errors
+    <operation name="methodHexBinary">
+      <input message="tns:inputHexBinary"/>
+      <output message="tns:outputHexBinary"/>
+    </operation>
+    -->
+    <operation name="methodSoapString">
+      <input message="tns:inputSoapString"/>
+      <output message="tns:outputSoapString"/>
+    </operation>
+    <operation name="methodSoapBoolean">
+      <input message="tns:inputSoapBoolean"/>
+      <output message="tns:outputSoapBoolean"/>
+    </operation>
+    <operation name="methodSoapFloat">
+      <input message="tns:inputSoapFloat"/>
+      <output message="tns:outputSoapFloat"/>
+    </operation>
+    <operation name="methodSoapDouble">
+      <input message="tns:inputSoapDouble"/>
+      <output message="tns:outputSoapDouble"/>
+    </operation>
+    <operation name="methodSoapDecimal">
+      <input message="tns:inputSoapDecimal"/>
+      <output message="tns:outputSoapDecimal"/>
+    </operation>
+    <operation name="methodSoapInt">
+      <input message="tns:inputSoapInt"/>
+      <output message="tns:outputSoapInt"/>
+    </operation>
+    <operation name="methodSoapShort">
+      <input message="tns:inputSoapShort"/>
+      <output message="tns:outputSoapShort"/>
+    </operation>    
+    <!-- Comment out for now because causes compile errors 
+    <operation name="methodSoapBase64">
+      <input message="tns:inputSoapBase64"/>
+      <output message="tns:outputSoapBase64"/>
+    </operation>
+    -->
   </portType>
 
   <!-- binding declns -->
@@ -923,6 +1236,342 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+        <operation name="methodBoolean">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodByte">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodShort">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodInt">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodLong">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodFloat">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodDouble">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodString">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodInteger">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodDecimal">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodDateTime">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <!-- Comment out for now because causes compile errors
+    <operation name="methodBase64Binary">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    -->
+    <operation name="methodQName">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <!-- Comment out for now because causes compile errors
+    <operation name="methodHexBinary">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    -->
+    <operation name="methodSoapString">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodSoapBoolean">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodSoapFloat">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodSoapDouble">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodSoapDecimal">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodSoapInt">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="methodSoapShort">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>  
+    <!-- Comment out for now because causes compile errors
+    <operation name="methodSoapBase64">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    -->
   </binding>
 
   <!-- service decln -->

@@ -202,7 +202,7 @@ public class JavaImplWriter extends JavaWriter {
                 } else if ("byte".equals(returnType)) {
                     pw.println("(byte)-3;");
                 } else if ("short".equals(returnType)) {
-                    pw.println("short)-3;");
+                    pw.println("(short)-3;");
                 } else {
                     pw.println("-3;");
                 }

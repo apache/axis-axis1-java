@@ -308,6 +308,160 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
+        try {
+            BooleanHolder bh = new BooleanHolder(true);
+            boolean actual = binding.methodBoolean(true, bh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            ByteHolder bh = new ByteHolder((byte)5);
+            byte actual = binding.methodByte((byte)5, bh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            ShortHolder sh = new ShortHolder((short)127);
+            short actual = binding.methodShort((short)127, sh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            IntHolder ih = new IntHolder(2002);
+            int actual = binding.methodInt(2002, ih);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            LongHolder lh = new LongHolder(14003L);
+            long actual = binding.methodLong(14003L, lh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            FloatHolder fh = new FloatHolder(2.342F);
+            float delta = 0.0F;
+            float actual = binding.methodFloat(2.342F, fh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            DoubleHolder dh = new DoubleHolder(5006.345D);
+            double value = 110312.2325D;
+            double delta = 0.0D;
+            double actual = binding.methodDouble(5006.345D, dh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            String sendValue = "Sent String"; 
+            StringHolder sh = new StringHolder(sendValue);
+            String actual = binding.methodString(sendValue, sh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.math.BigInteger sendValue = new java.math.BigInteger("3048");
+            BigIntegerHolder bih = new BigIntegerHolder(sendValue);
+            java.math.BigInteger actual = binding.methodInteger(sendValue, bih);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.math.BigDecimal sendValue = new java.math.BigDecimal("1205.258");
+            BigDecimalHolder bdh = new BigDecimalHolder(sendValue);
+            java.math.BigDecimal actual = binding.methodDecimal(sendValue, bdh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.util.Date sendValue = new java.util.Date(1012182070626L);
+            DateHolder dh = new DateHolder(sendValue);
+            java.util.Date actual = binding.methodDateTime(sendValue, dh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+// Comment out for now because causes compile errors
+//        try {
+//            byte[] sendValue = {(byte) 10, (byte) 9};
+//            ByteArrayHolder bah = new ByteArrayHolder(sendValue);
+//            byte[] actual = binding.methodBase64Binary(sendValue, bah);
+//        } catch (java.rmi.RemoteException re) {
+//            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+//        }
+        try {
+            javax.xml.rpc.namespace.QName sendValue = new javax.xml.rpc.namespace.QName("test1", "test2");
+            QNameHolder qh = new QNameHolder(sendValue);
+            javax.xml.rpc.namespace.QName actual = binding.methodQName(sendValue, qh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+// Comment out for now because causes compile errors
+//        try {
+//            byte[] sendValue = {(byte) 10, (byte) 9};
+//            ByteArrayHolder bah = new ByteArrayHolder(sendValue);
+//            byte[] actual = binding.methodHexBinary(sendValue, bah);
+//        } catch (java.rmi.RemoteException re) {
+//            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+//        }
+        try {
+            String sendValue = "Sent String"; 
+            StringHolder sh = new StringHolder(sendValue);
+            String actual = binding.methodSoapString(sendValue, sh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.lang.Boolean sendValue = new java.lang.Boolean(true);
+            BooleanClassHolder bh = new BooleanClassHolder(sendValue);
+            java.lang.Boolean actual = binding.methodSoapBoolean(sendValue, bh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.lang.Float sendValue = new java.lang.Float(93049.0394F);
+            FloatClassHolder fh = new FloatClassHolder(sendValue);
+            java.lang.Float actual = binding.methodSoapFloat(sendValue, fh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.lang.Double sendValue = new java.lang.Double(193049.0394D);
+            DoubleClassHolder dh = new DoubleClassHolder(sendValue);
+            java.lang.Double actual = binding.methodSoapDouble(sendValue, dh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.math.BigDecimal sendValue = new java.math.BigDecimal("1205.258");
+            BigDecimalHolder bdh = new BigDecimalHolder(sendValue);
+            java.math.BigDecimal actual = binding.methodDecimal(sendValue, bdh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.lang.Integer sendValue = new java.lang.Integer(94);
+            IntegerClassHolder ich = new IntegerClassHolder(sendValue);
+            java.lang.Integer actual = binding.methodSoapInt(sendValue, ich);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.lang.Short sendValue = new java.lang.Short((short) 5);
+            ShortClassHolder sch = new ShortClassHolder(sendValue);
+            java.lang.Short actual = binding.methodSoapShort(sendValue, sch);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+// Comment out for now because causes compile errors
+//        try {
+//            Byte[] sendValue = {new java.lang.Byte((byte) 10), new java.lang.Byte((byte) 9)};
+//            ByteClassArrayHolder bach = new ByteClassArrayHolder(sendValue);
+//            Byte[] actual = binding.methodSoapBase64(sendValue, bach);
+//        } catch (java.rmi.RemoteException re) {
+//            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+//        }
+
     }
 }
 
