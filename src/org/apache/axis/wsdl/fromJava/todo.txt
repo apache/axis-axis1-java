@@ -43,6 +43,7 @@ Group 5
 -------
 * Style/use support: rpc/encoded, document/literal, rpc/literal and document/encoded
 * Switch the runtime WSDL generation to use Java2WSDL
+   - Rich: Done.  But someone may want to add ability to get interface/implementation wsdl.
 
 
 

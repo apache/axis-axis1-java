@@ -185,11 +185,11 @@ public class Emitter {
      * mode 1: Interface
      * mode 2: Implementation
      * 
-     * @param filename  WSDL
      * @param mode generation mode - all, interface, implementation                     
+     * @return Document                     
      * @throws Exception
      */
-    public void emit(String filename, int mode) throws Exception {
+    public Document emit(int mode) throws Exception {
         Document doc = null;
         Definition def = null;
         switch (mode) {
@@ -210,6 +210,24 @@ public class Emitter {
             default:
                 throw new Exception ("unrecognized output WSDL mode"); 
         }
+
+        // Return the document
+        return doc;
+    }
+
+    /**
+     * Generates a WSDL document for a given <code>Class</code>. The sections of
+     * the WSDL generated are controlled by the mode parameter 
+     * mode 0: All
+     * mode 1: Interface
+     * mode 2: Implementation
+     * 
+     * @param filename  WSDL
+     * @param mode generation mode - all, interface, implementation                     
+     * @throws Exception
+     */
+    public void emit(String filename, int mode) throws Exception {
+        Document doc = emit(mode);
 
         // Supply a reasonable file name if not supplied
         if (filename == null) {
@@ -721,6 +739,66 @@ public class Emitter {
         this.cls = cls;
     }
 
+    /**
+     * Sets the <code>Class</code> to export.
+     * If the class looks like a skeleton class, do some searching to find the
+     * interface class.  
+     * @param cls the <code>Class</code> to export
+     * @param name service name
+     */
+    public void setClsSmart(Class cls, String serviceName) {
+
+        if (cls == null || serviceName == null)
+            return;
+
+        // Strip off \ and / from serviceName
+        if (serviceName.lastIndexOf('/') > 0) {
+            serviceName = serviceName.substring(serviceName.lastIndexOf('/') + 1);
+        } else if (serviceName.lastIndexOf('\\') > 0) {
+            serviceName = serviceName.substring(serviceName.lastIndexOf('\\') + 1);
+        } 
+
+        // Get the constructors of the class
+        java.lang.reflect.Constructor[] constructors = cls.getDeclaredConstructors();
+        Class intf = null;
+        for (int i=0; i < constructors.length && intf == null; i++) {
+            Class[] parms = constructors[i].getParameterTypes();
+            // If the constructor has a single parameter that is an interface which
+            // matches the serviceName, then use this as the interface class.
+            if (parms.length == 1 &&
+                parms[0].isInterface() &&
+                parms[0].getName() != null &&
+                Types.getLocalNameFromFullName(parms[0].getName()).equals(serviceName)) {
+                intf = parms[0];
+            }
+        }
+        if (intf != null)
+            setCls(intf);
+        else
+            setCls(cls);
+    }
+
+    /**
+     * Sets the <code>Class</code> to export
+     * @param className the name of the <code>Class</code> to export
+     * @param classDir the directory containing the class (optional)
+     */
+    public void setCls(String className, String classDir) {
+        try {
+            cls = Class.forName(className);
+        }
+        catch (Exception ex) {
+            /** @todo ravi: use classDir to load class directly into the class loader
+             *  The case for it is that one can create a new directory, drop some source, compile and use a
+             *  WSDL gen tool to generate wsdl - without editing the Wsdl gen tool's classpath
+             *  Assuming all of the classes are either under classDir or otherwise in the classpath
+             *
+             *  Would this be useful?
+             *  */
+            ex.printStackTrace();
+        }
+    }
+
    /**
      * Returns the interface namespace
      * @return interface target namespace
@@ -752,28 +830,6 @@ public class Emitter {
     public void setImplNamespace(String ns) {
         this.implNS = ns;                 
     }
-
-    /**
-     * Sets the <code>Class</code> to export
-     * @param className the name of the <code>Class</code> to export
-     * @param classDir the directory containing the class (optional)
-     */
-    public void setCls(String className, String classDir) {
-        try {
-            cls = Class.forName(className);
-        }
-        catch (Exception ex) {
-            /** @todo ravi: use classDir to load class directly into the class loader
-             *  The case for it is that one can create a new directory, drop some source, compile and use a
-             *  WSDL gen tool to generate wsdl - without editing the Wsdl gen tool's classpath
-             *  Assuming all of the classes are either under classDir or otherwise in the classpath
-             *
-             *  Would this be useful?
-             *  */
-            ex.printStackTrace();
-        }
-    }
-
 
     /**
      * Returns a list of a space separated list of methods to export
@@ -912,53 +968,4 @@ public class Emitter {
         this.reg = reg;
     }
 
-
-    /**
-     * @todo: this is the logic to hook into the existing WSDLUtils code.
-     * WSDLUtils should be changed to invoke Emitter using the same interface
-     * as Java2Wsdl.  Remove this method after WSDLUtils is changed.
-     * 
-     * Generates a WSDL document for a given <code>Class</code> and
-     * a space separated list of methods at runtime
-     *
-     * @param cls <code>Class</code> object
-     * @param allowedMethods space separated methods
-     * @param locationUrl location of the service
-     * @param serviceUrn service URN
-     * @param description description of service
-     * @param msgContext <code>MsgContext</code> of the service invocation
-     * @return WSDL <code>Document</code>
-     * @throws Exception
-     */
-        /** @todo ravi: fix targetNamespace for runtime generation
-        // This is set to auto generated or user defined targetNamespace
-        // need to figure out what it should be in the runtime situation
-        // till we revisit, leave it as it was in WSDLUtils **/
-
-    /*    
-    public static Document writeWSDLDoc(Class cls,
-                                    String allowedMethods,
-                                    String locationUrl,
-                                    String serviceUrn,
-                                    String description,
-                                    MessageContext msgContext) throws Exception
-    {
-        Emitter emitter = new Emitter();
-        emitter.setCls(cls);
-        emitter.setAllowedMethods(allowedMethods);
-        emitter.setLocationUrl(locationUrl);
-
-        emitter.setTargetNamespace(locationUrl);
-
-        emitter.setServiceUrn(serviceUrn);
-        emitter.setDescription(description);
-        String targetService = msgContext.getTargetService();
-        if ((targetService == null) || ("JWSProcessor".equals(targetService)))
-            targetService = "";
-        emitter.setTargetService(targetService);
-        emitter.setReg(msgContext.getTypeMappingRegistry());
-        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(emitter.emit());
-        return doc;
-    }
-    */
 }

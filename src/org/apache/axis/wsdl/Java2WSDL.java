@@ -273,7 +273,7 @@ public class Java2WSDL {
             }
 
             // Find the class using the name and optionally the classDir
-            emitter.setCls(className, classDir);
+            emitter.setCls(className, "");
 
             // Generate a full wsdl, or interface & implementation wsdls
             if (wsdlImplFilename == null) {
