@@ -19,6 +19,8 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ser.DateDeserializerFactory;
 import org.apache.axis.encoding.ser.DateSerializerFactory;
+import org.apache.axis.encoding.ser.TimeDeserializerFactory;
+import org.apache.axis.encoding.ser.TimeSerializerFactory;
 
 /**
  * This is the implementation of the axis Default JAX-RPC SOAP Encoding TypeMapping
@@ -61,18 +63,18 @@ public class DefaultJAXRPC11TypeMappingImpl extends DefaultSOAPEncodingTypeMappi
         myRegisterSimple(Constants.XSD_UNSIGNEDBYTE, short.class);
         myRegister(Constants.XSD_DATETIME, java.util.Calendar.class,
                 new DateSerializerFactory(java.util.Calendar.class,
-                        Constants.XSD_DATE),
+                        Constants.XSD_DATETIME),
                 new DateDeserializerFactory(java.util.Calendar.class,
-                        Constants.XSD_DATE));
+                        Constants.XSD_DATETIME));
         myRegister(Constants.XSD_DATE, java.util.Calendar.class,
                 new DateSerializerFactory(java.util.Calendar.class,
                         Constants.XSD_DATE),
                 new DateDeserializerFactory(java.util.Calendar.class,
                         Constants.XSD_DATE));
         myRegister(Constants.XSD_TIME, java.util.Calendar.class,
-                new DateSerializerFactory(java.util.Calendar.class,
+                new TimeSerializerFactory(java.util.Calendar.class,
                         Constants.XSD_TIME),
-                new DateDeserializerFactory(java.util.Calendar.class,
+                new TimeDeserializerFactory(java.util.Calendar.class,
                         Constants.XSD_TIME));
         try {
             myRegisterSimple(Constants.XSD_ANYURI,
