@@ -1,0 +1,91 @@
+NOTE: This document is a draft of a release plan for the first
+dot release of Axis. Nothing in this document should be
+considered authoritative until it has been discussed and approved
+on the AXIS-DEV mailing list.
+
+
+
+			  Axis 0.5 Release Plan 
+			  =====================
+
+Objective: 
+
+    The objective of the proposed 0.5 release is to get a functional but
+    not feature-complete version of Axis into official public distribution
+    so that we may solicit feedback from the community and build
+    momentum leading up to a 1.0 release by mid-summer.
+
+Axis 0.5 Release:
+
+	Code Freeze/Tag Date:	July 6, 2001
+	Release Manager:	Glen Daniels
+
+    The build must pass all unit tests and all existing test suites.
+
+    Documentation must be sufficient to allow users comfortable with Java but
+    with no prior exposure to Axis or SOAP to get started fairly easily.
+
+    Javadocs for the public classes must be improved.
+
+
+Issues That Won't Be Resolved In Axis 0.5
+=========================================
+
+(many of these will need to be complete by the next release, 0.8)
+
+- SOAP w/Attachments
+- Complete set of data types
+- WSDL support
+- SMTP transport
+- Code cleanup
+
+Release criteria
+================
+
+1. There should be no open bugs with the features which are supplied.
+
+2. We must meet the 0.5 requirements set out in our requirements doc.
+   (NOTE: Some of the 0.5 requirements on the doc, such as data type
+   support equivalent to SOAP 2.2, probably want to be pushed back to
+   0.8 in the interest of getting a release out.  Some of the above
+   assumes we will do this)
+
+3. ???
+
+Configurations
+ Axis must be tested standalone and in several J2EE containers to ensure
+ compatability.  At minimum, Tomcat, JRun, and WebSphere must all work.
+
+Maintenance Plan
+=================
+
+The release team must consist of at least 3 people.
+
+The release team will coordinate the maintenance and support of Axis, 
+dispatching bugs and user requests to developers and acting as the 
+last resort in resolving major support issues.
+
+"Support" caveat : as 0.5 is a "kick the tires" release and not a
+production-ready one, we explicitly offer NO claims or guarantees
+to provide any particular level of support for the package.  That
+said, we will make an effort to incorporate user feedback into
+the development cycle for the next release (after all, that's the
+whole point!).
+
+Release Team
+============
+
+The release team will be composed of the committers that give the binding
++1 on the release plan and release proposal. It must have at least 3
+members, and follow the rules that will be established. 
+
+The release team will coordinate the execution of the release plan, dispatch
+bugs to volunteers, review commits, and act as a lead in the release
+process.
+
+One of the team members will act as "Release Manager" and will be 
+responsible for building the milestones, making the announcements about
+the release progress and all other roles that will be set by PMC and 
+committers.
+
+
