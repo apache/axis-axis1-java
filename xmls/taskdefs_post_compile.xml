@@ -18,3 +18,7 @@
         <classpath refid="classpath"/>
   </taskdef>
 
+  <taskdef name="adminclient" classname="org.apache.axis.tools.ant.axis.AdminClientTask"
+    loaderref="axis" >
+        <classpath refid="classpath"/>
+  </taskdef>
