@@ -307,6 +307,17 @@ public class DeserializationContext extends DefaultHandler
         return recorder.getLength() - 1;
     }
     
+    protected int startOfMappingsPos = -1;
+    
+    public int getStartOfMappingsPos()
+    {
+        if (startOfMappingsPos == -1) {
+            return getCurrentRecordPos();
+        }
+        
+        return startOfMappingsPos;
+    }
+    
     /****************************************************************
      * Management of sub-handlers (deserializers)
      */
@@ -388,6 +399,9 @@ public class DeserializationContext extends DefaultHandler
     {
         if (recorder != null)
             recorder.startPrefixMapping(prefix, uri);
+        
+        if (startOfMappingsPos == -1)
+            startOfMappingsPos = getCurrentRecordPos();
         
         if (prefix != null) {
             namespaces.add(uri, prefix);
@@ -497,6 +511,8 @@ public class DeserializationContext extends DefaultHandler
         
         nextHandler.startElement(namespace, localName, qName,
                                  attributes, this);
+        
+        startOfMappingsPos = -1;
     }
     
     public void endElement(String namespace, String localName, String qName)

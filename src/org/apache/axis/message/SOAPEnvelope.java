@@ -133,6 +133,7 @@ public class SOAPEnvelope extends MessageElement
             System.out.println("Adding header to message...");
         header.setEnvelope(this);
         headers.addElement(header);
+        _isDirty = true;
     }
     
     public void addBodyElement(SOAPBodyElement element)
@@ -141,6 +142,7 @@ public class SOAPEnvelope extends MessageElement
             System.out.println("Adding body element to message...");
         element.setEnvelope(this);
         bodyElements.addElement(element);
+        _isDirty = true;
     }
     
     public void removeHeader(SOAPHeader header)
@@ -148,6 +150,7 @@ public class SOAPEnvelope extends MessageElement
         if (DEBUG_LOG)
             System.out.println("Removing header from message...");
         headers.removeElement(header);
+        _isDirty = true;
     }
     
     public void removeBodyElement(SOAPBodyElement element)
@@ -155,6 +158,7 @@ public class SOAPEnvelope extends MessageElement
         if (DEBUG_LOG)
             System.out.println("Removing body element from message...");
         bodyElements.removeElement(element);
+        _isDirty = true;
     }
     
     public void removeTrailer(MessageElement element)
@@ -162,12 +166,14 @@ public class SOAPEnvelope extends MessageElement
         if (DEBUG_LOG)
             System.out.println("Removing trailer from message...");
         trailers.removeElement(element);
+        _isDirty = true;
     }
     
     public void clearBody()
     {
         if (!bodyElements.isEmpty())
             bodyElements.removeAllElements();
+        _isDirty = true;
     }
     
     public void addTrailer(MessageElement element)
@@ -176,6 +182,7 @@ public class SOAPEnvelope extends MessageElement
             System.out.println("Adding trailer to message...");
         element.setEnvelope(this);
         trailers.addElement(element);
+        _isDirty = true;
     }
 
     public SOAPHeader getHeaderByName(String namespace, String localPart)

@@ -56,9 +56,16 @@ public class TestDOM extends TestCase {
 
        // Now completely round trip it
        SOAPEnvelope envelope = message.getAsSOAPEnvelope();
+       
        // Element dom = message.getAsDOM();
        String result = message.getAsString();
 
        assertEquals(request, result);
+    }
+    
+    public static void main(String [] args) throws Exception
+    {
+        TestDOM tester = new TestDOM("TestDOM");
+        tester.testDOM();
     }
 }
