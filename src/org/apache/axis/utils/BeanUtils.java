@@ -253,7 +253,7 @@ public class BeanUtils {
 
             // If typeDesc meta data exists, re-order according to the fields
             if (typeDesc != null &&
-                    typeDesc.getFields() != null) {
+                    typeDesc.getFields(true) != null) {
                 ArrayList ordered = new ArrayList();
                 // Add the TypeDesc elements first
                 FieldDesc[] fds = typeDesc.getFields(true);
