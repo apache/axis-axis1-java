@@ -358,18 +358,20 @@ public class MessageContext {
      *
      * @param tServ the name of the target service.
      */
-    public void setTargetService(String tServ) {
+    public void setTargetService(String tServ) throws AxisFault {
         category.debug("MessageContext: setTargetService(" + tServ+")");
         targetService = tServ ;
 
         if (targetService == null)
             setServiceHandler(null);
         else {
-            // Do NOT throw an exception if the service handler is not found,
-            // since we may be on the client!  -- yow... this is messy. -- RobJ
             try {
                 setServiceHandler(getAxisEngine().getService(tServ));
             } catch (AxisFault fault) {
+                // If we're on the client, don't throw this fault...
+                if (!isClient()) {
+                    throw fault;
+                }
             }
         }
     }

@@ -62,6 +62,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
@@ -116,7 +117,11 @@ public class BodyBuilder extends SOAPHandler
                 category.debug(JavaUtils.getMessage("dispatching00",namespace));
             }
 
-            context.getMessageContext().setTargetService(namespace);
+            try {
+                context.getMessageContext().setTargetService(namespace);
+            } catch (AxisFault fault) {
+                throw new SAXException(fault);
+            }
         }
         
         /** Now we make a plain SOAPBodyElement IF we either:
