@@ -78,7 +78,6 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
-import javax.activation.DataHandler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
