@@ -166,7 +166,7 @@ public class HTTPSender extends BasicHandler {
                         OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
 
                         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
-                        out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n"
+                        out.print("CONNECT " + host + ":" + port + " HTTP/1.0\r\n"
                                   + "User-Agent: AxisClient"
                                   + "\r\n\r\n");
                         out.flush();
@@ -251,7 +251,7 @@ public class HTTPSender extends BasicHandler {
                     otherHeaders.append( HTTPConstants.HEADER_PROXY_AUTHORIZATION )
                          .append( ": Basic " )
                          .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                         .append("\n" );
+                         .append("\r\n" );
                 }            
 
                 if ((port = tmpURL.getPort()) == -1 ) port = 80;
@@ -310,7 +310,7 @@ public class HTTPSender extends BasicHandler {
                 otherHeaders.append( HTTPConstants.HEADER_AUTHORIZATION )
                      .append( ": Basic " )
                      .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                     .append("\n" );
+                     .append("\r\n" );
             }
 
             // don't forget the cookies!
