@@ -480,8 +480,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *     <CODE>MimeHeader</CODE> objects
      */
     public MimeHeaders getMimeHeaders() {
-        //TODO: Flesh it out.
-        return null;
+        return headers;
     }
 
     /**
@@ -491,7 +490,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *   <P>This method does not touch the SOAP part.</P>
      */
     public void removeAllAttachments(){
-        //TODO: Flesh it out.
+        mAttachments.removeAllAttachments();
     }
 
     /**
@@ -512,7 +511,11 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *     message
      */
     public Iterator getAttachments(){
-        //TODO: Flesh it out.
+        try {
+            return mAttachments.getAttachments().iterator();
+        } catch (AxisFault af){
+            log.error(JavaUtils.getMessage("exception00"), af);
+        }
         return null;
     }
 
@@ -528,8 +531,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *     that matches one of the given headers
      */
     public Iterator getAttachments(MimeHeaders headers){
-        //TODO: Flesh it out.
-        return null;
+        return mAttachments.getAttachments(headers);
     }
 
     /**
@@ -543,7 +545,11 @@ public class Message extends javax.xml.soap.SOAPMessage {
      * @throws java.lang.IllegalArgumentException
      */
     public void addAttachmentPart(AttachmentPart attachmentpart){
-        //TODO: Flesh it out.
+        try {
+            mAttachments.addAttachmentPart((org.apache.axis.Part)attachmentpart);
+        } catch (AxisFault af){
+            log.error(JavaUtils.getMessage("exception00"), af);
+        }
     }
 
     /**
@@ -557,7 +563,11 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *     object
      */
     public AttachmentPart createAttachmentPart() {
-        //TODO: Flesh it out.
+        try {
+            return (AttachmentPart) mAttachments.createAttachmentPart();
+        } catch (AxisFault af){
+            log.error(JavaUtils.getMessage("exception00"), af);
+        }
         return null;
     }
 }

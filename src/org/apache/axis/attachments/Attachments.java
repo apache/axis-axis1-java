@@ -89,6 +89,14 @@ public interface Attachments {
      public Part removeAttachmentPart(String reference) throws org.apache.axis.AxisFault;
 
     /**
+     * Removes all <CODE>AttachmentPart</CODE> objects that have
+     *   been added to this <CODE>SOAPMessage</CODE> object.
+     *
+     *   <P>This method does not touch the SOAP part.</P>
+     */
+    public void removeAllAttachments();
+
+    /**
      * This method should look at a refernce and determine if it is a CID: or url
      * to look for attachment.
      * @param  The reference in the xml that referers to an attachment.
@@ -102,13 +110,32 @@ public interface Attachments {
      * @return A collection of attachments. 
      */ 
     public java.util.Collection getAttachments() throws org.apache.axis.AxisFault;
-    
+
+    /**
+     * Retrieves all the <CODE>AttachmentPart</CODE> objects
+     * that have header entries that match the specified headers.
+     * Note that a returned attachment could have headers in
+     * addition to those specified.
+     * @param   headers a <CODE>MimeHeaders</CODE>
+     *     object containing the MIME headers for which to
+     *     search
+     * @return an iterator over all attachments that have a header
+     *     that matches one of the given headers
+     */
+    public java.util.Iterator getAttachments(javax.xml.soap.MimeHeaders headers);
+
     /**
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
      * @param The part that is referenced 
      */ 
     public Part createAttachmentPart(Object part) throws org.apache.axis.AxisFault;
+
+    /**
+     * Create a new attachment Part in this Message.
+     * Will actually, and always, return an AttachmentPart.
+     */
+    public Part createAttachmentPart() throws org.apache.axis.AxisFault;
 
     /**
      *  Will the attachments of this message to that of the colleciton.
