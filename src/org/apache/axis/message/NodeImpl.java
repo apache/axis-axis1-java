@@ -301,13 +301,8 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     public Document getOwnerDocument() {
         if(document == null) {
             NodeImpl node = getParent();
-            while(node != null) {
-                Document doc = node.getOwnerDocument();
-                if (doc == null) {
-                    node = node.getParent();
-                } else {
-                    return doc;
-                }
+            if (node != null) {
+              return node.getOwnerDocument();
             }
         }
         return document;
