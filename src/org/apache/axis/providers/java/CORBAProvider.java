@@ -131,11 +131,13 @@ public class CORBAProvider extends RPCProvider
 
         Class helperClass = ClassUtils.forName(helperClassName);
         // Narrow the object reference
-        Method narrowMethod = helperClass.getMethod("narrow", new Class[] {org.omg.CORBA.Object.class});
+        Method narrowMethod = helperClass.getMethod("narrow", CORBA_OBJECT_CLASS);
         Object targetObject = narrowMethod.invoke(null, new Object[] {corbaObject});
 
         return targetObject;
     }
+
+    private static final Class[] CORBA_OBJECT_CLASS = new Class[] {org.omg.CORBA.Object.class};
 
     /**
      * Return the option in the configuration that contains the service class

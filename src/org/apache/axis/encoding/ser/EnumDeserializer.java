@@ -69,6 +69,8 @@ public class EnumDeserializer extends SimpleDeserializer {
 
     private Method fromStringMethod = null;
 
+    private static final Class[] STRING_CLASS = new Class[] { java.lang.String.class };
+
     public EnumDeserializer(Class javaType, QName xmlType) {
         super(javaType, xmlType);
     }
@@ -80,8 +82,7 @@ public class EnumDeserializer extends SimpleDeserializer {
             return null;
         if (fromStringMethod == null) {
             try {
-                fromStringMethod = javaType.getMethod("fromString", 
-                                                 new Class[] {java.lang.String.class});
+                fromStringMethod = javaType.getMethod("fromString", STRING_CLASS);
             } catch (Exception e) {
                 throw new IntrospectionException(e.toString());
             }

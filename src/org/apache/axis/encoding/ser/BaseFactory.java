@@ -69,13 +69,18 @@ import java.lang.reflect.Method;
  * @author Davanum Srinivas <dims@yahoo.com> 
  */
 public abstract class BaseFactory {
+
+    private static final Class[] STRING_CLASS_QNAME_CLASS = new Class[] {
+        String.class, Class.class, QName.class
+    };
+    
     /**
      * Returns the the specified method - if any.
      */
     protected Method getMethod(Class clazz, String methodName) {
         Method method = null;
         try {
-            method = MethodCache.getInstance().getMethod(clazz, methodName, new Class[]{String.class, Class.class, QName.class});
+            method = MethodCache.getInstance().getMethod(clazz, methodName, STRING_CLASS_QNAME_CLASS);
         } catch (NoSuchMethodException e) {
         }
         return method;
