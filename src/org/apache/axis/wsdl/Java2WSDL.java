@@ -81,7 +81,9 @@ public class Java2WSDL {
     protected static final int PACKAGE_OPT = 'p';
     protected static final int NAMESPACE_OPT = 'n';
     protected static final int NAMESPACE_IMPL_OPT = 'N';
-    protected static final int SERVICE_NAME_OPT = 's';
+    protected static final int PORTTYPE_NAME_OPT = 'P';
+    protected static final int SERVICE_ELEMENT_NAME_OPT = 'S';
+    protected static final int SERVICE_PORT_NAME_OPT = 's';
     protected static final int LOCATION_OPT = 'l';
     protected static final int LOCATION_IMPORT_OPT = 'L';
     protected static final int METHODS_ALLOWED_OPT = 'm';
@@ -113,10 +115,18 @@ public class Java2WSDL {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_OPT,
                 JavaUtils.getMessage("j2woptlocation00")),
-        new CLOptionDescriptor("service",
+        new CLOptionDescriptor("portTypeName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
-                SERVICE_NAME_OPT,
-                JavaUtils.getMessage("j2woptservice00")),
+                PORTTYPE_NAME_OPT,
+                JavaUtils.getMessage("j2woptportTypeName00")),
+        new CLOptionDescriptor("serviceElementName",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                SERVICE_ELEMENT_NAME_OPT,
+                JavaUtils.getMessage("j2woptserviceElementName00")),
+        new CLOptionDescriptor("servicePortName",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                SERVICE_PORT_NAME_OPT,
+                JavaUtils.getMessage("j2woptservicePortName00")),
         new CLOptionDescriptor("namespace",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_OPT,
@@ -267,8 +277,12 @@ public class Java2WSDL {
                         emitter.setImplNamespace(option.getArgument());
                         break;
 
-                    case SERVICE_NAME_OPT:
-                        emitter.setServiceName(option.getArgument());
+                    case SERVICE_ELEMENT_NAME_OPT:
+                        emitter.setServiceElementName(option.getArgument());
+                        break;
+
+                    case SERVICE_PORT_NAME_OPT:
+                        emitter.setServicePortName(option.getArgument());
                         break;
 
                     case LOCATION_OPT:
