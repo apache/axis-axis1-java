@@ -66,6 +66,7 @@ import org.apache.xerces.parsers.DOMParser ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
+import org.apache.axis.encoding.Base64 ;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -92,7 +93,7 @@ public class HTTPDispatchHandler implements Handler {
     try {
       String   host ;
       int      port = 80 ;
-      String   action = (String) msgContext.getProperty( "HTTP_ACTION" );
+      String   action = (String) msgContext.getProperty( Constants.MC_TARGET );
       URL      tmpURL        = new URL( targetURL );
       byte[]   buf           = new byte[4097];
       int      rc            = 0 ;
@@ -107,10 +108,25 @@ public class HTTPDispatchHandler implements Handler {
 
       OutputStream  out  = sock.getOutputStream();
       InputStream   inp  = sock.getInputStream();
-      String        header = "POST " + tmpURL.getPath() + " HTTP/1.0\n" +
-                             "Content-Length: " + reqEnv.length() + "\n" +
-                             "Content-Type: text/xml\n" +
-                             "SOAPAction: " + action + "\n\n" ;
+      String        otherHeaders = null ;
+      String        userID = null ;
+      String        passwd = null ;
+      
+      userID = (String) msgContext.getProperty( Constants.MC_USERID );
+      passwd = (String) msgContext.getProperty( Constants.MC_PASSWORD );
+
+      if ( userID != null )
+        otherHeaders = Constants.HEADER_AUTHORIZATION + ": Basic " + 
+                       Base64.encode( (userID + ":" + passwd).getBytes() ) + 
+                       "\n" ;
+
+      String  header = Constants.HEADER_POST + " " + 
+                         tmpURL.getPath() + " HTTP/1.0\n" +
+                       Constants.HEADER_CONTENT_LENGTH + ": " + 
+                                          + reqEnv.length() + "\n" +
+                       Constants.HEADER_CONTENT_TYPE + ": text.xml\n" +
+                       (otherHeaders == null ? "" : otherHeaders) + 
+                       Constants.HEADER_SOAP_ACTION + ":" + action + "\n\n" ;
 
       out.write( header.getBytes() );
       out.write( reqEnv.getBytes() );

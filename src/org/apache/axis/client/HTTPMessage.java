@@ -126,8 +126,8 @@ public class HTTPMessage {
       // Debug.Print( 1, (String) reqMsg.getAs("String") );
     // }
 
-    msgContext.setProperty( "HTTP_URL", url );   // horrible name!
-    msgContext.setProperty( "HTTP_ACTION", action );   // horrible name!
+    msgContext.setProperty( Constants.MC_HTTP_URL, url );   // horrible name!
+    msgContext.setProperty( Constants.MC_TARGET, action );   // horrible name!
     try {
       client.init();
       client.invoke( msgContext );
