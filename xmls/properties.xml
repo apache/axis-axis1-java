@@ -50,6 +50,7 @@ them.
 <property name="build.file" value="build.xml" />
 <!-- directories for output -->
 
+<property name="build.dir" location="build"/>
 <property name="build.dest" location="${build.dir}/classes"/>
 <property name="build.lib" location="${build.dir}/lib"/>
 <property name="build.samples" location="${build.dir}/classes/samples"/>
