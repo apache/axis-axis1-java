@@ -89,6 +89,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -215,6 +216,14 @@ public class SymbolTable {
     private void populate(Definition def, Document doc) throws IOException {
         if (doc != null) {
             populateTypes(doc);
+
+            // If def == null, then WSDL4J doesn't provide any import logic
+            // for this xml file.  Recurse on Document imports rather than
+            // Definition imports.
+            if (def == null && addImports) {
+                // Recurse through children nodes, looking for imports
+                lookForImports(doc);
+            }
         }
         if (def != null) {
             if (addImports) {
@@ -239,6 +248,25 @@ public class SymbolTable {
             populateServices(def);
         }
     } // populate
+
+    /**
+     * Recursively find all import objects and call populate for each one.
+     */
+    private void lookForImports(Node node) throws IOException {
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if ("import".equals(child.getLocalName())) {
+                NamedNodeMap attributes = child.getAttributes();
+                Node importFile = attributes.getNamedItem("schemaLocation");
+                if (importFile != null) {
+                    populate(null,
+                            XMLUtils.newDocument(importFile.getNodeValue()));
+                }
+            }
+            lookForImports(child);
+        }
+    } // lookForImports
 
     /**
      * Populate the symbol table with all of the Types from the Document.
