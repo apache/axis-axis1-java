@@ -136,6 +136,11 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
                     !value.endsWith("f"))     // doesn't complain about precision.
                     value += "F";
             }
+            else if (baseClass.equals("Long")) {
+                if (!value.endsWith("L") &&   // Indicate float literal so javac
+                    !value.endsWith("l"))     // doesn't complain about precision.
+                    value += "L";
+            }
             values.add(value);
         }
         
