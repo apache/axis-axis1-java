@@ -71,7 +71,6 @@ import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
@@ -84,7 +83,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
+ * A service represented in WSDD.
  *
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class WSDDService
     extends WSDDTargetedChain
@@ -202,10 +203,12 @@ public class WSDDService
             }
         }
 
+        initTMR();
+
         // call to validate standard descriptors for this service
         validateDescriptors();
     }
-    
+
     /**
      * This method can be used for dynamic deployment using new WSDDService()
      * etc.  It validates some standard parameters for some standard providers
@@ -213,25 +216,17 @@ public class WSDDService
      */
     public void validateDescriptors()
     {
-        String className = this.getParameter(JavaProvider.OPTION_CLASSNAME);
-        if (className != null) {
-            try {
-                Class cls = ClassUtils.forName(className);
-                desc.setImplClass(cls);
-                initTMR();
-                desc.setTypeMapping(getTypeMapping(desc.getStyle().getEncoding()));
-            } catch (Exception ex) {
-            }
-        }
+        desc.setTypeMappingRegistry(tmr);
+        desc.setTypeMapping(getTypeMapping(desc.getStyle().getEncoding()));
 
         String allowedMethods = getParameter(JavaProvider.OPTION_ALLOWEDMETHODS);
-        if (allowedMethods != null) {
+        if (allowedMethods != null && !"*".equals(allowedMethods)) {
             ArrayList methodList = new ArrayList();
             StringTokenizer tokenizer = new StringTokenizer(allowedMethods, " ,");
             while (tokenizer.hasMoreTokens()) {
                 methodList.add(tokenizer.nextToken());
             }
-            //desc.setAllowedMethods(methodList);
+            desc.setAllowedMethods(methodList);
         }
     }
 
@@ -405,7 +400,6 @@ public class WSDDService
         AxisEngine.normaliseOptions(service);
 
         initTMR();
-        service.setTypeMappingRegistry(tmr);
         tmr.delegate(registry.getTypeMappingRegistry());
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
@@ -584,7 +578,7 @@ public class WSDDService
             }
         }
     }
-    
+
     public TypeMapping getTypeMapping(String encodingStyle) {
         return (TypeMapping) tmr.getTypeMapping(encodingStyle);
     }

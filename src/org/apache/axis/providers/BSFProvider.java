@@ -57,6 +57,7 @@ package org.apache.axis.providers;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.description.ServiceDesc;
 
 public class BSFProvider extends BasicProvider {
@@ -69,8 +70,7 @@ public class BSFProvider extends BasicProvider {
         System.out.println(getOption("Script"));
     }
 
-    public ServiceDesc getServiceDesc(MessageContext msgContext, ServiceDesc serviceDesc)
+    public void initServiceDesc(SOAPService service)
             throws AxisFault {
-        return serviceDesc;
     }
 }

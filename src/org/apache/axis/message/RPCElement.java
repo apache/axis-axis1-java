@@ -61,7 +61,6 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.enum.Style;
@@ -74,9 +73,6 @@ import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
 import java.util.Vector;
-import java.util.ArrayList;
-import java.lang.reflect.Array;
-import java.util.Collection;
 
 public class RPCElement extends SOAPBodyElement
 {
@@ -94,8 +90,6 @@ public class RPCElement extends SOAPBodyElement
     {
         super(namespace, localName, prefix, attributes, context);
 
-//        recorder = new SAX2EventRecorder();
-
         encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
 
         // This came from parsing XML, so we need to deserialize it sometime
@@ -107,7 +101,7 @@ public class RPCElement extends SOAPBodyElement
         if (operations == null) {
             SOAPService service    = msgContext.getService();
             if (service != null) {
-                ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
+                ServiceDesc serviceDesc = service.getInitializedServiceDesc();
                 
                 String lc = Utils.xmlNameToJava(name);
                 if (serviceDesc == null) {

@@ -56,11 +56,12 @@ public class TestArrayListConversions extends TestCase {
             transport = new LocalTransport(server);
 
             SOAPService service = new SOAPService(new RPCProvider());
-            ServiceDesc desc = service.getInitializedServiceDesc(null);
-            desc.setDefaultNamespace(SERVICE_NAME);
 
             service.setOption("className", "test.encoding.TestArrayListConversions");
             service.setOption("allowedMethods", "*");
+
+            ServiceDesc desc = service.getInitializedServiceDesc();
+            desc.setDefaultNamespace(SERVICE_NAME);
 
             provider.deployService(SERVICE_NAME, service);
         } catch (Exception exp) {

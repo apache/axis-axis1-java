@@ -57,11 +57,11 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.cache.JavaClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -69,50 +69,84 @@ import java.lang.reflect.Method;
 import java.util.Vector;
 
 /**
+ * Deal with message-style Java services.  For now, these are services
+ * with exactly ONE OperationDesc, pointing to a method which looks like
+ * one of the following:
+ *
+ * public Element [] method(Vector v);
+ * (NOTE : This is silly, we should change it to either be Vector/Vector
+ * or Element[]/Element[])
+ *
+ * public Document method(Document doc);
+ *
+ * public void method(MessageContext mc);
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class MsgProvider extends JavaProvider {
     /**
-     * This is pretty much a pass-thru to the util.Admin tool.  This will just
-     * take the Request xml file and call the Admin processing.
+     * Process the message.  This means figuring out what our actual
+     * backend method takes (we could cache this somehow) and doing the
+     * invocation.  Note that we don't catch exceptions here, preferring to
+     * bubble them right up through to someone who'll catch it above us.
+     *
+     * @param msgContext the active MessageContext
+     * @param reqEnv the request SOAPEnvelope
+     * @param resEnv the response SOAPEnvelope (we should fill this in)
+     * @param obj the service target object
+     * @throws Exception
      */
     public void processMessage (MessageContext msgContext,
-                                String serviceName,
-                                String methodName,
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
-                                JavaClass jc,
                                 Object obj)
         throws Exception
     {
         Handler targetService = msgContext.getService();
-        
+        OperationDesc operation = msgContext.getOperation();
+        Method method = operation.getMethod();
+
         // is this service a body-only service?
-        // if true (the default), the servic3e expects two args,
-        // a MessageContext and a Document which is the contents of the first body element.
+        // if true, we expect to pass a Vector of body Elements (as DOM) and
+        //   get back an array of DOM Elements for the return body, OR
+        //   to pass a Document and get back a Document.
+        //
         // if false, the service expects just one MessageContext argument,
-        // and looks at the entire request envelope in the MessageContext
-        // (hence it's a "FullMessageService").
+        //   and looks at the entire request envelope in the MessageContext
+        //   (hence it's a "FullMessageService").
+        //
+        // Q (Glen) : Why would you ever do the latter instead of just defining
+        //            a Handler provider yourself?  I think we should change
+        //            this to simply pass the whole SOAP envelope as a Document
+        //            and get back a Document.  Or even SOAPEnvelope/
+        //            SOAPEnvelope...
         boolean bodyOnlyService = true;
         if (targetService.getOption("FullMessageService") != null) {
             bodyOnlyService = false;
         }
-        
-        Class[]         argClasses;
-        Object[]        argObjects;
-        ClassLoader     clsLoader = msgContext.getClassLoader();
-        
-        // the document which is the contents of the first body element
-        // (generated only if we are not an envelope service)
-        Method   method = null ;
+
+        // Collect the types so we know what we're dealing with in the target
+        // method.
+        Class [] params = method.getParameterTypes();
+
+        if (params.length != 1) {
+            // Must have exactly one argument in all cases.
+            throw new AxisFault(
+                    JavaUtils.getMessage("msgMethodMustHaveOneParam",
+                                         method.getName(),
+                                         ""+params.length));
+
+        }
+
+        Object argObjects[] = new Object [params.length];
+
         Document doc = null ;
         
         if (bodyOnlyService) {
-            // dig out just the body, and pass it with the MessageContext
+            // dig out just the body, and pass it on
             Vector                bodies  = reqEnv.getBodyElements();
             SOAPBodyElement       reqBody = reqEnv.getFirstBody();
-            NoSuchMethodException exp2 = null ;
 
             doc = reqBody.getAsDOM().getOwnerDocument();
 
@@ -121,92 +155,44 @@ public class MsgProvider extends JavaProvider {
                 newBodies.add( ((SOAPBodyElement)bodies.get(i)).getAsDOM() );
             bodies = newBodies ;
 
-            /* If no methodName was specified during deployment then get it */
-            /* from the root of the Body element                            */
-            /* Hmmm, should we do this????                                  */
-            /****************************************************************/
-            if ( methodName == null || methodName.equals("") ) {
-                Element root = doc.getDocumentElement();
-                if ( root != null ) methodName = root.getLocalName();
-            }
-
-            // Try the "right" one first, if this fails then default back
-            // to the old ones - those should be removed eventually.
-            /////////////////////////////////////////////////////////////////
-            argClasses = new Class[1];
-            argObjects = new Object[1];
-            argClasses[0] = ClassUtils.forName("java.util.Vector", true, clsLoader);
-            argObjects[0] = bodies ;
-
-            try {
-                method = jc.getJavaClass().getMethod( methodName, argClasses );
-                Element[] result = (Element[]) method.invoke( obj, argObjects );        
+            // We know we have one param.  OK, is it a Vector?
+            if (params[0] == Vector.class) {
+                // Yes, invoke away!
+                argObjects[0] = bodies ;
+                Element[] result = (Element[]) method.invoke( obj, argObjects );
                 if ( result != null ) {
                     for ( int i = 0 ; i < result.length ; i++ )
                         resEnv.addBodyElement( new SOAPBodyElement(result[i]));
                 }
                 return ;
-            } catch( NoSuchMethodException exp ) {
-                exp2 = exp;
-            }
+            } else if (params[0] == Document.class) {
+                // Not a Vector, but a Document!  Invoke away!
+                argObjects[0] = doc;
 
-            if ( method == null ) {
-              // Try the the simplest case first - just Document as the param 
-              /////////////////////////////////////////////////////////////////
-                argClasses = new Class[1];
-                argObjects = new Object[1];
-                argClasses[0] = ClassUtils.forName("org.w3c.dom.Document", true, clsLoader);
-                argObjects[0] = doc ;
-
-                try {
-                    method = jc.getJavaClass().getMethod( methodName, argClasses );
-                } catch( NoSuchMethodException exp ) {
-                    exp2 = exp;
+                // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL?
+                Document retDoc = (Document) method.invoke( obj, argObjects );
+                if ( retDoc != null ) {
+                    SOAPBodyElement el = new SOAPBodyElement(retDoc.getDocumentElement());
+                    resEnv.addBodyElement(el);
                 }
-            }
-
-            if ( method == null ) {
-                String oldmsg = exp2.getMessage(); 
-                oldmsg = oldmsg == null ? "" : oldmsg;
-                String msg = oldmsg + JavaUtils.getMessage("triedClass00",
-                        jc.getJavaClass().getName(), methodName);
-                throw new NoSuchMethodException(msg);
+            } else {
+                // Neither - must be a bad method.
+                throw new AxisFault(
+                        JavaUtils.getMessage("badMsgMethodParam",
+                                             method.getName(),
+                                             params[0].getName()));
             }
         } else {
             // pass *just* the MessageContext (maybe don't even parse!!!)
-            argClasses = new Class[1];
-            argObjects = new Object[1];
-            argClasses[0] = ClassUtils.forName("org.apache.axis.MessageContext", true, clsLoader);
-            argObjects[0] = msgContext ;
-            try {
-                method = jc.getJavaClass().getMethod( methodName, argClasses );
-            }    
-            catch( NoSuchMethodException exp2 ) {
-                // No match - just throw an error
-                //
-                // We do not log the error here, this is
-                // treated as a catch-rethrow as:
-                // 1) it's clear where the exception is generated (try-block above)
-                // 2) we are adding detail to the exception's message.
-                ////////////////////////////////////////////
-
-                String oldmsg = exp2.getMessage(); 
-                oldmsg = oldmsg == null ? "" : oldmsg;
-                String msg = oldmsg + JavaUtils.getMessage("triedClass00",
-                        jc.getJavaClass().getName(), methodName);
-                throw new NoSuchMethodException(msg);
+            if (params[0] != MessageContext.class) {
+                throw new AxisFault(
+                        JavaUtils.getMessage("needMessageContextArg",
+                                             method.getName(),
+                                             params[0].getName()));
             }
-        }
-        
-        
-        // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL.  Some people will
-        //     want DOM, but our examples should mostly lean towards the
-        //     SAX side of things....
 
-        Document retDoc = (Document) method.invoke( obj, argObjects );        
-        if ( retDoc != null ) {
-            SOAPBodyElement el = new SOAPBodyElement(retDoc.getDocumentElement());
-            resEnv.addBodyElement(el);
+            argObjects[0] = msgContext ;
+            method.invoke(obj, argObjects);
         }
     }
 };

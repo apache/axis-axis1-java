@@ -58,7 +58,6 @@ package org.apache.axis.providers.java ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.attachments.MimeMultipartDataSource;
 import org.apache.axis.attachments.PlainTextDataSource;
 import org.apache.axis.enum.Style;
@@ -72,7 +71,6 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.cache.JavaClass;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -82,7 +80,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 import java.lang.reflect.Method;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -103,19 +100,13 @@ public class RPCProvider extends JavaProvider
      * Result in resEnv.
      *
      * @param msgContext self-explanatory
-     * @param serviceName the class name of the ServiceHandler
-     * @param allowedMethods the 'method name' of ditto
      * @param reqEnv the request envelope
      * @param resEnv the response envelope
-     * @param jc the JavaClass of the service object
      * @param obj the service object itself
      */
     public void processMessage (MessageContext msgContext,
-                                String serviceName,
-                                String allowedMethods,
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
-                                JavaClass jc,
                                 Object obj)
         throws Exception
     {
@@ -251,11 +242,12 @@ public class RPCProvider extends JavaProvider
             }
         }
 
-        // Check if we can find a Method by this name
-        // FIXME : Shouldn't this type of thing have already occurred?
+        // See if any subclasses want a crack at faulting on a bad operation
+        // FIXME : Does this make sense here???
+        String allowedMethods = (String)service.getOption("allowedMethods");
         checkMethodName(msgContext, allowedMethods, operation.getName());
 
-        // Now create any out holders we need to pass in
+       // Now create any out holders we need to pass in
         if (numArgs < argValues.length) {
             ArrayList outParams = operation.getOutParams();
             for (int i = 0; i < outParams.size(); i++) {
@@ -397,47 +389,7 @@ public class RPCProvider extends JavaProvider
                                    String methodName)
         throws Exception
     {
-        String methodNameMatch = allowedMethods;
-
-        // allowedMethods may be a comma-delimited string of method names.
-        // If so, look for the one matching methodName.
-        if (allowedMethods != null) {
-            StringTokenizer tok = new StringTokenizer(allowedMethods, ", ");
-            String nextMethodName = null;
-            while (tok.hasMoreElements()) {
-                String token = tok.nextToken();
-                if (token.equals(methodName)) {
-                    nextMethodName = token;
-                    break;
-                }
-            }
-            // didn't find a matching one...
-            if (nextMethodName == null) {
-                throw new AxisFault( "AxisServer.error",
-                        JavaUtils.getMessage("namesDontMatch00", methodName,
-                                             allowedMethods),
-                        null, null );  // should they??
-            }
-            methodNameMatch = nextMethodName;
-        }
-
-        if ( methodNameMatch != null && !methodNameMatch.equals(methodName) )
-            throw new AxisFault( "AxisServer.error",
-                    JavaUtils.getMessage("namesDontMatch01",
-                        new String[] {methodName, methodNameMatch,
-                                      allowedMethods}),
-                    null, null );  // should they??
-
-        if (log.isDebugEnabled()) {
-            log.debug( "methodName: " + methodName );
-            log.debug( "MethodNameMatch: " + methodNameMatch );
-            log.debug( "MethodName List: " + allowedMethods );
-        }
-
-        ///////////////////////////////////////////////////////////////
-        // If allowedMethods (i.e. methodNameMatch) is null,
-        //  then treat it as a wildcard automatically matching methodName
-        ///////////////////////////////////////////////////////////////
-        return;
+        // Our version doesn't need to do anything, though inherited
+        // ones might.
     }
 }

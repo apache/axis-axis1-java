@@ -3,11 +3,8 @@ package test.RPCDispatch;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -17,9 +14,6 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 
 import org.xml.sax.SAXException;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 import java.util.Vector;
@@ -56,8 +50,6 @@ public class TestRPC extends TestCase {
 
     /**
      * Invoke a given RPC method, and return the result
-     * @param soapAction action to be performed
-     * @param request XML body of the request
      * @return Deserialized result
      */
     private final Object rpc(String method, Object[] parms)
@@ -108,12 +100,10 @@ public class TestRPC extends TestCase {
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "reverseString");
         provider.deployService(new QName(null,SOAPAction), reverse);
-        ServiceDesc serviceDesc = reverse.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
 
         // invoke the service and verify the result
-        assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
+        assertEquals("Did not reverse the string correctly.", "cba",
+                     rpc("reverseString", new Object[] {"abc"}));
     }
 
     /**
@@ -126,9 +116,7 @@ public class TestRPC extends TestCase {
             reverse.setOption("className", "test.RPCDispatch.Service");
             reverse.setOption("allowedMethods", "reverseString2");
             provider.deployService(new QName(null,SOAPAction), reverse);
-            ServiceDesc serviceDesc = reverse.getServiceDescription();
-            serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                       (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
+
             // invoke the service and verify the result
             rpc("reverseString", new Object[] {"abc"});
             throw new junit.framework.AssertionFailedError("Should not reach here");
@@ -147,9 +135,6 @@ public class TestRPC extends TestCase {
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "reverseString2,reverseString");
         provider.deployService(new QName(null,SOAPAction), reverse);
-        ServiceDesc serviceDesc = reverse.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
 
         // invoke the service and verify the result
         assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
@@ -164,9 +149,6 @@ public class TestRPC extends TestCase {
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "reverseString2 reverseString");
         provider.deployService(new QName(null,SOAPAction), reverse);
-        ServiceDesc serviceDesc = reverse.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
 
         // invoke the service and verify the result
         assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
@@ -181,12 +163,10 @@ public class TestRPC extends TestCase {
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "*");
         provider.deployService(new QName(null,SOAPAction), reverse);
-        ServiceDesc serviceDesc = reverse.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
 
         // invoke the service and verify the result
-        assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
+        assertEquals("Did not reverse the string correctly.", "cba",
+                     rpc("reverseString", new Object[] {"abc"}));
     }
     
     /**
@@ -198,9 +178,6 @@ public class TestRPC extends TestCase {
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "reverseData");
         provider.deployService(new QName(null, SOAPAction), reverse);
-        ServiceDesc serviceDesc = reverse.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
 
         // invoke the service and verify the result
         Data input    = new Data(5, "abc", 3);
@@ -217,9 +194,6 @@ public class TestRPC extends TestCase {
         tgtSvc.setOption("className", "test.RPCDispatch.Service");
         tgtSvc.setOption("allowedMethods", "targetServiceImplicit");
         provider.deployService(new QName(null, SOAPAction), tgtSvc);
-        ServiceDesc serviceDesc = tgtSvc.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)tgtSvc.getTypeMappingRegistry().getDefaultTypeMapping());
 
         // invoke the service and verify the result
         assertEquals("SOAP Action did not equal the targetService.", 
@@ -235,9 +209,6 @@ public class TestRPC extends TestCase {
         echoInt.setOption("className", "test.RPCDispatch.Service");
         echoInt.setOption("allowedMethods", "echoInt");
         provider.deployService(new QName(null, SOAPAction), echoInt);
-        ServiceDesc serviceDesc = echoInt.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)echoInt.getTypeMappingRegistry().getDefaultTypeMapping());
 
         // invoke the service and verify the result
         assertNull("The result was not null as expected.", rpc("echoInt", new Object[] {null}));
@@ -252,9 +223,6 @@ public class TestRPC extends TestCase {
         simpleFault.setOption("className", "test.RPCDispatch.Service");
         simpleFault.setOption("allowedMethods", "simpleFault");
         provider.deployService(new QName(null, SOAPAction), simpleFault);
-        ServiceDesc serviceDesc = simpleFault.getServiceDescription();
-        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
-                                                   (TypeMapping)simpleFault.getTypeMappingRegistry().getDefaultTypeMapping());
 
         try {
             rpc("simpleFault", new Object[] {"foobar"});

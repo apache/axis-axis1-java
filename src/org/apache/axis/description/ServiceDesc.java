@@ -62,17 +62,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.components.bytecode.ExtractorFactory;
 import org.apache.axis.wsdl.Skeleton;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.AxisServiceConfig;
 import org.apache.commons.logging.Log;
 
 
@@ -152,7 +157,10 @@ public class ServiceDesc {
     private ArrayList completedNames = new ArrayList();
 
     /** Our typemapping for resolving Java<->XML type issues */
-    private TypeMapping tm = null;
+    private TypeMapping tm = DefaultTypeMappingImpl.getSingleton();
+
+    private TypeMappingRegistry tmr = null;
+
     private boolean haveAllSkeletonMethods = false;
     private boolean introspectionComplete = false;
 
@@ -656,6 +664,33 @@ public class ServiceDesc {
             return;
         }
 
+        /** If the class knows what it should be exporting,
+        * respect its wishes.
+        */
+        AxisServiceConfig axisConfig = null;
+        try {
+            Method method = implClass.getDeclaredMethod(
+                    "getAxisServiceConfig", new Class [] {});
+            if (method != null && Modifier.isStatic(method.getModifiers())) {
+                axisConfig = (AxisServiceConfig)method.invoke(null, null);
+            }
+        } catch (Exception e) {
+            // No problem, just continue without...
+        }
+
+        if (axisConfig != null) {
+            String allowedMethodsStr = axisConfig.getAllowedMethods();
+            if (allowedMethodsStr != null && !"*".equals(allowedMethodsStr)) {
+                ArrayList methodList = new ArrayList();
+                StringTokenizer tokenizer =
+                        new StringTokenizer(allowedMethodsStr, " ,");
+                while (tokenizer.hasMoreTokens()) {
+                    methodList.add(tokenizer.nextToken());
+                }
+                setAllowedMethods(methodList);
+            }
+        }
+
         loadServiceDescByIntrospectionRecursive(implClass);
         introspectionComplete = true;
     }
@@ -1022,5 +1057,16 @@ public class ServiceDesc {
 
     public void setEndpointURL(String endpointURL) {
         this.endpointURL = endpointURL;
+    }
+
+    public TypeMappingRegistry getTypeMappingRegistry() {
+        if (tmr == null) {
+            tmr = new TypeMappingRegistryImpl();
+        }
+        return tmr;
+    }
+
+    public void setTypeMappingRegistry(TypeMappingRegistry tmr) {
+        this.tmr = tmr;
     }
 }

@@ -398,38 +398,32 @@ public class Emitter {
             } else {
                 serviceDesc.setTypeMapping(defaultTM);
             }
-        }
-        
-        // If the provided service description does NOT have the implementaion
-        // class and we do, make sure to fill it in.
-        if (serviceDesc.getImplClass() == null && cls != null) {
-            serviceDesc.setImplClass(cls);
-        }
 
-        serviceDesc.setStopClasses(stopClasses);
-        serviceDesc.setAllowedMethods(allowedMethods);
-        serviceDesc.setDisallowedMethods(disallowedMethods);
+            serviceDesc.setStopClasses(stopClasses);
+            serviceDesc.setAllowedMethods(allowedMethods);
+            serviceDesc.setDisallowedMethods(disallowedMethods);
 
-        // If the class passed in is a portType, 
-        // there may be an implClass that is used to 
-        // obtain the method parameter names.  In this case,
-        // a serviceDesc2 is built to get the method parameter names. 
-        if (implCls != null &&
-            implCls != cls &&
-            serviceDesc2 == null) {
-            serviceDesc2 = new ServiceDesc();
-            serviceDesc2.setImplClass(implCls);
+            // If the class passed in is a portType,
+            // there may be an implClass that is used to
+            // obtain the method parameter names.  In this case,
+            // a serviceDesc2 is built to get the method parameter names.
+            if (implCls != null &&
+                    implCls != cls &&
+                    serviceDesc2 == null) {
+                serviceDesc2 = new ServiceDesc();
+                serviceDesc2.setImplClass(implCls);
 
-            // Set the typeMapping to the one provided.
-            // If not available use the default TM
-            if (tm != null) {
-                serviceDesc2.setTypeMapping(tm);
-            } else {
-                serviceDesc2.setTypeMapping(defaultTM);
+                // Set the typeMapping to the one provided.
+                // If not available use the default TM
+                if (tm != null) {
+                    serviceDesc2.setTypeMapping(tm);
+                } else {
+                    serviceDesc2.setTypeMapping(defaultTM);
+                }
+                serviceDesc2.setStopClasses(stopClasses);
+                serviceDesc2.setAllowedMethods(allowedMethods);
+                serviceDesc2.setDisallowedMethods(disallowedMethods);
             }
-            serviceDesc2.setStopClasses(stopClasses);
-            serviceDesc2.setAllowedMethods(allowedMethods);
-            serviceDesc2.setDisallowedMethods(disallowedMethods);
         }
 
         if (encodingList == null) {
@@ -473,10 +467,10 @@ public class Emitter {
             if (getBindingName() == null) {
                 setBindingName(getServicePortName() + "SoapBinding");
             }
-            
+
             encodingList = new ArrayList();
             encodingList.add(Constants.URI_DEFAULT_SOAP_ENC);
-            
+
             if (intfNS == null) {
                 Package pkg = cls.getPackage();
                 intfNS = namespaces.getCreate(
@@ -491,7 +485,7 @@ public class Emitter {
                     implNS = intfNS + "-impl";
                 }
             }
-                
+
             namespaces.put(cls.getName(), intfNS, "intf");
             namespaces.putPrefix(implNS, "impl");
         }
@@ -516,7 +510,7 @@ public class Emitter {
             def = reader.readWSDL(null, doc);
             // The input wsdl types section is deleted.  The
             // types will be added back in at the end of processing.
-            def.setTypes(null); 
+            def.setTypes(null);
         }
         return def;
     }
@@ -598,14 +592,14 @@ public class Emitter {
      * @param add  true if binding should be added to the def
      */
     private Binding writeBinding(Definition def, boolean add) {
-        QName bindingQName = 
+        QName bindingQName =
             new QName(intfNS, getBindingName());
 
         // If a binding already exists, don't replace it.
         Binding binding = def.getBinding(bindingQName);
         if (binding != null) {
             return binding;
-        } 
+        }
 
         // Create a binding
         binding = def.createBinding();
@@ -633,10 +627,10 @@ public class Emitter {
      */
     private void writeService(Definition def, Binding binding) {
 
-        QName serviceElementQName = 
+        QName serviceElementQName =
             new QName(implNS,
                       getServiceElementName());
-        
+
         // Locate an existing service, or get a new service
         Service service = def.getService(serviceElementQName);
         if (service == null) {
@@ -680,7 +674,7 @@ public class Emitter {
             portType.setQName(portTypeQName);
             newPortType = true;
         } else if (binding.getBindingOperations().size() > 0) {
-            // If both portType and binding already exist, 
+            // If both portType and binding already exist,
             // no additional processing is needed.
             return;
         }
@@ -689,8 +683,6 @@ public class Emitter {
         ArrayList operations = serviceDesc.getOperations();
         for (Iterator i = operations.iterator(); i.hasNext();) {
             OperationDesc thisOper = (OperationDesc)i.next();
-            if (!allowedMethod(thisOper.getName())) 
-                continue;
 
             BindingOperation bindingOper = writeOperation(def,
                                                           binding,
@@ -705,18 +697,18 @@ public class Emitter {
                 // corresponding operation is found, it is sent
                 // to the writeMessages method so that its parameter
                 // names will be used in the wsdl file.
-                OperationDesc[] operArray = 
+                OperationDesc[] operArray =
                     serviceDesc2.getOperationsByName(thisOper.getName());
                 boolean found = false;
                 if (operArray != null) {
-                    for (int j=0; 
+                    for (int j=0;
                          j < operArray.length && !found;
                          j++) {
                         OperationDesc tryOper = operArray[j];
                         if (tryOper.getParameters().size() ==
                             thisOper.getParameters().size()) {
                             boolean parmsMatch = true;
-                            for (int k=0; 
+                            for (int k=0;
                                  k<thisOper.getParameters().size() && parmsMatch;
                                  k++) {
                                 if (tryOper.getParameter(k).getMode() !=
@@ -735,7 +727,7 @@ public class Emitter {
                 }
             }
 
-            writeMessages(def, oper, messageOper, 
+            writeMessages(def, oper, messageOper,
                           bindingOper);
             if (newPortType) {
                 portType.addOperation(oper);
@@ -851,7 +843,7 @@ public class Emitter {
 
         SOAPOperation soapOper = new SOAPOperationImpl();
 
-        
+
         // If the soapAction option is OPERATION, force
         // soapAction to the name of the operation. If NONE,
         // force soapAction to "".
@@ -909,7 +901,7 @@ public class Emitter {
         else
             soapBodyOut.setNamespaceURI(targetService);
         QName retQName = desc.getReturnQName();
-        if (retQName != null && 
+        if (retQName != null &&
             !retQName.getNamespaceURI().equals("")) {
             soapBodyOut.setNamespaceURI(retQName.getNamespaceURI());
         }
@@ -995,7 +987,7 @@ public class Emitter {
      * @throws AxisFault
      */
     private Message writeFaultMessage(Definition def,
-                                      FaultDesc exception) 
+                                      FaultDesc exception)
         throws WSDLException, AxisFault
     {
 
@@ -1087,7 +1079,7 @@ public class Emitter {
             elemQName = param.getQName();
         if (mode == MODE_RPC) {
             QName typeQName = types.writePartType(javaType,
-                                                  param.getTypeQName()); 
+                                                  param.getTypeQName());
             if (typeQName != null) {
                 part.setTypeName(typeQName);
                 part.setName(param.getName());
@@ -1416,7 +1408,7 @@ public class Emitter {
     }
 
     /**
-     * Get the name of the input WSDL                              
+     * Get the name of the input WSDL
      * @return name of the input wsdl or null
      */
     public String getInputWSDL() {
@@ -1623,14 +1615,5 @@ public class Emitter {
 
     public void setServiceDesc(ServiceDesc serviceDesc) {
         this.serviceDesc = serviceDesc;
-    }
-
-    private boolean allowedMethod(String name) {
-        boolean allowed = false;
-        if (allowedMethods == null || allowedMethods.contains(name))
-            allowed = true;
-        if (allowed && disallowedMethods != null && disallowedMethods.contains(name)) 
-            allowed = false;
-        return allowed;
     }
 }
