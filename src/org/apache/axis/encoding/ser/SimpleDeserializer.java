@@ -58,7 +58,8 @@ public class SimpleDeserializer extends DeserializerImpl {
     public Class javaType;
     
     private TypeDesc typeDesc = null;
-    
+
+    protected DeserializationContext context = null;
     protected SimpleDeserializer cacheStringDSer = null;
     protected QName cacheXMLType = null;
     /**
@@ -78,7 +79,7 @@ public class SimpleDeserializer extends DeserializerImpl {
         
         init();
     }    
-    
+
     /**
      * Initialize the typeDesc, property descriptors and propertyMap.
      */
@@ -239,15 +240,36 @@ public class SimpleDeserializer extends DeserializerImpl {
                 return new Double(Double.NEGATIVE_INFINITY);
             }
         }    
+
+        Object [] args = null;
+        
+        if (QName.class.isAssignableFrom(javaType)) {
+            int colon = source.lastIndexOf(":");
+            String namespace = colon < 0 ? "" :
+                context.getNamespaceURI(source.substring(0, colon));
+            String localPart = colon < 0 ? source : source.substring(colon + 1);
+            args = new Object [] {namespace, localPart};
+        } 
+
         if (constructor == null) {
             try {
-                constructor = 
+                if (QName.class.isAssignableFrom(javaType)) {
+                    constructor = 
+                        javaType.getDeclaredConstructor(new Class [] {String.class, String.class});
+                } else {
+                    constructor = 
                         javaType.getDeclaredConstructor(new Class [] {String.class});
+                }
             } catch (Exception e) {
                 return null;
             }
         }
-        return constructor.newInstance(new Object [] { source });
+        
+        if (args == null) {
+            args = new Object[] { source };
+        }
+        
+        return constructor.newInstance(args);
     }
     
     /**
@@ -267,6 +289,8 @@ public class SimpleDeserializer extends DeserializerImpl {
             throws SAXException 
     {
         
+        this.context = context;
+
         // If we have no metadata, we have no attributes.  Q.E.D.
         if (typeDesc == null)
             return;
