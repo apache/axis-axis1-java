@@ -379,8 +379,8 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
             }
         } else if (ds.getContentType().equals("text/xml")) {
             return new StreamSource(is);
-        } else if (ds.getContentType().equals("text/gif") ||
-                   ds.getContentType().equals("text/jpeg")) {
+        } else if (ds.getContentType().equals("image/gif") ||
+                   ds.getContentType().equals("image/jpeg")) {
             try {
                 return ImageIOFactory.getImageIO().loadImage(is);
             } catch (Exception ex) {
