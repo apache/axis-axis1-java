@@ -133,7 +133,7 @@ public class RunAxisFunctionalTestsTask extends Task
             
             // second, and more involvedly, stop the http server
             // Try connecting in case the server is already stopped.
-            URL url = new URL("http://localhost:8080");
+            URL url = new URL("http://localhost:8080/");
             try {
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.connect();
@@ -141,6 +141,7 @@ public class RunAxisFunctionalTestsTask extends Task
                 connection.disconnect();
             } catch (IOException e) {
                 // Server is not running. Make this task a no-op.
+                System.out.println(e);
                 return;
             }
             
