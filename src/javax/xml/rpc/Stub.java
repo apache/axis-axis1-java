@@ -61,6 +61,27 @@ import java.util.Iterator;
  */
 public interface Stub {
 
+    // Constants for the standard properties
+    /**
+     * User name for authentication.
+     */
+    public static final String USERNAME_PROPERTY = Call.USERNAME_PROPERTY;
+    /**
+     * Password for authentication.
+     */
+    public static final String PASSWORD_PROPERTY = Call.PASSWORD_PROPERTY;
+    /**
+     * Target service endpoint address.
+     */
+    public static final String ADDRESS_PROPERTY =
+            Call.ENDPOINT_ADDRESS_PROPERTY;
+    /**
+     * This boolean property is used by a service client to indicate
+     * whether or not it wants to participate in a session with a service
+     * endpoint.
+     */
+    public static final String SESSION_MAINTAIN_PROPERTY = Call.SESSION_MAINTAIN_PROPERTY;
+
     /**
      * Sets the value for a named property. JAX-RPC 1.0 specification 
      * specifies a standard set of properties that may be passed 

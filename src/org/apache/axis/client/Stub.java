@@ -73,25 +73,6 @@ import org.apache.axis.utils.JavaUtils;
 
 public abstract class Stub implements javax.xml.rpc.Stub {
 
-    // Constants for the standard properties
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.USERNAME_PROPERTY instead.
-     */
-    public static final String USERNAME_PROPERTY = Call.USERNAME_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.PASSWORD_PROPERTY instead.
-     */
-    public static final String PASSWORD_PROPERTY = Call.PASSWORD_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.ENDPOINT_ADDRESS_PROPERTY instead.
-     */
-    public static final String ADDRESS_PROPERTY =
-            Call.ENDPOINT_ADDRESS_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.SESSION_MAINTAIN_PROPERTY instead.
-     */
-    public static final String SESSION_PROPERTY = Call.SESSION_MAINTAIN_PROPERTY;
-
     protected Service service = null;
 
     // If maintainSessionSet is true, then setMaintainSession
