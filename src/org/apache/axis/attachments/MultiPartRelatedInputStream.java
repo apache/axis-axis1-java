@@ -59,6 +59,7 @@ import org.apache.axis.attachments.ManagedMemoryDataSource;
 import javax.activation.DataHandler;
 import org.apache.axis.Part;
 import javax.mail.internet.MimeUtility;
+import org.apache.log4j.Category;
 
 
 /**
@@ -80,12 +81,15 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
     //This stream controls and manages the  boundary.
     protected org.apache.axis.attachments.BoundaryDelimitedStream boundaryDelimitedStream = null;
     protected java.io.InputStream soapStream = null; //Set the soap stream once found.
+    protected java.io.InputStream soapStreamBDS= null; //Set to the boundary delimited stream assoc. with soap stream once found.
     protected byte[] boundary = null;
     protected java.io.ByteArrayInputStream cachedSOAPEnvelope = null; //Caches the soap stream if it is
               //Still open and a reference to read data in a later attachment occurs.
     protected String contentLocation= null;          
     protected String contentId= null;
 
+    static Category category =
+            Category.getInstance(MultiPartRelatedInputStream.class.getName());
 
     /**
      * Multipart stream.
@@ -213,6 +217,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                 throw new org.apache.axis.AxisFault( "Root part containing SOAP envelope not found.  contentId=" + rootPartContentId);
             }
 
+            soapStreamBDS= boundaryDelimitedStream;
             if(contentTransferEncoding != null && 0 != contentTransferEncoding.length()){
                     soapStream = MimeUtility.decode(boundaryDelimitedStream, contentTransferEncoding);
             }else soapStream = boundaryDelimitedStream; //This should be the SOAP part
@@ -240,6 +245,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         if ( null == ret) {
             ret = readTillFound(id);
         }
+        category.debug("getAttachmentByReference(\"" + id + "\") returns" + (ret == null? "null" : ret.toString()));
         return ret;
     }
 
@@ -270,7 +276,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         Part ret = null;
 
         try {
-            if ( soapStream == boundaryDelimitedStream ) { //Still on the SOAP stream.
+            if ( soapStreamBDS == boundaryDelimitedStream ) { //Still on the SOAP stream.
                 if (!eos) { //The SOAP packet has not been fully read yet. Need to store it away.
 
                     java.io.ByteArrayOutputStream soapdata = new java.io.ByteArrayOutputStream(1024 * 8);
@@ -278,7 +284,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                     int byteread = 0;
 
                     do {
-                        byteread = boundaryDelimitedStream.read(buf);
+                        byteread = soapStream.read(buf);
                         if (byteread > 0) soapdata.write(buf, 0, byteread);
                     }
                     while (byteread > -1);

@@ -238,7 +238,7 @@ public class MimeUtils {
             messageBodyPart.setText(env);
             messageBodyPart.setHeader("Content-Type", "text/xml; charset=UTF-8" );
             messageBodyPart.setHeader("Content-ID", "<" + rootCID  + ">" );
-            messageBodyPart.setHeader("Content-Transfer-Encoding", "8bit");
+            messageBodyPart.setHeader(HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING, "binary");
 
             multipart.addBodyPart(messageBodyPart);
             java.util.Set pe = parts.entrySet();

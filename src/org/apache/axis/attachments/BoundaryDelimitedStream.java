@@ -82,12 +82,15 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
     static int streamCount= 0; //number of streams produced.
     protected synchronized static int newStreamNo(){
+
+     category.debug("New boundary stream no:" + (streamCount +1));
         return ++streamCount;
     }
     protected int streamNo=-1; //Keeps track of stream
 
     static Category category =
             Category.getInstance(BoundaryDelimitedStream.class.getName());
+    static boolean isDebugEnabled= false;
 
     /**
      * Gets the next stream. From the previous using the same buffer size to read.
@@ -118,6 +121,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         super (prev.is);
 
         streamNo= newStreamNo();
+
         boundary = prev.boundary;
         boundaryLen = prev.boundaryLen;
         boundaryBufLen = prev.boundaryBufLen;
@@ -144,6 +148,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      BoundaryDelimitedStream( java.io.InputStream is, byte[] boundary,
       int readbufsz) throws org.apache.axis.AxisFault {
         super (is);
+        isDebugEnabled= category.isDebugEnabled();
         streamNo= newStreamNo();
         closed = false;
         this.is = is;
@@ -191,6 +196,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
             }
             if (readBufPos == boundaryPos) {
                 eos = true; //hit the boundary so it the end of the stream.
+                category.debug("Boundary stream no:" + streamNo + " is at end of stream");
             }
             else if ( bwritten < len) { //need to get more data.
                 byte[]dstbuf = readbuf;
@@ -264,6 +270,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      */
     public synchronized void close() throws java.io.IOException {
         if (closed) return;
+        category.debug("Boundary stream no:" + streamNo + " is closed");
         closed = true; //mark it closed.
         if (!eos) { //We need get this off the stream.
                                 //Easy way to flush through the stream;

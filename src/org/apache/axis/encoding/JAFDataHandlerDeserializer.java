@@ -110,6 +110,7 @@ public class JAFDataHandlerDeserializer extends Deserializer implements Serializ
             }
 
             String href = attributes.getValue("href");
+            category.debug("href=" + href);
             if (href != null) {
                 //isHref = true;
                 Object ref = context.getObjectByRef(href);
