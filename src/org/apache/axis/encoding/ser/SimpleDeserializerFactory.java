@@ -55,28 +55,11 @@
 
 package org.apache.axis.encoding.ser;
 
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.namespace.QName;
-
-import org.apache.axis.InternalException;
-import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.JavaUtils;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
+import java.lang.reflect.Constructor;
 
 /**
  * A deserializer for any simple type with a (String) constructor.  Note:
@@ -95,7 +78,7 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
      * to allow distinction between primitive values and java.lang wrappers.
      **/
     public SimpleDeserializerFactory(Class javaType, QName xmlType) {
-        super(SimpleDeserializer.class, false, xmlType, javaType); 
+        super(SimpleDeserializer.class, xmlType, javaType);
         try {
             if (!javaType.isPrimitive()) {
                 constructor = 

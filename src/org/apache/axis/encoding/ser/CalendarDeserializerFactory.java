@@ -65,6 +65,6 @@ import javax.xml.rpc.namespace.QName;
 public class CalendarDeserializerFactory extends BaseDeserializerFactory {
 
     public CalendarDeserializerFactory(Class javaType, QName xmlType) {
-        super(CalendarDeserializer.class, false, xmlType, javaType); 
+        super(CalendarDeserializer.class, xmlType, javaType);
     }
 }

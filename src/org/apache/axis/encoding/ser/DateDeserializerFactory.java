@@ -55,28 +55,7 @@
 
 package org.apache.axis.encoding.ser;
 
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
-import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.namespace.QName;
-
-import org.apache.axis.InternalException;
-import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.JavaUtils;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
 
 /**
  * A DateDeserializer Factory
@@ -86,6 +65,6 @@ import org.apache.axis.encoding.DeserializerImpl;
 public class DateDeserializerFactory extends BaseDeserializerFactory {
 
     public DateDeserializerFactory(Class javaType, QName xmlType) {
-        super(DateDeserializer.class, false, xmlType, javaType); 
+        super(DateDeserializer.class, xmlType, javaType);
     }
 }

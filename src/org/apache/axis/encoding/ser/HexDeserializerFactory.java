@@ -55,19 +55,7 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
 /**
  * DeserializerFactory for hexBinary.
  *
@@ -75,6 +63,6 @@ import org.apache.axis.encoding.DeserializerImpl;
  */
 public class HexDeserializerFactory extends BaseDeserializerFactory {
     public HexDeserializerFactory(Class javaType, QName xmlType) {
-        super(HexDeserializer.class, false, xmlType, javaType);  // Can't share deserializers     
+        super(HexDeserializer.class, xmlType, javaType);
     }
 }
