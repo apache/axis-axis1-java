@@ -60,7 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import samples.message.testMessage;
+import samples.message.TestMsg;
 
 /** Test the message sample code.
  */
@@ -79,7 +79,7 @@ public class TestMessageSample extends TestCase {
     
     public void doTestMessage() throws Exception {
         String[] args = { };
-        String res = (new testMessage()).doit(args);
+        String res = (new TestMsg()).doit(args);
         String expected="Res elem[0]=<ns1:e1 xmlns:ns1=\"urn:foo\">Hello</ns1:e1>Res elem[1]=<ns2:e1 xmlns:ns2=\"urn:foo\">World</ns2:e1>";
         assertEquals("test result elements", res, expected);
     }
