@@ -57,6 +57,7 @@ package org.apache.axis.transport.http;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.components.net.SocketFactory;
@@ -632,6 +633,8 @@ public class HTTPSender extends BasicHandler {
 
             fault.setFaultDetailString(Messages.getMessage("return01",
                     "" + returnCode, buf.toString()));
+            fault.addFaultDetail(Constants.QNAME_FAULTDETAIL_HTTPERRORCODE,
+                    Integer.toString(returnCode));
             throw fault;
         }
 
