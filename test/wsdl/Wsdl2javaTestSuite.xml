@@ -987,6 +987,13 @@
                serverSide="no"
                testcase="no">
     </wsdl2java>
+
+    <wsdl2java url="test/wsdl/session/session.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
     <!-- Copy modified files to work directory -->
     <copy todir="${build.dir}/work/test/wsdl/jaxrpchandler" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/jaxrpchandler">
