@@ -1,6 +1,6 @@
 package samples.bidbuy;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class PurchaseOrder {
 
@@ -8,7 +8,7 @@ public class PurchaseOrder {
 
     public PurchaseOrder() {};
 
-    public PurchaseOrder(String id, Date createDate, Address shipTo,
+    public PurchaseOrder(String id, Calendar createDate, Address shipTo,
                          Address billTo, LineItem[] items)
     {
          this.poID=id;
@@ -24,9 +24,9 @@ public class PurchaseOrder {
     public String getPoID() { return poID; }
     public void setPoID(String value) { poID=value; }
 
-    private Date createDate;
-    public Date getCreateDate() { return createDate; }
-    public void setCreateDate(Date value) { createDate=value; }
+    private Calendar createDate;
+    public Calendar getCreateDate() { return createDate; }
+    public void setCreateDate(Calendar value) { createDate=value; }
 
     private Address shipTo;
     public Address getShipTo() { return shipTo; }

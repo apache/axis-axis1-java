@@ -66,7 +66,7 @@ import javax.xml.rpc.ParameterMode;
 
 import javax.xml.rpc.namespace.QName;
 import java.net.URL;
-import java.util.Date;
+import java.util.Calendar;
 
 
 /**
@@ -134,7 +134,7 @@ public class TestClient {
 
             PurchaseOrder po = new PurchaseOrder(
               "NCC-1701",
-              new Date(),
+              Calendar.getInstance(),
               new Address("Sam Ruby", "Home", "Raleigh", "NC", "27676"),
               new Address("Lou Gerstner", "Work", "Armonk", "NY", "15222"),
               li

@@ -7,8 +7,8 @@
 
 package test.wsdl.types;
 
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.xml.rpc.ServiceException;
 
@@ -20,7 +20,6 @@ import javax.xml.rpc.holders.ByteArrayHolder;
 import javax.xml.rpc.holders.ByteWrapperArrayHolder;
 import javax.xml.rpc.holders.ByteHolder;
 import javax.xml.rpc.holders.CalendarHolder;
-import javax.xml.rpc.holders.DateHolder;
 import javax.xml.rpc.holders.DoubleWrapperHolder;
 import javax.xml.rpc.holders.DoubleHolder;
 import javax.xml.rpc.holders.FloatWrapperHolder;
@@ -98,7 +97,6 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     true,
                     (byte) 0,
                     new QName("hi", "ho"),
-                    new Date(),
                     Calendar.getInstance(),
                     new byte[]{(byte) 5},
                     new byte[]{(byte) 6},
@@ -126,7 +124,6 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new BooleanHolder(true),
                     new ByteHolder((byte) 7),
                     new QNameHolder(new QName("ho", "hi")),
-                    new DateHolder(new Date()),
                     new CalendarHolder(Calendar.getInstance()),
                     new ByteArrayHolder(new byte[]{(byte) 8}),
                     new ByteArrayHolder(new byte[]{(byte) 9}),
@@ -154,7 +151,6 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new BooleanHolder(),
                     new ByteHolder(),
                     new QNameHolder(),
-                    new DateHolder(),
                     new CalendarHolder(),
                     new ByteArrayHolder(),
                     new ByteArrayHolder(),
@@ -455,13 +451,6 @@ public class VerifyTestCase extends junit.framework.TestCase {
             java.math.BigDecimal sendValue = new java.math.BigDecimal("1205.258");
             BigDecimalHolder bdh = new BigDecimalHolder(sendValue);
             java.math.BigDecimal actual = binding.methodDecimal(sendValue, bdh);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            Date sendValue = new Date(1012182070626L);
-            DateHolder dh = new DateHolder(sendValue);
-            Date actual = binding.methodDate(sendValue, dh);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }

@@ -391,7 +391,6 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
     public void methodAllTypesIn(String in0,
                                  BigInteger in1,
                                  BigDecimal in2,
-                                 Date in3,
                                  Calendar in35,
                                  boolean in4,
                                  byte in5,
@@ -416,7 +415,6 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         if (!((in0.equals(new String("Request methodAllTypesIn"))) &&
               (in1.equals(new BigInteger("545"))) &&
               (in2.equals(new BigDecimal("546.545"))) &&
-              (in3.equals(new Date(1017532800000L))) &&
               (in35.equals(expectedDateTime)) &&
               (in13.equals(new Boolean(false))) &&
               (in14.equals(new Byte((byte) 11))) &&
@@ -466,18 +464,6 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         }
 
     } // methodByteArray
-
-    public Date methodDate(Date in0) throws RemoteException {
-
-        Date expectedDate = new Date(1017532800000L);
-
-        if (in0.equals(expectedDate)) {
-            return new Date(1017532800000L);
-        } else {
-            throw new RemoteException("Expecting a Date value of " + expectedDate + ".");
-        }
-
-    } // methodDate
 
     public Calendar methodDateTime(Calendar in0) throws RemoteException {
 
