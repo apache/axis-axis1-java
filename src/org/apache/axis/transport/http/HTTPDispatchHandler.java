@@ -65,6 +65,7 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.transport.http.NonBlockingBufferedInputStream;
 import org.apache.axis.encoding.Base64 ;
 
 import org.w3c.dom.* ;
@@ -168,8 +169,8 @@ public class HTTPDispatchHandler extends BasicHandler {
       
       //System.out.println("Msg: " + reqEnv);
 
+      BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
       OutputStream  out  = sock.getOutputStream();
-      InputStream   inp  = sock.getInputStream();
       StringBuffer  otherHeaders = new StringBuffer();
       String        userID = null ;
       String        passwd = null ;
@@ -253,7 +254,7 @@ public class HTTPDispatchHandler extends BasicHandler {
                                     name.substring(end+1));
           }
           else
-            headers.put( name, value );
+            headers.put( name.toLowerCase(), value );
           len = 0 ;
         }
       }
@@ -268,12 +269,24 @@ public class HTTPDispatchHandler extends BasicHandler {
       }
 
       if ( b != -1 ) {
-        outMsg = new Message( inp, "InputStream" );
-        msgContext.setResponseMessage( outMsg );
 
-        Debug.Print( 1, "\nXML received:" );
-        Debug.Print( 1, "---------------------------------------------------");
-        Debug.Print( 1, (String)outMsg.getAs("String") );
+        if (Debug.getDebugLevel() > 0) {
+          String contentLength = (String) headers.get("content-length");
+          byte[] data = new byte[Integer.parseInt(contentLength)];
+          for (len=0; len<data.length; )
+            len+= inp.read(data,len,data.length-len);
+          String xml = new String(data);
+
+          outMsg = new Message( data, "String" );
+
+          Debug.Print( 1, "\nXML received:" );
+          Debug.Print( 1, "-------------------------------------------------");
+          Debug.Print( 1, xml );
+        } else {
+          outMsg = new Message( inp, "InputStream" );
+        }
+
+        msgContext.setResponseMessage( outMsg );
       }
       inp.close();
       out.close();
