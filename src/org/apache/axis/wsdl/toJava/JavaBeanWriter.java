@@ -965,11 +965,12 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (enableSetters) {
                 try
                 {
+                    String nm = (isUnion()) ? "_value" : name;
                     pw.println();
                     pw.println("    /**");
-                    pw.println("     * Sets the " + name + " value for this " + getClassName() + ".");
+                    pw.println("     * Sets the " + nm + " value for this " + getClassName() + ".");
                     pw.println("     * ");
-                    pw.println("     * @param " + name + comment);
+                    pw.println("     * @param " + nm + comment);
                     pw.println("     */");
                 }
                 catch (DOMException e)
