@@ -82,6 +82,7 @@ import javax.xml.rpc.namespace.QName;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.beans.IntrospectionException;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
@@ -115,7 +116,13 @@ public class SOAPService extends SimpleTargetedChain
      * Style of the service - document or RPC
      */ 
     private int style = STYLE_RPC;
-    
+
+    /**
+     * Mappings of element QNames -> method names if we're doc/literal and
+     * not in wrapped mode.
+     */
+    private HashMap qName2MethodMap = null;
+
     /**
      * SOAPRequestHandler is used to inject SOAP semantics just before
      * the pivot handler.
@@ -266,7 +273,27 @@ public class SOAPService extends SimpleTargetedChain
     public void setStyle(int style) {
         this.style = style;
     }
-    
+
+    public void setElementMap(HashMap elementMap) {
+        this.qName2MethodMap = elementMap;
+    }
+
+    /**
+     * Retreive a method which has been mapped to a particular element
+     * QName (for document/literal services)
+     *
+     * @param elementQName the QName of an XML element to dispatch on
+     * @return a method which should handle the specified element, or
+     *         null if no such method has been mapped.
+     */
+    public String getMethodForElementName(QName elementQName)
+    {
+        if (qName2MethodMap != null) {
+            return (String)qName2MethodMap.get(elementQName);
+        }
+        return null;
+    }
+
     /*********************************************************************
      * Administration and management APIs
      *
