@@ -58,6 +58,9 @@ import org.apache.axis.InternalException;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.description.FieldDesc;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import java.beans.PropertyDescriptor;
 import java.beans.Introspector;
 import java.util.Vector;
@@ -67,7 +70,7 @@ import java.util.ArrayList;
 
 public class BeanUtils {
 
-    public static final Object[] noArgs = new Object[] {};  // For convenience
+    public static final Object[] noArgs = new Object[] {}; 
 
     /**
      * Create a BeanPropertyDescriptor array for the indicated class.
@@ -75,7 +78,25 @@ public class BeanUtils {
     public static BeanPropertyDescriptor[] getPd(Class javaType) {
         BeanPropertyDescriptor[] pd;
         try {
-            PropertyDescriptor[] rawPd = Introspector.getBeanInfo(javaType).getPropertyDescriptors();
+            final Class secJavaType = javaType;
+
+            // Need doPrivileged access to do introspection.
+            PropertyDescriptor[] rawPd = 
+                (PropertyDescriptor[]) 
+                AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            PropertyDescriptor[] result = null;
+                            try {
+                                // privileged code goes here
+                                result = Introspector.
+                                    getBeanInfo(secJavaType).
+                                    getPropertyDescriptors();
+                            } catch (java.beans.IntrospectionException Iie) {
+                            }
+                            return result;
+                        }
+                    });
             pd = processPropertyDescriptors(rawPd,javaType);
         } catch (Exception e) {
             // this should never happen
