@@ -223,7 +223,29 @@ public class RPCProvider extends JavaProvider
         }
         
         // OK!  Now we can invoke the method
-        Object objRes = operation.getMethod().invoke(obj, argValues);
+        Object objRes = null;
+        try {
+            objRes = operation.getMethod().invoke(obj, argValues);
+        } catch (IllegalArgumentException e) {
+            String methodSig = operation.getMethod().toString();
+            String argClasses = "";
+            for (int i=0; i < argValues.length; i++) {
+                if (argValues[i] == null) {
+                    argClasses += "null";
+                } else {
+                    argClasses += argValues[i].getClass().getName();
+                }
+                if (i+1 < argValues.length) {
+                    argClasses += ",";
+                }
+            }
+            log.info(JavaUtils.getMessage("dispatchIAE00",
+                                          methodSig, 
+                                          argClasses), e);
+            throw new AxisFault(JavaUtils.getMessage("dispatchIAE00",
+                                            methodSig, 
+                                            argClasses), e);
+        }
 
         /* Now put the result in the result SOAPEnvelope */
         /*************************************************/
