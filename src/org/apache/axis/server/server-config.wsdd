@@ -49,8 +49,6 @@
                value="org.apache.axis.transport.http.QSMethodHandler"/>
   <parameter name="qs:wsdl" 
                value="org.apache.axis.transport.http.QSWSDLHandler"/>
-  <parameter name="qs:wsdldoc" 
-               value="com.ibm.wstk.axis.transport.http.QSWSDLDocHandler"/>
   <requestFlow>
    <handler type="URLMapper"/>
    <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
