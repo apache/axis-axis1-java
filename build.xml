@@ -2,7 +2,7 @@
 
 <!-- ===================================================================
 
-   Build file for Soap
+   Build file for Axis
 
 Notes:
    This is a build file for use with the Jakarta Ant build tool.
@@ -31,13 +31,14 @@ Build Instructions:
 
 Most useful targets:
 
- - compile  -> creates the "soap.jar" package in "./build/lib"
+ - compile  -> creates the "axis.jar" package in "./build/lib"
  - javadocs -> creates the javadocs in "./build/javadocs"
  - dist     -> creates the complete binary distribution
  - srcdist  -> creates the complete src distribution
 
 Authors:
   Sam Ruby <rubys@us.ibm.com>
+  Matthew J. Duftler <duftler@us.ibm.com>
 
 
 Copyright:
@@ -48,8 +49,8 @@ Copyright:
 <project default="compile" basedir=".">
 
   <target name="init">
-    <property name="name" value="soap"/>
-    <property name="Name" value="Soap"/>
+    <property name="name" value="axis"/>
+    <property name="Name" value="Axis"/>
     <property name="version" value="2.0"/>
     <property name="year" value="2000"/>
 
@@ -72,7 +73,7 @@ Copyright:
 
     <property name="webapps" value="./webapps"/>
 
-    <property name="dist.dir" value="./soap-2_0"/>
+    <property name="dist.dir" value="./axis-2_0"/>
   </target>
 
   <!-- =================================================================== -->
@@ -88,7 +89,66 @@ Copyright:
       classname="com.ibm.network.mail.smtp.protocol.CoreProtocolBean" />
     <available property="ejb.present" classname="javax.ejb.SessionBean" />
     <available property="ssl.present" classname="javax.net.ssl.SSLSocket" />
+
+    <uptodate property="javac.notRequired"
+              targetfile="${build.lib}/${name}.jar">
+      <srcfiles dir="${src.dir}">
+        <patternset refid="javac.source.files"/>
+      </srcfiles>
+    </uptodate>
+
+    <uptodate property="javadoc.required"
+              targetfile="${build.lib}/${name}.jar">
+      <srcfiles dir="${build.dir}" includes="**/*.html"/>
+    </uptodate>
+
+    <antcall target="checkDependencies"/>
   </target>
+
+  <!-- =================================================================== -->
+  <!-- Warn the user about items not being compiled                        -->
+  <!-- =================================================================== -->
+  <target name="checkBSF" unless="bsf.present">
+    <echo message="Warning: BSF dependencies were not resolved."/>
+  </target>
+  <target name="checkXMI" unless="xmi.present">
+    <echo message="Warning: XMI dependencies were not resolved."/>
+  </target>
+  <target name="checkPOP3" unless="pop3.present">
+    <echo message="Warning: POP3 dependencies were not resolved."/>
+  </target>
+  <target name="checkSMTP" unless="smtp.present">
+    <echo message="Warning: SMTP dependencies were not resolved."/>
+  </target>
+  <target name="checkEJB" unless="ejb.present">
+    <echo message="Warning: EJB dependencies were not resolved."/>
+  </target>
+  <target name="checkSSL" unless="ssl.present">
+    <echo message="Warning: SSL dependencies were not resolved."/>
+  </target>
+  <target name="checkDependencies" unless="javac.notRequired">
+    <antcall target="checkBSF"/>
+    <antcall target="checkXMI"/>
+    <antcall target="checkPOP3"/>
+    <antcall target="checkSMTP"/>
+    <antcall target="checkEJB"/>
+    <antcall target="checkSSL"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Source files to be compiled                                         -->
+  <!-- =================================================================== -->
+  <patternset id="javac.source.files">
+    <exclude name="**/InvokeBSF.java" unless="bsf.present" />
+    <exclude name="**/XMI*.java" unless="xmi.present" />
+    <exclude name="**/*SMTP*.java" unless="smtp.present" />
+    <exclude name="**/*SMTP*.java" unless="pop3.present" />
+    <exclude name="**/POP*.java" unless="smtp.present" />
+    <exclude name="**/POP*.java" unless="pop3.present" />
+    <exclude name="**/*EJB*.java" unless="ejb.present" />
+    <exclude name="**/SSLUtils.java" unless="ssl.present" />
+    <exclude name="**/old/**/*.java" />
+  </patternset>
 
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
@@ -96,32 +156,16 @@ Copyright:
   <target name="compile" depends="prepare">
     <mkdir dir="${build.dest}"/>
     <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}">
-      <exclude name="**/InvokeBSF.java" unless="bsf.present" />
-      <exclude name="**/*SMTP*.java" unless="smtp.present" />
-      <exclude name="**/*SMTP*.java" unless="pop3.present" />
-      <exclude name="**/POP*.java" unless="smtp.present" />
-      <exclude name="**/POP*.java" unless="pop3.present" />
-      <exclude name="**/XMI*.java" unless="xmi.present" />
-      <exclude name="**/*EJB*.java" unless="ejb.present" />
-      <exclude name="**/SSLUtils.java" unless="ssl.present" />
-      <exclude name="**/axis/**/*.java" />
+      <patternset refid="javac.source.files"/>
     </javac>
-    <mkdir dir="${build.lib}"/>
-    <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" 
-         excludes="**/axis/**/*" />
-  </target>
 
-  <!-- =================================================================== -->
-  <!-- Compiles beta Axis                                                  -->
-  <!-- =================================================================== -->
-  <target name="axis" depends="prepare">
-    <mkdir dir="${build.dest}"/>
-    <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}">
-      <include name="**/axis/**/*.java" />
-    </javac>
     <mkdir dir="${build.lib}"/>
-    <jar jarfile="${build.lib}/axis.jar" basedir="${build.dest}" 
-         includes="**/axis/**/*" />
+    <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" />
+
+    <uptodate property="javadoc.required"
+              targetfile="${build.lib}/${name}.jar">
+      <srcfiles dir="${build.dir}" includes="**/*.html"/>
+    </uptodate>
   </target>
 
   <!-- =================================================================== -->
@@ -130,10 +174,12 @@ Copyright:
   <target name="samples" depends="compile">
     <javac srcdir="." destdir="${build.dir}" 
            classpath="${build.lib}/${name}.jar" debug="${debug}">
-      <include name="samples/**/**.java" />
+      <include name="samples/**/*.java" />
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
     </javac>
-    <copydir src="${samples.dir}" dest="${build.samples}" />
+    <copy todir="${build.samples}">
+      <fileset dir="${samples.dir}"/>
+    </copy>
   </target>
 
   <!-- =================================================================== -->
@@ -141,22 +187,30 @@ Copyright:
   <!-- =================================================================== -->
   <target name="javadocs" depends="prepare">
     <mkdir dir="${build.javadocs}"/>
-    <javadoc2 packagenames="${packages}"
-              sourcepath="${src.dir}"
-              destdir="${build.javadocs}"
-              author="true"
-              version="true"
-              use="true"
-              windowtitle="${Name} API"
-              doctitle="${Name}"
-              bottom="Copyright &#169; ${year} Apache XML Project. All Rights Reserved."
+    <javadoc packagenames="${packages}"
+             sourcepath="${src.dir}"
+             destdir="${build.javadocs}"
+             author="true"
+             version="true"
+             use="true"
+             windowtitle="${Name} API"
+             doctitle="${Name}"
+             bottom="Copyright &#169; ${year} Apache XML Project. All Rights Reserved."
     />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation if necessary                          -->
+  <!-- =================================================================== -->
+  <target name="javadocsIfRequired" if="javadoc.required" depends="prepare">
+    <antcall target="javadocs"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Creates the binary distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="compile, javadocs, samples">
+  <!-- target name="dist" depends="compile, javadocsIfRequired, samples" -->
+  <target name="dist" depends="compile, javadocsIfRequired ">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/docs"/>
     <mkdir dir="${dist.dir}/docs/apiDocs"/>
@@ -164,36 +218,48 @@ Copyright:
     <mkdir dir="${dist.dir}/samples"/>
     <mkdir dir="${dist.dir}/webapps"/>
 
-    <copydir src="${build.javadocs}" dest="${dist.dir}/docs/apiDocs"/>
-    <copydir src="${build.lib}" dest="${dist.dir}/lib"/>
-    <copydir src="${build.samples}" dest="${dist.dir}/samples"/>
-    <copydir src="${docs.dir}" dest="${dist.dir}/docs"/>
-    <copydir src="${webapps}" dest="${dist.dir}/webapps"/>
+    <copy todir="${dist.dir}/docs/apiDocs">
+      <fileset dir="${build.javadocs}"/>
+    </copy>
+    <copy todir="${dist.dir}/lib">
+      <fileset dir="${build.lib}"/>
+    </copy>
+    <!--
+    <copy todir="${dist.dir}/samples">
+      <fileset dir="${build.samples}"/>
+    </copy>
+    -->
+    <copy todir="${dist.dir}/docs">
+      <fileset dir="${docs.dir}"/>
+    </copy>
+    <!--
+    <copy todir="${dist.dir}/webapps">
+      <fileset dir="${webapps}"/>
+    </copy>
+    -->
 
-    <copyfile src="LICENSE" dest="${dist.dir}/LICENSE"/>
-    <copyfile src="README" dest="${dist.dir}/README"/>
-    <copyfile src="ReleaseNotes.html" dest="${dist.dir}/ReleaseNotes.html"/>
+    <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
+    <copy file="README" tofile="${dist.dir}/README"/>
+    <copy file="ReleaseNotes.html" tofile="${dist.dir}/ReleaseNotes.html"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Creates the source distribution                                            -->
   <!-- =================================================================== -->
   <target name="srcdist" depends="init">
-    <mkdir dir="${dist.dir}"/>
-    <mkdir dir="${dist.dir}/src"/>
+    <copy todir="${dist.dir}/src">
+      <fileset dir="${src.dir}"/>
+    </copy>
 
-    <copydir src="${src.dir}" dest="${dist.dir}/src"/>
-
-    <copyfile src="LICENSE" dest="${dist.dir}/LICENSE"/>
-    <copyfile src="${build.file}" dest="${dist.dir}/${build.file}"/>
+    <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
+    <copy file="${build.file}" tofile="${dist.dir}/${build.file}"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Cleans everything                                                   -->
   <!-- =================================================================== -->
   <target name="clean" depends="init">
-    <deltree dir="${build.dir}"/>
-    <deltree dir="${dist.dir}"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
   </target>
-
 </project>
