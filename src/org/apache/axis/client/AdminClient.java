@@ -381,7 +381,7 @@ public class AdminClient
                 System.exit(1);
             }
 	} catch (AxisFault ae) {
-            System.err.println(Messages.getMessage("exception00") + " " + ae.dumpToDisplayString());
+            System.err.println(Messages.getMessage("exception00") + " " + ae.dumpToString());
             System.exit(1);
         } catch (Exception e) {
             System.err.println(Messages.getMessage("exception00") + " " + e.getMessage());
