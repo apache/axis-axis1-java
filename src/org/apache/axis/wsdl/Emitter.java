@@ -109,13 +109,11 @@ public class Emitter {
     public static final byte REQUEST_SCOPE     = 0x10;
     public static final byte SESSION_SCOPE     = 0x11;
 
-    private boolean firstSer = true ;
-
     private Document doc = null;
     private Definition def = null;
-    private WsdlAttributes wsdlAttr = null;
-    private boolean bEmitSkeleton = false;
-    private boolean bMessageContext = false;
+    protected WsdlAttributes wsdlAttr = null;
+    protected boolean bEmitSkeleton = false;
+    protected boolean bMessageContext = false;
     private boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
     private boolean bGenerateImports = true;
@@ -125,7 +123,7 @@ public class Emitter {
     protected ArrayList fileList = new ArrayList();
     private Namespaces namespaces = null;
     private HashMap delaySetMap = null;
-    private TypeFactory emitFactory = null;
+    protected TypeFactory emitFactory = null;
     private WriterFactory writerFactory = null;
 
     // portTypesInfo is a Hashmap of <PortType, HashMap2> pairs where HashMap2 is a
@@ -227,8 +225,10 @@ public class Emitter {
                     for (int j = 0; j < v.size(); ++j) {
                         Import imp = (Import) v.get(j);
                         Emitter emitter = new Emitter(this);
+                        writerFactory.setEmitter(emitter);
                         emitter.emit(imp.getDefinition(),
                                      XMLUtils.newDocument(imp.getLocationURI()));
+                        writerFactory.setEmitter(this);
                     }
                 }
             }
@@ -371,103 +371,6 @@ public class Emitter {
     public List getGeneratedFileNames() {
         return this.fileList;
     }
-
-    /**
-     * This method returns a set of all the Types in a given PortType.
-     * The elements of the returned HashSet are Types.
-     */
-    private HashSet getTypesInPortType(PortType portType) {
-        HashSet types = new HashSet();
-        HashSet firstPassTypes = new HashSet();
-
-        // Get all the types from all the operations
-        List operations = portType.getOperations();
-
-        for (int i = 0; i < operations.size(); ++i) {
-            firstPassTypes.addAll(getTypesInOperation((Operation) operations.get(i)));
-        }
-
-        // Extract those types which are complex types.
-        Iterator i = firstPassTypes.iterator();
-        while (i.hasNext()) {
-            Type type = (Type) i.next();
-            if (!types.contains(type)) {
-                types.add(type);
-                if (type.isDefined() && type.getBaseType() == null) {
-                    types.addAll(getNestedTypes(type.getNode()));
-                }
-            }
-        }
-        return types;
-    } // getTypesInPortType
-
-    /**
-     * This method returns a set of all the Types in a given Operation.
-     * The elements of the returned HashSet are Types.
-     */
-    private HashSet getTypesInOperation(Operation operation) {
-        HashSet types = new HashSet();
-        Vector v = new Vector();
-
-        // Collect all the input types
-        Input input = operation.getInput();
-
-        if (input != null) {
-            partTypes(v,
-                    input.getMessage().getOrderedParts(null),
-                    (wsdlAttr.getInputBodyType(operation) == WsdlAttributes.USE_LITERAL));
-        }
-
-        // Collect all the output types
-        Output output = operation.getOutput();
-
-        if (output != null) {
-            partTypes(v,
-                    output.getMessage().getOrderedParts(null),
-                    (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL));
-        }
-
-        // Collect all the types in faults
-        Map faults = operation.getFaults();
-
-        if (faults != null) {
-            Iterator i = faults.values().iterator();
-
-            while (i.hasNext()) {
-                Fault f = (Fault) i.next();
-                partTypes(v,
-                        f.getMessage().getOrderedParts(null),
-                        (wsdlAttr.getFaultBodyType(operation, f.getName()) == WsdlAttributes.USE_LITERAL));
-            }
-        }
-
-        // Put all these types into a set.  This operation eliminates all duplicates.
-        for (int i = 0; i < v.size(); i++)
-            types.add(v.get(i));
-        return types;
-    } // getTypesInOperation
-
-    /**
-     * This method returns a set of all the nested Types.
-     * The elements of the returned HashSet are Types.
-     */
-    private HashSet getNestedTypes(Node type) {
-        HashSet types = new HashSet();
-        if (type == null) {
-            return types;
-        }
-
-        Vector v = emitFactory.getComplexElementTypesAndNames(type);
-        if (v != null) {
-            for (int i = 0; i < v.size(); i+=2) {
-                if (!types.contains(v.get(i))) {
-                    types.add(v.get(i));
-                    types.addAll(getNestedTypes(((Type) v.get(i)).getNode()));
-                }
-            }
-        }
-        return types;
-    } // getNestedTypes
 
     /**
      * PortTypes and Services can share the same name.  If they do in this Definition,
@@ -815,14 +718,14 @@ public class Emitter {
                 skelSig = skelSig + p.type + " " + p.name;
             }
             else if (p.mode == Parameter.INOUT) {
-                signature = signature + holder(p.type) + " " + p.name;
-                axisSig = axisSig + holder(p.type) + " " + p.name;
+                signature = signature + Utils.holder(p.type) + " " + p.name;
+                axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
                 skelSig = skelSig + p.type + " " + p.name;
             }
             else// (p.mode == Parameter.OUT)
             {
-                signature = signature + holder(p.type) + " " + p.name;
-                axisSig = axisSig + holder(p.type) + " " + p.name;
+                signature = signature + Utils.holder(p.type) + " " + p.name;
+                axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";
@@ -868,27 +771,6 @@ public class Emitter {
             }
         }
     } // partStrings
-
-    /**
-     * This method returns a vector of Types for the parts.
-     */
-    private void partTypes(Vector v, Collection parts, boolean literal) {
-        Iterator i = parts.iterator();
-
-        while (i.hasNext()) {
-            Part part = (Part) i.next();
-
-            QName qType;
-            if (literal) {
-                qType = part.getElementName();
-            } else {
-                qType = part.getTypeName();
-            }
-            if (qType != null) {
-                v.add(emitFactory.getType(qType));
-            }
-        }
-    } // partTypes
 
     /**
      * This method generates the axis server side impl interface signatures operation.
@@ -965,453 +847,10 @@ public class Emitter {
      * Generate a stub and a skeleton for the given binding tag.
      */
     private void writeBinding(Binding binding, HashMap portTypeInfo) throws IOException {
-        QName bindingQName = binding.getQName();
-        if (portTypeInfo == null)
-            throw new IOException("Emitter failure.  Can't find interal classes for portType for binding " + bindingQName);
-
-        PortType portType = binding.getPortType();
-        String name = Utils.xmlNameToJava(bindingQName.getLocalPart());
-        String portTypeName = emitFactory.getJavaName(portType.getQName());
-        boolean isRPC = true;
-        if (wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_DOCUMENT) {
-            isRPC = false;
-        }
-
-        String stubName = name + "Stub";
-        PrintWriter stubPW = printWriter(bindingQName, "Stub", "java", "Generating client-side stub:  ");
-
-        writeFileHeader(stubName + ".java", namespaces.getCreate(bindingQName.getNamespaceURI()), stubPW);
-        stubPW.println("public class " + stubName + " extends javax.xml.rpc.Stub implements " + portTypeName + " {");
-        stubPW.println("    private org.apache.axis.client.Service service = null ;");
-        stubPW.println("    private org.apache.axis.client.Call call = null ;");
-        stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable();");
-        stubPW.println();
-        stubPW.println("    public " + stubName + "(java.net.URL endpointURL) throws org.apache.axis.AxisFault {");
-        stubPW.println("         this();");
-        stubPW.println("         call.setTargetEndpointAddress( endpointURL );");
-        stubPW.println("         call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
-        stubPW.println("    }");
-
-        stubPW.println("    public " + stubName + "() throws org.apache.axis.AxisFault {");
-
-        HashSet types = getTypesInPortType(portType);
-        Iterator it = types.iterator();
-
-        stubPW.println("        try {" );
-        stubPW.println("            service = new org.apache.axis.client.Service();");
-        stubPW.println("            call = (org.apache.axis.client.Call) service.createCall();");
-
-        while (it.hasNext()) {
-            writeSerializationInit(stubPW, (Type) it.next());
-        }
-
-        stubPW.println("        }");
-        stubPW.println("        catch(Exception t) {");
-        stubPW.println("            throw new org.apache.axis.AxisFault(t);");
-        stubPW.println("        }");
-
-        stubPW.println("    }");
-        stubPW.println();
-        stubPW.println("    public void _setProperty(String name, Object value) {");
-        stubPW.println("        properties.put(name, value);");
-        stubPW.println("    }");
-        stubPW.println();
-        stubPW.println("    // From javax.xml.rpc.Stub");
-        stubPW.println("    public Object _getProperty(String name) {");
-        stubPW.println("        return properties.get(name);");
-        stubPW.println("    }");
-        stubPW.println();
-        stubPW.println("    // From javax.xml.rpc.Stub");
-        stubPW.println("    public void _setTargetEndpoint(java.net.URL address) {");
-        stubPW.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
-        stubPW.println("    }");
-        stubPW.println();
-        stubPW.println("    // From javax.xml.rpc.Stub");
-        stubPW.println("    public java.net.URL _getTargetEndpoint() {");
-        stubPW.println("        try {");
-        stubPW.println("            return new java.net.URL((String) call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL));");
-        stubPW.println("        }");
-        stubPW.println("        catch (java.net.MalformedURLException mue) {");
-        stubPW.println("            return null; // ???");
-        stubPW.println("        }");
-        stubPW.println("    }");
-        stubPW.println();
-        stubPW.println("    // From javax.xml.rpc.Stub");
-        stubPW.println("    public synchronized void setMaintainSession(boolean session) {");
-        stubPW.println("        call.setMaintainSession(session);");
-        stubPW.println("    }");
-        stubPW.println();
-        stubPW.println("    // From javax.naming.Referenceable");
-        stubPW.println("    public javax.naming.Reference getReference() {");
-        stubPW.println("        return null; // ???");
-        stubPW.println("    }");
-        stubPW.println();
-
-        PrintWriter skelPW =
-                null;
-        PrintWriter implPW = null;
-
-        if (bEmitSkeleton) {
-            String skelName = name + "Skeleton";
-
-            skelPW = printWriter(bindingQName, "Skeleton", "java", "Generating server-side skeleton:  ");
-            String implType = portTypeName + " impl";
-            String implName = name + "Impl";
-
-            if (bMessageContext) {
-                implType = portTypeName + "Axis impl";
-            }
-            writeFileHeader(skelName + ".java", namespaces.getCreate(bindingQName.getNamespaceURI()), skelPW);
-            skelPW.println("public class " + skelName + " {");
-            skelPW.println("    private " + implType + ";");
-            skelPW.println();
-            // RJB WARNING! - is this OK?
-            skelPW.println("    public " + skelName + "() {");
-            skelPW.println("        this.impl = new " + implName + "();");
-            skelPW.println("    }");
-            skelPW.println();
-            skelPW.println("    public " + skelName + "(" + implType + ") {");
-            skelPW.println("        this.impl = impl;");
-            skelPW.println("    }");
-            skelPW.println();
-
-            String implFileName = implName + ".java";
-
-            if (!fileExists (implFileName, bindingQName.getNamespaceURI())) {
-                implPW = printWriter(bindingQName, "Impl", "java", "Generating server-side impl template:  ");
-                writeFileHeader(implFileName, namespaces.getCreate(bindingQName.getNamespaceURI()), implPW);
-                implPW.print("public class " + implName + " implements " + portTypeName);
-                if (bMessageContext) {
-                    implPW.print("Axis");
-                }
-                implPW.println(" {");
-            }
-        }
-
-        List operations = binding.getBindingOperations();
-        for (int i = 0; i < operations.size(); ++i) {
-            BindingOperation operation = (BindingOperation) operations.get(i);
-            Parameters parameters = (Parameters) portTypeInfo.get(operation.getOperation());
-
-            // Get the soapAction from the <soap:operation>
-            String soapAction = "";
-            Iterator operationExtensibilityIterator = operation.getExtensibilityElements().iterator();
-            for (; operationExtensibilityIterator.hasNext();) {
-                Object obj = operationExtensibilityIterator.next();
-                if (obj instanceof SOAPOperation) {
-                    soapAction = ((SOAPOperation) obj).getSoapActionURI();
-                    break;
-                }
-            }
-            // Get the namespace for the operation from the <soap:body>
-            String namespace = "";
-            Iterator bindingInputIterator
-                    = operation.getBindingInput().getExtensibilityElements().iterator();
-            for (; bindingInputIterator.hasNext();) {
-                Object obj = bindingInputIterator.next();
-                if (obj instanceof SOAPBody) {
-                    namespace = ((SOAPBody) obj).getNamespaceURI();
-                    if (namespace == null)
-                        namespace = "";
-                    break;
-                }
-            }
-
-            writeBindingOperation(operation, parameters, soapAction, namespace, isRPC, stubPW, skelPW, implPW);
-        }
-
-        stubPW.println("}");
-        stubPW.close();
-
-        if (bEmitSkeleton) {
-            skelPW.println("}");
-            skelPW.close();
-        }
-        if (implPW != null) {
-            implPW.println("}");
-            implPW.close();
-        }
-
+        HashMap operationParameters = (HashMap) portTypesInfo.get(binding.getPortType());
+        Writer writer = writerFactory.getWriter(binding, operationParameters);
+        writer.write();
     } // writeBinding
-
-    /**
-     * In the stub constructor, write the serializer code for the complex types.
-     */
-    private void writeSerializationInit(PrintWriter pw, Type type) throws IOException {
-        if (type.getBaseType() != null) {
-            return;
-        }
-        if ( firstSer ) {
-            pw.println("            javax.xml.rpc.namespace.QName qn;" );
-            pw.println("            Class cls;" );
-        }
-        firstSer = false ;
-
-        QName qname = type.getQName();
-        //pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
-        pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
-        pw.println("            cls = " + type.getJavaName() + ".class;");
-        pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
-        pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
-        pw.println();
-    } // writeSerializationInit
-
-    /**
-     * Write the stub and skeleton code for the given BindingOperation.
-     */
-    private void writeBindingOperation(BindingOperation operation, Parameters parms,
-                                        String soapAction, String namespace,
-                                       boolean isRPC,
-                                       PrintWriter stubPW, PrintWriter skelPW,
-                                       PrintWriter implPW)
-            throws IOException {
-
-        String name = operation.getName();
-
-        writeComment(stubPW, operation.getDocumentationElement());
-        writeStubOperation(name, parms, soapAction, namespace, isRPC, stubPW);
-        if (bEmitSkeleton) {
-            writeSkeletonOperation(name, parms, skelPW);
-            writeImplOperation(name, parms, implPW);
-        }
-    } // writeBindingOperation
-
-    /**
-     * Write the stub code for the given operation.
-     */
-    private void writeStubOperation(String name, Parameters parms, String soapAction,
-                                    String namespace, boolean isRPC, PrintWriter pw) {
-        pw.println(parms.signature + "{");
-        pw.println("        if (call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
-        pw.println("            throw new org.apache.axis.NoEndPointException();");
-        pw.println("        }");
-        pw.println("        call.removeAllParameters();");
-
-        // DUG: need to set the isRPC flag in the Call object
-
-        // loop over paramters and set up in/out params
-        for (int i = 0; i < parms.list.size(); ++i) {
-            Parameter p = (Parameter) parms.list.get(i);
-
-
-            Type type = emitFactory.getType(p.type);
-            if (type == null) {
-                // XXX yikes, something is wrong
-            }
-            QName qn = type.getQName();
-            String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                    qn.getLocalPart() + "\"))";
-            if (p.mode == Parameter.IN) {
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
-            }
-            else if (p.mode == Parameter.INOUT) {
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", call.PARAM_MODE_INOUT);");
-            }
-            else { // p.mode == Parameter.OUT
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", call.PARAM_MODE_OUT);");
-            }
-        }
-        // set output type
-        if (!"void".equals(parms.returnType)) {
-            QName qn = emitFactory.getType(parms.returnType).getQName();
-            String outputType = "new org.apache.axis.encoding.XMLType(new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-              qn.getLocalPart() + "\"))";
-            pw.println("        call.setReturnType(" + outputType + ");");
-
-            pw.println();
-        }
-
-        pw.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
-        pw.println("        call.setProperty(call.NAMESPACE, \"" + namespace
-                                                 + "\");" );
-        pw.println("        call.setOperationName( \"" + name + "\");" );
-        pw.print("        Object resp = call.invoke(");
-        pw.print("new Object[] {");
-
-        // Write the input and inout parameter list
-        boolean needComma = false;
-        for (int i = 0; i < parms.list.size(); ++i) {
-            Parameter p = (Parameter) parms.list.get(i);
-
-            if (needComma) {
-                if (p.mode != Parameter.OUT)
-                    pw.print(", ");
-            }
-            else
-                needComma = true;
-            if (p.mode == Parameter.IN)
-                pw.print(wrapPrimitiveType(p.type, p.name));
-            else if (p.mode == Parameter.INOUT)
-                pw.print(wrapPrimitiveType(p.type, p.name + "._value"));
-        }
-        pw.println("});");
-        pw.println();
-        pw.println("        if (resp instanceof java.rmi.RemoteException) {");
-        pw.println("            throw (java.rmi.RemoteException)resp;");
-        pw.println("        }");
-
-        int allOuts = parms.outputs + parms.inouts;
-        if (allOuts > 0) {
-            pw.println("        else {");
-            if (allOuts == 1) {
-                if (parms.inouts == 1) {
-                    // There is only one output and it is an inout, so the resp object
-                    // must go into the inout holder.
-                    int i = 0;
-                    Parameter p = (Parameter) parms.list.get(i);
-
-                    while (p.mode != Parameter.INOUT)
-                        p = (Parameter) parms.list.get(++i);
-                    pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
-                }
-                else {
-                    // (parms.outputs == 1)
-                    // There is only one output and it is the return value.
-                    pw.println("             return " + getResponseString(parms.returnType, "resp"));
-                }
-            }
-            else {
-                // There is more than 1 output.  resp is the first one.  The rest are from
-                // call.getOutputParams ().  Pull the Objects from the appropriate place -
-                // resp or call.getOutputParms - and put them in the appropriate place,
-                // either in a holder or as the return value.
-                pw.println("            java.util.Vector output = call.getOutputParams();");
-                int outdex = 0;
-                boolean firstInoutIsResp = (parms.outputs == 0);
-                for (int i = 0; i < parms.list.size (); ++i) {
-                    Parameter p = (Parameter) parms.list.get (i);
-                    if (p.mode != Parameter.IN) {
-                        if (firstInoutIsResp) {
-                            firstInoutIsResp = false;
-                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));
-                        }
-                        else {
-                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) output.get(" + outdex++ + ")).getValue()"));
-                        }
-                    }
-
-                }
-                if (parms.outputs > 0)
-                    pw.println ("            return " + getResponseString(parms.returnType, "resp"));
-
-            }
-            pw.println("        }");
-        }
-        pw.println("    }");
-        pw.println();
-    } // writeStubOperation
-
-    /**
-     * Write the skeleton code for the given operation.
-     */
-    private void writeSkeletonOperation(String name, Parameters parms, PrintWriter pw) {
-        pw.println(parms.skelSignature);
-        pw.println("    {");
-
-        // Instantiate the holders
-        for (int i = 0; i < parms.list.size(); ++i) {
-            Parameter p = (Parameter) parms.list.get(i);
-
-            String holder = holder(p.type);
-            if (p.mode == Parameter.INOUT) {
-                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + p.name + ");");
-            }
-            else if (p.mode == Parameter.OUT) {
-                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "();");
-            }
-        }
-
-        // Call the real implementation
-        if ( "void".equals(parms.returnType) )
-            pw.print("        ");
-        else
-            pw.print("        Object ret = ");
-        String call = "impl." + name + "(";
-        if (bMessageContext) {
-            call = call + "ctx";
-            if (parms.list.size() > 0)
-                call = call + ", ";
-        }
-
-        boolean needComma = false;
-        for (int i = 0; i < parms.list.size(); ++i) {
-            if (needComma)
-                call = call + ", ";
-            else
-                needComma = true;
-            Parameter p = (Parameter) parms.list.get(i);
-
-            if (p.mode == Parameter.IN)
-                call = call + p.name;
-            else
-                call = call + p.name + "Holder";
-        }
-        call = call + ")";
-        if (parms.outputs == 0)
-            pw.println(call + ";");
-        else
-            pw.println(wrapPrimitiveType(parms.returnType, call) + ";");
-
-        // Handle the outputs, if there are any.
-        if (parms.inouts + parms.outputs > 0) {
-            if (parms.inouts == 0 && parms.outputs == 1)
-            // The only output is a single return value; simply pass it through.
-                pw.println("        return ret;");
-            else if (parms.outputs == 0 && parms.inouts == 1) {
-                // There is only one inout parameter.  Find it in the parms list and write
-                // its return
-                int i = 0;
-                Parameter p = (Parameter) parms.list.get(i);
-                while (p.mode != Parameter.INOUT)
-                    p = (Parameter) parms.list.get(++i);
-                pw.println("        return " + wrapPrimitiveType(p.type, p.name + "Holder._value") + ";");
-            }
-            else {
-                // There are more than 1 output parts, so create a Vector to put them into.
-                pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
-                if (!"void".equals(parms.returnType))
-                    pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
-                for (int i = 0; i < parms.list.size(); ++i) {
-                    Parameter p = (Parameter) parms.list.get(i);
-
-                    if (p.mode != Parameter.IN)
-                        pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + wrapPrimitiveType(p.type, p.name + "Holder._value") +"));");
-                }
-                pw.println("        return list;");
-            }
-        }
-
-        pw.println("    }");
-        pw.println();
-    } // writeSkeletonOperation
-
-    /**
-     * This method generates the axis server side dummy impl
-     */
-    private void writeImplOperation(String name, Parameters parms, PrintWriter pw) {
-        if (pw != null) {
-            if (bMessageContext) {
-                pw.println(parms.axisSignature + " {");
-            }
-            else {
-                pw.println(parms.signature + " {");
-            }
-            if (!"void".equals(parms.returnType)) {
-                pw.print("        return ");
-
-                if (isPrimitiveType(parms.returnType)) {
-                    if ("boolean".equals(parms.returnType)) {
-                        pw.println("false;");
-                    } else {
-                        pw.println("-3;");
-                    }
-                } else {
-                    pw.println("null;");
-                }
-            }
-            pw.println("    }");
-        }
-    } // writeImplOperation
 
     /**
      * Create the service class or classes
@@ -1909,7 +1348,7 @@ public class Emitter {
     /**
      * Does the given file already exist?
      */
-    private boolean fileExists (String name, String namespace) throws IOException
+    protected boolean fileExists (String name, String namespace) throws IOException
     {
         String packageName = namespaces.getAsDir(namespace);
         String fullName = packageName + name;
@@ -1976,34 +1415,6 @@ public class Emitter {
     }
 
     /**
-     * Given a type name, return the Java mapping of that type's holder.
-     */
-    protected String holder(String typeValue) {
-        if (typeValue.equals("java.lang.String")) {
-            return "javax.xml.rpc.holders.StringHolder";
-        }
-        else if (typeValue.equals("java.math.BigDecimal")) {
-            return "javax.xml.rpc.holders.BigDecimalHolder";
-        }
-        else if (typeValue.equals("java.util.Date")) {
-            return "javax.xml.rpc.holders.DateHolder";
-        }
-        else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
-            return "javax.xml.rpc.holders.QNameHolder";
-        }
-        else if (typeValue.equals("int")
-                || typeValue.equals("long")
-                || typeValue.equals("short")
-                || typeValue.equals("float")
-                || typeValue.equals("double")
-                || typeValue.equals("boolean")
-                || typeValue.equals("byte"))
-            return "javax.xml.rpc.holders." + Utils.capitalize(typeValue) + "Holder";
-        else
-            return typeValue + "Holder";
-    } // holder
-
-    /**
      * A simple map of the primitive types and their holder objects
      */
     private static HashMap TYPES = new HashMap(7);
@@ -2016,24 +1427,6 @@ public class Emitter {
         TYPES.put("byte", "Byte");
         TYPES.put("short", "Short");
         TYPES.put("long", "Long");
-
-    }
-
-    /**
-     * Return the Object variable 'var' cast to the appropriate type
-     * doing the right thing for the primitive types.
-     */
-    private String getResponseString(String type, String var) {
-        String objType = (String) TYPES.get(type);
-        if (objType != null) {
-            return "((" + objType + ") " + var + ")." + type + "Value();";
-        }
-        else if (type.equals("void")) {
-            return ";";
-        }
-        else {
-            return "(" + type + ") " + var + ";";
-        }
     }
 
     /**
@@ -2065,9 +1458,5 @@ public class Emitter {
         // print package declaration
         pw.println("package " + pkgName + ";");
         pw.println();
-    }
-
-    protected boolean isPrimitiveType(String type) {
-        return TYPES.get(type) != null;
     }
 }

@@ -331,6 +331,35 @@ public class Utils {
         }
         return sb.toString();
     }
+
+    /**
+     * Given a type name, return the Java mapping of that type's holder.
+     */
+    protected static String holder(String typeValue) {
+        if (typeValue.equals("java.lang.String")) {
+            return "javax.xml.rpc.holders.StringHolder";
+        }
+        else if (typeValue.equals("java.math.BigDecimal")) {
+            return "javax.xml.rpc.holders.BigDecimalHolder";
+        }
+        else if (typeValue.equals("java.util.Date")) {
+            return "javax.xml.rpc.holders.DateHolder";
+        }
+        else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
+            return "javax.xml.rpc.holders.QNameHolder";
+        }
+        else if (typeValue.equals("int")
+                || typeValue.equals("long")
+                || typeValue.equals("short")
+                || typeValue.equals("float")
+                || typeValue.equals("double")
+                || typeValue.equals("boolean")
+                || typeValue.equals("byte"))
+            return "javax.xml.rpc.holders." + Utils.capitalize(typeValue) + "Holder";
+        else
+            return typeValue + "Holder";
+    } // holder
+
 }
 
 

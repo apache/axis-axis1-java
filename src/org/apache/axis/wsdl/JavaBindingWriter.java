@@ -54,51 +54,57 @@
  */
 package org.apache.axis.wsdl;
 
+import java.io.IOException;
+
 import java.util.HashMap;
 
 import javax.wsdl.Binding;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
+import javax.wsdl.QName;
 
 /**
-* Writer and WriterFactory are part of the Writer framework.  Folks who want
-* to use the emitter to generate stuff from WSDL should do 3 things:
-* 1.  Write implementations of the Writer interface, one each for PortType,
-*     Binding, Service, and Type.  These implementations generate the stuff
-*     for each of these WSDL types.
-* 2.  Write an implementation of the WriterFactory interface that returns
-*     instantiations of these Writer implementations as appropriate.
-* 3.  Implement a class with a main method (like Wsdl2java) that instantiates
-*     an Emitter and passes it the WriterFactory implementation
+* This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
+* which contains the <portTypeName> interface.
 */
-
-public interface WriterFactory {
-    /**
-     * Get a Writer implementation that will generate bindings for the given
-     * PortType and HashMap of Parameters keyed off of operations.
-     */
-    public Writer getWriter(PortType portType, HashMap operationParameters);
+public class JavaBindingWriter implements Writer {
+    Writer stubWriter = null;
+    Writer skelWriter = null;
+    Writer implWriter = null;
 
     /**
-     * Get a Writer implementation that will generate bindings for the given
-     * Binding and HashMap of Parameters keyed off of operations.
+     * Constructor.
      */
-    public Writer getWriter(Binding binding, HashMap operationParameters);
+    protected JavaBindingWriter(
+            Emitter emitter,
+            Binding binding,
+            HashMap operationParameters) {
+        QName bindingQName = new QName(binding.getQName().getNamespaceURI(), Utils.capitalize(Utils.xmlNameToJava(binding.getQName().getLocalPart())));
+        binding.setQName (bindingQName);
+        stubWriter = new JavaStubWriter(emitter, binding, operationParameters);
+        if (emitter.bEmitSkeleton) {
+            skelWriter = new JavaSkelWriter(emitter, binding, operationParameters);
+            String fileName = bindingQName.getLocalPart() + "Impl.java";
+            try {
+                if (!emitter.fileExists (fileName, bindingQName.getNamespaceURI())) {
+                    implWriter = new JavaImplWriter(emitter, binding, operationParameters);
+                }
+            }
+            catch (IOException ioe) {
+                System.err.println("Error determining if " + fileName + " already exists.  Will not generate this file.");
+            }
+        }
+    } // ctor
 
     /**
-     * Get a Writer implementation that will generate bindings for the given
-     * Service.
+     * Write all the binding bindnigs:  stub, skeleton, and impl.
      */
-    public Writer getWriter(Service service);
+    public void write() throws IOException {
+        stubWriter.write();
+        if (skelWriter != null) {
+            skelWriter.write();
+        }
+        if (implWriter != null) {
+            implWriter.write();
+        }
+    } // write
 
-    /**
-     * Get a Writer implementation that will generate bindings for the given
-     * Type.
-     */
-    public Writer getWriter(Type type);
-
-    /**
-     * Provide the Emitter to the factory.
-     */
-    public void setEmitter(Emitter emitter);
-}
+} // class JavaBindingWriter
