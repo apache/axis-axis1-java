@@ -232,22 +232,20 @@ public class Types {
             qName != null &&
             Constants.equals(Constants.SOAP_ARRAY, qName)) {
             Class componentType = javaType.getComponentType();
-            if (componentType != java.lang.Object.class) {
-                // If component namespace uri == targetNamespace
-                // Construct ArrayOf<componentLocalPart>
-                // Else
-                // Construct ArrayOf_<componentPrefix>_<componentLocalPart>
-                javax.xml.rpc.namespace.QName cqName = getTypeQName(componentType);
-                if (targetNamespace.equals(cqName.getNamespaceURI())) {
-                    qName = new javax.xml.rpc.namespace.QName(
-                         targetNamespace,
-                         "ArrayOf" + cqName.getLocalPart());
-                } else {                                     
-                    String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
-                    qName = new javax.xml.rpc.namespace.QName(
-                         targetNamespace,
+            // If component namespace uri == targetNamespace
+            // Construct ArrayOf<componentLocalPart>
+            // Else
+            // Construct ArrayOf_<componentPrefix>_<componentLocalPart>
+            javax.xml.rpc.namespace.QName cqName = getTypeQName(componentType);
+            if (targetNamespace.equals(cqName.getNamespaceURI())) {
+                qName = new javax.xml.rpc.namespace.QName(
+                        targetNamespace,
+                        "ArrayOf" + cqName.getLocalPart());
+            } else {                                     
+                String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
+                qName = new javax.xml.rpc.namespace.QName(
+                        targetNamespace,
                         "ArrayOf_" + pre + "_" + cqName.getLocalPart());
-                }
             }
             return qName;
         }
