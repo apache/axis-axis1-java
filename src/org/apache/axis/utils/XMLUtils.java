@@ -72,6 +72,9 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.XMLReader;
+
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -179,17 +182,21 @@ public class XMLUtils {
         return( dbf );
     }
 
+    private static DefaultHandler doNothingContentHandler = new DefaultHandler(); //no events should h
+    private static boolean tryReset= true;
+
     /** Get a SAX parser instance from the JAXP factory.
      *
      * @return a SAXParser instance.
      */
-    public static synchronized SAXParser getSAXParser() {
+    public static SAXParser getSAXParser() {
+        synchronized (XMLUtils.class ) {
+          if(!saxParsers.empty()) 
+                 return (SAXParser )saxParsers.pop();
+         }
         try {
-            if (saxParsers.empty()) {
                 return saxFactory.newSAXParser();
-            } else {
-                return (SAXParser)saxParsers.pop();
-            }
+            
         } catch (ParserConfigurationException e) {
             log.error(JavaUtils.getMessage("parserConfigurationException00"), e);
             return null;
@@ -199,11 +206,28 @@ public class XMLUtils {
         }
     }
 
+
     /** Return a SAX parser for reuse.
      * @param SAXParser A SAX parser that is available for reuse
      */
-    public static synchronized SAXParser releaseSAXParser(SAXParser parser) {
-        return (SAXParser)saxParsers.push(parser);
+    public static void releaseSAXParser(SAXParser parser) {
+        if(!tryReset) return;
+       
+        //Free up possible ref. held by past contenthandler.
+        try{
+            XMLReader xmlReader= parser.getXMLReader(); 
+            if(null != xmlReader){
+                xmlReader.setContentHandler(doNothingContentHandler); 
+                xmlReader.setDTDHandler(doNothingContentHandler); 
+                xmlReader.setEntityResolver(doNothingContentHandler);
+                xmlReader.setErrorHandler(doNothingContentHandler);
+                synchronized (XMLUtils.class ) {
+                saxParsers.push(parser);
+                }
+            }    
+            else     
+             tryReset= false;
+        }catch(org.xml.sax.SAXException e){ tryReset= false;}
     }
 
     public static Document newDocument() {
