@@ -52,11 +52,12 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment;
+package org.apache.axis.deployment.wsdd;
 
 import java.util.Hashtable;
 
-import org.apache.axis.deployment.wsdd.*;
+import org.apache.axis.deployment.SimpleDeploymentManager;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.Handler;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.QName;
@@ -94,7 +95,7 @@ public class SimpleWsddDeploymentManager
     {
 
         try {
-            WSDDDeployableItem item = (WSDDDeployableItem) items.get(name);
+            WSDDDeployableItem item = (WSDDDeployableItem) getDeployedItem(name);
 
             return item;
         }
