@@ -94,7 +94,7 @@ public class Constants {
     //
     // Default SOAP version
     //
-    public static final SOAPConstants DEFAULT_SOAP_VERSION = 
+    public static final SOAPConstants DEFAULT_SOAP_VERSION =
         SOAPConstants.SOAP11_CONSTANTS;
 
     //
@@ -104,7 +104,7 @@ public class Constants {
                                 "http://schemas.xmlsoap.org/soap/envelope/" ;
     public static final String URI_SOAP12_ENV =
                                    "http://www.w3.org/2002/06/soap-envelope";
-    public static final String URI_DEFAULT_SOAP_ENV = 
+    public static final String URI_DEFAULT_SOAP_ENV =
         DEFAULT_SOAP_VERSION.getEnvelopeURI();
 
     public static final String[] URIS_SOAP_ENV = {
@@ -155,7 +155,7 @@ public class Constants {
                                    "http://www.w3.org/2002/06/soap-encoding";
     public static final String URI_SOAP12_NOENC =
                      "http://www.w3.org/2002/06/soap-envelope/encoding/none";
-    public static final String URI_DEFAULT_SOAP_ENC = 
+    public static final String URI_DEFAULT_SOAP_ENC =
         DEFAULT_SOAP_VERSION.getEncodingURI();
 
     public static final String[] URIS_SOAP_ENC = {
@@ -285,11 +285,11 @@ public class Constants {
 
     public static final String URI_SOAP12_RPC =
                                      "http://www.w3.org/2002/06/soap-rpc";
-    
+
     public static final String URI_SOAP12_NONE_ROLE =
-                         "http://www.w3.org/2002/06/soap-envelope/role/none";    
+                         "http://www.w3.org/2002/06/soap-envelope/role/none";
     public static final String URI_SOAP12_ULTIMATE_ROLE =
-             "http://www.w3.org/2002/06/soap-envelope/role/ultimateReceiver";    
+             "http://www.w3.org/2002/06/soap-envelope/role/ultimateReceiver";
 
     public static final String URI_SOAP11_HTTP =
                                      "http://schemas.xmlsoap.org/soap/http";
@@ -392,15 +392,15 @@ public class Constants {
     // WSDL extensions for SOAP in DIME
     // (http://gotdotnet.com/team/xml_wsspecs/dime/WSDL-Extension-for-DIME.htm)
     //
-    public static final String URI_DIME_WSDL = 
+    public static final String URI_DIME_WSDL =
                                  "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/";
 
-    public static final String URI_DIME_CONTENT = 
+    public static final String URI_DIME_CONTENT =
                                  "http://schemas.xmlsoap.org/ws/2002/04/content-type/";
 
     public static final String URI_DIME_REFERENCE=
                                  "http://schemas.xmlsoap.org/ws/2002/04/reference/";
-    
+
     public static final String URI_DIME_CLOSED_LAYOUT=
                                  "http://schemas.xmlsoap.org/ws/2002/04/dime/closed-layout";
 
@@ -582,7 +582,7 @@ public class Constants {
     public static final QName XSD_LANGUAGE = new QName(URI_2001_SCHEMA_XSD, "language");
     public static final QName XSD_ID = new QName(URI_2001_SCHEMA_XSD, "ID");
     public static final QName XSD_SCHEMA = new QName(URI_2001_SCHEMA_XSD, "schema");
-    
+
     public static final QName XML_LANG = new QName(NS_URI_XML, "lang");
 
     public static final QName SOAP_BASE64 = new QName(URI_DEFAULT_SOAP_ENC, "base64");
@@ -615,12 +615,13 @@ public class Constants {
     public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
 
     /**
-     * QName of stack trace element in an axis fault detail
+     * QName of stack trace element in an axis fault detail.
      */
     public static final QName QNAME_FAULTDETAIL_STACKTRACE = new QName(NS_URI_AXIS,"stackTrace");
 
     /**
-     * QName of exception Name element in an axis fault detail
+     * QName of exception Name element in an axis fault detail.
+     * Do not use - this is for pre-1.0 server->client exceptions.
      */
     public static final QName QNAME_FAULTDETAIL_EXCEPTIONNAME = new QName(NS_URI_AXIS, "exceptionName");
 
