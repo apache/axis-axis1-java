@@ -89,9 +89,9 @@ import java.util.Properties;
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter extends Parser {
-	
-	public static final String DEFAULT_NSTOPKG_FILE = "NStoPkg.properties";
-	
+    
+    public static final String DEFAULT_NSTOPKG_FILE = "NStoPkg.properties";
+    
     protected HashMap namespaceMap = new HashMap();
     protected String typeMappingVersion = "1.1";
     protected BaseTypeMapping baseTypeMapping = null;
@@ -422,23 +422,23 @@ public class Emitter extends Parser {
 
 
     /**
-	 * Tries to load the namespace-to-package mapping file.
-	 * <ol>
-	 *   <li>if a file name is explicitly set using <code>setNStoPkg()</code>, tries
-	 *      to load the mapping from this file. If this fails, the built-in default
-	 *      mapping is used.
-	 * 
-	 *    <li>if no file name is set, tries to load the file <code>DEFAULT_NSTOPKG_FILE</code>
-	 *       as a java resource. If this fails, the built-in dfault mapping is used.
-	 * </ol>
-	 * 
-	 * @param namespaces  a hashmap which is filled with the namespace-to-package mapping
-	 *    in this method
-	 * 
-	 * @see #setNStoPkg(String)
-	 * @see #DEFAULT_NSTOPKG_FILE
-	 * @see org.apache.axis.utils.ClassUtils#getResourceAsStream(java.lang.Class,String)
-	 * 
+     * Tries to load the namespace-to-package mapping file.
+     * <ol>
+     *   <li>if a file name is explicitly set using <code>setNStoPkg()</code>, tries
+     *      to load the mapping from this file. If this fails, the built-in default
+     *      mapping is used.
+     * 
+     *    <li>if no file name is set, tries to load the file <code>DEFAULT_NSTOPKG_FILE</code>
+     *       as a java resource. If this fails, the built-in dfault mapping is used.
+     * </ol>
+     * 
+     * @param namespaces  a hashmap which is filled with the namespace-to-package mapping
+     *    in this method
+     * 
+     * @see #setNStoPkg(String)
+     * @see #DEFAULT_NSTOPKG_FILE
+     * @see org.apache.axis.utils.ClassUtils#getResourceAsStream(java.lang.Class,String)
+     * 
      */
     private void getNStoPkgFromPropsFile(HashMap namespaces) throws IOException
     {
@@ -453,8 +453,8 @@ public class Emitter extends Parser {
                     );
                 }
             } catch (Throwable t) {
-				// loading the custom mapping file failed. We do not try
-				// to load the mapping from a default mapping file.
+                // loading the custom mapping file failed. We do not try
+                // to load the mapping from a default mapping file.
                 throw new IOException(
                         Messages.getMessage("nsToPkgFileNotFound00", NStoPkgFilename)
                 );
@@ -469,7 +469,7 @@ public class Emitter extends Parser {
                     );
                 }
             } catch (Throwable t) {
-            	try {
+                try {
                     mappings.load(ClassUtils.getResourceAsStream(
                         Emitter.class, DEFAULT_NSTOPKG_FILE));
                     if (verbose) {
@@ -479,8 +479,8 @@ public class Emitter extends Parser {
                     }
 
                 } catch(Throwable t1) {
-					// loading the default mapping file failed.
-					// The built-in default mapping is used
+                    // loading the default mapping file failed.
+                    // The built-in default mapping is used
                     // No message is given, since this is generally what happens
                 }
             }

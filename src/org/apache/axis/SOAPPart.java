@@ -692,7 +692,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @see #setContent(javax.xml.transform.Source) setContent(javax.xml.transform.Source)
      */
     public Source getContent() throws SOAPException {
-    	if(contentSource == null) {
+        if(contentSource == null) {
             switch(currentForm) {
             case FORM_STRING:
                 String s = (String)currentMessage;
@@ -708,7 +708,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 } catch (Exception e) {
                     throw new SOAPException(Messages.getMessage("errorGetDocFromSOAPEnvelope"), e);
                 }
-                break;	
+                break;  
             case FORM_BYTES:
                 byte[] bytes = (byte[])currentMessage;
                 contentSource = new StreamSource(new ByteArrayInputStream(bytes));
@@ -717,7 +717,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 contentSource = new StreamSource((InputStream)currentMessage);
                 break;
             }
-       	}        
+        }        
         return contentSource;
     }
 
