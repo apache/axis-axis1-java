@@ -55,18 +55,20 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.Constants;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.utils.ClassUtils;
-
-import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Vector;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
+
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.utils.ClassUtils;
 
 /**
  * Base class for Axis Deserialization Factory classes for code reuse
@@ -76,13 +78,14 @@ import java.util.Vector;
 public abstract class BaseDeserializerFactory 
     implements DeserializerFactory {
 
-    static Vector mechanisms = null;
+    transient static Vector mechanisms = null;
     
     protected Class deserClass = null;
     protected QName xmlType = null;
     protected Class javaType = null;
-    protected Constructor deserClassConstructor = null;
-    protected Method getDeserializer = null;
+    
+    transient protected Constructor deserClassConstructor = null;
+    transient protected Method getDeserializer = null;
 
     /**
      * Constructor
@@ -99,8 +102,6 @@ public abstract class BaseDeserializerFactory
         this(deserClass);
         this.xmlType = xmlType;
         this.javaType = javaType;
-        this.deserClassConstructor = getConstructor(deserClass); 
-        this.getDeserializer = getDeserializerMethod(javaType);    
     }
 
     public javax.xml.rpc.encoding.Deserializer
@@ -136,6 +137,7 @@ public abstract class BaseDeserializerFactory
      */
     protected Deserializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
+        	Constructor deserClassConstructor = getDeserClassConstructor();
             if (deserClassConstructor != null) {
                 try {
                     return (Deserializer) 
@@ -166,6 +168,7 @@ public abstract class BaseDeserializerFactory
      */
     protected Deserializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
+        	Method getDeserializer = getGetDeserializer();
             if (getDeserializer != null) {
                 try {
                     return (Deserializer) 
@@ -266,4 +269,26 @@ public abstract class BaseDeserializerFactory
         }
         return df;
     }
+	/**
+	 * Returns the deserClassConstructor.
+	 * @return Constructor
+	 */
+	protected Constructor getDeserClassConstructor() {
+		if (deserClassConstructor == null) { 
+		    deserClassConstructor = getConstructor(deserClass);
+		} 
+		return deserClassConstructor;
+	}
+
+	/**
+	 * Returns the getDeserializer.
+	 * @return Method
+	 */
+	protected Method getGetDeserializer() {
+		if (getDeserializer == null) {
+            getDeserializer = getDeserializerMethod(javaType);    
+		}
+		return getDeserializer;
+	}
+
 }

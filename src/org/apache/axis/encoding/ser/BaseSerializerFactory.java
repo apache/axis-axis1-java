@@ -68,6 +68,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Vector;
+import java.io.Serializable;
 
 /**
  * Base class for Axis Serialization Factory classes for code reuse
@@ -77,14 +78,15 @@ import java.util.Vector;
 public abstract class BaseSerializerFactory 
     implements SerializerFactory {
 
-    static Vector mechanisms = null;
+    transient static Vector mechanisms = null;
     
     protected Class serClass = null;
-    protected Serializer ser = null;
     protected QName xmlType = null;
     protected Class javaType = null;
-    protected Constructor serClassConstructor = null;
-    protected Method getSerializer = null;
+
+    transient protected Serializer ser = null;
+    transient protected Constructor serClassConstructor = null;
+    transient protected Method getSerializer = null;
 
     /**
      * Constructor
@@ -99,8 +101,6 @@ public abstract class BaseSerializerFactory
         this(serClass);
         this.xmlType = xmlType;
         this.javaType = javaType;
-        this.serClassConstructor = getConstructor(serClass);
-        this.getSerializer = getSerializerMethod(javaType);
     }
 
     public javax.xml.rpc.encoding.Serializer 
@@ -145,6 +145,7 @@ public abstract class BaseSerializerFactory
      */
     protected Serializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
+        	Constructor serClassConstructor = getSerClassConstructor();
             if (serClassConstructor != null) {
                 try {
                     return (Serializer) 
@@ -298,4 +299,26 @@ public abstract class BaseSerializerFactory
         }
         return sf;
     }
+	/**
+	 * Returns the getSerializer.
+	 * @return Method
+	 */
+	protected Method getGetSerializer() {
+		if (getSerializer == null) {
+            getSerializer = getSerializerMethod(javaType);
+		}
+		return getSerializer;
+	}
+
+	/**
+	 * Returns the serClassConstructor.
+	 * @return Constructor
+	 */
+	protected Constructor getSerClassConstructor() {
+		if (serClassConstructor == null) {
+		    serClassConstructor = getConstructor(serClass);
+		}
+		return serClassConstructor;
+	}
+
 }
