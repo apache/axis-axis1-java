@@ -61,7 +61,7 @@ public class TestRPC extends TestCase {
         // Create the message context
         MessageContext msgContext = new MessageContext(engine);
         DeserializationContext deserContext =
-            new DeserializationContext(null, msgContext);
+            new DeserializationContext(null, msgContext, null);
 
         // Set the dispatch either by SOAPAction or methodNS
         String methodNS = null;

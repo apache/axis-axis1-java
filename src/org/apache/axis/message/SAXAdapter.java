@@ -5,6 +5,7 @@ import org.xml.sax.SAXException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.XMLUtils;
 import javax.xml.parsers.*;
+import org.apache.axis.encoding.ServiceDescription;
 
 /** This class is an adapter for the Axis SAX-event system
  * which uses a SAX parser to parse on its own thread, synchronizing
@@ -25,6 +26,12 @@ public class SAXAdapter extends SOAPSAXHandler
         super(msgContext, messageType);
         _parser = XMLUtils.getSAXParser();
         this.inputSource = inputSource;
+    }
+    
+    public SAXAdapter(InputSource inputSource,
+                      MessageContext msgContext)
+    {
+        this(inputSource, msgContext, ServiceDescription.REQUEST);
     }
     
     /*******************************************************************
