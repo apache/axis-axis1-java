@@ -5,6 +5,7 @@
             xmlns:handler="http://xml.apache.org/axis/wsdd/providers/handler">
 
  <globalConfiguration>
+   <parameter name="disablePrettyXML" value="true"/>
    <requestFlow>
      <handler type="java:org.apache.axis.handlers.JWSHandler">
         <parameter name="scope" value="session"/>

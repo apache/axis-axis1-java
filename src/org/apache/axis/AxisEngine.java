@@ -55,6 +55,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_DEBUG_LEVEL = "debugLevel";
     public static final String PROP_DEBUG_FILE = "debugFile";
     public static final String PROP_DOMULTIREFS = "sendMultiRefs";
+    public static final String PROP_DISABLE_PRETTY_XML = "disablePrettyXML";
     public static final String PROP_PASSWORD = "adminPassword";
     public static final String PROP_SYNC_CONFIG = "syncConfiguration";
     public static final String PROP_SEND_XSI = "sendXsiTypes";
@@ -414,7 +415,7 @@ public abstract class AxisEngine extends BasicHandler
      * web services.
      */
     private static final String [] BOOLEAN_OPTIONS = new String [] {
-        PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL
+        PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL, PROP_DISABLE_PRETTY_XML
     };
 
     /**
