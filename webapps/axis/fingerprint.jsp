@@ -172,20 +172,98 @@
 
 %>
 <h1>System Fingerprint</h1>
+<h2>JVM and Server Version</h2>
+<table>
+<tr>
+    <td>Servlet Engine</td>
+    <td><%= this.getServletContext().getServerInfo() %></td>
+    <td><%= this.getServletContext().getMajorVersion() %></td>
+    <td><%= this.getServletContext().getMinorVersion() %></td>
+</tr>
+<tr>
+    <td>Java VM</td>
+    <td><%= System.getProperty("java.vm.vendor") %></td>
+    <td><%= System.getProperty("java.vm.name") %></td>
+    <td><%= System.getProperty("java.vm.version") %></td>
+</tr>
+<tr>
+    <td>Java RE</td>
+    <td><%= System.getProperty("java.vendor") %></td>
+    <td><%= System.getProperty("java.version") %></td>
+    <td> </td>
+</tr>
+<tr>
+    <td>Platform</td>
+    <td><%= System.getProperty("os.name") %></td>
+    <td><%= System.getProperty("os.arch") %></td>
+    <td><%= System.getProperty("os.version") %></td>
+</tr>
+</table>
 
 <%
 listClasspathProperty("Boot jars", out,"sun.boot.class.path", "Only valid on a sun jvm");
 listClasspathProperty("System jars", out,"java.class.path", null);
 listDirpathProperty("Extra system jars", out,"java.ext.dirs", null);
 listContextPath("Webapp jars", out, "/WEB-INF/lib", null);
-
-//handle catalina common dir
-String catalina=System.getProperty("catalina.home");
-if(catalina!=null) {
-    listDirectory("Tomcat 4 Common Jars", out,
-        catalina+File.separator
-        +"common"+File.separator
-        +"lib",
-        null);
+// identify the container...
+String container=this.getServletContext().getServerInfo();
+if (container.startsWith("Tomcat Web Server/3.2")) {
+    String home=System.getProperty("tomcat.home");
+    if(home!=null) {
+        listDirectory("Tomcat 3.2 Common Jars", out,
+                      home+File.separator
+                      +"lib",
+                      null);
     }
+} else if (container.startsWith("Tomcat Web Server/3.3")) {
+    String home=System.getProperty("tomcat.home");
+    if(home!=null) {
+        listDirectory("Tomcat 3.3 Container Jars", out,
+                      home+File.separator
+                      +"lib"+File.separator
+                      +"container",
+                      null);
+        listDirectory("Tomcat 3.3 Common Jars", out,
+                      home+File.separator
+                      +"lib"+File.separator
+                      +"common",
+                      null);
+    }
+} else if (container.startsWith("Apache Tomcat/4.0")) {
+    //handle catalina common dir
+    String home=System.getProperty("catalina.home");
+    if(home!=null) {
+        listDirectory("Tomcat 4.0 Common Jars", out,
+                      home+File.separator
+                      +"common"+File.separator
+                      +"lib",
+                      null);
+    }
+} else if (container.startsWith("Apache Tomcat/4.1")) {
+    //handle catalina common dir
+    String home=System.getProperty("catalina.home");
+    if(home!=null) {
+        listDirectory("Tomcat 4.1 Common Jars", out,
+                      home+File.separator
+                      +"shared"+File.separator
+                      +"lib",
+                      null);
+    }
+} else if (System.getProperty("resin.home")!=null) {
+    String home=System.getProperty("resin.home");
+    if(home!=null) {
+        listDirectory("Resin Common Jars", out,
+                      home+File.separator
+                      +"lib",
+                      null);
+    }    
+} else if (System.getProperty("weblogic.httpd.servlet.classpath")!=null) {
+    listClasspathProperty("Weblogic Servlet Jars", out,
+                  "weblogic.httpd.servlet.classpath",
+                  null);
+} else {
+    //TODO: identify more servlet engine classpaths.
+}
 %>
+</body>
+</html>
