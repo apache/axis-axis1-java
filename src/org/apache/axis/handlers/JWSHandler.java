@@ -63,6 +63,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -376,39 +377,45 @@ public class JWSHandler extends BasicHandler
             classpath.append(File.pathSeparatorChar);
         }
 
-        // ws.ext.dirs is set in websphere.
-        String wsClasspath = AxisProperties.getProperty("ws.ext.dirs");
-        if( wsClasspath  != null) {
-            classpath.append(wsClasspath);
-            classpath.append(File.pathSeparatorChar);
-        }
+        // classpath used by Jasper 
+        getClassPathFromProperty(classpath, "org.apache.catalina.jsp_classpath");
         
-        String systemClasspath = AxisProperties.getProperty("java.class.path");
-        if( systemClasspath != null) {
-            classpath.append(systemClasspath);
-            classpath.append(File.pathSeparatorChar);
-        }
+        // websphere stuff.
+        getClassPathFromProperty(classpath, "ws.ext.dirs");
+        getClassPathFromProperty(classpath, "com.ibm.websphere.servlet.application.classpath");
+        
+        // java class path
+        getClassPathFromProperty(classpath, "java.class.path");
+        
+        // Load jars from java external directory
+        getClassPathFromDirectoryProperty(classpath, "java.ext.dirs");
+        
+        // boot classpath isn't found in above search
+        getClassPathFromProperty(classpath, "sun.boot.class.path");
 
-        String systemExtDirs = AxisProperties.getProperty("java.ext.dirs");
-        String systemExtClasspath = null;
+        return classpath.toString();
+    }
+
+    private void getClassPathFromDirectoryProperty(StringBuffer classpath, String property) {
+        String dirs = AxisProperties.getProperty(property);
+        String path = null;
         try {
-            systemExtClasspath = expandDirs(systemExtDirs);
+            path = expandDirs(dirs);
         } catch (Exception e) {
             // Oh well.  No big deal.
         }
-        if( systemExtClasspath!= null) {
-            classpath.append(systemExtClasspath);
+        if( path!= null) {
+            classpath.append(path);
             classpath.append(File.pathSeparatorChar);
         }
+    }
 
-        // boot classpath isn't found in above search
-        String bootClassPath = AxisProperties.getProperty("sun.boot.class.path");
-        if( bootClassPath != null) {
-            classpath.append(bootClassPath);
+    private void getClassPathFromProperty(StringBuffer classpath, String property) {
+        String path = AxisProperties.getProperty(property);
+        if( path  != null) {
+            classpath.append(path);
             classpath.append(File.pathSeparatorChar);
         }
-
-        return classpath.toString();
     }
 
     /**
@@ -426,7 +433,7 @@ public class JWSHandler extends BasicHandler
                     //If it is a drive letter, adjust accordingly.
                     if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':')
                         path = path.substring(1);
-                    classpath.append(path);
+                    classpath.append(URLDecoder.decode(path));
                     classpath.append(File.pathSeparatorChar);
 
                     // if its a jar extract Class-Path entries from manifest
