@@ -1236,6 +1236,10 @@ public class SymbolTable {
                             Object obj = inIter.next();
                             if (obj instanceof SOAPBody) {
                                 String use = ((SOAPBody) obj).getUse();
+                                if (use == null) {
+                                    throw new IOException(JavaUtils.getMessage(
+                                            "noUse", bindOp.getName()));
+                                }
                                 if (use.equalsIgnoreCase("literal")) {
                                     inputBodyType = BindingEntry.USE_LITERAL;
                                 }
@@ -1253,6 +1257,10 @@ public class SymbolTable {
                             Object obj = outIter.next();
                             if (obj instanceof SOAPBody) {
                                 String use = ((SOAPBody) obj).getUse();
+                                if (use == null) {
+                                    throw new IOException(JavaUtils.getMessage(
+                                            "noUse", bindOp.getName()));
+                                }
                                 if (use.equalsIgnoreCase("literal")) {
                                     outputBodyType = BindingEntry.USE_LITERAL;
                                 }
@@ -1278,6 +1286,10 @@ public class SymbolTable {
                         Object obj = faultIter.next();
                         if (obj instanceof SOAPBody) {
                             String use = ((SOAPBody) obj).getUse();
+                            if (use == null) {
+                                throw new IOException(JavaUtils.getMessage(
+                                        "noUse", bindOp.getName()));
+                            }
                             if (use.equalsIgnoreCase("literal")) {
                                 faultBodyType = BindingEntry.USE_LITERAL;
                             }
