@@ -79,6 +79,8 @@ public class AxisServer extends AxisEngine
 {
     protected static Log log =
         LogFactory.getLog(AxisServer.class.getName());
+    private static Log tlog =
+        LogFactory.getLog("org.apache.axis.TIME");
 
     private static AxisServerFactory factory = null;
     
@@ -162,6 +164,11 @@ public class AxisServer extends AxisEngine
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+        long t0=0, t1=0, t2=0, t3=0, t4=0, t5=0;
+        if( tlog.isDebugEnabled() ) {
+            t0=System.currentTimeMillis();
+        }
+        
         if (log.isDebugEnabled()) {
             log.debug("Enter: AxisServer::invoke");
         }
@@ -195,12 +202,21 @@ public class AxisServer extends AxisEngine
                         h = null ;
                     }
                 }
+                if( tlog.isDebugEnabled() ) {
+                    t1=System.currentTimeMillis();
+                }
                 if ( h != null )
                     h.invoke(msgContext);
                 else
                     throw new AxisFault( "Server.error",
                                          JavaUtils.getMessage("noHandler00", hName),
                                          null, null );
+                if( tlog.isDebugEnabled() ) {
+                    t2=System.currentTimeMillis();
+                    tlog.debug( "AxisServer.invoke " + hName + " invoke=" +
+                                ( t2-t1 ) + " pre=" + (t1-t0 ));
+                }
+                
             }
             else {
                 // This really should be in a handler - but we need to discuss it
@@ -247,6 +263,9 @@ public class AxisServer extends AxisEngine
                 if (log.isDebugEnabled())
                     log.debug(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
 
+                if( tlog.isDebugEnabled() ) {
+                    t1=System.currentTimeMillis();
+                }
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
@@ -256,6 +275,9 @@ public class AxisServer extends AxisEngine
                     }
                 }
 
+                if( tlog.isDebugEnabled() ) {
+                    t2=System.currentTimeMillis();
+                }
                 /* Process the Global Request Chain */
                 /**********************************/
                 if ((h = getGlobalRequest()) != null )
@@ -283,8 +305,15 @@ public class AxisServer extends AxisEngine
                                                                  "" + msgContext.getTargetService()),
                                             null, null );
                 }
+                if( tlog.isDebugEnabled() ) {
+                    t3=System.currentTimeMillis();
+                }
 
                 h.invoke(msgContext);
+
+                if( tlog.isDebugEnabled() ) {
+                    t4=System.currentTimeMillis();
+                }
 
                 /* Process the Global Response Chain */
                 /***********************************/
@@ -298,6 +327,19 @@ public class AxisServer extends AxisEngine
                     if (h != null)
                         h.invoke(msgContext);
                 }
+                
+                if( tlog.isDebugEnabled() ) {
+                    t5=System.currentTimeMillis();
+                    tlog.debug( "AxisServer.invoke2 " +
+                                " preTr=" +
+                                ( t1-t0 ) + " tr=" + (t2-t1 ) +
+                                " preInvoke=" + ( t3-t2 ) +
+                                " invoke=" + ( t4-t3 ) +
+                                " postInvoke=" + ( t5-t4 ) +
+                                msgContext.getTargetService() +
+                                "." + msgContext.getOperation().getName());
+                }
+
             }
         } catch (AxisFault e) {
             throw e;

@@ -141,6 +141,8 @@ import java.util.Vector;
 public class Call implements javax.xml.rpc.Call {
     protected static Log log =
         LogFactory.getLog(Call.class.getName());
+    private static Log tlog =
+        LogFactory.getLog("org.apache.axis.TIME");
 
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
@@ -1170,6 +1172,10 @@ public class Call implements javax.xml.rpc.Call {
      * @throws java.rmi.RemoteException if there's an error
      */
     public Object invoke(Object[] params) throws java.rmi.RemoteException {
+        long t0=0, t1=0, t2=0, t3=0;
+        if( tlog.isDebugEnabled() ) {
+            t0=System.currentTimeMillis();
+        }
         /* First see if we're dealing with Messaging instead of RPC.        */
         /* If ALL of the params are SOAPBodyElements then we're doing       */
         /* Messaging, otherwise just fall through to normal RPC processing. */
@@ -1211,8 +1217,13 @@ public class Call implements javax.xml.rpc.Call {
         if ( operationName == null )
             throw new AxisFault( JavaUtils.getMessage("noOperation00") );
         try {
-            return this.invoke(operationName.getNamespaceURI(),
+            Object res=this.invoke(operationName.getNamespaceURI(),
                     operationName.getLocalPart(), params);
+            if( tlog.isDebugEnabled() ) {
+                t1=System.currentTimeMillis();
+                tlog.debug("axis.Call.invoke: " + (t1-t0)  + " " + operationName);
+            }
+            return res;
         }
         catch( AxisFault af) {
             throw af;
