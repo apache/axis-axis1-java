@@ -6,14 +6,14 @@
     <pathelement location="${j2ee.jar}"/>
     <pathelement location="${jsse.jar}"/>
     <pathelement location="${tools.jar}"/>
-    <fileset dir="lib">
+    <fileset dir="${lib.dir}">
         <include name="*.jar"/>
     </fileset>
     <pathelement path="${java.class.path}"/>
-    <pathelement location="test/foreachTask/bsf.jar" />
-    <pathelement location="test/foreachTask/js.jar" />
+    <pathelement location="${test.dir}/foreachTask/bsf.jar" />
+    <pathelement location="${test.dir}/foreachTask/js.jar" />
     <pathelement location="${build.dest}" />
-    <pathelement location="build/work" />
-    <pathelement location="${env.ANT_HOME}/lib" />
+    <pathelement location="${build.dir}/work" />
+    <pathelement location="${ant.home}/lib" />
   </path>
 
