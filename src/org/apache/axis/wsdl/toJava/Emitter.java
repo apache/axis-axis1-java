@@ -122,6 +122,7 @@ public class Emitter {
     protected HashMap delaySetMap = null;
     protected WriterFactory writerFactory = null;
     protected SymbolTable symbolTable = null;
+    protected String currentWSDLURI = null;
 
     /**
      * Default constructor.
@@ -148,6 +149,7 @@ public class Emitter {
      * @param Document doc This is the XML Document containing the WSDL.
      */
     public void emit(String context, Document doc) throws IOException, WSDLException {
+        currentWSDLURI = context;
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.verbose", bVerbose);
         def = reader.readWSDL(context, doc);
@@ -181,6 +183,7 @@ public class Emitter {
         // outside of the recursive emit method.
         Writer writer = writerFactory.getWriter(def, symbolTable);
         writer.write();
+        currentWSDLURI = null;
     } // emit
 
     private void emit(Definition def, Document doc) throws IOException, WSDLException {
@@ -358,7 +361,12 @@ public class Emitter {
     public void setNamespaceMap(HashMap map) {
         delaySetMap = map;
     }
-
+    /**
+     * Get the map of namespace -> Java package names
+     */ 
+    public HashMap getNamespaceMap() {
+        return delaySetMap;
+    }
 
     /**
      * Set the output directory to use in emitted source files
@@ -471,6 +479,10 @@ public class Emitter {
     public Namespaces getNamespaces() {
         return namespaces;
     } // getNamespaces
+
+    public String getWSDLURI() {
+        return currentWSDLURI;
+    }
 
     //
     // Utility methods

@@ -77,8 +77,8 @@ import org.apache.axis.utils.JavaUtils;
 * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
 */
 public class JavaDeployWriter extends JavaWriter {
-    private Definition definition;
-    private SymbolTable symbolTable;
+    protected Definition definition;
+    protected SymbolTable symbolTable;
 
     /**
      * Constructor.
@@ -112,7 +112,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment and undeployment instructions for each WSDL service
      */
-    private void writeDeployServices() throws IOException {
+    protected void writeDeployServices() throws IOException {
         //deploy the ports on each service
         Map serviceMap = definition.getServices();
         for (Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
@@ -140,7 +140,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out bean mappings for each type
      */
-    private void writeDeployTypes() throws IOException {
+    protected void writeDeployTypes() throws IOException {
         Vector types = symbolTable.getTypes();
 
         pw.println();
@@ -174,7 +174,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment and undeployment instructions for given WSDL port
      */
-    private void writeDeployPort(Port port) throws IOException {
+    protected void writeDeployPort(Port port) throws IOException {
         Binding binding = port.getBinding();
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
@@ -195,7 +195,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment instructions for given WSDL binding
      */
-    private void writeDeployBinding(Binding binding) throws IOException {
+    protected void writeDeployBinding(Binding binding) throws IOException {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String className = bEntry.getName();
         if (emitter.getDeploySkeleton())
