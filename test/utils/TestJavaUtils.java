@@ -6,6 +6,7 @@ import junit.framework.TestSuite;
 import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.rpc.holders.LongHolder;
+import javax.xml.rpc.holders.ByteHolder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -103,6 +104,11 @@ public class TestJavaUtils extends TestCase
         ret = JavaUtils.convert(holder, Object.class);
         assertTrue(ret != null);
         assertTrue(Long.class.isInstance(ret));
+
+        ByteHolder holder2 = new ByteHolder((byte)0);
+        ret = JavaUtils.convert(holder2, Object.class);
+        assertTrue(ret != null);
+        assertTrue(Byte.class.isInstance(ret));
     }
 
     /**
@@ -115,6 +121,9 @@ public class TestJavaUtils extends TestCase
         assertTrue(!JavaUtils.isConvertable(new Long(1),Float.class));
         Class clazz = long.class;
         assertTrue(JavaUtils.isConvertable(clazz,Long.class));
+        assertTrue(JavaUtils.isConvertable(clazz,Object.class));
+        clazz = byte.class;
+        assertTrue(JavaUtils.isConvertable(clazz,Byte.class));
         assertTrue(JavaUtils.isConvertable(clazz,Object.class));
     }
 
