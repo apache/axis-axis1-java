@@ -18,6 +18,7 @@ package org.apache.axis.transport.http;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.CommonsHTTPClientProperties;
 import org.apache.axis.components.net.CommonsHTTPClientPropertiesFactory;
@@ -201,7 +202,9 @@ public class CommonsHTTPSender extends BasicHandler {
                 
                 try {
                     fault.setFaultDetailString(Messages.getMessage("return01",
-                    "" + returnCode, method.getResponseBodyAsString()));
+                            "" + returnCode, method.getResponseBodyAsString()));
+                    fault.addFaultDetail(Constants.QNAME_FAULTDETAIL_HTTPERRORCODE,
+                            Integer.toString(returnCode));
                     throw fault;
                 } finally {
                     method.releaseConnection(); // release connection back to pool.
