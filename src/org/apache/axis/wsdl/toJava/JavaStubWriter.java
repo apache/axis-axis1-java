@@ -54,15 +54,14 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionTE;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -71,19 +70,16 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
-
 import javax.wsdl.extensions.soap.SOAPOperation;
-
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionTE;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -811,9 +807,9 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("                if (_returnDH == null) {");
             pw.println("                    return null;");
             pw.println("                }");
-            pw.println("                // " + JavaUtils.getMessage("needJIMI"));
+            pw.println("                // " + JavaUtils.getMessage("needImageIO"));
             pw.println("                java.io.InputStream _DHIS = _returnDH.getInputStream();");
-            pw.println("                java.awt.Image _DHI = com.sun.jimi.core.Jimi.getImage(_DHIS);");
+            pw.println("                java.awt.Image _DHI = org.apache.axis.components.image.ImageIOFactory.getImageIO().loadImage(_DHIS);");
             pw.println("                " + target + "_DHI;");
         }
         else if (mimeType.equals("text/xml") ||

@@ -52,71 +52,42 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.attachments;
 
-import org.apache.axis.components.image.ImageIOFactory;
+package org.apache.axis.components.image;
+
+import org.apache.axis.AxisProperties;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 
-import javax.activation.DataSource;
-import java.awt.Image;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-public class ImageDataSource implements DataSource {
+/**
+ * This class implements a factory to instantiate an ImageIO component.
+ * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
+ * @version $Revision$ $Date$
+ * @since 2.0
+ */
+public class ImageIOFactory {
     protected static Log log =
-        LogFactory.getLog(ImageDataSource.class.getName());
-    
-    public static final String CONTENT_TYPE = "image/jpeg";
+            LogFactory.getLog(ImageIOFactory.class.getName());
 
-    private final String name;
-    private final String contentType;
-    private byte[] data;
-    private ByteArrayInputStream is;
-    private ByteArrayOutputStream os;
-
-    public ImageDataSource(String name, Image data) {
-        this(name, CONTENT_TYPE, data);
-    } // ctor
-
-    public ImageDataSource(String name, String contentType, Image data) {
-        this.name = name;
-        this.contentType = contentType == null ? CONTENT_TYPE : contentType;
-        os = new ByteArrayOutputStream();
-        try {
-            if (data != null)
-                ImageIOFactory.getImageIO().saveImage(this.contentType, data, os);
+    public static ImageIO getImageIO() {
+        String imageIOClassName = AxisProperties.getProperty("axis.ImageIO",
+                "org.apache.axis.components.image.JimiIO");
+        log.debug("axis.ImageIO:" + imageIOClassName);
+        if (imageIOClassName != null) {
+            try {
+                Class imageIOClass = ClassUtils.forName(imageIOClassName);
+                if (ImageIO.class.isAssignableFrom(imageIOClass))
+                    return (ImageIO) imageIOClass.newInstance();
+            } catch (Exception e) {
+                // If something goes wrong here, should we just fall
+                // through and use the default one?
+                log.error(JavaUtils.getMessage("exception00"), e);
+            }
         }
-        catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-        }
-    } // ctor
+        log.info(JavaUtils.getMessage("needImageIO"));
+        return null;
+    }
+}
 
-    public String getName() {
-        return name;
-    } // getName
-
-    public String getContentType() {
-        return contentType;
-    } // getContentType
-
-    public InputStream getInputStream() throws IOException {
-        if (os.size() != 0) {
-            data = os.toByteArray();
-            os.reset();
-        }
-        return new ByteArrayInputStream(data == null ? new byte[0] : data);
-    } // getInputStream
-
-    public OutputStream getOutputStream() throws IOException {
-        if (os.size() != 0) {
-            data = os.toByteArray();
-            os.reset();
-        }
-        return os;
-    } // getOutputStream
-} // class ImageDataSource
