@@ -210,7 +210,8 @@ public class ArraySerializer extends DeserializerBase
         
         Attributes attrs = attributes;
         
-        if (attributes.getIndex(Constants.URI_SOAP_ENC,
+        if (attributes != null &&
+            attributes.getIndex(Constants.URI_SOAP_ENC,
                                 Constants.ATTR_ARRAY_TYPE) == -1) {
             context.registerPrefixForURI("SOAP-ENC", Constants.URI_SOAP_ENC);
             AttributesImpl attrImpl = new AttributesImpl(attributes);
