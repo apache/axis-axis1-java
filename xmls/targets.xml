@@ -633,7 +633,7 @@
 
   <target name="clover-report" depends="setenv">
      <clover-report>
-        <current outfile="${axis.home}/build/clover-report" title="Axis Clover Report">
+        <current outfile="${axis.home}/build/clover-report" title="Axis Clover Report" span="60m">
            <format type="html"/> 
         </current>	 
      </clover-report>
@@ -642,7 +642,8 @@
   <target name="axis-clover-setup" depends="axis-clover-setenv" if="clover.present">
      <echo message="Registering clover tasks" />
      <taskdef resource="clovertasks"/>
-     <clover-setup initString="${axis.home}/axis_coverage.db"
+     <clover-setup initString="${axis.home}/build/clover/axis_coverage.db"
+                   tmpdir="${axis.home}/build/clover"
                    flushpolicy="interval"
                    flushinterval="1000">
        <files>
