@@ -53,21 +53,26 @@
  * <http://www.apache.org/>.
  */
 
- package org.apache.axis.configuration;
+package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.Handler;
+import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
+import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
-import java.io.File;
+import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Hashtable;
 
 /**
  * A simple ConfigurationProvider that uses the Admin class to read +
@@ -75,15 +80,16 @@ import java.util.Properties;
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class FileProvider implements ConfigurationProvider
-{
+public class FileProvider implements EngineConfiguration {
     protected String sep = System.getProperty("file.separator");
+
+    protected WSDDDeployment deployment = null;
 
     String basepath = ".";
     String filename;
-    
+
     InputStream myInputStream = null;
-    
+
     // Should we search the classpath for the file if we don't find it in
     // the specified location?
     boolean searchClasspath = true;
@@ -92,8 +98,7 @@ public class FileProvider implements ConfigurationProvider
      * Constructor which accesses a file in the current directory of the
      * engine.
      */
-    public FileProvider(String filename)
-    {
+    public FileProvider(String filename) {
         this.filename = filename;
     }
 
@@ -101,72 +106,145 @@ public class FileProvider implements ConfigurationProvider
      * Constructor which accesses a file relative to a specific base
      * path.
      */
-    public FileProvider(String basepath, String filename)
-    {
+    public FileProvider(String basepath, String filename) {
         this.basepath = basepath;
         this.filename = filename;
     }
-    
+
     /**
      * Constructor which takes an input stream directly.
      * Note: The configuration will be read-only in this case!
-     */ 
-    public FileProvider(InputStream is)
-    {
+     */
+    public FileProvider(InputStream is) {
         myInputStream = is;
     }
-    
+
+    public WSDDDeployment getDeployment() {
+        return deployment;
+    }
+
+    public void setDeployment(WSDDDeployment deployment) {
+        this.deployment = deployment;
+    }
+
     /**
-     * Determine whether or not we will look for a "server-config.wsdd" file
+     * Determine whether or not we will look for a "*-config.wsdd" file
      * on the classpath if we don't find it in the specified location.
-     * 
+     *
      * @param searchClasspath true if we should search the classpath
-     */ 
-    public void setSearchClasspath(boolean searchClasspath)
-    {
+     */
+    public void setSearchClasspath(boolean searchClasspath) {
         this.searchClasspath = searchClasspath;
     }
 
-    public void configureEngine(AxisEngine engine) throws Exception
-    {
-        if (myInputStream == null) {
-            try {
-                myInputStream = new FileInputStream(basepath + sep + filename);
-            } catch (Exception e) {
-                if (searchClasspath) {
-                    myInputStream = engine.
-                                    getClass().getResourceAsStream(filename);
+    public void configureEngine(AxisEngine engine) throws ConfigurationException {
+        try {
+            if (myInputStream == null) {
+                try {
+                    myInputStream = new FileInputStream(basepath + sep + filename);
+                } catch (Exception e) {
+                    if (searchClasspath) {
+                        myInputStream = engine.getClass().getResourceAsStream(filename);
+                    }
                 }
             }
-        }
-        
-        if (myInputStream == null) {
-            throw new Exception("No engine configuration file - aborting!");
-        }
 
-        WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(myInputStream));
-        engine.deployWSDD(doc);
-        
-        myInputStream = null;
+            if (myInputStream == null) {
+                throw new ConfigurationException("No engine configuration file - aborting!");
+            }
+
+            WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(myInputStream));
+            deployment = doc.getDeployment();
+
+            deployment.configureEngine(engine);
+            engine.refreshGlobalOptions();
+
+            myInputStream = null;
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
     }
 
     /**
      * Save the engine configuration.  In case there's a problem, we
      * write it to a string before saving it out to the actual file so
      * we don't screw up the file.
-     */ 
-    public void writeEngineConfig(AxisEngine engine) throws Exception
-    {
-        // If there's no filename then we must have created this with just
-        // an InputStream - in which case the config stuff is read-only
-        if ( filename == null ) return ;
+     */
+    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException {
+        try {
+            // If there's no filename then we must have created this with just
+            // an InputStream - in which case the config stuff is read-only
+            if (filename == null) return;
 
-        Document doc = Admin.listConfig(engine);
-        StringWriter writer = new StringWriter();
-        XMLUtils.DocumentToWriter(doc, writer);
-        writer.close();
-        FileOutputStream fos = new FileOutputStream(basepath + sep + filename);
-        fos.write(writer.getBuffer().toString().getBytes());
-        fos.close();
+            Document doc = Admin.listConfig(engine);
+            StringWriter writer = new StringWriter();
+            XMLUtils.DocumentToWriter(doc, writer);
+            writer.close();
+            FileOutputStream fos = new FileOutputStream(basepath + sep + filename);
+            fos.write(writer.getBuffer().toString().getBytes());
+            fos.close();
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
     }
+
+    /**
+     * retrieve an instance of the named handler
+     * @param qname XXX
+     * @return XXX
+     * @throws ConfigurationException XXX
+     */
+    public Handler getHandler(QName qname) throws ConfigurationException {
+        return deployment.getHandler(qname);
+    }
+
+    /**
+     * retrieve an instance of the named service
+     * @param qname XXX
+     * @return XXX
+     * @throws ConfigurationException XXX
+     */
+    public Handler getService(QName qname) throws ConfigurationException {
+        return deployment.getService(qname);
+    }
+
+    /**
+     * retrieve an instance of the named transport
+     * @param qname XXX
+     * @return XXX
+     * @throws ConfigurationException XXX
+     */
+    public Handler getTransport(QName qname) throws ConfigurationException {
+        return deployment.getTransport(qname);
+    }
+
+    public TypeMappingRegistry getTypeMappingRegistry() throws ConfigurationException {
+        return deployment.getTypeMappingRegistry();
+    }
+
+    /**
+     * Returns a global request handler.
+     */
+    public Handler getGlobalRequest() throws ConfigurationException {
+        return deployment.getGlobalRequest();
+    }
+
+    /**
+     * Returns a global response handler.
+     */
+    public Handler getGlobalResponse() throws ConfigurationException {
+        return deployment.getGlobalResponse();
+    }
+
+    /**
+     * Returns the global configuration options.
+     */
+    public Hashtable getGlobalOptions() throws ConfigurationException {
+        WSDDGlobalConfiguration globalConfig = deployment.getGlobalConfiguration();
+        if (globalConfig != null)
+            return globalConfig.getParametersTable();
+
+        return null;
+    }
+
 }

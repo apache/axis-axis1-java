@@ -1,6 +1,5 @@
 package org.apache.axis.server;
 
-import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.configuration.FileProvider;

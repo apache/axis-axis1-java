@@ -74,7 +74,6 @@ import java.io.StringReader;
  * represents a WSDD Document (this is the top level object in this object model)
  */
 public class WSDDDocument
-    implements DeploymentDocument
 {
     private Document doc;
 
@@ -162,48 +161,15 @@ public class WSDDDocument
         deployment = null;
     }
 
-    /**
-     *
-     */
-    public void deploy(DeploymentRegistry registry)
-        throws DeploymentException
-    {
+    public void deploy(WSDDDeployment registry) throws DeploymentException {
         if (deployment != null) {
             deployment.deployToRegistry(registry);
-        } else {
+        }
+        if (undeployment != null) {
             undeployment.undeployFromRegistry(registry);
         }
     }
 
-    /**
-     * Undeploy the contents of this document from the given registry.
-     */
-    public void undeploy(DeploymentRegistry registry)
-            throws DeploymentException {
-
-        if (deployment == null)
-            throw new DeploymentException();
-
-        WSDDHandler[]     handlers   = deployment.getHandlers();
-        WSDDTransport[]   transports = deployment.getTransports();
-        WSDDService[]     services   = deployment.getServices();
-        WSDDTypeMapping[] mappings   = deployment.getTypeMappings();
-        QName qname = null;
-
-        for (int n = 0; n < handlers.length; n++) {
-            qname = handlers[n].getQName();
-            if (qname != null)
-                registry.undeployHandler(qname);
-        }
-        for (int n = 0; n < transports.length; n++) {
-            qname = transports[n].getQName();
-            if (qname != null)
-                registry.undeployTransport(qname);
-        }
-        for (int n = 0; n < services.length; n++) {
-            qname = services[n].getQName();
-            if (qname != null)
-                registry.undeployService(qname);
-        }
+    public void undeploy(DeploymentRegistry registry) throws DeploymentException {
     }
 }

@@ -56,20 +56,59 @@
 package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.Handler;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+
+import javax.xml.rpc.namespace.QName;
+import java.util.Hashtable;
 
 /**
  * A do-nothing ConfigurationProvider
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class NullProvider implements ConfigurationProvider
+public class NullProvider implements EngineConfiguration
 {
-    public void configureEngine(AxisEngine engine) throws Exception
+    public void configureEngine(AxisEngine engine) throws ConfigurationException
     {
     }
 
-    public void writeEngineConfig(AxisEngine engine) throws Exception
+    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException
     {
+    }
+
+    public Hashtable getGlobalOptions() throws ConfigurationException {
+        return null;
+    }
+
+    public Handler getGlobalResponse() throws ConfigurationException {
+        return null;
+    }
+
+    public Handler getGlobalRequest() throws ConfigurationException {
+        return null;
+    }
+
+    public TypeMappingRegistry getTypeMappingRegistry() throws ConfigurationException {
+        return null;
+    }
+
+    public TypeMapping getTypeMapping(String encodingStyle) throws ConfigurationException {
+        return null;
+    }
+
+    public Handler getTransport(QName qname) throws ConfigurationException {
+        return null;
+    }
+
+    public Handler getService(QName qname) throws ConfigurationException {
+        return null;
+    }
+
+    public Handler getHandler(QName qname) throws ConfigurationException {
+        return null;
     }
 }

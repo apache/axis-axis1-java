@@ -11,7 +11,10 @@ import org.apache.axis.client.Call;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Constants;
 import org.apache.axis.configuration.XMLStringProvider;
+import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.providers.java.RPCProvider;
 
@@ -31,7 +34,7 @@ public class TestSimpleSession extends TestCase {
             " <transport name=\"local\" " +
                 "pivot=\"java:org.apache.axis.transport.local.LocalSender\"/>\n" +
             "</deployment>";
-    static XMLStringProvider provider = new XMLStringProvider(clientWSDD);
+    static XMLStringProvider clientProvider = new XMLStringProvider(clientWSDD);
 
     /**
      * Default constructor for use as service
@@ -84,11 +87,14 @@ public class TestSimpleSession extends TestCase {
         service.setOption("className", "test.session.TestSimpleSession");
         service.setOption("allowedMethods", "counter");
 
-        AxisServer server = new AxisServer();
-        server.deployService("sessionTest", service);
+        SimpleProvider simpleProvider =
+                new SimpleProvider(
+                        new FileProvider(Constants.SERVER_CONFIG_FILE));
+        AxisServer server = new AxisServer(simpleProvider);
+        simpleProvider.deployService("sessionTest", service);
 
         // Set up the client side (using the WSDD above)
-        Service svc = new Service(provider);
+        Service svc = new Service(clientProvider);
         Call call = (Call)svc.createCall();
         svc.setMaintainSession(true);
         call.setTransport(new LocalTransport(server));
@@ -106,7 +112,7 @@ public class TestSimpleSession extends TestCase {
                         2);
 
         // Now start fresh and confirm a new session
-        Service svc2 = new Service(provider);
+        Service svc2 = new Service(clientProvider);
         Call call2 = (Call)svc2.createCall();
         svc2.setMaintainSession(true);
         call2.setTransport(new LocalTransport(server));

@@ -55,6 +55,8 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.Handler;
+import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.encoding.TypeMapping;
@@ -72,6 +74,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * The DeploymentRegistry abstract class takes the place of the
@@ -83,17 +86,6 @@ import java.util.Enumeration;
 public abstract class DeploymentRegistry
     implements Serializable
 {
-    public abstract DeploymentDocument getConfigDocument()
-        throws DeploymentException;
-    
-    /**
-     * retrieve the global configuration for the axis engine
-     * @return XXX
-     * @throws DeploymentException XXX
-     */
-    public abstract WSDDGlobalConfiguration getGlobalConfiguration()
-        throws DeploymentException;
-
     /**
      * retrieve an instance of the named handler
      * @param qname XXX
@@ -209,6 +201,15 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
+     * deploy the given service
+     * @param key XXX
+     * @param service XXX
+     * @throws DeploymentException XXX
+     */
+     public abstract void deployService(String key, SOAPService service)
+         throws DeploymentException;
+
+    /**
      * deploy the given handler
      * @param item XXX
      * @throws DeploymentException XXX
@@ -217,6 +218,15 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
+     * Deploy a Handler into the registry.
+     * @param key XXX
+     * @param handler XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void deployHandler(String key, Handler handler)
+        throws DeploymentException;
+               
+    /**
      * deploy the given transport
      * @param item XXX
      * @throws DeploymentException XXX
@@ -224,6 +234,15 @@ public abstract class DeploymentRegistry
     public abstract void deployTransport(DeployableItem item)
         throws DeploymentException;
 
+    /**
+     * deploy the given transport
+     * @param key XXX
+     * @param transport XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void deployTransport(String key, SimpleTargetedChain transport)
+        throws DeploymentException;
+  
     /**
      * remove the given item
      * @param qname XXX
@@ -239,7 +258,15 @@ public abstract class DeploymentRegistry
      */
     public abstract void undeployHandler(QName qname)
         throws DeploymentException;
-
+ 
+   /**
+     * Remove the specified handler.
+     * @param key XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void undeployHandler(String key)
+        throws DeploymentException;
+ 
     /**
      * remove the given service
      * @param qname XXX
@@ -248,12 +275,28 @@ public abstract class DeploymentRegistry
     public abstract void undeployService(QName qname)
         throws DeploymentException;
 
+     /**
+     * remove the given service
+     * @param key XXX
+     * @throws DeploymentException XXX
+     */
+   public abstract void undeployService(String key)
+        throws DeploymentException;
+
     /**
      * remove the given transport
      * @param qname XXX
      * @throws DeploymentException XXX
      */
     public abstract void undeployTransport(QName qname)
+        throws DeploymentException;
+
+    /**
+     * remove the given transport
+     * @param key XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void undeployTransport(String key)
         throws DeploymentException;
 
     /**
@@ -383,4 +426,20 @@ public abstract class DeploymentRegistry
      */
     public abstract Enumeration getTransports() throws DeploymentException ;
 
+    /**
+     * Returns a global request handler.
+     */
+    public abstract Handler getGlobalRequest()
+        throws DeploymentException;
+
+    /**
+     * Returns a global response handler.
+     */
+    public abstract Handler getGlobalResponse()
+        throws DeploymentException;
+
+    /**
+     * Returns the global configuration options.
+     */
+    public abstract Hashtable getGlobalOptions();
 }

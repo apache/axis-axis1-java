@@ -398,7 +398,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public TypeMapping getTypeMapping()
     {
-        return (TypeMapping) msgContext.getTypeMappingRegistry().getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
+        return (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
     }
     
     /**

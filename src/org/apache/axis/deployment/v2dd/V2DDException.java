@@ -57,7 +57,6 @@ package org.apache.axis.deployment.v2dd;
 import org.apache.axis.deployment.DeploymentException;
 
 public class V2DDException extends DeploymentException {  
-    public V2DDException() { super(); }
     public V2DDException(String msg) { super(msg); }
     public V2DDException(Exception e) {
         super(e.getMessage());

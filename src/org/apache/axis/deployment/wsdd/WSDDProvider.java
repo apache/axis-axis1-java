@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
@@ -136,7 +137,7 @@ public abstract class WSDDProvider
      */
     public static Handler getInstance(QName providerType,
                                WSDDService service,
-                               DeploymentRegistry registry)
+                               EngineConfiguration registry)
         throws Exception
     {
         if (providerType == null)
@@ -158,6 +159,6 @@ public abstract class WSDDProvider
      * @throws Exception XXX
      */
     public abstract Handler newProviderInstance(WSDDService service,
-                                                DeploymentRegistry registry)
+                                                EngineConfiguration registry)
         throws Exception;
 }

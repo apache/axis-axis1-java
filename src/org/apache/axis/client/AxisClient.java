@@ -57,7 +57,7 @@ package org.apache.axis.client ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
@@ -80,9 +80,9 @@ public class AxisClient extends AxisEngine
     static Category category =
             Category.getInstance(AxisClient.class.getName());
 
-    public AxisClient(ConfigurationProvider provider)
+    public AxisClient(EngineConfiguration config)
     {
-        super(provider);
+        super(config);
     }
     
     public AxisClient()

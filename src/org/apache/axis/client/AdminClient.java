@@ -56,6 +56,7 @@
 package org.apache.axis.client ;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
@@ -89,6 +90,21 @@ public class AdminClient
     static Category category =
             Category.getInstance(AdminClient.class.getName());
 
+    private static ThreadLocal defaultConfiguration = new ThreadLocal();
+
+    /**
+     * If the user calls this with an EngineConfiguration object, all
+     * AdminClients on this thread will use that EngineConfiguration
+     * rather than the default one.  This is primarily to enable the
+     * deployment of custom transports and handlers.
+     *
+     * @param config the EngineConfiguration which should be used
+     */
+    public static void setDefaultConfiguration(EngineConfiguration config)
+    {
+        defaultConfiguration.set(config);
+    }
+
     protected PrintWriter _log;
     protected Call call;
 
@@ -98,7 +114,17 @@ public class AdminClient
     public AdminClient()
     {
         try {
-            Service service = new Service();
+            // Initialize our Service - allow the user to override the
+            // default configuration with a thread-local version (see
+            // setDefaultConfiguration() above)
+            EngineConfiguration config =
+                    (EngineConfiguration)defaultConfiguration.get();
+            Service service;
+            if (config != null) {
+                service = new Service(config);
+            } else {
+                service = new Service();
+            }
             call = (Call) service.createCall();
         } catch (JAXRPCException e) {
             category.fatal(JavaUtils.getMessage("couldntCall00"), e);

@@ -55,6 +55,8 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
@@ -126,8 +128,6 @@ public abstract class WSDDDeployableItem
 //            qname = XMLUtils.getQNameFromString(name, e);
             qname = new QName("", name);
         }
-        
-        //!!! default namespace?
         
         String typeStr = e.getAttribute("type");
         if (typeStr != null && !typeStr.equals("")) {
@@ -276,7 +276,7 @@ public abstract class WSDDDeployableItem
      */
     public void removeParameter(String name)
     {
-        // !!! FILL IN
+        parameters.remove(name);
     }
 
     /**
@@ -285,8 +285,8 @@ public abstract class WSDDDeployableItem
      * @return XXX
      * @throws Exception XXX
      */
-    public final Handler getInstance(DeploymentRegistry registry)
-        throws Exception
+    public final Handler getInstance(EngineConfiguration registry)
+        throws ConfigurationException
     {
         if (scope == SCOPE_SINGLETON) {
             synchronized (this) {
@@ -307,15 +307,26 @@ public abstract class WSDDDeployableItem
      * @return XXX
      * @throws Exception XXX
      */
-    protected Handler makeNewInstance(DeploymentRegistry registry)
-        throws Exception
+    protected Handler makeNewInstance(EngineConfiguration registry)
+        throws ConfigurationException
     {
-        Class   c = getJavaClass();
+        Class   c = null;
         Handler h = null;
-        
+
+        try {
+            c = getJavaClass();
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException(e);
+        }
+
         if (c != null) {
-            h = (Handler)createInstance(c);
-            
+
+            try {
+                h = (Handler)createInstance(c);
+            } catch (Exception e) {
+                throw new ConfigurationException(e);
+            }
+
             if (h != null) {
                 if ( qname != null )
                   h.setName(qname.getLocalPart()); 
@@ -335,7 +346,7 @@ public abstract class WSDDDeployableItem
      * @throws Exception XXX
      */
     Object createInstance(Class _class)
-        throws Exception
+        throws InstantiationException, IllegalAccessException
     {
         return _class.newInstance();
     }

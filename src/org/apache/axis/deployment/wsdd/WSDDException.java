@@ -63,15 +63,6 @@ import org.apache.axis.deployment.DeploymentException;
 public class WSDDException
     extends DeploymentException
 {
-
-    /**
-     *
-     */
-    public WSDDException()
-    {
-        super();
-    }
-
     /**
      *
      * @param msg (String) XXX

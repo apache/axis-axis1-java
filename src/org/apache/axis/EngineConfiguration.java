@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,37 +52,87 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
 package org.apache.axis;
 
-import org.apache.axis.deployment.DeploymentRegistry;
+import javax.xml.rpc.namespace.QName;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
+import java.util.Hashtable;
 
 /**
- * ConfigurationProvider is an interface which represents a source of
- * configuration information for an AxisEngine.  Concrete implementations
- * of this interface will obtain configuration information from some source
- * (examples might be files, Strings, or databases) and are responsible for
- * writing it into an AxisEngine, and writing an AxisEngine's state back out
- * to whatever storage medium is in use.
+ * EngineConfiguration is an interface that the Message Flow subsystem
+ * provides so that engine configuration can be provided in a pluggable
+ * way. An instance of EngineConfiguration provides configuration
+ * for a particular engine instance.
+ * <p>
+ * Concrete implementations of this interface will obtain configuration
+ * information from some source (examples might be files, Strings, or
+ * databases) and are responsible for writing it into an AxisEngine, and
+ * writing an AxisEngine's state back out to whatever storage medium is in use.
  *
+ * @author Glyn Normington (glyn@apache.org)
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public interface ConfigurationProvider
-{
-    /**
+public interface EngineConfiguration {
+     /**
      * Configure this AxisEngine using whatever data source we have.
      *
      * @param engine the AxisEngine we'll deploy state to
-     * @throws Exeption if there was a problem
+     * @throws ConfigurationException if there was a problem
      */
-    public void configureEngine(AxisEngine engine) throws Exception;
+    public void configureEngine(AxisEngine engine) throws ConfigurationException;
 
     /**
      * Read the configuration from an engine, and store it somehow.
      *
      * @param engine the AxisEngine from which to read state.
-     * @throws Exception if there was a problem
+     * @throws ConfigurationException if there was a problem
      */
-    public void writeEngineConfig(AxisEngine engine) throws Exception;
+    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException;
+   
+    /**
+     * retrieve an instance of the named handler
+     * @param qname XXX
+     * @return XXX
+     * @throws ConfigurationException XXX
+     */
+    public Handler getHandler(QName qname) throws ConfigurationException;
+ 
+   /**
+     * retrieve an instance of the named service
+     * @param qname XXX
+     * @return XXX
+     * @throws ConfigurationException XXX
+     */
+    public Handler getService(QName qname) throws ConfigurationException;
 
-    public DeploymentRegistry getDeploymentRegistry();
+     /**
+     * retrieve an instance of the named transport
+     * @param qname XXX
+     * @return XXX
+     * @throws ConfigurationException XXX
+     */
+    public Handler getTransport(QName qname) throws ConfigurationException;
+
+    /**
+     * Retrieve the TypeMappingRegistry for this engine
+     */
+    public TypeMappingRegistry getTypeMappingRegistry()
+        throws ConfigurationException;
+
+    /**
+     * Returns a global request handler.
+     */
+    public Handler getGlobalRequest() throws ConfigurationException;
+
+    /**
+     * Returns a global response handler.
+     */
+    public Handler getGlobalResponse() throws ConfigurationException;
+
+    /**
+     * Returns the global configuration options.
+     */
+    public Hashtable getGlobalOptions() throws ConfigurationException;
 }

@@ -58,7 +58,7 @@ package org.apache.axis.client ;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.JavaUtils;
@@ -106,7 +106,7 @@ public class Service implements javax.xml.rpc.Service {
     private javax.wsdl.Service  wsdlService     = null ;
     private boolean             maintainSession = false ;
 
-    private ConfigurationProvider configProvider =
+    private EngineConfiguration config =
             new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
     Definition getWSDLDefinition() {
@@ -119,7 +119,7 @@ public class Service implements javax.xml.rpc.Service {
 
     protected AxisClient getAxisClient()
     {
-        return new AxisClient(configProvider);
+        return new AxisClient(config);
     }
 
     /**
@@ -133,11 +133,11 @@ public class Service implements javax.xml.rpc.Service {
 
     /**
      * Constructs a new Service object as above, but also passing in
-     * the ConfigurationProvider which should be used to set up the
+     * the EngineConfiguration which should be used to set up the
      * AxisClient.
      */
-    public Service(ConfigurationProvider configProvider) {
-        this.configProvider = configProvider;
+    public Service(EngineConfiguration config) {
+        this.config = config;
         engine = getAxisClient();
     }
 
@@ -492,17 +492,17 @@ public class Service implements javax.xml.rpc.Service {
     }
 
     /**
-     * Set this Service's configuration provider.
+     * Set this Service's engine configuration.
      *
      * Note that since all of the constructors create the AxisClient right
      * now, this is basically a no-op.  Putting it in now so that we can make
      * lazy engine instantiation work, and not have to duplicate every single
-     * Service constructor with a ConfigurationProvider argument.
+     * Service constructor with a EngineConfiguration argument.
      *
-     * @param configProvider the ConfigurationProvider we want to use.
+     * @param config the EngineConfiguration we want to use.
      */
-    public void setConfigProvider(ConfigurationProvider configProvider) {
-        this.configProvider = configProvider;
+    public void setEngineConfiguration(EngineConfiguration config) {
+        this.config = config;
     }
 
     /**

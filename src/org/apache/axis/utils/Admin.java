@@ -55,13 +55,7 @@
 
 package org.apache.axis.utils ;
 
-import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisFault;
-import org.apache.axis.Chain;
-import org.apache.axis.Constants;
-import org.apache.axis.Handler;
-import org.apache.axis.MessageContext;
-import org.apache.axis.SimpleChain;
+import org.apache.axis.*;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.deployment.wsdd.*;
@@ -146,26 +140,25 @@ public class Admin {
         NodeList list = root.getElementsByTagName("beanMappings");
         for (int i = 0; list != null && i < list.getLength(); i++) {
             Element el = (Element)list.item(i);
-            registerTypes(el, service, true, null);
+            registerTypes(el, service, true);
         }
 
         list = root.getElementsByTagName("typeMappings");
         for (int i = 0; list != null && i < list.getLength(); i++) {
             Element el = (Element)list.item(i);
-            registerTypes(el, service, false, null);
+            registerTypes(el, service, false);
         }
     }
 
     private static void registerTypes(Element root,
                                       WSDDTypeMappingContainer container,
-                                      boolean isBean,
-                                      DeploymentRegistry registry)
+                                      boolean isBean)
         throws Exception
     {
         NodeList list = root.getChildNodes();
         for (int i = 0; (list != null) && (i < list.getLength()); i++) {
             if (!(list.item(i) instanceof Element)) continue;
-            registerTypeMapping((Element)list.item(i), container, isBean, registry);
+            registerTypeMapping((Element)list.item(i), container, isBean);
         }
     }
 
@@ -173,7 +166,7 @@ public class Admin {
      * Process a given XML document - needs cleanup.
      */
     public Element[] AdminService(MessageContext msgContext, Vector xml)
-        throws AxisFault
+        throws Exception
     {
         category.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
         Document doc = process( msgContext, (Element) xml.get(0) );
@@ -183,132 +176,20 @@ public class Admin {
         return( result );
     }
 
-    /** Process an engine configuration file by deploying appropriate stuff
-     * into the specified AxisEngine, and then telling it to save itself
-     * when we're done.
-     *
-     * @param doc an XML document containing an Axis engine configuration
-     * @param engine the AxisEngine in which to deploy
-     * @exception Exception (should be DeploymentException?)
-     */
-    public static void processEngineConfig(Document doc, AxisEngine engine)
-        throws Exception
-    {
-        Element el = doc.getDocumentElement();
-        String namespace = el.getNamespaceURI();
-        
-        // If this is WSDD, process it correctly.
-        if (namespace != null && namespace.equals(WSDDConstants.WSDD_NS)) {
-            processWSDD(engine, el);
-            return;
-        }
-        
-        if (!el.getTagName().equals("engineConfig"))
-            throw new Exception(
-                    JavaUtils.getMessage("noEngineConfig00", el.getTagName()));
-
-        NodeList nl = el.getElementsByTagName("handlers");
-        deploy(nl, engine);
-
-        nl = el.getElementsByTagName("services");
-        deploy(nl, engine);
-
-        nl = el.getElementsByTagName("transports");
-        deploy(nl, engine);
-
-        nl = el.getElementsByTagName("typeMappings");
-        deploy(nl, engine);
-        
-        //engine.saveConfiguration();
-    }
-
-    private static final int
-        TYPE_UNKNOWN = 0,
-        TYPE_HANDLER = 1,
-        TYPE_CHAIN = 2,
-        TYPE_SERVICE = 3,
-        TYPE_TRANSPORT = 4,
-        TYPE_TYPEMAPPING = 5;
-    private static final Hashtable typeTable = new Hashtable();
-    static {
-        typeTable.put("handler", new Integer(TYPE_HANDLER));
-        typeTable.put("chain", new Integer(TYPE_CHAIN));
-        typeTable.put("service", new Integer(TYPE_SERVICE));
-        typeTable.put("transport", new Integer(TYPE_TRANSPORT));
-        typeTable.put("typeMapping", new Integer(TYPE_TYPEMAPPING));
-    }
-    private static int getType(String tagName) {
-        Integer i;
-        if ((i = (Integer)typeTable.get(tagName)) == null)
-            return TYPE_UNKNOWN;
-        return i.intValue();
-    }
-
-    /** Deploy a set of individual items.
-     *
-     * NOTE: as it stands this doesn't care about the relationship between
-     * these items and the enclosing tag.  We shouldn't really allow <service>
-     * deployment underneath the <transports> tag, for instance.  Since this
-     * is going to mutate some more, this is the simple way to do it for now.
-     *
-     * @param nl a DOM NodeList of deployable items.
-     * @param engine the AxisEngine into which we deploy.
-     * @exception Exception (should be DeploymentException?)
-     */
-    static void deploy(NodeList nl, AxisEngine engine) throws Exception
-    {
-        WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
-        WSDDDeployment dep = wd.getDeployment();
-        
-        int lenI = nl.getLength();
-        for (int i = 0; i < lenI; i++) {
-            Element el = (Element)nl.item(i);
-
-            NodeList children = el.getChildNodes();
-            int lenJ = children.getLength();
-            for (int j = 0; j < lenJ; j++) {
-                if (!(children.item(j) instanceof Element)) continue;
-
-                Element item = (Element)children.item(j);
-
-                int type;
-                switch (type = getType(item.getTagName())) {
-                case TYPE_HANDLER:
-                    registerHandler(item, engine);
-                    break;
-                case TYPE_CHAIN:
-                    registerChain(item, engine);
-                    break;
-                case TYPE_SERVICE:
-                    registerService(item, engine);
-                    break;
-                case TYPE_TRANSPORT:
-                    registerTransport(item, engine);
-                    break;
-                case TYPE_TYPEMAPPING:
-                    registerTypeMapping(item, dep, false, null);
-                    break;
-                case TYPE_UNKNOWN:
-                    // ignore it
-                    break;
-                default:
-                    throw new UnknownError(JavaUtils.getMessage(
-                            "never00",
-                            "org.apache.axis.utils.Admin",
-                            "type = " + type));
-                }
-            }
-        }
-    }
-    
     protected static Document processWSDD(AxisEngine engine, Element root)
-        throws AxisFault
+        throws Exception
     {
         Document doc = null ;
 
         WSDDDocument wsddDoc = new WSDDDocument(root);
-        engine.deployWSDD(wsddDoc);
-        
+        EngineConfiguration config = engine.getConfig();
+        if (config instanceof FileProvider) {
+            FileProvider wsddProvider = (FileProvider)config;
+            WSDDDeployment deployment = wsddProvider.getDeployment();
+            wsddDoc.getDeployment().deployToRegistry(deployment);
+        }
+        engine.refreshGlobalOptions();
+
         engine.saveConfiguration();
         
         doc = XMLUtils.newDocument();
@@ -327,7 +208,7 @@ public class Admin {
      * @return an XML Document indicating the results.
      */
     public Document process(MessageContext msgContext, Element root)
-        throws AxisFault
+        throws Exception
     {
         // Check security FIRST.
         
@@ -433,8 +314,14 @@ public class Admin {
                 engine = engine.getClientEngine();
             }
             
-            WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
-            WSDDDeployment dep = wd.getDeployment();
+            WSDDDeployment dep = null;
+            try {
+                FileProvider config = (FileProvider)engine.getConfig();
+                dep = config.getDeployment();
+            } catch (Exception e) {
+                // This will catch NPEs and ClassCastExceptions, either of
+                // which means the engine isn't configurable.
+            }
 
             NodeList list = root.getChildNodes();
             for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
@@ -449,11 +336,11 @@ public class Admin {
                 if ( action.equals( "undeploy" ) ) {
                     if ( type.equals("service") ) {
                         category.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
-                        engine.undeployService( name );
+                        dep.undeployService( new QName(null,name) );
                     }
                     else if ( type.equals("handler") || type.equals("chain") ) {
                         category.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
-                        engine.undeployHandler( name );
+                        dep.undeployHandler( new QName(null,name) );
                     }
                     else
                         throw new AxisFault( "Admin.error",
@@ -463,25 +350,25 @@ public class Admin {
                 }
                 
                 if ( type.equals( "handler" ) ) {
-                    registerHandler(elem, engine);
+                    registerHandler(elem, dep);
                 }
                 else if ( type.equals( "chain" ) ) {
-                    registerChain(elem, engine);
+                    registerChain(elem, dep);
                 }
                 else if ( type.equals( "service" ) ) {
-                    registerService(elem, engine);
+                    registerService(elem, dep, engine instanceof AxisServer);
                 }
                 else if (type.equals("transport")) {
-                    registerTransport(elem, engine);
+                    registerTransport(elem, dep);
                 }
 
                 // A streamlined means of deploying both a serializer and a deserializer
                 // for a bean at the same time.
                 else if ( type.equals( "beanMappings" ) ) {
-                    registerTypes(elem, dep, true, engine.getDeploymentRegistry());
+                    registerTypes(elem, dep, true);
                 }
                 else if (type.equals("typeMappings")) {
-                    registerTypes(elem, dep, false, engine.getDeploymentRegistry());
+                    registerTypes(elem, dep, false);
                 } else
                     throw new AxisFault( "Admin.error",
                         JavaUtils.getMessage("unknownType01", action + ": " + type),
@@ -517,10 +404,16 @@ public class Admin {
         SerializationContext context = new SerializationContextImpl(writer, null);
         context.setPretty(true);
         try {
-            engine.getDeploymentRegistry().writeToContext(context);
+            FileProvider config = (FileProvider)engine.getConfig();
+            WSDDDeployment deployment = config.getDeployment();
+            deployment.writeToContext(context);
         } catch (Exception e) {
-            e.printStackTrace();
+            // If the engine config isn't a FileProvider, or we have no
+            // engine config for some odd reason, we'll end up here.
+
+            throw new AxisFault(JavaUtils.getMessage("noEngineWSDD"));
         }
+
         try {
             writer.close();
             return XMLUtils.newDocument(new InputSource(new StringReader(writer.getBuffer().toString())));
@@ -535,8 +428,9 @@ public class Admin {
      * @param elem the <chain> element
      * @param engine the AxisEngine in which to deploy
      */
-    public static void registerChain(Element elem, AxisEngine engine)
-        throws AxisFault
+    public static void registerChain(Element elem,
+                                     WSDDDeployment deployment)
+        throws Exception
     {
         Handler tmpH = null;
         String hName;
@@ -560,9 +454,6 @@ public class Admin {
 
             getOptions( elem, options );
             
-            WSDDDocument wsddDoc = (WSDDDocument)engine.
-                    getDeploymentRegistry().getConfigDocument();
-            
             WSDDChain chain = new WSDDChain();
             chain.setName(name);
             chain.setOptionsHashtable(options);
@@ -576,7 +467,7 @@ public class Admin {
                 chain.addHandler(handler);
             }
 
-            engine.getDeploymentRegistry().deployHandler(chain);
+            deployment.deployHandler(chain);
         }
     }
 
@@ -586,8 +477,10 @@ public class Admin {
      * @param elem the <service> element
      * @param engine the AxisEngine in which to deploy
      */
-    public static void registerService(Element elem, AxisEngine engine)
-        throws AxisFault
+    public static void registerService(Element elem,
+                                       WSDDDeployment deployment,
+                                       boolean isServer)
+        throws Exception
     {
         String   name    = elem.getAttribute( "name" );
         String   request   = elem.getAttribute( "request" );
@@ -632,8 +525,8 @@ public class Admin {
         /**
          * Pivots only make sense on the server.
          */ 
-        if (engine instanceof AxisServer) {
-            Handler pivotHandler = engine.getHandler(pivot);
+        if (isServer) {
+            Handler pivotHandler = deployment.getHandler(new QName("", pivot));
             if (pivotHandler == null)
                 throw new AxisFault(JavaUtils.getMessage("noPivot00", pivot));
             Class pivotClass = pivotHandler.getClass();
@@ -665,50 +558,45 @@ public class Admin {
             throw AxisFault.makeFault(e);
         }
 
-        engine.getDeploymentRegistry().deployService(serv);
+        deployment.deployService(serv);
     }
 
     /**
      * Deploy a handler described in XML into an AxisEngine.
      *
      * @param elem the <handler> element
-     * @param engine the AxisEngine in which to deploy
      */
-    public static void registerHandler(Element elem, AxisEngine engine)
-        throws AxisFault
+    public static void registerHandler(Element elem,
+                                       WSDDDeployment deployment)
+        throws Exception
     {
-        try {
-            AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
-            String   name    = elem.getAttribute( "name" );
-            Handler h = null;
+        AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
+        String   name    = elem.getAttribute( "name" );
 
-            if ( name != null && name.equals("") ) name = null ;
+        WSDDHandler handler;
 
-            String   cls   = elem.getAttribute( "class" );
-            if ( cls != null && cls.equals("") ) cls = null ;
-            category.info( JavaUtils.getMessage("deployHandler00", name) );
+        if ( name != null && name.equals("") ) name = null ;
 
-            h = engine.getHandler( name );
-            if ( h == null ) h = (Handler) cl.loadClass(cls).newInstance();
-            getOptions( elem, h );
-            engine.deployHandler( name, h );
-        } catch (ClassNotFoundException e) {
-              throw AxisFault.makeFault(e);
-        } catch (InstantiationException e) {
-              throw AxisFault.makeFault(e);
-        } catch (IllegalAccessException e) {
-              throw AxisFault.makeFault(e);
-        }
+        String   cls   = elem.getAttribute( "class" );
+        if ( cls != null && cls.equals("") ) cls = null ;
+        category.info( JavaUtils.getMessage("deployHandler00", name) );
+
+        handler = new WSDDHandler();
+
+        handler.setQName(new QName(null, name));
+        getOptions( elem, handler.getParametersTable() );
+
+        deployment.deployHandler(handler);
     }
 
     /**
      * Deploy a transport described in XML into an AxisEngine.
      *
      * @param elem the <transport> element
-     * @param engine the AxisEngine in which to deploy
      */
-    public static void registerTransport(Element elem, AxisEngine engine)
-        throws AxisFault
+    public static void registerTransport(Element elem,
+                                         WSDDDeployment deployment)
+        throws Exception
     {
         String   name    = elem.getAttribute( "name" );
         String   request   = elem.getAttribute( "request" );
@@ -726,7 +614,6 @@ public class Admin {
         Vector reqNames = new Vector();
         Vector respNames = new Vector();
 
-        WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
         WSDDTransport transport = new WSDDTransport();
         
         transport.setName(name);
@@ -756,7 +643,7 @@ public class Admin {
         getOptions( elem, options );
         transport.setOptionsHashtable(options);
 
-        engine.getDeploymentRegistry().deployTransport(transport);
+        deployment.deployTransport(transport);
     }
 
     /**
@@ -767,8 +654,7 @@ public class Admin {
      */
     private static void registerTypeMapping(Element elem,
                                             WSDDTypeMappingContainer container,
-                                            boolean isBean,
-                                            DeploymentRegistry registry)
+                                            boolean isBean)
         throws Exception
     {
         WSDDTypeMapping mapping = new WSDDTypeMapping();
@@ -838,10 +724,8 @@ public class Admin {
                     null, null);
             }
         }
-        
-        if (registry != null) {
-            WSDDDeployment.deployMappingToRegistry(mapping, registry);
-        }
+
+        container.deployTypeMapping(mapping);
     }
 
     public static void main(String args[]) throws Exception {
