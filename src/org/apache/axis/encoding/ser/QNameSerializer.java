@@ -78,7 +78,7 @@ public class QNameSerializer implements Serializer {
     {
         QName qname = (QName) value;
         String str = context.qName2String(qname);
-        context.startElement(name, null);
+        context.startElement(name, attributes);
         context.writeString(str);
         context.endElement();
     }
