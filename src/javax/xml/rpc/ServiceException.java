@@ -107,13 +107,6 @@ public class ServiceException extends Exception {
     public Throwable getLinkedCause() {
         return cause;
     }
-
-    /**
-     * @deprecated Use getLinkedCause instead.
-     */
-    public Throwable getCause() {
-        return cause;
-    }
 }
 
 

@@ -238,14 +238,14 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @param namespaceURI 
      * @param mapping - TypeMapping for specific namespaces
      *
+     * @return Previous TypeMapping associated with the specified namespaceURI,
+     * or null if there was no TypeMapping associated with the specified namespaceURI
+     *
      * @throws JAXRPCException - If there is any error in the registration
      * of the TypeMapping for the specified namespace URI
-     * java.lang.IllegalArgumentException -
-     * if an invalid namespace URI is specified
      */
-    public void register(String namespaceURI,
-                         javax.xml.rpc.encoding.TypeMapping mapping)
-        throws JAXRPCException {
+    public javax.xml.rpc.encoding.TypeMapping register(String namespaceURI,
+                         javax.xml.rpc.encoding.TypeMapping mapping) {
 //        namespaceURI = "";
         if (mapping == null || 
             !(mapping instanceof TypeMapping)) {
@@ -264,6 +264,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         } else {
             del.setDelegate((TypeMapping) mapping);
         }
+        return null; // Needs works
     }
     
     /**
@@ -377,9 +378,9 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
 
 
     /**
-     * Removes all registered TypeMappings from the registery                   
+     * Removes all TypeMappings and namespaceURIs from this TypeMappingRegistry.
      */
-    public void clear(String namespaceURI) {
+    public void clear() {
         mapTM.clear();
     }
 
