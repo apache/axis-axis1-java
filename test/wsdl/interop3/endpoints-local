@@ -1,0 +1,27 @@
+#
+# Local Axis endpoints
+#
+# Where <endpointfile> has the syntax
+#   TESTNAME="<endpoint>"
+#
+Import1=http://localhost:8080/axis/services/SoapInteropImport1Port
+Import2=http://localhost:8080/axis/services/SoapInteropImport2Port
+Import3=http://localhost:8080/axis/services/SoapInteropImport3Port
+Compound1=http://localhost:8080/axis/services/SoapInteropCompound1Port
+Compound2=http://localhost:8080/axis/services/SoapInteropCompound2Port
+DocLit=http://localhost:8080/axis/services/WSDLInteropTestDocLitPort
+DocLitParam=http://localhost:8080/axis/services/WSDLInteropTestDocLitParamPort
+RpcEnc=http://localhost:8080/axis/services/WSDLInteropTestRpcEncPort
+
+# No client for this one yet
+EmptySA=
+
+# Group E
+
+#
+# NOTE: this test takes the WSDL URL
+#TestList=http://localhost:8080/axis/services/SoapInteropTestListPort?WSDL
+TestList=
+
+# we don't have this one yet
+TestHeaders=

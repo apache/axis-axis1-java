@@ -40,9 +40,9 @@ public class DocLitParamTestCase extends junit.framework.TestCase {
         WSDLInteropTestDocLitPortBinding binding;
         try {
             if (url != null) {
-                binding = new WSDLInteropTestDocLitServiceLocator().getWSDLInteropTestDocLitPort(url);
+                binding = new WSDLInteropTestDocLitServiceLocator().getWSDLInteropTestDocLitParamPort(url);
             } else {
-                binding = new WSDLInteropTestDocLitServiceLocator().getWSDLInteropTestDocLitPort();
+                binding = new WSDLInteropTestDocLitServiceLocator().getWSDLInteropTestDocLitParamPort();
             }
         }
         catch (javax.xml.rpc.ServiceException jre) {
