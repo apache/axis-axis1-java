@@ -891,6 +891,11 @@
           <mapping namespace="http://xml.apache.org/axis/PolymorphismTest"
               package="test.wsdl.polymorphism"/>
       </wsdl2java>
+      <copy todir="${build.dir}/work/test/wsdl/polymorphism" overwrite="yes">
+        <fileset dir="${test.dir}/wsdl/polymorphism">
+          <include name="C.java"/>
+        </fileset>
+      </copy>
 
     <!-- This tests the getPort method in generated services.  -->
     <wsdl2java url="test/wsdl/getPort/getPort.wsdl"
