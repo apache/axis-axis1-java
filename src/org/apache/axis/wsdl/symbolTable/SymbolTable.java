@@ -1195,7 +1195,7 @@ public class SymbolTable {
         // If this is a collection we want the XML to reflect the type in
         // the collection, not foo[unbounded].  
         // Same check is made in addOutParam below.
-        if (p.getType() instanceof CollectionTE) {
+        if (p.getType() instanceof CollectionElement) {
             p.setQName(p.getType().getRefType().getQName());
         }
 
@@ -1258,7 +1258,7 @@ public class SymbolTable {
         // If this is a collection we want the XML to reflect the type in
         // the collection, not foo[unbounded].  
         // Same check is made in addInishParam above.
-        if (p.getType() instanceof CollectionTE) {
+        if (p.getType() instanceof CollectionElement) {
             p.setQName(p.getType().getRefType().getQName());
         }
 
