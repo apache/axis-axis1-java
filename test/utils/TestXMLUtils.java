@@ -6,6 +6,9 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.test.AxisTestBase;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.message.PrefixedQName;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -13,12 +16,14 @@ import org.xml.sax.InputSource;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPBodyElement;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Iterator;
 
 public class TestXMLUtils extends AxisTestBase
 {
@@ -349,10 +354,16 @@ public class TestXMLUtils extends AxisTestBase
         "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" > " +
         "<SOAP-ENV:Body>\n" +
         "<echo:Echo xmlns:echo=\"EchoService\">\n" +
-        "<symbol>IBM</symbol>\n" +
+        "<symbol xml:lang=\"en\">IBM</symbol>\n" +
         "</echo:Echo>\n" +
         "</SOAP-ENV:Body></SOAP-ENV:Envelope>\n";
     
+    /**
+     * Confirm we can parse a SOAP Envelope, and make sure that the
+     * xml:lang attribute is handled OK while we're at it.
+     * 
+     * @throws Exception
+     */ 
     public void testSAXXXE3() throws Exception
     {
         StringReader strReader3 = new StringReader(msg2);
@@ -360,6 +371,17 @@ public class TestXMLUtils extends AxisTestBase
             new InputSource(strReader3), null, org.apache.axis.Message.REQUEST);
         dser.parse();
         SOAPEnvelope env = dser.getEnvelope();
+        SOAPBodyElement body = (SOAPBodyElement)env.getBody().getChildElements().next();
+        assertNotNull(body);
+        MessageElement child = (MessageElement)body.getChildElements().next();
+        assertNotNull(child);
+        Iterator i = child.getAllAttributes();
+        assertNotNull(i);
+        PrefixedQName attr = (PrefixedQName)i.next();
+        assertNotNull(attr);
+        assertEquals("Prefix for attribute was not 'xml'", attr.getPrefix(), "xml");
+        assertEquals("Namespace for attribute was not correct", attr.getURI(),
+                     Constants.NS_URI_XML);
     }
 
     public static void main(String[] args) throws Exception
