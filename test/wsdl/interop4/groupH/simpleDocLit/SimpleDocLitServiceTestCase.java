@@ -253,7 +253,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
 
         // Test operation
         int intParam = 66;
-        _enum enumParam = new _enum(1);
+        Enum enumParam = new Enum(1);
         for (int i=1; i < 3; i++) {
             try {
               _echoMultipleFaults4Request request =

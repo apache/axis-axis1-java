@@ -54,7 +54,7 @@ public class SimpleRpcEncBindingImpl implements test.wsdl.interop4.groupH.simple
         }
     }
 
-    public void echoMultipleFaults4(int whichFault, int param1, test.wsdl.interop4.groupH.simpleRPCenc._enum param2) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleRPCenc.EnumFault, test.wsdl.interop4.groupH.simpleRPCenc.IntFault {
+    public void echoMultipleFaults4(int whichFault, int param1, test.wsdl.interop4.groupH.simpleRPCenc.Enum param2) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleRPCenc.EnumFault, test.wsdl.interop4.groupH.simpleRPCenc.IntFault {
         switch (whichFault) {
             case 2:
                 throw new EnumFault(param2);
