@@ -55,7 +55,6 @@
 
 package org.apache.axis.utils.bytecode;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import java.io.ByteArrayInputStream;
@@ -119,6 +118,10 @@ public class ClassReader extends ByteArrayInputStream {
      */
     protected static byte[] getBytes(Class c) throws IOException {
         InputStream fin = c.getResourceAsStream('/' + c.getName().replace('.', '/') + ".class");
+        if (fin == null) {
+            throw new IOException(
+                    Messages.getMessage("cantLoadByecode", c.getName()));
+        }
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buf = new byte[1024];
