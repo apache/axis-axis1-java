@@ -652,8 +652,9 @@ public class HTTPSender extends BasicHandler {
                 : location.trim();
                 
         if ((returnCode > 199) && (returnCode < 300)) {
-                if (returnCode == 202)
+            if (returnCode == 202) {
                 return inp;
+            }
             // SOAP return is OK - so fall through
         } else if (msgContext.getSOAPConstants() ==
                 SOAPConstants.SOAP12_CONSTANTS) {
@@ -673,6 +674,11 @@ public class HTTPSender extends BasicHandler {
             // next try
                 invoke(msgContext);            
                 return inp;
+        } else if (returnCode == 100) {
+            msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+            msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
+            readHeadersFromSocket(socketHolder, msgContext, inp, headers);
+            return readFromSocket(socketHolder, msgContext, inp, headers);
         } else {
             // Unknown return code - so wrap up the content into a
             // SOAP Fault.
