@@ -85,6 +85,7 @@ public class Java2WSDL {
 //    protected static final int CLASSDIR_OPT = 'c';
     protected static final int METHODS_ALLOWED_OPT = 'm';
     protected static final int INHERITED_CLASS_OPT = 'a';
+    protected static final int FACTORY_CLASS_OPT = 'f';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -150,6 +151,11 @@ public class Java2WSDL {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_IMPL_OPT,
                 "output Implementation Wsdl filename, setting this causes --outputWsdlMode to be ignored"),
+        new CLOptionDescriptor("factory",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                FACTORY_CLASS_OPT,
+                "name of the Java2WSDLFactory class for extending WSDL generation functions"),
+
     };
 
     
@@ -201,6 +207,10 @@ public class Java2WSDL {
 
                     case INHERITED_CLASS_OPT:
                         emitter.setUseInheritedMethods(true);
+                        break;
+
+                    case FACTORY_CLASS_OPT:
+                        emitter.setFactory(option.getArgument());
                         break;
 
                     case HELP_OPT:
