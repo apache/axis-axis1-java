@@ -73,19 +73,19 @@ public interface SchemaVersion {
     /**
      * Get the appropriate QName for the "null"/"nil" attribute for this
      * Schema version.
-     * @return
+     * @return the appropriate "null"/"nil" QName
      */
     public QName getNilQName();
 
     /**
      * The XSI URI
-     * @return
+     * @return the XSI URI
      */
     public String getXsiURI();
 
     /**
      * The XSD URI
-     * @return
+     * @return the XSD URI
      */
     public String getXsdURI();
     

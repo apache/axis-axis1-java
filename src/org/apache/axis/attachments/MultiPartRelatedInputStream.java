@@ -370,7 +370,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
      *
      * @param id
      *
-     * @return
+     * @return the attachment Part
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -434,7 +434,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
     /**
      * Method getAttachments
      *
-     * @return
+     * @return the collection of attachments
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -452,7 +452,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
      *         
      * @param id
      *
-     * @return
+     * @return the part for the id
      *
      * @throws org.apache.axis.AxisFault
      */

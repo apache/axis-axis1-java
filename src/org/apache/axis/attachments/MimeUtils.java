@@ -272,14 +272,14 @@ public class MimeUtils {
     }
 
     /**
-     * This routine will create a multipar object from the parts and the SOAP content.
+     * This routine will create a multipart object from the parts and the SOAP content.
      * @param the env should be the text for the main root part.
      * @param the parts contain a collection of the message parts.
      *
      * @param env
      * @param parts
      *
-     * @return
+     * @return a new MimeMultipart object
      *
      * @throws org.apache.axis.AxisFault
      */

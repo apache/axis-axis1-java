@@ -359,7 +359,7 @@ public class TypeMappingImpl implements TypeMapping
      *
      * @param javaType
      * @param xmlType
-     * @return
+     * @return the type's QName
      * @throws JAXRPCException
      */
     public QName getXMLType(Class javaType, QName xmlType)

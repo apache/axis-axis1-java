@@ -199,7 +199,7 @@ public class Constants {
      *
      * @param attributes
      * @param search
-     * @return
+     * @return the value of the attribute
      */
     public static String getValue(Attributes attributes,
                                   QName [] search) {

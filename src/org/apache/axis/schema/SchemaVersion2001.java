@@ -81,7 +81,7 @@ public class SchemaVersion2001 implements SchemaVersion {
     /**
      * Get the appropriate QName for the "null"/"nil" attribute for this
      * Schema version.
-     * @return
+     * @return {http://www.w3.org/2001/XMLSchema-instance}nil
      */
     public QName getNilQName() {
         return QNAME_NIL;
@@ -89,7 +89,7 @@ public class SchemaVersion2001 implements SchemaVersion {
 
     /**
      * The XSI URI
-     * @return
+     * @return the XSI URI
      */
     public String getXsiURI() {
         return Constants.URI_2001_SCHEMA_XSI;
@@ -97,7 +97,7 @@ public class SchemaVersion2001 implements SchemaVersion {
 
     /**
      * The XSD URI
-     * @return
+     * @return the XSD URI
      */
     public String getXsdURI() {
         return Constants.URI_2001_SCHEMA_XSD;
