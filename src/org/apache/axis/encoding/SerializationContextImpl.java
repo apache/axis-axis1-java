@@ -380,7 +380,7 @@ public class SerializationContextImpl implements SerializationContext
      */
     public String getPrefixForURI(String uri, String defaultPrefix, boolean attribute)
     {
-        if ((uri == null) || (uri.equals("")))
+        if ((uri == null) || (uri.length() == 0))
             return null;
 
         // If we're looking for an attribute prefix, we shouldn't use the
@@ -447,8 +447,9 @@ public class SerializationContextImpl implements SerializationContext
     public String qName2String(QName qName, boolean writeNS)
     {
         String prefix = null;
+        String namespaceURI = qName.getNamespaceURI();
 
-        if (qName.getNamespaceURI().equals("")) {
+        if (namespaceURI.length() == 0) {
             if (writeNS) {
                 // If this is unqualified (i.e. prefix ""), set the default
                 // namespace to ""
@@ -458,7 +459,7 @@ public class SerializationContextImpl implements SerializationContext
                 }
             }
         } else {
-            prefix = getPrefixForURI(qName.getNamespaceURI());
+            prefix = getPrefixForURI(namespaceURI);
         }
 
         if ((prefix == null) || (prefix.length() == 0))
@@ -487,14 +488,17 @@ public class SerializationContextImpl implements SerializationContext
     public String attributeQName2String(QName qName) {
         String prefix = null;
 
-        if (! qName.getNamespaceURI().equals("")) {
+        if (qName.getNamespaceURI().length() > 0) {
             prefix = getPrefixForURI(qName.getNamespaceURI(), null, true);
         }
 
-        String ret = (((prefix != null) && (!prefix.equals(""))) ?
-                      prefix + ":" : "") +
-           qName.getLocalPart();
-        return ret;
+        if ((prefix == null) || (prefix.length() == 0))
+           return qName.getLocalPart();
+
+        StringBuffer sb = new StringBuffer(prefix);
+        sb.append(':');
+        sb.append(qName.getLocalPart());
+        return sb.toString();
     }
 
     /**
@@ -871,8 +875,8 @@ public class SerializationContextImpl implements SerializationContext
 
                 String prefix = "";
                 String uri = attributes.getURI(i);
-                if (uri != null && !uri.equals("")) {
-                    if (qname.equals("")) {
+                if (uri != null && uri.length() > 0) {
+                    if (qname.length() == 0) {
                         // If qname isn't set, generate one
                         prefix = getPrefixForURI(uri);
                     } else {
@@ -884,14 +888,14 @@ public class SerializationContextImpl implements SerializationContext
                                                      prefix, true);
                         }
                     }
-                    if (!prefix.equals("")) {
+                    if (prefix.length() > 0) {
                         qname = prefix + ":" + attributes.getLocalName(i);
                     } else {
                         qname = attributes.getLocalName(i);
                     }
                 } else {
                    qname = attributes.getQName(i);
-                    if(qname.equals(""))
+                    if(qname.length() == 0)
                         qname = attributes.getLocalName(i);
                 }
 
@@ -908,7 +912,7 @@ public class SerializationContextImpl implements SerializationContext
 
         for (Mapping map=nsStack.topOfFrame(); map!=null; map=nsStack.next()) {
             StringBuffer sb = new StringBuffer("xmlns");
-            if (!map.getPrefix().equals("")) {
+            if (map.getPrefix().length() > 0) {
                 sb.append(":");
                 sb.append(map.getPrefix());
             }
