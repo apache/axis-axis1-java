@@ -54,6 +54,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestNCName.class);
         suite.addTestSuite(TestNMToken.class);
         suite.addTestSuite(TestDuration.class);
+        suite.addTestSuite(TestURI.class);
         return suite;
     }
 }
