@@ -58,6 +58,7 @@ Copyright:
            destdir="${build.dest}" 
            fork="${javac.fork}"
            nowarn="${nowarn}"
+		   source="${source}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="foo.java" />

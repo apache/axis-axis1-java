@@ -84,7 +84,7 @@ Copyright:
     </copy>
 
     <!-- Compile the Web Service -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
         <classpath refid="classpath" />
       <include name="test/wsdl/addrNoImplSEI/**.java" />
       <exclude name="test/wsdl/addrNoImplSEI/*TestCase.java" />
@@ -127,8 +127,7 @@ Copyright:
       </fileset>
     </copy>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
-           debug="${debug}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
         <classpath refid="classpath" />
       <include name="test/wsdl/addrNoImplSEI/**.java" />
     </javac>

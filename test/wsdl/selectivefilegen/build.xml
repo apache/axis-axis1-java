@@ -231,7 +231,7 @@ Copyright:
         <property name="prop3" value="value3"/>
     </wsdl2java>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/selectivefilegen/**/*.java" />

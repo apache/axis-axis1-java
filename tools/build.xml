@@ -65,6 +65,7 @@ Copyright:
   <echo message="Building ForEach" />
   <javac srcdir="${tools.dir}" 
       debug="${debug}"
+      source="${source}"
       nowarn="${nowarn}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
@@ -75,6 +76,7 @@ Copyright:
   <echo message="Building RunAxisFunctionalTest" />
   <javac srcdir="${tools.dir}" 
       debug="${debug}"
+      source="${source}"
       nowarn="${nowarn}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
@@ -85,6 +87,7 @@ Copyright:
   <echo message="Building WSDL tasks" />
   <javac srcdir="${tools.dir}"
     debug="${debug}"
+    source="${source}"
     nowarn="${nowarn}"
     destdir="${tools.build.dir}">
     <classpath>

@@ -50,7 +50,7 @@ Copyright:
 
 <target name="compile">
   <echo message="Compiling test.wsdd"/>
-  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
