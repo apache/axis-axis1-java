@@ -62,7 +62,6 @@ import org.apache.axis.utils.Messages;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.Service;
-import javax.activation.DataHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
