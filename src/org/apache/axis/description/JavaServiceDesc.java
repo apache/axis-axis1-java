@@ -1271,9 +1271,14 @@ public class JavaServiceDesc implements ServiceDesc {
                 */
 
                 FaultDesc fault = operation.getFaultByClass(ex);
+                boolean isNew;
+                
                 // If we didn't find one, create a new one
                 if (fault == null) {
                     fault = new FaultDesc();
+                    isNew = true;
+                } else {
+                    isNew = false;
                 }
                 
                 // Try to fil in any parts of the faultDesc that aren't there
@@ -1321,8 +1326,10 @@ public class JavaServiceDesc implements ServiceDesc {
                     fault.setQName(new QName(pkgAndClsName));
                 }
 
-                // Add the fault to the operation
-                operation.addFault(fault);
+                if (isNew) {
+                    // Add the fault to the operation
+                    operation.addFault(fault);
+                }
             }
         }
     }
