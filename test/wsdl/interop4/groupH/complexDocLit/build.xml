@@ -48,7 +48,7 @@ Copyright (c) 2002-2003 Apache Software Foundation.
         <delete dir="${build.dir}/work/${componentName}"/>
     </target>
     
-    <target name="compile">
+    <target name="compile" depends="setenv">
         <property name="testname" value="complexDocLit"/>
         
         <!-- generate skeletons -->

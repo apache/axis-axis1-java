@@ -42,13 +42,13 @@ Then, we construct a classpath that includes, hopefully, all of the things that 
 <!-- =========================================================================================== -->
 <!-- This target should copy in anything that this test needs, or copy out to staging -->
 <!-- =========================================================================================== -->
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <!-- =========================================================================================== -->
 <!-- This target actually "makes" things -->
 <!-- =========================================================================================== -->
 
-<target name="compile">
+<target name="compile" depends="copy">
   <echo message="Usually, this would build something..." />
 </target>
 

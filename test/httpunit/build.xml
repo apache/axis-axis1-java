@@ -55,6 +55,7 @@ Copyright:
   
         &properties;
         &paths;
+        &targets;
         <!-- &taskdefs; -->
         <!-- &taskdefs_post_compile; -->
   
@@ -100,7 +101,7 @@ Copyright:
     description="compile and run the tests"/>
   
   <!-- init configures things -->
-  <target name="init" >
+  <target name="init" depends="setenv">
     <echo> Axis home=${axis.home}</echo>
     <mkdir dir="${test.classes.dir}" />
     <mkdir dir="${test.data.dir}" />

@@ -43,15 +43,9 @@ Copyright:
     &targets;
 
   <target name="clean"/>
-  <target name="copy"/>
-  <target name="compile">
-    <condition property="jms.present" >
-      <available classname="javax.jms.Message" classpathref="classpath" />
-    </condition>
+  <target name="copy" depends="setenv"/>
 
-<!-- ===================================================================
-   <echo message="jms.present=${jms.present}" />
-==================================================================== -->
+  <target name="compile" depends="copy">
 
     <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath>
