@@ -135,6 +135,7 @@ public class ClassRep {
     private Vector   _methods    = new Vector();
     private Vector   _fields     = new Vector();
     private HashMap  _fieldNames = new HashMap();
+    private Vector   _stopList    = null;
     
 
     /**
@@ -167,26 +168,24 @@ public class ClassRep {
         _name = cls.getName();
         _isInterface = cls.isInterface();
         _modifiers = cls.getModifiers();
+        _stopList = stopList;
 
         // Get our parent class, avoid Object and any class on the stop list.
-        Class superClazz = cls.getSuperclass();
-        if (superClazz != null &&
-            superClazz != Object.class &&
-            (stopList == null || !stopList.contains(superClazz.getName()))) {
-            _super = new ClassRep(superClazz, inhMethods, stopList);
+        Class superClass = cls.getSuperclass();
+        if (isClassOk(superClass)) {
+            _super = new ClassRep(superClass, inhMethods, _stopList);
         }
         
         // Add the interfaces
         for (int i=0; i < cls.getInterfaces().length; i++) {
-            _interfaces.add(new ClassRep(cls.getInterfaces()[i], inhMethods, stopList));
+            _interfaces.add(new ClassRep(cls.getInterfaces()[i], inhMethods, _stopList));
         }
         // Add the methods
-        addMethods(cls, inhMethods, stopList, implClass);
+        addMethods(cls, inhMethods, implClass);
 
         // Add the fields
         addFields(cls);
     }
-
 
     /**
      * Getters/Setters
@@ -218,11 +217,11 @@ public class ClassRep {
      *                   class that implements or extends cls.  The
      *                   implClass is used to obtain parameter names.            
      */ 
-    protected void addMethods(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
+    protected void addMethods(Class cls, boolean inhMethods, Class implClass) {
         // Constructs a vector of all the public methods
 
         // walk class intheritance chain
-        walkInheritanceChain(cls, inhMethods, stopList, implClass);
+        walkInheritanceChain(cls, inhMethods, implClass);
 
         // If we aren't doing inhertance, all done
         if (!inhMethods) {
@@ -231,19 +230,44 @@ public class ClassRep {
         // add methods from interfaces
         Class[] interfaces = cls.getInterfaces();
         for (int i=0; i < interfaces.length; i++) {
-            walkInheritanceChain(interfaces[i], inhMethods, stopList, implClass);
+            walkInheritanceChain(interfaces[i], inhMethods, implClass);
         } 
         
         return;
     }
 
-    private void walkInheritanceChain(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
+    /**
+     * Return true if we should process this class
+     */ 
+    private boolean isClassOk(Class clazz) {
+        if (clazz == null)
+            return false;
+
+        String name = clazz.getName();
+
+        if (_stopList != null) {
+            // Use the user provided list of classes to stop
+            if (_stopList.contains(name))
+                return false;
+        } else {
+            // if stop list not provided, default to java.* and javax.*
+            if (name.startsWith("java.") || name.startsWith("javax."))
+                return false;
+        }
+        
+        // Didn't find a reason to reject this class
+        return true;
+    }
+
+
+    /**
+     * Iterate up the inheritance chain and construct the list of methods
+     * Appends to the _methods class variable.
+     */ 
+    private void walkInheritanceChain(Class cls, boolean inhMethods, Class implClass) {
         Method[] m;
-        // iterate up the inheritance chain and construct the list of methods
         Class currentClass = cls;
-        while (currentClass != null &&
-                currentClass != Object.class &&
-                (stopList == null || !stopList.contains(currentClass.getName()))) {
+        while (isClassOk(currentClass)) {
 
             // get the methods in this class
             m = currentClass.getDeclaredMethods();
