@@ -247,6 +247,9 @@ public class SOAPEnvelope extends MessageElement
      * Remove all headers
      */ 
     public void removeHeaders() {
+        if (header != null) {
+            removeChild(header);
+        }
         header = null;
     }
 
@@ -280,6 +283,9 @@ public class SOAPEnvelope extends MessageElement
      * Remove the SOAP Body
      */ 
     public void removeBody() {
+        if (body != null) {
+            removeChild(body);
+        }
         body = null;
     }
 
