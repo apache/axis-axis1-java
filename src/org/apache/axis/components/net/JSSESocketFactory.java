@@ -77,7 +77,7 @@ import java.util.Hashtable;
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class JSSESocketFactory extends DefaultSocketFactory {
+public class JSSESocketFactory extends DefaultSocketFactory implements SecureSocketFactory {
 
     /** Field sslFactory           */
     private static final SSLSocketFactory sslFactory = (SSLSocketFactory)SSLSocketFactory.getDefault();

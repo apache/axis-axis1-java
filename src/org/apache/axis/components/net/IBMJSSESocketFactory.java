@@ -83,7 +83,7 @@ import java.util.Hashtable;
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class IBMJSSESocketFactory extends DefaultSocketFactory {
+public class IBMJSSESocketFactory extends DefaultSocketFactory implements SecureSocketFactory {
 
     /** Field keystoreType           */
     private String keystoreType;
