@@ -261,7 +261,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
         pw.println("        // compare elements");
         pw.println("        " +  className + " other = (" + className + ") obj;");
         pw.println("        if (this == obj) return true;");
-        pw.println("        if (! obj instanceof " + className + ") return false;");
+        pw.println("        if (! (obj instanceof " + className + ")) return false;");
         if (names.size() == 0) {
             pw.println("        return true;");
         } else {
