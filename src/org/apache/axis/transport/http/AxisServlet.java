@@ -462,7 +462,7 @@ public class AxisServlet extends HttpServlet {
 
             // Create a Session wrapper for the HTTP session.
             // These can/should be pooled at some point.  (Sam is Watching! :-)
-            msgContext.setSession(new AxisHttpSession(req.getSession()));
+            msgContext.setSession(new AxisHttpSession(req));
 
             /* Save the real path */
             /**********************/

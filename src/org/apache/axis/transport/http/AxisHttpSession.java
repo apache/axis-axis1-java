@@ -58,6 +58,7 @@ package org.apache.axis.transport.http;
 import org.apache.axis.session.Session;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * An HTTP/Servlet implementation of Axis sessions.
@@ -67,6 +68,12 @@ import javax.servlet.http.HttpSession;
 public class AxisHttpSession implements Session
 {
     private HttpSession rep;
+    private HttpServletRequest req;
+    
+    public AxisHttpSession(HttpServletRequest realRequest)
+    {
+        req = realRequest;
+    }
     
     public AxisHttpSession(HttpSession realSession)
     {
@@ -88,6 +95,7 @@ public class AxisHttpSession implements Session
      */
     public Object get(String key)
     {
+        ensureSession();
         return rep.getAttribute(key);
     }
     
@@ -98,6 +106,7 @@ public class AxisHttpSession implements Session
      */
     public void set(String key, Object value)
     {
+        ensureSession();
         rep.setAttribute(key, value);
     }
     
@@ -107,6 +116,7 @@ public class AxisHttpSession implements Session
      */
     public void remove(String key)
     {
+        ensureSession();
         rep.removeAttribute(key);
     }
     
@@ -118,6 +128,7 @@ public class AxisHttpSession implements Session
      */
     public void setTimeout(int timeout)
     {
+        ensureSession();
         rep.setMaxInactiveInterval(timeout);
     }
 
@@ -127,6 +138,7 @@ public class AxisHttpSession implements Session
      * @return the timeout value for this session.
      */
     public int getTimeout() {
+        ensureSession();
         return rep.getMaxInactiveInterval();
     }
 
@@ -135,5 +147,11 @@ public class AxisHttpSession implements Session
      */
     public void touch() {
         // ???
+    }
+
+    protected void ensureSession() {
+        if (rep == null) {
+              rep = req.getSession();
+        }
     }
 }
