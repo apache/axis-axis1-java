@@ -118,6 +118,7 @@ Copyright:
   <target name="compile" depends="init" if="execute.httpunit">
     <javac destdir="${test.classes.dir}"
            debug="${build.debug}"
+           nowarn="${nowarn}" 
            debuglevel="${debuglevel}"
            includeAntRuntime="false"
            fork="${javac.fork}"

@@ -75,7 +75,7 @@ Copyright:
 
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work" 
-      destdir="${build.dest}" debug="on">
+      destdir="${build.dest}" debug="on" nowarn="${nowarn}">
       <classpath refid="test-classpath" />
       <include name="test/wsdl/interop3/${testname}/*.java" />
     </javac>

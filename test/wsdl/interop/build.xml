@@ -74,7 +74,7 @@ Copyright:
     </copy>
 
     <!-- Compile the sample code -->
-    <javac srcdir="${axis.home}" destdir="${build.dest}" fork="${javac.fork}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
            debug="${debug}">
       <classpath>
         <pathelement location="${build.lib}/${name}.jar"/>
@@ -269,7 +269,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.definitions"/>
     </wsdl2java>
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/import1/*.java" />
       <include name="test/wsdl/interop3/import1/**/*.java" />
@@ -293,7 +293,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.step6.definitions"/>
     </wsdl2java>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/import1/step6/**/*.java" />
     </javac>
@@ -310,7 +310,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import2.xsd"/>
     </wsdl2java>
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/import2/*.java" />
     </javac>
@@ -333,7 +333,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.step6.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import2.step6.xsd"/>
     </wsdl2java>
-      <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" fork="${javac.fork}">
+      <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}" fork="${javac.fork}">
         <classpath refid="classpath" />
         <include name="test/wsdl/interop3/import2/step6/**/*.java" />
       </javac>
@@ -349,7 +349,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.absimport2.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.absimport2.xsd"/>
     </wsdl2java>
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/absimport2/*.java" />
     </javac>
@@ -386,7 +386,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import3.xsd"/>
         <mapping namespace="http://soapinterop.org/xsd2" package="test.wsdl.interop3.import3.xsd2"/>
     </wsdl2java>
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/import3/*.java" />
     </javac>
@@ -413,7 +413,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/xsd2" package="test.wsdl.interop3.import3.step6.xsd2"/>
     </wsdl2java>
     
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/import3/step6/**/*.java" />
     </javac>
@@ -564,7 +564,7 @@ Copyright:
 
     <delete dir="${build.dir}/classes/samples/userguide/example6"/>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="com/**/*.java" />

@@ -55,7 +55,7 @@ Copyright:
         </copy>
 
         <!-- Compile the sample code -->
-        <javac srcdir="${axis.home}" destdir="${build.dest}" fork="${javac.fork}"
+        <javac srcdir="${axis.home}" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
             debug="${debug}">
             <classpath>
                 <pathelement location="${build.lib}/${name}.jar"/>
@@ -92,7 +92,7 @@ Copyright:
 
         <delete dir="${build.dir}/classes/samples/userguide/example6"/>
 
-        <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
+        <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
             <classpath>
                 <path refid="classpath"/>
             </classpath>
