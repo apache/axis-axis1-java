@@ -199,9 +199,6 @@ public class Call implements javax.xml.rpc.Call {
     // A place to store any client-specified headers
     private Vector             myHeaders       = null;
 
-    // The desired return Java type, so we can do conversions if needed
-    private Class              returnJavaType  = null;
-
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
@@ -1015,7 +1012,6 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setReturnType(QName xmlType, Class javaType) {
         setReturnType(xmlType);
-        returnJavaType = javaType;
         // Use specified type as the operation return
         operation.setReturnClass(javaType);
     }
@@ -1096,8 +1092,6 @@ public class Call implements javax.xml.rpc.Call {
         TypeMapping tm = getTypeMapping();
         operation.setReturnType(tm.getTypeQName(cls));
         parmAndRetReq = true;
-
-        returnJavaType = cls;
     }
 
     /**
@@ -1157,7 +1151,6 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Note: Not part of JAX-RPC specification.
      * 
-     * @param  portName        PortName in the WSDL doc to search for
      * @param  opName          Operation(method) that's going to be invoked
      */     
     public void setOperation(String opName) {
@@ -1423,7 +1416,6 @@ public class Call implements javax.xml.rpc.Call {
 
         // Get the SOAPAction
         ////////////////////////////////////////////////////////////////////
-        String opStyle = null;
         BindingOperation bop = binding.getBindingOperation(opName,
                                                            null, null);
         if ( bop == null )
@@ -1434,7 +1426,6 @@ public class Call implements javax.xml.rpc.Call {
             Object obj = list.get(i);
             if ( obj instanceof SOAPOperation ) {
                 SOAPOperation sop    = (SOAPOperation) obj ;
-                opStyle = ((SOAPOperation) obj).getStyle();
                 String        action = sop.getSoapActionURI();
                 if ( action != null ) {
                     setUseSOAPAction(true);
@@ -2306,8 +2297,8 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         // Convert type if needed
-        if (returnJavaType != null) {
-            result = JavaUtils.convert(result, returnJavaType);
+        if (operation != null && operation.getReturnClass() != null) {
+            result = JavaUtils.convert(result, operation.getReturnClass());
         }
 
         return( result );
@@ -2492,7 +2483,10 @@ public class Call implements javax.xml.rpc.Call {
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFault) {
-            if(returnJavaType == null || returnJavaType != javax.xml.soap.SOAPMessage.class) 
+            if(operation == null ||
+                    operation.getReturnClass() == null ||
+                    operation.getReturnClass() != 
+                        javax.xml.soap.SOAPMessage.class) 
                 throw ((SOAPFault)respBody).getFault();
         }
     }
