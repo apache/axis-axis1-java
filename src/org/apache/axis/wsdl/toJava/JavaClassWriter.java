@@ -155,7 +155,13 @@ public abstract class JavaClassWriter extends JavaWriter {
      */
     protected void registerFile(String file) {
 
-        String fqClass = getPackage() + '.' + getClassName();
+        final String pkg = getPackage();
+        String fqClass;
+        if (pkg != null && pkg.length() > 0) {
+            fqClass = pkg + '.' + getClassName();
+        } else {
+            fqClass = getClassName();
+        }
 
         emitter.getGeneratedFileInfo().add(file, fqClass, type);
     }    // registerFile
@@ -211,8 +217,9 @@ public abstract class JavaClassWriter extends JavaWriter {
      */
     protected void writePackage(PrintWriter pw) throws IOException {
 
-        if (getPackage() != null) {
-            pw.println("package " + getPackage() + ";");
+        final String pkg = getPackage();
+        if (pkg != null && pkg.length() > 0) {
+            pw.println("package " + pkg + ";");
             pw.println();
         }
     }    // writePackage
