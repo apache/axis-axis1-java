@@ -683,32 +683,11 @@ public class Types {
      * @return QName
      */
     public QName getTypeQName(Class javaType) {
-
-        QName qName = null;
-
-        // Use the typeMapping information to lookup the qName.
-        QName dQName = null;
-
-        if (defaultTM != null) {
-            dQName = defaultTM.getTypeQName(javaType);
-        }
-
-        if (tm != null) {
+        QName qName = defaultTM.getTypeQName(javaType);
+        if(qName == null) {
             qName = tm.getTypeQName(javaType);
         }
-
-        if (qName == null) {
-            qName = dQName;
-        } else if ((qName != null) && (qName != dQName)) {
-
-            // If the TM and default TM resulted in different
-            // names, choose qName unless it is a schema namespace.
-            // (i.e. prefer soapenc primitives over schema primitives)
-            if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
-                qName = dQName;
-            }
-        }
-
+        
         // If the javaType is an array and the qName is
         // SOAP_ARRAY, construct the QName using the
         // QName of the component type
