@@ -184,7 +184,12 @@ public class ParameterDesc implements Serializable {
     }
 
     public String getName() {
-        return name.getLocalPart();
+        if (name == null) {
+            return null;
+        }
+        else {
+            return name.getLocalPart();
+        }
     }
 
     public void setName(String name) {
@@ -231,6 +236,11 @@ public class ParameterDesc implements Serializable {
         }
 
         this.javaType = javaType;
+
+        // If it doesn't already exist, try to set the MIME type.
+        if (mimeType == null) {
+            mimeType = JavaUtils.javaToMIME(javaType);
+        }
     }
 
     public byte getMode() {
@@ -261,7 +271,7 @@ public class ParameterDesc implements Serializable {
      * @param value boolean that indicates if return parameter of OperationDesc
      */
     public void setIsReturn(boolean value) {
-        isReturn = value; 
+        isReturn = value;
     }
 
     /**

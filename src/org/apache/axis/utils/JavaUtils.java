@@ -1086,4 +1086,27 @@ public class JavaUtils
         }
     } // mimeToJava
 
+    /**
+     * Given a Java type, return the MIME type string mapping
+     */
+    public static String javaToMIME(Class javaType) {
+        if (javaType != null) {
+            if (java.awt.Image.class.isAssignableFrom(javaType)) {
+                return "image/jpeg";
+            }
+            else if (javax.xml.transform.Source.class.isAssignableFrom(javaType)) {
+                return "text/xml";
+            }
+            else if (javax.mail.internet.MimeMultipart.class.isAssignableFrom(
+                    javaType)) {
+                return "multipart/related";
+            }
+            else if (javax.activation.DataHandler.class.isAssignableFrom(
+                    javaType)) {
+                return "";
+            }
+        }
+        return null;
+    } // javaToMIME
+
 }
