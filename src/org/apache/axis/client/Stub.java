@@ -216,6 +216,16 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     } // _getProperty
 
     /**
+     * Remove a property from this instance of the Stub
+     * NOTE: This is NOT part of JAX-RPC and is an Axis extension.
+     *
+     * @param name the name of the property to remove
+     * @return the value to which the key had been mapped, or null if the key did not have a mapping.
+     */
+    public Object removeProperty(String name) {
+        return cachedProperties.remove(name);
+    }
+    /**
      * Return the names of configurable properties for this stub class.
      */
     public Iterator _getPropertyNames() {
