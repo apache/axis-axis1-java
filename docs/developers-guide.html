@@ -378,5 +378,14 @@ indicate that functional-tests should continue if a failure occurs.
 <blockquote><tt>ant functional-tests -Dtest.functional.SimpleAxisPort=8011
 -Dtest.functional.fail=no</tt></blockquote>
 The SOAP messages for all of the tests should appear in the tcpmon window.
+
+<h4>Running a single functional test</h4>
+In one window start the server:
+<br>
+<blockquote><tt>java org.apache.axis.transport.http.SimpleAxisServer -p 8080</tt></blockquote>
+In another window, first deploy the service you're testing:
+<blockquote><tt>java org.apache.axis.client.AdminClient deploy.wsdd</tt></blockquote>
+Then bring up the JUnit user interface with your test.  For example, to run the the multithread test case:
+<blockquote><tt>java junit.swingui.TestRunner -noloading test.wsdl.multithread.MultithreadTestCase</tt></blockquote>
 </body>
 </html>
