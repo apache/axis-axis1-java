@@ -172,8 +172,10 @@ public abstract class WSDDTargetedChain
         if (resp != null)
             respHandler = resp.getInstance(registry);
 
-        return new org.apache.axis.SimpleTargetedChain(reqHandler, pivot,
+        Handler retVal = new org.apache.axis.SimpleTargetedChain(reqHandler, pivot,
                                                        respHandler);
+        retVal.setOptions(getParametersTable());
+        return retVal;
     }
 
     /**
