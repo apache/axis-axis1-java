@@ -61,24 +61,10 @@ import java.io.InputStreamReader;
 
 import java.util.Properties;
 
-/**
- * TODO: Put description here.
- * <p>
- * @author  name TODO: put author's name here.
- */
 class FactoryFinder {
 
-    /** TODO: Put description here. */
     FactoryFinder() {}
 
-    /**
-     * TODO: Put description here.
-     * <p>
-     * @param   s              String.
-     * @param   classloader    ClassLoader.
-     * @return                 Object.
-     * @throws  SOAPException  TODO: Put exception class-name and description here.
-     */
     private static Object newInstance(String s, ClassLoader classloader)
             throws SOAPException {
 
@@ -102,14 +88,6 @@ class FactoryFinder {
         }
     }
 
-    /**
-     * TODO: Put description here.
-     * <p>
-     * @param   s              String.
-     * @param   s1             String.
-     * @return                 Object.
-     * @throws  SOAPException  TODO: Put exception class-name and description here.
-     */
     static Object find(String s, String s1) throws SOAPException {
 
         ClassLoader classloader;

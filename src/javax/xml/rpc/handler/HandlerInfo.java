@@ -52,7 +52,76 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
 
-/** */
-public interface SOAPFaultElement extends SOAPElement {}
+package javax.xml.rpc.handler;
+
+import java.io.Serializable;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * The <code>javax.xml.rpc.handler.HandlerInfo</code> represents
+ * information about a handler in the HandlerChain. All elements
+ * in the HandlerChain are of the type HandlerInfo.
+ * @see HandlerChain
+ */
+public class HandlerInfo implements Serializable {
+
+    /** Default constructor */
+    public HandlerInfo() {
+        handlerClass = null;
+        config = new HashMap();
+    }
+
+    /**
+     *  Constructor for HandlerInfo
+     *  <p>
+     *  @param  handlerClass Class for the Handler
+     *  @param  config Handler Configuration as a java.util.Map
+     */
+    public HandlerInfo(Class handlerClass, Map config) {
+        this.handlerClass = handlerClass;
+        this.config = config;
+    }
+
+    /**
+     *  Sets the Handler class
+     *  @param  handlerClass Class for the Handler
+     */
+    public void setHandlerClass(Class handlerClass) {
+        this.handlerClass = handlerClass;
+    }
+
+    /**
+     *  Gets the Handler class
+     *  @return Returns null if no Handler class has been
+     *    set; otherwise the set handler class
+     */
+    public Class getHandlerClass() {
+        return handlerClass;
+    }
+
+    /**
+     *  Sets the Handler configuration map
+     *  @param  config Configuration map
+     */
+    public void setHandlerConfig(Map config) {
+        this.config = config;
+    }
+
+    /**
+     *  Gets the Handler configuration map
+     *  @return  Returns empty Map if no configuration map
+     *     has been set; otherwise returns the set configuration map
+     */
+    public Map getHandlerConfig() {
+        return config;
+    }
+
+    /** Handler Class */
+    private Class handlerClass;
+
+    /** Configuration Map */
+    private Map config;
+}

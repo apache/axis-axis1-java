@@ -212,6 +212,6 @@ public class SOAPException extends Exception {
         }
     }
 
-    /** TODO: Put description here. */
+    /** */
     private Throwable cause;
 }
