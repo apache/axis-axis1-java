@@ -982,46 +982,56 @@ public class SymbolTable {
             Part part = (Part) i.next();
             QName elementName = part.getElementName();
             QName typeName = part.getTypeName();
+            
+            if (!literal) {
+                // not doing literal use, add this type or element name
+                if (typeName != null) {
+                    v.add(getType(typeName));
+                    v.add(part.getName());
+                } else if (elementName != null) {
+                    v.add(getElement(elementName));
+                    v.add(part.getName());
+                }
+                continue;   // next part
+            }
+                
+            // See if we can map all the XML types to java types
+            // if we can, we use these as the types
+            Node node = null;
+            Element e;
             if (typeName != null) {
-                v.add(getType(typeName));
-                v.add(part.getName());
+                node = getTypeEntry(typeName, false).getNode();
             } else if (elementName != null) {
-                // if literal use, try to map the elements
-                if (literal) {
-                    // See if we can map all the XML types to java types
-                    // if we can, we use these as the types
-                    
-                    // Get the Element
-                    Element e = getElement((elementName));
-                    Node node = getTypeEntry(elementName, true).getNode();
-                    
-                    // Check if this element is of the form:
-                    //    <element name="foo" type="tns:foo_type"/> 
-                    QName type = Utils.getNodeTypeRefQName(e.getNode(), "type");
-                    if (type != null)
-                        node = getTypeEntry(type, false).getNode();
-                    
-                    // Get the nested type entries.
-                    Vector vTypes = SchemaUtils.getComplexElementTypesAndNames(
-                            //getTypeEntry(elementName, true).getNode(), 
-                            node, 
-                            this);
-                    
-                    if (vTypes != null) {
-                        // add the elements in this list
-                        v.addAll(vTypes);
-                    } else {
-                        // XXX - This should be a SOAPElement/SOAPBodyElement
-                        v.add(getElement(elementName));
-                        v.add(part.getName());
-                    }
-                } else {
-                    // not doing literal use, add this element name
+                node = getTypeEntry(elementName, true).getNode();
+                // Check if this element is of the form:
+                //    <element name="foo" type="tns:foo_type"/> 
+                QName type = Utils.getNodeTypeRefQName(node, "type");
+                if (type != null)
+                    node = getTypeEntry(type, false).getNode();
+            }
+            
+            if (node == null)
+                continue;  // ??? Skip this part, something is wrong
+            
+            // Get the nested type entries.
+            Vector vTypes = 
+                    SchemaUtils.getComplexElementTypesAndNames(node, this);
+            
+            if (vTypes != null) {
+                // add the elements in this list
+                v.addAll(vTypes);
+            } else {
+                // XXX - This should be a SOAPElement/SOAPBodyElement
+                if (typeName != null) {
+                    v.add(getType(typeName));
+                    v.add(part.getName());
+                } else if (elementName != null) {
                     v.add(getElement(elementName));
                     v.add(part.getName());
                 }
             }
-        }
+        } // while
+        
     } // partStrings
 
     /**
