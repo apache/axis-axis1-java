@@ -517,7 +517,7 @@ public class Utils {
     /**
      * Given a type, return the Java mapping of that type's holder.
      */
-    public static String holder(Type type) {
+    public static String holder(Type type, SymbolTable symbolTable) {
         String typeValue = type.getName();
         if (typeValue.equals("java.lang.String")) {
             return "javax.xml.rpc.holders.StringHolder";
@@ -536,6 +536,9 @@ public class Utils {
         }
         else if (typeValue.equals("byte[]")) {
             return "javax.xml.rpc.holders.ByteArrayHolder";
+        }
+        else if (typeValue.endsWith("[]")) {
+            return symbolTable.getJavaName(type.getQName()) + "Holder";
         }
         else if (typeValue.equals("int")
                 || typeValue.equals("long")

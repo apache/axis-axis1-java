@@ -87,23 +87,29 @@ public class JavaTypeWriter implements Writer {
             // Determine what sort of type this is and instantiate the appropriate Writer.
             Node node = type.getNode();
 
-            // Generate the proper class for either "complex" or "enumeration" types
-            Vector v = SchemaUtils.getComplexElementTypesAndNames(
-                    node, symbolTable);
-            if (v != null) {
-                typeWriter = new JavaComplexTypeWriter(emitter, type, v,
-                    SchemaUtils.getComplexElementExtensionBase(node,symbolTable));
-            }
-            else {
-                v = SchemaUtils.getEnumerationBaseAndValues(node, symbolTable);
+            // If it's an array, don't emit a class
+            if (!type.getName().endsWith("[]")) {
+
+                // Generate the proper class for either "complex" or "enumeration" types
+                Vector v = SchemaUtils.getComplexElementTypesAndNames(
+                        node, symbolTable);
                 if (v != null) {
-                    typeWriter = new JavaEnumTypeWriter(emitter, type, v);
+                    typeWriter = new JavaComplexTypeWriter(emitter, type, v,
+                            SchemaUtils.getComplexElementExtensionBase(
+                            node, symbolTable));
+                }
+                else {
+                    v = SchemaUtils.getEnumerationBaseAndValues(
+                            node, symbolTable);
+                    if (v != null) {
+                        typeWriter = new JavaEnumTypeWriter(emitter, type, v);
+                    }
                 }
             }
 
-            // If a type class is written, and the holder is needed (ie., something uses this
-            // type as an out or inout parameter), instantiate the holder writer.
-            if (v != null && holderIsNeeded(type)) {
+            // If the holder is needed (ie., something uses this type as an out or inout
+            // parameter), instantiate the holder writer.
+            if (holderIsNeeded(type)) {
                 holderWriter = new JavaHolderWriter(emitter, type);
             }
         }
