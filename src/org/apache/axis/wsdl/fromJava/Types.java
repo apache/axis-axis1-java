@@ -323,7 +323,9 @@ public class Types {
             }
         }
 
-        makeTypeElement(type, qname, null);
+        if(!makeTypeElement(type, qname, null)) {
+            qname = Constants.XSD_ANYTYPE;
+        }
 
         return qname;
     }
