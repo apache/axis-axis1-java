@@ -1053,8 +1053,11 @@ public class Emitter {
         stubPW.println("        try {" );
         stubPW.println("            service = new org.apache.axis.client.Service();");
         stubPW.println("            call = (org.apache.axis.client.Call) service.createCall();");
-        while (it.hasNext())
+        
+        while (it.hasNext()) {
             writeSerializationInit(stubPW, (Type) it.next());
+        }
+        
         stubPW.println("        }");
         stubPW.println("        catch(Exception t) {");
         stubPW.println("            throw new org.apache.axis.AxisFault(t);");
