@@ -72,13 +72,13 @@ public class Transport extends SimpleTargetedChain
             Category.getInstance(Transport.class.getName());
 
     public Element getDeploymentData(Document doc) {
-        category.debug("Enter: Transport::getDeploymentData" );
+        category.debug("Enter: Transport::getDeploymentData");
 
-        Element  root = doc.createElement( "transport" );
+        Element  root = doc.createElementNS("", "transport");
 
         fillInDeploymentData(root);
 
-        category.debug("Exit: Transport::getDeploymentData" );
+        category.debug("Exit: Transport::getDeploymentData");
         return( root );
     }
 }

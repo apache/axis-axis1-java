@@ -323,7 +323,7 @@ public class TypeMappingRegistry implements Serializer {
             if (desc.cls == null)
                 continue;
             
-            Element mapEl = doc.createElement("typeMapping");
+            Element mapEl = doc.createElementNS("", "typeMapping");
 
             mapEl.setAttribute("type", "ns:" + typeQName.getLocalPart());
             mapEl.setAttribute("xmlns:ns", typeQName.getNamespaceURI());

@@ -91,6 +91,8 @@ public class AxisServer extends AxisEngine
     public AxisServer(ConfigurationProvider provider)
     {
         super(provider);
+        // Server defaults to persisting configuration
+        shouldSaveConfig = true;
     }
 
     /** Is this server active?  If this is false, any requests will

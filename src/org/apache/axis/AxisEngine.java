@@ -86,6 +86,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_DEBUG_FILE = "debugFile";
     public static final String PROP_DOMULTIREFS = "sendMultiRefs";
     public static final String PROP_PASSWORD = "adminPassword";
+    public static final String PROP_SYNC_CONFIG = "syncConfiguration";
 
     /** Our go-to guy for configuration... */
     protected ConfigurationProvider configProvider;
@@ -105,6 +106,9 @@ public abstract class AxisEngine extends BasicHandler
 
     /** Has the user changed the password yet? */
     protected boolean _hasSafePassword = false;
+
+    /** Should we save the engine config each time we modify it? */
+    protected boolean shouldSaveConfig = false;
 
     //protected SupplierRegistry listenerRegistry = new SupplierRegistry();
 
@@ -199,6 +203,9 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void saveConfiguration()
     {
+        if (!shouldSaveConfig)
+            return;
+
         try {
             configProvider.writeEngineConfig(this);
         } catch (Exception e) {
