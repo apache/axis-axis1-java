@@ -52,4 +52,18 @@ public class DataTypes_BindingImpl implements DataTypes_Port {
         return array;
     }
 
+    public java.lang.String[] getSimpleList(java.lang.String[] inputList) throws java.rmi.RemoteException {
+        java.lang.String[] outputList;
+        if (inputList == null) {
+            outputList = null;
+        }
+        else {
+            outputList = new java.lang.String[inputList.length];
+            for (int i = 0; i < inputList.length; i++) {
+                outputList[i] = inputList[i] + "_response";
+            }
+        }
+
+        return outputList;
+    }
 }
