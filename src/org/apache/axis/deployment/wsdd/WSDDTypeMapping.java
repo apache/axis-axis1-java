@@ -227,7 +227,7 @@ public class WSDDTypeMapping
             }
             String loadName = JavaUtils.getLoadableClassName(typeQName.getLocalPart());
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            return cl.loadClass(loadName);
+            return Class.forName(loadName, true, cl);
         }
         
         throw new ClassNotFoundException(JavaUtils.getMessage("noTypeQName00"));
