@@ -13,15 +13,15 @@ final public class ChainContainer implements Handler {
         this.singleChain.add(handler);
     }
   
-    public void init() {};
+    public void init() {}
 
-    public void cleanup() {};
+    public void cleanup() {}
 
     public void invoke(MessageContext msgCntxt) {
         int length = this.singleChain.size();
-        for( int i=0; i<length; i++) {
+        for(int i = 0; i < length; i++) {
             Handler handler = (Handler)this.singleChain.get(i);
             handler.invoke(msgCntxt);
         }        
-    };
-};
+    }
+}
