@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.ArrayList;
 
 /**
  * Proof-of-concept "management" servlet for Axis.
