@@ -108,6 +108,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             else if (mimeType.startsWith("multipart/")) {
                 return "org.apache.axis.holders.MimeMultipartHolder";
             }
+            else if (mimeType.startsWith("application/octetstream")) {
+                return "org.apache.axis.holders.OctetStreamHolder";
+            }
             else if (mimeType.equals("text/xml") ||
                      mimeType.equals("application/xml")) {
                 return "org.apache.axis.holders.SourceHolder";
@@ -522,6 +525,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             else if (mimeType.startsWith("multipart/")) {
                 return "(javax.mail.internet.MimeMultipart) " + var + ";";
             }
+            else if (mimeType.startsWith("application/octetstream")) {
+                return "(org.apache.axis.attachments.OctetStream) " + var + ";";
+            }
             else {
                 return "(" + type.getName() + ") " + var + ";";
             }
@@ -823,6 +829,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             else if (mimeType.equals("text/xml") ||
                     mimeType.equals("application/xml")) {
                 return "new javax.xml.transform.stream.StreamSource()";
+            }
+            else if (mimeType.equals("application/octetstream")) {
+                return "new org.apache.axis.attachments.OctetStream()";
             }
             else {
                 return "new " + Utils.getParameterTypeName(param) + "()";

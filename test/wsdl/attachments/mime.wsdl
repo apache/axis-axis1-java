@@ -51,6 +51,12 @@
   <message name="mmp4">
     <part name="out" type="xsd:string"/>
   </message>
+  <message name="EchoAttachmentIn">
+    <part name="In" type="xsd:base64Binary"/>
+  </message>
+  <message name="EchoAttachmentOut">
+      <part name="Out" type="xsd:base64Binary"/>
+  </message>
 
   <portType name="pt1">
 <!--
@@ -94,6 +100,10 @@
     <operation name="outputMimeMultipart">
       <input message="tns:empty"/>
       <output message="tns:mmp3"/>
+    </operation>
+    <operation name="EchoAttachment">
+        <input name="EchoAttachmentInput" message="tns:EchoAttachmentIn"/>
+        <output name="EchoAttachmentOutput" message="tns:EchoAttachmentOut"/>
     </operation>
   </portType>
 
@@ -261,6 +271,29 @@
           </mime:part>
         </mime:multipartRelated>
       </output>
+    </operation>
+    <operation name="EchoAttachment">
+        <soap:operation soapAction="http://soapinterop.org/attachments/"/>
+        <input name="EchoAttachmentInput">
+            <mime:multipartRelated>
+                <mime:part>
+                    <soap:body use="encoded" namespace="http://soapinterop.org/attachments/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                </mime:part>
+                <mime:part>
+                    <mime:content part="In" type="application/octetstream"/>
+                </mime:part>
+            </mime:multipartRelated>
+        </input>
+        <output name="EchoAttachmentOutput">
+            <mime:multipartRelated>
+                <mime:part>
+                    <soap:body use="encoded" namespace="http://soapinterop.org/attachments/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                </mime:part>
+                <mime:part>
+                    <mime:content part="Out" type="application/octetstream"/>
+                </mime:part>
+            </mime:multipartRelated>
+        </output>
     </operation>
   </binding>
 

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,49 +53,34 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
+package org.apache.axis.holders;
 
 import org.apache.axis.attachments.OctetStream;
 
-import javax.mail.internet.MimeMultipart;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import java.awt.*;
+import javax.xml.rpc.holders.Holder;
 
 /**
- * A JAFDataHandlerSerializer Factory
+ * Class OctetStreamHolder
  *
- *  @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class JAFDataHandlerSerializerFactory extends BaseSerializerFactory {
+public final class OctetStreamHolder implements Holder {
 
-    public JAFDataHandlerSerializerFactory(Class javaType, QName xmlType) {
-        super(getSerializerClass(javaType, xmlType), xmlType, javaType);
-    }
-    public JAFDataHandlerSerializerFactory() {
-        super(JAFDataHandlerSerializer.class);
+    /** Field _value */
+    public OctetStream value;
+
+    /**
+     * Constructor OctetStreamHolder
+     */
+    public OctetStreamHolder() {
     }
 
-    private static Class getSerializerClass(Class javaType, QName xmlType) {
-        Class ser;
-        if (Image.class.isAssignableFrom(javaType)) {
-            ser = ImageDataHandlerSerializer.class;
-        }
-        else if (String.class.isAssignableFrom(javaType)) {
-            ser = PlainTextDataHandlerSerializer.class;
-        }
-        else if (Source.class.isAssignableFrom(javaType)) {
-            ser = SourceDataHandlerSerializer.class;
-        }
-        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
-            ser = MimeMultipartDataHandlerSerializer.class;
-        }
-        else if (OctetStream.class.isAssignableFrom(javaType)) {
-            ser = OctetStreamDataHandlerSerializer.class;
-        }
-        else {
-            ser = JAFDataHandlerSerializer.class;
-        }
-        return ser;
-    } // getSerializerClass
+    /**
+     * Constructor OctetStreamHolder
+     *
+     * @param value
+     */
+    public OctetStreamHolder(org.apache.axis.attachments.OctetStream value) {
+        this.value = value;
+    }
 }
+

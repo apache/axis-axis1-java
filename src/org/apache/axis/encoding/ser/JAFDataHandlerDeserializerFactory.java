@@ -56,6 +56,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.attachments.OctetStream;
 import org.apache.commons.logging.Log;
 
 import javax.mail.internet.MimeMultipart;
@@ -95,6 +96,9 @@ public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
         }
         else if (MimeMultipart.class.isAssignableFrom(javaType)) {
             deser = MimeMultipartDataHandlerDeserializer.class;
+        }
+        else if (OctetStream.class.isAssignableFrom(javaType)) {
+            deser = OctetStreamDataHandlerDeserializer.class;
         }
         else {
             deser = JAFDataHandlerDeserializer.class;

@@ -61,4 +61,8 @@ public class B1Impl implements test.wsdl.attachments.Pt1 {
             throw new java.rmi.RemoteException(me.getMessage(), me);
         }
     }
+
+    public org.apache.axis.attachments.OctetStream echoAttachment(org.apache.axis.attachments.OctetStream in) throws java.rmi.RemoteException {
+        return in;
+    }
 }

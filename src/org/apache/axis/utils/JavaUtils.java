@@ -56,6 +56,7 @@
 package org.apache.axis.utils;
 
 import org.apache.axis.attachments.AttachmentPart;
+import org.apache.axis.attachments.OctetStream;
 import org.apache.axis.components.image.ImageIO;
 import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.components.logger.LogFactory;
@@ -71,6 +72,7 @@ import java.beans.Introspector;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.text.Collator;
@@ -258,19 +260,21 @@ public class JavaUtils
 
         // Convert an AttachmentPart to the given destination class.
         if (isAttachmentSupported() &&
-                (arg instanceof AttachmentPart || arg instanceof DataHandler)) {
+                (arg instanceof InputStream || arg instanceof AttachmentPart || arg instanceof DataHandler)) {
             try {
                 String destName = destClass.getName();
                 if (destClass == String.class
+                        || destClass == OctetStream.class
+                        || destClass == byte[].class
                         || destClass == Image.class
                         || destClass == Source.class
                         || destClass == DataHandler.class
                         || destName.equals("javax.mail.internet.MimeMultipart")) {
-                    DataHandler handler;
+                    DataHandler handler = null;
                     if (arg instanceof AttachmentPart) {
                         handler = ((AttachmentPart) arg).getDataHandler();
                     }
-                    else {
+                    else if (arg instanceof DataHandler) {
                         handler = (DataHandler) arg;
                     }
                     if (destClass == Image.class) {
@@ -299,6 +303,14 @@ public class JavaUtils
                         // StreamSource.
                         return new StreamSource(new StringReader(
                                 (String) handler.getContent()));
+                    }
+                    else if (destClass == OctetStream.class || destClass == byte[].class) {
+                        InputStream in = (InputStream) arg;
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        int byte1 = -1;
+                        while((byte1 = in.read())!=-1)
+                            baos.write(byte1);
+                        return new OctetStream(baos.toByteArray());
                     }
                     else if (destClass == DataHandler.class) {
                         return handler;
@@ -556,6 +568,7 @@ public class JavaUtils
             String name = src.getName();
             if (src == String.class
                     || src == java.awt.Image.class
+                    || src == OctetStream.class
                     || name.equals("javax.mail.internet.MimeMultipart")
                     || name.equals("javax.xml.transform.Source"))
                 return true;
@@ -575,6 +588,11 @@ public class JavaUtils
                 return true;
         }
 
+        if (obj instanceof java.io.InputStream) {
+            if (dest ==  OctetStream.class)
+                return true;
+        }
+        
         if (src.isPrimitive()) {
             return isConvertable(getWrapperClass(src),dest);
         }
@@ -1121,6 +1139,9 @@ public class JavaUtils
         }
         else if ("text/xml".equals(mime) || "application/xml".equals(mime)) {
             return "javax.xml.transform.Source";
+        }
+        else if ("application/octetstream".equals(mime)) {
+            return "org.apache.axis.attachments.OctetStream";
         }
         else if (mime != null && mime.startsWith("multipart/")) {
             return "javax.mail.internet.MimeMultipart";

@@ -55,47 +55,36 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.attachments.OctetStream;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.commons.logging.Log;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
-import javax.mail.internet.MimeMultipart;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import java.awt.*;
+import javax.activation.DataHandler;
+import java.io.IOException;
 
 /**
- * A JAFDataHandlerSerializer Factory
- *
- *  @author Rich Scheuerle (scheu@us.ibm.com)
+ * application/octetstream DataHandler Deserializer
+ * Modified by Davanum Srinivas <dims@yahoo.com>
  */
-public class JAFDataHandlerSerializerFactory extends BaseSerializerFactory {
+public class OctetStreamDataHandlerDeserializer extends JAFDataHandlerDeserializer {
+    protected static Log log =
+            LogFactory.getLog(OctetStreamDataHandlerDeserializer.class.getName());
 
-    public JAFDataHandlerSerializerFactory(Class javaType, QName xmlType) {
-        super(getSerializerClass(javaType, xmlType), xmlType, javaType);
-    }
-    public JAFDataHandlerSerializerFactory() {
-        super(JAFDataHandlerSerializer.class);
-    }
+    public void startElement(String namespace, String localName,
+                             String prefix, Attributes attributes,
+                             DeserializationContext context)
+            throws SAXException {
 
-    private static Class getSerializerClass(Class javaType, QName xmlType) {
-        Class ser;
-        if (Image.class.isAssignableFrom(javaType)) {
-            ser = ImageDataHandlerSerializer.class;
+        super.startElement(namespace, localName, prefix, attributes, context);
+
+        if (getValue() instanceof DataHandler) {
+            try {
+                DataHandler dh = (DataHandler) getValue();
+                setValue(dh.getContent());
+            } catch (IOException ioe) {
+            }
         }
-        else if (String.class.isAssignableFrom(javaType)) {
-            ser = PlainTextDataHandlerSerializer.class;
-        }
-        else if (Source.class.isAssignableFrom(javaType)) {
-            ser = SourceDataHandlerSerializer.class;
-        }
-        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
-            ser = MimeMultipartDataHandlerSerializer.class;
-        }
-        else if (OctetStream.class.isAssignableFrom(javaType)) {
-            ser = OctetStreamDataHandlerSerializer.class;
-        }
-        else {
-            ser = JAFDataHandlerSerializer.class;
-        }
-        return ser;
-    } // getSerializerClass
-}
+    } // startElement
+} // class OctetStreamDataHandlerDeserializer

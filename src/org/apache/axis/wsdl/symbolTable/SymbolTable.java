@@ -1522,6 +1522,9 @@ public class SymbolTable {
                 }
                 else if (Constants.MIME_SOURCE.equals(mimeQName)) {
                     mimeType = "text/xml";
+                } 
+                else if (Constants.MIME_OCTETSTREAM.equals(mimeQName)) {
+                    mimeType = "application/octetstream";
                 }
             }
         }

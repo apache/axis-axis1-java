@@ -9,6 +9,7 @@ package test.wsdl.attachments;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import java.util.Arrays;
 
 public class AttachmentTestCase extends junit.framework.TestCase {
     public AttachmentTestCase(java.lang.String name) {
@@ -180,4 +181,23 @@ public class AttachmentTestCase extends junit.framework.TestCase {
         // TBD - validate results
     }
 
+    public void test10AttachmentPortRPCEchoAttachment() throws Exception {
+        test.wsdl.attachments.Pt1 binding;
+        try {
+            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if(jre.getLinkedCause()!=null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        // Test operation
+        org.apache.axis.attachments.OctetStream input = new org.apache.axis.attachments.OctetStream("EchoAttachment".getBytes());
+        org.apache.axis.attachments.OctetStream output = null;
+        output = binding.echoAttachment(input);
+        // TBD - validate results
+        assertTrue(Arrays.equals(input.getBytes(), output.getBytes()));
+    }
 }

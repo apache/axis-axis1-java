@@ -52,50 +52,47 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.attachments;
 
-package org.apache.axis.encoding.ser;
+import javax.activation.DataSource;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.apache.axis.attachments.OctetStream;
+public class OctetStreamDataSource implements DataSource {
+    public static final String CONTENT_TYPE = "application/octetstream";
 
-import javax.mail.internet.MimeMultipart;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import java.awt.*;
+    private final String name;
+    private byte[] data;
+    private ByteArrayOutputStream os;
 
-/**
- * A JAFDataHandlerSerializer Factory
- *
- *  @author Rich Scheuerle (scheu@us.ibm.com)
- */
-public class JAFDataHandlerSerializerFactory extends BaseSerializerFactory {
+    public OctetStreamDataSource(String name, OctetStream data) {
+        this.name = name;
+        this.data = data == null ? null : data.getBytes();
+        os = new ByteArrayOutputStream();
+    } // ctor
 
-    public JAFDataHandlerSerializerFactory(Class javaType, QName xmlType) {
-        super(getSerializerClass(javaType, xmlType), xmlType, javaType);
-    }
-    public JAFDataHandlerSerializerFactory() {
-        super(JAFDataHandlerSerializer.class);
-    }
+    public String getName() {
+        return name;
+    } // getName
 
-    private static Class getSerializerClass(Class javaType, QName xmlType) {
-        Class ser;
-        if (Image.class.isAssignableFrom(javaType)) {
-            ser = ImageDataHandlerSerializer.class;
+    public String getContentType() {
+        return CONTENT_TYPE;
+    } // getContentType
+
+    public InputStream getInputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
         }
-        else if (String.class.isAssignableFrom(javaType)) {
-            ser = PlainTextDataHandlerSerializer.class;
+        return new ByteArrayInputStream(data == null ? new byte[0] : data);
+    } // getInputStream
+
+    public OutputStream getOutputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
         }
-        else if (Source.class.isAssignableFrom(javaType)) {
-            ser = SourceDataHandlerSerializer.class;
-        }
-        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
-            ser = MimeMultipartDataHandlerSerializer.class;
-        }
-        else if (OctetStream.class.isAssignableFrom(javaType)) {
-            ser = OctetStreamDataHandlerSerializer.class;
-        }
-        else {
-            ser = JAFDataHandlerSerializer.class;
-        }
-        return ser;
-    } // getSerializerClass
-}
+        return new ByteArrayOutputStream();
+    } // getOutputStream
+} // class OctetStreamDataSource
