@@ -59,17 +59,16 @@ package org.apache.axis.wsdl;
  *
  * @author Tom Jordahl (tjordahl@macromedia.com)
  */
-public class Wsdl2java
-{
+public class Wsdl2java {
     /**
      * print usage message
      */
     private static void usage() {
-        System.out.println ("Usage: java org.apache.axis.wsdl.Wsdl2java [-verbose] [-skeleton [-messageContext]] WSDL-URI");
-        System.out.println ("Switches:");
-        System.out.println ("   -verbose - emit informational messages");
-        System.out.println ("   -skeleton - emit skeleton class for web service");
-        System.out.println ("   -messageContext - emit a MessageContext parameter in skeleton");
+        System.out.println("Usage: java org.apache.axis.wsdl.Wsdl2java [-verbose] [-skeleton [-messageContext]] WSDL-URI");
+        System.out.println("Switches:");
+        System.out.println("   -verbose - emit informational messages");
+        System.out.println("   -skeleton - emit skeleton class for web service");
+        System.out.println("   -messageContext - emit a MessageContext parameter in skeleton");
         System.exit(-1);
     }
 
@@ -81,22 +80,24 @@ public class Wsdl2java
             boolean bVerbose = false;
             int argcount = args.length;
             int arg = 0;
-            while ( arg < (args.length-1)) {
-                if( args[arg].startsWith("-skel") )      {
+
+            while (arg < (args.length - 1)) {
+                if (args[arg].startsWith("-skel")) {
                     bSkeleton = true;
-                   --argcount;
+                    --argcount;
                 }
-                if( args[arg].startsWith("-v") )      {
+                if (args[arg].startsWith("-v")) {
                     bVerbose = true;
-                   --argcount;
+                    --argcount;
                 }
-                if( args[arg].startsWith("-messageContext") )        {
+                if (args[arg].startsWith("-messageContext")) {
                     bMessageContext = true;
-                   --argcount;
+                    --argcount;
                 }
                 ++arg;
             }
-            if (argcount != 1 )
+
+            if (argcount != 1)
                 usage();
             if (bMessageContext && !bSkeleton) {
                 System.out.println("Error: -messageContext switch only valid with -skeleton");
@@ -107,14 +108,14 @@ public class Wsdl2java
             if (uri.startsWith("-"))
                 usage();
 
-            Emitter emitter = new Emitter ();
+            Emitter emitter = new Emitter();
             emitter.generateSkeleton(bSkeleton);
             emitter.verbose(bVerbose);
             emitter.generateMessageContext(bMessageContext);
-            emitter.emit (uri);
+            emitter.emit(uri);
         }
         catch (Throwable t) {
-            t.printStackTrace ();
+            t.printStackTrace();
         }
     } // main
 

@@ -113,15 +113,15 @@ public class Emitter {
     public void emit(String uri) throws IOException {
 
         if (bVerbose)
-            System.out.println ("Parsing XML File: " + uri);
+            System.out.println("Parsing XML File: " + uri);
 
         try {
             doc = XMLUtils.newDocument(uri);
-            emit (doc);
+            emit(doc);
         }
         catch (Throwable t) {
-            t.printStackTrace ();
-            System.out.println("Error in parsing: " + t.getMessage ());
+            t.printStackTrace();
+            System.out.println("Error in parsing: " + t.getMessage());
         }
     } // emit
 
@@ -132,19 +132,19 @@ public class Emitter {
         this.doc = doc;
 
         try {
-            WSDLReader reader = new WSDLReader ();
+            WSDLReader reader = new WSDLReader();
 
-            def = reader.readWSDL (null, doc);
+            def = reader.readWSDL(null, doc);
 
-            writeTypes ();
-            HashMap portTypesInfo = writePortTypes ();
-            writeBindings (portTypesInfo);
-            writeServices ();
-            if(bEmitSkeleton)
+            writeTypes();
+            HashMap portTypesInfo = writePortTypes();
+            writeBindings(portTypesInfo);
+            writeServices();
+            if (bEmitSkeleton)
                 writeDeploymentXML();
         }
         catch (WSDLException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
     } // emit
 
@@ -176,25 +176,25 @@ public class Emitter {
      * This method returns a set of all the complex types in a given PortType.  The elements of the returned HashSet are Strings.
      */
     private HashSet complexTypesInClass(PortType portType) {
-        HashSet types = new HashSet ();
-        HashSet firstPassTypes = new HashSet ();
+        HashSet types = new HashSet();
+        HashSet firstPassTypes = new HashSet();
 
         // Get all the types from all the operations
-        List operations = portType.getOperations ();
+        List operations = portType.getOperations();
 
-        for (int i = 0; i < operations.size (); ++i)
-            firstPassTypes.addAll (typesInOperation ((Operation) operations.get (i)));
+        for (int i = 0; i < operations.size(); ++i)
+            firstPassTypes.addAll(typesInOperation((Operation) operations.get(i)));
 
         // Extract those types which are complex types.
-        Iterator i = firstPassTypes.iterator ();
+        Iterator i = firstPassTypes.iterator();
 
-        while (i.hasNext ()) {
-            String typeName = (String) i.next ();
-            Node complexType = complexType (typeName);
+        while (i.hasNext()) {
+            String typeName = (String) i.next();
+            Node complexType = complexType(typeName);
 
             if (complexType != null) {
-                types.add (typeName);
-                types.addAll (complexTypesInComplexType (complexType (typeName)));
+                types.add(typeName);
+                types.addAll(complexTypesInComplexType(complexType(typeName)));
             }
         }
         return types;
@@ -204,34 +204,34 @@ public class Emitter {
      * This method returns a set of all the types in a given Operation.  The elements of the returned HashSet are Strings.
      */
     private HashSet typesInOperation(Operation operation) {
-        HashSet types = new HashSet ();
-        Vector v = new Vector ();
+        HashSet types = new HashSet();
+        Vector v = new Vector();
 
         // Collect all the input types
-        Input input = operation.getInput ();
+        Input input = operation.getInput();
 
         if (input != null)
-            partStrings (v, input.getMessage ().getOrderedParts (null));
+            partStrings(v, input.getMessage().getOrderedParts(null));
 
         // Collect all the output types
-        Output output = operation.getOutput ();
+        Output output = operation.getOutput();
 
         if (output != null)
-            partStrings (v, output.getMessage ().getOrderedParts (null));
+            partStrings(v, output.getMessage().getOrderedParts(null));
 
         // Collect all the types in faults
-        Map faults = operation.getFaults ();
+        Map faults = operation.getFaults();
 
         if (faults != null) {
-            Iterator i = faults.values ().iterator ();
+            Iterator i = faults.values().iterator();
 
-            while (i.hasNext ())
-                partStrings (v, ((Fault) i.next ()).getMessage ().getOrderedParts (null));
+            while (i.hasNext())
+                partStrings(v, ((Fault) i.next()).getMessage().getOrderedParts(null));
         }
 
         // Put all these types into a set.  This operation eliminates all duplicates.
-        for (int i = 0; i < v.size (); i += 2)
-            types.add (type ((String) v.get (i)));
+        for (int i = 0; i < v.size(); i += 2)
+            types.add(type((String) v.get(i)));
         return types;
     } // typesInOperation
 
@@ -239,21 +239,21 @@ public class Emitter {
      * This method returns a set of all the complex types in a given complex type.  The elements of the returned HashSet are Strings.
      */
     private HashSet complexTypesInComplexType(Node type) {
-        HashSet types = new HashSet ();
+        HashSet types = new HashSet();
 
-        Vector elements = findChildNodesByName (type, "element");
+        Vector elements = findChildNodesByName(type, "element");
 
-        for (int i = 0; i < elements.size (); ++i) {
-            NamedNodeMap attributes = ((Node) elements.get (i)).getAttributes ();
+        for (int i = 0; i < elements.size(); ++i) {
+            NamedNodeMap attributes = ((Node) elements.get(i)).getAttributes();
 
             if (attributes != null) {
-                Node typeAttr = attributes.getNamedItem ("type");
-                String typeName = type (typeAttr.getNodeValue ());
-                Node complexType = complexType (typeName);
+                Node typeAttr = attributes.getNamedItem("type");
+                String typeName = type(typeAttr.getNodeValue());
+                Node complexType = complexType(typeName);
 
-                if (complexType != null && !types.contains (typeName)) {
-                    types.add (typeName);
-                    types.addAll (complexTypesInComplexType (complexType));
+                if (complexType != null && !types.contains(typeName)) {
+                    types.add(typeName);
+                    types.addAll(complexTypesInComplexType(complexType));
                 }
             }
         }
@@ -264,17 +264,17 @@ public class Emitter {
      * Generate the bindings for all port types.
      */
     private HashMap writePortTypes() throws IOException {
-        Map portTypes = def.getPortTypes ();
-        Iterator i = portTypes.values ().iterator ();
-        HashMap portTypesInfo = new HashMap ();
+        Map portTypes = def.getPortTypes();
+        Iterator i = portTypes.values().iterator();
+        HashMap portTypesInfo = new HashMap();
 
-        while (i.hasNext ()) {
-            PortType portType = (PortType) i.next ();
-            HashMap portTypeInfo = writePortType (portType);
-            if(bEmitSkeleton && bMessageContext)
+        while (i.hasNext()) {
+            PortType portType = (PortType) i.next();
+            HashMap portTypeInfo = writePortType(portType);
+            if (bEmitSkeleton && bMessageContext)
                 writeAxisPortType(portType);
 
-            portTypesInfo.put (portType, portTypeInfo);
+            portTypesInfo.put(portType, portTypeInfo);
         }
         return portTypesInfo;
     } // writePortTypes
@@ -283,27 +283,27 @@ public class Emitter {
      * Generate the interface for the given port type.
      */
     private HashMap writePortType(PortType portType) throws IOException {
-        String nameValue = portType.getQName ().getLocalPart ();
-        PrintWriter interfacePW = new PrintWriter (
-                new FileWriter (nameValue + ".java"));
-        if(bVerbose)
-        	System.out.println("Generating portType interface: " + nameValue + ".java");
+        String nameValue = portType.getQName().getLocalPart();
+        PrintWriter interfacePW = new PrintWriter(
+                new FileWriter(nameValue + ".java"));
+        if (bVerbose)
+            System.out.println("Generating portType interface: " + nameValue + ".java");
 
-        interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
-        interfacePW.println ("{");
+        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote");
+        interfacePW.println("{");
 
-        HashMap portTypeInfo = new HashMap ();
-        List operations = portType.getOperations ();
+        HashMap portTypeInfo = new HashMap();
+        List operations = portType.getOperations();
 
-        for (int i = 0; i < operations.size (); ++i) {
-            Operation operation = (Operation) operations.get (i);
-            Parameters operationInfo = writeOperation (operation, interfacePW);
+        for (int i = 0; i < operations.size(); ++i) {
+            Operation operation = (Operation) operations.get(i);
+            Parameters operationInfo = writeOperation(operation, interfacePW);
 
-            portTypeInfo.put (operation, operationInfo);
+            portTypeInfo.put(operation, operationInfo);
         }
 
-        interfacePW.println ("}");
-        interfacePW.close ();
+        interfacePW.println("}");
+        interfacePW.close();
 
         return portTypeInfo;
     } // writePortType
@@ -312,25 +312,25 @@ public class Emitter {
      * Generate the server-side (Axis) interface for the given port type.
      */
     private void writeAxisPortType(PortType portType) throws IOException {
-        String nameValue = portType.getQName ().getLocalPart () + "Axis";
-        PrintWriter interfacePW = new PrintWriter (
-                new FileWriter (nameValue + ".java"));
-        if(bVerbose)
+        String nameValue = portType.getQName().getLocalPart() + "Axis";
+        PrintWriter interfacePW = new PrintWriter(
+                new FileWriter(nameValue + ".java"));
+        if (bVerbose)
             System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
-        if(bMessageContext)
-            interfacePW.println ("import org.apache.axis.MessageContext;");
-        interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
-        interfacePW.println ("{");
+        if (bMessageContext)
+            interfacePW.println("import org.apache.axis.MessageContext;");
+        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote");
+        interfacePW.println("{");
 
-        List operations = portType.getOperations ();
+        List operations = portType.getOperations();
 
-        for (int i = 0; i < operations.size (); ++i) {
-            Operation operation = (Operation) operations.get (i);
+        for (int i = 0; i < operations.size(); ++i) {
+            Operation operation = (Operation) operations.get(i);
             Parameters operationInfo = writeOperationAxisSkelSignatures(operation, interfacePW);
-         }
+        }
 
-        interfacePW.println ("}");
-        interfacePW.close ();
+        interfacePW.println("}");
+        interfacePW.close();
 
         return;
     } // writeAxisPortType
@@ -347,7 +347,7 @@ public class Emitter {
 
         public String name;
         public String type;
-        public byte   mode = IN;
+        public byte mode = IN;
 
         public String toString() {
             return "(" + type + ", " + name + ", "
@@ -362,7 +362,7 @@ public class Emitter {
     private static class Parameters {
 
         // This vector contains instances of the Parameter class
-        public Vector list = new Vector ();
+        public Vector list = new Vector();
 
         // The type of the first output part, used as the method's return value
         public String returnType = null;
@@ -386,12 +386,12 @@ public class Emitter {
 
         public String toString() {
             return "\nreturnType = " + returnType
-                + "\nfaultString = " + faultString
-                + "\nsignature = " + signature
-                + "\nskelSignature = " + skelSignature
-                + "\naxisSignature = " + axisSignature
-                + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
-                + "\nlist = " + list;
+                    + "\nfaultString = " + faultString
+                    + "\nsignature = " + signature
+                    + "\nskelSignature = " + skelSignature
+                    + "\naxisSignature = " + axisSignature
+                    + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
+                    + "\nlist = " + list;
         } // toString
     } // class Parameters
 
@@ -402,60 +402,60 @@ public class Emitter {
      * Parameters object.
      */
     private Parameters parameters(Operation operation) throws IOException {
-        Parameters parameters = new Parameters ();
-        Vector inputs = new Vector ();
-        Vector outputs = new Vector ();
-        List parameterOrder = operation.getParameterOrdering ();
+        Parameters parameters = new Parameters();
+        Vector inputs = new Vector();
+        Vector outputs = new Vector();
+        List parameterOrder = operation.getParameterOrdering();
 
         // Handle parameterOrder="", which is techinically illegal
-        if (parameterOrder != null && parameterOrder.isEmpty() ) {
+        if (parameterOrder != null && parameterOrder.isEmpty()) {
             parameterOrder = null;
         }
 
         // Collect the input parts
-        Input input = operation.getInput ();
+        Input input = operation.getInput();
         if (input != null)
-            partStrings (inputs, input.getMessage ().getOrderedParts (parameterOrder));
+            partStrings(inputs, input.getMessage().getOrderedParts(parameterOrder));
 
         // Collect the output parts
-        Output output = operation.getOutput ();
+        Output output = operation.getOutput();
         if (output != null)
-            partStrings (outputs, output.getMessage ().getOrderedParts (parameterOrder));
+            partStrings(outputs, output.getMessage().getOrderedParts(parameterOrder));
 
         if (parameterOrder == null) {
             // Get the mode info about the parts.  Since no parameterOrder is defined
             // the order doesn't matter.  Add the input and inout parts first, then add
             // the output parts.
-            for (int i = 1; i < inputs.size (); i += 2) {
-                String name = (String) inputs.get (i);
-                Parameter p = new Parameter ();
+            for (int i = 1; i < inputs.size(); i += 2) {
+                String name = (String) inputs.get(i);
+                Parameter p = new Parameter();
 
                 p.name = name;
-                p.type = (String) inputs.get (i - 1);
-                for (int j = 1; j < outputs.size (); j += 2)
-                    if (name.equals (outputs.get (j))) {
+                p.type = (String) inputs.get(i - 1);
+                for (int j = 1; j < outputs.size(); j += 2)
+                    if (name.equals(outputs.get(j))) {
                         p.mode = Parameter.INOUT;
-                        outputs.remove (j);
-                        outputs.remove (j - 1);
+                        outputs.remove(j);
+                        outputs.remove(j - 1);
                         break;
                     }
                 if (p.mode == Parameter.IN)
                     ++parameters.inputs;
                 else
                     ++parameters.inouts;
-                parameters.list.add (p);
+                parameters.list.add(p);
             }
-            if (outputs.size () > 0) {
-                parameters.returnType = (String) outputs.get (0);
+            if (outputs.size() > 0) {
+                parameters.returnType = (String) outputs.get(0);
                 ++parameters.outputs;
-                for (int i = 3; i < outputs.size (); i += 2) {
-                    Parameter p = new Parameter ();
+                for (int i = 3; i < outputs.size(); i += 2) {
+                    Parameter p = new Parameter();
 
-                    p.name = (String) outputs.get (i);
-                    p.type = (String) outputs.get (i - 1);
+                    p.name = (String) outputs.get(i);
+                    p.type = (String) outputs.get(i - 1);
                     p.mode = Parameter.OUT;
                     ++parameters.outputs;
-                    parameters.list.add (p);
+                    parameters.list.add(p);
                 }
             }
         }
@@ -465,62 +465,62 @@ public class Emitter {
             int index = 1;
             int outdex = 1;
             boolean firstOutput = true;
-            String inName = inputs.size () == 0 ? null : (String) inputs.get (1);
-            String outName = outputs.size () == 0 ? null : (String) outputs.get (1);
+            String inName = inputs.size() == 0 ? null : (String) inputs.get(1);
+            String outName = outputs.size() == 0 ? null : (String) outputs.get(1);
 
-            for (int i = 0; i < parameterOrder.size (); ++i) {
-                String name = (String) parameterOrder.get (i);
-                Parameter p = new Parameter ();
+            for (int i = 0; i < parameterOrder.size(); ++i) {
+                String name = (String) parameterOrder.get(i);
+                Parameter p = new Parameter();
 
-                if (name.equals (inName)) {
+                if (name.equals(inName)) {
                     p.name = name;
-                    p.type = (String) inputs.get (index - 1);
+                    p.type = (String) inputs.get(index - 1);
                     index += 2;
-                    inName = index > inputs.size () ? null : (String) inputs.get (index);
-                    if (name.equals (outName)) {
+                    inName = index > inputs.size() ? null : (String) inputs.get(index);
+                    if (name.equals(outName)) {
                         p.mode = Parameter.INOUT;
                         outdex += 2;
-                        outName = outdex > outputs.size () ? null : (String) outputs.get (outdex);
+                        outName = outdex > outputs.size() ? null : (String) outputs.get(outdex);
                         ++parameters.inouts;
                     }
                     else
                         ++parameters.inputs;
-                    parameters.list.add (p);
+                    parameters.list.add(p);
                 }
-                else if (name.equals (outName)) {
+                else if (name.equals(outName)) {
                     if (firstOutput) {
-                        parameters.returnType = (String) outputs.get (outdex - 1);
+                        parameters.returnType = (String) outputs.get(outdex - 1);
                         firstOutput = false;
                     }
                     else {
                         p.name = name;
-                        p.type = (String) outputs.get (outdex - 1);
+                        p.type = (String) outputs.get(outdex - 1);
                         p.mode = Parameter.OUT;
-                        parameters.list.add (p);
+                        parameters.list.add(p);
                     }
                     outdex += 2;
-                    outName = outdex > outputs.size () ? null : (String) outputs.get (outdex);
+                    outName = outdex > outputs.size() ? null : (String) outputs.get(outdex);
                     ++parameters.outputs;
                 }
                 else {
-                    System.err.println ("!!! " + name + " not found as an input OR an output part!");
+                    System.err.println("!!! " + name + " not found as an input OR an output part!");
                 }
             }
         }
 
         // Collect the list of faults into a single string, separated by commas.
-        Map faults = operation.getFaults ();
-        Iterator i = faults.values ().iterator ();
-        while (i.hasNext ()) {
+        Map faults = operation.getFaults();
+        Iterator i = faults.values().iterator();
+        while (i.hasNext()) {
             if (parameters.faultString == null)
-                parameters.faultString = fault ((Fault) i.next ());
+                parameters.faultString = fault((Fault) i.next());
             else
-                parameters.faultString = parameters.faultString + ", " + fault ((Fault) i.next ());
+                parameters.faultString = parameters.faultString + ", " + fault((Fault) i.next());
         }
 
         if (parameters.returnType == null)
             parameters.returnType = "void";
-        constructSignatures (parameters, operation.getName ());
+        constructSignatures(parameters, operation.getName());
         return parameters;
     } // parameters
 
@@ -539,18 +539,18 @@ public class Emitter {
         else
             skelSig = "    public Object " + name + "(";
 
-        if(bMessageContext){
+        if (bMessageContext) {
             skelSig = skelSig + "org.apache.axis.MessageContext ctx";
             axisSig = axisSig + "org.apache.axis.MessageContext ctx";
-            if (parms.list.size() > 0){
-              skelSig = skelSig + ", ";
-              axisSig = axisSig + ", ";
+            if (parms.list.size() > 0) {
+                skelSig = skelSig + ", ";
+                axisSig = axisSig + ", ";
             }
         }
         boolean needComma = false;
 
-        for (int i = 0; i < parms.list.size (); ++i) {
-            Parameter p = (Parameter) parms.list.get (i);
+        for (int i = 0; i < parms.list.size(); ++i) {
+            Parameter p = (Parameter) parms.list.get(i);
 
             if (needComma) {
                 signature = signature + ", ";
@@ -559,7 +559,7 @@ public class Emitter {
                     skelSig = skelSig + ", ";
             }
             else
-               needComma = true;
+                needComma = true;
             if (p.mode == Parameter.IN) {
                 signature = signature + p.type + " " + p.name;
                 axisSig = axisSig + p.type + " " + p.name;
@@ -594,13 +594,13 @@ public class Emitter {
      * even numbered elements are element values.
      */
     private void partStrings(Vector v, Collection parts) {
-        Iterator i = parts.iterator ();
+        Iterator i = parts.iterator();
 
-        while (i.hasNext ()) {
-            Part part = (Part) i.next ();
+        while (i.hasNext()) {
+            Part part = (Part) i.next();
 
-            v.add (type (part.getTypeName ().getLocalPart ()));
-            v.add (part.getName ());
+            v.add(type(part.getTypeName().getLocalPart()));
+            v.add(part.getName());
         }
     } // partStrings
 
@@ -608,22 +608,10 @@ public class Emitter {
      * This method generates the interface signatures for the given operation.
      */
     private Parameters writeOperation(Operation operation, PrintWriter interfacePW) throws IOException {
-        String name = operation.getName ();
-        Parameters parms = parameters (operation);
+        String name = operation.getName();
+        Parameters parms = parameters(operation);
 
-        interfacePW.println (parms.signature + ";");
-
-        return parms;
-    } // writeOperation
-
-    /**
-     * This method generates the skeleton interface signatures operation.
-     */
-    private Parameters writeOperationSkelSignatures(Operation operation, PrintWriter interfacePW) throws IOException {
-        String name = operation.getName ();
-        Parameters parms = parameters (operation);
-
-        interfacePW.println (parms.skelSignature + ";");
+        interfacePW.println(parms.signature + ";");
 
         return parms;
     } // writeOperation
@@ -632,10 +620,10 @@ public class Emitter {
      * This method generates the axis server side impl interface signatures operation.
      */
     private Parameters writeOperationAxisSkelSignatures(Operation operation, PrintWriter interfacePW) throws IOException {
-        String name = operation.getName ();
-        Parameters parms = parameters (operation);
+        String name = operation.getName();
+        Parameters parms = parameters(operation);
 
-        interfacePW.println (parms.axisSignature + ";");
+        interfacePW.println(parms.axisSignature + ";");
 
         return parms;
     } // writeOperation
@@ -645,41 +633,41 @@ public class Emitter {
      * the fault.
      */
     private String fault(Fault operation) throws IOException {
-        String exceptionName = capitalize (operation.getName ());
-        PrintWriter pw = new PrintWriter (new FileWriter (exceptionName + ".java"));
+        String exceptionName = capitalize(operation.getName());
+        PrintWriter pw = new PrintWriter(new FileWriter(exceptionName + ".java"));
 
-        pw.println ("public class " + exceptionName + " extends Exception");
-        pw.println ("{");
+        pw.println("public class " + exceptionName + " extends Exception");
+        pw.println("{");
 
-        Vector params = new Vector ();
+        Vector params = new Vector();
 
-        partStrings (params, operation.getMessage ().getOrderedParts (null));
+        partStrings(params, operation.getMessage().getOrderedParts(null));
 
-        for (int i = 0; i < params.size (); i += 2)
-            pw.println ("    public " + params.get (i) + " " + params.get (i + 1) + ";");
+        for (int i = 0; i < params.size(); i += 2)
+            pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");
 
-        pw.println ();
-        pw.println ("    public " + exceptionName + " ()");
-        pw.println ("    {");
-        pw.println ("    }");
-        pw.println ();
-        if (params.size () > 0) {
-            pw.print ("      public " + exceptionName + "(");
-            for (int i = 0; i < params.size (); i += 2) {
-                if (i != 0) pw.print (", ");
-                pw.print (params.get (i) + " " + params.get (i + 1));
+        pw.println();
+        pw.println("    public " + exceptionName + " ()");
+        pw.println("    {");
+        pw.println("    }");
+        pw.println();
+        if (params.size() > 0) {
+            pw.print("      public " + exceptionName + "(");
+            for (int i = 0; i < params.size(); i += 2) {
+                if (i != 0) pw.print(", ");
+                pw.print(params.get(i) + " " + params.get(i + 1));
             }
-            pw.println (")");
-            pw.println ("    {");
-            for (int i = 1; i < params.size (); i += 2) {
-                String variable = (String) params.get (i);
+            pw.println(")");
+            pw.println("    {");
+            for (int i = 1; i < params.size(); i += 2) {
+                String variable = (String) params.get(i);
 
-                pw.println ("        this." + variable + " = " + variable + ";");
+                pw.println("        this." + variable + " = " + variable + ";");
             }
-            pw.println ("    }");
+            pw.println("    }");
         }
-        pw.println ("}");
-        pw.close ();
+        pw.println("}");
+        pw.close();
         return exceptionName;
     } // fault
 
@@ -687,14 +675,14 @@ public class Emitter {
      * Generate the stubs and skeletons for all binding tags.
      */
     private void writeBindings(HashMap portTypesInfo) throws IOException {
-        Map bindings = def.getBindings ();
-        Iterator i = bindings.values ().iterator ();
+        Map bindings = def.getBindings();
+        Iterator i = bindings.values().iterator();
 
-        while (i.hasNext ()) {
-            Binding binding = (Binding) i.next ();
-            HashMap portTypeInfo = (HashMap) portTypesInfo.get (binding.getPortType ());
+        while (i.hasNext()) {
+            Binding binding = (Binding) i.next();
+            HashMap portTypeInfo = (HashMap) portTypesInfo.get(binding.getPortType());
 
-            writeBinding (binding, portTypeInfo);
+            writeBinding(binding, portTypeInfo);
         }
     } // writeBindings
 
@@ -703,125 +691,124 @@ public class Emitter {
      */
     private void writeBinding(Binding binding, HashMap portTypeInfo) throws IOException {
         if (portTypeInfo == null)
-            throw new IOException ("Emitter failure.  Can't find interal classes for portType for binding " + binding.getQName ());
+            throw new IOException("Emitter failure.  Can't find interal classes for portType for binding " + binding.getQName());
 
-        PortType portType = binding.getPortType ();
-        String name = binding.getQName ().getLocalPart ();
-        String portTypeName = portType.getQName ().getLocalPart ();
+        PortType portType = binding.getPortType();
+        String name = binding.getQName().getLocalPart();
+        String portTypeName = portType.getQName().getLocalPart();
 
         String stubName = name + "Stub";
-        PrintWriter stubPW = new PrintWriter (new FileWriter (stubName + ".java"));
-        if(bVerbose)
+        PrintWriter stubPW = new PrintWriter(new FileWriter(stubName + ".java"));
+        if (bVerbose)
             System.out.println("Generating client-side stub: " + stubName + ".java");
 
-        stubPW.println ("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName);
-        stubPW.println ("{");
-        stubPW.println ("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient (new org.apache.axis.transport.http.HTTPTransport ());");
-        stubPW.println ("    private java.util.Hashtable properties = new java.util.Hashtable ();");
-        stubPW.println ();
-        stubPW.println ("    public " + stubName + " (java.net.URL endpointURL) throws org.apache.axis.SerializationException");
-        stubPW.println ("    {");
-        stubPW.println ("         this();");
-        stubPW.println ("         call.set (org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
-        stubPW.println ("    }");
+        stubPW.println("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName);
+        stubPW.println("{");
+        stubPW.println("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient (new org.apache.axis.transport.http.HTTPTransport ());");
+        stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable ();");
+        stubPW.println();
+        stubPW.println("    public " + stubName + " (java.net.URL endpointURL) throws org.apache.axis.SerializationException");
+        stubPW.println("    {");
+        stubPW.println("         this();");
+        stubPW.println("         call.set (org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
+        stubPW.println("    }");
 
-        stubPW.println ("    public " + stubName + " () throws org.apache.axis.SerializationException");
-        stubPW.println ("    {");
+        stubPW.println("    public " + stubName + " () throws org.apache.axis.SerializationException");
+        stubPW.println("    {");
 
-        HashSet types = complexTypesInClass (portType);
-        Iterator it = types.iterator ();
+        HashSet types = complexTypesInClass(portType);
+        Iterator it = types.iterator();
 
-        while (it.hasNext ())
-            writeSerializationInit (stubPW, (String) it.next ());
+        while (it.hasNext())
+            writeSerializationInit(stubPW, (String) it.next());
 
-        stubPW.println ("    }");
-        stubPW.println ();
-        stubPW.println ("    public void _setProperty (String name, Object value)");
-        stubPW.println ("    {");
-        stubPW.println ("        properties.put (name, value);");
-        stubPW.println ("    }");
-        stubPW.println ();
-        stubPW.println ("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println ("    public Object _getProperty (String name)");
-        stubPW.println ("    {");
-        stubPW.println ("        return properties.get (name);");
-        stubPW.println ("    }");
-        stubPW.println ();
-        stubPW.println ("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println ("    public void _setTargetEndpoint (java.net.URL address)");
-        stubPW.println ("    {");
-        stubPW.println ("        call.set (org.apache.axis.transport.http.HTTPTransport.URL, address.toString ());");
-        stubPW.println ("    }");
-        stubPW.println ();
-        stubPW.println ("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println ("    public java.net.URL _getTargetEndpoint ()");
-        stubPW.println ("    {");
-        stubPW.println ("        try");
-        stubPW.println ("        {");
-        stubPW.println ("            return new java.net.URL ((String)call.get (org.apache.axis.transport.http.HTTPTransport.URL));");
-        stubPW.println ("        }");
-        stubPW.println ("        catch (java.net.MalformedURLException mue)");
-        stubPW.println ("        {");
-        stubPW.println ("            return null; // ???");
-        stubPW.println ("        }");
-        stubPW.println ("    }");
-        stubPW.println ();
-        stubPW.println ("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println ("    public synchronized void setMaintainSession (boolean session)");
-        stubPW.println ("    {");
-        stubPW.println ("        call.setMaintainSession (session);");
-        stubPW.println ("    }");
-        stubPW.println ();
-        stubPW.println ("    // From javax.naming.Referenceable");
-        stubPW.println ("    public javax.naming.Reference getReference ()");
-        stubPW.println ("    {");
-        stubPW.println ("        return null; // ???");
-        stubPW.println ("    }");
-        stubPW.println ();
+        stubPW.println("    }");
+        stubPW.println();
+        stubPW.println("    public void _setProperty (String name, Object value)");
+        stubPW.println("    {");
+        stubPW.println("        properties.put (name, value);");
+        stubPW.println("    }");
+        stubPW.println();
+        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    public Object _getProperty (String name)");
+        stubPW.println("    {");
+        stubPW.println("        return properties.get (name);");
+        stubPW.println("    }");
+        stubPW.println();
+        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    public void _setTargetEndpoint (java.net.URL address)");
+        stubPW.println("    {");
+        stubPW.println("        call.set (org.apache.axis.transport.http.HTTPTransport.URL, address.toString ());");
+        stubPW.println("    }");
+        stubPW.println();
+        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    public java.net.URL _getTargetEndpoint ()");
+        stubPW.println("    {");
+        stubPW.println("        try");
+        stubPW.println("        {");
+        stubPW.println("            return new java.net.URL ((String)call.get (org.apache.axis.transport.http.HTTPTransport.URL));");
+        stubPW.println("        }");
+        stubPW.println("        catch (java.net.MalformedURLException mue)");
+        stubPW.println("        {");
+        stubPW.println("            return null; // ???");
+        stubPW.println("        }");
+        stubPW.println("    }");
+        stubPW.println();
+        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    public synchronized void setMaintainSession (boolean session)");
+        stubPW.println("    {");
+        stubPW.println("        call.setMaintainSession (session);");
+        stubPW.println("    }");
+        stubPW.println();
+        stubPW.println("    // From javax.naming.Referenceable");
+        stubPW.println("    public javax.naming.Reference getReference ()");
+        stubPW.println("    {");
+        stubPW.println("        return null; // ???");
+        stubPW.println("    }");
+        stubPW.println();
 
         PrintWriter skelPW =
-            null;
+                null;
 
-        if (bEmitSkeleton)
-        {
+        if (bEmitSkeleton) {
             String skelName = name + "Skeleton";
-            skelPW = new PrintWriter (new FileWriter (skelName + ".java"));
+            skelPW = new PrintWriter(new FileWriter(skelName + ".java"));
             String implType = portTypeName + " impl";
-            if(bVerbose)
+            if (bVerbose)
                 System.out.println("Generating server-side skeleton: " + skelName + ".java");
-            if(bMessageContext){
-                skelPW.println ("import org.apache.axis.MessageContext;");
+            if (bMessageContext) {
+                skelPW.println("import org.apache.axis.MessageContext;");
                 implType = portTypeName + "Axis impl";
             }
-            skelPW.println ("public class " + skelName);
-            skelPW.println ("{");
-            skelPW.println ("    private " + implType + ";");
-            skelPW.println ();
+            skelPW.println("public class " + skelName);
+            skelPW.println("{");
+            skelPW.println("    private " + implType + ";");
+            skelPW.println();
             // RJB WARNING! - is this OK?
-            skelPW.println ("    public " + skelName + "()");
-            skelPW.println ("    {");
-            skelPW.println ("        this.impl = new " + name + "Impl ();");
-            skelPW.println ("    }");
-            skelPW.println ();
-            skelPW.println ("    public " + skelName + " (" + implType + ")");
-            skelPW.println ("    {");
-            skelPW.println ("        this.impl = impl;");
-            skelPW.println ("    }");
-            skelPW.println ();
+            skelPW.println("    public " + skelName + "()");
+            skelPW.println("    {");
+            skelPW.println("        this.impl = new " + name + "Impl ();");
+            skelPW.println("    }");
+            skelPW.println();
+            skelPW.println("    public " + skelName + " (" + implType + ")");
+            skelPW.println("    {");
+            skelPW.println("        this.impl = impl;");
+            skelPW.println("    }");
+            skelPW.println();
         }
 
-        List operations = binding.getBindingOperations ();
-        for (int i = 0; i < operations.size (); ++i) {
-            BindingOperation operation = (BindingOperation) operations.get (i);
-            Parameters parameters = (Parameters) portTypeInfo.get (operation.getOperation ());
+        List operations = binding.getBindingOperations();
+        for (int i = 0; i < operations.size(); ++i) {
+            BindingOperation operation = (BindingOperation) operations.get(i);
+            Parameters parameters = (Parameters) portTypeInfo.get(operation.getOperation());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
             Iterator operationExtensibilityIterator = operation.getExtensibilityElements().iterator();
-            for ( ; operationExtensibilityIterator.hasNext(); ) {
+            for (; operationExtensibilityIterator.hasNext();) {
                 Object obj = operationExtensibilityIterator.next();
                 if (obj instanceof SOAPOperation) {
-                    soapAction = ((SOAPOperation)obj).getSoapActionURI();
+                    soapAction = ((SOAPOperation) obj).getSoapActionURI();
                     break;
                 }
             }
@@ -829,26 +816,25 @@ public class Emitter {
             String namespace = "";
             Iterator bindingInputIterator
                     = operation.getBindingInput().getExtensibilityElements().iterator();
-            for ( ; bindingInputIterator.hasNext(); ) {
+            for (; bindingInputIterator.hasNext();) {
                 Object obj = bindingInputIterator.next();
                 if (obj instanceof SOAPBody) {
-                    namespace = ((SOAPBody)obj).getNamespaceURI();
+                    namespace = ((SOAPBody) obj).getNamespaceURI();
                     if (namespace == null)
                         namespace = "";
                     break;
                 }
             }
 
-            writeBindingOperation (operation, parameters, soapAction, namespace, stubPW, skelPW);
+            writeBindingOperation(operation, parameters, soapAction, namespace, stubPW, skelPW);
         }
 
-        stubPW.println ("}");
-        stubPW.close ();
+        stubPW.println("}");
+        stubPW.close();
 
-        if (bEmitSkeleton)
-        {
-            skelPW.println ("}");
-            skelPW.close ();
+        if (bEmitSkeleton) {
+            skelPW.println("}");
+            skelPW.close();
         }
     } // writeBinding
 
@@ -856,96 +842,97 @@ public class Emitter {
      * In the stub constructor, write the serializer code for the complex types.
      */
     private void writeSerializationInit(PrintWriter pw, String type) throws IOException {
-        Element e = (Element)complexType(type).getParentNode();
+        Element e = (Element) complexType(type).getParentNode();
         String namespace = e.getAttribute("targetNamespace");
-        pw.println ("        try");
-        pw.println ("        {");
-        pw.println ("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName (\"" + namespace + "\", \"" + type + "\");");
-        pw.println ("            Class cls = " + type + ".class;");
-        pw.println ("            call.addSerializer (cls, qn1, new org.apache.axis.encoding.BeanSerializer (cls));");
-        pw.println ("            call.addDeserializerFactory (qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory ());");
-        pw.println ("        }");
-        pw.println ("        catch (Throwable t)");
-        pw.println ("        {");
-        pw.println ("            throw new org.apache.axis.SerializationException (\"" + type + "\", t);");
-        pw.println ("        }");
-        pw.println ();
+        pw.println("        try");
+        pw.println("        {");
+        pw.println("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName (\"" + namespace + "\", \"" + type + "\");");
+        pw.println("            Class cls = " + type + ".class;");
+        pw.println("            call.addSerializer (cls, qn1, new org.apache.axis.encoding.BeanSerializer (cls));");
+        pw.println("            call.addDeserializerFactory (qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory ());");
+        pw.println("        }");
+        pw.println("        catch (Throwable t)");
+        pw.println("        {");
+        pw.println("            throw new org.apache.axis.SerializationException (\"" + type + "\", t);");
+        pw.println("        }");
+        pw.println();
     } // writeSerializationInit
 
     /**
      * Write the stub and skeleton code for the given BindingOperation.
      */
     private void writeBindingOperation(BindingOperation operation, Parameters parms,
-        String soapAction, String namespace, PrintWriter stubPW, PrintWriter skelPW)
+                                       String soapAction, String namespace, PrintWriter stubPW, PrintWriter skelPW)
             throws IOException {
 
-        String name = operation.getName ();
+        String name = operation.getName();
 
-        writeStubOperation (name, parms, soapAction, namespace, stubPW);
+        writeStubOperation(name, parms, soapAction, namespace, stubPW);
         if (bEmitSkeleton)
-            writeSkeletonOperation (name, parms, skelPW);
+            writeSkeletonOperation(name, parms, skelPW);
     } // writeBindingOperation
 
     /**
      * Write the stub code for the given operation.
      */
     private void writeStubOperation(String name, Parameters parms, String soapAction,
-                                    String namespace,PrintWriter pw) {
-        pw.println (parms.signature);
-        pw.println ("    {");
-        pw.println ("        if (call.get (org.apache.axis.transport.http.HTTPTransport.URL) == null)");
-        pw.println ("            throw new org.apache.axis.NoEndPointException ();");
+                                    String namespace, PrintWriter pw) {
+        pw.println(parms.signature);
+        pw.println("    {");
+        pw.println("        if (call.get (org.apache.axis.transport.http.HTTPTransport.URL) == null)");
+        pw.println("            throw new org.apache.axis.NoEndPointException ();");
 
-        pw.println ("        call.set (org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
-        pw.print ("        Object resp = call.invoke (");
+        pw.println("        call.set (org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
+        pw.print("        Object resp = call.invoke (");
 
         // Namespace
-        pw.print ("\"" + namespace + "\"");
+        pw.print("\"" + namespace + "\"");
 
         // Operation
-        pw.print (", \"" + name + "\", new Object[] {");
+        pw.print(", \"" + name + "\", new Object[] {");
 
         // Write the input and inout parameter list
         boolean needComma = false;
-        for (int i = 0; i < parms.list.size (); ++i) {
-            Parameter p = (Parameter) parms.list.get (i);
+        for (int i = 0; i < parms.list.size(); ++i) {
+            Parameter p = (Parameter) parms.list.get(i);
 
             if (needComma) {
                 if (p.mode != Parameter.OUT)
-                    pw.print (", ");
+                    pw.print(", ");
             }
             else
                 needComma = true;
             if (p.mode == Parameter.IN)
-                pw.print ("new org.apache.axis.message.RPCParam (\"" + p.name +
+                pw.print("new org.apache.axis.message.RPCParam (\"" + p.name +
                         "\", " + wrapPrimitiveType(p.type, p.name) + ")");
             else if (p.mode == Parameter.INOUT)
-                pw.print ("new org.apache.axis.message.RPCParam (\"" + p.name +
+                pw.print("new org.apache.axis.message.RPCParam (\"" + p.name +
                         "\", " + p.name + "._value)");
         }
-        pw.println ("});");
-        pw.println ();
-        pw.println ("        if (resp instanceof java.rmi.RemoteException)");
-        pw.println ("            throw (java.rmi.RemoteException)resp;");
+        pw.println("});");
+        pw.println();
+        pw.println("        if (resp instanceof java.rmi.RemoteException)");
+        pw.println("            throw (java.rmi.RemoteException)resp;");
 
         int allOuts = parms.outputs + parms.inouts;
         if (allOuts > 0) {
-            pw.println ("        else");
-            pw.println ("        {");
+            pw.println("        else");
+            pw.println("        {");
             if (allOuts == 1) {
                 if (parms.inouts == 1) {
                     // There is only one output and it is an inout, so the resp object
                     // must go into the inout holder.
                     int i = 0;
-                    Parameter p = (Parameter) parms.list.get (i);
+                    Parameter p = (Parameter) parms.list.get(i);
 
                     while (p.mode != Parameter.INOUT)
-                        p = (Parameter) parms.list.get (++i);
-                    pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
+                        p = (Parameter) parms.list.get(++i);
+                    pw.println("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
                 }
-                else { // (parms.outputs == 1)
+                else {
+                    // (parms.outputs == 1)
                     // There is only one output and it is the return value.
-                    pw.println("             return " + getResponseString(parms.returnType, "resp") );
+                    pw.println("             return " + getResponseString(parms.returnType, "resp"));
                 }
             }
             else {
@@ -953,21 +940,21 @@ public class Emitter {
                 // call.getOutputParams ().  Pull the Objects from the appropriate place -
                 // resp or call.getOutputParms - and put them in the appropriate place,
                 // either in a holder or as the return value.
-                pw.println ("            java.util.Vector output = call.getOutputParams ();");
+                pw.println("            java.util.Vector output = call.getOutputParams ();");
                 int outdex = 0;
                 final int RESP = -1;
                 final int NO_OUTPUT = -2;
-                int ret = "void".equals (parms.returnType) ? NO_OUTPUT : RESP; // assume the resp is the return type.  It may not be.
+                int ret = "void".equals(parms.returnType) ? NO_OUTPUT : RESP; // assume the resp is the return type.  It may not be.
                 boolean firstInoutOut = true;
                 boolean firstOut = true;
 
-                for (int i = 0; i < parms.list.size (); ++i) {
-                    Parameter p = (Parameter) parms.list.get (i);
+                for (int i = 0; i < parms.list.size(); ++i) {
+                    Parameter p = (Parameter) parms.list.get(i);
                     if (p.mode != Parameter.IN) {
                         if (firstInoutOut) {
                             firstInoutOut = false;
                             if (p.mode == Parameter.INOUT) {
-                                pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));
+                                pw.println("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
                             }
                             else {
                                 firstOut = false;
@@ -975,104 +962,104 @@ public class Emitter {
                             }
                         }
                         else if (p.mode == Parameter.INOUT) {
-                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "output.get (" + outdex++ + ")"));
+                            pw.println("            " + p.name + "._value = " + getResponseString(p.type, "output.get (" + outdex++ + ")"));
                         }
                         else if (firstOut) {
                             firstOut = false;
                             ret = outdex++;
                         }
                         else {
-                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "output.get (" + outdex++ + ")"));
+                            pw.println("            " + p.name + "._value = " + getResponseString(p.type, "output.get (" + outdex++ + ")"));
                         }
                     }
                 }
                 if (ret == RESP) {
-                    pw.println ("            return " + getResponseString (parms.returnType, "resp"));
+                    pw.println("            return " + getResponseString(parms.returnType, "resp"));
                 }
                 else if (ret != NO_OUTPUT) {
-                    pw.println ("            return " + getResponseString(parms.returnType, "output.get (" + ret + ")"));
+                    pw.println("            return " + getResponseString(parms.returnType, "output.get (" + ret + ")"));
                 }
             }
-            pw.println ("        }");
+            pw.println("        }");
         }
-        pw.println ("    }");
-        pw.println ();
+        pw.println("    }");
+        pw.println();
     } // writeStubOperation
 
     /**
      * Write the skeleton code for the given operation.
      */
     private void writeSkeletonOperation(String name, Parameters parms, PrintWriter pw) {
-        pw.println (parms.skelSignature);
-        pw.println ("    {");
+        pw.println(parms.skelSignature);
+        pw.println("    {");
 
         // Instantiate the holders
-        for (int i = 0; i < parms.list.size (); ++i) {
-            Parameter p = (Parameter) parms.list.get (i);
+        for (int i = 0; i < parms.list.size(); ++i) {
+            Parameter p = (Parameter) parms.list.get(i);
 
             if (p.mode == Parameter.INOUT)
-                pw.println ("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder (" + p.name + ");");
+                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder (" + p.name + ");");
             else if (p.mode == Parameter.OUT)
-                pw.println ("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder ();");
+                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder ();");
         }
 
         // Call the real implementation
         if (parms.outputs == 0)
-            pw.print ("        impl." + name + "(");
+            pw.print("        impl." + name + "(");
         else
-            pw.print ("        Object ret = impl." + name + "(");
+            pw.print("        Object ret = impl." + name + "(");
 
-        if(bMessageContext){
+        if (bMessageContext) {
             pw.print("ctx");
-            if(parms.list.size() > 0)
+            if (parms.list.size() > 0)
                 pw.print(", ");
         }
 
         boolean needComma = false;
-        for (int i = 0; i < parms.list.size (); ++i) {
+        for (int i = 0; i < parms.list.size(); ++i) {
             if (needComma)
-                pw.print (", ");
+                pw.print(", ");
             else
                 needComma = true;
-            Parameter p = (Parameter) parms.list.get (i);
+            Parameter p = (Parameter) parms.list.get(i);
 
             if (p.mode == Parameter.IN)
-                pw.print (p.name);
+                pw.print(p.name);
             else
-                pw.print (p.name + "Holder");
+                pw.print(p.name + "Holder");
         }
-        pw.println (");");
+        pw.println(");");
 
         // Handle the outputs, if there are any.
         if (parms.inouts + parms.outputs > 0) {
             if (parms.inouts == 0 && parms.outputs == 1)
-                // The only output is a single return value; simply pass it through.
-                pw.println ("        return ret;");
+            // The only output is a single return value; simply pass it through.
+                pw.println("        return ret;");
             else if (parms.outputs == 0 && parms.inouts == 1) {
                 // There is only one inout parameter.  Find it in the parms list and write
                 // its return
                 int i = 0;
-                Parameter p = (Parameter) parms.list.get (i);
+                Parameter p = (Parameter) parms.list.get(i);
                 while (p.mode != Parameter.INOUT)
-                    p = (Parameter) parms.list.get (++i);
-                pw.println ("        return " + p.name + "Holder._value;");
+                    p = (Parameter) parms.list.get(++i);
+                pw.println("        return " + p.name + "Holder._value;");
             }
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
-                pw.println ("        java.util.Vector v = new java.util.Vector ();");
+                pw.println("        java.util.Vector v = new java.util.Vector ();");
                 if (parms.outputs > 0)
-                    pw.println ("        v.add (ret);");
-                for (int i = 0; i < parms.list.size (); ++i) {
-                    Parameter p = (Parameter) parms.list.get (i);
+                    pw.println("        v.add (ret);");
+                for (int i = 0; i < parms.list.size(); ++i) {
+                    Parameter p = (Parameter) parms.list.get(i);
 
                     if (p.mode != Parameter.IN)
-                        pw.println ("        v.add (" + p.name + "Holder._value);");
+                        pw.println("        v.add (" + p.name + "Holder._value);");
                 }
-                pw.println ("        return v;");
+                pw.println("        return v;");
             }
         }
-        pw.println ("    }");
-        pw.println ();
+        pw.println("    }");
+        pw.println();
     } // writeSkeletonOperation
 
     /**
@@ -1080,12 +1067,12 @@ public class Emitter {
      */
     private void writeServices() throws IOException {
         Map services = def.getServices();
-        Iterator i = services.values ().iterator ();
+        Iterator i = services.values().iterator();
 
-         while (i.hasNext ()) {
-             Service s = (Service) i.next ();
-             writeService (s);
-         }
+        while (i.hasNext()) {
+            Service s = (Service) i.next();
+            writeService(s);
+        }
     }
 
     /**
@@ -1093,29 +1080,29 @@ public class Emitter {
      */
     private void writeService(Service service) throws IOException {
         String serviceName = service.getQName().getLocalPart();
-        PrintWriter servicePW = new PrintWriter (
-                new FileWriter (serviceName + ".java"));
-        if(bVerbose)
+        PrintWriter servicePW = new PrintWriter(
+                new FileWriter(serviceName + ".java"));
+        if (bVerbose)
             System.out.println("Generating service class: " + serviceName + ".java");
 
         // imports (none right now)
 
         // declare class
-        servicePW.println ("public class " + serviceName);
-        servicePW.println ("{");
+        servicePW.println("public class " + serviceName);
+        servicePW.println("{");
 
         // get ports
         Map portMap = service.getPorts();
         Iterator portIterator = portMap.values().iterator();
 
         // write a get method for each of the ports with a Soap RPC binding
-        while (portIterator.hasNext() ) {
-            Port p = (Port)portIterator.next();
+        while (portIterator.hasNext()) {
+            Port p = (Port) portIterator.next();
             String portName = p.getName();
             Binding binding = p.getBinding();
 
             // If this isn't an RPC binding, skip it
-            if (! isRpcBinding(binding) )
+            if (!isRpcBinding(binding))
                 continue;
 
             String stubClass = binding.getQName().getLocalPart() + "Stub";
@@ -1125,13 +1112,13 @@ public class Emitter {
             String address = getAddressFromPort(p);
             if (address == null) {
                 // now what?
-                throw new IOException ("Emitter failure.  Can't find endpoint address in port " + portName + " in service " + serviceName );
+                throw new IOException("Emitter failure.  Can't find endpoint address in port " + portName + " in service " + serviceName);
             }
             try {
                 URL ep = new URL(address);
             }
-            catch(MalformedURLException e) {
-                throw new IOException ("Emitter failure.  Invalid endpoint address in port " + portName + " in service " + serviceName + ": " + address );
+            catch (MalformedURLException e) {
+                throw new IOException("Emitter failure.  Invalid endpoint address in port " + portName + " in service " + serviceName + ": " + address);
             }
 
             servicePW.println();
@@ -1161,7 +1148,7 @@ public class Emitter {
         // write out standard service methods (available in all services)
 
         // all done
-        servicePW.println ("}");
+        servicePW.println("}");
         servicePW.close();
     }
 
@@ -1173,7 +1160,7 @@ public class Emitter {
         while (i.hasNext()) {
             Object obj = i.next();
             if (obj instanceof SOAPBinding) {
-                SOAPBinding sb = (SOAPBinding)obj;
+                SOAPBinding sb = (SOAPBinding) obj;
                 String style = sb.getStyle();
                 if (style.equalsIgnoreCase("rpc"))
                     return true;
@@ -1187,14 +1174,13 @@ public class Emitter {
     /**
      * Return the endpoint address from a <soap:address location="..."> tag
      */
-    private String getAddressFromPort(Port p)
-    {
+    private String getAddressFromPort(Port p) {
         // Get the endpoint for a port
         List extensibilityList = p.getExtensibilityElements();
-        for (ListIterator li = extensibilityList.listIterator(); li.hasNext(); ) {
+        for (ListIterator li = extensibilityList.listIterator(); li.hasNext();) {
             Object obj = li.next();
             if (obj instanceof SOAPAddress) {
-                return ((SOAPAddress)obj).getLocationURI();
+                return ((SOAPAddress) obj).getLocationURI();
             }
         }
         // didn't find it
@@ -1205,14 +1191,14 @@ public class Emitter {
      * Generate the deployment descriptor and undeployment descriptor
      * for the current WSDL file
      */
-    private void writeDeploymentXML(){
-        try{
-            PrintWriter deployPW = new PrintWriter (new FileWriter ("deploy.xml"));
-            if(bVerbose)
+    private void writeDeploymentXML() {
+        try {
+            PrintWriter deployPW = new PrintWriter(new FileWriter("deploy.xml"));
+            if (bVerbose)
                 System.out.println("Generating deployment document: deploy.xml");
             initializeDeploymentDoc(deployPW, "deploy");
-            PrintWriter undeployPW = new PrintWriter (new FileWriter ("undeploy.xml"));
-            if(bVerbose)
+            PrintWriter undeployPW = new PrintWriter(new FileWriter("undeploy.xml"));
+            if (bVerbose)
                 System.out.println("Generating deployment document: undeploy.xml");
             initializeDeploymentDoc(undeployPW, "undeploy");
             writeDeployServices(deployPW, undeployPW);
@@ -1221,7 +1207,8 @@ public class Emitter {
             deployPW.close();
             undeployPW.println("</m:undeploy>");
             undeployPW.close();
-        }catch (IOException e){
+        }
+        catch (IOException e) {
             System.err.println("Failed to write deployment documents");
             e.printStackTrace();
         }
@@ -1232,25 +1219,25 @@ public class Emitter {
      * Initialize the deployment document, spit out preamble comments
      * and opening tag
      */
-    private void initializeDeploymentDoc(PrintWriter pw, String deploymentOpName) throws IOException{
-        pw.println( "<!--                                         " +
-                    "                    -->");
-        pw.println( "<!--Use this file to " + deploymentOpName +
-                    " some handlers/chains and services  -->");
-        pw.println( "<!--Two ways to do this:                     " +
-                    "                    -->");
-        pw.println( "<!--  java org.apache.axis.utils.Admin "+
-                    deploymentOpName + ".xml              -->");
-        pw.println( "<!--     from the same dir that the Axis " +
-                    "engine runs             -->");
-        pw.println( "<!--or                                     " +
-                    "                      -->");
-        pw.println( "<!--  java org.apache.axis.client.AdminClient " +
-                    deploymentOpName + ".xml       -->");
-        pw.println( "<!--     after the axis server is running    " +
-                    "                    -->");
-        pw.println( "<!--This file will be replaced by WSDD once " +
-                    "it's ready           -->");
+    private void initializeDeploymentDoc(PrintWriter pw, String deploymentOpName) throws IOException {
+        pw.println("<!--                                         " +
+                "                    -->");
+        pw.println("<!--Use this file to " + deploymentOpName +
+                " some handlers/chains and services  -->");
+        pw.println("<!--Two ways to do this:                     " +
+                "                    -->");
+        pw.println("<!--  java org.apache.axis.utils.Admin " +
+                deploymentOpName + ".xml              -->");
+        pw.println("<!--     from the same dir that the Axis " +
+                "engine runs             -->");
+        pw.println("<!--or                                     " +
+                "                      -->");
+        pw.println("<!--  java org.apache.axis.client.AdminClient " +
+                deploymentOpName + ".xml       -->");
+        pw.println("<!--     after the axis server is running    " +
+                "                    -->");
+        pw.println("<!--This file will be replaced by WSDD once " +
+                "it's ready           -->");
         pw.println();
         pw.println("<m:" + deploymentOpName + " xmlns:m=\"AdminService\">");
     } // initializeDeploymentDoc
@@ -1258,37 +1245,37 @@ public class Emitter {
     /**
      * Write out bean mappings for each type
      */
-    private void writeDeployTypes(PrintWriter pw) throws IOException{
-        Vector types = findChildNodesByName (doc, "complexType");
+    private void writeDeployTypes(PrintWriter pw) throws IOException {
+        Vector types = findChildNodesByName(doc, "complexType");
 
-        if(types.isEmpty()) return;
+        if (types.isEmpty()) return;
 
         pw.println();
 
         //assumes all complex type elements are under one parent
-       Node type = (Node)types.get(0);
-                Element parent = (Element)type.getParentNode();
-                String namespaceURI = parent.getAttribute("targetNamespace");
+        Node type = (Node) types.get(0);
+        Element parent = (Element) type.getParentNode();
+        String namespaceURI = parent.getAttribute("targetNamespace");
 
-                //grab the namespace prefix from the attributes of the root (if it is there)
-                String namespacePrefix="ns";
-                NamedNodeMap docAttrs = doc.getDocumentElement().getAttributes();
-                for(int i = 0; i<docAttrs.getLength();i++){
-                        Attr attr = (Attr)docAttrs.item(i);
-                        if(attr.getValue().equals(namespaceURI)){
-                        namespacePrefix = ((Attr)docAttrs.item(i)).getLocalName();
-                        break;
-                }
-                }
+        //grab the namespace prefix from the attributes of the root (if it is there)
+        String namespacePrefix = "ns";
+        NamedNodeMap docAttrs = doc.getDocumentElement().getAttributes();
+        for (int i = 0; i < docAttrs.getLength(); i++) {
+            Attr attr = (Attr) docAttrs.item(i);
+            if (attr.getValue().equals(namespaceURI)) {
+                namespacePrefix = ((Attr) docAttrs.item(i)).getLocalName();
+                break;
+            }
+        }
 
-                pw.println("   <beanMappings xmlns:" + namespacePrefix + "=\"" + namespaceURI + "\">");
+        pw.println("   <beanMappings xmlns:" + namespacePrefix + "=\"" + namespaceURI + "\">");
 
-        for (int i = 0; i < types.size (); ++i) {
-                type = (Node) types.get (i);
-                NamedNodeMap attributes = type.getAttributes ();
-                String typeName = capitalize (attributes.getNamedItem ("name").getNodeValue ());
+        for (int i = 0; i < types.size(); ++i) {
+            type = (Node) types.get(i);
+            NamedNodeMap attributes = type.getAttributes();
+            String typeName = capitalize(attributes.getNamedItem("name").getNodeValue());
 
-                        pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + typeName + "\"/>");
+            pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + typeName + "\"/>");
         }
         pw.println("   </beanMappings>");
 
@@ -1297,11 +1284,11 @@ public class Emitter {
     /**
      * Write out deployment and undeployment instructions for each WSDL service
      */
-    private void writeDeployServices(PrintWriter deployPW, PrintWriter undeployPW) throws IOException{
+    private void writeDeployServices(PrintWriter deployPW, PrintWriter undeployPW) throws IOException {
         //deploy the ports on each service
         Map serviceMap = def.getServices();
-        for ( Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
-            Service myService = (Service)mapIterator.next();
+        for (Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
+            Service myService = (Service) mapIterator.next();
 
             deployPW.println();
             deployPW.println("   <!-- Services from " + myService.getQName().getLocalPart() + " WSDL service -->");
@@ -1312,33 +1299,33 @@ public class Emitter {
             undeployPW.println();
 
             for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {
-                Port myPort = (Port)portIterator.next();
+                Port myPort = (Port) portIterator.next();
                 writeDeployPort(deployPW, undeployPW, myPort);
             }
         }
-        } //writeDeployServices
+    } //writeDeployServices
 
     /**
      * Write out deployment and undeployment instructions for given WSDL port
      */
-    private void writeDeployPort(PrintWriter deployPW, PrintWriter undeployPW, Port port) throws IOException{
+    private void writeDeployPort(PrintWriter deployPW, PrintWriter undeployPW, Port port) throws IOException {
         Binding binding = port.getBinding();
         String serviceName = port.getName();
 
         boolean isRPC = false;
         Iterator operationExtensibilityIterator = binding.getExtensibilityElements().iterator();
-        for ( ; operationExtensibilityIterator.hasNext(); ) {
+        for (; operationExtensibilityIterator.hasNext();) {
             Object obj = operationExtensibilityIterator.next();
             if (obj instanceof SOAPBinding) {
-                isRPC = ((SOAPBinding)obj).getStyle().equals("rpc");
+                isRPC = ((SOAPBinding) obj).getStyle().equals("rpc");
                 break;
             }
         }
 
-                deployPW.println("   <service name=\"" + serviceName
-                                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">" );
-                undeployPW.println("   <service name=\"" + serviceName
-                                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">" );
+        deployPW.println("   <service name=\"" + serviceName
+                + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
+        undeployPW.println("   <service name=\"" + serviceName
+                + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
 
         writeDeployBinding(deployPW, binding);
 
@@ -1349,14 +1336,14 @@ public class Emitter {
     /**
      * Write out deployment instructions for given WSDL binding
      */
-    private void writeDeployBinding(PrintWriter deployPW, Binding binding) throws IOException{
+    private void writeDeployBinding(PrintWriter deployPW, Binding binding) throws IOException {
         deployPW.println("      <option name=\"className\" value=\"" +
-                           binding.getQName ().getLocalPart () + "Skeleton" + "\"/>");
+                binding.getQName().getLocalPart() + "Skeleton" + "\"/>");
 
         String methodList = "";
         Iterator operationsIterator = binding.getBindingOperations().iterator();
-        for ( ; operationsIterator.hasNext(); ) {
-            BindingOperation op = (BindingOperation)operationsIterator.next();
+        for (; operationsIterator.hasNext();) {
+            BindingOperation op = (BindingOperation) operationsIterator.next();
             methodList = methodList + " " + op.getName();
         }
 
@@ -1373,11 +1360,11 @@ public class Emitter {
      * If generating serverside (skeleton) spit out beanmappings
      */
     private void writeTypes() throws IOException {
-        Vector types = findChildNodesByName (doc, "complexType");
+        Vector types = findChildNodesByName(doc, "complexType");
 
-        for (int i = 0; i < types.size (); ++i) {
-            writeType ((Node) types.get (i));
-            writeHolder ((Node) types.get (i));
+        for (int i = 0; i < types.size(); ++i) {
+            writeType((Node) types.get(i));
+            writeHolder((Node) types.get(i));
         }
     } // writeTypes
 
@@ -1385,87 +1372,87 @@ public class Emitter {
      * Generate the binding for the given complex type.
      */
     private void writeType(Node node) throws IOException {
-        NamedNodeMap attributes = node.getAttributes ();
-        String nameValue = capitalize (attributes.getNamedItem ("name").getNodeValue ());
-        PrintWriter typePW = new PrintWriter (new FileWriter (nameValue + ".java"));
-        if(bVerbose)
+        NamedNodeMap attributes = node.getAttributes();
+        String nameValue = capitalize(attributes.getNamedItem("name").getNodeValue());
+        PrintWriter typePW = new PrintWriter(new FileWriter(nameValue + ".java"));
+        if (bVerbose)
             System.out.println("Generating type implementation: " + nameValue + ".java");
 
-        typePW.println ("public class " + nameValue + " implements java.io.Serializable");
-        typePW.println ("{");
+        typePW.println("public class " + nameValue + " implements java.io.Serializable");
+        typePW.println("{");
 
-        Vector elements = findNameValues (node, "element");
+        Vector elements = findNameValues(node, "element");
 
-        for (int i = 0; i < elements.size (); i += 2)
-            typePW.println ("    public " + elements.get (i) + " " + elements.get (i + 1) + ";");
+        for (int i = 0; i < elements.size(); i += 2)
+            typePW.println("    public " + elements.get(i) + " " + elements.get(i + 1) + ";");
 
-        typePW.println ();
-        typePW.println ("    public " + nameValue + " ()");
-        typePW.println ("    {");
-        typePW.println ("    }");
-        typePW.println ();
-        typePW.print ("    public " + nameValue + " (");
-        for (int i = 0; i < elements.size (); i += 2) {
-            if (i != 0) typePW.print (", ");
-            typePW.print ((String) elements.get (i) + " " + elements.get (i + 1));
+        typePW.println();
+        typePW.println("    public " + nameValue + " ()");
+        typePW.println("    {");
+        typePW.println("    }");
+        typePW.println();
+        typePW.print("    public " + nameValue + " (");
+        for (int i = 0; i < elements.size(); i += 2) {
+            if (i != 0) typePW.print(", ");
+            typePW.print((String) elements.get(i) + " " + elements.get(i + 1));
         }
-        typePW.println (")");
-        typePW.println ("    {");
-        for (int i = 1; i < elements.size (); i += 2) {
-            String variable = (String) elements.get (i);
+        typePW.println(")");
+        typePW.println("    {");
+        for (int i = 1; i < elements.size(); i += 2) {
+            String variable = (String) elements.get(i);
 
-            typePW.println ("        this." + variable + " = " + variable + ";");
+            typePW.println("        this." + variable + " = " + variable + ";");
         }
-        typePW.println ("    }");
-        typePW.println ();
-        for (int i = 0; i < elements.size (); i += 2) {
-            String type = (String) elements.get (i);
-            String name = (String) elements.get (i + 1);
-            String capName = capitalize (name);
+        typePW.println("    }");
+        typePW.println();
+        for (int i = 0; i < elements.size(); i += 2) {
+            String type = (String) elements.get(i);
+            String name = (String) elements.get(i + 1);
+            String capName = capitalize(name);
 
-            typePW.println ("    public " + type + " get" + capName + " ()");
-            typePW.println ("    {");
-            typePW.println ("        return " + name + ";");
-            typePW.println ("    }");
-            typePW.println ();
-            typePW.println ("    public void set" + capName + " (" + type + " " + name + ")");
-            typePW.println ("    {");
-            typePW.println ("        this." + name + " = " + name + ";");
-            typePW.println ("    }");
-            typePW.println ();
+            typePW.println("    public " + type + " get" + capName + " ()");
+            typePW.println("    {");
+            typePW.println("        return " + name + ";");
+            typePW.println("    }");
+            typePW.println();
+            typePW.println("    public void set" + capName + " (" + type + " " + name + ")");
+            typePW.println("    {");
+            typePW.println("        this." + name + " = " + name + ";");
+            typePW.println("    }");
+            typePW.println();
         }
-        typePW.println ("}");
-        typePW.close ();
+        typePW.println("}");
+        typePW.close();
     } // writeType
 
     /**
      * Generate the holder for the given complex type.
      */
     private void writeHolder(Node type) throws IOException {
-        NamedNodeMap attributes = type.getAttributes ();
+        NamedNodeMap attributes = type.getAttributes();
         String typeName =
-            capitalize (attributes.getNamedItem ("name").getNodeValue ());
+                capitalize(attributes.getNamedItem("name").getNodeValue());
         PrintWriter pw =
-            new PrintWriter (new FileWriter (typeName + "Holder.java"));
-        if(bVerbose)
+                new PrintWriter(new FileWriter(typeName + "Holder.java"));
+        if (bVerbose)
             System.out.println("Generating type implementation holder: " + typeName + "Holder.java");
 
-        pw.println ("public final class " + typeName + "Holder implements java.io.Serializable");
-        pw.println ("{");
-        pw.println ("    public " + typeName + " _value;");
-        pw.println ();
-        pw.println ("    public " + typeName + "Holder ()");
-        pw.println ("    {");
-        pw.println ("    }");
-        pw.println ();
-        pw.println ("    public " + typeName + "Holder (" + typeName + " value)");
-        pw.println ("    {");
-        pw.println ("        this._value = value;");
-        pw.println ("    }");
-        pw.println ();
-        pw.println ("    // ??? what else?");
-        pw.println ("}");
-        pw.close ();
+        pw.println("public final class " + typeName + "Holder implements java.io.Serializable");
+        pw.println("{");
+        pw.println("    public " + typeName + " _value;");
+        pw.println();
+        pw.println("    public " + typeName + "Holder ()");
+        pw.println("    {");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public " + typeName + "Holder (" + typeName + " value)");
+        pw.println("    {");
+        pw.println("        this._value = value;");
+        pw.println("    }");
+        pw.println();
+        pw.println("    // ??? what else?");
+        pw.println("}");
+        pw.close();
     } // writeHolder
 
     /**
@@ -1473,14 +1460,14 @@ public class Emitter {
      * even numbered elements are element values.
      */
     private Vector findNameValues(Node node, String name) {
-        Vector nameValues = new Vector ();
-        Vector elements = findChildNodesByName (node, name);
+        Vector nameValues = new Vector();
+        Vector elements = findChildNodesByName(node, name);
 
-        for (int i = 0; i < elements.size (); ++i) {
-            NamedNodeMap attributes = ((Node) elements.get (i)).getAttributes ();
+        for (int i = 0; i < elements.size(); ++i) {
+            NamedNodeMap attributes = ((Node) elements.get(i)).getAttributes();
 
-            nameValues.add (type (attributes.getNamedItem ("type").getNodeValue ()));
-            nameValues.add (attributes.getNamedItem ("name").getNodeValue ());
+            nameValues.add(type(attributes.getNamedItem("type").getNodeValue()));
+            nameValues.add(attributes.getNamedItem("name").getNodeValue());
         }
         return nameValues;
     } // findNameValue
@@ -1489,16 +1476,16 @@ public class Emitter {
      * This method returns the complexType node with the given type name.  If the given name does not describe a complex type, this method returns null.
      */
     private Node complexType(String typeName) {
-        Vector types = findChildNodesByName (doc, "complexType");
+        Vector types = findChildNodesByName(doc, "complexType");
 
-        for (int i = 0; i < types.size (); ++i) {
-            Node complexType = (Node) types.get (i);
-            NamedNodeMap attributes = complexType.getAttributes ();
+        for (int i = 0; i < types.size(); ++i) {
+            Node complexType = (Node) types.get(i);
+            NamedNodeMap attributes = complexType.getAttributes();
 
             if (attributes != null) {
-                Node name = attributes.getNamedItem ("name");
+                Node name = attributes.getNamedItem("name");
 
-                if (name != null && capitalize (name.getNodeValue ()).equals (typeName)) {
+                if (name != null && capitalize(name.getNodeValue()).equals(typeName)) {
                     return complexType;
                 }
             }
@@ -1510,17 +1497,17 @@ public class Emitter {
      * Recursively find all children of this node with the given name.
      */
     private Vector findChildNodesByName(Node node, String name) {
-        Vector namedNodes = new Vector ();
-        NodeList children = node.getChildNodes ();
+        Vector namedNodes = new Vector();
+        NodeList children = node.getChildNodes();
 
-        for (int i = 0; i < children.getLength (); ++i) {
-            if (name.equals (children.item (i).getLocalName ())) {
-                namedNodes.add (children.item (i));
+        for (int i = 0; i < children.getLength(); ++i) {
+            if (name.equals(children.item(i).getLocalName())) {
+                namedNodes.add(children.item(i));
             }
         }
-        if (namedNodes.size () == 0) {
-            for (int i = 0; i < children.getLength (); ++i) {
-                namedNodes.addAll (findChildNodesByName (children.item (i), name));
+        if (namedNodes.size() == 0) {
+            for (int i = 0; i < children.getLength(); ++i) {
+                namedNodes.addAll(findChildNodesByName(children.item(i), name));
             }
         }
         return namedNodes;
@@ -1540,57 +1527,58 @@ public class Emitter {
      * For a given string, strip off the prefix - everything before the colon.
      */
     private String localName(String name) {
-        int colonIndex = name.lastIndexOf (":");
+        int colonIndex = name.lastIndexOf(":");
 
-        return colonIndex < 0 ? name : name.substring (colonIndex + 1);
+        return colonIndex < 0 ? name : name.substring(colonIndex + 1);
     } // localName
 
     /**
      * Given a type name, return the Java mapping of that type.
      */
     private String type(String typeValue) {
-        String localName = localName (typeValue);
+        String localName = localName(typeValue);
 
-        if (localName.equals ("integer"))
+        if (localName.equals("integer"))
             return "int";
-        else if (localName.equals ("string"))
+        else if (localName.equals("string"))
             return "String";
-        else if (localName.equals ("decimal"))
+        else if (localName.equals("decimal"))
             return "java.math.BigDecimal";
-        else if (localName.equals ("QName"))
+        else if (localName.equals("QName"))
             return "javax.xml.rpc.namespace.QName";
-        else if (localName.equals ("date"))
+        else if (localName.equals("date"))
             return "java.util.Date";
         // else others???
-        else if (localName.equals ("int")
-            || localName.equals ("long")
-            || localName.equals ("short")
-            || localName.equals ("float")
-            || localName.equals ("double")
-            || localName.equals ("boolean")
-            || localName.equals ("byte"))
+        else if (localName.equals("int")
+                || localName.equals("long")
+                || localName.equals("short")
+                || localName.equals("float")
+                || localName.equals("double")
+                || localName.equals("boolean")
+                || localName.equals("byte"))
             return localName;
         else
-            return capitalize (localName);
+            return capitalize(localName);
     } // type
 
     /**
      * Capitalize the given name.
      */
     private String capitalize(String name) {
-        char start = name.charAt (0);
+        char start = name.charAt(0);
 
         if (Character.isLowerCase(start)) {
             start = Character.toUpperCase(start);
-            return start + name.substring (1);
+            return start + name.substring(1);
         }
         return name;
     } // capitalize
 
-     /**
+    /**
      * A simple map of the primitive types and their holder objects
      */
     private static HashMap TYPES = new HashMap(7);
+
     static {
         TYPES.put("int", "Integer");
         TYPES.put("float", "Float");
@@ -1607,7 +1595,7 @@ public class Emitter {
      * doing the right thing for the primitive types.
      */
     private String getResponseString(String type, String var) {
-        String objType = (String)TYPES.get(type);
+        String objType = (String) TYPES.get(type);
         if (objType != null) {
             return "((" + objType + ")" + var + ")." + type + "Value();";
         }
@@ -1620,14 +1608,14 @@ public class Emitter {
      * Return a string with "var" wrapped as an Object type if needed
      */
     private String wrapPrimitiveType(String type, String var) {
-         String objType = (String)TYPES.get(type);
-         if (objType != null) {
-             return "new " + objType + "(" + var + ")";
-         }
-         else {
-             return var;
-         }
-     }
+        String objType = (String) TYPES.get(type);
+        if (objType != null) {
+            return "new " + objType + "(" + var + ")";
+        }
+        else {
+            return var;
+        }
+    }
 
 
 }
