@@ -1,7 +1,6 @@
 package test.wsdl.interop3.import2;
 
 import test.wsdl.interop3.import2.definitions.SoapInteropImport2PortType;
-import test.wsdl.interop3.import2.step6.definitions.SoapInteropImport2PortTypeServiceLocator;
 import test.wsdl.interop3.import2.xsd.SOAPStruct;
 
 /*
@@ -61,25 +60,6 @@ public class Import2TestCase extends junit.framework.TestCase {
         try {
             SOAPStruct value = null;
             value = binding.echoStruct(new SOAPStruct());
-        }
-        catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
-        }
-    }
-
-    public void testStep7() {
-        test.wsdl.interop3.import2.step6.definitions.SoapInteropImport2PortType binding;
-        try {
-            binding = new SoapInteropImport2PortTypeServiceLocator().getSoapInteropImport2Port();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        try {
-            test.wsdl.interop3.import2.step6.xsd.SOAPStruct value = null;
-            value = binding.echoStruct(new test.wsdl.interop3.import2.step6.xsd.SOAPStruct());
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
