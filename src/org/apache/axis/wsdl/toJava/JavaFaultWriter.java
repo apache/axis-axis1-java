@@ -66,55 +66,75 @@ import java.util.Vector;
 
 /**
  * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
- *
+ * <p/>
  * NOTE: This only writes simple type faults, the JavaTypeWriter emits
- * faults that are complex types. 
+ * faults that are complex types.
  */
 public class JavaFaultWriter extends JavaClassWriter {
+
+    /** Field faultMessage */
     private Message faultMessage;
+
+    /** Field symbolTable */
     private SymbolTable symbolTable;
+
+    /** Field literal */
     private boolean literal;
+
+    /** Field faultName */
     private String faultName;
 
     /**
      * Constructor.
+     * 
+     * @param emitter     
+     * @param symbolTable 
+     * @param faultInfo   
      */
-    protected JavaFaultWriter(Emitter emitter, 
-                              SymbolTable symbolTable,
+    protected JavaFaultWriter(Emitter emitter, SymbolTable symbolTable,
                               FaultInfo faultInfo) {
-        super(emitter, Utils.getFullExceptionName(faultInfo.getMessage(),
-                symbolTable), "fault");
+
+        super(emitter,
+                Utils.getFullExceptionName(faultInfo.getMessage(), symbolTable),
+                "fault");
+
         this.literal = faultInfo.getUse().equals(Use.LITERAL);
         this.faultMessage = faultInfo.getMessage();
         this.symbolTable = symbolTable;
-    } // ctor
+    }    // ctor
 
     /**
      * Return "extends org.apache.axis.AxisFault ".
+     * 
+     * @return 
      */
     protected String getExtendsText() {
         return "extends org.apache.axis.AxisFault ";
-    } // getExtendsText
+    }    // getExtendsText
 
     /**
      * Write the body of the Fault file.
+     * 
+     * @param pw 
+     * @throws IOException 
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
+
         Vector params = new Vector();
 
-        symbolTable.getParametersFromParts(params, 
-                                faultMessage.getOrderedParts(null), 
-                                literal, 
-                                faultName, 
-                                null);
+        symbolTable.getParametersFromParts(params,
+                faultMessage.getOrderedParts(null),
+                literal, faultName, null);
 
         // Write data members of the exception and getter methods for them
         for (int i = 0; i < params.size(); i++) {
-            Parameter param = (Parameter)params.get(i);
+            Parameter param = (Parameter) params.get(i);
             String type = param.getType().getName();
             String variable = Utils.xmlNameToJava(param.getName());
+
             pw.println("    public " + type + " " + variable + ";");
-            pw.println("    public " + type + " get" + Utils.capitalizeFirstChar(variable) + "() {");
+            pw.println("    public " + type + " get"
+                    + Utils.capitalizeFirstChar(variable) + "() {");
             pw.println("        return this." + variable + ";");
             pw.println("    }");
         }
@@ -124,23 +144,32 @@ public class JavaFaultWriter extends JavaClassWriter {
         pw.println("    public " + className + "() {");
         pw.println("    }");
         pw.println();
-        
+
         // contructor that initializes data
         if (params.size() > 0) {
             pw.print("      public " + className + "(");
+
             for (int i = 0; i < params.size(); i++) {
-                if (i != 0) pw.print(", ");
-                Parameter param = (Parameter)params.get(i);
+                if (i != 0) {
+                    pw.print(", ");
+                }
+
+                Parameter param = (Parameter) params.get(i);
                 String type = param.getType().getName();
                 String variable = Utils.xmlNameToJava(param.getName());
+
                 pw.print(type + " " + variable);
             }
+
             pw.println(") {");
+
             for (int i = 0; i < params.size(); i++) {
-                Parameter param = (Parameter)params.get(i);
+                Parameter param = (Parameter) params.get(i);
                 String variable = Utils.xmlNameToJava(param.getName());
+
                 pw.println("        this." + variable + " = " + variable + ";");
             }
+
             pw.println("    }");
         }
 
@@ -152,13 +181,18 @@ public class JavaFaultWriter extends JavaClassWriter {
         pw.println("    /**");
         pw.println("     * Writes the exception data to the faultDetails");
         pw.println("     */");
-        pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
-        for (int i = 0; i < params.size(); i++) {
-            Parameter param = (Parameter)params.get(i);
-            String variable = Utils.xmlNameToJava(param.getName());
-            pw.println("        context.serialize(qname, null, " + Utils.wrapPrimitiveType(param.getType(), variable) + ");");
-        }
-        pw.println("    }");
-    } // writeFileBody
+        pw.println(
+                "    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
 
-} // class JavaFaultWriter
+        for (int i = 0; i < params.size(); i++) {
+            Parameter param = (Parameter) params.get(i);
+            String variable = Utils.xmlNameToJava(param.getName());
+
+            pw.println("        context.serialize(qname, null, "
+                    + Utils.wrapPrimitiveType(param.getType(), variable)
+                    + ");");
+        }
+
+        pw.println("    }");
+    }    // writeFileBody
+}    // class JavaFaultWriter

@@ -52,30 +52,37 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.wsdl.symbolTable;
 
 import javax.wsdl.Service;
 
 /**
-* This class represents a WSDL service.  It simply encompasses the WSDL4J Service object so it can
-* reside in the SymbolTable.
-*/
+ * This class represents a WSDL service.  It simply encompasses the WSDL4J Service object so it can
+ * reside in the SymbolTable.
+ */
 public class ServiceEntry extends SymTabEntry {
+
+    /** Field service */
     private Service service;
 
     /**
      * Construct a ServiceEntry from a WSDL4J Service object.
+     * 
+     * @param service 
      */
     public ServiceEntry(Service service) {
+
         super(service.getQName());
+
         this.service = service;
-    } // ctor
+    }    // ctor
 
     /**
      * Get this entry's Service object.
+     * 
+     * @return 
      */
     public Service getService() {
         return service;
-    } // getService
-} // class ServiceEntry
+    }    // getService
+}    // class ServiceEntry

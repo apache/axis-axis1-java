@@ -57,10 +57,16 @@ package org.apache.axis.wsdl.symbolTable;
 import javax.xml.namespace.QName;
 
 /**
- * This Type is for a QName represents a Base Type (i.e. xsd:string represents a java.lang.String) 
+ * This Type is for a QName represents a Base Type (i.e. xsd:string represents a java.lang.String)
  */
 public class BaseType extends Type {
+
+    /**
+     * Constructor BaseType
+     * 
+     * @param pqName 
+     */
     public BaseType(QName pqName) {
         super(pqName);
     }
-};
+}

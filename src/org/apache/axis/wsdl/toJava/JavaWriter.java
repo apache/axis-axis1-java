@@ -65,95 +65,114 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
-* Emitter knows about WSDL writers, one each for PortType, Binding, Service,
-* Definition, Type.  But for some of these WSDL types, Wsdl2java generates
-* multiple files.  Each of these files has a corresponding writer that extends
-* JavaWriter.  So the Java WSDL writers (JavaPortTypeWriter, JavaBindingWriter,
-* etc.) each calls a file writer (JavaStubWriter, JavaSkelWriter, etc.) for
-* each file that that WSDL generates.
-*
-* <p>For example, when Emitter calls JavaWriterFactory for a Binding Writer, it
-* returns a JavaBindingWriter.  JavaBindingWriter, in turn, contains a
-* JavaStubWriter, JavaSkelWriter, and JavaImplWriter since a Binding may cause
-* a stub, skeleton, and impl template to be generated.
-*
-* <p>Note that the writers that are given to Emitter by JavaWriterFactory DO NOT
-* extend JavaWriter.  They simply implement Writer and delegate the actual
-* task of writing to extensions of JavaWriter.
-*
-* <p>All of Wsdl2java's Writer implementations follow a common behaviour.
-* JavaWriter is the abstract base class that dictates this common behaviour.
-* This behaviour is primarily placed within the generate method.  The generate
-* method calls, in succession (note:  the starred methods are the ones you are
-* probably most interested in):
-* <dl>
-*   <dt> * getFileName
-*   <dd> This is an abstract method that must be implemented by the subclass.
-*        It returns the fully-qualified file name.
-*   <dt> isFileGenerated(file)
-*   <dd> You should not need to override this method.  It checks to see whether
-*        this file is in the List returned by emitter.getGeneratedFileNames.
-*   <dt> registerFile(file)
-*   <dd> You should not need to override this method.  It registers this file by
-*        calling emitter.getGeneratedFileInfo().add(...).
-*   <dt> * verboseMessage(file)
-*   <dd> You may override this method if you want to provide more information.
-*        The generate method only calls verboseMessage if verbose is turned on.
-*   <dt> getPrintWriter(file)
-*   <dd> You should not need to override this method.  Given the file name, it
-*        creates a PrintWriter for it.
-*   <dt> * writeFileHeader(pw)
-*   <dd> You may want to override this method.  The default implementation
-*        generates nothing.
-*   <dt> * writeFileBody(pw)
-*   <dd> This is an abstract method that must be implemented by the subclass.
-*        This is where the body of a file is generated.
-*   <dt> * writeFileFooter(pw)
-*   <dd> You may want to override this method.  The default implementation
-*        generates nothing.
-*   <dt> closePrintWriter(pw)
-*   <dd> You should not need to override this method.  It simply closes the
-*        PrintWriter.
-* </dl>
-*/
+ * Emitter knows about WSDL writers, one each for PortType, Binding, Service,
+ * Definition, Type.  But for some of these WSDL types, Wsdl2java generates
+ * multiple files.  Each of these files has a corresponding writer that extends
+ * JavaWriter.  So the Java WSDL writers (JavaPortTypeWriter, JavaBindingWriter,
+ * etc.) each calls a file writer (JavaStubWriter, JavaSkelWriter, etc.) for
+ * each file that that WSDL generates.
+ * <p/>
+ * <p>For example, when Emitter calls JavaWriterFactory for a Binding Writer, it
+ * returns a JavaBindingWriter.  JavaBindingWriter, in turn, contains a
+ * JavaStubWriter, JavaSkelWriter, and JavaImplWriter since a Binding may cause
+ * a stub, skeleton, and impl template to be generated.
+ * <p/>
+ * <p>Note that the writers that are given to Emitter by JavaWriterFactory DO NOT
+ * extend JavaWriter.  They simply implement Writer and delegate the actual
+ * task of writing to extensions of JavaWriter.
+ * <p/>
+ * <p>All of Wsdl2java's Writer implementations follow a common behaviour.
+ * JavaWriter is the abstract base class that dictates this common behaviour.
+ * This behaviour is primarily placed within the generate method.  The generate
+ * method calls, in succession (note:  the starred methods are the ones you are
+ * probably most interested in):
+ * <dl>
+ * <dt> * getFileName
+ * <dd> This is an abstract method that must be implemented by the subclass.
+ * It returns the fully-qualified file name.
+ * <dt> isFileGenerated(file)
+ * <dd> You should not need to override this method.  It checks to see whether
+ * this file is in the List returned by emitter.getGeneratedFileNames.
+ * <dt> registerFile(file)
+ * <dd> You should not need to override this method.  It registers this file by
+ * calling emitter.getGeneratedFileInfo().add(...).
+ * <dt> * verboseMessage(file)
+ * <dd> You may override this method if you want to provide more information.
+ * The generate method only calls verboseMessage if verbose is turned on.
+ * <dt> getPrintWriter(file)
+ * <dd> You should not need to override this method.  Given the file name, it
+ * creates a PrintWriter for it.
+ * <dt> * writeFileHeader(pw)
+ * <dd> You may want to override this method.  The default implementation
+ * generates nothing.
+ * <dt> * writeFileBody(pw)
+ * <dd> This is an abstract method that must be implemented by the subclass.
+ * This is where the body of a file is generated.
+ * <dt> * writeFileFooter(pw)
+ * <dd> You may want to override this method.  The default implementation
+ * generates nothing.
+ * <dt> closePrintWriter(pw)
+ * <dd> You should not need to override this method.  It simply closes the
+ * PrintWriter.
+ * </dl>
+ */
 public abstract class JavaWriter implements Generator {
+
+    /** Field emitter */
     protected Emitter emitter;
-    protected String  type;
+
+    /** Field type */
+    protected String type;
 
     /**
      * Constructor.
+     * 
+     * @param emitter 
+     * @param type    
      */
     protected JavaWriter(Emitter emitter, String type) {
         this.emitter = emitter;
-        this.type    = type;
-    } // ctor
+        this.type = type;
+    }    // ctor
 
     /**
      * Generate a file.
+     * 
+     * @throws IOException 
      */
     public void generate() throws IOException {
+
         String file = getFileName();
+
         if (isFileGenerated(file)) {
-            throw new DuplicateFileException(Messages.getMessage("duplicateFile00", file), file);
+            throw new DuplicateFileException(
+                    Messages.getMessage("duplicateFile00", file), file);
         }
+
         registerFile(file);
+
         if (emitter.isVerbose()) {
             String msg = verboseMessage(file);
+
             if (msg != null) {
                 System.out.println(msg);
             }
         }
+
         PrintWriter pw = getPrintWriter(file);
+
         writeFileHeader(pw);
         writeFileBody(pw);
         writeFileFooter(pw);
         closePrintWriter(pw);
-    } // generate
+    }    // generate
 
     /**
      * This method must be implemented by a subclass.  It
      * returns the fully-qualified name of the file to be
      * generated.
+     * 
+     * @return 
      */
     protected abstract String getFileName();
 
@@ -161,71 +180,103 @@ public abstract class JavaWriter implements Generator {
      * You should not need to override this method. It checks
      * to see whether the given file is in the List returned
      * by emitter.getGeneratedFileNames.
+     * 
+     * @param file 
+     * @return 
      */
     protected boolean isFileGenerated(String file) {
         return emitter.getGeneratedFileNames().contains(file);
-    } // isFileGenerated
+    }    // isFileGenerated
 
     /**
      * You should not need to override this method.
      * It registers the given file by calling
      * emitter.getGeneratedFileInfo().add(...).
+     * 
+     * @param file 
      */
     protected void registerFile(String file) {
         emitter.getGeneratedFileInfo().add(file, null, type);
-    } // registerFile
+    }    // registerFile
 
     /**
      * Return the string:  "Generating <file>".  Override this
      * method if you want to provide more information.
+     * 
+     * @param file 
+     * @return 
      */
     protected String verboseMessage(String file) {
         return Messages.getMessage("generating", file);
-    } // verboseMessage
+    }    // verboseMessage
 
     /**
      * You should not need to override this method.
      * Given the file name, it creates a PrintWriter for it.
+     * 
+     * @param filename 
+     * @return 
+     * @throws IOException 
      */
     protected PrintWriter getPrintWriter(String filename) throws IOException {
+
         File file = new File(filename);
         File parent = new File(file.getParent());
+
         parent.mkdirs();
+
         return new PrintWriter(new FileWriter(file));
-    } // getPrintWriter
+    }                                // getPrintWriter
 
     /**
      * This method is intended to be overridden as necessary
      * to generate file header information.  This default
      * implementation does nothing.
+     * 
+     * @param pw 
+     * @throws IOException 
      */
-    protected void writeFileHeader(PrintWriter pw) throws IOException {
-    } // writeFileHeader
+    protected void writeFileHeader(PrintWriter pw)
+            throws IOException {
+    }    // writeFileHeader
 
     /**
      * This method must be implemented by a subclass.  This
      * is where the body of a file is generated.
+     * 
+     * @param pw 
+     * @throws IOException 
      */
     protected abstract void writeFileBody(PrintWriter pw) throws IOException;
 
     /**
      * You may want to override this method.  This default
      * implementation generates nothing.
+     * 
+     * @param pw 
+     * @throws IOException 
      */
-    protected void writeFileFooter(PrintWriter pw) throws IOException {
-    } // writeFileFooter
+    protected void writeFileFooter(PrintWriter pw)
+            throws IOException {
+    }    // writeFileFooter
 
     /**
      * Close the print writer.
+     * 
+     * @param pw 
      */
     protected void closePrintWriter(PrintWriter pw) {
         pw.close();
-    } // closePrintWriter
+    }    // closePrintWriter
 
     /**
      * Output a documentation element as a Java comment.
+     * 
+     * @param pw      
+     * @param element 
      */
     protected void writeComment(PrintWriter pw, Element element) {
+
         // This controls how many characters per line
         final int LINE_LENGTH = 65;
 
@@ -234,6 +285,7 @@ public abstract class JavaWriter implements Generator {
         }
 
         Node child = element.getFirstChild();
+
         if (child == null) {
             return;
         }
@@ -247,22 +299,26 @@ public abstract class JavaWriter implements Generator {
         if (comment != null) {
             int start = 0;
 
-            pw.println();  // blank line
+            pw.println();    // blank line
 
             // make the comment look pretty
             while (start < comment.length()) {
                 int end = start + LINE_LENGTH;
-                if (end > comment.length())
+
+                if (end > comment.length()) {
                     end = comment.length();
+                }
+
                 // look for next whitespace
-                while (end < comment.length() &&
-                        !Character.isWhitespace(comment.charAt(end))) {
+                while ((end < comment.length())
+                        && !Character.isWhitespace(comment.charAt(end))) {
                     end++;
                 }
+
                 pw.println("    // " + comment.substring(start, end).trim());
+
                 start = end + 1;
             }
         }
-    } // writeComment
-
-} // abstract class JavaWriter
+    }                        // writeComment
+}    // abstract class JavaWriter

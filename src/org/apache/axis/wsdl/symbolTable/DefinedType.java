@@ -57,32 +57,55 @@ package org.apache.axis.wsdl.symbolTable;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
+
 /**
- * This Type is for a QName that is a complex or simple type, these types are 
+ * This Type is for a QName that is a complex or simple type, these types are
  * always emitted.
  */
 public class DefinedType extends Type {
+
     // cache lookups for our base type
+
+    /** Field extensionBase */
     protected TypeEntry extensionBase;
-    
+
+    /**
+     * Constructor DefinedType
+     * 
+     * @param pqName 
+     * @param pNode  
+     */
     public DefinedType(QName pqName, Node pNode) {
         super(pqName, pNode);
     }
-    public DefinedType(QName pqName, TypeEntry refType, Node pNode, String dims) {
+
+    /**
+     * Constructor DefinedType
+     * 
+     * @param pqName  
+     * @param refType 
+     * @param pNode   
+     * @param dims    
+     */
+    public DefinedType(QName pqName, TypeEntry refType, Node pNode,
+                       String dims) {
         super(pqName, refType, pNode, dims);
     }
 
     /**
      * Get a TypeEntry for the base type of this type, if one exists.
-     *
+     * 
      * @param symbolTable a <code>SymbolTable</code> value
      * @return a <code>TypeEntry</code> value
      */
     public TypeEntry getComplexTypeExtensionBase(SymbolTable symbolTable) {
+
         if (null == extensionBase) {
-            extensionBase = SchemaUtils.getComplexElementExtensionBase(getNode(), symbolTable);
+            extensionBase =
+                    SchemaUtils.getComplexElementExtensionBase(getNode(),
+                            symbolTable);
         }
+
         return extensionBase;
     }
-};
-
+}

@@ -76,35 +76,49 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
-* This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
-*/
+ * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
+ */
 public class JavaTestCaseWriter extends JavaClassWriter {
+
+    /** Field sEntry */
     private ServiceEntry sEntry;
+
+    /** Field symbolTable */
     private SymbolTable symbolTable;
 
     /**
      * Constructor.
+     * 
+     * @param emitter     
+     * @param sEntry      
+     * @param symbolTable 
      */
-    protected JavaTestCaseWriter(
-            Emitter emitter,
-            ServiceEntry sEntry,
-            SymbolTable symbolTable) {
+    protected JavaTestCaseWriter(Emitter emitter, ServiceEntry sEntry,
+                                 SymbolTable symbolTable) {
+
         super(emitter, sEntry.getName() + "TestCase", "testCase");
+
         this.sEntry = sEntry;
         this.symbolTable = symbolTable;
-    } // ctor
+    }    // ctor
 
     /**
      * Returns "extends junit.framework.TestCase ".
+     * 
+     * @return 
      */
     protected String getExtendsText() {
         return "extends junit.framework.TestCase ";
-    } // getExtendsText
+    }    // getExtendsText
 
     /**
      * Write the body of the TestCase file.
+     * 
+     * @param pw 
+     * @throws IOException 
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
+
         // Write the constructor
         pw.print("    public ");
         pw.print(getClassName());
@@ -129,12 +143,13 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
             // JSR 101 indicates that the name of the port used
             // in the java code is the name of the wsdl:port.  It
-            // does not indicate what should occur if the 
+            // does not indicate what should occur if the
             // wsdl:port name is not a java identifier.  The
             // TCK depends on the case-sensitivity being preserved,
             // and the interop tests have port names that are not
             // valid java identifiers.  Thus the following code.
             String portName = p.getName();
+
             if (!JavaUtils.isJavaId(portName)) {
                 portName = Utils.xmlNameToJavaClass(portName);
             }
@@ -144,57 +159,79 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             writeComment(pw, p.getDocumentationElement());
             writeServiceTestCode(pw, portName, portType, bEntry);
         }
-    } // writeFileBody
+    }    // writeFileBody
 
     // Methods may be overloaded.  If we just grab the method name
     // for the test method names, we could end up with duplicates.
     // The quick-and-easy solution is to have a test counter so that
     // each test method has a number.
+
+    /** Field counter */
     private int counter = 1;
 
-    private final void writeServiceTestCode(PrintWriter pw,
-            String portName, PortType portType,
-            BindingEntry bEntry) throws IOException {
+    /**
+     * Method writeServiceTestCode
+     * 
+     * @param pw       
+     * @param portName 
+     * @param portType 
+     * @param bEntry   
+     * @throws IOException 
+     */
+    private final void writeServiceTestCode(
+            PrintWriter pw, String portName, PortType portType, BindingEntry bEntry)
+            throws IOException {
+
         Iterator ops = portType.getOperations().iterator();
+
         while (ops.hasNext()) {
             Operation op = (Operation) ops.next();
             OperationType type = op.getStyle();
             Parameters params = bEntry.getParameters(op);
+
             // did we emit a constructor that throws?
             BooleanHolder bThrow = new BooleanHolder(false);
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
-            if (type == OperationType.NOTIFICATION
-                    || type == OperationType.SOLICIT_RESPONSE) {
+            if ((type == OperationType.NOTIFICATION)
+                    || (type == OperationType.SOLICIT_RESPONSE)) {
                 pw.println("    " + params.signature);
+
                 continue;
             }
 
             String javaOpName = Utils.xmlNameToJavaClass(op.getName());
             String testMethodName = "test" + counter++ + portName + javaOpName;
-            pw.println("    public void " + testMethodName + "() throws Exception {");
+
+            pw.println("    public void " + testMethodName
+                    + "() throws Exception {");
 
             String bindingType = bEntry.getName() + "Stub";
-            writeBindingAssignment(pw, bindingType, portName);
 
-            
+            writeBindingAssignment(pw, bindingType, portName);
             pw.println("        // Test operation");
+
             String indent = "";
             Map faultMap = op.getFaults();
-            if (faultMap != null && faultMap.size() > 0) {
+
+            if ((faultMap != null) && (faultMap.size() > 0)) {
+
                 // we are going to catch fault Exceptions
                 pw.println("        try {");
+
                 indent = "    ";
             }
+
             if (params.returnParam != null) {
                 TypeEntry returnType = params.returnParam.getType();
+
                 pw.print("        " + indent);
                 pw.print(Utils.getParameterTypeName(params.returnParam));
                 pw.print(" value = ");
 
-                if (params.returnParam.getMIMEInfo() == null &&
-                        Utils.isPrimitiveType(returnType)) {
+                if ((params.returnParam.getMIMEInfo() == null)
+                        && Utils.isPrimitiveType(returnType)) {
                     if ("boolean".equals(returnType.getName())) {
                         pw.println("false;");
                     } else {
@@ -205,7 +242,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 }
             }
 
-            pw.print  ("        " + indent);
+            pw.print("        " + indent);
 
             if (params.returnParam != null) {
                 pw.print("value = ");
@@ -230,22 +267,29 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
                 // if we have an out or in/out, we are passing in a holder
                 if (param.getMode() != Parameter.IN) {
-                    pw.print("new " + Utils.holder(param.getMIMEInfo(), param.getType(), emitter)
-                            + "(");
+                    pw.print(
+                            "new "
+                            + Utils.holder(
+                                    param.getMIMEInfo(), param.getType(), emitter) + "(");
+
                     suffix = ")";
                 }
 
                 // if we have an in or in/out, write the constructor
                 if (param.getMode() != Parameter.OUT) {
-                    String constructorString = Utils.getConstructorForParam(param, symbolTable, bThrow);
+                    String constructorString =
+                            Utils.getConstructorForParam(param, symbolTable,
+                                    bThrow);
+
                     pw.print(constructorString);
                 }
+
                 pw.print(suffix);
             }
 
             pw.println(");");
 
-            if (faultMap != null && faultMap.size() > 0) {
+            if ((faultMap != null) && (faultMap.size() > 0)) {
                 pw.println("        }");
             }
 
@@ -255,56 +299,72 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
                 while (i.hasNext()) {
                     count++;
+
                     Fault f = (Fault) i.next();
+
                     pw.print("        catch (");
-                    pw.print(Utils.getFullExceptionName(
-                            f.getMessage(), symbolTable));
+                    pw.print(Utils.getFullExceptionName(f.getMessage(),
+                            symbolTable));
                     pw.println(" e" + count + ") {");
                     pw.print("            ");
-                    pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");
+                    pw.println(
+                            "throw new junit.framework.AssertionFailedError(\""
+                            + f.getName() + " Exception caught: \" + e" + count
+                            + ");");
                     pw.println("        }");
                 }
             }
-            
+
             pw.println("        " + indent + "// TBD - validate results");
 
             /*
-            pw.println("        catch (java.rmi.RemoteException re) {");
-            pw.print("            ");
-            pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re);");
-            pw.println("        }");
-            if (bThrow.value) {
-                pw.println("        catch (Exception e) {");
-                pw.println("            // Unsigned constructors can throw - ignore");
-                pw.println("        }");
-            }
-            */
+             * pw.println("        catch (java.rmi.RemoteException re) {");
+             * pw.print("            ");
+             * pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re);");
+             * pw.println("        }");
+             * if (bThrow.value) {
+             *   pw.println("        catch (Exception e) {");
+             *   pw.println("            // Unsigned constructors can throw - ignore");
+             *   pw.println("        }");
+             * }
+             */
             pw.println("    }");
             pw.println();
         }
-    } // writeServiceTestCode
+    }    // writeServiceTestCode
 
-    public final void writeBindingAssignment(PrintWriter pw,
-            String bindingType, String portName) throws IOException {
+    /**
+     * Method writeBindingAssignment
+     * 
+     * @param pw          
+     * @param bindingType 
+     * @param portName    
+     * @throws IOException 
+     */
+    public final void writeBindingAssignment(
+            PrintWriter pw, String bindingType, String portName)
+            throws IOException {
+
         pw.println("        " + bindingType + " binding;");
         pw.println("        try {");
         pw.println("            binding = (" + bindingType + ")");
         pw.print("                          new " + sEntry.getName());
         pw.println("Locator" + "().get" + portName + "();");
         pw.println("        }");
-        pw.println("        catch (" + javax.xml.rpc.ServiceException.class.getName() + " jre) {");
-        pw.println("            if(jre.getLinkedCause()!=null)"); 
+        pw.println("        catch ("
+                + javax.xml.rpc.ServiceException.class.getName()
+                + " jre) {");
+        pw.println("            if(jre.getLinkedCause()!=null)");
         pw.println("                jre.getLinkedCause().printStackTrace();");
-        pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
+        pw.println(
+                "            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
         pw.println("        }");
-
-        pw.println("        assertNotNull(\"" +
-                Messages.getMessage("null00", "binding") +
-                "\", binding);");
+        pw.println("        assertNotNull(\""
+                + Messages.getMessage("null00", "binding")
+                + "\", binding);");
         pw.println();
         pw.println("        // Time out after a minute");
         pw.println("        binding.setTimeout(60000);");
         pw.println();
-    } // writeBindingAssignment
-
-} // class JavaTestCasepw
+    }    // writeBindingAssignment
+}    // class JavaTestCasepw

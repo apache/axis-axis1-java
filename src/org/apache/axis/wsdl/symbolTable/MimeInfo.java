@@ -52,22 +52,55 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.wsdl.symbolTable;
 
+/**
+ * Class MimeInfo
+ * 
+ * @version %I%, %G%
+ */
 public class MimeInfo {
+
+    /** Field type */
     String type;
+
+    /** Field dims */
     String dims;
-    public MimeInfo(String type, String dims){
+
+    /**
+     * Constructor MimeInfo
+     * 
+     * @param type 
+     * @param dims 
+     */
+    public MimeInfo(String type, String dims) {
         this.type = type;
         this.dims = dims;
     }
-    public String getDimensions(){
+
+    /**
+     * Method getDimensions
+     * 
+     * @return 
+     */
+    public String getDimensions() {
         return this.dims;
     }
-    public String getType(){
+
+    /**
+     * Method getType
+     * 
+     * @return 
+     */
+    public String getType() {
         return this.type;
     }
+
+    /**
+     * Method toString
+     * 
+     * @return 
+     */
     public String toString() {
         return "(" + type + "," + dims + ")";
     }

@@ -63,27 +63,46 @@ import java.util.Vector;
 public class Parameters {
 
     // This vector contains instances of the Parameter class
+
+    /** Field list */
     public Vector list = new Vector();
 
     // The return info is stored as a Parameter.
+
+    /** Field returnParam */
     public Parameter returnParam = null;
 
     // A map of the faults
+
+    /** Field faults */
     public Map faults = null;
 
     // The signature that the interface and the stub will use
+
+    /** Field signature */
     public String signature = null;
 
     // The numbers of the respective parameters
+
+    /** Field inputs */
     public int inputs = 0;
+
+    /** Field inouts */
     public int inouts = 0;
+
+    /** Field outputs */
     public int outputs = 0;
 
+    /**
+     * Method toString
+     * 
+     * @return 
+     */
     public String toString() {
-        return "\nreturnParam = " + returnParam
-                + "\nfaults = " + faults
+
+        return "\nreturnParam = " + returnParam + "\nfaults = " + faults
                 + "\nsignature = " + signature
-                + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
-                + "\nlist = " + list;
-    } // toString
-} // class Parameters
+                + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts
+                + ", " + outputs + ")" + "\nlist = " + list;
+    }    // toString
+}    // class Parameters

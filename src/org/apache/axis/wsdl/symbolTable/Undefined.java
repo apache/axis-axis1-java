@@ -60,16 +60,21 @@ import java.io.IOException;
  * This Undefined interface is implemented by UndefinedType and UndefinedElement.
  */
 public interface Undefined {
+
     /**
-     *  Register referrant TypeEntry so that 
-     *  the code can update the TypeEntry when the Undefined Element or Type is defined
+     * Register referrant TypeEntry so that
+     * the code can update the TypeEntry when the Undefined Element or Type is defined
+     * 
+     * @param referrant 
      */
     public void register(TypeEntry referrant);
 
     /**
-     *  Call update with the actual TypeEntry.  This updates all of the
-     *  referrant TypeEntry's that were registered.
+     * Call update with the actual TypeEntry.  This updates all of the
+     * referrant TypeEntry's that were registered.
+     * 
+     * @param def 
+     * @throws IOException 
      */
     public void update(TypeEntry def) throws IOException;
-      
-};
+}

@@ -71,32 +71,47 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
-* This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java
-* file which contains the <bindingName>Impl class.
-*/
+ * This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java
+ * file which contains the <bindingName>Impl class.
+ */
 public class JavaImplWriter extends JavaClassWriter {
+
+    /** Field binding */
     protected Binding binding;
+
+    /** Field symbolTable */
     protected SymbolTable symbolTable;
+
+    /** Field bEntry */
     protected BindingEntry bEntry;
 
     /**
      * Constructor.
+     * 
+     * @param emitter     
+     * @param bEntry      
+     * @param symbolTable 
      */
-    protected JavaImplWriter(
-            Emitter emitter,
-            BindingEntry bEntry,
-            SymbolTable symbolTable) {
+    protected JavaImplWriter(Emitter emitter, BindingEntry bEntry,
+                             SymbolTable symbolTable) {
+
         super(emitter, bEntry.getName() + "Impl", "templateImpl");
+
         this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;
         this.bEntry = bEntry;
-    } // ctor
+    }    // ctor
 
     /**
      * Write the body of the binding's stub file.
+     * 
+     * @param pw 
+     * @throws IOException 
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
+
         List operations = binding.getBindingOperations();
+
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Operation ptOperation = operation.getOperation();
@@ -106,48 +121,62 @@ public class JavaImplWriter extends JavaClassWriter {
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
-            if (type == OperationType.NOTIFICATION
-                    || type == OperationType.SOLICIT_RESPONSE) {
+            if ((type == OperationType.NOTIFICATION)
+                    || (type == OperationType.SOLICIT_RESPONSE)) {
                 pw.println(parameters.signature);
                 pw.println();
-            }
-            else {
+            } else {
                 writeOperation(pw, parameters);
             }
         }
-    } // writeFileBody
+    }    // writeFileBody
 
     /**
      * Returns the appropriate implements text
+     * 
      * @return " implements <classes>"
      */
     protected String getImplementsText() {
-        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
+
+        String portTypeName =
+                (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
         String implementsText = "implements " + portTypeName;
+
         return implementsText;
     }
 
     /**
      * Write the implementation template for the given operation.
+     * 
+     * @param pw    
+     * @param parms 
+     * @throws IOException 
      */
-    protected void writeOperation(PrintWriter pw, Parameters parms) throws IOException {
+    protected void writeOperation(PrintWriter pw, Parameters parms)
+            throws IOException {
+
         pw.println(parms.signature + " {");
 
         // Fill in any out parameter holders
         Iterator iparam = parms.list.iterator();
+
         while (iparam.hasNext()) {
             Parameter param = (Parameter) iparam.next();
+
             if (param.getMode() == Parameter.OUT) {
+
                 // write a constructor for each of the parameters
-                
                 BooleanHolder bThrow = new BooleanHolder(false);
-                String constructorString = 
-                       Utils.getConstructorForParam(param, symbolTable, bThrow);
+                String constructorString =
+                        Utils.getConstructorForParam(param, symbolTable, bThrow);
+
                 if (bThrow.value) {
                     pw.println("        try {");
                 }
+
                 pw.println("        " + Utils.xmlNameToJava(param.getName())
-                         + ".value = " + constructorString + ";");
+                        + ".value = " + constructorString + ";");
+
                 if (bThrow.value) {
                     pw.println("        } catch (Exception e) {");
                     pw.println("        }");
@@ -158,10 +187,12 @@ public class JavaImplWriter extends JavaClassWriter {
         // Print the return statement
         if (parms.returnParam != null) {
             TypeEntry returnType = parms.returnParam.getType();
+
             pw.print("        return ");
 
             if (Utils.isPrimitiveType(returnType)) {
                 String returnString = returnType.getName();
+
                 if ("boolean".equals(returnString)) {
                     pw.println("false;");
                 } else if ("byte".equals(returnString)) {
@@ -175,8 +206,8 @@ public class JavaImplWriter extends JavaClassWriter {
                 pw.println("null;");
             }
         }
+
         pw.println("    }");
         pw.println();
-    } // writeOperation
-
-} // class JavaImplWriter
+    }    // writeOperation
+}    // class JavaImplWriter

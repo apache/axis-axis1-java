@@ -69,63 +69,131 @@ import javax.wsdl.Service;
 import javax.xml.namespace.QName;
 
 /**
-* This factory returns a bunch of NoopGenerators
-*/
-
+ * This factory returns a bunch of NoopGenerators
+ */
 public class NoopFactory implements GeneratorFactory {
-    public void generatorPass(Definition def, SymbolTable symbolTable) {
-    } // generatorPass
 
+    /**
+     * Method generatorPass
+     * 
+     * @param def         
+     * @param symbolTable 
+     */
+    public void generatorPass(Definition def,
+                              SymbolTable symbolTable) {
+    }    // generatorPass
+
+    /**
+     * Method getGenerator
+     * 
+     * @param message     
+     * @param symbolTable 
+     * @return 
+     */
     public Generator getGenerator(Message message, SymbolTable symbolTable) {
         return new NoopGenerator();
-    } // getGenerator
-    
+    }    // getGenerator
+
+    /**
+     * Method getGenerator
+     * 
+     * @param portType    
+     * @param symbolTable 
+     * @return 
+     */
     public Generator getGenerator(PortType portType, SymbolTable symbolTable) {
         return new NoopGenerator();
-    } // getGenerator
-    
+    }    // getGenerator
+
+    /**
+     * Method getGenerator
+     * 
+     * @param binding     
+     * @param symbolTable 
+     * @return 
+     */
     public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
         return new NoopGenerator();
-    } // getGenerator
-    
+    }    // getGenerator
+
+    /**
+     * Method getGenerator
+     * 
+     * @param service     
+     * @param symbolTable 
+     * @return 
+     */
     public Generator getGenerator(Service service, SymbolTable symbolTable) {
         return new NoopGenerator();
-    } // getGenerator
-    
+    }    // getGenerator
+
+    /**
+     * Method getGenerator
+     * 
+     * @param type        
+     * @param symbolTable 
+     * @return 
+     */
     public Generator getGenerator(TypeEntry type, SymbolTable symbolTable) {
         return new NoopGenerator();
-    } // getGenerator
+    }    // getGenerator
 
-    public Generator getGenerator(Definition definition, SymbolTable symbolTable) {
+    /**
+     * Method getGenerator
+     * 
+     * @param definition  
+     * @param symbolTable 
+     * @return 
+     */
+    public Generator getGenerator(Definition definition,
+                                  SymbolTable symbolTable) {
         return new NoopGenerator();
-    } // getGenerator
+    }    // getGenerator
 
+    /** Field btm */
     private BaseTypeMapping btm = null;
 
+    /**
+     * Method setBaseTypeMapping
+     * 
+     * @param btm 
+     */
     public void setBaseTypeMapping(BaseTypeMapping btm) {
         this.btm = btm;
-    } // setBaseTypeMapping
+    }    // setBaseTypeMapping
 
+    /**
+     * Method getBaseTypeMapping
+     * 
+     * @return 
+     */
     public BaseTypeMapping getBaseTypeMapping() {
+
         if (btm == null) {
             btm = new BaseTypeMapping() {
-                    TypeMapping defaultTM = DefaultSOAPEncodingTypeMappingImpl.create();
-                    public String getBaseName(QName qNameIn) {
-                        javax.xml.namespace.QName qName = 
-                            new javax.xml.namespace.QName(
-                              qNameIn.getNamespaceURI(),
-                              qNameIn.getLocalPart());
-                        Class cls = defaultTM.getClassForQName(qName);
-                        if (cls == null) {
-                            return null;
-                        }
-                        else {
-                            // RJB NOTE:  Javaism - bad bad bad
-                            return JavaUtils.getTextClassName(cls.getName());
-                        }
+
+                TypeMapping defaultTM =
+                        DefaultSOAPEncodingTypeMappingImpl.create();
+
+                public String getBaseName(QName qNameIn) {
+
+                    javax.xml.namespace.QName qName =
+                            new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
+                                    qNameIn.getLocalPart());
+                    Class cls =
+                            defaultTM.getClassForQName(qName);
+
+                    if (cls == null) {
+                        return null;
+                    } else {
+
+                        // RJB NOTE:  Javaism - bad bad bad
+                        return JavaUtils.getTextClassName(cls.getName());
                     }
+                }
             };
         }
+
         return btm;
-    } // getBaseTypeMapping
-} // class NoopFactory
+    }    // getBaseTypeMapping
+}    // class NoopFactory

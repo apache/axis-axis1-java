@@ -64,16 +64,30 @@ import javax.wsdl.Binding;
 import java.io.IOException;
 
 /**
-* This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
-* <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
-*/
+ * This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
+ * <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
+ */
 public class JavaBindingWriter implements Generator {
+
+    /** Field stubWriter */
     protected Generator stubWriter = null;
+
+    /** Field skelWriter */
     protected Generator skelWriter = null;
+
+    /** Field implWriter */
     protected Generator implWriter = null;
+
+    /** Field interfaceWriter */
     protected Generator interfaceWriter = null;
+
+    /** Field emitter */
     protected Emitter emitter;
+
+    /** Field binding */
     protected Binding binding;
+
+    /** Field symbolTable */
     protected SymbolTable symbolTable;
 
     // This is the dynamic var key for the SEI (Service Endpoint
@@ -81,118 +95,155 @@ public class JavaBindingWriter implements Generator {
     // the portType or the binding.  The generatorPass fills
     // this dynamic var in and it is used in the writers that
     // need this SEI name.
+
+    /** Field INTERFACE_NAME */
     public static String INTERFACE_NAME = "interface name";
 
     /**
      * Constructor.
+     * 
+     * @param emitter     
+     * @param binding     
+     * @param symbolTable 
      */
-    public JavaBindingWriter(
-            Emitter emitter,
-            Binding binding,
-            SymbolTable symbolTable) {
+    public JavaBindingWriter(Emitter emitter, Binding binding,
+                             SymbolTable symbolTable) {
+
         this.emitter = emitter;
         this.binding = binding;
         this.symbolTable = symbolTable;
-    } // ctor
+    }    // ctor
 
     /**
      * getJavaInterfaceWriter
-     **/
+     * 
+     * @param emitter 
+     * @param ptEntry 
+     * @param bEntry  
+     * @param st      
+     * @return 
+     */
     protected Generator getJavaInterfaceWriter(Emitter emitter,
                                                PortTypeEntry ptEntry,
                                                BindingEntry bEntry,
                                                SymbolTable st) {
         return new JavaInterfaceWriter(emitter, ptEntry, bEntry, st);
     }
+
     /**
      * getJavaStubWriter
-     **/
-    protected Generator getJavaStubWriter(Emitter emitter,
-                                          BindingEntry bEntry,
+     * 
+     * @param emitter 
+     * @param bEntry  
+     * @param st      
+     * @return 
+     */
+    protected Generator getJavaStubWriter(Emitter emitter, BindingEntry bEntry,
                                           SymbolTable st) {
         return new JavaStubWriter(emitter, bEntry, st);
     }
+
     /**
      * getJavaSkelWriter
-     **/
-    protected Generator getJavaSkelWriter(Emitter emitter,
-                                          BindingEntry bEntry,
+     * 
+     * @param emitter 
+     * @param bEntry  
+     * @param st      
+     * @return 
+     */
+    protected Generator getJavaSkelWriter(Emitter emitter, BindingEntry bEntry,
                                           SymbolTable st) {
         return new JavaSkelWriter(emitter, bEntry, st);
     }
+
     /**
      * getJavaImplWriter
-     **/
-    protected Generator getJavaImplWriter(Emitter emitter,
-                                          BindingEntry bEntry,
+     * 
+     * @param emitter 
+     * @param bEntry  
+     * @param st      
+     * @return 
+     */
+    protected Generator getJavaImplWriter(Emitter emitter, BindingEntry bEntry,
                                           SymbolTable st) {
         return new JavaImplWriter(emitter, bEntry, st);
     }
 
     /**
      * Write all the binding bindings:  stub, skeleton, and impl.
+     * 
+     * @throws IOException 
      */
     public void generate() throws IOException {
+
         setGenerators();
+
         if (interfaceWriter != null) {
             interfaceWriter.generate();
         }
+
         if (stubWriter != null) {
             stubWriter.generate();
         }
+
         if (skelWriter != null) {
             skelWriter.generate();
         }
+
         if (implWriter != null) {
             implWriter.generate();
         }
-    } // generate
+    }    // generate
 
-    /** 
+    /**
      * setGenerators
      * Logic to set the generators that are based on the Binding
      * This logic was moved from the constructor so extended interfaces
      * can more effectively use the hooks.
      */
     protected void setGenerators() {
+
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
-        
+
         // Interface writer
         PortTypeEntry ptEntry =
-            symbolTable.getPortTypeEntry(binding.getPortType().getQName());
+                symbolTable.getPortTypeEntry(binding.getPortType().getQName());
+
         if (ptEntry.isReferenced()) {
-            interfaceWriter = getJavaInterfaceWriter(
-                                 emitter, ptEntry, bEntry, symbolTable);
+            interfaceWriter = getJavaInterfaceWriter(emitter, ptEntry, bEntry,
+                    symbolTable);
         }
-        
+
         if (bEntry.isReferenced()) {
+
             // Stub writer
             stubWriter = getJavaStubWriter(emitter, bEntry, symbolTable);
 
             // Skeleton and Impl writers
             if (emitter.isServerSide()) {
                 if (emitter.isSkeletonWanted()) {
-                    skelWriter = getJavaSkelWriter(emitter, bEntry, symbolTable);
+                    skelWriter = getJavaSkelWriter(emitter, bEntry,
+                            symbolTable);
                 }
+
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
                         + "Impl.java";
+
                 try {
                     if (Utils.fileExists(fileName,
                             binding.getQName().getNamespaceURI(),
                             emitter.getNamespaces())) {
-                        System.out.println(Messages.getMessage(
-                                "wontOverwrite", fileName));
+                        System.out.println(Messages.getMessage("wontOverwrite",
+                                fileName));
+                    } else {
+                        implWriter = getJavaImplWriter(emitter, bEntry,
+                                symbolTable);
                     }
-                    else {
-                        implWriter = getJavaImplWriter(
-                                emitter, bEntry, symbolTable);
-                    }
-                }
-                catch (IOException ioe) {
-                    System.err.println(
-                            Messages.getMessage("fileExistError00", fileName));
+                } catch (IOException ioe) {
+                    System.err.println(Messages.getMessage("fileExistError00",
+                            fileName));
                 }
             }
         }
-}
-} // class JavaBindingWriter
+    }
+}    // class JavaBindingWriter

@@ -51,7 +51,7 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
- */ 
+ */
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.wsdl.gen.Generator;
@@ -66,26 +66,33 @@ import java.io.IOException;
 import java.util.Vector;
 
 /**
-* This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
-* <typeName>.java, <typeName>Holder.java.
-*/
+ * This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
+ * <typeName>.java, <typeName>Holder.java.
+ */
 public class JavaTypeWriter implements Generator {
+
+    /** Field HOLDER_IS_NEEDED */
     public static final String HOLDER_IS_NEEDED = "Holder is needed";
 
+    /** Field typeWriter */
     private Generator typeWriter = null;
+
+    /** Field holderWriter */
     private Generator holderWriter = null;
 
     /**
      * Constructor.
+     * 
+     * @param emitter     
+     * @param type        
+     * @param symbolTable 
      */
-    public JavaTypeWriter(
-            Emitter emitter,
-            TypeEntry type,
-            SymbolTable symbolTable) {
+    public JavaTypeWriter(Emitter emitter, TypeEntry type,
+                          SymbolTable symbolTable) {
 
         if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
 
-            // Determine what sort of type this is and instantiate 
+            // Determine what sort of type this is and instantiate
             // the appropriate Writer.
             Node node = type.getNode();
 
@@ -93,36 +100,34 @@ public class JavaTypeWriter implements Generator {
             if (!type.getName().endsWith("[]")) {
 
                 // Generate the proper class for either "complex" or "enumeration" types
-                Vector v = Utils.getEnumerationBaseAndValues(
-                        node, symbolTable);
+                Vector v = Utils.getEnumerationBaseAndValues(node, symbolTable);
+
                 if (v != null) {
                     typeWriter = getEnumTypeWriter(emitter, type, v);
-                }
-                else {
-                    TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-                       node, symbolTable);
+                } else {
+                    TypeEntry base =
+                            SchemaUtils.getComplexElementExtensionBase(node,
+                                    symbolTable);
+
                     if (base == null) {
                         base = SchemaUtils.getComplexElementRestrictionBase(
-                           node, symbolTable);
+                                node, symbolTable);
                     }
+
                     if (base == null) {
-                        QName baseQName = SchemaUtils.getSimpleTypeBase(
-                           node);
+                        QName baseQName = SchemaUtils.getSimpleTypeBase(node);
+
                         if (baseQName != null) {
                             base = symbolTable.getType(baseQName);
                         }
                     }
 
                     typeWriter = getBeanWriter(
-                            emitter, 
-                            type, 
+                            emitter, type,
                             SchemaUtils.getContainedElementDeclarations(
-                                node, 
-                                symbolTable),
-                            base,
+                                    node, symbolTable), base,
                             SchemaUtils.getContainedAttributeTypes(
-                                 node, 
-                                 symbolTable));
+                                    node, symbolTable));
                 }
             }
 
@@ -132,74 +137,108 @@ public class JavaTypeWriter implements Generator {
                 holderWriter = getHolderWriter(emitter, type);
             }
         }
-    } // ctor
+    }    // ctor
 
     /**
      * Write all the service bindnigs:  service and testcase.
+     * 
+     * @throws IOException 
      */
     public void generate() throws IOException {
+
         if (typeWriter != null) {
             typeWriter.generate();
         }
+
         if (holderWriter != null) {
             holderWriter.generate();
         }
-    } // generate
+    }    // generate
 
     /**
      * Does anything use this type as an inout/out parameter?  Query the Type dynamicVar
+     * 
+     * @param entry 
+     * @return 
      */
     private boolean holderIsNeeded(SymTabEntry entry) {
+
         Boolean holderIsNeeded =
                 (Boolean) entry.getDynamicVar(HOLDER_IS_NEEDED);
-        return (holderIsNeeded != null && holderIsNeeded.booleanValue());
-    } // holderIsNeeded
+
+        return ((holderIsNeeded != null) && holderIsNeeded.booleanValue());
+    }    // holderIsNeeded
 
     /**
      * getEnumWriter
-     **/
-    protected JavaWriter getEnumTypeWriter(Emitter emitter, TypeEntry type, Vector v) {
+     * 
+     * @param emitter 
+     * @param type    
+     * @param v       
+     * @return 
+     */
+    protected JavaWriter getEnumTypeWriter(Emitter emitter, TypeEntry type,
+                                           Vector v) {
         return new JavaEnumTypeWriter(emitter, type, v);
     }
 
     /**
      * getBeanWriter
-     **/
-    protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type, 
-                                   Vector elements, TypeEntry base,
-                                   Vector attributes) {
-        JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
-                                                  attributes);
+     * 
+     * @param emitter    
+     * @param type       
+     * @param elements   
+     * @param base       
+     * @param attributes 
+     * @return 
+     */
+    protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type,
+                                       Vector elements, TypeEntry base,
+                                       Vector attributes) {
+
+        JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements,
+                base, attributes);
+
         // If this complexType is referenced in a
-        // fault context, emit a bean-like exception 
+        // fault context, emit a bean-like exception
         // class
-        Boolean isComplexFault = (Boolean)
-            type.getDynamicVar(
-                               JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-        if (isComplexFault != null && 
-            isComplexFault.booleanValue()) {
-            return new JavaBeanFaultWriter(emitter, type, 
-                                           elements, base, attributes, 
-                                           helperWriter);
+        Boolean isComplexFault = (Boolean) type.getDynamicVar(
+                JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+
+        if ((isComplexFault != null) && isComplexFault.booleanValue()) {
+            return new JavaBeanFaultWriter(emitter, type, elements, base,
+                    attributes, helperWriter);
         }
-        return new JavaBeanWriter(emitter, type, 
-                                  elements, base, attributes, 
-                                  helperWriter);
+
+        return new JavaBeanWriter(emitter, type, elements, base, attributes,
+                helperWriter);
     }
 
     /**
      * getHelperWriter
-     **/
+     * 
+     * @param emitter    
+     * @param type       
+     * @param elements   
+     * @param base       
+     * @param attributes 
+     * @return 
+     */
     protected JavaWriter getBeanHelperWriter(Emitter emitter, TypeEntry type,
-                                         Vector elements, TypeEntry base, 
-                                         Vector attributes) {
-        return new JavaBeanHelperWriter(emitter, type, elements, base, attributes); 
+                                             Vector elements, TypeEntry base,
+                                             Vector attributes) {
+        return new JavaBeanHelperWriter(emitter, type, elements, base,
+                attributes);
     }
 
     /**
      * getHolderWriter
-     **/
+     * 
+     * @param emitter 
+     * @param type    
+     * @return 
+     */
     protected Generator getHolderWriter(Emitter emitter, TypeEntry type) {
         return new JavaHolderWriter(emitter, type);
     }
-} // class JavaTypeWriter
+}    // class JavaTypeWriter

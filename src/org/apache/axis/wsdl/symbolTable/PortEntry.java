@@ -57,12 +57,10 @@ package org.apache.axis.wsdl.symbolTable;
 import javax.wsdl.Port;
 import javax.xml.namespace.QName;
 
-
 /**
- * This class represents the symbol table entry for a WSDL port. 
+ * This class represents the symbol table entry for a WSDL port.
  * 
  * @author <a href="mailto:karl.guggisberg@guggis.ch">Karl Guggisberg</a>
- * 
  */
 public class PortEntry extends SymTabEntry {
 
@@ -72,17 +70,19 @@ public class PortEntry extends SymTabEntry {
     /**
      * constructor
      * 
-     * @param port   the WSDL port element
+     * @param port the WSDL port element
      */
     public PortEntry(Port port) {
+
         super(new QName(port.getName()));
+
         this.port = port;
     }
 
     /**
-     * replies the WSDL port element represented by this symbol table entry 
+     * replies the WSDL port element represented by this symbol table entry
      * 
-     * @return the WSDL port element represented by this symbol table entry 	
+     * @return the WSDL port element represented by this symbol table entry
      */
     public Port getPort() {
         return port;
