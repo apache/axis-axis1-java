@@ -316,10 +316,10 @@ public class Java2WSDL {
 
                     case TYPEMAPPING_OPT:
                         String value = option.getArgument();
-                        if (option.equals("1.1")) {
+                        if (value.equals("1.1")) {
                             emitter.setDefaultTypeMapping(
                                 DefaultTypeMappingImpl.create());
-                        } else if (option.equals("1.2")) {
+                        } else if (value.equals("1.2")) {
                             emitter.setDefaultTypeMapping(
                                 DefaultSOAP12TypeMappingImpl.create());
                         } else {
