@@ -108,7 +108,7 @@
 		<part name="input4" type="xsd:anyType"/>
 	</message>
 	<message name="echoSimpleTypesAsStructOfSchemaTypesResponse">
-		<part name="return" type="test:PolyMorphStruct"/>
+		<part name="return" type="types:SOAPStructTypes"/>
 	</message>
 
 	<!-- xmlp-11 echoInteger rpc operation -->
