@@ -82,6 +82,7 @@ public class Java2Wsdl {
     protected static final int LOCATION_IMPORT_OPT = 'L';
 //    protected static final int CLASSDIR_OPT = 'c';
     protected static final int METHODS_ALLOWED_OPT = 'm';
+    protected static final int INHERITED_CLASS_OPT = 'a';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -125,6 +126,10 @@ public class Java2Wsdl {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_ALLOWED_OPT,
                 "space seperated list of methods to export"),
+        new CLOptionDescriptor("methods",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                INHERITED_CLASS_OPT,
+                "look for allowed methods in inherited class"),
 //        there is no implementation for a class loader
 //        look at todo in Emitter
 //        new CLOptionDescriptor("classDir",
@@ -190,6 +195,10 @@ public class Java2Wsdl {
 
                     case METHODS_ALLOWED_OPT:
                         emitter.setAllowedMethods(option.getArgument());
+                        break;
+
+                    case INHERITED_CLASS_OPT:
+                        emitter.setUseInheritedMethods(true);
                         break;
 
                     case HELP_OPT:
