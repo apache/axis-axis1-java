@@ -35,11 +35,11 @@ Most useful targets:
  - javadocs : creates the javadocs in "./build/javadocs"
  - dist     : creates the complete binary distribution
  - srcdist  : creates the complete src distribution
- - functional-tests : attempts to build Ant task and then run 
+ - functional-tests : attempts to build Ant task and then run
               client-server functional test
  - war      : create the web application as a WAR file
  - clean    : clean up files and directories
- 
+
 
 Custom post-compilation work:
 
@@ -412,10 +412,18 @@ Copyright:
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
 
+    <!-- jaxrpc Dynamic proxy with bean - Bug 10824 -->
+    <wsdl2java url="samples/jaxrpc/address/Address.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
     <!-- Compile the echo sample generated java files -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="test-classpath" />
       <include name="samples/addr/**.java" />
+      <include name="samples/jaxrpc/address/**.java" />
     </javac>
 
 
@@ -432,7 +440,6 @@ Copyright:
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/Calculator.java"/>
-<!--      <exclude name="samples/addr/*.java" /> -->
       <exclude name="samples/addr/AddressBookTestCase.java" unless= "junit.present"/>
       <exclude name="samples/userguide/example6/Main.java" />
       <exclude name="samples/userguide/example6/*Impl.java" />
@@ -580,7 +587,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates a war file for testing                                      -->
   <!-- =================================================================== -->
-  <target name="war" depends="compile, samples" 
+  <target name="war" depends="compile, samples"
       description="Create the web application" >
     <mkdir dir="${build.webapp}"/>
     <copy todir="${build.webapp}">

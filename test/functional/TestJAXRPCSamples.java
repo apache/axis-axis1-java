@@ -151,9 +151,22 @@ public class TestJAXRPCSamples extends TestCase {
         }
     }
 
+    public void testAddress() throws Exception {
+        try {
+            log.info("Testing JAX-RPC Address sample.");
+            samples.jaxrpc.address.AddressClient.main(new String[]{});
+            log.info("Test complete.");
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+            throw new Exception("Fault returned from test: " + t);
+        }
+    }
+
     public static void main(String args[]) throws Exception {
         TestJAXRPCSamples tester = new TestJAXRPCSamples("tester");
         tester.testHello();
+        tester.testAddress();
     } // main
 }
 
