@@ -67,7 +67,12 @@ public class TestEchoSample extends TestCase {
     public TestEchoSample(String name) {
         super(name);
     }
-    
+
+    public static void main(String args[]) throws Exception {
+        TestEchoSample tester = new TestEchoSample("tester");
+        tester.testEchoService();
+    }
+
     public void testEchoService () throws Exception {
         System.out.println("Testing echo interop sample.");
 

@@ -84,6 +84,9 @@ public class WSDLUtils {
     {
         TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
         String name = cls.getName();
+        String serviceName = msgContext.getTargetService();
+        if ((serviceName == null) || ("JWSProcessor".equals(serviceName)))
+            serviceName = "";
 
         DefinitionFactory factory = DefinitionFactory.
                 newInstance("com.ibm.wsdl.factory.DefinitionFactoryImpl");
@@ -146,6 +149,7 @@ public class WSDLUtils {
 
             SOAPBody soapBody = new SOAPBody();
             soapBody.setUse("encoded");
+            soapBody.setNamespaceURI(serviceName);
             soapBody.setEncodingStyles(encodingList);
 
             bindingInput.addExtensibilityElement(soapBody);
