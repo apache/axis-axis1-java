@@ -22,11 +22,11 @@
 
   <!-- ===================================================================
         This is an accessory function to exec JUST the testcase of a 
-	component.
+    component.
        =================================================================== -->
   <target name="batch-component-test">
-	<antcall target="echo-file"/>
-	<ant antfile="${file}" target="component-junit-functional"/>
+    <antcall target="echo-file"/>
+    <ant antfile="${file}" target="component-junit-functional"/>
       <!--
         <exec executable="ant">
            <arg line="-buildfile ${file} component-junit-functional"/>
@@ -38,8 +38,8 @@
         This is an accessory function to execs the full component test
        =================================================================== -->
   <target name="batch-component-run">
-        <antcall target="echo-file"/>
-	<ant antfile="${file}" target="run"/>
+    <antcall target="echo-file"/>
+    <ant antfile="${file}" target="run"/>
       <!--
         <exec executable="ant">
            <arg line="-buildfile ${file} run"/>
@@ -157,6 +157,9 @@
 
   </target>
 
+  <!-- print out the current enviroment. 
+      Also, probe for javadocs being out of date and set javadoc.notrequired
+      to true if they are not needed -->
   <target name="printEnv" depends="setenv" >
 
     <echo message="-----------------------------------------------------------------"/>
@@ -197,6 +200,8 @@
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
     <echo message="deprecation=${deprecation}" />
+    <echo message="build.compiler=${build.compiler}" />
+    <echo message="javac.fork=${javac.fork}" />
     <!-- Set environment variable axis_nojavadocs=true  to never generate javadocs. Case sensative! -->
     <echo message="axis_nojavadocs=${env.axis_nojavadocs}"/>
 
@@ -217,6 +222,7 @@
       <srcfiles dir="${src.dir}" includes="**/*.java" />
     </uptodate>
 
+    <!-- for ant1.5+, we can use <isset> here -->
     <condition property="axis_nojavadocs" value="true">
       <equals arg1="true" arg2="${env.axis_nojavadocs}"/>
     </condition>
@@ -232,7 +238,7 @@
     </condition>
 
 
- </target>
+  </target>
 
 
   <!-- =================================================================== -->
@@ -336,7 +342,7 @@
           <path id="deploy.xml.files">
                 <fileset dir="${build.dir}">
                   <include name="work/${componentName}/**/deploy.wsdd"/>
-		  <include name="${extraServices}/deploy.wsdd" />
+                  <include name="${extraServices}/deploy.wsdd" />
                 </fileset>
           </path>
 
@@ -351,12 +357,12 @@
           <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
   </target>
   
-<target name="component-test-run" if="junit.present" depends="start-signature-signing-and-verification">
-	<echo message="Execing ${componentName} Test"/>
-	<antcall target="component-junit-functional"/>
-</target>
+  <target name="component-test-run" if="junit.present" depends="start-signature-signing-and-verification">
+    <echo message="Execing ${componentName} Test"/>
+    <antcall target="component-junit-functional"/>
+  </target>
 
-<target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare">
+  <target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare">
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
       <arg line="${deploy.xml.property}"/>
@@ -379,18 +385,18 @@
       <classpath refid="classpath" />
       <arg line="${undeploy.xml.property}"/>
     </java>
-</target>
+  </target>
 
-<target name="execute-Component"  depends="transport-layer" >
+  <target name="execute-Component"  depends="transport-layer" >
     <runaxisfunctionaltests
       url="http://localhost:${test.functional.TCPListenerPort}"
       startTarget1="start-functional-test-tcp-server"
       startTarget2="start-functional-test-http-server"
       testTarget="component-test-run"
       stopTarget="stop-functional-test-http-server" />
-</target>
+  </target>
 
-<target name="transport-layer" depends="setenv" >
-  <mkdir dir="${test.functional.reportdir}" />
-  <ant antfile="${axis.home}/samples/transport/build.xml" target="compile" />
-</target>
+  <target name="transport-layer" depends="setenv" >
+    <mkdir dir="${test.functional.reportdir}" />
+    <ant antfile="${axis.home}/samples/transport/build.xml" target="compile" />
+  </target>
