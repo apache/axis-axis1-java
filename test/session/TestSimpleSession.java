@@ -82,8 +82,8 @@ public class TestSimpleSession extends TestCase {
         // Set up the server side
         SimpleSessionHandler sessionHandler = new SimpleSessionHandler();
         // Set a 3-second reap period, and a 3-second timeout
-        sessionHandler.setReapPeriodicity(3000);
-        sessionHandler.setDefaultSessionTimeout(3000);
+        sessionHandler.setReapPeriodicity(3);
+        sessionHandler.setDefaultSessionTimeout(3);
 
         SOAPService service = new SOAPService(sessionHandler,
                                               new RPCProvider(),
@@ -130,7 +130,7 @@ public class TestSimpleSession extends TestCase {
                      count.intValue());
 
         // Wait around a few seconds to let the first session time out
-        Thread.sleep(3000);
+        Thread.sleep(4000);
 
         // And now we should get a new session, therefore going back to 1
         count = (Integer)call.invoke("sessionTest", "counter", null);

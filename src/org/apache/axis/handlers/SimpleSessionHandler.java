@@ -126,11 +126,11 @@ public class SimpleSessionHandler extends BasicHandler
     private long curSessionID = 0;
     
     // Reap timed-out sessions on the first request after this many
-    // milliseconds.
-    private long reapPeriodicity = 30000;
+    // seconds.
+    private long reapPeriodicity = 30;
     private long lastReapTime = 0;
 
-    // By default, sessions time out after 1 minute of inactivity
+    // By default, sessions time out after 1 minute of inactivity (60 sec)
     private int defaultSessionTimeout = 60;
 
     /**
@@ -144,7 +144,7 @@ public class SimpleSessionHandler extends BasicHandler
         
         // Minimize synchronicity, just check in here, do reap later.
         synchronized (this) {
-            if (curTime > lastReapTime + reapPeriodicity) {
+            if (curTime > lastReapTime + (reapPeriodicity * 1000)) {
                 reap = true;
                 lastReapTime = curTime;
             }
@@ -158,8 +158,8 @@ public class SimpleSessionHandler extends BasicHandler
             for (i = keys.iterator(); i.hasNext();) {
                 key = i.next();
                 SimpleSession session = (SimpleSession)activeSessions.get(key);
-                if ((session.getTimeout() * 1000) >
-                     (curTime - session.getLastAccessTime())) {
+                if ((curTime - session.getLastAccessTime()) >
+                     (session.getTimeout() * 1000)) {
                     log.debug(JavaUtils.getMessage("timeout00",
                                                         key.toString()));
 
@@ -300,7 +300,9 @@ public class SimpleSessionHandler extends BasicHandler
     }
 
     /**
-     * Set the reaper periodicity - convenience method for testing.
+     * Set the reaper periodicity in SECONDS
+     *
+     * Convenience method for testing.
      *
      * !!! TODO: Should be able to set this via options on the Handler
      * or perhaps the engine.
@@ -311,7 +313,9 @@ public class SimpleSessionHandler extends BasicHandler
     }
 
     /**
-     * Set the default session timeout - again, for testing.
+     * Set the default session timeout in SECONDS
+     *
+     * Again, for testing.
      */
     public void setDefaultSessionTimeout(int defaultSessionTimeout) {
         this.defaultSessionTimeout = defaultSessionTimeout;
