@@ -139,14 +139,15 @@ public abstract class SOAPSAXHandler extends DefaultHandler
              * to know at this point if this is an RPC service or not.  It's
              * possible that no one has set the service up until this point,
              * so if that's the case we should attempt to set it based on the
-             * namespace of the first body element without an ID (assuming
-             * that ID'ed attributes are multi-ref encodings).  Setting the
+             * namespace of the first root body element.  Setting the
              * service may (should?) result in setting the service
              * description, which can then tell us what to create.
              */
-            String id = attributes.getValue("id");
+            boolean isRoot = true;
+            String id = attributes.getValue(Constants.ATTR_ROOT);
+            if ((id != null) && id.equals("0")) isRoot = false;
 
-            if (id == null &&
+            if (isRoot &&
                 context.getMessageContext().getServiceHandler() == null) {
                 Debug.Print(2, "Dispatching to body namespace '",
                             namespace, "'");
@@ -154,13 +155,13 @@ public abstract class SOAPSAXHandler extends DefaultHandler
             }
             
             /** Now we make a plain SOAPBodyElement IF we either:
-             * a) have an ID attribute, or
+             * a) have an non-root element, or
              * b) have a non-RPC service
              */
             ServiceDescription serviceDesc = context.getServiceDescription();
             if (((serviceDesc != null) &&
                 (!serviceDesc.isRPC())) ||
-                (id != null)) {
+                (!isRoot)) {
                 return new SOAPBodyElement(namespace, localName, attributes, context);
             }
 
