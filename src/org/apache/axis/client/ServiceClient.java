@@ -132,12 +132,6 @@ public class ServiceClient {
         try {
             transport.init(engine);
             
-            /* Do some prep-work.  Get the registries and put them in the */
-            /* msgContext so they can be used by later handlers.          */
-            /**************************************************************/
-            HandlerRegistry hr = engine.getHandlerRegistry();
-            HandlerRegistry sr = engine.getServiceRegistry();
-            
             transport.initMessageContext(msgContext, this, engine, doLocal);
         } catch (AxisFault f) {
             // this will happen if there is no appropriate service
