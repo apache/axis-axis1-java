@@ -168,6 +168,24 @@ public class AdminClient
         return process(input);
     }
 
+    public String undeployHandler(String handlerName) throws Exception { 
+        log(JavaUtils.getMessage("doQuit00"));
+        String               str   = "<m:undeploy xmlns:m=\"AdminService\">" +
+                                     "<handler name=\"" + handlerName + "\"/>"+
+                                     "</m:undeploy>" ;
+        ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
+        return process(input);
+    }
+
+    public String undeployService(String serviceName) throws Exception { 
+        log(JavaUtils.getMessage("doQuit00"));
+        String               str   = "<m:undeploy xmlns:m=\"AdminService\">" +
+                                     "<service name=\"" + serviceName + "\"/>"+
+                                     "</m:undeploy>" ;
+        ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
+        return process(input);
+    }
+
     /**
      * <p>Processes a set of administration commands.</p>
      * <p>The following commands are available:</p>
