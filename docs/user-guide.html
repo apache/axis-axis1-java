@@ -15,6 +15,7 @@ h1 {  margin-left: -30px}
 </head>
 
 <body bgcolor="#FFFFFF" text="#000000">
+<h1 align="center"><img src="axis.jpg" width="176" height="96"></h1>
 <h1>Axis User's Guide</h1>
 <p><i>Alpha 1 Version</i></p>
 <h3>Table of Contents</h3>
@@ -67,8 +68,7 @@ better.
   &quot;<a href="mailto:axis-dev@xml.apache.org">axis-dev@xml.apache.org</a>&quot; 
 </p>
 <h3>What is SOAP?</h3>
-<i><font color="#FF0000">TBD - links to SOAP information sites, brief description... 
-</font></i> 
+SOAP is an XML <i></i> 
 <h3>What's in this release?</h3>
 <p>This release contains:</p>
 <ul>
@@ -175,8 +175,8 @@ Now you'll get a message that looks like this:
   
 </div>
 <p>You'll note the param is now named &quot;testParam&quot; as expected.</p>
-<p>OK - so now you know how to access SOAP services as a client. But how do you 
-  publish your own services?</p>
+<p>OK - so now you know the basics of accessing SOAP services as a client. But 
+  how do you publish your own services?</p>
 <h2><a name="PublishingServices"></a>Publishing Web Services with Axis</h2>
 <p>Let's say we have a simple class like the following:</p>
 <pre class="example">public class Calculator {
@@ -214,14 +214,75 @@ Got result : 7
 Got result : 1
 % </pre>
 <h3>Custom Deployment - deploy.xml files and the AdminClient</h3>
-<font color="#FF0000"><i>TBD - explanation of the AdminClient and the deploy.xml 
-file. Link to the deployment reference.</i></font> 
-<h2><a name="DataMapping"></a>XML &lt;-&gt; Java Data Mapping in Axis</h2>
+<p>JWS files are great quick ways to get your classes out there as Web Services, 
+  but they're not always the best choice. For one thing, you need the source code 
+  - there might be times when you want to expose a pre-existing class on your 
+  system without source. Also, the amount of configuration you can do as to how 
+  the service gets accessed is pretty limited - you can't specify custom type 
+  mappings, or control which Handlers get invoked when people are using your service.</p>
+<pre>&lt;admin:deploy xmlns:admin=&quot;AdminService&quot;&gt;
+ &lt;service name=&quot;MyService&quot; pivot=&quot;RPCDispatcher&quot;&gt;
+  &lt;option name=&quot;classname&quot; value=&quot;MyService&quot;/&gt;
+  &lt;option name=&quot;methods&quot; value=&quot;*&quot;/&gt;
+ &lt;/service&gt;
+&lt;/admin:deploy&gt;</pre>
+<p>Pretty simple, really - the outermost element tells the engine that this is 
+  a deployment (other options are &quot;undeploy&quot; and &quot;list&quot; - 
+  see the deployment reference). Then we deploy a service</p>
+<p>Now let's start to explore some of the more powerful features of the Axis engine. 
+  Let's say you want to track how many times your service has been called, and 
+  by whom.</p>
+<pre>&lt;admin:deploy xmlns:admin=&quot;AdminService&quot;&gt;
+ &lt;!-- define the logging handler configuration --&gt;
+ &lt;handler name=&quot;track&quot; class=&quot;org.apache.axis.handlers.LogHandler&quot;&gt;
+  &lt;option name=&quot;filename&quot; value=&quot;MyService.log&quot;/&gt;
+ &lt;/handler&gt;
+
+ &lt;!-- define the service, using the log handler we just defined --&gt;
+ &lt;service name=&quot;MyService&quot; request=&quot;track&quot; pivot=&quot;RPCDispatcher&quot;&gt;
+ &lt;/service&gt;
+&lt;/admin:deploy&gt;</pre>
+<h4>Remote Administration</h4>
+<p>Note that by default, the Axis server is configured to only accept administration 
+  requests from the machine on which it resides - if you wish to enable remote 
+  administration, you must set the &quot;enableRemoteAdmin&quot; property of the 
+  AdminService to <b>true</b>. To do this, find the &quot;server-config.xml&quot; 
+  file in your webapp's WEB-INF directory. In it, you'll see a deployment for 
+  the AdminService. Add an option as follows:</p>
+<pre>&lt;service name=&quot;AdminService&quot; pivot=&quot;RPCDispatcher&quot;&gt;
+ &lt;option name=&quot;className&quot; value=&quot;org.apache.axis.util.Admin&quot;/&gt;
+ &lt;option name=&quot;methodName&quot; value=&quot;*&quot;/&gt;
+ <b>&lt;option name=&quot;enableRemoteAdmin&quot; value=&quot;true&quot;/&gt;</b>
+&lt;/service&gt;</pre>
+<p><b>WARNING: enabling remote administration may give unauthorized parties access 
+  to your machine. If you do this, please make sure to add security to your configuration!</b><br>
+  <i><font color="#FF0000"></font></i> </p>
+<i><font color="#FF0000"></font></i><h2><a name="DataMapping"></a>XML &lt;-&gt; Java Data Mapping in Axis</h2>
 <h3>Encoding Your Beans - the BeanSerializer</h3>
-<p><i><font color="#FF0000">TBD - how to use bean mappings</font></i> </p>
+<p>Axis includes the ability to serialize arbitrary Java classes which follow 
+  the standard JavaBean pattern of get/set accessors. All you need to do is tell 
+  Axis which Java classes map to which XML Schema types. Configuring a bean mapping 
+  looks like this:</p>
+<p>&lt;beanMapping&gt;</p>
+<p>Let's take a look at how this works. Go look at the docs/examples/example4/BeanService.java 
+  file. (we won't reproduce it here, it's pretty basic) The key thing to notice 
+  is that the argument to the service method is an Order object. Since Order is 
+  not a basic type which Axis understands by default, trying to run the service 
+  without a type mapping will result in a fault (if you want to try this for yourself, 
+  you can use the simple-deploy.xml file in the example4 directory). But if we 
+  put a beanMapping into our deployment, all will be well.</p>
 <h3>When Beans Are Not Enough - Custom Serialization</h3>
-<i><font color="#FF0000">TBD - explanation of custom serializers/deserializers, 
-and how to use the contexts.</font></i> 
+<p>Just as JWS deployment is sometimes not flexible enough to meet all needs, 
+  the default bean serialization model isn't robust enough to handle every case 
+  either. At times there will be non-bean Java classes (especially in the case 
+  of pre-existing assets) which you need to map to/from XML, and there also may 
+  be some custom XML schema types which you want to map into Java in particular 
+  ways. Axis gives you the ability to write custom serializers/deserializers, 
+  and some tools to help make your life easier when you do so.</p>
+<p><i><font color="#FF0000">TBD - this section will be expanded in a future version! 
+  For now, take a look at the ArraySerializer, the BeanSerializer (both in org.apache.axis.encoding), 
+  and the DataSer example (in samples/encoding) to see how custom serializers 
+  work. </font></i></p>
 <h2><a name="DeploymentReference"></a>Deployment Reference</h2>
 <i>Note: this reference reflects the state of the deploy.xml structure as of the 
 alpha 1 release. This will <b>very likely change</b> in a subsequent release to 
