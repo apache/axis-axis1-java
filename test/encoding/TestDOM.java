@@ -34,7 +34,6 @@ public class TestDOM extends TestCase {
         " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
         "  <SOAP-ENV:Header>\n" +
         "    <SOAP-SEC:signature SOAP-ENV:actor=\"null\" SOAP-ENV:mustUnderstand=\"1\"" +
-        " xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"" +
         " xmlns:SOAP-SEC=\"http://schemas.xmlsoap.org/soap/security/\">\n" +
         "       <Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">\n" +
         "       </Signature>\n" +

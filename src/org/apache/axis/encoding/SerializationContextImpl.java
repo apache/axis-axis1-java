@@ -461,7 +461,10 @@ public class SerializationContextImpl implements SerializationContext
                 nsStack.push();
                 noNamespaceMappings = false;
             }
-            nsStack.add(uri, prefix);
+            String activePrefix = nsStack.getPrefix(uri,true);
+            if(activePrefix == null || !activePrefix.equals(prefix)) {
+                nsStack.add(uri, prefix);
+            }
         }
     }
 
