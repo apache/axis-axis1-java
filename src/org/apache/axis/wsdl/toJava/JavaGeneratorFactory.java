@@ -910,9 +910,17 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             // If the given parameter is an inout or out parameter, then
                             // set a HOLDER_IS_NEEDED flag using the dynamicVar design.
                             if (p.getMode() != Parameter.IN) {
-                                p.getType().setDynamicVar(
+                                TypeEntry typeEntry = p.getType();
+                                typeEntry.setDynamicVar(
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
                                         new Boolean(true));
+                                //If this is a complex then set the HOLDER_IS_NEEDED
+                                //for the reftype too.
+                                if(!typeEntry.isSimpleType() && typeEntry.getRefType()!=null){
+                                    typeEntry.getRefType().setDynamicVar(
+                                        JavaTypeWriter.HOLDER_IS_NEEDED,
+                                        new Boolean(true));
+                                }
 
                                 // If the type is a DefinedElement, need to 
                                 // set HOLDER_IS_NEEDED on the anonymous type.

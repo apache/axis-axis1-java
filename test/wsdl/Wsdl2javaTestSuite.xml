@@ -897,6 +897,15 @@
         <mapping namespace="http://ram.uspto.gov" package="test.wsdl.ram"/>
     </wsdl2java>
 
+    <!-- This tests holders for complextype Bug:10247 -->
+    <wsdl2java url="test/wsdl/echo/echo.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="yes">
+        <mapping namespace="http://echo.services" package="test.wsdl.echo"/>
+        <mapping namespace="http://types.echo.services" package="test.wsdl.echo"/>
+    </wsdl2java>
+    
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
 
