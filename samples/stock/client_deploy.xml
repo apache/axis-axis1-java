@@ -10,6 +10,5 @@
 <deploy>
   <handler name="log" class="org.apache.axis.handlers.LogHandler" />
 
-  <service name="urn:xmltoday-delayed-quotes" input="log" output="log" 
-  pivot="log" />
+  <service name="urn:xmltoday-delayed-quotes" input="log" output="log" />
 </deploy>

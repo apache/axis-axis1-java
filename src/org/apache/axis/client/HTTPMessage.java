@@ -61,6 +61,7 @@ import org.jdom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.registries.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -175,7 +176,8 @@ public class HTTPMessage {
       client = new AxisClient();
       client.init();
       msgContext.setTargetService( action );
-      HandlerRegistry sr = client.getOption( Constants.SERVICE_REGISTRY );
+      HandlerRegistry sr = (HandlerRegistry) client.getOption( 
+                                                 Constants.SERVICE_REGISTRY );
       if ( sr == null || sr.find("HTTP.input") == null )
         msgContext.setProperty( 
                       MessageContext.TRANS_INPUT,
