@@ -62,6 +62,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.lang.reflect.Constructor;
 
 import javax.xml.namespace.QName;
 import javax.wsdl.WSDLException;
@@ -282,8 +283,17 @@ public class Emitter extends Parser {
     */
     public void setFactory(String factory) {
         try {
-            setFactory((GeneratorFactory)
-                       ClassUtils.forName(factory).newInstance());
+             Class clazz = ClassUtils.forName(factory);
+             GeneratorFactory genFac = null;
+             try {
+                 Constructor ctor = 
+                     clazz.getConstructor(new Class[] { getClass() });
+                 genFac = (GeneratorFactory) 
+                     ctor.newInstance(new Object[] { this });
+             } catch (NoSuchMethodException ex) {
+                 genFac = (GeneratorFactory) clazz.newInstance();
+             }
+             setFactory(genFac);
         }
         catch (Exception ex) {
             ex.printStackTrace();
