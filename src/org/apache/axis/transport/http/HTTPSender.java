@@ -113,11 +113,11 @@ public class HTTPSender extends BasicHandler {
             if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
             Socket             sock = null ;
-            String proxyHost = System.getProperty("https.proxyHost");
-            String proxyPort = System.getProperty("https.proxyPort");
 
             if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
                 if ( (port = tmpURL.getPort()) == -1 ) port = 443;
+                String tunnelHost = System.getProperty("https.proxyHost");
+                String tunnelPortStr = System.getProperty("https.proxyPort");
                 String tunnelUsername = System.getProperty("https.proxyUsername");
                 String tunnelPassword = System.getProperty("https.proxyPassword");
                 try {
@@ -133,7 +133,7 @@ public class HTTPSender extends BasicHandler {
                                                  SSLSocketClass.getMethod("startHandshake", new Class[] {});
                     Object factory = getDefaultMethod.invoke(null, new Object[] {});
                     Object sslSocket = null;
-                    if (proxyHost == null || proxyHost.equals("")) {
+                    if (tunnelHost == null || tunnelHost.equals("")) {
                         // direct SSL connection
                         sslSocket = createSocketMethod .invoke(factory,
                                                                new Object[] {host, new Integer(port)});
@@ -142,9 +142,9 @@ public class HTTPSender extends BasicHandler {
                         Method createSocketMethod2 =
                                                     SSLSocketFactoryClass.getMethod("createSocket",
                                                                                     new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
-                        int tunnelPort = (proxyPort != null? (Integer.parseInt(proxyPort) < 0? 443: Integer.parseInt(proxyPort)): 443);
+                        int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 443: Integer.parseInt(tunnelPortStr)): 443);
                         Object tunnel = createSocketMethod .invoke(factory,
-                                                                   new Object[] {proxyHost, new Integer(tunnelPort)});
+                                                                   new Object[] {tunnelHost, new Integer(tunnelPort)});
                         // The tunnel handshake method (condensed and made reflexive)
                         OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
                         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
@@ -157,12 +157,12 @@ public class HTTPSender extends BasicHandler {
                         String replyStr = ""; int i;
                         while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); }
                         if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
-                            throw new IOException("Unable to tunnel through " + proxyHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
+                            throw new IOException("Unable to tunnel through " + tunnelHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
                         }
                         // End of condensed reflective tunnel handshake method
                         sslSocket = createSocketMethod2.invoke(factory,
                                                                new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
-                        category.debug( "Set up SSL tunnelling through " + proxyHost + ":" +tunnelPort);
+                        category.debug( "Set up SSL tunnelling through " + tunnelHost + ":" +tunnelPort);
                     }
                     // must shake out hidden errors!
                     startHandshakeMethod.invoke(sslSocket, new Object[] {});
@@ -171,11 +171,13 @@ public class HTTPSender extends BasicHandler {
                     category.debug( "SSL feature disallowed: JSSE files not installed or present in classpath");
                     throw new AxisFault(cnfe);
                 } catch (NumberFormatException nfe) {
-                      category.debug( "Proxy port number, \"" + proxyPort + "\", incorrectly formatted");
+                      category.debug( "Proxy port number, \"" + tunnelPortStr + "\", incorrectly formatted");
                       throw new AxisFault(nfe);
                 }
                 category.debug( "Created an SSL connection");
             } else {
+                String proxyHost = System.getProperty("http.proxyHost");
+                String proxyPort = System.getProperty("http.proxyPort");
                 if ((port = tmpURL.getPort()) == -1 ) port = 80;
 
                 if (proxyHost == null || proxyHost.equals("")
