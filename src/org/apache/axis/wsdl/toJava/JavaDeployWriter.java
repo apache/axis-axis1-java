@@ -108,7 +108,7 @@ public class JavaDeployWriter extends JavaWriter {
     } // ctor
 
     public void generate() throws IOException {
-        if (emitter.generateServerSide()) {
+        if (emitter.isServerSide()) {
             super.generate();
         }
     } // generate
@@ -278,7 +278,7 @@ public class JavaDeployWriter extends JavaWriter {
     protected void writeDeployBinding(Binding binding) throws IOException {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String className = bEntry.getName();
-        if (emitter.deploySkeleton())
+        if (emitter.isSkeletonWanted())
             className += "Skeleton";
         else
             className += "Impl";
@@ -287,7 +287,7 @@ public class JavaDeployWriter extends JavaWriter {
                          + className + "\"/>");
 
         String methodList = "";
-        if (!emitter.deploySkeleton()) {
+        if (!emitter.isSkeletonWanted()) {
             Iterator operationsIterator = binding.getBindingOperations().iterator();
             for (; operationsIterator.hasNext();) {
                 BindingOperation bindingOper = (BindingOperation) operationsIterator.next();

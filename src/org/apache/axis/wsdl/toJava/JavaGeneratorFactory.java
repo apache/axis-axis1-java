@@ -110,15 +110,58 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      */
 
     public JavaGeneratorFactory() {
+        addGenerators();
     } // ctor
 
     public JavaGeneratorFactory(Emitter emitter) {
         this.emitter = emitter;
+        addGenerators();
     } // ctor
 
     public void setEmitter(Emitter emitter) {
         this.emitter = emitter;
     } // setEmitter
+
+    private void addGenerators() {
+        addMessageGenerators();
+        addPortTypeGenerators();
+        addBindingGenerators();
+        addServiceGenerators();
+        addTypeGenerators();
+        addDefinitionGenerators();
+    } // addGenerators
+
+    /**
+     * These addXXXGenerators are called by the constructor.
+     * If an extender of this factory wants to CHANGE the set
+     * of generators that are called per WSDL construct, they
+     * should override these addXXXGenerators methods.  If all
+     * an extender wants to do is ADD a generator, then the
+     * extension should simply call addGenerator.
+     * (NOTE:  It doesn't quite work this way, yet.  Only the
+     * Definition generators fit this model at this point in
+     * time.)
+     */
+    protected void addMessageGenerators() {
+    } // addMessageGenerators
+
+    protected void addPortTypeGenerators() {
+    } // addPortTypeGenerators
+
+    protected void addBindingGenerators() {
+    } // addBindingGenerators
+
+    protected void addServiceGenerators() {
+    } // addServiceGenerators
+
+    protected void addTypeGenerators() {
+    } // addTypeGenerators
+
+    protected void addDefinitionGenerators() {
+        addGenerator(Definition.class, JavaDefinitionWriter.class); // for faults
+        addGenerator(Definition.class, JavaDeployWriter.class); // for deploy.wsdd
+        addGenerator(Definition.class, JavaUndeployWriter.class); // for undeploy.wsdd
+    } // addDefinitionGenerators
 
     /**
      * Do the Wsdl2java generator pass:
@@ -129,7 +172,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         this.symbolTable = symbolTable;
         javifyNames(symbolTable);
         resolveNameClashes(symbolTable);
-        if (emitter.generateAll()) {
+        if (emitter.isAllWanted()) {
             setAllReferencesToTrue();
         }
         else {

@@ -130,16 +130,16 @@ public class Wsdl2javaAntTask extends Task
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
-            emitter.setGenerateTestCase(testCase);
-            emitter.setGenerateHelper(helperGen);    
+            emitter.setTestCaseWanted(testCase);
+            emitter.setHelperWanted(helperGen);    
             if (factory != null) {
                 emitter.setFactory(factory);
             }   
             emitter.setImports(!noImports);
-            emitter.setGenerateAll(all);
+            emitter.setAllWanted(all);
             emitter.setOutputDir(output);
-            emitter.setGenerateServerSide(server);
-            emitter.setDeploySkeleton(skeletonDeploy);
+            emitter.setServerSide(server);
+            emitter.setSkeletonWanted(skeletonDeploy);
             emitter.setVerbose(verbose);
             emitter.setTypeMappingVersion(tm);
             emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));

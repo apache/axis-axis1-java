@@ -85,7 +85,7 @@ public class JavaServiceWriter implements Generator {
                     new JavaServiceIfaceWriter(emitter, sEntry, symbolTable);
             serviceImplWriter =
                     new JavaServiceImplWriter(emitter, sEntry, symbolTable);
-            if (emitter.generateTestCase()) {
+            if (emitter.isTestCaseWanted()) {
                 testCaseWriter =
                         new JavaTestCaseWriter(emitter, sEntry, symbolTable);
             }

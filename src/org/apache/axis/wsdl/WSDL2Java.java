@@ -189,12 +189,12 @@ public class WSDL2Java extends WSDL2 {
             case SKELETON_DEPLOY_OPT:
                 String skeletonDeploy = option.getArgument(0);
                 if (skeletonDeploy.equalsIgnoreCase("true"))
-                    emitter.setDeploySkeleton(true);
+                    emitter.setSkeletonWanted(true);
                 else
-                    emitter.setDeploySkeleton(false);
+                    emitter.setSkeletonWanted(false);
 
             case SERVER_OPT:
-                emitter.setGenerateServerSide(true);
+                emitter.setServerSide(true);
                 break;
 
             case NAMESPACE_OPT:
@@ -234,11 +234,11 @@ public class WSDL2Java extends WSDL2 {
                 break;
 
             case TEST_OPT:
-                emitter.setGenerateTestCase(true);
+                emitter.setTestCaseWanted(true);
                 break;
 
             case ALL_OPT:
-                emitter.setGenerateAll(true);
+                emitter.setAllWanted(true);
                 break;
 
             case TYPEMAPPING_OPT:
@@ -278,7 +278,7 @@ public class WSDL2Java extends WSDL2 {
         super.validateOptions();
 
         // validate argument combinations
-        if (emitter.deploySkeleton() && !emitter.generateServerSide()) {
+        if (emitter.isSkeletonWanted() && !emitter.isServerSide()) {
             System.out.println(JavaUtils.getMessage("badSkeleton00"));
             printUsage();
         }

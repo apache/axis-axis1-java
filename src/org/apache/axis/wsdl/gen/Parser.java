@@ -90,25 +90,25 @@ public class Parser {
     private GeneratorFactory genFactory = null;
     private SymbolTable      symbolTable = null;
 
-    public boolean debug() {
+    public boolean isDebug() {
         return debug;
-    } // debug
+    } // isDebug
 
     public void setDebug(boolean debug) {
         this.debug = debug;
     } // setDebug
 
-    public boolean visitImports() {
+    public boolean isImports() {
         return imports;
-    } // visitImports
+    } // isImports
 
     public void setImports(boolean imports) {
         this.imports = imports;
     } // setImports
 
-    public boolean verbose() {
+    public boolean isVerbose() {
         return verbose;
-    } // verbose
+    } // isVerbose
 
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -196,7 +196,7 @@ public class Parser {
     private void generate(SymbolTable symbolTable) throws IOException, WSDLException {
         Definition def = symbolTable.getDefinition();
         genFactory.generatorPass(def, symbolTable);
-        if (debug()) {
+        if (isDebug()) {
             symbolTable.dump(System.out);
         }
 

@@ -274,7 +274,7 @@ public class JavaBeanWriter extends JavaWriter {
 
         // Write the meta data into a Helper class or
         // embed it in the bean class
-        if (emitter.generateHelper()) {
+        if (emitter.isHelperWanted()) {
             helper.generate(); // separate Helper Class
         } else {
             helper.generate(pw); // embed in Bean Class
