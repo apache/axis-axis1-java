@@ -274,7 +274,11 @@ public class Parser {
         generate(symbolTable);
     } // run
 
+    protected void sanityCheck(SymbolTable symbolTable){
+        // do nothing.
+    }
     private void generate(SymbolTable symbolTable) throws IOException {
+        sanityCheck(symbolTable);
         Definition def = symbolTable.getDefinition();
         genFactory.generatorPass(def, symbolTable);
         if (isDebug()) {

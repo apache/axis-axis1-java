@@ -64,6 +64,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;												   
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -78,6 +80,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -420,6 +424,26 @@ public class Emitter extends Parser {
         }
     } // setup
 
+
+    protected void sanityCheck(SymbolTable symbolTable) {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                String namespace = entry.getQName().getNamespaceURI();
+                String packageName =
+                        org.apache.axis.wsdl.toJava.Utils.makePackageName(namespace);
+                String localName = entry.getQName().getLocalPart();
+                if (localName.equals(packageName) &&
+                        packageName.equals(namespaces.getCreate(namespace))) {
+                    packageName += "_pkg";
+                    namespaces.put(namespace, packageName);
+                }
+
+            }
+        }
+    }
 
     /**
      * Tries to load the namespace-to-package mapping file.
