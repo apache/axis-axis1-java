@@ -116,12 +116,10 @@ public class MsgProvider extends JavaProvider {
             /* from the root of the Body element                            */
             /* Hmmm, should we do this????                                  */
             /****************************************************************/
-System.err.println( "Class:" +  jc.getJavaClass().getName() + ", Methodname:"+ methodName);           
             if ( methodName == null || methodName.equals("") ) {
                 Element root = doc.getDocumentElement();
                 if ( root != null ) methodName = root.getLocalName();
             }
-System.err.println( "Class:" +  jc.getJavaClass().getName() + ", Methodname:"+ methodName);           
 
             // Try the the simplest case first - just Document as the param 
             /////////////////////////////////////////////////////////////////
