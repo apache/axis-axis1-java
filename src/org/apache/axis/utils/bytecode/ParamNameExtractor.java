@@ -60,6 +60,7 @@ import org.apache.commons.logging.Log;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  *  This class retieves function parameter names from bytecode built with
@@ -85,6 +86,12 @@ public class ParamNameExtractor {
 
         // get declaring class
         Class c = method.getDeclaringClass();
+        
+        // Don't worry about it if the class is a Java dynamic proxy 
+        if(Proxy.isProxyClass(c)) {
+            return null;
+        }
+        
         try {
             // get a parameter reader
             ParamReader pr = new ParamReader(c);
