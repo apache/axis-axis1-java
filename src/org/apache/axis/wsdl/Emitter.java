@@ -151,8 +151,8 @@ public class Emitter {
         this.bVerbose             = that.bVerbose;
         this.bGeneratePackageName = that.bGeneratePackageName;
         this.bGenerateImports     = that.bGenerateImports;
-        this.packageName          = that.packageName;
-        this.packageDirName       = that.packageDirName;
+//        this.packageName          = that.packageName;
+//        this.packageDirName       = that.packageDirName;
         this.outputDir            = that.outputDir;
         this.scope                = that.scope;
         this.emitFactory          = that.emitFactory;
@@ -163,7 +163,6 @@ public class Emitter {
      * Call this method if you have a uri for the WSDL document
      */
     public void emit(String uri) throws IOException {
-
         if (bVerbose)
             System.out.println("Parsing XML File: " + uri);
 
@@ -196,9 +195,19 @@ public class Emitter {
         this.def = def;
         this.doc = doc;
 
+        if (def != null) {
+            // Generate package name if desired
+            if (packageName == null && bGeneratePackageName) {
+                makePackageName();
+            }
+            emitFactory.map(def.getTargetNamespace(), packageName);
+        }
+        else {
+            emitFactory.map(doc.getNamespaceURI(), packageName);
+        }
+
         // Generate types from doc
         if (doc != null) {
-            emitFactory.map(def.getTargetNamespace(), packageName);
             emitFactory.buildTypes(doc);
             if (bVerbose) {
                 System.out.println("Types:");
@@ -250,11 +259,6 @@ public class Emitter {
      * Set up the emitter variables:  packageName, wsdlAttr, output directory, etc.
      */
     private void setup() {
-        // Generate package name if desired
-        if (packageName == null && bGeneratePackageName) {
-            makePackageName();
-        }
-
         // Make sure the directory that the files will go into exists
         File outputFile = null;
         if (outputDir == null) {
@@ -1592,8 +1596,8 @@ public class Emitter {
             }
 
             String portName = p.getName();
-            String stubClass = binding.getQName().getLocalPart() + "Stub";
-            String bindingType = binding.getPortType().getQName().getLocalPart();
+            String stubClass = emitFactory.getJavaName(binding.getQName()) + "Stub";
+            String bindingType = emitFactory.getJavaName(binding.getPortType().getQName());
 
             // Get endpoint address and validate it
             String address = getAddressFromPort(p);

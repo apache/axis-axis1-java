@@ -420,7 +420,7 @@ public class TypeFactory {
     /**
      * Convert the specified QName into a full Java Name.
      */
-    private String getJavaName(QName qName) {
+    public String getJavaName(QName qName) {
         String javaName = Utils.getJavaName(qName.getLocalPart());
         String pkg = getPackage(qName.getNamespaceURI());
         String fullJavaName = javaName;
