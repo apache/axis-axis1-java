@@ -24,16 +24,16 @@
     <mkdir dir="${root.dir}/${build.dest}"/>
 
     <copy file="SoapInteropImport1BindingImpl.java" overwrite="true"
-          todir="${root.dir}/build/work/test/wsdl/interop3/${import1}"/>
+          todir="${root.dir}/build/work/test/wsdl/interop3/${test.dir}"/>
 
     <copy file="Import1TestCase.java"
-          todir="${root.dir}/build/work/test/wsdl/interop3/${import1}"/>
+          todir="${root.dir}/build/work/test/wsdl/interop3/${test.dir}"/>
 
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
       <classpath refid="test-classpath" />
-      <include name="test/wsdl/interop3/${import1}/*.java" />
+      <include name="test/wsdl/interop3/${test.dir}/*.java" />
     </javac>
   </target>
 
