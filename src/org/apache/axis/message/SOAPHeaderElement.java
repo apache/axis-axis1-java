@@ -67,7 +67,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.Name;
 import javax.xml.namespace.QName;
 
-/** 
+/**
  * A simple header element abstraction.  Extends MessageElement with
  * header-specific stuff like mustUnderstand, actor, and a 'processed' flag.
  *
@@ -104,9 +104,16 @@ public class SOAPHeaderElement extends MessageElement
         // TLS (SOAPConstants.getCurrentVersion() ?)
         SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
 
+        if (getNamespaceURI().equals(SOAPConstants.SOAP12_CONSTANTS.getEnvelopeURI()))
+            soapConstants = SOAPConstants.SOAP12_CONSTANTS;
+
         String val = elem.getAttributeNS(soapConstants.getEnvelopeURI(),
                                          Constants.ATTR_MUST_UNDERSTAND);
-        mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
+
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
+            mustUnderstand = ((val != null) && val.equals("true")) ? true : false;
+        else
+            mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
         QName roleQName = soapConstants.getRoleAttributeQName();
         actor = elem.getAttributeNS(roleQName.getNamespaceURI(),
@@ -118,9 +125,9 @@ public class SOAPHeaderElement extends MessageElement
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if(parent == null)
-            throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
+            throw new IllegalArgumentException(Messages.getMessage("nullParent00"));
         if(!(parent instanceof SOAPHeader))
-            throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00")); 
+            throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
         try {
             super.setParentElement((SOAPHeader)parent);
         } catch (Throwable t) {
@@ -144,7 +151,11 @@ public class SOAPHeaderElement extends MessageElement
         // Check for mustUnderstand
         String val = attributes.getValue(soapConstants.getEnvelopeURI(),
                                          Constants.ATTR_MUST_UNDERSTAND);
-        mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
+
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
+            mustUnderstand = ((val != null) && val.equals("true")) ? true : false;
+        else
+            mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
         QName roleQName = soapConstants.getRoleAttributeQName();
         actor = attributes.getValue(roleQName.getNamespaceURI(),
@@ -187,7 +198,11 @@ public class SOAPHeaderElement extends MessageElement
             setAttribute(roleQName.getNamespaceURI(),
                          roleQName.getLocalPart(), actor);
 
-            String val = mustUnderstand ? "1" : "0";
+            String val;
+            if (context.getMessageContext().getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
+                val = mustUnderstand ? "true" : "false";
+            else
+                val = mustUnderstand ? "1" : "0";
 
             setAttribute(soapVer.getEnvelopeURI(),
                          Constants.ATTR_MUST_UNDERSTAND,
