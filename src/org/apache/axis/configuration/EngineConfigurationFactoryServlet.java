@@ -58,6 +58,7 @@ package org.apache.axis.configuration;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.ClassUtils;
@@ -142,7 +143,15 @@ public class EngineConfigurationFactoryServlet
      * @param ctx a ServletContext
      * @return a server EngineConfiguration
      */
-    private static EngineConfiguration getServerEngineConfig(ServletContext ctx) {
+    private static 
+            EngineConfiguration getServerEngineConfig(ServletContext ctx) {
+        // Respect the system property setting for a different config file
+        String configFile = 
+                AxisProperties.getProperty(OPTION_SERVER_CONFIG_FILE);
+        if (configFile == null) {
+            configFile = SERVER_CONFIG_FILE;
+        }
+        
         /**
          * Flow can be confusing.  Here is the logic:
          * 1) Make all attempts to open resource IF it exists
@@ -172,9 +181,9 @@ public class EngineConfigurationFactoryServlet
          * or WAR file).
          */
         if (realWebInfPath == null  ||
-            !(new File(realWebInfPath, SERVER_CONFIG_FILE)).exists())
+            !(new File(realWebInfPath, configFile)).exists())
         {
-            String name = appWebInfPath + "/" + SERVER_CONFIG_FILE;
+            String name = appWebInfPath + "/" + configFile;
             InputStream is = ctx.getResourceAsStream(name);
             if (is != null) {
                 // FileProvider assumes responsibility for 'is':
@@ -195,7 +204,7 @@ public class EngineConfigurationFactoryServlet
          */
         if (config == null  &&  realWebInfPath != null) {
             try {
-                config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
+                config = new FileProvider(realWebInfPath, configFile);
             } catch (ConfigurationException e) {
                 log.error(Messages.getMessage("servletEngineWebInfError00"), e);
             }
@@ -207,7 +216,9 @@ public class EngineConfigurationFactoryServlet
         if (config == null) {
             log.warn(Messages.getMessage("servletEngineWebInfWarn00"));
             try {
-                InputStream is = ClassUtils.getResourceAsStream(AxisServer.class, SERVER_CONFIG_FILE);
+                InputStream is = 
+                        ClassUtils.getResourceAsStream(AxisServer.class,
+                                                       SERVER_CONFIG_FILE);
                 config = new FileProvider(is);
             } catch (Exception e) {
                 log.error(Messages.getMessage("servletEngineWebInfError02"), e);
