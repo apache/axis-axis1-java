@@ -338,11 +338,17 @@ public class Admin
 
                 if ( action.equals( "undeploy" ) ) {
                     if ( type.equals("service") ) {
-                        log.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
+
+                        if (log.isDebugEnabled())
+                            log.debug( JavaUtils.getMessage("undeploy00",
+                                                            type + ": " + name) );
+
                         dep.undeployService( new QName(null,name) );
                     }
                     else if ( type.equals("handler") || type.equals("chain") ) {
-                        log.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
+                        if (log.isDebugEnabled())
+                            log.debug( JavaUtils.getMessage("undeploy00",
+                                                            type + ": " + name) );
                         dep.undeployHandler( new QName(null,name) );
                     }
                     else
@@ -452,7 +458,9 @@ public class Admin
         if ("".equals(name)) name = null;
 
         if (flow != null) {
-            log.info( JavaUtils.getMessage("deployChain00", name) );
+            if (log.isDebugEnabled())
+                log.debug( JavaUtils.getMessage("deployChain00", name) );
+
             Vector names = new Vector();
 
             getOptions( elem, options );
@@ -495,7 +503,9 @@ public class Admin
         if ( pivot  != null && pivot.equals("") )  pivot = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        log.info( JavaUtils.getMessage("deployService01", name) );
+        if (log.isDebugEnabled())
+            log.debug( JavaUtils.getMessage("deployService01", name) );
+
         String            hName = null ;
         Handler            tmpH = null ;
         StringTokenizer      st = null ;
@@ -582,7 +592,9 @@ public class Admin
 
         String   cls   = elem.getAttribute( "class" );
         if ( cls != null && cls.equals("") ) cls = null ;
-        log.info( JavaUtils.getMessage("deployHandler00", name) );
+
+        if (log.isDebugEnabled())
+            log.debug( JavaUtils.getMessage("deployHandler00", name) );
 
         handler = new WSDDHandler();
 
@@ -612,7 +624,9 @@ public class Admin
         if ( sender  != null && sender.equals("") )  sender = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        log.info( JavaUtils.getMessage("deployTransport00", name) );
+        if (log.isDebugEnabled())
+            log.debug( JavaUtils.getMessage("deployTransport00", name) );
+
         StringTokenizer      st = null ;
         Vector reqNames = new Vector();
         Vector respNames = new Vector();
@@ -777,7 +791,9 @@ public class Admin
 
         try {
             for ( i = 1 ; i < args.length ; i++ ) {
-                log.info( JavaUtils.getMessage("process00", args[i]) );
+                if (log.isDebugEnabled())
+                    log.debug( JavaUtils.getMessage("process00", args[i]) );
+
                 Document doc = XMLUtils.newDocument( new FileInputStream( args[i] ) );
                 admin.process(msgContext, doc.getDocumentElement());
             }

@@ -169,7 +169,7 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        log.debug(JavaUtils.getMessage("start00", "SimpleAxisServer"));
+        log.info(JavaUtils.getMessage("start00", "SimpleAxisServer"));
 
         // create an Axis server
         AxisServer engine = getAxisServer();
@@ -251,8 +251,12 @@ public class SimpleAxisServer implements Runnable {
                         // Got params
                         String params = fileName.substring(paramIdx + 1);
                         fileName.setLength(paramIdx);
-                        log.debug(JavaUtils.getMessage("filename00", "" + fileName.toString()));
-                        log.debug(JavaUtils.getMessage("params00", params));
+
+                        log.debug(JavaUtils.getMessage("filename00",
+                                                       fileName.toString()));
+                        log.debug(JavaUtils.getMessage("params00",
+                                                       params));
+
                         if ("wsdl".equalsIgnoreCase(params))
                             doWsdl = true;
                     }
@@ -291,8 +295,12 @@ public class SimpleAxisServer implements Runnable {
                             }
                             authBuf.append((char)(decoded[i] & 0x7f));
                         }
-                        log.info(JavaUtils.getMessage("user00", userBuf.toString()));
-                        log.info(JavaUtils.getMessage("password00", pwBuf.toString()));
+
+                        if (log.isDebugEnabled()) {
+                            log.debug(JavaUtils.getMessage("user00",
+                                                           userBuf.toString()));
+                        }
+
                         msgContext.setUsername(userBuf.toString());
                         msgContext.setPassword(pwBuf.toString());
                     }
@@ -458,6 +466,7 @@ public class SimpleAxisServer implements Runnable {
                 }
             }
         }
+
         log.info(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
     }
 
