@@ -1257,4 +1257,21 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         // This constructed type is a normal type, instantiate it.
         return "new " + paramType + "()";
     }
+
+    public static boolean shouldEmit(TypeEntry type) {
+        // 1) Don't register types that are base (primitive) types or attributeGroups.
+        // If the baseType != null && getRefType() != null this
+        // is a simpleType that must be registered.
+        // 2) Don't register the special types for collections
+        // (indexed properties) or elements
+        // 3) Don't register types that are not referenced
+        // or only referenced in a literal context.
+        return (!(((type.getBaseType() != null) && (type.getRefType() == null))
+                || (type instanceof CollectionTE)
+                || (type instanceof Element) || !type.isReferenced()
+                || type.isOnlyLiteralReferenced()
+                || ((type.getNode() != null)
+                && type.getNode().getLocalName().equals(
+                        "attributeGroup"))));
+    }
 }    // class Utils

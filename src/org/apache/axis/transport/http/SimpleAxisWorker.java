@@ -265,7 +265,14 @@ public class SimpleAxisWorker implements Runnable {
 
                 String filePart = fileName.toString();
                 if (filePart.startsWith("axis/services/")) {
-                    msgContext.setTargetService(filePart.substring(14));
+                    String servicePart = filePart.substring(14);
+                    int separator = servicePart.indexOf('/');
+                    if (separator > -1) {
+                        msgContext.setProperty("objectID",
+                                       servicePart.substring(separator + 1));
+                        servicePart = servicePart.substring(0, separator);
+                    }
+                    msgContext.setTargetService(servicePart);
                 }
 
                 if (authInfo.length() > 0) {
@@ -465,27 +472,28 @@ public class SimpleAxisWorker implements Runnable {
 
             // synchronize the character encoding of request and response
             String responseEncoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-            if (responseEncoding != null) {
+            if (responseEncoding != null && responseMsg != null) {
                 responseMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, responseEncoding);
             }
             // Send it on its way...
             OutputStream out = socket.getOutputStream();
             out.write(HTTP);
             out.write(status);
-            if (server.isSessionUsed() && null != cooky && 0 != cooky.trim().length()) {
-                // write cookie headers, if any
-                // don't sweat efficiency *too* badly
-                // optimize at will
-                StringBuffer cookieOut = new StringBuffer();
-                cookieOut.append("\r\nSet-Cookie: ")
-                        .append(cooky)
-                        .append("\r\nSet-Cookie2: ")
-                        .append(cooky);
-                // OH, THE HUMILITY!  yes this is inefficient.
-                out.write(cookieOut.toString().getBytes());
-            }
 
             if (responseMsg != null) {
+                if (server.isSessionUsed() && null != cooky &&
+                        0 != cooky.trim().length()) {
+                    // write cookie headers, if any
+                    // don't sweat efficiency *too* badly
+                    // optimize at will
+                    StringBuffer cookieOut = new StringBuffer();
+                    cookieOut.append("\r\nSet-Cookie: ")
+                            .append(cooky)
+                            .append("\r\nSet-Cookie2: ")
+                            .append(cooky);
+                    // OH, THE HUMILITY!  yes this is inefficient.
+                    out.write(cookieOut.toString().getBytes());
+                }
 
                 //out.write(XML_MIME_STUFF);
                 out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType(msgContext.getSOAPConstants())).getBytes());

@@ -60,6 +60,11 @@ public class SOAPBodyElement extends MessageElement
         super(qname);
     }
 
+    public SOAPBodyElement(QName qname, Object value)
+    {
+        super(qname, value);
+    }
+
     public SOAPBodyElement(Element elem)
     {
         super(elem);
