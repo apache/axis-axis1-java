@@ -258,7 +258,7 @@ public class JMSConnectorManager
         }
         catch (Exception e)
         {
-            log.warn("failedJMSConnectorShutdown", e);
+            log.warn(Messages.getMessage("failedJMSConnectorShutdown"), e);
         }
 
         if (log.isDebugEnabled()) {
