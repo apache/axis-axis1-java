@@ -61,7 +61,6 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.AxisClassLoader;
 import org.w3c.dom.Document;
 
 import javax.naming.Reference;
@@ -286,7 +285,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         try {
             Call call = new Call(endpoint);
-            ClassLoader classLoader = AxisClassLoader.getClassLoader();
+            ClassLoader classLoader =
+                    Thread.currentThread().getContextClassLoader();
             return (java.rmi.Remote)Proxy.newProxyInstance(classLoader,
                                                 new Class[] { proxyInterface },
                                                 new AxisClientProxy(call));
