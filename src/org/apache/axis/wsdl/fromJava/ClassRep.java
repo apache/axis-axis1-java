@@ -54,19 +54,21 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Field;
-import java.util.Vector;
-import java.util.HashMap;
-
+import com.techtrader.modules.tools.bytecode.BCClass;
+import com.techtrader.modules.tools.bytecode.BCMethod;
+import com.techtrader.modules.tools.bytecode.Code;
+import com.techtrader.modules.tools.bytecode.Constants;
+import com.techtrader.modules.tools.bytecode.LocalVariable;
+import com.techtrader.modules.tools.bytecode.LocalVariableTableAttribute;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.Skeleton;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.LocalVariableTable;
-import org.apache.bcel.classfile.LocalVariable;
-import org.apache.bcel.Repository;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * ClassRep is the representation of a class used inside the Java2WSDL
@@ -590,39 +592,53 @@ public class ClassRep {
     public String[] getParameterNames(java.lang.reflect.Method method) {
         Class c = method.getDeclaringClass();
         int numParams = method.getParameterTypes().length;
-        
+
+        // Don't worry about it if there are no params.
         if (numParams == 0)
             return null;
-        
-        JavaClass jc = Repository.lookupClass(c.getName());
-        if (jc == null)
+
+        // Try to make a tt-bytecode
+        BCMethod bmeth = null;
+        BCClass bclass = null;
+        try {
+            bclass = new BCClass(c);
+        } catch (IOException e) {
+            return null;  // no dice
+        }
+
+        // Obtain the exact method we're interested in.
+        bmeth = bclass.getMethod(method.getName(), method.getParameterTypes());
+
+        if (bmeth == null)
             return null;
-        org.apache.bcel.classfile.Method [] methods = jc.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            org.apache.bcel.classfile.Method meth = methods[i];
-            if (!meth.getName().equals(method.getName()))
-                continue;
-            
-            LocalVariableTable lt = meth.getLocalVariableTable();
-            if (lt == null)
-                continue;
-            LocalVariable [] vars = lt.getLocalVariableTable();
-            if (vars.length == numParams + 1) {
-                String [] argNames = new String[numParams + 1];
-                argNames[0] = null; // don't know return name
-                int idx = 1;
-                // This is it?  Check types?
-                for (int j = 0; j < vars.length; j++) {
-                    LocalVariable var = vars[j];
-                    if (var.getName().equals("this"))
-                        continue;
-                    argNames[var.getIndex()] = var.getName();
-                }
-                return argNames;
+
+        // Get the Code object, which contains the local variable table.
+        Code code = bmeth.getCode();
+        LocalVariableTableAttribute attr =
+                (LocalVariableTableAttribute)code.getAttribute(Constants.ATTR_LOCALS);
+
+        if (attr == null)
+            return null;
+
+        // OK, found it.  Now scan through the local variables and record
+        // the names in the right indices.
+        LocalVariable [] vars = attr.getLocalVariables();
+
+        String [] argNames = new String[numParams + 1];
+        argNames[0] = null; // don't know return name
+
+        // NOTE: we scan through all the variables here, because I have been
+        // told that jikes sometimes produces unpredictable ordering of the
+        // local variable table.
+        for (int j = 0; j < vars.length; j++) {
+            LocalVariable var = vars[j];
+            if (var.getIndex() <= numParams) {
+                if (var.getName().equals("this"))
+                    continue;
+                argNames[var.getIndex()] = var.getName();
             }
         }
-        
-        return null;
+        return argNames;
     }
 
 };

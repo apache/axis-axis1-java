@@ -55,10 +55,7 @@
 package org.apache.axis.utils;
 
 import java.util.Hashtable;
-import java.io.FileInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Class loader for JWS files.  There is one of these per JWS class, and
@@ -73,6 +70,9 @@ import java.io.IOException;
  */
 public class JWSClassLoader extends ClassLoader {
     private static Hashtable classloaders = new Hashtable();
+
+    private String classFile = null;
+    private String name = null;
 
     /**
      * Construct a JWSClassLoader with a class name, a parent ClassLoader,
@@ -90,6 +90,9 @@ public class JWSClassLoader extends ClassLoader {
         throws FileNotFoundException, IOException
     {
         super(cl);
+
+        this.name = name + ".class";
+        this.classFile = classFile;
 
         FileInputStream       fis  = new FileInputStream( classFile );
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -127,5 +130,23 @@ public class JWSClassLoader extends ClassLoader {
     public static void removeClassLoader(String className)
     {
         classloaders.remove(className);
+    }
+
+    /**
+     * Overloaded getResourceAsStream() so we can be sure to return the
+     * correct class file regardless of where it might live on our hard
+     * drive.
+     *
+     * @param resourceName the resource to load (should be "classname.class")
+     * @return an InputStream of the class bytes, or null
+     */
+    public InputStream getResourceAsStream(String resourceName) {
+        try {
+            if (resourceName.equals(name))
+                return new FileInputStream( classFile );
+        } catch (FileNotFoundException e) {
+            // Fall through, return null.
+        }
+        return null;
     }
 }
