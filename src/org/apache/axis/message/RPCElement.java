@@ -348,14 +348,19 @@ public class RPCElement extends SOAPBodyElement
     }
 
     private List getParams2() {
-        ArrayList list = new ArrayList();
+        return getParams(new ArrayList());
+    }
+
+    private List getParams(List list) {
         for (int i = 0; children != null && i < children.size(); i++) {
-            if(children.get(i) instanceof RPCParam)
-                list.add(children.get(i));
+            Object child = children.get(i);
+            if (child instanceof RPCParam) {
+                list.add(child);
+            }
         }
         return list;
     }
-
+    
     /** This gets the FIRST param whose name matches.
      * !!! Should it return more in the case of duplicates?
      */
@@ -380,8 +385,8 @@ public class RPCElement extends SOAPBodyElement
         if (needDeser) {
             deserialize();
         }
-
-        return new Vector(getParams2());
+        
+        return (Vector)getParams(new Vector());
     }
 
     public void addParam(RPCParam param)
