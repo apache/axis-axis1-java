@@ -55,7 +55,6 @@
 
 package org.apache.axis.handlers ;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -64,6 +63,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Document;
 
@@ -73,7 +73,7 @@ import org.w3c.dom.Document;
  */
 public class EchoHandler extends BasicHandler {
     protected static Log log =
-        AxisInternalServices.getLog(EchoHandler.class.getName());
+        LogFactory.getLog(EchoHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: EchoHandler::invoke");

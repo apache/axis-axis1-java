@@ -55,9 +55,9 @@
 
 package org.apache.axis.utils ;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -89,7 +89,7 @@ import java.util.Stack;
 
 public class XMLUtils {
     protected static Log log =
-        AxisInternalServices.getLog(XMLUtils.class.getName());
+        LogFactory.getLog(XMLUtils.class.getName());
         
     public static final String charEncoding = "ISO-8859-1";
 
@@ -472,7 +472,7 @@ public class XMLUtils {
     public static class ParserErrorHandler implements ErrorHandler
     {
         protected static Log log =
-            AxisInternalServices.getLog(ParserErrorHandler.class.getName());
+            LogFactory.getLog(ParserErrorHandler.class.getName());
         /**
          * Returns a string describing parse exception details
          */

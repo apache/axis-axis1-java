@@ -59,10 +59,10 @@
  */
 package org.apache.axis.attachments;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is defines utilities for mime.
@@ -70,8 +70,7 @@ import org.apache.commons.logging.Log;
 public class MimeUtils {
 
     /** Field log           */
-    protected static Log log =
-        AxisInternalServices.getLog(MimeUtils.class.getName());
+    protected static Log log = LogFactory.getLog(MimeUtils.class.getName());
 
     /**
      * Determine as efficiently as possible the content length for attachments in a mail Multipart.

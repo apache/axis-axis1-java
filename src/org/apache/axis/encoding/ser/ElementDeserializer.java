@@ -55,13 +55,13 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ import java.util.ArrayList;
 public class ElementDeserializer extends DeserializerImpl
 {
     protected static Log log =
-        AxisInternalServices.getLog(ElementDeserializer.class.getName());
+        LogFactory.getLog(ElementDeserializer.class.getName());
 
    public static final String DESERIALIZE_CURRENT_ELEMENT = "DeserializeCurrentElement";
 

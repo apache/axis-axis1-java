@@ -56,12 +56,12 @@
 package org.apache.axis.client ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
@@ -83,7 +83,7 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 public class AdminClient
 {
     protected static Log log =
-        AxisInternalServices.getLog(AdminClient.class.getName());
+        LogFactory.getLog(AdminClient.class.getName());
 
     private static ThreadLocal defaultConfiguration = new ThreadLocal();
 

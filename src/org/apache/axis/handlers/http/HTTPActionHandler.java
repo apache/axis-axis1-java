@@ -55,12 +55,12 @@
 package org.apache.axis.handlers.http;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** An <code>HTTPActionHandler</code> simply sets the context's TargetService
  * property from the HTTPAction property.  We expect there to be a
@@ -76,7 +76,7 @@ import org.apache.commons.logging.Log;
 public class HTTPActionHandler extends BasicHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(HTTPActionHandler.class.getName());
+        LogFactory.getLog(HTTPActionHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {

@@ -55,7 +55,6 @@
 
 package org.apache.axis.message;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
@@ -68,6 +67,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,7 +93,7 @@ import java.util.Iterator;
 public class MessageElement implements SOAPElement
 {
     protected static Log log =
-        AxisInternalServices.getLog(MessageElement.class.getName());
+        LogFactory.getLog(MessageElement.class.getName());
 
     private static final Mapping encMapping =
             new Mapping(Constants.URI_DEFAULT_SOAP_ENC,

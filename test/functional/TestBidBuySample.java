@@ -56,18 +56,17 @@
 package test.functional;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.client.AdminClient;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.bidbuy.TestClient;
 
 /** Test the stock sample code.
  */
 public class TestBidBuySample extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestBidBuySample.class.getName());
+            LogFactory.getLog(TestBidBuySample.class.getName());
 
     public TestBidBuySample(String name) {
         super(name);

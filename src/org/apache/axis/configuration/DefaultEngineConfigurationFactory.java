@@ -56,13 +56,13 @@
 package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This is a default implementation of EngineConfigurationFactory.
@@ -80,7 +80,7 @@ import org.apache.commons.logging.Log;
 public class DefaultEngineConfigurationFactory implements EngineConfigurationFactory
 {
     protected static Log log =
-        AxisInternalServices.getLog(DefaultEngineConfigurationFactory.class.getName());
+        LogFactory.getLog(DefaultEngineConfigurationFactory.class.getName());
 
     protected static final String CLIENT_CONFIG_FILE = "client-config.wsdd";
     protected static final String SERVER_CONFIG_FILE = "server-config.wsdd";
@@ -97,7 +97,7 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
      */
     public DefaultEngineConfigurationFactory() {
         String fClassName =
-            AxisInternalServices.getGlobalProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
+            AxisEngine.getGlobalProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
 
         if (fClassName != null) {
             try {
@@ -109,12 +109,12 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
             }
         }
 
-        clientConfigFile = AxisInternalServices.getGlobalProperty("axis.ClientConfigFile");
+        clientConfigFile = AxisEngine.getGlobalProperty("axis.ClientConfigFile");
         if (clientConfigFile == null) {
             clientConfigFile = CLIENT_CONFIG_FILE;
         }
 
-        serverConfigFile = AxisInternalServices.getGlobalProperty("axis.ServerConfigFile");
+        serverConfigFile = AxisEngine.getGlobalProperty("axis.ServerConfigFile");
         if (serverConfigFile == null) {
             serverConfigFile = SERVER_CONFIG_FILE;
         }

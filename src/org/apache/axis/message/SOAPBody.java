@@ -56,13 +56,13 @@
 package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
@@ -80,7 +80,7 @@ import java.util.Vector;
 public class SOAPBody extends MessageElement
     implements javax.xml.soap.SOAPBody {
 
-    private static Log log = AxisInternalServices.getLog(SOAPBody.class.getName());
+    private static Log log = LogFactory.getLog(SOAPBody.class.getName());
 
     private Vector bodyElements = new Vector();
 

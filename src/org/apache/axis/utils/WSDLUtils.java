@@ -62,12 +62,12 @@ import javax.wsdl.Port;
 
 import javax.wsdl.extensions.soap.SOAPAddress;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class WSDLUtils {
     protected static Log log =
-        AxisInternalServices.getLog(WSDLUtils.class.getName());
+        LogFactory.getLog(WSDLUtils.class.getName());
 
     /**
      * Return the endpoint address from a <soap:address location="..."> tag

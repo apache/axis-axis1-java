@@ -66,13 +66,13 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Style;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.bytecode.ExtractorFactory;
 import org.apache.axis.wsdl.Skeleton;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A ServiceDesc is an abstract description of a service.
@@ -85,7 +85,7 @@ import org.apache.commons.logging.Log;
  */
 public class ServiceDesc {
     protected static Log log =
-            AxisInternalServices.getLog(ServiceDesc.class.getName());
+            LogFactory.getLog(ServiceDesc.class.getName());
 
     /** The name of this service */
     private String name = null;

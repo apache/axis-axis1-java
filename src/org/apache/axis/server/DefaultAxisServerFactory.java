@@ -55,14 +55,14 @@
 
 package org.apache.axis.server;
 
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisInternalServices;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -77,7 +77,7 @@ import java.io.File;
 
 public class DefaultAxisServerFactory implements AxisServerFactory {
     protected static Log log =
-        AxisInternalServices.getLog(DefaultAxisServerFactory.class.getName());
+        LogFactory.getLog(DefaultAxisServerFactory.class.getName());
 
     /**
      * Get an AxisServer.
@@ -176,7 +176,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
         if (config == null) {
             // A default engine configuration class may be set in a system
             // property. If so, try creating an engine configuration.
-            String configClass = AxisInternalServices.getGlobalProperty(AxisEngine.PROP_CONFIG_CLASS);
+            String configClass = AxisEngine.getGlobalProperty(AxisEngine.PROP_CONFIG_CLASS);
             if (configClass != null) {
                 try {
                     // Got one - so try to make it (which means it had better have

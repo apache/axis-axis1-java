@@ -56,7 +56,6 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -67,6 +66,7 @@ import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import java.io.OutputStream;
@@ -75,7 +75,7 @@ import java.net.InetAddress;
 
 public class SimpleAxisWorker implements Runnable {
     protected static Log log =
-            AxisInternalServices.getLog(SimpleAxisWorker.class.getName());
+            LogFactory.getLog(SimpleAxisWorker.class.getName());
 
     private SimpleAxisServer server;
     private Socket socket;

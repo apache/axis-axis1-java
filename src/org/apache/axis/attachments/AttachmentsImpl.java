@@ -58,11 +58,11 @@
 package org.apache.axis.attachments;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Part;
 import org.apache.axis.SOAPPart;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -76,7 +76,7 @@ import java.util.LinkedList;
  */
 public class AttachmentsImpl implements Attachments {
     protected static Log log =
-            AxisInternalServices.getLog(AttachmentsImpl.class.getName());
+            LogFactory.getLog(AttachmentsImpl.class.getName());
 
     /** Field attachments           */
     private HashMap attachments = new java.util.HashMap();

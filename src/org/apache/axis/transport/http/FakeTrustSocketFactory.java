@@ -55,12 +55,12 @@
 
 package org.apache.axis.transport.http;
 
-import org.apache.axis.AxisInternalServices;
 import com.sun.net.ssl.SSLContext;
 import com.sun.net.ssl.TrustManager;
 import com.sun.net.ssl.X509TrustManager;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 
@@ -68,7 +68,7 @@ import java.io.IOException;
  */
 public class FakeTrustSocketFactory implements HTTPSender.SocketFactoryFactory {
     protected static Log log =
-            AxisInternalServices.getLog(FakeTrustSocketFactory.class.getName());
+            LogFactory.getLog(FakeTrustSocketFactory.class.getName());
 
     public Object createFactory() throws IOException {
         try {
@@ -90,7 +90,7 @@ public class FakeTrustSocketFactory implements HTTPSender.SocketFactoryFactory {
 
     public static class FakeX509TrustManager implements X509TrustManager {
         protected static Log log =
-                AxisInternalServices.getLog(FakeX509TrustManager.class.getName());
+                LogFactory.getLog(FakeX509TrustManager.class.getName());
 
         public boolean isClientTrusted(java.security.cert.X509Certificate[] chain) {
             if (log.isDebugEnabled()) {

@@ -58,7 +58,6 @@ package test.functional;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -67,6 +66,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
 import samples.transport.tcp.TCPSender;
@@ -80,7 +80,7 @@ import java.net.URL;
  */
 public class TestTCPTransportSample extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestTCPTransportSample.class.getName());
+            LogFactory.getLog(TestTCPTransportSample.class.getName());
 
     public TestTCPTransportSample(String name) {
         super(name);

@@ -54,9 +54,9 @@
  */
 package org.apache.axis.message;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -68,7 +68,7 @@ import java.io.IOException;
 public class SAXOutputter extends DefaultHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(SAXOutputter.class.getName());
+        LogFactory.getLog(SAXOutputter.class.getName());
     
     SerializationContext context;
     

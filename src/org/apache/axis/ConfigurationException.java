@@ -55,10 +55,10 @@
 
 package org.apache.axis;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.StringWriter;
 import java.io.PrintWriter;
@@ -78,7 +78,7 @@ public class ConfigurationException extends IOException {
     protected static boolean copyStackByDefault= true;
 
     protected static Log log =
-        AxisInternalServices.getLog(ConfigurationException.class.getName());
+        LogFactory.getLog(ConfigurationException.class.getName());
 
     /**
      * Construct a ConfigurationException from a String.  The string is wrapped

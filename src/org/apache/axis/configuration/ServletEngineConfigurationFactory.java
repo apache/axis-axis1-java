@@ -55,11 +55,11 @@
 
 package org.apache.axis.configuration;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletContext;
 
@@ -81,7 +81,7 @@ import java.io.InputStream;
  */
 public class ServletEngineConfigurationFactory extends DefaultEngineConfigurationFactory {
     protected static Log log =
-        AxisInternalServices.getLog(ServletEngineConfigurationFactory.class.getName());
+        LogFactory.getLog(ServletEngineConfigurationFactory.class.getName());
 
     private ServletContext ctx;
     

@@ -62,6 +62,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -84,7 +85,7 @@ import javax.xml.namespace.QName;
 
 public class AxisFault extends java.rmi.RemoteException {
     protected static Log log =
-        AxisInternalServices.getLog(AxisFault.class.getName());
+        LogFactory.getLog(AxisFault.class.getName());
 
     private static final String LS = System.getProperty("line.separator");
 

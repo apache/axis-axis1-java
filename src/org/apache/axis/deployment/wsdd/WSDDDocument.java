@@ -54,13 +54,13 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -75,7 +75,7 @@ import java.io.StringWriter;
 public class WSDDDocument extends WSDDConstants
 {
     protected static Log log =
-        AxisInternalServices.getLog(WSDDDocument.class.getName());
+        LogFactory.getLog(WSDDDocument.class.getName());
 
     private Document doc;
 

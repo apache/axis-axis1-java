@@ -56,7 +56,6 @@
 package org.apache.axis.transport.local;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -66,6 +65,7 @@ import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.URL;
 
@@ -76,7 +76,7 @@ import java.net.URL;
  */
 public class LocalSender extends BasicHandler {
     protected static Log log =
-        AxisInternalServices.getLog(LocalSender.class.getName());
+        LogFactory.getLog(LocalSender.class.getName());
 
     private volatile AxisServer server;
 

@@ -54,13 +54,13 @@
  */
 package org.apache.axis.utils;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.axis.SOAPPart;
 
 public class SOAPUtils {
     protected static Log log =
-        AxisInternalServices.getLog(SOAPUtils.class.getName());
+        LogFactory.getLog(SOAPUtils.class.getName());
 
     static String thisHost = null;
 

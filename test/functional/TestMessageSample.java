@@ -57,16 +57,16 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.client.AdminClient;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.message.TestMsg;
 
 /** Test the message sample code.
  */
 public class TestMessageSample extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestMessageSample.class.getName());
+            LogFactory.getLog(TestMessageSample.class.getName());
 
     public TestMessageSample(String name) {
         super(name);

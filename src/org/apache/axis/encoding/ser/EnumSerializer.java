@@ -62,7 +62,6 @@ import javax.xml.namespace.QName;
 
 import java.io.IOException;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
@@ -75,6 +74,7 @@ import org.apache.axis.InternalException;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -90,7 +90,7 @@ import java.beans.IntrospectionException;
 public class EnumSerializer extends SimpleSerializer implements Serializer
 {
     protected static Log log =
-        AxisInternalServices.getLog(EnumSerializer.class.getName());
+        LogFactory.getLog(EnumSerializer.class.getName());
 
     private java.lang.reflect.Method toStringMethod = null;
 
