@@ -331,6 +331,7 @@ public abstract class WSDDDeployableItem
                 if ( qname != null )
                   h.setName(qname.getLocalPart()); 
                 h.setOptions(getParametersTable());
+                h.init();
             }
         } else {
             h = registry.getHandler(getType());
