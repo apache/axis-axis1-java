@@ -402,7 +402,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public boolean isNil(Attributes attrs) {
         return JavaUtils.isTrueExplicitly(
-                    Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI, "nil"),
+                    Constants.getValue(attrs, Constants.QNAMES_NIL),
                     false);
     }
 

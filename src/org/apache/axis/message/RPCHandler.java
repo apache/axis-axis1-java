@@ -252,8 +252,7 @@ public class RPCHandler extends SOAPHandler
         // so that a list of 3 items is created.
         // Failure to register the target would result in the last
         // item not being added to the list
-        if (JavaUtils.isTrueExplicitly(
-           attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil"))) {
+        if (context.isNil(attributes)) {
           Deserializer nilDSer =  new DeserializerImpl();
           nilDSer.registerValueTarget(
              new MethodTarget(currentParam,

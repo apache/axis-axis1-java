@@ -321,8 +321,7 @@ public class DeserializerImpl extends SOAPHandler
 
         // If the nil attribute is present and true, set the value to null
         // and return since there is nothing to deserialize.
-        if (JavaUtils.isTrueExplicitly(Constants.getValue(attributes,
-                                        Constants.QNAMES_NIL))) {
+        if (context.isNil(attributes)) {
             value = null;
             isNil = true;
             return;

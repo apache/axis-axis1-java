@@ -105,7 +105,7 @@ public class VectorDeserializer extends DeserializerImpl
             log.debug("Enter: VectorDeserializer::startElement()");
         }
         
-        if (attributes.getValue(Constants.URI_DEFAULT_SCHEMA_XSI,  "nil") != null) {
+        if (context.isNil(attributes)) { 
             return;
         }
         
