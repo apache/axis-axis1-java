@@ -82,6 +82,7 @@ public class DOM2Writer
      * The namespaceURI represented by the prefix <code>xmlns</code>.
      */
     private static String NS_URI_XMLNS = "http://www.w3.org/2000/xmlns/";
+    private static String NS_URI_XML = "http://www.w3.org/XML/1998/namespace";
 
     private static final char NL = '\n';
     private static final char CR = '\r';
@@ -366,7 +367,8 @@ public class DOM2Writer
         String namespaceURI = node.getNamespaceURI();
         String prefix = node.getPrefix();
 
-        if (!(namespaceURI.equals(NS_URI_XMLNS) && prefix.equals("xmlns")))
+        if (!(namespaceURI.equals(NS_URI_XMLNS) && prefix.equals("xmlns")) &&
+            !(namespaceURI.equals(NS_URI_XML) && prefix.equals("xml")))
         {
             if (XMLUtils.getNamespace(prefix, owner) == null)
             {
