@@ -55,6 +55,8 @@
 
 package org.apache.axis.client;
 
+import org.apache.axis.utils.Messages;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
@@ -122,41 +124,40 @@ public class HappyClient {
                    String homePage) throws IOException {
         String url = "";
         if (homePage != null) {
-            url = "\n  fetch this from " + homePage+"\n";
-        }
-        String jarlocation="";
-        if (jarFile != null) {
-            jarlocation =" from file "+jarFile;
+            url=Messages.getMessage("happyClientHomepage",homePage);
         }
         String errorLine="";
         if (errorText != null) {
-            errorLine="\n" + errorText;
+            errorLine=Messages.getMessage(errorText);
         }
         try {
             Class clazz = classExists(classname);
             if (clazz == null) {
-                out.print(category);
-                out.print(": could not find class ");
-                out.print(classname);
-                out.print(jarlocation);
-                out.println(errorLine);
+                String text;
+                text=Messages.getMessage("happyClientMissingClass",
+                        category,classname,jarFile);
+                out.println(text);
+                out.println(url);
                 return 1;
             } else {
                 String location = getLocation(clazz);
+                String text;
                 if (location == null) {
-                    out.println("Found " + description + " (" + classname + ")");
+                    text=Messages.getMessage("happyClientFoundDescriptionClass",
+                                    description,classname);
                 } else {
-                    out.println("Found " + description + " (" + classname + ") \n  at " + location);
+                    text = Messages.getMessage("happyClientFoundDescriptionClassLocation",
+                            description, classname,location);
                 }
+                out.println(text);
                 return 0;
             }
         } catch (NoClassDefFoundError ncdfe) {
-            out.println(category + ": could not find a dependency"
-                    + " of class " + classname);
-            out.print(jarlocation);
-            out.print(errorLine);
+            out.println(Messages.getMessage("happyClientNoDependency",
+                category, classname, jarFile));
+            out.println(errorLine);
             out.println(url);
-            out.println("The root cause was: " + ncdfe.getMessage());
+            out.println(ncdfe.getMessage());
             return 1;
         }
     }
@@ -185,7 +186,7 @@ public class HappyClient {
             }
         } catch (Throwable t) {
         }
-        return "an unknown location";
+        return Messages.getMessage("happyClientUnknownLocation");
     }
 
     /**
@@ -204,7 +205,7 @@ public class HappyClient {
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(
-                "Error",
+                Messages.getMessage("happyClientError"),
                 classname,
                 jarFile,
                 description,
@@ -228,7 +229,7 @@ public class HappyClient {
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(
-                "Warning",
+                Messages.getMessage("happyClientWarning"),
                 classname,
                 jarFile,
                 description,
@@ -246,12 +247,11 @@ public class HappyClient {
             String resource,
                      String errorText) throws Exception {
         if (!resourceExists(resource)) {
-            out.println("Warning: could not find resource " + resource
-                    + "\n"
-                    + errorText);
+            out.println(Messages.getMessage("happyClientNoResource",resource));
+            out.println(errorText);
             return 0;
         } else {
-            out.println("found " + resource);
+            out.println(Messages.getMessage("happyClientFoundResource", resource));
             return 1;
         }
     }
@@ -264,7 +264,7 @@ public class HappyClient {
     private String getParserName() {
         SAXParser saxParser = getSAXParser();
         if (saxParser == null) {
-            return "Could not create an XML Parser";
+            return Messages.getMessage("happyClientNoParser");
         }
 
         // check to what is in the classname
@@ -335,8 +335,10 @@ public class HappyClient {
 
     private void title(String title) {
         out.println();
-        out.println(title);
-        for(int i=0;i<title.length();i++) {
+        String message=Messages.getMessage(title);
+        out.println(message);
+        //subtitle
+        for(int i=0;i< message.length();i++) {
             out.print("=");
         }
         out.println();
@@ -349,83 +351,83 @@ public class HappyClient {
      */
     public boolean  verifyClientIsHappy(boolean warningsAsErrors) throws IOException {
         int needed = 0,wanted = 0;
-
-        title("Verifying Axis client configuration");
-        title("Needed components");
+        out.println();
+        title("happyClientTitle");
+        title("happyClientNeeded");
 
         /**
          * the essentials, without these Axis is not going to work
          */
         needed = needClass("javax.xml.soap.SOAPMessage",
                 "saaj.jar",
-                "SAAJ API",
-                "Axis will not work",
+                "SAAJ",
+                "happyClientNoAxis",
                 "http://xml.apache.org/axis/");
 
         needed += needClass("javax.xml.rpc.Service",
                 "jaxrpc.jar",
-                "JAX-RPC API",
-                "Axis will not work",
+                "JAX-RPC",
+                "happyClientNoAxis",
                 "http://xml.apache.org/axis/");
 
         needed += needClass("org.apache.commons.discovery.Resource",
                 "commons-discovery.jar",
                 "Jakarta-Commons Discovery",
-                "Axis will not work",
+                "happyClientNoAxis",
                 "http://jakarta.apache.org/commons/discovery.html");
 
         needed += needClass("org.apache.commons.logging.Log",
                 "commons-logging.jar",
                 "Jakarta-Commons Logging",
-                "Axis will not work",
+                "happyClientNoAxis",
                 "http://jakarta.apache.org/commons/logging.html");
 
         //all refs to log4j are split to get past the package tester
         needed += needClass("org.apache" + ".log" +"4j" +".Layout",
                 "log4"+"j-1.2.4.jar",
                 "Log4"+"j",
-                "Axis logging may be downgraded",
+                "happyClientNoLog4J",
                 "http://jakarta.apache.org/log"+"4j");
 
         //should we search for a javax.wsdl file here, to hint that it needs
         //to go into an approved directory? because we dont seem to need to do that.
         needed += needClass("com.ibm.wsdl.factory.WSDLFactoryImpl",
                 "wsdl4j.jar",
-                "IBM's WSDL4Java",
-                "Axis will not work",
+                "WSDL4Java",
+                "happyClientNoAxis",
                 null);
 
         needed += needClass("javax.xml.parsers.SAXParserFactory",
                 "xerces.jar",
-                "JAXP implementation",
-                "Axis will not work",
+                "JAXP",
+                "happyClientNoAxis",
                 "http://xml.apache.org/xerces-j/");
 
 
-        title("Optional Components");
+        title("happyClientOptional");
 
         wanted += wantClass("javax.mail.internet.MimeMessage",
                 "mail.jar",
-                "Mail API",
-                "Attachments will not work",
+                "Mail",
+                "happyClientNoAttachments",
                 "http://java.sun.com/products/javamail/");
 
         wanted += wantClass("javax.activation.DataHandler",
                 "activation.jar",
-                "Activation API",
-                "Attachments will not work",
+                "Activation",
+                "happyClientNoAttachments",
                 "http://java.sun.com/products/javabeans/glasgow/jaf.html");
 
         wanted += wantClass("org.apache.xml.security.Init",
                 "xmlsec.jar",
-                "XML Security API",
-                "XML Security is not supported",
+                "XML Security",
+                "happyClientNoSecurity",
                 "http://xml.apache.org/security/");
 
         wanted += wantClass("javax.net.ssl.SSLSocketFactory",
-                "jsse.jar or java1.4+ runtime",
+                Messages.getMessage("happyClientJSSEsources"),
                 "Java Secure Socket Extension",
-                "https is not supported",
+                "happyClientNoHTTPS",
                 "http://java.sun.com/products/jsse/");
 
 
@@ -436,56 +438,50 @@ public class HappyClient {
 
         String xmlParser = getParserName();
         String xmlParserLocation = getParserLocation();
-        out.println("\nXML parser :" + xmlParser + "\n  from " + xmlParserLocation);
+        out.println(Messages.getMessage("happyClientXMLinfo",
+                xmlParser,xmlParserLocation));
         if (xmlParser.indexOf("xerces") <= 0) {
             warningMessages++;
             out.println();
-            out.println("Axis recommends Xerces 2 "
-                    + "(http://xml.apache.org/xerces2-j) as the XML Parser");
+            out.println(Messages.getMessage("happyClientRecommendXerces"));
         }
         if (getJavaVersionNumber() < 13) {
             warningMessages++;
             out.println();
-            out.println("Warning: Axis does not support this version of Java. \n"
-                    + "  Use at your own risk, and do not file bug reports if something fails");
+            out.println(Messages.getMessage("happyClientUnsupportedJVM"));
         }
         /* add more libraries here */
 
         //print the summary information
         boolean happy;
-        title("Summary");
+        title("happyClientSummary");
 
         //is everythng we need here
         if (needed == 0) {
             //yes, be happy
-            out.println("The core axis libraries are present.");
+            out.println(Messages.getMessage("happyClientCorePresent"));
             happy=true;
         } else {
             happy=false;
             //no, be very unhappy
-            out.println(""
-                    + needed
-                    + " core axis librar"
-                    + (needed == 1 ? "y is" : "ies are")
-                    + " missing");
+            out.println(Messages.getMessage("happyClientCoreMissing",
+                    Integer.toString(needed)));
         }
         //now look at wanted stuff
         if (wanted > 0) {
-            out.println("\n"
-                    + wanted
-                    + " optional axis librar"
-                    +(wanted==1?"y is":"ies are")
-                    +" missing");
+            out.println();
+            out.println(Messages.getMessage("happyClientOptionalMissing",
+                    Integer.toString(wanted)));
+            out.println(Messages.getMessage("happyClientOptionalOK"));
             if (warningsAsErrors) {
                 happy = false;
             }
         } else {
-            out.println("The optional components are present.");
+            out.println(Messages.getMessage("happyClientOptionalPresent"));
         }
         if (warningMessages > 0) {
-            out.println("\n"
-                    + warningMessages
-                    + " warning message(s) were printed");
+            out.println(Messages.getMessage("happyClientWarningMessageCount",
+                    Integer.toString(warningMessages)));
             if (warningsAsErrors) {
                 happy = false;
             }
