@@ -112,7 +112,7 @@ public class JavaFaultWriter extends JavaClassWriter {
         for (int i = 0; i < params.size(); i++) {
             Parameter param = (Parameter)params.get(i);
             String type = param.getType().getName();
-            String variable = param.getName();
+            String variable = Utils.xmlNameToJava(param.getName());
             pw.println("    public " + type + " " + variable + ";");
             pw.println("    public " + type + " get" + Utils.capitalizeFirstChar(variable) + "() {");
             pw.println("        return this." + variable + ";");
@@ -132,13 +132,13 @@ public class JavaFaultWriter extends JavaClassWriter {
                 if (i != 0) pw.print(", ");
                 Parameter param = (Parameter)params.get(i);
                 String type = param.getType().getName();
-                String variable = param.getName();
+                String variable = Utils.xmlNameToJava(param.getName());
                 pw.print(type + " " + variable);
             }
             pw.println(") {");
             for (int i = 0; i < params.size(); i++) {
                 Parameter param = (Parameter)params.get(i);
-                String variable = param.getName();
+                String variable = Utils.xmlNameToJava(param.getName());
                 pw.println("        this." + variable + " = " + variable + ";");
             }
             pw.println("    }");
@@ -155,7 +155,7 @@ public class JavaFaultWriter extends JavaClassWriter {
         pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
         for (int i = 0; i < params.size(); i++) {
             Parameter param = (Parameter)params.get(i);
-            String variable = param.getName();
+            String variable = Utils.xmlNameToJava(param.getName());
             pw.println("        context.serialize(qname, null, " + Utils.wrapPrimitiveType(param.getType(), variable) + ");");
         }
         pw.println("    }");
