@@ -25,7 +25,7 @@
 <target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.attachements"/>
+  <echo message="Compilig test.wsdl.attachments"/>
     <wsdl2java url="${axis.home}/test/wsdl/attachments/mime.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes"

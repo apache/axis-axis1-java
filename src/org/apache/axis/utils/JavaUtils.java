@@ -83,7 +83,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.beans.Introspector;
 
-import javax.mail.internet.MimeMultipart;
+import javax.activation.DataHandler;
 
 import javax.xml.soap.SOAPException;
 
@@ -240,11 +240,21 @@ public class JavaUtils
         }
 
         // Convert an AttachmentPart to the given destination class.
-        if (arg instanceof AttachmentPart) {
+        if (arg instanceof AttachmentPart || arg instanceof DataHandler) {
             try {
+                String destName = destClass.getName();
                 if (destClass == String.class
-                        || destClass == MimeMultipart.class) {
-                    return ((AttachmentPart)arg).getDataHandler().getContent();
+                        || destClass == java.awt.Image.class
+                        || destName.equals("javax.mail.internet.MimeMultipart")
+                        || destName.equals("javax.xml.transform.Source")) {
+                    DataHandler handler;
+                    if (arg instanceof AttachmentPart) {
+                        handler = ((AttachmentPart) arg).getDataHandler();
+                    }
+                    else {
+                        handler = (DataHandler) arg;
+                    }
+                    return handler.getContent();
                 }
             }
             catch (IOException ioe) {
@@ -469,6 +479,17 @@ public class JavaUtils
         Class srcHeld = JavaUtils.getHolderValueType(src);
         if (srcHeld != null) {
             if (dest.isAssignableFrom(srcHeld) || isConvertable(srcHeld, dest))
+                return true;
+        }
+
+        // If it's a MIME type mapping and we want a DataHandler,
+        // then we're good.
+        if (dest.getName().equals("javax.activation.DataHandler")) {
+            String name = src.getName();
+            if (src == String.class
+                    || src == java.awt.Image.class
+                    || name.equals("javax.mail.internet.MimeMultipart")
+                    || name.equals("javax.xml.transform.Source"))
                 return true;
         }
 
@@ -1085,28 +1106,4 @@ public class JavaUtils
             return null;
         }
     } // mimeToJava
-
-    /**
-     * Given a Java type, return the MIME type string mapping
-     */
-    public static String javaToMIME(Class javaType) {
-        if (javaType != null) {
-            if (java.awt.Image.class.isAssignableFrom(javaType)) {
-                return "image/jpeg";
-            }
-            else if (javax.xml.transform.Source.class.isAssignableFrom(javaType)) {
-                return "text/xml";
-            }
-            else if (javax.mail.internet.MimeMultipart.class.isAssignableFrom(
-                    javaType)) {
-                return "multipart/related";
-            }
-            else if (javax.activation.DataHandler.class.isAssignableFrom(
-                    javaType)) {
-                return "";
-            }
-        }
-        return null;
-    } // javaToMIME
-
 }

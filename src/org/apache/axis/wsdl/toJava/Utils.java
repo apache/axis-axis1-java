@@ -612,12 +612,16 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /** 
      * Get the QName that could be used in the xsi:type
      * when serializing an object for this parameter/return
-     * @param te is the typeEntry from the Parameters object,
-     *           which represents the parameter
-     * @return the QName of the type
+     * @param param is a parameter
+     * @return the QName of the parameter's type
      */
-    public static QName getXSIType(TypeEntry te) {
+    public static QName getXSIType(Parameter param) {
+        if (param.getMIMEType() != null) {
+            return getMIMETypeQName(param.getMIMEType());
+        }
+
         QName xmlType = null;
+        TypeEntry te = param.getType();
 
         // If the TypeEntry describes an Element, get
         // the referenced Type.
@@ -645,6 +649,30 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
         return xmlType;
     }
+
+    /**
+     * Given a MIME type, return the AXIS-specific type QName.
+     * @param the MIME type name
+     * @return the AXIS-specific QName for the MIME type
+     */
+    public static QName getMIMETypeQName(String mimeName) {
+        if ("text/plain".equals(mimeName)) {
+            return Constants.MIME_PLAINTEXT;
+        }
+        else if ("image/gif".equals(mimeName) || "image/jpeg".equals(mimeName)) {
+            return Constants.MIME_IMAGE;
+        }
+        else if ("text/xml".equals(mimeName) || "applications/xml".equals(mimeName)) {
+            return Constants.MIME_SOURCE;
+        }
+        else if (mimeName != null && mimeName.startsWith("multipart/")) {
+            return Constants.MIME_MULTIPART;
+        }
+        else {
+            return null;
+        }
+    } // getMIMEType
+
     
     /**
      * Are there any MIME parameters in the given binding?

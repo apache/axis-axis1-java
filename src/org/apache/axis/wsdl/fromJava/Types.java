@@ -262,14 +262,6 @@ public class Types {
             return qname;
         }
 
-        // For MIME types, just use xsd:string since the xml type is
-        // ignored by WSDL2Java anyway.  NOTE:  This probably is not
-        // good enough for the long haul, but it'll do today (ie., for
-        // the TCK).
-        if (JavaUtils.javaToMIME(type) != null) {
-            return Constants.XSD_STRING;
-        }
-
         if (wsdlTypesElem == null) {
             writeWsdlTypesElement();
         }
@@ -499,14 +491,6 @@ public class Types {
         if (qName == null ||
             Constants.equals(Constants.SOAP_ARRAY, qName)) {
             qName = getTypeQName(type);
-        }
-
-        // For MIME types, just use xsd:string since the xml type is
-        // ignored by WSDL2Java anyway.  NOTE:  This probably is not
-        // good enough for the long haul, but it'll do today (ie., for
-        // the TCK).
-        if (JavaUtils.javaToMIME(type) != null) {
-            return Constants.NS_PREFIX_SCHEMA_XSD + ":string";
         }
 
         // Quick return if schema type

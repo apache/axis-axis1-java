@@ -357,7 +357,7 @@ public class JavaDeployWriter extends JavaWriter {
                     QName returnType = null;
                     if (params.returnParam != null) {
                         returnQName = params.returnParam.getQName();
-                        returnType = Utils.getXSIType(params.returnParam.getType());
+                        returnType = Utils.getXSIType(params.returnParam);
                     }
 
                     // Write the operation metadata
@@ -415,7 +415,7 @@ public class JavaDeployWriter extends JavaWriter {
 
             // Get the parameter name QName and type QName
             QName paramQName = param.getQName();
-            QName paramType = Utils.getXSIType(param.getType());
+            QName paramType = Utils.getXSIType(param);
 
             if (param.getMIMEType() != null) {
                 paramType = new QName(

@@ -123,7 +123,7 @@ Copyright:
               <include name="**/FunctionalTests.class" />
               <include name="**/*TestCase.class" />
               <exclude name="**/Interop3TestCase.class"/>
-              <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachements.present" />
+              <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachments.present" />
         </fileset>
       </batchtest>
     </junit>
@@ -282,7 +282,7 @@ Copyright:
       <classpath refid="test-classpath" />
       <include name="**/*.java" />
       <exclude name="test/wsdl/interop3/**/*.java" />
-      <exclude name="test/wsdl/attachments/**/*.java" unless="attachements.present" />
+      <exclude name="test/wsdl/attachments/**/*.java" unless="attachments.present" />
     </javac>
   </target>
 

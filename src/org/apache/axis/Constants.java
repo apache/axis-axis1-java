@@ -79,8 +79,6 @@ public class Constants {
     public static final String NS_PREFIX_WSDL_SOAP  = "wsdlsoap";
     public static final String NS_PREFIX_XMLSOAP    = "apachesoap";
     public static final String NS_PREFIX_XML        = "xml";
-    public static final String NS_PREFIX_MIME       = "mime";
-
 
     // Axis Namespaces
     public static final String NS_URI_AXIS = "http://xml.apache.org/axis/";
@@ -92,8 +90,6 @@ public class Constants {
     // {http://xml.apache.org/axis/java}org.foo.Bar
     public static final String NS_URI_JAVA = "http://xml.apache.org/axis/java";
 
-    // WSDL MIME namespace
-    public static final String NS_URI_WSDL_MIME = "http://schemas.xmlsoap.org/wsdl/mime/";
     //
     // SOAP-ENV Namespaces
     //
@@ -473,6 +469,11 @@ public class Constants {
     public static final QName SOAP_MAP = new QName(NS_URI_XMLSOAP, "Map");
     public static final QName SOAP_ELEMENT = new QName(NS_URI_XMLSOAP, "Element");
     public static final QName SOAP_VECTOR = new QName(NS_URI_XMLSOAP, "Vector");
+    public static final QName MIME_IMAGE = new QName(NS_URI_XMLSOAP, "Image");
+    public static final QName MIME_PLAINTEXT = new QName(NS_URI_XMLSOAP, "PlainText");
+    public static final QName MIME_MULTIPART = new QName(NS_URI_XMLSOAP, "Multipart");
+    public static final QName MIME_SOURCE = new QName(NS_URI_XMLSOAP, "Source");
+    public static final QName MIME_DATA_HANDLER = new QName(NS_URI_XMLSOAP, "DataHandler");
 
 
     public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
