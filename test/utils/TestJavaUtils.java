@@ -118,6 +118,7 @@ public class TestJavaUtils extends TestCase
     /**
      * test the convert() function 
      * verify that we can convert to the Collection, List, and Set interfaces
+     * NOTE : These should be split out into separate tests...
      */ 
     public void testConvert() {
         Integer[] array = new Integer[4];
@@ -167,7 +168,7 @@ public class TestJavaUtils extends TestCase
         Object[][] outer = (Object[][]) ret;
         assertEquals("Outer array of 2D array/ArrayList is wrong length", 1, outer.length);
         Object[] inner = ((Object[][])ret)[0];
-        assertEquals("Inner array of 2D array/ArrayLis is wrong length", 5, inner.length);
+        assertEquals("Inner array of 2D array/ArrayLis is wrong length", 1, inner.length);
         
         // check 2D ArrayList of ArrayList
         ArrayList data2D = new ArrayList(2);
@@ -179,6 +180,15 @@ public class TestJavaUtils extends TestCase
         Object[] inner2 = ((Object[][]) ret)[0];
         assertEquals("Inner array of 2D ArrayList is wrong length", 5, inner2.length);
         
+    }
+
+    public void test1dTo2d() throws Exception {
+        byte [] arg = new byte [] { '0', '1' };
+        byte [][] ret = (byte[][])JavaUtils.convert(arg, byte[][].class);
+        // ClassCastException above if problems converting
+        assertNotNull("Conversion result was null", ret);
+        assertEquals("Outer array size wrong", 1, ret.length);
+        assertEquals("Inner array size wrong", 2, ret[0].length);
     }
 
     /**

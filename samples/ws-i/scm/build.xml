@@ -53,6 +53,8 @@ Copyright:
     <target name="copy" depends="setenv"/>
 
     <target name="compile" depends="copy">
+<!-- Commented out by gdaniels on 9/21/04 due to problems getting the WSDL from ws-i.org
+
         <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
         <mkdir dir="${axis.home}/build/work/${componentName}"/>
 
@@ -103,6 +105,7 @@ Copyright:
             </classpath>
             <include name="**/*.java"/>
         </javac>
+-->
     </target>
     
     <!--
@@ -110,7 +113,7 @@ Copyright:
     -->
 
     <target name="run">
-        <antcall target="execute-Component"/>
+<!--        <antcall target="execute-Component"/>-->
     </target>
 
     <!--
