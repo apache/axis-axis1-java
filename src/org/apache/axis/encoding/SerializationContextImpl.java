@@ -433,12 +433,12 @@ public class SerializationContextImpl implements SerializationContext
 
         if (javaType.isPrimitive()) return true;
 
-        if (String.class.isAssignableFrom(javaType)) return true;
+        if (javaType == String.class) return true;
         if (Calendar.class.isAssignableFrom(javaType)) return true;
         if (Date.class.isAssignableFrom(javaType)) return true;
         if (Hex.class.isAssignableFrom(javaType)) return true;
         if (Element.class.isAssignableFrom(javaType)) return true;
-        if (byte[].class.isAssignableFrom(javaType)) return true;
+        if (javaType == byte[].class) return true;
 
         // There has been discussion as to whether arrays themselves should
         // be regarded as multi-ref.

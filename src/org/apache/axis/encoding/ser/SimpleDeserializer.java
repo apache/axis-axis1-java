@@ -213,8 +213,7 @@ public class SimpleDeserializer extends DeserializerImpl {
     public Object makeValue(String source) throws Exception
     {
         // If the javaType is a boolean, except a number of different sources
-        if (javaType == boolean.class ||
-            Boolean.class.isAssignableFrom(javaType)) {
+        if (javaType == boolean.class || javaType == Boolean.class) {
             // This is a pretty lame test, but it is what the previous code did.
             switch (source.charAt(0)) {
                 case '0': case 'f': case 'F':
