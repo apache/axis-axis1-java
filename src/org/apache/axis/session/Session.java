@@ -111,6 +111,11 @@ public interface Session
     public void touch();
     
     /**
+     * invalidate the session
+     */ 
+    public void invalidate();
+    
+    /**
      * Get an Object suitable for synchronizing the session.  This method
      * exists because different session implementations might provide
      * different ways of getting at shared data.  For a simple hashtable-
