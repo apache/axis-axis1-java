@@ -60,7 +60,6 @@ import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
-import javax.wsdl.Import;
 import javax.wsdl.Message;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
@@ -155,6 +154,7 @@ public class Emitter {
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             reader.setVerbose(bVerbose);
             def = reader.readWSDL(null, doc);
+            this.doc = doc;
             namespaces = new Namespaces(outputDir);
 
             // First, read the namespace mapping file - NStoPkg.properties - if it
@@ -165,7 +165,9 @@ public class Emitter {
                 namespaces.putAll(delaySetMap);
             }
 
-            symbolTable = new SymbolTable(namespaces);
+            symbolTable = new SymbolTable(namespaces, bGenerateImports);
+            symbolTable.add(def, doc);
+            writerFactory.writerPass(def, symbolTable);
             emit(def, doc);
 
             // Output extra stuff (deployment files and faults) 
@@ -181,55 +183,56 @@ public class Emitter {
     } // emit
 
     private void emit(Definition def, Document doc) throws IOException {
-        this.def = def;
-        this.doc = doc;
-
-        if (def == null) {
-            symbolTable.add(null, doc);
+        if (bVerbose) {
+            System.out.println(JavaUtils.getMessage("types00"));
+            dumpTypes();
         }
-        else {
+        // Output Java classes for types
+        writeTypes();
 
-            // Generated all the imported XML
-            if (bGenerateImports) {
-
-                // Generate the imported WSDL documents
-                Map imports = def.getImports();
-                Object[] importKeys = imports.keySet().toArray();
-                for (int i = 0; i < importKeys.length; ++i) {
-                    Vector v = (Vector) imports.get(importKeys[i]);
-                    for (int j = 0; j < v.size(); ++j) {
-                        Import imp = (Import) v.get(j);
-                        Emitter emitter = new Emitter(this);
-                        writerFactory.setEmitter(emitter);
-                        emitter.emit(imp.getDefinition(),
-                                     XMLUtils.newDocument(imp.getLocationURI()));
-                        writerFactory.setEmitter(this);
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                Writer writer = null;
+                if (entry instanceof MessageEntry) {
+                    writer = writerFactory.getWriter(
+                            ((MessageEntry) entry).getMessage(), symbolTable);
+                }
+                else if (entry instanceof PortTypeEntry) {
+                    PortTypeEntry pEntry = (PortTypeEntry) entry;
+                    // If the portType is undefined, then we're parsing a Definition
+                    // that didn't contain a portType, merely a binding that referred
+                    // to a non-existent port type.  Don't bother writing it.
+                    if (pEntry.getPortType().isUndefined()) {
+                        continue;
                     }
+                    writer = writerFactory.getWriter(pEntry.getPortType(),
+                            symbolTable);
+                }
+                else if (entry instanceof BindingEntry) {
+                    BindingEntry bEntry = (BindingEntry)entry;
+                    Binding binding = bEntry.getBinding();
+
+                    // If the binding is undefined, then we're parsing a Definition
+                    // that didn't contain a binding, merely a service that referred
+                    // to a non-existent binding.  Don't bother writing it.
+                    // If this isn't a SOAP binding, don't bother writing it, either.
+                    if (binding.isUndefined() ||
+                        bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
+                        continue;
+                    }
+                    writer = writerFactory.getWriter(binding, symbolTable);
+                }
+                else if (entry instanceof ServiceEntry) {
+                    writer = writerFactory.getWriter(
+                            ((ServiceEntry) entry).getService(), symbolTable);
+                }
+                if (writer != null) {
+                    writer.write();
                 }
             }
-
-            symbolTable.add(def, doc);
-
-            writerFactory.writerPass(def, symbolTable);
-
-            if (bVerbose) {
-                System.out.println(JavaUtils.getMessage("types00"));
-                dumpTypes();
-            }
-            // Output Java classes for types
-            writeTypes();
-
-            // Output messages
-            writeMessages();
-
-            // Output interfaces for portTypes
-            writePortTypes();
-
-            // Output factory classes for services
-            writeServices();
-
-            // Output Stub classes for bindings
-            writeBindings();
         }
     } // emit
 
@@ -363,82 +366,6 @@ public class Emitter {
      */
     public List getGeneratedFileNames() {
         return this.fileList;
-    }
-
-    /**
-     * Generate the bindings for all messages.
-     */
-    protected void writeMessages() throws IOException {
-        Map messages = def.getMessages();
-        Iterator i = messages.values().iterator();
-
-        while (i.hasNext()) {
-            Message message = (Message) i.next();
-
-            Writer writer = writerFactory.getWriter(message, symbolTable);
-            writer.write();
-        }
-    } // writeMessages
-
-    /**
-     * Generate the bindings for all port types.
-     */
-    protected void writePortTypes() throws IOException {
-        Map portTypes = def.getPortTypes();
-        Iterator i = portTypes.values().iterator();
-
-        while (i.hasNext()) {
-            PortType portType = (PortType) i.next();
-
-            // If the portType is undefined, then we're parsing a Definition
-            // that didn't contain a portType, merely a binding that referred
-            // to a non-existent port type.  Don't bother writing it.
-            if (!portType.isUndefined()) {
-                Writer writer = writerFactory.getWriter(portType, symbolTable);
-                writer.write();
-            }
-        }
-    } // writePortTypes
-
-    /**
-     * Generate the stubs and skeletons for all binding tags.
-     */
-    protected void writeBindings() throws IOException {
-        Map bindings = def.getBindings();
-        Iterator i = bindings.values().iterator();
-
-        while (i.hasNext()) {
-            Binding binding = (Binding) i.next();
-            BindingEntry bEntry =
-                    symbolTable.getBindingEntry(binding.getQName());
-
-            // If the binding is undefined, then we're parsing a Definition
-            // that didn't contain a binding, merely a service that referred
-            // to a non-existent binding.  Don't bother writing it.
-            if (!binding.isUndefined()) {
-
-            // If this isn't a SOAP binding, skip it
-                if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
-                    continue;
-                }
-                Writer writer = writerFactory.getWriter(binding, symbolTable);
-                writer.write();
-            }
-        }
-    } // writeBindings
-
-    /**
-     * Create the service class or classes
-     */
-    protected void writeServices() throws IOException {
-        Map services = def.getServices();
-        Iterator i = services.values().iterator();
-
-        while (i.hasNext()) {
-            Service service = (Service) i.next();
-            Writer writer = writerFactory.getWriter(service, symbolTable);
-            writer.write();
-       }
     }
 
     //////////////////////////////

@@ -89,8 +89,8 @@ public class JavaWriterFactory implements WriterFactory {
     public void writerPass(Definition def, SymbolTable symbolTable) {
         javifyNames(symbolTable);
         resolveNameClashes(symbolTable);
-        ignoreNonSOAPBindingPortTypes(def, symbolTable);
-        constructSignatures(def, symbolTable);
+        ignoreNonSOAPBindingPortTypes(symbolTable);
+        constructSignatures(symbolTable);
     } // writerPass
 
     /**
@@ -198,43 +198,43 @@ public class JavaWriterFactory implements WriterFactory {
     /**
      * If a binding's type is not TYPE_SOAP, then we don't use that binding's portType.
      */
-    private void ignoreNonSOAPBindingPortTypes(
-            Definition def,
-            SymbolTable symbolTable) {
+    private void ignoreNonSOAPBindingPortTypes(SymbolTable symbolTable) {
 
         // Look at all uses of the portTypes.  If none of the portType's bindings are of type
         // TYPE_SOAP, then turn off that portType's isReferenced flag.
 
         Vector unusedPortTypes = new Vector();
         Vector usedPortTypes = new Vector();
-        Map bindings = def.getBindings();
-        Iterator it = bindings.values().iterator();
 
-        // loop through each binding
+        Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
-            Binding binding = (Binding) it.next();
-            BindingEntry bEntry =
-                   symbolTable.getBindingEntry(binding.getQName());
-            PortType portType = binding.getPortType();
-            PortTypeEntry ptEntry =
-                    symbolTable.getPortTypeEntry(portType.getQName());
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                if (entry instanceof BindingEntry) {
+                    BindingEntry bEntry = (BindingEntry) entry;
+                    Binding binding = bEntry.getBinding();
+                    PortType portType = binding.getPortType();
+                    PortTypeEntry ptEntry =
+                      symbolTable.getPortTypeEntry(portType.getQName());
 
-            if (bEntry.getBindingType() == BindingEntry.TYPE_SOAP) {
-
-                // If a binding is of type TYPE_SOAP, then mark its portType used (ie., add it
-                // to the usedPortTypes list.  If the portType was previously marked as unused,
-                // unmark it (in other words, remove it from the unusedPortTypes list).
-                usedPortTypes.add(ptEntry);
-                if (unusedPortTypes.contains(ptEntry)) {
-                    unusedPortTypes.remove(ptEntry);
-                }
-            }
-            else {
-
-                // If a binding is not of type TYPE_SOAP, then mark its portType as unused ONLY
-                // if it hasn't already been marked as used.
-                if (!usedPortTypes.contains(ptEntry)) {
-                    unusedPortTypes.add(ptEntry);
+                    if (bEntry.getBindingType() == BindingEntry.TYPE_SOAP) {
+                        // If a binding is of type TYPE_SOAP, then mark its portType used
+                        // (ie., add it to the usedPortTypes list.  If the portType was
+                        // previously marked as unused, unmark it (in other words, remove it
+                        // from the unusedPortTypes list).
+                        usedPortTypes.add(ptEntry);
+                        if (unusedPortTypes.contains(ptEntry)) {
+                            unusedPortTypes.remove(ptEntry);
+                        }
+                    }
+                    else {
+                        // If a binding is not of type TYPE_SOAP, then mark its portType as
+                        // unused ONLY if it hasn't already been marked as used.
+                        if (!usedPortTypes.contains(ptEntry)) {
+                            unusedPortTypes.add(ptEntry);
+                        }
+                    }
                 }
             }
         }
@@ -247,27 +247,28 @@ public class JavaWriterFactory implements WriterFactory {
         }
     } // ignoreNonSOAPBindingPortTypes
 
-    private void constructSignatures(Definition def, SymbolTable symbolTable) {
-        Map portTypes = def.getPortTypes();
-        Iterator i = portTypes.values().iterator();
-
-        while (i.hasNext()) {
-            PortType portType = (PortType) i.next();
-            PortTypeEntry ptEntry =
-                    symbolTable.getPortTypeEntry(portType.getQName());
-            if (ptEntry != null) {
-                // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
-                // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
-                // TODO: Remove this patch...
-                // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
-                Iterator operations =
-                        new HashSet(portType.getOperations()).iterator();
-                while(operations.hasNext()) {
-                    Operation operation = (Operation) operations.next();
-                    String name = operation.getName();
-                    constructSignatures(ptEntry.getParameters(name), name);
+    private void constructSignatures(SymbolTable symbolTable) {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                if (entry instanceof PortTypeEntry) {
+                    PortTypeEntry ptEntry = (PortTypeEntry) entry;
+                    PortType portType = ptEntry.getPortType();
+                    // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
+                    // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
+                    // TODO: Remove this patch...
+                    // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been
+                    // notified.
+                    Iterator operations =
+                            new HashSet(portType.getOperations()).iterator();
+                    while(operations.hasNext()) {
+                        Operation operation = (Operation) operations.next();
+                        String name = operation.getName();
+                        constructSignatures(ptEntry.getParameters(name), name);
+                    }
                 }
-                
             }
         }
     } // constructSignatures
