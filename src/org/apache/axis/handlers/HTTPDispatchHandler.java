@@ -124,7 +124,7 @@ public class HTTPDispatchHandler implements Handler {
                        "\n" ;
 
       String  header = HTTPConstants.HEADER_POST + " " + 
-                         tmpURL.getPath() + " HTTP/1.0\n" +
+                         tmpURL.getFile() + " HTTP/1.0\n" +
                        HTTPConstants.HEADER_CONTENT_LENGTH + ": " + 
                                           + reqEnv.length() + "\n" +
                        HTTPConstants.HEADER_CONTENT_TYPE + ": text.xml\n" +

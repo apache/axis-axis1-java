@@ -71,7 +71,7 @@ import org.apache.axis.message.SOAPDocument;
 import org.apache.axis.message.SOAPHeaderEntry;
 
 public class Signer implements Handler {
-    public static final String NS_URI_DSIG = "http://www.w3.org/2000/07/xmldsig#" ;
+    public static final String NS_URI_DSIG = "http://www.w3.org/2001/07/xmldsig#" ;
     public static final String NS_URI_SIGREQ = "http://www.ibm.com/soap/security/Signer" ;
     public static final String ELEM_REFERENCE = "Reference" ;
     public static final String ELEM_SIGREQ = "SignatureRequest" ;
