@@ -553,6 +553,8 @@ public class SerializationContextImpl implements SerializationContext
                 AttributesImpl attrs = new AttributesImpl();
                 if (attributes != null)
                     attrs.setAttributes(attributes);
+                if (sendType)
+                    attrs = (AttributesImpl) setTypeAttribute(attrs, xmlType);
                 attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
                                    "CDATA", "true");
                 startElement(elemQName, attrs);
