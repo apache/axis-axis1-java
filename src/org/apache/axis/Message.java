@@ -86,7 +86,8 @@ import java.util.Iterator;
  * @author Glen Daniels (gdaniels@allaire.com)
  * @author Rick Rineholt
  */
-public class Message extends javax.xml.soap.SOAPMessage {
+public class Message extends javax.xml.soap.SOAPMessage
+    implements java.io.Serializable {
     protected static Log log =
         LogFactory.getLog(Message.class.getName());
 

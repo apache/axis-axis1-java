@@ -56,6 +56,8 @@ package org.apache.axis.soap;
 
 import javax.xml.namespace.QName;
 
+import java.io.Serializable;
+
 /**
  * An interface definining SOAP constants.  This allows various parts of the
  * engine to avoid hardcoding dependence on a particular SOAP version and its
@@ -67,7 +69,7 @@ import javax.xml.namespace.QName;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public interface SOAPConstants {
+public interface SOAPConstants extends Serializable {
     /** SOAP 1.1 constants - thread-safe and shared */
     public SOAP11Constants SOAP11_CONSTANTS = new SOAP11Constants();
     /** SOAP 1.2 constants - thread-safe and shared */

@@ -66,7 +66,7 @@ import org.apache.axis.Part;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Rick Rineholt
  */
-public interface Attachments {
+public interface Attachments extends java.io.Serializable {
 
     /**
      * Adds an existing attachment to this list.

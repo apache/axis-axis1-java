@@ -55,31 +55,61 @@
 
 package test.message;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 
 /**
- * Test org.apache.axis.Message subsystem.
+ * Test certain classes in the message package for java
+ * serializability.
  *
  * @author Glyn Normington (glyn@apache.org)
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
+public class TestJavaSerialization extends TestCase {
+
+    public TestJavaSerialization(String name) {
         super(name);
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
-        
-        suite.addTestSuite(TestMessageElement.class);
-        suite.addTestSuite(TestSOAPEnvelope.class);
-        suite.addTestSuite(TestSOAPHeader.class);
-        suite.addTestSuite(TestJavaSerialization.class);
- 
-        return suite;
+    public void testSOAPEnvelope() throws Exception {
+        // Create an example SOAP envelope
+        SOAPEnvelope env = new org.apache.axis.message.SOAPEnvelope();
+        SOAPHeader h = env.getHeader();
+        SOAPBody b = env.getBody();
+        Name heName = env.createName("localName", "prefix", "http://uri");
+        SOAPHeaderElement he = h.addHeaderElement(heName);
+        he.setActor("actor");
+
+        // Serialize the SOAP envelope
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(bos);
+        os.writeObject(env);
+
+        // Deserializet the SOAP envelope
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream is = new ObjectInputStream(bis);
+        SOAPEnvelope env2 = (SOAPEnvelope)is.readObject();
+
+        // Check that the SOAP envelope survived the round trip
+        SOAPHeader h2 = env2.getHeader();
+        SOAPHeaderElement he2 = (SOAPHeaderElement)h2.
+            examineHeaderElements("actor").next();
+        Name heName2 = he2.getElementName();
+        assertEquals("Local name did not survive java ser+deser", 
+                     heName.getLocalName(), heName2.getLocalName());
+        assertEquals("Prefix did not survive java ser+deser", 
+                     heName.getPrefix(), heName2.getPrefix());
+        assertEquals("URI did not survive java ser+deser", 
+                     heName.getURI(), heName2.getURI());
     }
 }

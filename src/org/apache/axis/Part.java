@@ -78,7 +78,7 @@ import java.util.Hashtable;
 
 import org.apache.axis.transport.http.HTTPConstants;
 
-public interface Part
+public interface Part extends java.io.Serializable
 {
     /**
      * Gets all the values of the <CODE>MimeHeader</CODE> object

@@ -55,7 +55,9 @@
 
 package org.apache.axis.utils;
 
-public class Mapping {
+import java.io.Serializable;
+
+public class Mapping implements Serializable {
     public String namespaceURI;
     public String prefix;
     public Mapping(String namespaceURI, String prefix)
