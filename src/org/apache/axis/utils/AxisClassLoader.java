@@ -68,10 +68,29 @@ import java.util.Hashtable ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class AxisClassLoader extends ClassLoader {
-  static Hashtable list = new Hashtable() ;
+  static Hashtable list         = new Hashtable() ;
+  static Hashtable classLoaders = new Hashtable();
 
   public AxisClassLoader() {
     super();
+  }
+
+  static public AxisClassLoader getClassLoader() {
+    return( getClassLoader(null) );
+  }
+
+  static public AxisClassLoader getClassLoader(String name) {
+    AxisClassLoader cl = null ;
+    if ( name == null ) name = "<default_class_loader>" ;
+    cl = (AxisClassLoader) classLoaders.get( name );
+    if ( cl == null ) 
+      classLoaders.put( name, cl = new AxisClassLoader() );
+    return( cl );
+  }
+  
+  static public void removeClassLoader(String name) {
+    if ( name != null )
+      classLoaders.remove( name );
   }
 
   public void registerClass( String name, String classFile )
@@ -107,6 +126,10 @@ public class AxisClassLoader extends ClassLoader {
     /* Deregister the passed in className */
     /**************************************/
     list.remove( name);
+  }
+
+  public boolean isClassRegistered( String name ) {
+    return( list != null && list.get(name) != null );
   }
 
   public Class loadClass(String name) throws ClassNotFoundException {

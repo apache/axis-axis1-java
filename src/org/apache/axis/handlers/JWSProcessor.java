@@ -58,8 +58,8 @@ import java.io.* ;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
-import org.apache.axis.utils.AxisClassLoader ;
 import org.apache.axis.utils.XMLUtils ;
+import org.apache.axis.utils.AxisClassLoader ;
 import sun.tools.javac.Main;
 
 import org.w3c.dom.* ;
@@ -96,6 +96,12 @@ public class JWSProcessor extends BasicHandler
 
       File  f1 = new File( cFile );
       File  f2 = new File( jwsFile );
+
+      /* Get the class */
+      /*****************/
+      String clsName = f2.getName();
+      clsName = clsName.substring( 0, clsName.length()-4 );
+      Debug.Print( 2, "ClsName: " + clsName );
 
       /* Check to see if we need to recompile */
       /****************************************/
@@ -135,7 +141,6 @@ public class JWSProcessor extends BasicHandler
         /**************************************************************/
         (new File(jFile)).delete();
 
-        // if ( proc.exitValue() != 0 ) {
         if ( !result ) {
           /* Delete the *class file - sometimes it gets created even */
           /* when there are errors - so erase it so it doesn't       */
@@ -161,15 +166,13 @@ public class JWSProcessor extends BasicHandler
                                null, new Element[] { root } );
         }
         (new File(errFile)).delete();
+
+        AxisClassLoader.removeClassLoader( clsName );
       }
-
-      /* Load the class */
-      /******************/
-      String clsName = f2.getName();
-      clsName = clsName.substring( 0, clsName.length()-4 );
-      Debug.Print( 2, "ClsName: " + clsName );
-
-      (new AxisClassLoader()).registerClass( clsName, cFile );
+      AxisClassLoader cl = msgContext.getClassLoader( clsName );
+      if ( !cl.isClassRegistered(clsName) )
+        cl.registerClass( clsName, cFile );
+      msgContext.setClassLoader( cl );
 
       /* Create a new RPCDispatchHandler - this will be the "service"   */
       /* that we invoke.                                                */

@@ -124,8 +124,8 @@ public class Admin {
     Document doc = null ;
     try {
       init();
-      ClassLoader   cl     = new AxisClassLoader();
-      String        action = root.getLocalName();
+      AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
+      String            action = root.getLocalName();
 
       if ( !action.equals("deploy") && !action.equals("undeploy") &&
            !action.equals("list") )
