@@ -24,6 +24,8 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.Target;
+import org.apache.axis.encoding.ConstructorTarget;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.BeanPropertyDescriptor;
@@ -37,6 +39,7 @@ import javax.xml.namespace.QName;
 import java.io.Serializable;
 import java.io.CharArrayWriter;
 import java.util.Map;
+import java.lang.reflect.Constructor;
 
 /**
  * General purpose deserializer for an arbitrary java bean.
@@ -57,6 +60,16 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
     protected Map propertyMap = null;
     protected QName prevQName;
 
+    /**
+     *  Constructor if no default constructor
+     */
+    protected Constructor constructorToUse = null;
+
+    /**
+     * Constructor Target object to use (if constructorToUse != null)
+     */
+    protected Target constructorTarget = null;
+    
     /** Type metadata about this class for XML deserialization */
     protected TypeDesc typeDesc = null;
 
@@ -120,10 +133,20 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             try {
                 value=javaType.newInstance();
             } catch (Exception e) {
-                // Failed to create an object.
-                throw new SAXException(Messages.getMessage("cantCreateBean00", 
+                // Use first found constructor.
+                // Note : the right way is to use XML mapping information
+                // for example JSR 109's constructor-parameter-order
+                Constructor[] constructors = javaType.getConstructors();
+                if (constructors.length > 0) {
+                    constructorToUse = constructors[0];
+                }
+
+                // Failed to create an object if no constructor
+                if (constructorToUse == null) {
+                    throw new SAXException(Messages.getMessage("cantCreateBean00", 
                                                             javaType.getName(), 
                                                             e.toString()));
+                }
             }
         }
         // Invoke super.startElement to do the href/id processing.
@@ -270,8 +293,12 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                                        childXMLType.toString()));
         }
 
-        // Register value target
-        if (propDesc.isWriteable()) {
+        if (constructorToUse != null) {
+            if (constructorTarget == null) {
+                constructorTarget = new ConstructorTarget(constructorToUse, this);
+            }
+            dSer.registerValueTarget(constructorTarget);
+        } else if (propDesc.isWriteable()) {        // Register value target
             // If this is an indexed property, and the deserializer we found
             // was NOT the ArrayDeserializer, this is a non-SOAP array:
             // <bean>
@@ -338,7 +365,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // The value should have been created or assigned already.
         // This code may no longer be needed.
-        if (value == null) {
+        if (value == null && constructorToUse == null) {
             // create a value
             try {
                 value=javaType.newInstance();
@@ -369,7 +396,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(fieldName);
             if (bpd != null) {
-                if (!bpd.isWriteable() || bpd.isIndexed() ) continue ;
+                if (constructorToUse == null) {
+                    // check only if default constructor
+                    if (!bpd.isWriteable() || bpd.isIndexed()) continue ;
+                }
                 
                 // Get the Deserializer for the attribute
                 Deserializer dSer = getDeserializer(fieldDesc.getXmlType(),
@@ -397,7 +427,15 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                         attributes, context);
                     Object val = ((SimpleDeserializer)dSer).
                         makeValue(attributes.getValue(i));
-                    bpd.set(value, val);
+                    if (constructorToUse == null) {
+                        bpd.set(value, val);
+                    } else {
+                        // add value for our constructor
+                        if (constructorTarget == null) {
+                            constructorTarget = new ConstructorTarget(constructorToUse, this);
+                        }
+                        constructorTarget.set(val);
+                    }
                 } catch (Exception e) {
                     throw new SAXException(e);
                 }

@@ -37,6 +37,7 @@ public class PackageTests extends TestCase {
         suite.addTestSuite(FaultDecode.class);
         suite.addTestSuite(FaultEncode.class);
         suite.addTestSuite(TestSOAPFaultException.class);
+        suite.addTestSuite(TestBeans.class);
         suite.addTest(TestAxisFault.suite());
 
 
