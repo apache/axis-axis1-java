@@ -112,7 +112,6 @@ public class XMLUtils {
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
 
-    private static java.io.PrintStream os = System.out;
     private static String empty = new String("");
     private static ByteArrayInputStream bais = new ByteArrayInputStream(empty.getBytes());
 
