@@ -78,7 +78,7 @@ public class RPCDispatchHandler implements Handler {
   }
 
   public void invoke(MessageContext msgContext) throws AxisFault {
-    System.err.println("In RPCDispatchHandler");
+    Debug.Print( 1, "Enter: RPCDispatchHandler::invoke" );
 
     /* Find the service we're invoking so we can grab it's options */
     /***************************************************************/
@@ -130,7 +130,7 @@ public class RPCDispatchHandler implements Handler {
           resEnv = new SOAPEnvelope();
         RPCBody resBody = new RPCBody();
         resBody.setMethodName( mName + "Response" );
-        resBody.setNamespace( body.getNamespace() );
+        resBody.setPrefix( body.getPrefix() );
         resBody.setNamespaceURI( body.getNamespaceURI() );
         RPCArg  arg = new RPCArg();
         arg.setName( "return" );
@@ -143,14 +143,16 @@ public class RPCDispatchHandler implements Handler {
       msgContext.setOutgoingMessage( outMsg );
     }
     catch( Exception e ) {
-      e.printStackTrace();
+      Debug.Print( 1, e );
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
     } 
+    Debug.Print( 1, "Exit: RPCDispatchHandler::invoke" );
   }
 
   public void undo(MessageContext msgContext) { 
-    System.err.println( "In DispatchHandler:undo" );
+    Debug.Print( 1, "Enter: RPCDispatchHandler::undo" );
+    Debug.Print( 1, "Exit: RPCDispatchHandler::undo" );
   }
 
   public boolean canHandleBlock(QName qname) {

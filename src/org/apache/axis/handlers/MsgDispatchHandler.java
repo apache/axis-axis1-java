@@ -57,16 +57,21 @@
 
 package org.apache.axis.handlers ;
 
+import java.io.* ;
 import java.util.* ;
+import java.lang.reflect.* ;
+import org.w3c.dom.* ;
+import org.apache.xerces.dom.DocumentImpl ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.message.* ;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class ErrorHandler implements Handler {
-  protected Hashtable  options ;
+public class MsgDispatchHandler implements Handler {
+  public Hashtable  options ;
 
   public void init() {
   }
@@ -74,15 +79,58 @@ public class ErrorHandler implements Handler {
   public void cleanup() {
   }
 
+  /**
+   * This is pretty much a pass-thru to the util.Admin tool.  This will just
+   * take the incoming xml file and call the Admin processing.
+   */
   public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: ErrorHandler::invoke" );
-    throw new AxisFault( "Server.Whatever", "ERROR", null, null );
+    Debug.Print( 1, "Enter: MsgDispatcherHandler::invoke" );
+
+    /* Find the service we're invoking so we can grab it's options */
+    /***************************************************************/
+    Handler service ;
+    service = (Handler) msgContext.getProperty( Constants.MC_SVC_HANDLER );
+
+    /* Now get the service (RPC) specific info  */
+    /********************************************/
+    String  clsName    = (String) service.getOption( "className" );
+    String  methodName = (String) service.getOption( "methodName" );
+
+    Debug.Print( 2, "ClassName: " + clsName );
+    Debug.Print( 2, "MethodName: " + methodName );
+
+    try {
+      Class        cls    = Class.forName(clsName);
+      Object       obj    = cls.newInstance();
+      Class[]      argClasses = new Class[2];
+      Object[]     argObjects = new Object[2];
+
+      Message       reqMsg  = msgContext.getIncomingMessage();
+      SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
+      SOAPBody      reqBody = reqEnv.getFirstBody();
+  
+      argClasses[0] = Class.forName("org.apache.axis.MessageContext");
+      argClasses[1] = Class.forName("org.w3c.dom.Document");
+      argObjects[0] = (Object) msgContext ;
+      argObjects[1] = (Object) reqBody.getAsDocument();
+
+      Method       method = cls.getMethod( methodName, argClasses );
+
+      Document retDoc = (Document) method.invoke( obj, argObjects );
+  
+      SOAPBody      resBody = new SOAPBody( retDoc );
+      SOAPEnvelope  resEnv  = new SOAPEnvelope( resBody );
+      Message       resMsg = new Message( resEnv, "SOAPEnvelope" );
+      msgContext.setOutgoingMessage( resMsg );
+    }
+    catch( Exception exp ) {
+      exp.printStackTrace();
+    }
+
+    Debug.Print( 1, "Exit: MsgDispatcherHandler::invoke" );
   }
 
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: ErrorHandler::undo" );
-    Debug.Print( 1, "Exit: ErrorHandler::undo" );
-  }
+  public void undo(MessageContext msgContext) { }
 
   public boolean canHandleBlock(QName qname) {
     return( false );
@@ -107,12 +155,12 @@ public class ErrorHandler implements Handler {
   /**
    * Return the entire list of options
    */
-  public Hashtable getOptions() {
-    return( options );
-  }
-
+   public Hashtable getOptions() {
+     return( options );
+   }
+ 
   public void setOptions(Hashtable opts) {
-    options = opts ;
+    this.options = opts ;
   }
 
 };

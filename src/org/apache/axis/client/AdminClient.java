@@ -65,6 +65,12 @@ import java.util.*;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
+
+import org.apache.axis.Message ;
+import org.apache.axis.MessageContext ;
+import org.apache.axis.client.HTTPMessage ;
+import org.apache.axis.utils.Debug ;
+
 public class AdminClient {
   public static void main(String args[]) {
 
@@ -76,50 +82,58 @@ public class AdminClient {
     String msg = null ;
 
     try {
-      String  host = "localhost" ;
-      int     port = 8080 ;
+      /* Parse the command line  */
+      /***************************/
+      String  host    = "localhost" ;
+      String  servlet = "/axis/servlet/AxisServlet" ;
+      int     port    = 8080 ;
 
       for ( int i = 0 ; i < args.length ; i++ ) {
-        if ( args[i].charAt(0) == '-' ) {
+        if ( args[i].charAt(0) == '-' )
           switch( args[i].toLowerCase().charAt(1) ) {
-            case 'h': if (args[i].length() > 2 )
+            case 'd': Debug.incDebugLevel();
+                      break ;
+            case 'h': if ( args[i].length() > 2 )
                         host = args[i].substring(2);
                       break ;
-            case 'p': if (args[i].length() > 2 )
+            case 'p': if ( args[i].length() > 2 )
                         port = Integer.parseInt(args[i].substring(2));
                       break ;
-            default: System.err.println( "Unknown option '" + 
+            case 's': if ( args[i].length() > 2 )
+                        servlet = args[i].substring(2);
+                      if ( servlet != null && servlet.charAt(0) != '/' )
+                        servlet = "/" + servlet ;
+                      break ;
+            case 'u': if ( args[i].length() > 2 ) {
+                        URL tmpurl = new URL(args[i].substring(2));
+                        host = tmpurl.getHost();
+                        port = tmpurl.getPort();
+                        servlet = tmpurl.getPath() ;
+                      }
+                      break ;
+            default: System.err.println( "Unknown option '" +
                                          args[i].charAt(1) + "'" );
                      System.exit(1);
           }
-        }
         else {
           InputStream    input = null ;
           long           length ;
         
           System.out.println( "Processing file: " + args[i] );
-          File           file = new File(args[i]);
-          length = file.length();
           input = new FileInputStream( args[i] );
 
-          Socket         sock = new Socket( host, port );
-          InputStream    inp  = sock.getInputStream();
-          OutputStream   out  = sock.getOutputStream();
-          String         cl   = "Content-Length: " + length + "\n\n" ;
-    
-          out.write( hdr.getBytes() );
-          out.write( cl.getBytes() );
+          String          url = "http://" + host + ":" + port + servlet ;
+          HTTPMessage     hMsg       = new HTTPMessage( url, "AdminService" );
+          MessageContext  msgContext = new MessageContext();
+          Message         inMsg      = new Message( input, "InputStream" );
+          Message         outMsg     = null ;
+          msgContext.setIncomingMessage( inMsg );
 
-          byte[]          buf = new byte[1000];
-          int             rc ;
-          while ( (rc = input.read(buf)) > 0 )
-            out.write( buf, 0, rc );
+          hMsg.invoke( msgContext );
 
-          while ( (rc = inp.read(buf,0,1000)) > 0 )
-            System.out.write( buf,0,rc );
-            
-          sock.close();
+          outMsg = msgContext.getOutgoingMessage();
           input.close();
+          System.err.println( outMsg.getAs( "String" ) );
         }
       }
     }

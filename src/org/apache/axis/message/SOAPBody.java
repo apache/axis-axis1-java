@@ -61,6 +61,7 @@ package org.apache.axis.message ;
 
 import java.util.* ;
 import org.w3c.dom.* ;
+import org.apache.xerces.dom.DocumentImpl ;
 import org.xml.sax.InputSource ;
 import org.apache.axis.message.* ;
 
@@ -69,63 +70,37 @@ import org.apache.axis.message.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SOAPBody {
-  protected String    name ;
-  protected String    namespace ;
-  protected String    namespaceURI ;
-  protected ArrayList data ;
+  protected Element   root ;
 
   public SOAPBody() {
+    root = null ;
+  }
+
+  public SOAPBody(Document doc) {
+    root = doc.getDocumentElement() ;
   }
 
   public SOAPBody(Element elem) {
-    String    value ;
-    NodeList  list ;
-    namespace = elem.getPrefix();
-    namespaceURI = elem.getNamespaceURI();
-    name = elem.getLocalName();
-    // setData( elem.getChildNodes() );
-    setData( elem.getElementsByTagName("*") );
+    root = elem ;
   }
 
-  public String  getName() { return( name ); }
-  public void    setName(String name) { this.name = name ; }
-
-  public String  getNamespace() { return( namespace ); }
-  public void    setNamespace(String ns) { namespace = ns; }
-
-  public String  getNamespaceURI() { return( namespaceURI ); }
-  public void    setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
-
-  public Vector getData() { 
-    if ( data == null || data.size() == 0 ) return( null );
-    Vector  v = new Vector();
-
-    for ( int i = 0 ;i < data.size() ; i++ )
-      v.add( data.get(i) );
-    return( v );
+  public Element getRoot() {
+    return( root );
   }
 
-  public void addDataNode(Node n) { data.add(n); };
-
-  public void setData(NodeList nl) { 
-    data = null ;
-    if ( nl == null || nl.getLength() == 0 ) return ;
-    for ( int i = 0 ; i < nl.getLength() ; i++ ) {
-      Node n = nl.item(i);
-      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
-      if ( data == null ) data = new ArrayList();
-      data.add( n );
-    }
+  public void setRoot(Element r) {
+    this.root = r ;
   }
 
   public Element getAsXML(Document doc) {
-    Element   root = doc.createElementNS(namespace, namespace + ":" +
-                                         name );
-    root.setAttribute( "xmlns:" + namespace, namespaceURI );
+    if ( doc == null ) return( root );
+    return( (Element) doc.importNode( (Node) root, true ) );
+  }
 
-    for ( int i = 0 ; data != null && i < data.size() ; i++ )
-      root.appendChild(doc.importNode( (Node) data.get(i), true ));
-    return( root );
+  public Document getAsDocument() {
+    Document doc = new DocumentImpl();
+    doc.appendChild( doc.importNode( (Node) root, true ) );
+    return( doc );
   }
 
 };

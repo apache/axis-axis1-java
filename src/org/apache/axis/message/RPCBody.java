@@ -69,29 +69,26 @@ import org.apache.axis.message.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class RPCBody extends SOAPBody {
-  protected String    namespace ;
+  protected String    methodName ;
+  protected String    prefix ;
   protected String    namespaceURI ;
   protected ArrayList args ;                // RPCArgs
 
   public RPCBody() {}
 
   public RPCBody(Element elem) {
-    NodeList  list ;
-
-    namespace = elem.getPrefix();
-    namespaceURI = elem.getNamespaceURI();
-    name = elem.getLocalName();
-    parseArgs( elem.getChildNodes() );
+    setBody( elem );
   }
 
   public RPCBody(SOAPBody b) {
-    setMethodName( b.getName() );
-    setNamespace( b.getNamespace() );
-    setNamespaceURI( b.getNamespaceURI() );
-    Vector list = b.getData();
-    if ( list != null )
-      for ( int i = 0 ; i < list.size() ; i++ )
-        addArg( new RPCArg( (Element) list.get(i) ) );
+    setBody( b.getRoot() );
+  }
+
+  public void setBody( Element root ) {
+    setMethodName( root.getLocalName() );
+    setPrefix( root.getPrefix() );
+    setNamespaceURI( root.getNamespaceURI() );
+    parseArgs( root.getChildNodes() );
   }
 
   public RPCBody(String methodName, Object[] args) {
@@ -104,11 +101,11 @@ public class RPCBody extends SOAPBody {
     }
   }
 
-  public String getMethodName() { return( name ); }
-  public void   setMethodName(String name) { this.name = name ; }
+  public String getMethodName() { return( this.methodName ); }
+  public void   setMethodName(String name) { this.methodName = name ; }
 
-  public String getNamespace() { return( namespace ); }
-  public void   setNamespace(String ns) { namespace = ns; }
+  public String getPrefix() { return( prefix ); }
+  public void   setPrefix(String p) { prefix = p; }
 
   public String getNamespaceURI() { return( namespaceURI ); }
   public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
@@ -138,13 +135,12 @@ public class RPCBody extends SOAPBody {
   public Element getAsXML(Document doc) {
     Element   root ;
    
-    if ( namespace != null ) {
-      root = doc.createElementNS(namespace, namespace + ":" + name );
-      root.setAttribute( "xmlns:" + namespace, namespaceURI );
+    if ( prefix != null ) {
+      root = doc.createElementNS(prefix, prefix + ":" + methodName );
+      root.setAttribute( "xmlns:" + prefix, namespaceURI );
     }
-    else {
-      root = doc.createElement( name );
-    }
+    else 
+      root = doc.createElement( methodName );
     for ( int i = 0 ; args != null && i < args.size() ; i++ ) {
       RPCArg  arg = (RPCArg) args.get(i) ;
       root.appendChild( arg.getAsXML(doc) );

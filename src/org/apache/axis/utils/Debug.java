@@ -1,3 +1,4 @@
+
 /*
  * The Apache Software License, Version 1.1
  *
@@ -57,54 +58,85 @@
 
 package org.apache.axis.utils ;
 
-public class Constants {
-  // Some common Constants that should be used in local handler options
-  // (Not all implementations will have these concepts - for example
-  //  not all Engines will have notion of registries but defining these
-  //  here should allow people to ask if they exist)
-  //////////////////////////////////////////////////////////////////////////
-  public static String HANDLER_REGISTRY = "HandlerRegistry" ;
-  public static String SERVICE_REGISTRY = "ServiceRegistry" ;
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 
-  // MessageContext Property Names
-  //////////////////////////////////////////////////////////////////////////
-  public static String MC_TARGET           = "TargetAction" ;      // String
-  public static String MC_SVC_HANDLER      = "ServiceHandler" ;    // Handler
-  public static String MC_HTTP_STATUS_CODE = "HTTP_Status_Code" ;  // Integer
-  public static String MC_HTTP_STATUS_LINE = "HTTP_Status_Line" ;  // String
+// We should replace this with Log4J if we really want this stuff.  But
+// for now I want something that's easy and doesn't require any other
+// jar files
 
-  // Envelope Stuff
-  //////////////////////////////////////////////////////////////////////////
-  public static String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
-  public static String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
-  public static String NSPREFIX_SCHEMA_XSI = "xsi" ;
-  public static String NSPREFIX_SCHEMA_XSD = "xsd" ;
+import java.io.* ;
 
-  public static String URI_SOAP_ENV =
-                               "http://schemas.xmlsoap.org/soap/envelope/" ;
-  public static String URI_SOAP_ENC =
-                               "http://schemas.xmlsoap.org/soap/encoding/" ;
-  public static String URI_SCHEMA_XSI =
-                               "http://www.w3.org/1999/XMLSchema/instance/" ;
-  public static String URI_SCHEMA_XSD =
-                               "http://www.w3.org/1999/XMLSchema/" ;
-  public static String URI_NEXT_ACTOR = 
-                               "http://schemas.xmlsoap.org/soap/actor/next" ;
+public class Debug {
+  private static int     debugLevel = 0 ;
+  private static boolean toScreen   = true ;
+  private static boolean toFile     = false ;
 
-  public static String ELEM_ENVELOPE = "Envelope" ;
-  public static String ELEM_HEADER   = "Header" ;
-  public static String ELEM_BODY     = "Body" ;
-  public static String ELEM_FAULT    = "Fault" ;
+  public static void setDebugLevel( int dl ) {
+    debugLevel = dl ;
+  }
 
-  public static String ELEM_FAULT_CODE   = "faultcode" ;
-  public static String ELEM_FAULT_STRING = "faultstring" ;
-  public static String ELEM_FAULT_DETAIL = "detail" ;
-  public static String ELEM_FAULT_ACTOR  = "faultactor" ;
+  public static int getDebugLevel() {
+    return( debugLevel );
+  }
 
-  public static String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
-  public static String ATTR_ENCODING_STYLE  = "encodingStyle" ;
-  public static String ATTR_ACTOR           = "actor" ;
-  public static String ATTR_ROOT            = "root" ;
-  public static String ATTR_ID              = "id" ;
-  public static String ATTR_HREF            = "href" ;
+  public static int incDebugLevel() {
+    return( ++debugLevel );
+  }
+
+  public static int decDebugLevel() {
+    return( debugLevel = ( (debugLevel == 0) ? 0 : (debugLevel-1) ) );
+  }
+
+  public static void setToScreen(boolean b) {
+    toScreen = b ;
+  }
+
+  public static void setToFile(boolean b) {
+    toFile = b ;
+  }
+
+  public static boolean DebugOn(int level) {
+    return( debugLevel >= level );
+  }
+
+  public static void Print( int level, Exception exp ) {
+    if ( debugLevel < level ) return ;
+    try {
+      String msg = "Exception: " + exp.getMessage() ;
+      if ( toScreen )
+        System.err.println( msg );
+      if ( toFile ) {
+        FileWriter   fw = new FileWriter( "AxisDebug.log", true );
+        fw.write( msg, 0, msg.length() );
+        PrintWriter  pw = new PrintWriter( fw );
+        exp.printStackTrace( pw );
+        pw.close();
+        fw.close();
+      }
+    }
+    catch( Exception e ) {
+      System.err.println( "Can't log debug info: " + e );
+      e.printStackTrace();
+    }
+  }
+
+  public static void Print( int level, String msg ) {
+    if ( debugLevel >= level ) {
+      if ( toScreen ) System.err.println( msg );
+      if ( toFile ) {
+        try {
+          FileWriter fw = new FileWriter( "AxisDebug.log", true );
+          fw.write( msg, 0, msg.length() );
+          fw.close();
+        }
+        catch( Exception e ) {
+          System.err.println( "Can't log debug info: " + e );
+          e.printStackTrace();
+        }
+      }
+    }
+  }
 }

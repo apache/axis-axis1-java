@@ -61,6 +61,7 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.utils.* ;
 
 /**
  *
@@ -95,15 +96,18 @@ public class HTTPCall {
     this.action = action ;
   }
 
-  public static Object invoke(String url, String act, String m, Object[] args) {
+  public static Object invoke(String url, String act, String m, Object[] args) 
+      throws AxisFault
+  {
     HTTPCall  ahc = new HTTPCall();
     ahc.setURL( url );
     ahc.setAction( act );
     return( ahc.invoke( m, args ) );
   }
 
-  public Object invoke( String method, Object[] args ) {
+  public Object invoke( String method, Object[] args ) throws AxisFault {
     // quote = HTTPCall.invoke( "getQuote", Object[] { "IBM" } );
+    Debug.Print( 1, "Enter: HTTPCall.invoke" );
     RPCBody              body   = new RPCBody( method, args );
     SOAPEnvelope         reqEnv = new SOAPEnvelope();
     SOAPEnvelope         resEnv = null ;
@@ -115,7 +119,7 @@ public class HTTPCall {
     Vector               resArgs = null ;
     RPCArg               arg ;
 
-    body.setNamespace( "m" );
+    body.setPrefix( "m" );
     body.setNamespaceURI( action );
     reqEnv.addBody( body );
     msgContext.setProperty( "HTTP_URL", url );   // horrible name!
@@ -126,8 +130,8 @@ public class HTTPCall {
       client.cleanup();
     }
     catch( AxisFault fault ) {
-      System.err.println( fault );
-      System.exit(1); /// ha!
+      Debug.Print( 1,  fault );
+      throw fault ;
     }
 
     resMsg = msgContext.getOutgoingMessage();
@@ -137,6 +141,7 @@ public class HTTPCall {
     body = (RPCBody) resBodies.get( 0 );
     resArgs = body.getArgs();
     arg = (RPCArg) resArgs.get(0);
+    Debug.Print( 1, "Exit: HTTPCall.invoke" );
     return( (String) arg.getValue() );
   }
 

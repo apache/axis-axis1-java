@@ -4,6 +4,15 @@
 <!-- This file will be replaced by WSDD once it's ready -->
 
 <deploy>
-  <handler name="admin" class="org.apache.axis.handlers.AdminHandler" />
-  <service name="AdminService" handler="admin" />
+  <handler name="MsgDispatcher"
+           class="org.apache.axis.handlers.MsgDispatchHandler" />
+
+  <handler name="RPCDispatcher"
+           class="org.apache.axis.handlers.RPCDispatchHandler" />
+
+  <service name="AdminService" handler="MsgDispatchHandler">
+    <option name="className" value="org.apache.axis.utils.Admin" />
+    <option name="methodName" value="AdminService" />
+  </service>
+
 </deploy>

@@ -62,6 +62,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.client.HTTPCall ;
+import org.apache.axis.utils.Debug ;
 
 /** 
  *
@@ -83,6 +84,8 @@ public class GetQuote {
       for ( int i = 0 ; i < args.length ; i++ ) {
         if ( args[i].charAt(0) == '-' ) 
           switch( args[i].toLowerCase().charAt(1) ) {
+            case 'd': Debug.incDebugLevel();
+                      break ;
             case 'h': if ( args[i].length() > 2 )
                         host = args[i].substring(2);
                       break ;

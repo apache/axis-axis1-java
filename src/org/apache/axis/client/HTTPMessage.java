@@ -55,56 +55,96 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils ;
+package org.apache.axis.client ;
 
-public class Constants {
-  // Some common Constants that should be used in local handler options
-  // (Not all implementations will have these concepts - for example
-  //  not all Engines will have notion of registries but defining these
-  //  here should allow people to ask if they exist)
-  //////////////////////////////////////////////////////////////////////////
-  public static String HANDLER_REGISTRY = "HandlerRegistry" ;
-  public static String SERVICE_REGISTRY = "ServiceRegistry" ;
+import java.util.* ;
+import org.w3c.dom.* ;
 
-  // MessageContext Property Names
-  //////////////////////////////////////////////////////////////////////////
-  public static String MC_TARGET           = "TargetAction" ;      // String
-  public static String MC_SVC_HANDLER      = "ServiceHandler" ;    // Handler
-  public static String MC_HTTP_STATUS_CODE = "HTTP_Status_Code" ;  // Integer
-  public static String MC_HTTP_STATUS_LINE = "HTTP_Status_Line" ;  // String
+import org.apache.axis.* ;
+import org.apache.axis.message.* ;
+import org.apache.axis.handlers.* ;
+import org.apache.axis.utils.* ;
 
-  // Envelope Stuff
-  //////////////////////////////////////////////////////////////////////////
-  public static String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
-  public static String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
-  public static String NSPREFIX_SCHEMA_XSI = "xsi" ;
-  public static String NSPREFIX_SCHEMA_XSD = "xsd" ;
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 
-  public static String URI_SOAP_ENV =
-                               "http://schemas.xmlsoap.org/soap/envelope/" ;
-  public static String URI_SOAP_ENC =
-                               "http://schemas.xmlsoap.org/soap/encoding/" ;
-  public static String URI_SCHEMA_XSI =
-                               "http://www.w3.org/1999/XMLSchema/instance/" ;
-  public static String URI_SCHEMA_XSD =
-                               "http://www.w3.org/1999/XMLSchema/" ;
-  public static String URI_NEXT_ACTOR = 
-                               "http://schemas.xmlsoap.org/soap/actor/next" ;
 
-  public static String ELEM_ENVELOPE = "Envelope" ;
-  public static String ELEM_HEADER   = "Header" ;
-  public static String ELEM_BODY     = "Body" ;
-  public static String ELEM_FAULT    = "Fault" ;
+// Need to add proxy, ssl.... other cool things - but it's a start
+// Only supports String
 
-  public static String ELEM_FAULT_CODE   = "faultcode" ;
-  public static String ELEM_FAULT_STRING = "faultstring" ;
-  public static String ELEM_FAULT_DETAIL = "detail" ;
-  public static String ELEM_FAULT_ACTOR  = "faultactor" ;
+public class HTTPMessage {
+  private String  url ;
+  private String  action ;
 
-  public static String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
-  public static String ATTR_ENCODING_STYLE  = "encodingStyle" ;
-  public static String ATTR_ACTOR           = "actor" ;
-  public static String ATTR_ROOT            = "root" ;
-  public static String ATTR_ID              = "id" ;
-  public static String ATTR_HREF            = "href" ;
+  public HTTPMessage() {
+  }
+
+  public HTTPMessage(String url) {
+    this.url = url ;
+  }
+
+  public HTTPMessage(String url, String action) {
+    setURL( url );
+    setAction( action );
+  }
+
+  public void setURL( String url ) {
+    this.url = url ;
+  }
+
+  public void setAction( String action ) {
+    this.action = action ;
+  }
+
+  public static void invoke(String url, String act, MessageContext mc ) 
+      throws AxisFault
+  {
+    HTTPMessage  hm = new HTTPMessage();
+    hm.setURL( url );
+    hm.setAction( act );
+    hm.invoke( mc );
+  }
+
+  public void invoke( MessageContext mc ) throws AxisFault {
+    Debug.Print( 1, "Enter: HTTPMessage.invoke" );
+    Message              inMsg = mc.getIncomingMessage();
+
+    Document             doc = (Document) inMsg.getAs("Document");
+    Element              root = doc.getDocumentElement();
+    SOAPBody             reqBody = new SOAPBody( root );
+    SOAPEnvelope         reqEnv = new SOAPEnvelope();
+    HTTPDispatchHandler  client = new HTTPDispatchHandler();
+    Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
+    MessageContext       msgContext = new MessageContext( reqMsg );
+
+    reqEnv.addBody( reqBody );
+
+    if ( Debug.DebugOn(1) ) {
+      Debug.Print( 1, "Request Message:" );
+      Debug.Print( 1, (String) reqMsg.getAs("String") );
+    }
+
+    msgContext.setProperty( "HTTP_URL", url );   // horrible name!
+    msgContext.setProperty( "HTTP_ACTION", action );   // horrible name!
+    try {
+      client.init();
+      client.invoke( msgContext );
+      client.cleanup();
+    }
+    catch( AxisFault fault ) {
+      Debug.Print( 1,  fault );
+      throw fault ;
+    }
+
+    Message       resMsg = msgContext.getOutgoingMessage();
+    SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
+    SOAPBody      resBody = resEnv.getFirstBody();
+
+    mc.setOutgoingMessage( new Message(resBody.getAsDocument(), "Document") );
+
+    Debug.Print( 1, "Exit: HTTPMessage.invoke" );
+  }
+
 }

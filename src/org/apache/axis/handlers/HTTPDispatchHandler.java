@@ -68,6 +68,7 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 
 /**
+ * This is meant to be used on a SOAP Client to call a SOAP server.
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
@@ -81,6 +82,7 @@ public class HTTPDispatchHandler implements Handler {
   }
 
   public void invoke(MessageContext msgContext) throws AxisFault {
+    Debug.Print( 1, "Enter: HTTPDispatchHandler::invoke" );
     /* Find the service we're invoking so we can grab it's options */
     /***************************************************************/
     String   targetURL = (String) msgContext.getProperty( "HTTP_URL" );
@@ -99,8 +101,10 @@ public class HTTPDispatchHandler implements Handler {
       if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
       Socket             sock = null ;
-      sock = new Socket( host, port );
-      reqEnv    = (String) msgContext.getIncomingMessage().getAs("String");
+
+      sock    = new Socket( host, port );
+      reqEnv  = (String) msgContext.getIncomingMessage().getAs("String");
+
       OutputStream  out  = sock.getOutputStream();
       InputStream   inp  = sock.getInputStream();
       String        header = "POST " + tmpURL.getPath() + " HTTP/1.0\n" +
@@ -138,7 +142,19 @@ public class HTTPDispatchHandler implements Handler {
             name = new String( buf, 0, len );
             value = "" ;
           }
-          headers.put( name, value );
+          Debug.Print( 2, name + value );
+          if ( msgContext.getProperty(Constants.MC_HTTP_STATUS_CODE) == null ) {
+            // Reader status code
+            int start = name.indexOf( ' ' ) + 1 ;
+            int end   = name.indexOf( ' ', start ) ;
+            rc = Integer.parseInt( name.substring(start, end) );
+            msgContext.setProperty( Constants.MC_HTTP_STATUS_CODE, 
+                                    new Integer(rc) );
+            msgContext.setProperty( Constants.MC_HTTP_STATUS_LINE, 
+                                    name.substring(end+1));
+          }
+          else 
+            headers.put( name, value );
           len = 0 ;
         }
       }
@@ -148,6 +164,11 @@ public class HTTPDispatchHandler implements Handler {
   
         outMsg = new Message( parser.getDocument(), "Document" );
         msgContext.setOutgoingMessage( outMsg );
+        if ( Debug.DebugOn(2) ) {
+          Debug.Print( 2, "XML received:" );
+          Message m = new Message( parser.getDocument(), "Document" );
+          Debug.Print( 2, (String) m.getAs( "String" ) );
+        }
       }
 
       inp.close();
@@ -155,10 +176,11 @@ public class HTTPDispatchHandler implements Handler {
       sock.close();
     }
     catch( Exception e ) {
-      e.printStackTrace();
+      Debug.Print( 1, e );
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
     } 
+    Debug.Print( 1, "Exit: HTTPDispatchHandler::invoke" );
   }
 
   public void undo(MessageContext msgContext) { 
