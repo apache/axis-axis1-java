@@ -696,9 +696,13 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("        return new " + wrapper
                         + "(value).toString();");
             } else {
-                if (simpleValueTypes.get(0).equals("byte[]")) {
+                String simpleValueType0 = (String)simpleValueTypes.get(0); 
+                if (simpleValueType0.equals("byte[]")) {
                     pw.println(
                             "        return value == null ? null : org.apache.axis.types.HexBinary.encode(value);");
+                } else if (simpleValueType0.equals("java.util.Calendar")) {
+                    pw.println(
+                            "        return value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(value, null);");
                 } else {
                     pw.println(
                             "        return value == null ? null : value.toString();");
