@@ -167,15 +167,19 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         prevQName = elemQName;
 
         if (typeDesc != null) {       
-            // IF we're SOAP-encoded AND this is an unprefixed element,
-            // ignore the actual namespace context for the element, and
-            // just compare local names.
-            boolean ignoreNS = ((prefix == null || prefix.equals("")) && 
-                                context.getMessageContext().isEncoded());
             
+            // First lookup the field using the target namespace context
+            // and local name.  If this fails and the incoming element
+            // name is not prefixed, lookup the name assuming an unqualified
+            // name.
             String fieldName = typeDesc.getFieldNameForElement(elemQName, 
-                                                               ignoreNS);
-            
+                                                               false);
+            if (fieldName == null && (prefix == null || prefix.equals(""))) {
+                fieldName = 
+                    typeDesc.getFieldNameForElement(
+                      new QName("", elemQName.getLocalPart()), false);
+            }
+
             propDesc = (BeanPropertyDescriptor)propertyMap.get(fieldName);
         }
 
@@ -183,6 +187,36 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             // look for a field by this name.
             propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
         }
+
+        // Currently the meta data does not consider inheritance.
+        // Glen is working on a fix.  In the meantime, the following 
+        // code attempts to get the meta data from the base class.  
+        // (this fix does not work in all cases, but is necessary to 
+        // get comprehensive tests Animal - Cat inheritance to work).
+        if (propDesc == null) {
+            Class superClass = javaType;
+            while (superClass != null && propDesc == null) {
+                superClass = superClass.getSuperclass(); 
+                if (superClass != null) {
+                    TypeDesc td = TypeDesc.getTypeDescForClass(superClass);
+                    if (td != null) {
+                        String fieldName = 
+                            td.getFieldNameForElement(elemQName, 
+                                                      false);
+                        if (fieldName == null && 
+                            (prefix == null || prefix.equals(""))) {
+                            fieldName = 
+                                td.getFieldNameForElement(
+                                new QName("", elemQName.getLocalPart()), false);
+                        }
+                        
+                        propDesc = 
+                            (BeanPropertyDescriptor)propertyMap.get(fieldName);
+                    }
+                }
+            }
+        }
+
         if (propDesc == null) {
             // No such field
             throw new SAXException(
