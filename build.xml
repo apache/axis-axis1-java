@@ -48,7 +48,8 @@ Copyright:
   <property name="Name" value="Axis"/>
   <property name="year" value="2001"/>
 
-  <property name="debug" value="on"/>
+  <property name="debug" value="true"/>
+  <property name="deprecation" value="true"/>
 
   <property name="src.dir" value="./src"/>
   <property name="docs.dir" value="./docs"/>
@@ -101,6 +102,7 @@ Copyright:
     <echo message=""/>
     <echo message="--- Property values" />
     <echo message="debug=${debug}" />
+    <echo message="deprecation=${deprecation}" />
 
     <uptodate property="javadoc.notrequired"
               targetfile="${build.javadocs}/index.html">
@@ -113,6 +115,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="compile" depends="setenv">
     <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}"
+      deprecation="${deprecation}"
       classpathref="classpath">
       <exclude name="**/old/**/*" />
       <exclude name="org/apache/axis/handlers/HTTP*" unless="servlet.present"/>
