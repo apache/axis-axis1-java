@@ -532,11 +532,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     // Mark the type as a complex type fault
                     te.setDynamicVar(
                         JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
-                        new Boolean(true));
+                        Boolean.TRUE);
                     if (elementTE != null) {
                         te.setDynamicVar(
                            JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
-                           new Boolean(true));
+                           Boolean.TRUE);
                     }
 
                     // Mark all derived types as Complex Faults
@@ -549,7 +549,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             derivedI.next();
                         derivedTE.setDynamicVar(
                             JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
-                            new Boolean(true));
+                            Boolean.TRUE);
                     }
                     // Mark all base types as Complex Faults
                     TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
@@ -558,7 +558,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     while (base != null) {
                         base.setDynamicVar(
                             JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
-                            new Boolean(true));
+                            Boolean.TRUE);
                         base = SchemaUtils.getComplexElementExtensionBase(
                             base.getNode(),
                             symbolTable);
@@ -579,7 +579,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             if (exceptionClassName != null) {
                 me.setDynamicVar(
                                  JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
-                                 new Boolean(true));
+                                 Boolean.TRUE);
                 me.setDynamicVar(
                                  JavaGeneratorFactory.EXCEPTION_CLASS_NAME, 
                                  exceptionClassName);
@@ -979,13 +979,13 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                 TypeEntry typeEntry = p.getType();
                                 typeEntry.setDynamicVar(
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
-                                        new Boolean(true));
+                                        Boolean.TRUE);
                                 //If this is a complex then set the HOLDER_IS_NEEDED
                                 //for the reftype too.
                                 if(!typeEntry.isSimpleType() && typeEntry.getRefType()!=null){
                                     typeEntry.getRefType().setDynamicVar(
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
-                                        new Boolean(true));
+                                        Boolean.TRUE);
                                 }
 
                                 // If the type is a DefinedElement, need to 
@@ -998,7 +998,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                     if (anonType != null) {
                                         anonType.setDynamicVar(
                                             JavaTypeWriter.HOLDER_IS_NEEDED,
-                                            new Boolean(true));
+                                            Boolean.TRUE);
                                     }                                    
                                 }
                             }

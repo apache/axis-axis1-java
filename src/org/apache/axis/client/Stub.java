@@ -200,7 +200,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
                 return cachedEndpoint.toString();
             }
             else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {
-                return maintainSessionSet ? new Boolean(maintainSession) : null;
+                return maintainSessionSet ? Boolean.valueOf(maintainSession) : null;
             }
             else if (name.startsWith("java.") || name.startsWith("javax.")) {
                 throw new JAXRPCException(
@@ -301,7 +301,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     public void setMaintainSession(boolean session) {
         maintainSessionSet = true;
         maintainSession = session;
-        cachedProperties.put(Call.SESSION_MAINTAIN_PROPERTY, new Boolean(session));
+        cachedProperties.put(Call.SESSION_MAINTAIN_PROPERTY, Boolean.valueOf(session));
     } // setmaintainSession
 
 
