@@ -179,10 +179,14 @@ public class ArraySerializer implements Serializer
         String arrayType = "";
         int dim2Len = -1;
         if (encoded) {
-            if (soap == SOAPConstants.SOAP12_CONSTANTS)
+            if (soap == SOAPConstants.SOAP12_CONSTANTS) {
                 arrayType = dims + len;
-            else
-                arrayType = dims + "[" + len + "]";
+            } else {
+                if (componentType == null)
+                    arrayType = dims + "[" + len + "]";
+                else
+                    arrayType = "[" + len + "]";
+            }
 
             // Discover whether array can be serialized directly as a two-dimensional
             // array (i.e. arrayType=int[2,3]) versus an array of arrays.
