@@ -59,6 +59,7 @@ import java.util.*;
 import java.io.Serializable ;
 import org.apache.axis.* ;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.utils.* ;
 
 import javax.xml.parsers.* ;
@@ -74,8 +75,7 @@ import org.w3c.dom.* ;
  */
 public class FaultableHandler extends BasicHandler {
     protected Handler    workHandler ;
-    protected Hashtable  faultHandlers ;
-    
+
     /** Constructor
      * 
      * @param workHandler the Handler we're going to wrap with Fault semantics.
@@ -83,7 +83,6 @@ public class FaultableHandler extends BasicHandler {
     public FaultableHandler(Handler workHandler)
     {
         this.workHandler = workHandler;
-        faultHandlers = new Hashtable();
     }
 
     public void init() {
@@ -115,18 +114,33 @@ public class FaultableHandler extends BasicHandler {
                 fault = new AxisFault( e );
             }
 
+            HandlerRegistry hr = msgContext.getAxisEngine().getHandlerRegistry();
+
             /** Index off fault code.
              * 
              * !!! TODO: This needs to be able to handle searching by faultcode
              * hierarchy, i.e.  "Server.General.*" or "Server.*", with the
              * most specific match winning.
              */
+            /*
             QFault   key          = fault.getFaultCode() ;
             Handler  faultHandler = (Handler) faultHandlers.get( key );
+            */
+            Handler faultHandler;
+
+            Hashtable options = getOptions();
+            Enumeration enum = options.keys();
+            while (enum.hasMoreElements()) {
+                String s = (String) enum.nextElement();
+                if (s.equals("fault-" + fault.getFaultCode().getLocalPart())) {
+                    faultHandler = hr.find((String)options.get(s));
+                }
+            }
+
             if ( faultHandler != null ) {
                 /** faultHandler will (re)throw if it's appropriate, but it
                  * might also eat the fault.  Which brings up another issue -
-                 * should we have a way to pass the Fault directly to the 
+                 * should we have a way to pass the Fault directly to the
                  * faultHandler? Maybe another well-known MessageContext
                  * property?
                  */
