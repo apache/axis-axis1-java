@@ -608,8 +608,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                 if (br == -1) {
                     return -1;
                 }
-
-                return retb[0];
+                return 0xFF & retb[0];
             }
         }
 
