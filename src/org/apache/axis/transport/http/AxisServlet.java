@@ -206,7 +206,7 @@ public class AxisServlet extends HttpServlet {
                         JavaUtils.getMessage("error00") + "</h2>");
                 writer.println("<p>" +
                         JavaUtils.getMessage("somethingWrong00") + "</p>");
-                writer.println("<pre>Fault - " + fault + " </pre>");
+                writer.println("<pre>" + fault.dumpToString() + " </pre>");
                 return;
             }
         }
@@ -363,7 +363,8 @@ public class AxisServlet extends HttpServlet {
                         JavaUtils.getMessage("error00") + "</h2>");
                 writer.println("<p>" +
                         JavaUtils.getMessage("somethingWrong00") + "</p>");
-                writer.println("<pre>Fault - " + fault + " </pre>");
+                writer.println("<pre>" + fault.dumpToString() + 
+                               " </pre>");
             } catch (Exception e) {
                 res.setContentType("text/html");
                 writer.println("<h2>" +

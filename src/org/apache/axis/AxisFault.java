@@ -213,6 +213,11 @@ public class AxisFault extends java.rmi.RemoteException {
     }
     
     public void dump() {
+        System.out.println(dumpToString());
+    }
+    
+    public String dumpToString()
+    {
         String details = new String();
         if (faultDetails != null) {
             for (int i=0; i < faultDetails.size(); i++) {
@@ -222,11 +227,11 @@ public class AxisFault extends java.rmi.RemoteException {
             }
         }
         
-        System.out.println( "AxisFault\n" +
+        return "AxisFault\n" +
                 "  faultCode: " + faultCode + "\n" +
                 "  faultString: " + faultString + "\n" +
                 "  faultActor: " + faultActor + "\n" +
-                "  faultDetail: " + details + "\n"  );
+                "  faultDetail: " + details + "\n";
     }
 
     public void setFaultCode(QFault code) {
