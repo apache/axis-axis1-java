@@ -48,11 +48,12 @@ public class TestSer extends TestCase {
         
         StringReader reader = new StringReader(msgString);
         
-        SAXAdapter adapter = new SAXAdapter(new InputSource(reader), msgContext);
-        reg = adapter.getContext().getTypeMappingRegistry();
+        DeserializationContext dser = new DeserializationContext(new InputSource(reader), msgContext);
+        reg = dser.getTypeMappingRegistry();
         reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
+        dser.parse();
         
-        SOAPEnvelope env = adapter.getEnvelope();
+        SOAPEnvelope env = dser.getEnvelope();
         RPCElement rpcElem = (RPCElement)env.getFirstBody();
         RPCParam struct = rpcElem.getParam("struct");
         assertNotNull("No <struct> param", struct);

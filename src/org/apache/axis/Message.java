@@ -59,8 +59,10 @@ import java.io.* ;
 
 import org.w3c.dom.* ;
 import org.xml.sax.*;
+import javax.xml.parsers.SAXParser;
 
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
@@ -175,7 +177,11 @@ public class Message {
         }
         
         if ( currentForm == FORM_BODYINSTREAM ) {
-            getAsSOAPEnvelope();
+            try {
+                getAsSOAPEnvelope();
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         if ( currentForm == FORM_INPUTSTREAM ) {
@@ -272,7 +278,9 @@ public class Message {
         return( null );
     }
 
-    public SOAPEnvelope getAsSOAPEnvelope() {
+    public SOAPEnvelope getAsSOAPEnvelope()
+        throws AxisFault
+    {
         Debug.Print( 2, "Enter: Message::getAsSOAPEnvelope; currentForm is "+
                         formNames[currentForm] );
         if ( currentForm == FORM_SOAPENVELOPE )
@@ -294,9 +302,17 @@ public class Message {
         } else {
             is = new InputSource(new StringReader(getAsString()));
         }
+        SAXParser parser = XMLUtils.getSAXParser();
+        DeserializationContext dser = new DeserializationContext(msgContext);
         
-        SAXAdapter parser = new SAXAdapter(is, msgContext, messageType);
-        SOAPEnvelope env = parser.getEnvelope();
+        // This may throw a SAXException
+        try {
+            parser.parse(is, dser);
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+
+        SOAPEnvelope env = dser.getEnvelope();
         env.setMessageType(messageType);
         
         setCurrentMessage( env, FORM_SOAPENVELOPE );

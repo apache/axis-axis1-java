@@ -38,8 +38,10 @@ public class TestString extends TestCase {
         
         StringReader reader = new StringReader(msgString);
         
-        SAXAdapter adapter = new SAXAdapter(new InputSource(reader), msgContext);
-        SOAPEnvelope env = adapter.getEnvelope();
+        DeserializationContext dser = new DeserializationContext(new InputSource(reader), msgContext);
+        dser.parse();
+        
+        SOAPEnvelope env = dser.getEnvelope();
         RPCElement rpcElem = (RPCElement)env.getFirstBody();
         RPCParam output = rpcElem.getParam("testParam");
         assertNotNull("No <testParam> param", output);

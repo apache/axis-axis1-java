@@ -65,8 +65,10 @@ import org.apache.axis.utils.Debug;
  */
 public class SOAPBodyElement extends MessageElement
 {
-    public SOAPBodyElement(String namespace, String localPart,
-                      Attributes attributes, DeserializationContext context)
+    public SOAPBodyElement(String namespace,
+                           String localPart,
+                           Attributes attributes,
+                           DeserializationContext context)
     {
         super(namespace, localPart, attributes, context);
     }

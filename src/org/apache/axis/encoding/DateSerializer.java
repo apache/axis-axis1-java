@@ -159,7 +159,7 @@ public class DateSerializer implements Serializer {
     }
 
     static public class DateDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer(Class cls) { return new DateDeser(); }
+        public Deserializer getDeserializer(Class cls) { return new DateDeser(); }
     }
 
     /** 

@@ -16,7 +16,7 @@ public class DOMBody extends SOAPBodyElement
         this.element = element;
     }
     
-    public void output(SerializationContext context) throws IOException
+    public void outputImpl(SerializationContext context) throws IOException
     {
         outputElement(element, context);
     }

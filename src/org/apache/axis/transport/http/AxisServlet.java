@@ -184,9 +184,13 @@ public class AxisServlet extends HttpServlet {
                 msg = new Message((AxisFault)e);
                 msgContext.setResponseMessage(msg);
             } else {
-                SOAPEnvelope env = msg.getAsSOAPEnvelope();
-                env.clearBody();
-                env.addBodyElement(new SOAPFaultElement((AxisFault)e));
+                try {
+                    SOAPEnvelope env = msg.getAsSOAPEnvelope();
+                    env.clearBody();
+                    env.addBodyElement(new SOAPFaultElement((AxisFault)e));
+                } catch (AxisFault af) {
+                    // Should never reach here!
+                }
             }
         }
 

@@ -48,14 +48,13 @@ public class TestHrefs extends TestCase {
               "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
               "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
               "xmlns:xsi=\"" + NS_XSI + "\" " +
-              "xmlns:xsd=\"" + NS_XSD + "\">\n";
-        
-        messageParts = new String [] {
+              "xmlns:xsd=\"" + NS_XSD + "\">\n" +
               "<soap:Body>\n" +
                 "<methodResult xmlns=\"http://tempuri.org/\">\n" +
                  "<reference href=\"#1\"/>\n" +
-                "</methodResult>\n",
-
+                "</methodResult>\n";
+        
+        messageParts = new String [] {
               "</soap:Body>\n",
         
              "</soap:Envelope>\n" };
@@ -97,7 +96,6 @@ public class TestHrefs extends TestCase {
             "<result root=\"0\" id=\"1\" xsi:type=\"xsd:string\">abc</result>";
         deserialize(result, "abc", 0);
         deserialize(result, "abc", 1);
-        deserialize(result, "abc", 2);
     }
 
     /*

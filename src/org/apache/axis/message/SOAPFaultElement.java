@@ -73,40 +73,22 @@ import java.io.*;
  */
 public class SOAPFaultElement extends SOAPBodyElement
 {
-    static class FaultElementFactory implements ElementFactory
-    {
-        public MessageElement createElement(String namespace, String localName,
-                                        Attributes attributes, DeserializationContext context)
-        {
-            return new SOAPFaultElement(namespace, localName, attributes, context);
-        }
-    }
-    
-    public static ElementFactory getFactory()
-    {
-        return new FaultElementFactory();
-    }
-    
     String currentSubElement;
-    StringBuffer currentValue;
+    Deserializer currentDeser;
     
-    public void onStartChild(String namespace, String name, String qName,
-                             Attributes attributes)
+    public SOAPHandler onStartChild(String namespace,
+                                    String name,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
         currentSubElement = name;
-        currentValue = new StringBuffer();
+        currentDeser = context.getTypeMappingRegistry().
+                          getDeserializer(SOAPTypeMappingRegistry.XSD_STRING);
+        return currentDeser;
     }
     
-    public void characters(char [] chars, int start, int end)
-    {
-        // Only capture characters between StartChild and EndChild (the
-        // rest, presumably, is ignorable whitespace).
-        if (currentValue != null)
-            currentValue.append(chars, start, end);
-    }
-
-    public void onEndChild(String localName, DeserializerBase deserializer)
+    public void onEndChild(String localName, Deserializer deserializer)
         throws SAXException
     {
         if (fault == null)
@@ -115,23 +97,19 @@ public class SOAPFaultElement extends SOAPBodyElement
         if (currentSubElement.equals("faultcode")) {
             fault.setFaultCode(
                       new QFault(
-                         context.getQNameFromString(currentValue.toString())
+                         context.getQNameFromString(currentDeser.getValue().toString())
                                 )
                               );
         } else if (currentSubElement.equals("faultstring")) {
-            fault.setFaultString(currentValue.toString());
+            fault.setFaultString(currentDeser.getValue().toString());
         } else if (currentSubElement.equals("faultactor")) {
-            fault.setFaultActor(currentValue.toString());
+            fault.setFaultActor(currentDeser.getValue().toString());
         } else if (currentSubElement.equals("details")) {
             // !!! Not supported yet
             // fault.setFaultDetails(...);
         }
-
-        currentValue = null;
     }
 
-    public DeserializerBase getContentHandler() { return this; }
-    
     ///////////////////////////////////////////////////////////////
     
     protected AxisFault fault;    
@@ -149,33 +127,34 @@ public class SOAPFaultElement extends SOAPBodyElement
         name = Constants.ELEM_FAULT;
     }
     
-    public void output(SerializationContext context)
+    public void outputImpl(SerializationContext context)
         throws IOException
     {
         context.registerPrefixForURI(prefix, namespaceURI);
         context.startElement(new QName(this.getNamespaceURI(), this.getName()), attributes);
 
         if (fault.getFaultCode() != null) {
-          MessageElement element = new 
-            MessageElement(Constants.URI_SOAP_ENV, "faultcode");
+          context.startElement(new QName(Constants.URI_SOAP_ENV, "faultcode"),
+                               null);
           QFault code = fault.getFaultCode();
-          String prefix = context.getPrefixForURI(code.getNamespaceURI());
-          element.setValue(prefix + ":" + code.getLocalPart());
-          element.output(context);
+          context.writeString(context.qName2String(code));
+          context.endElement();
         }
     
         if (fault.getFaultString() != null) {
-          MessageElement element = new 
-            MessageElement(Constants.URI_SOAP_ENV, "faultstring");
-          element.setValue(fault.getFaultString());
-          element.output(context);
+          context.startElement(new QName(Constants.URI_SOAP_ENV,
+                                         "faultstring"),
+                               null);
+          context.writeString(fault.getFaultString());
+          context.endElement();
         }
     
         if (fault.getFaultActor() != null) {
-          MessageElement element = new 
-            MessageElement(Constants.URI_SOAP_ENV, "faultactor");
-          element.setValue(fault.getFaultActor());
-          element.output(context);
+          context.startElement(new QName(Constants.URI_SOAP_ENV,
+                                         "faultactor"),
+                               null);
+          context.writeString(fault.getFaultActor());
+          context.endElement();
         }
     
         Element[] faultDetails = fault.getFaultDetails();

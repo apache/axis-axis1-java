@@ -64,7 +64,7 @@ import java.beans.Introspector;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
-import org.apache.axis.encoding.*;
+import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.JavaUtils;
@@ -76,7 +76,7 @@ import org.xml.sax.*;
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class BeanSerializer extends DeserializerBase 
+public class BeanSerializer extends Deserializer 
     implements Serializer, Serializable 
 {
 
@@ -150,7 +150,7 @@ public class BeanSerializer extends DeserializerBase
     public static class BeanSerFactory implements DeserializerFactory {
         private Hashtable propertyDescriptors = new Hashtable();
 
-        public DeserializerBase getDeserializer(Class cls) {
+        public Deserializer getDeserializer(Class cls) {
             PropertyDescriptor [] pd =
                   (PropertyDescriptor [])propertyDescriptors.get(cls);
             
@@ -217,8 +217,10 @@ public class BeanSerializer extends DeserializerBase
      * Deserializer interface called on each child element encountered in
      * the XML stream.
      */
-    public void onStartChild(String namespace, String localName,
-                             String qName, Attributes attributes)
+    public SOAPHandler onStartChild(String namespace,
+                                    String localName,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
         PropertyDescriptor[] pd = getPd();
@@ -246,15 +248,14 @@ public class BeanSerializer extends DeserializerBase
                                            pd[i].getPropertyType());
 
                 // get the deserializer
-                DeserializerBase dSer = context.getDeserializer(qn);
+                Deserializer dSer = tmr.getDeserializer(qn);
                 if (dSer == null)
                     throw new SAXException("No deserializer for " + 
                                            pd[i].getPropertyType());
 
                 // Success!  Register the target and deserializer.
                 dSer.registerValueTarget(new PropertyTarget(value, pd[i]));
-                context.pushElementHandler(dSer);
-                return;
+                return dSer;
             }
         }
 

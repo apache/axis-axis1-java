@@ -22,7 +22,9 @@ public class SAXOutputter extends DefaultHandler
     }
     
     public void endDocument() throws SAXException {
-        System.out.println("SAXOutputter: end document.");
+        if (DEBUG_LOG) {
+            System.out.println("SAXOutputter: end document.");
+        }
     }
     
     public void startPrefixMapping(String p1, String p2) throws SAXException {

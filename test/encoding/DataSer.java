@@ -5,15 +5,17 @@ import org.apache.axis.encoding.*;
 import java.util.*;
 import java.io.*;
 import org.xml.sax.*;
+import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.QName;
 
-public class DataSer extends DeserializerBase implements Serializer
+public class DataSer extends Deserializer implements Serializer
 {
     public static final String STRINGMEMBER = "stringMember";
     public static final String FLOATMEMBER = "floatMember";
     
     public static class DataSerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer(Class cls) {
+        public Deserializer getDeserializer(Class cls) {
             return new DataSer();
         }
     }
@@ -34,24 +36,35 @@ public class DataSer extends DeserializerBase implements Serializer
     /** DESERIALIZER STUFF - event handlers
      */
     
-    public void onStartChild(String namespace, String localName,
-                             String qName, Attributes attributes)
+    public SOAPHandler onStartChild(String namespace,
+                                    String localName,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
         QName typeQName = (QName)typesByMemberName.get(localName);
         if (typeQName == null)
-            throw new SAXException("Invalid element in Data struct - " + localName);
+            throw new SAXException("Invalid element in Data struct - " +
+                                   localName);
         
         // These can come in either order.
-        DeserializerBase dSer = context.getDeserializer(typeQName);
+        Deserializer dSer = context.getTypeMappingRegistry().
+                                                     getDeserializer(typeQName);
         
         if (dSer == null)
             throw new SAXException("No deserializer for a " + typeQName + "???");
         
-        context.pushElementHandler(dSer);
+        try {
+            dSer.registerValueTarget(new Deserializer.FieldTarget(value,
+                                                                  localName));
+        } catch (NoSuchFieldException e) {
+            throw new SAXException(e);
+        }
+        
+        return dSer;
     }
     
-    public void onEndChild(String localName, DeserializerBase deserializer)
+    public void onEndChild(String localName, Deserializer deserializer)
         throws SAXException
     {
         if (STRINGMEMBER.equals(localName)) {

@@ -68,7 +68,6 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.registries.HandlerRegistry;
-import org.apache.axis.message.DebugHeader;
 import org.apache.axis.transport.http.HTTPTransport;
 
 import org.w3c.dom.* ;

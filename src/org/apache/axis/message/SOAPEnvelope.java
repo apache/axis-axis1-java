@@ -64,18 +64,14 @@ import org.apache.axis.AxisFault;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class SOAPEnvelope
+public class SOAPEnvelope extends MessageElement
 {
     private static boolean DEBUG_LOG = false;
     
     public Vector headers = new Vector();
     public Vector bodyElements = new Vector();
-    public Vector independentElements = new Vector();
-    public Hashtable idMapping = new Hashtable();
+    public Vector trailers = new Vector();
     public String encodingStyleURI = null;
-    public Hashtable nsDecls = new Hashtable();
-                                            
-    public SOAPSAXHandler handler;
     
     // This is a hint to any service description to tell it what
     // "type" of message we are.  This might be "request", "response",
@@ -90,14 +86,8 @@ public class SOAPEnvelope
         nsDecls.put(Constants.URI_SOAP_ENV, Constants.NSPREFIX_SOAP_ENV);
         nsDecls.put(Constants.URI_CURRENT_SCHEMA_XSD, Constants.NSPREFIX_SCHEMA_XSD);
         nsDecls.put(Constants.URI_CURRENT_SCHEMA_XSI, Constants.NSPREFIX_SCHEMA_XSI);
-        handler = null;
     }
     
-    SOAPEnvelope(SOAPSAXHandler handler)
-    {
-        this.handler = handler;
-    }
-
     public String getMessageType()
     {
         return messageType;
@@ -113,35 +103,18 @@ public class SOAPEnvelope
         encodingStyleURI = uri;
     }
     
-    public String getAsString()
-    {
-        // !!! NOT IMPLEMENTED YET
-        return null;
-    }
-    
     public Vector getBodyElements() throws AxisFault
     {
-        if ((handler != null) && !handler.hasParsedBody()) {
-            try {
-                handler.parseToEnd();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        }
-        
         return bodyElements;
+    }
+    
+    public Vector getTrailers()
+    {
+        return trailers;
     }
     
     public SOAPBodyElement getFirstBody() throws AxisFault
     {
-        if ((handler != null) && !handler.hasParsedBody()) {
-            try {
-                handler.parseToEnd();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        }
-        
         if (bodyElements.isEmpty())
             return null;
         
@@ -150,23 +123,7 @@ public class SOAPEnvelope
     
     public Vector getHeaders() throws AxisFault
     {
-        if ((handler != null) && !handler.hasParsedHeaders()) {
-            try {
-                handler.parseToEnd();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        }
-        
         return headers;
-    }
-    
-    void processID(MessageElement element)
-    {
-        String id = element.getID();
-        if (id != null) {
-            idMapping.put(id, element);
-        }
     }
     
     public void addHeader(SOAPHeader header)
@@ -175,7 +132,6 @@ public class SOAPEnvelope
             System.out.println("Adding header to message...");
         header.setEnvelope(this);
         headers.addElement(header);
-        processID(header); // Can headers have IDs?
     }
     
     public void addBodyElement(SOAPBodyElement element)
@@ -184,7 +140,6 @@ public class SOAPEnvelope
             System.out.println("Adding body element to message...");
         element.setEnvelope(this);
         bodyElements.addElement(element);
-        processID(element); // Can body elements have IDs?
     }
     
     public void clearBody()
@@ -193,50 +148,18 @@ public class SOAPEnvelope
             bodyElements.removeAllElements();
     }
     
-    public void addIndependentElement(MessageElement element)
+    public void addTrailer(MessageElement element)
     {
         if (DEBUG_LOG)
-            System.out.println("Adding independent element to message...");
+            System.out.println("Adding trailer to message...");
         element.setEnvelope(this);
-        independentElements.addElement(element);
-        processID(element);
+        trailers.addElement(element);
     }
 
-    public void parseToEnd() throws AxisFault
-    {
-        if (handler != null)
-            try {
-                handler.parseToEnd();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-    }
-    
-    public MessageElement getElementByID(String id) throws AxisFault
-    {
-        MessageElement el = (MessageElement)idMapping.get(id);
-        if ((el != null) || (handler == null))
-            return el;  // Got it, or else don't have anything to parse.
-        
-        // Must find it...
-        try {
-            return handler.parseForID(id);
-        } catch (Exception e) {
-            throw new AxisFault(e);
-        }
-    }
-    
     public SOAPHeader getHeaderByName(String namespace, String localPart)
         throws AxisFault
     {
         SOAPHeader header = (SOAPHeader)findElement(headers, namespace, localPart);
-        
-        if ((header == null) && (handler != null))
-            try {
-                return handler.parseForHeader(namespace, localPart);
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
         
         return header;
     }
@@ -244,14 +167,6 @@ public class SOAPEnvelope
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
         throws AxisFault
     {
-        if ((handler != null) && !handler.hasParsedBody()) {
-            try {
-                return handler.parseForBody(namespace, localPart);
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        }
-        
         return (SOAPBodyElement)findElement(bodyElements, namespace, localPart);
     }
     
@@ -280,14 +195,6 @@ public class SOAPEnvelope
          * which moves through the headers list (parsing on demand, again),
          * returning only the next one each time.... this is Q&D for now.
          */
-        if ((handler != null) && !handler.hasParsedHeaders()) {
-            try {
-                handler.parse();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        }
-        
         Vector v = new Vector();
         Enumeration e = headers.elements();
         SOAPHeader header;
@@ -303,22 +210,11 @@ public class SOAPEnvelope
     
     /** Should make SOAPSerializationException?
      */
-    public void output(SerializationContext context)
+    public void outputImpl(SerializationContext context)
         throws Exception
     {
-        Enumeration enum;
-        
-        /** !!! Since we want this as SAX events, we need to
-         * finish parsing our input stream.  There should be a way
-         * for us to get the input stream itself, though, if we
-         * haven't started parsing yet....
-         */
-        if ((handler != null) && !handler.hasFinished()) {
-            handler.parseToEnd();
-        }
-        
         // Register namespace prefixes.
-        enum = nsDecls.keys();
+        Enumeration enum = nsDecls.keys();
         while (enum.hasMoreElements()) {
             String uri = (String)enum.nextElement();
             context.registerPrefixForURI((String)nsDecls.get(uri), uri);
@@ -373,8 +269,8 @@ public class SOAPEnvelope
         // Output </SOAP-ENV:Body>
         context.endElement();
         
-        // Output independent elements
-        enum = independentElements.elements();
+        // Output trailers
+        enum = trailers.elements();
         while (enum.hasMoreElements()) {
             MessageElement element = (MessageElement)enum.nextElement();
             element.output(context);

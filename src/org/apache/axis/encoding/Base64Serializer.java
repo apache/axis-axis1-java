@@ -70,7 +70,7 @@ import org.xml.sax.*;
  */
 public class Base64Serializer implements Serializer {
 
-    static class Base64Deser extends DeserializerBase {
+    static class Base64Deser extends Deserializer {
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
@@ -81,7 +81,7 @@ public class Base64Serializer implements Serializer {
     static public class Base64DeserializerFactory 
         implements DeserializerFactory 
     {
-        public DeserializerBase getDeserializer(Class cls) {return new Base64Deser();}
+        public Deserializer getDeserializer(Class cls) {return new Base64Deser();}
     }
 
     /** 

@@ -55,35 +55,37 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import java.io.*;
-import java.util.*;
-import org.apache.axis.Constants;
-import org.apache.axis.encoding.*;
+import java.lang.reflect.*;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.QName;
-import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.DefaultHandler;
+import java.io.IOException;
 
-/** An RPC parameter element.
+/** An RPC parameter
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class RPCParam extends MessageElement
+public class RPCParam
 {
     private static boolean DEBUG_LOG = false;
     
     // Who's your daddy?
-    RPCElement myRPCElement;
-
-    /** This constructor is called during XML parsing.
-     */
-    public RPCParam(String namespace, String localName, Attributes attrs,
-                    DeserializationContext context)
-    {
-        super(namespace, localName, attrs, context);
-        name = localName;
-    }
+    RPCElement myCall;
     
+    private String namespaceURI;
+    private String name;
+    public Object value;
+    
+    private static Field valueField;
+    static {
+        Class cls = RPCParam.class;
+        try {
+            valueField = cls.getField("value");
+        } catch (NoSuchFieldException e) {
+            System.err.println("No value field for RPCParam to use?!? " + e);
+            System.exit(-1);
+        }
+    }
+
     /** Constructor for building up messages.
      */
     public RPCParam(String name, Object value)
@@ -99,73 +101,34 @@ public class RPCParam extends MessageElement
         this.value = value;
     }
     
-    public void setRPCElement(RPCElement element)
+    public void setRPCCall(RPCElement call)
     {
-        myRPCElement = element;
-        // if (namespaceURI==null) namespaceURI=element.getNamespaceURI();
+        myCall = call;
     }
     
-    /** !!! This is a little messy... need to think about
-     * how elements get connected with their envelopes a bit
-     * more?
-     */
-    public SOAPEnvelope getEnvelope()
+    public Object getValue()
     {
-        if (myRPCElement != null)
-            return myRPCElement.getEnvelope();
-        
-        return super.getEnvelope();
+        return value;
     }
     
-   
-    public void output(SerializationContext context) throws IOException
+    public void setValue(Object value)
     {
-        AttributesImpl attrs;
-        if (deserializer != null) getValue();
-        
-        if (value instanceof ElementRecorder) {
-            try {
-                ((ElementRecorder)value).publishToHandler(new SAXOutputter(context));
-            } catch (SAXException ex) {
-                throw new IOException(ex.getMessage());
-            }
-            return;
-        } else {
-            if ((value != null) && (typeQName == null)) {
-                typeQName = context.getQNameForClass(value.getClass());
-            }
-        }
-        
-        if (attributes != null) {
-            // Must be writing a message we parsed earlier, so just put out
-            // what's already there.
-            attrs = new AttributesImpl(attributes);
-        } else {
-            // Writing a message from memory out to XML...
-            // !!! How do we set other attributes when serializing??
-            attrs = new AttributesImpl();
-            
-            ServiceDescription desc = context.getServiceDescription();
-            if ((desc == null) || desc.getSendTypeAttr()) {
-                
-                if (typeQName != null) {
-                    attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type", "xsi:type",
-                                       "CDATA",
-                                       context.qName2String(typeQName));
-                }
-            }
-        
-            if (value == null)
-                attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "null", "xsi:null",
-                                   "CDATA", "1");
-        }
-
-        // don't try to get typeQName unless value is non-null!
-        if (typeQName == null && value != null) {
-            Class clazz = value.getClass();
-            typeQName = context.getQNameForClass(clazz);
-        }
-        
-        context.serialize(new QName(getNamespaceURI(), getName()), attrs, value);
+        this.value = value;
+    }
+    
+    public String getName()
+    {
+        return this.name;
+    }
+    
+    public static Field getValueField()
+    {
+        return valueField;
+    }
+    
+    public void serialize(SerializationContext context)
+        throws IOException
+    {
+        context.serialize(new QName(namespaceURI,name), null, value);
     }
 }

@@ -1,4 +1,4 @@
-package org.apache.axis.message.events;
+package org.apache.axis.message;
 
 /*
  * The Apache Software License, Version 1.1
@@ -56,50 +56,18 @@ package org.apache.axis.message.events;
  */
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.apache.axis.encoding.DeserializationContext;
 
-import org.apache.axis.encoding.SerializationContext;
-import java.io.IOException;
-
-/** An <code>EndElementEvent</code>
+/** A simple handler factory interface
  * 
- * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-
-public class EndElementEvent implements SAXEvent
+public interface HandlerFactory
 {
-    String _namespace;
-    String _localPart;
-    String _qName;
-    
-    public EndElementEvent(String namespace, String localPart, String qName)
-    {
-        _namespace = namespace;
-        _localPart = localPart;
-        _qName = qName;
-    }
-    
-    public void publishToHandler(ContentHandler handler) throws SAXException
-    {
-        handler.endElement(_namespace, _localPart, _qName);
-    }
-    
-    public void output(SerializationContext context) throws IOException
-    {
-        context.writeString("</");
-        if (_namespace!=null && _namespace.length()>0) {
-          // FIXME: this really should be using a NSStack...
-          context.writeString(_namespace);
-          context.writeString(":");
-        }
-        context.writeString(_localPart);
-        context.writeString(">");
-    }
-    
-    public String toString()
-    {
-        return "[EndElementEvent " + _qName + " ]";
-    }
+    public SOAPHandler getHandler(String namespace,
+                                  String localName,
+                                  Attributes attributes,
+                                  DeserializationContext context)
+        throws SAXException;
 }

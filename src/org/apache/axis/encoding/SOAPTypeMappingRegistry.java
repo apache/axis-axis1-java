@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.QName;
 import org.xml.sax.*;
 
@@ -104,7 +105,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     }
     
     public static class ObjDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer(Class cls) { return null; }
+        public Deserializer getDeserializer(Class cls) { return null; }
     }
     public static class ObjSerializer implements Serializer {
         public void serialize(QName name, Attributes attributes,
@@ -115,16 +116,26 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         }
     }
 
-    public static abstract class BasicDeser extends DeserializerBase {
+    public static abstract class BasicDeser extends Deserializer {
         StringBuffer val = new StringBuffer();
+        
+        public SOAPHandler onStartChild(String namespace,
+                                        String localName,
+                                        Attributes attributes,
+                                        DeserializationContext context)
+            throws SAXException
+        {
+            throw new SAXException("Basic deser can't handle structured data!");
+        }
         
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
             val.append(chars, start, end);
         }
+        
         public void endElement(String namespace, String localName,
-                               String qName)
+                               DeserializationContext context)
             throws SAXException
         {
             try {
@@ -169,7 +180,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     }
     
     public static class BasicDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer(Class cls)
+        public Deserializer getDeserializer(Class cls)
         {
             return new BasicDeserializer(cls);
         }

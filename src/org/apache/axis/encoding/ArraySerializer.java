@@ -56,7 +56,7 @@ package org.apache.axis.encoding;
  */
 
 import org.apache.axis.*;
-import org.apache.axis.message.*;
+import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
@@ -74,9 +74,10 @@ import java.util.Hashtable;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 
-public class ArraySerializer extends DeserializerBase
+public class ArraySerializer extends Deserializer
     implements ValueReceiver, Serializer
 {
+    private final static boolean DEBUG_LOG = false;
 
     static Hashtable primitives = new Hashtable();
     static {
@@ -90,7 +91,7 @@ public class ArraySerializer extends DeserializerBase
     }
 
     public static class Factory implements DeserializerFactory {
-        public DeserializerBase getDeserializer(Class cls) {
+        public Deserializer getDeserializer(Class cls) {
             return new ArraySerializer();
         }
     }
@@ -99,12 +100,16 @@ public class ArraySerializer extends DeserializerBase
     public QName arrayType = null;
     public int curIndex = 0;
     QName arrayItemType;
+    int length;
     
-    public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes)
+    public void onStartElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
         throws SAXException
     {
-        super.startElement(namespace, localName, qName, attributes);
+        if (DEBUG_LOG) {
+            System.err.println("In ArraySerializer.startElement()");
+        }
         
         QName arrayTypeValue = context.getQNameFromString(
                                   attributes.getValue(Constants.URI_SOAP_ENC,
@@ -153,21 +158,13 @@ public class ArraySerializer extends DeserializerBase
 
             try
             {
-                int length = Integer.parseInt(lengthStr);
+                length = Integer.parseInt(lengthStr);
                 Class componentType = context.getTypeMappingRegistry().
                                               getClassForQName(arrayItemType);
                 
                 if (componentType == null)
                     throw new SAXException("No component type for " +
                                            arrayItemType);
-                
-                // Replace wrapper classes with primitive equivalents
-                /*
-                Object primitive = primitives.get(componentType);
-                if (primitive != null) componentType = (Class) primitive;
-
-                value = Array.newInstance(componentType, length);
-                */
                 
                 value = new Vector(length);
                 ((Vector)value).setSize(length);
@@ -180,39 +177,45 @@ public class ArraySerializer extends DeserializerBase
                     lengthStr + "'.");
             }
         }
+        
+        if (DEBUG_LOG) {
+            System.err.println("Out ArraySerializer.startElement()");
+        }
     }
     
-    public void onStartChild(String namespace, String localName,
-                             String qName, Attributes attributes)
+    public SOAPHandler onStartChild(String namespace,
+                                    String localName,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
-        // !!! Check position attribute, type attribute....
-        QName itemType = context.getTypeFromAttributes(attributes);
-        /*
-        if (itemType != null) {
-        if (!arrayItemType.equals(itemType))
-        throw new SAXException("Item type (" + itemType + ") didn't match ArrayType (" +
-        arrayItemType + ")");
+        if (DEBUG_LOG) {
+            System.err.println("In ArraySerializer.onStartChild()");
         }
-        */
+        
+        // !!! Check position attribute, type attribute....
+        QName itemType = context.getTypeFromAttributes(namespace,
+                                                       localName,
+                                                       attributes);
         if (itemType == null)
             itemType = arrayItemType;
         
-        DeserializerBase dSer = context.getDeserializer(itemType);
+        Deserializer dSer = context.getTypeMappingRegistry().
+                                        getDeserializer(itemType);
         dSer.registerCallback(this, new Integer(curIndex++));
-        context.pushElementHandler(dSer);
-    }
-    
-    public void onEndChild(String localName, DeserializerBase deserializer)
-        throws SAXException
-    {
+        
+        if (DEBUG_LOG) {
+            System.err.println("Out ArraySerializer.onStartChild()");
+        }
+        return dSer;
     }
     
     public void valueReady(Object value, Object hint)
     {
-        /*
-        Array.set(this.value, ((Integer)hint).intValue(), value);
-        */
+        if (DEBUG_LOG) {
+            System.err.println("ArraySerializer got value [" + hint +
+                               "] = " + value);
+        }
         ((Vector)this.value).set(((Integer)hint).intValue(), value);
     }
 

@@ -75,7 +75,7 @@ import org.xml.sax.*;
  */
 public class BooleanDeserializerFactory implements DeserializerFactory {
 
-    static class BooleanDeser extends DeserializerBase {
+    static class BooleanDeser extends Deserializer {
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
@@ -94,6 +94,6 @@ public class BooleanDeserializerFactory implements DeserializerFactory {
         }
     }
 
-    public DeserializerBase getDeserializer(Class cls) { return new BooleanDeser(); }
+    public Deserializer getDeserializer(Class cls) { return new BooleanDeser(); }
 
 }
