@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE project [
-	<!ENTITY properties SYSTEM "file:xmls/properties.xml">
+        <!ENTITY properties SYSTEM "file:xmls/properties.xml">
         <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:xmls/taskdefs.xml">
-	<!ENTITY taskdefs_post_compile SYSTEM "file:xmls/taskdefs_post_compile.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:xmls/taskdefs_post_compile.xml">
         <!ENTITY targets SYSTEM "file:xmls/targets.xml">
 ]>
 
@@ -46,11 +46,11 @@ Copyright:
 </description>
 <!-- ==================================================================== -->
 
-	&properties;
-	&paths;
-	&taskdefs;
-	&taskdefs_post_compile;
-	&targets;
+      &properties;
+      &paths;
+      &taskdefs;
+      &taskdefs_post_compile;
+      &targets;
 
   <!-- Give user a chance to override without editing this file
        (and without typing -D each time it compiles it) -->
@@ -122,10 +122,10 @@ Copyright:
     <foreach target="component-compile">
         <param name="file">
              <fileset dir="./" >
-		<patternset>
+               <patternset>
                  <include name="test/**/buildComponent.xml"/>
-		 <exclude name="test/httpunit/buildComponent.xml"/>
-		</patternset>
+               <exclude name="test/httpunit/buildComponent.xml"/>
+               </patternset>
              </fileset>
         </param>
      </foreach>
@@ -208,20 +208,20 @@ Copyright:
   <!-- =================================================================== -->
   <target name="junit-functional-prepare" if="junit.present">
     <mkdir dir="${test.functional.reportdir}" />
-	  <path id="deploy.xml.files">
-		<fileset dir="${build.dir}/work">
-		  <include name="**/deploy.wsdd"/>
-		</fileset>
-	  </path>
+    <path id="deploy.xml.files">
+    <fileset dir="${build.dir}/work">
+      <include name="**/deploy.wsdd"/>
+    </fileset>
+    </path>
 
-	  <path id="undeploy.xml.files">
-		<fileset dir="${build.dir}/work">
-		  <include name="**/undeploy.wsdd"/>
-		</fileset>
-	  </path>
+    <path id="undeploy.xml.files">
+    <fileset dir="${build.dir}/work">
+      <include name="**/undeploy.wsdd"/>
+    </fileset>
+    </path>
 
-	  <property name="deploy.xml.property" refid="deploy.xml.files"/>
-	  <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
+    <property name="deploy.xml.property" refid="deploy.xml.files"/>
+    <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
   </target>
 
   <!-- =================================================================== -->
