@@ -30,46 +30,53 @@
   </binding>
 
   <service name="empty"/>
+
+  <!-- 
+  	all services names unique in the enclosing WSDL document - Test
+  	Bug 15686
+   -->
   <service name="serviceA">
     <documentation>
     Service with all ports unique. /* Test Bug 13407 - embedded comments */
     </documentation>
-    <port name="portOne" binding="tns:bindingOne">
-      <soap:address location="http://localhost:8080/axis/services/portOne"/>
+    <port name="portAOne" binding="tns:bindingOne">
+      <soap:address location="http://localhost:8080/axis/services/portAOne"/>
     </port>
-    <port name="portTwo" binding="tns:bindingTwo">
-      <soap:address location="http://localhost:8080/axis/services/portTwo"/>
+    <port name="portATwo" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portATwo"/>
     </port>
-    <port name="portThree" binding="tns:bindingThree">
-      <soap:address location="http://localhost:8080/axis/services/portThree"/>
+    <port name="portAThree" binding="tns:bindingThree">
+      <soap:address location="http://localhost:8080/axis/services/portAThree"/>
     </port>
   </service>
+  
   <service name="serviceB">
     <documentation>
-    Service with two ports (portTwo, portTwoA) that share the same portType via the same binding.
+    Service with two ports (portBTwo, portBTwoA) that share the same portType via the same binding.
     </documentation>
-    <port name="portOne" binding="tns:bindingOne">
-      <soap:address location="http://localhost:8080/axis/services/portOne"/>
+    <port name="portBOne" binding="tns:bindingOne">
+      <soap:address location="http://localhost:8080/axis/services/portBOne"/>
     </port>
-    <port name="portTwo" binding="tns:bindingTwo">
-      <soap:address location="http://localhost:8080/axis/services/portTwo"/>
+    <port name="portBTwo" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portBTwo"/>
     </port>
-    <port name="portTwoA" binding="tns:bindingTwo">
-      <soap:address location="http://localhost:8080/axis/services/portTwoA"/>
+    <port name="portBTwoA" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portBTwoA"/>
     </port>
   </service>
-  <service name="serviceC">
+  
+  	<service name="serviceC">
     <documentation>
-    Service with two ports (portTwo, portThree) that share the same portType via different bindings.
+    Service with two ports (portCTwo, portCThree) that share the same portType via different bindings.
     </documentation>
-    <port name="portOne" binding="tns:bindingOne">
-      <soap:address location="http://localhost:8080/axis/services/portOne"/>
+    <port name="portCOne" binding="tns:bindingOne">
+      <soap:address location="http://localhost:8080/axis/services/portCOne"/>
     </port>
-    <port name="portTwo" binding="tns:bindingTwo">
-      <soap:address location="http://localhost:8080/axis/services/portTwo"/>
+    <port name="portCTwo" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portCTwo"/>
     </port>
-    <port name="portThree" binding="tns:bindingAnotherOne">
-      <soap:address location="http://localhost:8080/axis/services/portFour"/>
+    <port name="portCThree" binding="tns:bindingAnotherOne">
+      <soap:address location="http://localhost:8080/axis/services/portCThree"/>
     </port>
   </service>
 

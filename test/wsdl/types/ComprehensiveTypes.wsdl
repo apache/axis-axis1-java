@@ -961,11 +961,17 @@
       <output message="tns:arrayM"/>
     </operation>
     <operation name="arrayMOut" parameterOrder="arrayM">
-      <input message="tns:emptyM"/>
+      <!-- BUG: type emptyM not defined ! Replacing by type empty
+      	for the time being.
+      -->
+      <input message="tns:empty"/>
       <output message="tns:arrayM"/>
     </operation>
     <operation name="arrayMReturn">
-      <input message="tns:emptyM"/>
+      <!-- BUG: type emptyM not defined ! Replacing by type empty
+      	for the time being.
+      -->
+      <input message="tns:empty"/>      
       <output message="tns:arrayM"/>
     </operation>
 

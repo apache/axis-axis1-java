@@ -1026,6 +1026,122 @@ public class SymbolTable {
         }
     } // populateMessages
 
+	/**
+	 * ensures that a message in a <code>&lt;input&gt;</code>, <code>&lt;output&gt;</code>, 
+	 * or <code>&lt;fault&gt;</fault> element in an <code>&lt;operation&gt;</code>
+	 * element is valid. In particular, ensures that 
+	 * <ol>
+	 *   <li>an attribute <code>message</code> is present (according to the
+	 *      XML Schema for WSDL 1.1 <code>message</code> is <strong>required</strong>
+	 * 
+	 *   <li>the value of attribute <code>message</code> (a QName) refers to
+	 *      an already defined message 
+	 * </ol>
+	 * 
+	 * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code> rather than
+	 *   a <code>java.io.IOException</code>
+	 * 
+	 * @param message  the message object
+	 * 
+	 * @exception IOException thrown, if the message is not valid 
+	 * 
+	 */
+	protected void ensureOperationMessageValid(Message message) throws IOException {
+		
+		// make sure the message is not null (i.e. there is an
+		// attribute 'message ')
+		//
+		if (message == null) {
+			throw new IOException(
+				"<input>,<output>, or <fault> in <operation ..> without attribute 'message' found. Attribute 'message' is required."
+			);
+		}
+
+		// make sure the value of the attribute refers to an 
+		// already defined message 
+		// 		
+		if (message.isUndefined()) {
+			throw new IOException(
+					"<input ..>, <output ..> or <fault ..> in <portType> with undefined message found. message name is '"
+					+ message.getQName().toString()
+					+ "'"
+			);			
+		}		
+	}
+
+	
+	/**
+	 * ensures that an an element <code>&lt;operation&gt;</code> within
+	 * an element <code>&lt;portType&gt;<code> is valid. Throws an exception
+	 * if the operation is not valid.
+	 * 
+	 * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
+	 *  rather than a <code>java.io.IOException</code>
+	 * 
+	 * @param operation  the operation element
+	 * 
+	 * @exception IOException  thrown, if the element is not valid. 
+	 * @exception IllegalArgumentException  thrown, if operation is null
+	 */
+	protected void ensureOperationValid(Operation operation) throws IOException {
+		
+		if (operation == null) {
+			throw new IllegalArgumentException("parameter 'operation' must not be null");
+		}		
+
+		Input input = operation.getInput();
+		if (input != null) {
+			ensureOperationMessageValid(input.getMessage());
+		}
+
+		Output output = operation.getOutput();
+		if (output != null) {
+			ensureOperationMessageValid(output.getMessage());
+		}
+
+		Map faults = operation.getFaults();
+		if (faults != null) {
+			Iterator it = faults.values().iterator();
+			while(it.hasNext()) {
+				ensureOperationMessageValid(
+					((Fault)it.next()).getMessage()
+				);
+			}				
+		}
+	}
+
+	/**
+	 * ensures that an an element <code>&lt;portType&gt;</code>
+	 * is valid. Throws an exception if the portType is not valid.
+	 * 
+	 * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
+	 *  rather than a <code>java.io.IOException</code>
+	 * 
+	 * @param portType  the portType element 
+	 * 
+	 * @exception IOException  thrown, if the element is not valid. 
+	 * @exception IllegalArgumentException  thrown, if operation is null
+	 */
+	
+	protected void ensureOperationsOfPortTypeValid(PortType portType) throws IOException {
+		if (portType == null)
+			throw new IllegalArgumentException("parameter 'portType' must not be null");
+			
+        List operations = portType.getOperations();
+        
+        // no operations defined ? -> valid according to the WSDL 1.1 schema
+        //
+        if (operations == null || operations.size() == 0) return;
+
+		// check operations defined in this portType
+		//       
+        Iterator it = operations.iterator();
+        while(it.hasNext()) {
+        	Operation operation = (Operation)it.next();
+        	ensureOperationValid(operation);	
+        }        
+	}
+
     /**
      * Populate the symbol table with all of the PortTypeEntry's from the Definition.
      */
@@ -1034,15 +1150,18 @@ public class SymbolTable {
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
 
+
             // If the portType is undefined, then we're parsing a Definition
             // that didn't contain a portType, merely a binding that referred
             // to a non-existent port type.  Don't bother with it.
             if (!portType.isUndefined()) {
+	            ensureOperationsOfPortTypeValid(portType);
                 PortTypeEntry ptEntry = new PortTypeEntry(portType);
                 symbolTablePut(ptEntry);
-            }
+            }            
         }
     } // populatePortTypes
+    
 
     /**
      * Create the parameters and store them in the bindingEntry.
@@ -1947,9 +2066,76 @@ public class SymbolTable {
             }
 
             ServiceEntry sEntry = new ServiceEntry(service);
-            symbolTablePut(sEntry);
+            symbolTablePut(sEntry);          
+            populatePorts(service.getPorts());
         }
     } // populateServices
+    
+    
+    /**
+     * populates the symbol table with port elements defined within a &lt;service&gt; 
+     * element.
+     * 
+     * @param ports  a map of name->port pairs (i.e. what is returned by service.getPorts()
+     * 
+     * @exception IOException  thrown, if an IO or WSDL error is detected
+     * @see javax.wsdl.Service#getPorts()
+     * @see javax.wsdl.Port
+     */
+    private void populatePorts(Map ports) throws IOException {
+    	if (ports == null) return;
+    	Iterator it = ports.values().iterator();
+    	while(it.hasNext()) {
+    	
+    	   Port port = (Port)it.next();
+    	   String portName = port.getName();
+    	   Binding portBinding = port.getBinding();
+    	
+    	   // make sure there is a port name. The 'name' attribute for WSDL ports is 
+    	   // mandatory
+    	   //
+    	   if (portName == null){    	   	  
+    	   		//REMIND: should rather be a javax.wsdl.WSDLException ?
+    	   		throw new IOException(
+    	   		    Messages.getMessage("missingPortNameException")
+    	   		);
+    	   }
+
+		   // make sure there is a binding for the port. The 'binding' attribute for
+		   // WSDL ports is mandatory
+		   //
+		   if (portBinding == null) {	   	
+    	   		//REMIND: should rather be a javax.wsdl.WSDLException ?
+		   		throw new IOException(
+					Messages.getMessage("missingBindingException")
+		   		);
+		   }	   
+
+		   // make sure the port name is unique among all port names defined in this
+		   // WSDL document.
+		   // 
+		   // NOTE: there's a flaw in com.ibm.wsdl.xml.WSDLReaderImpl#parsePort() and
+		   // com.ibm.wsdl.xml.WSDLReaderImpl#addPort(). These methods do not enforce 
+		   // the port name exists and is unique. Actually, if two port definitions with
+		   // the same name exist within the same service element, only *one* port 
+		   // element is present after parsing and the following exception is not thrown.
+		   // 
+		   // If two ports with the same name exist in different service elements,
+		   // the exception below is thrown. This is conformant to the WSDL 1.1 spec (sec 2.6)
+		   // , which states: "The name attribute provides a unique name among all ports 
+		   // defined within in the enclosing WSDL document."
+		   // 
+		   // 
+		   if (existsPortWithName(new QName(portName))) {
+		   	   	//REMIND: should rather be a javax.wsdl.WSDLException ?
+		   		throw new IOException(
+		   			Messages.getMessage("twoPortsWithSameName", portName)
+		   		);
+		   }
+		   PortEntry portEntry = new PortEntry(port);
+		   symbolTablePut(portEntry);
+    	}        	
+    }
 
     /**
      * Set each SymTabEntry's isReferenced flag.  The default is false.  If no other symbol
@@ -2356,6 +2542,30 @@ public class SymbolTable {
         }
     } // symbolTablePut
 
+    
+    /**
+     * checks whether there exists a WSDL port with a given name in the current
+     * symbol table
+     * 
+     * @param  name   the QName of the port. Note: only the local part of the qname is relevant,
+     *    since port names are not qualified with a namespace. They are of type nmtoken in WSDL 1.1
+     *    and of type ncname in WSDL 1.2
+     * 
+     * @return true, if there is a port element with the specified name; false, otherwise
+     */
+    protected boolean existsPortWithName(QName name) {
+    	Vector v = (Vector)symbolTable.get(name);
+    	if (v == null) return false;
+    	Iterator it = v.iterator();
+    	while(it.hasNext()) {
+			Object o = it.next();
+			if (o instanceof PortEntry) return true;    		
+    	}
+    	return false;    	
+    }
+    
+
+
     private static QName getInnerCollectionComponentQName(Node node) {
         if (node == null) {
             return null;
@@ -2394,4 +2604,5 @@ public class SymbolTable {
         }
         return null;
     }
+
 } // class SymbolTable
