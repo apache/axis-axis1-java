@@ -334,12 +334,32 @@ Copyright:
         <mapping namespace="http://soapinterop.org/" package="samples.echo"/>
         <mapping namespace="http://soapinterop.org/xsd" package="samples.echo"/>
     </wsdl2java>
-    
+
     <!-- Compile the echo sample generated java files -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="test-classpath" />
       <include name="samples/echo/**.java" />
     </javac>
+
+    <!-- AddressBook Sample -->
+    <wsdl2java url="samples/addr/AddressBook.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
+    </wsdl2java>
+    
+    <!-- Compile the echo sample generated java files -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="test-classpath" />
+      <include name="samples/addr/**.java" />
+    </javac>
+
 
     <!-- Compile the sample code -->
     <javac srcdir="." destdir="${build.dest}"
@@ -353,7 +373,7 @@ Copyright:
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/Calculator.java"/>
-      <exclude name="samples/addr/*.java" />
+<!--      <exclude name="samples/addr/*.java" /> -->
       <exclude name="samples/userguide/example6/Main.java" />
       <exclude name="samples/userguide/example6/*Impl.java" />
       <exclude name="samples/userguide/example6/*TestCase.java" />
