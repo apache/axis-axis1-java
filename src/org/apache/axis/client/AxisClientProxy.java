@@ -35,7 +35,7 @@ import org.apache.axis.utils.JavaUtils;
  * a SOAP request.
  *
  * @author Glen Daniels (gdaniels@apache.org)
- * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author C?dric Chabanois (cchabanois@ifrance.com)
  */
 public class AxisClientProxy implements InvocationHandler {
 
@@ -142,8 +142,11 @@ public class AxisClientProxy implements InvocationHandler {
         if (method.getName().equals("_setProperty")) {
             call.setProperty((String) objects[0], objects[1]);
             return null;
-        }
-        else {
+        } else if (method.getName().equals("_getProperty")) {
+            return call.getProperty((String) objects[0]);
+        } else if (method.getName().equals("_getPropertyNames")) {
+            return call.getPropertyNames();
+        } else {
           Object outValue;
           Object[] paramsCall;
 
