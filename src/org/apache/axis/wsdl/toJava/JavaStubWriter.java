@@ -119,8 +119,18 @@ public class JavaStubWriter extends JavaWriter {
         }
 
         pw.println("public class " + className + " extends javax.xml.rpc.Stub implements " + portTypeName + " {");
-        pw.println("    private javax.xml.rpc.Service service = null ;");
-        pw.println("    private org.apache.axis.client.Call call = null ;");
+
+        pw.println("    private javax.xml.rpc.Service service = null;");
+        pw.println("    private java.net.URL cachedEndpoint = null;");
+        pw.println("    private java.util.Properties cachedProperties = new java.util.Properties();");
+
+        HashSet types = getTypesInPortType(portType);
+        if (types.size() > 0) {
+            pw.println("    private java.util.Vector cachedSerClasses = new java.util.Vector();");
+            pw.println("    private java.util.Vector cachedSerQNames = new java.util.Vector();");
+            pw.println("    private java.util.Vector cachedSerializers = new java.util.Vector();");
+            pw.println("    private java.util.Vector cachedDeserFactories = new java.util.Vector();");
+        }
         pw.println();
 
         pw.println("    public " + className + "() throws org.apache.axis.AxisFault {");
@@ -130,24 +140,19 @@ public class JavaStubWriter extends JavaWriter {
 
         pw.println("    public " + className + "(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
         pw.println("         this(service);");
-        pw.println("         call.setTargetEndpointAddress( endpointURL );");
-        pw.println("         call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
+        pw.println("         cachedEndpoint = endpointURL;");
         pw.println("    }");
         pw.println();
 
         pw.println("    public " + className + "(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
-
-        HashSet types = getTypesInPortType(portType);
-        Iterator it = types.iterator();
-
         pw.println("        try {" );
         pw.println("            if (service == null) {");
         pw.println("                this.service = new org.apache.axis.client.Service();");
         pw.println("            } else {");
         pw.println("                this.service = service;");
         pw.println("            }");
-        pw.println("            call = (org.apache.axis.client.Call) this.service.createCall();");
 
+        Iterator it = types.iterator();
         while (it.hasNext()) {
             writeSerializationInit((TypeEntry) it.next());
         }
@@ -174,35 +179,28 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("     * @param value - Value of the property");
         pw.println("     */");
         pw.println("    public void _setProperty(String name, Object value) {");
-        pw.println("        call.setProperty(name, value);");
+        pw.println("        cachedProperties.put(name, value);");
         pw.println("    }");
         pw.println();
         pw.println("    // " +
                 JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public Object _getProperty(String name) {");
-        pw.println("        return call.getProperty(name);");
+        pw.println("        return cachedProperties.get(name);");
         pw.println("    }");
         pw.println();
         pw.println("    // " +
                 JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public void _setTargetEndpoint(java.net.URL address) {");
-        pw.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
+        pw.println("        cachedEndpoint = address;");
         pw.println("    }");
         pw.println();
         pw.println("    // " +
                 JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public java.net.URL _getTargetEndpoint() {");
-        pw.println("        try {");
-        pw.println("            return new java.net.URL((String) call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL));");
-        pw.println("        }");
-        pw.println("        catch (java.net.MalformedURLException mue) {");
-        pw.println("            return null; // ???");
-        pw.println("        }");
+        pw.println("        return cachedEndpoint;");
         pw.println("    }");
         pw.println();
-        pw.println("    // " +
-                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
-        pw.println("    public synchronized void setMaintainSession(boolean session) {");
+        pw.println("    public void setMaintainSession(boolean session) {");
         pw.println("        if (service instanceof org.apache.axis.client.Service) {");
         pw.println("            ((org.apache.axis.client.Service) service).setMaintainSession(session);");
         pw.println("        }");
@@ -211,6 +209,41 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("    // From javax.naming.Referenceable");
         pw.println("    public javax.naming.Reference getReference() {");
         pw.println("        return null; // ???");
+        pw.println("    }");
+        pw.println();
+        pw.println("    private javax.xml.rpc.Call getCall() throws java.rmi.RemoteException {");
+        pw.println("        try {");
+        pw.println("            org.apache.axis.client.Call call =");
+        pw.println("                    (org.apache.axis.client.Call) this.service.createCall();");
+        pw.println("            if (cachedEndpoint != null) {");
+        pw.println("                call.setTargetEndpointAddress(cachedEndpoint);");
+        pw.println("                call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, cachedEndpoint.toString());");
+        pw.println("            }");
+        pw.println("            java.util.Enumeration keys = cachedProperties.keys();");
+        pw.println("            while (keys.hasMoreElements()) {");
+        pw.println("                String key = (String) keys.nextElement();");
+        pw.println("                call.setProperty(key, cachedProperties.get(key));");
+        pw.println("            }");
+        if (types.size() > 0) {
+            pw.println("            for (int i = 0; i < cachedSerializers.size(); ++i) {");
+            pw.println("                Class cls = (Class) cachedSerClasses.get(i);");
+            pw.println("                javax.xml.rpc.namespace.QName qname =");
+            pw.println("                        (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
+            pw.println("                org.apache.axis.encoding.Serializer ser =");
+            pw.println("                        (org.apache.axis.encoding.Serializer) cachedSerializers.get(i);");
+            pw.println("                org.apache.axis.encoding.DeserializerFactory deserFac =");
+            pw.println("                        (org.apache.axis.encoding.DeserializerFactory)");
+            pw.println("                         cachedDeserFactories.get(i);");
+            pw.println("                call.addSerializer(cls, qname, ser);");
+            pw.println("                call.addDeserializerFactory(qname, cls, deserFac);");
+            pw.println("            }");
+        }
+        pw.println("            return call;");
+        pw.println("        }");
+        pw.println("        catch (Throwable t) {");
+        pw.println("            throw new org.apache.axis.AxisFault(\""
+                + JavaUtils.getMessage("badCall01") + "\", t);");
+        pw.println("        }");
         pw.println("    }");
         pw.println();
 
@@ -367,16 +400,20 @@ public class JavaStubWriter extends JavaWriter {
             return;
         }
         if ( firstSer ) {
-            pw.println("            javax.xml.rpc.namespace.QName qn;" );
             pw.println("            Class cls;" );
+            pw.println("            org.apache.axis.encoding.Serializer ser;");
+            pw.println("            org.apache.axis.encoding.DeserializerFactory deserFac;");
         }
         firstSer = false ;
 
         QName qname = type.getQName();
-        pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
+        pw.println("            cachedSerQNames.add(new javax.xml.rpc.namespace.QName(\""
+                + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
+                + "\"));");
         pw.println("            cls = " + type.getName() + ".class;");
-        pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
-        pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
+        pw.println("            cachedSerClasses.add(cls);");
+        pw.println("            cachedSerializers.add(new org.apache.axis.encoding.BeanSerializer(cls));");
+        pw.println("            cachedDeserFactories.add(org.apache.axis.encoding.BeanSerializer.getFactory());");
         pw.println();
     } // writeSerializationInit
 
@@ -393,11 +430,11 @@ public class JavaStubWriter extends JavaWriter {
         writeComment(pw, operation.getDocumentationElement());
 
         pw.println(parms.signature + "{");
-        pw.println("        if (call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
+        pw.println("        if (cachedEndpoint == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
+        pw.println("        javax.xml.rpc.Call call = getCall();");
         pw.println("        try {");
-        pw.println("            call.removeAllParameters();");
 
         // DUG: need to set the isRPC flag in the Call object
 
@@ -442,10 +479,10 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("        call.setProperty(\"soap.http.soapaction.use\", Boolean.TRUE);");
             pw.println("        call.setProperty(\"soap.http.soapaction.uri\", \"" + soapAction + "\");");
         }
-        pw.println("        call.setProperty(call.NAMESPACE, \"" + namespace
-                                                 + "\");" );
+        pw.println("        call.setProperty(org.apache.axis.client.Call.NAMESPACE, \""
+                   + namespace + "\");" );
         // Operation name
-        pw.println("        call.setOperationName(\"" + operation.getName() + "\");" );
+        pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + operation.getName() + "\"));" );
         
         // Invoke the operation
         pw.println();
@@ -493,7 +530,14 @@ public class JavaStubWriter extends JavaWriter {
                         p = (Parameter) parms.list.get(++i);
                     }
                     String javifiedName = Utils.xmlNameToJava(p.name);
-                    pw.println("            java.util.Map output = call.getOutputParams();");
+                    pw.println("            java.util.Map output;");
+                    pw.println("            try {");
+                    pw.println("                output = call.getOutputParams();");
+                    pw.println("            }");
+                    pw.println("            catch (javax.xml.rpc.JAXRPCException jre) {");
+                    pw.println("            throw new java.rmi.RemoteException(\"" +
+                            JavaUtils.getMessage("badCall02") + "\");");
+                    pw.println("            }");
                     // If expecting an array, need to call convert(..) because
                     // the runtime stores arrays in a different form (ArrayList). 
                     // NOTE A:
@@ -537,7 +581,14 @@ public class JavaStubWriter extends JavaWriter {
                 // call.getOutputParams ().  Pull the Objects from the appropriate place -
                 // resp or call.getOutputParms - and put them in the appropriate place,
                 // either in a holder or as the return value.
-                pw.println("            java.util.Map output = call.getOutputParams();");
+                pw.println("            java.util.Map output;");
+                pw.println("            try {");
+                pw.println("                output = call.getOutputParams();");
+                pw.println("            }");
+                pw.println("            catch (javax.xml.rpc.JAXRPCException jre) {");
+                pw.println("            throw new java.rmi.RemoteException(\"" +
+                           JavaUtils.getMessage("badCall02") + "\");");
+                pw.println("            }");
                 boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);

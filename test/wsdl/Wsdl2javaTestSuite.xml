@@ -67,6 +67,13 @@
         <mapping namespace="urn:MultiRefTest2" package="test.wsdl.multiref"/>
     </wsdl2java>
 
+    <!-- Multithread Test -->
+    <wsdl2java url="test/wsdl/multithread/AddressBook.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes">
+    </wsdl2java>
+
     <!-- RefAttr Test -->
     <wsdl2java url="test/wsdl/refattr/refattr.wsdl"
                output="build/work"
