@@ -221,7 +221,7 @@ public class AxisServlet extends AxisServletBase {
         if (isDebug)
             log.debug("Enter: doGet()");
 
-        PrintWriter writer = response.getWriter();
+        PrintWriter writer = new FilterPrintWriter(response);
 
         try 
         {
