@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -507,6 +508,10 @@ public class WSDDDeployment
 
     public Hashtable getGlobalOptions() throws ConfigurationException {
         return globalConfig.getParametersTable();
+    }
+
+    public List getRoles() {
+        return globalConfig == null ? new ArrayList() : globalConfig.getRoles();
     }
 
     /**

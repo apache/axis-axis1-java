@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.List;
 
 /**
  * A service represented in WSDD.
@@ -68,6 +69,9 @@ public class WSDDService
 
     /** Which namespaces should auto-dispatch to this service? */
     private Vector namespaces = new Vector();
+
+    /** Which roles does this service support? */
+    private List roles = new ArrayList();
 
     private String descriptionURL;
 
@@ -177,6 +181,12 @@ public class WSDDService
         }
         if (!namespaces.isEmpty())
             desc.setNamespaceMappings(namespaces);
+
+        Element [] roleElements = getChildElements(e, ELEM_WSDD_ROLE);
+        for (int i = 0; i < roleElements.length; i++) {
+            String role = XMLUtils.getChildCharacterData(roleElements[i]);
+            roles.add(role);
+        }
 
         Element wsdlElem = getChildElement(e, ELEM_WSDD_WSDLFILE);
         if (wsdlElem != null) {
@@ -439,6 +449,8 @@ public class WSDDService
         if ( getQName() != null )
             service.setName(getQName().getLocalPart());
         service.setOptions(getParametersTable());
+
+        service.setRoles(roles);
 
         service.setEngine(((WSDDDeployment)registry).getEngine());
 

@@ -22,6 +22,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import javax.xml.namespace.QName;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * EngineConfiguration is an interface that the Message Flow subsystem
@@ -158,4 +159,12 @@ public interface EngineConfiguration {
      *              returned
      */
     Iterator getDeployedServices() throws ConfigurationException;
+
+    /**
+     * Get a list of roles that this engine plays globally.  Services
+     * within the engine configuration may also add additional roles.
+     *
+     * @return a <code>List</code> of the roles for this engine
+     */
+    List getRoles();
 }

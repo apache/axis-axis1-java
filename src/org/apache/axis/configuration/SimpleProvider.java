@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A SimpleProvider is an EngineConfiguration which contains a simple
@@ -57,6 +58,7 @@ public class SimpleProvider implements EngineConfiguration
     Hashtable globalOptions = null;
     Handler globalRequest = null;
     Handler globalResponse = null;
+    List roles = new ArrayList();
 
     /** Our TypeMappingRegistry */
     TypeMappingRegistry tmr = null;
@@ -259,5 +261,45 @@ public class SimpleProvider implements EngineConfiguration
             serviceDescs.add(service.getServiceDescription());
         }
         return serviceDescs.iterator();
+    }
+
+    /**
+     * Set the global role list for this configuration.  Note that we use
+     * the actual passed value, so if anyone else changes that collection,
+     * our role list will change.  Be careful to pass this a cloned list if
+     * you want to change the list later without affecting the config.
+     *
+     * @param roles
+     */
+    public void setRoles(List roles) {
+        this.roles = roles;
+    }
+
+    /**
+     * Add a role to the configuration's global list
+     *
+     * @param role
+     */
+    public void addRole(String role) {
+        roles.add(role);
+    }
+
+    /**
+     * Remove a role from the configuration's global list
+     * 
+     * @param role
+     */
+    public void removeRole(String role) {
+        roles.remove(role);
+    }
+
+    /**
+     * Get a list of roles that this engine plays globally.  Services
+     * within the engine configuration may also add additional roles.
+     *
+     * @return a <code>List</code> of the roles for this engine
+     */
+    public List getRoles() {
+        return roles;
     }
 }
