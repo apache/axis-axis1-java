@@ -195,6 +195,22 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
+     * remove the given item
+     * @param qname XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void undeployService(QName qname)
+        throws DeploymentException;
+
+    /**
+     * remove the given item
+     * @param qname XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void undeployTransport(QName qname)
+        throws DeploymentException;
+
+    /**
      * set the global configuration for the axis engine
      * @param global XXX
      */

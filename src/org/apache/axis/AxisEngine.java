@@ -368,7 +368,7 @@ public abstract class AxisEngine extends BasicHandler
         
         myRegistry.deployHandler(newService);
 
-        myRegistry.deployService(new SimpleHandler(new QName(null, key),
+        myRegistry.deployService(new SimpleHandler(new QName("", key),
                                                    service));
     }
 
@@ -378,7 +378,7 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployService(String key)
         throws DeploymentException
     {
-        myRegistry.removeDeployedItem(new QName("", key));
+        myRegistry.undeployService(new QName("", key));
     }
 
     /**
@@ -398,7 +398,7 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployTransport(String key)
         throws DeploymentException
     {
-        myRegistry.removeDeployedItem(new QName("", key));
+        myRegistry.undeployTransport(new QName("", key));
     }
 
     /**
