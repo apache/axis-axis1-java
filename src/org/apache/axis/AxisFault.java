@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -57,7 +57,6 @@ package org.apache.axis ;
 
 import java.io.* ;
 import java.util.* ;
-import java.lang.reflect.InvocationTargetException ;
 
 import javax.xml.parsers.* ;
 import org.w3c.dom.* ;
@@ -66,13 +65,14 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.encoding.SerializationContext;
 
-/** 
+/**
+ * An exception which maps cleanly to a SOAP fault.
  *
  * @author Doug Davis (dug@us.ibm.com)
  * @author James Snell (jasnell@us.ibm.com)
  */
 
-public class AxisFault extends Exception {
+public class AxisFault extends java.rmi.RemoteException {
     protected QFault    faultCode ;
     protected String    faultString ;
     protected String    faultActor ;
@@ -80,6 +80,7 @@ public class AxisFault extends Exception {
 
     public AxisFault(String code, String str,
                      String actor, Element[] details) {
+        super (str);
         setFaultCode( new QFault(Constants.AXIS_NS, code));
         setFaultString( str );
         setFaultActor( actor );
@@ -88,6 +89,7 @@ public class AxisFault extends Exception {
 
     public AxisFault(QFault code, String str,
                      String actor, Element[] details) {
+        super (str);
         setFaultCode( code );
         setFaultString( str );
         setFaultActor( actor );
@@ -95,43 +97,39 @@ public class AxisFault extends Exception {
     }
 
     public AxisFault(Exception e) {
+        super ("", e);
         String  str ;
 
-        if (e instanceof InvocationTargetException) {
-            Throwable t = ((InvocationTargetException)e).getTargetException();
-            if (t != null && t instanceof Exception) e = (Exception) t;
-        }
-
         setFaultCode( Constants.FAULT_SERVER_GENERAL );
-        setFaultString( e.toString() );
-        
+        // setFaultString( e.toString() );
         // need to set details if we were in the body at the time!!
-        StringWriter writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        e.printStackTrace(printWriter);
-        printWriter.close();
-        
-        Document doc = XMLUtils.newDocument();
-        Element elem = doc.createElement("stackTrace");
-        String text = XMLUtils.xmlEncodeString(writer.getBuffer().toString());
-        Node textNode = doc.createTextNode(text);
-        elem.appendChild(textNode);
-        
-        Element [] details = new Element [] { elem };
-        setFaultDetails( details );
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PrintStream           ps = new PrintStream( stream );
+        e.printStackTrace(ps);
+        ps.close();
+        setFaultString( stream.toString() );
     }
-    
+
     public AxisFault(String message)
     {
+        super (message);
         setFaultCode(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
     }
-    
+
     /**
      * No-arg constructor for building one from an XML stream.
      */
     public AxisFault()
     {
+        super ();
+    }
+
+    public AxisFault (String message, Throwable t)
+    {
+        super (message, t);
+        setFaultCode(Constants.FAULT_SERVER_GENERAL);
+        setFaultString(message);
     }
 
     public void dump() {
@@ -189,7 +187,7 @@ public class AxisFault extends Exception {
 
         SOAPEnvelope envelope = new SOAPEnvelope();
 
-        SOAPFaultElement fault = 
+        SOAPFaultElement fault =
                                 new SOAPFaultElement(this);
         envelope.addBodyElement(fault);
 
