@@ -409,19 +409,18 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     }
 
     /**
-     * Convenience method to get the Deserializer for a specific
-     * xmlType.
-     * @param xmlType is QName for a type to deserialize
-     * @return Deserializer
-     */
-    public final Deserializer getDeserializerForType(QName xmlType) {
+     * Get a Deserializer which can turn a given xml type into a given
+     * Java type
+     */ 
+    public final Deserializer getDeserializer(Class cls, QName xmlType) {
         if (xmlType == null)
             return null;
-        
+
         DeserializerFactory dserF = null;
         Deserializer dser = null;
-        try { 
-            dserF = (DeserializerFactory) getTypeMapping().getDeserializer(xmlType);
+        try {
+            dserF = (DeserializerFactory) getTypeMapping().
+                    getDeserializer(cls, xmlType);
         } catch (JAXRPCException e) {
             log.error(JavaUtils.getMessage("noFactory00", xmlType.toString()));
         }
@@ -432,7 +431,17 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                 log.error(JavaUtils.getMessage("noDeser00", xmlType.toString()));
             }
         }
-        return dser;
+        return dser;                    
+    }
+    
+    /**
+     * Convenience method to get the Deserializer for a specific
+     * xmlType.
+     * @param xmlType is QName for a type to deserialize
+     * @return Deserializer
+     */
+    public final Deserializer getDeserializerForType(QName xmlType) {
+        return getDeserializer(null, xmlType);
     }
     
     /** 
@@ -921,7 +930,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         } finally {
             if (curElement != null)
                 curElement = (MessageElement)curElement.getParentElement();
-        
+
+            namespaces.pop();
+
 	        if (log.isDebugEnabled()) {
                 String name = curElement != null ?
                         curElement.getClass().getName() + ":" +

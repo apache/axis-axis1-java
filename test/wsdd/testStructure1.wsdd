@@ -11,14 +11,16 @@
   <handler type="java:org.apache.axis.handlers.JWSHandler"/>
  </chain>
 
- <service name="service.one" provider="java:MSG">
+ <service name="service.one" provider="java:RPC">
+  <parameter name="className" value="test.wsdd.TestStructure"/>
   <responseFlow>
     <handler type="java:org.apache.axis.providers.java.RPCProvider"
              name="BackReference"/>
   </responseFlow>
  </service>
 
- <service name="service.two" provider="java:MSG">
+ <service name="service.two" provider="java:RPC">
+  <parameter name="className" value="test.wsdd.TestStructure"/>
   <requestFlow>
     <handler type="BackReference"/>
   </requestFlow>

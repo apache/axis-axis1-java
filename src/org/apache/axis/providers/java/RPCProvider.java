@@ -58,8 +58,6 @@ package org.apache.axis.providers.java ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.attachments.MimeMultipartDataSource;
-import org.apache.axis.attachments.PlainTextDataSource;
 import org.apache.axis.enum.Style;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -101,7 +99,7 @@ public class RPCProvider extends JavaProvider
         LogFactory.getLog(RPCProvider.class.getName());
 
    /**
-     * Process the current message. 
+     * Process the current message.
      * Result in resEnv.
      *
      * @param msgContext self-explanatory
@@ -122,7 +120,7 @@ public class RPCProvider extends JavaProvider
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
         OperationDesc operation = msgContext.getOperation();
-        
+
         Vector          bodies = reqEnv.getBodyElements();
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("bodyElems00", "" + bodies.size()));
@@ -161,12 +159,12 @@ public class RPCProvider extends JavaProvider
        // special case code for a document style operation with no
        // arguments (which is a strange thing to have, but whatever)
         if (body == null) {
-            // throw an error if this isn't a document style service            
+            // throw an error if this isn't a document style service
             if (!serviceDesc.getStyle().equals(Style.DOCUMENT)) {
                 throw new Exception(JavaUtils.getMessage("noBody00"));
             }
-            
-            // look for a method in the service that has no arguments, 
+
+            // look for a method in the service that has no arguments,
             // use the first one we find.
             ArrayList ops = serviceDesc.getOperations();
             for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
@@ -224,7 +222,7 @@ public class RPCProvider extends JavaProvider
 
             // first check the type on the paramter
             ParameterDesc paramDesc = rpcParam.getParamDesc();
-            
+
             // if we found some type info try to make sure the value type is
             // correct.  For instance, if we deserialized a xsd:dateTime in
             // to a Calendar and the service takes a Date, we need to convert
@@ -242,7 +240,7 @@ public class RPCProvider extends JavaProvider
                     outs.add(rpcParam);
                 }
             }
-            
+
             // Put the value (possibly converted) in the argument array
             // make sure to use the parameter order if we have it
             if (paramDesc == null || paramDesc.getOrder() == -1) {
@@ -284,11 +282,11 @@ public class RPCProvider extends JavaProvider
                 }
             }
         }
-        
+
         // OK!  Now we can invoke the method
         Object objRes = null;
         try {
-            objRes = invokeMethod(msgContext, 
+            objRes = invokeMethod(msgContext,
                                  operation.getMethod(),
                                  obj, argValues);
         } catch (IllegalArgumentException e) {
@@ -304,7 +302,7 @@ public class RPCProvider extends JavaProvider
                     argClasses += ",";
                 }
             }
-            log.info(JavaUtils.getMessage("dispatchIAE00", 
+            log.info(JavaUtils.getMessage("dispatchIAE00",
                                           new String[] {methodSig, argClasses}),
                      e);
             throw new AxisFault(JavaUtils.getMessage("dispatchIAE00",
@@ -453,7 +451,7 @@ public class RPCProvider extends JavaProvider
     } // getDataFromDataHandler
 
     /**
-     * This method encapsulates the method invocation.             
+     * This method encapsulates the method invocation.
      * @param msgContext MessageContext
      * @param method the target method.
      * @param obj the target object

@@ -288,7 +288,6 @@ public class SOAPService extends SimpleTargetedChain
 
     /**
      * Returns a service description with the implementation class filled in.
-     *
      * Syncronized to prevent simutaneous modification of serviceDescription.
      */
     public synchronized ServiceDesc getInitializedServiceDesc(

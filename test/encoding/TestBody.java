@@ -6,6 +6,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
@@ -33,6 +34,7 @@ public class TestBody extends TestCase {
 
         // register the service with the engine
         SOAPService target = new SOAPService(new RPCProvider());
+        target.setOption(JavaProvider.OPTION_CLASSNAME, "test.encoding.TestBody");
         provider.deployService(new QName(null,namespace), target);
 
         // setup

@@ -228,6 +228,10 @@ public class ServiceDesc {
 
     /**
      * set the implementation class
+     * <p>
+     * Warning: You cannot call getInitializedServiceDesc() after setting this
+     * as it uses this to indicate its work has already been done.
+     *
      * @param implClass
      * @throws IllegalArgumentException if the implementation class is already
      *         set
@@ -479,7 +483,7 @@ public class ServiceDesc {
         // Developer Note:
         //
         // The goal of the sync code is to associate
-        // the OperationDesc/ParamterDesc with the 
+        // the OperationDesc/ParamterDesc with the
         // target Method.  There are a number of ways to get to this
         // point depending on what information
         // is available.  Here are the main scenarios:
@@ -488,17 +492,17 @@ public class ServiceDesc {
         //   * OperationDesc/ParameterDesc loaded from deploy.wsdd
         //   * Loaded ParameterDesc does not have javaType,
         //     so it is discovered using the TypeMappingRegistry
-        //     (also loaded via deploy.wsdd) and the 
+        //     (also loaded via deploy.wsdd) and the
         //     typeQName specified by the ParameterDesc.
         //   * Sync occurs using the discovered
         //     javaTypes and the javaTypes of the Method
         //     parameters
         //
         // B) Deployment with no wsdd OperationDesc info (non-skeleton):
-        //   * Implementation Class introspected to build 
+        //   * Implementation Class introspected to build
         //     OperationDesc/ParameterDesc.
         //   * ParameterDesc is known via introspection.
-        //   * ParameterDesc are discovered using javaType 
+        //   * ParameterDesc are discovered using javaType
         //     and TypeMappingRegistry.
         //   * Sync occurs using the introspected
         //     javaTypes and the javaTypes of the Method
@@ -509,13 +513,13 @@ public class ServiceDesc {
         //   * In this scenario the ParameterDescs' already
         //     have javaTypes (see E below).
         //   * Sync occurs using the ParameterDesc
-        //     javaTypes and the javaTypes of the Method 
+        //     javaTypes and the javaTypes of the Method
         //     parameters.
         //
         // D) Commandline Java2WSDL loading non-Skeleton Class/Interface
-        //   * Class/Interface introspected to build 
+        //   * Class/Interface introspected to build
         //     OperationDesc/ParameterDesc.
-        //   * The javaTypes of the ParameterDesc are set using introspection.  
+        //   * The javaTypes of the ParameterDesc are set using introspection.
         //   * typeQNames are determined for built-in types using
         //     from the default TypeMappingRegistry.  Other
         //     typeQNames are guessed from the javaType.  Note
@@ -524,7 +528,7 @@ public class ServiceDesc {
         //     javaTypes and the javaTypes of the Method
         //     parameters.
         //
-        // E) Commandline Java2WSDL loading Skeleton Class 
+        // E) Commandline Java2WSDL loading Skeleton Class
         //   * OperationDesc/ParameterDesc loaded from Skeleton
         //   * Each ParameterDesc has an appropriate typeQName
         //   * Each ParameterDesc also has a javaType, which is
@@ -537,9 +541,9 @@ public class ServiceDesc {
         // So in each scenario, the ultimate sync'ing occurs
         // using the javaTypes of the ParameterDescs and the
         // javaTypes of the Method parameters.
-        // 
+        //
         // ------------------------------------------------
-        
+
         // If we're already mapped to a Java method, no need to do anything.
         if (oper.getMethod() != null)
             return;
@@ -630,10 +634,10 @@ public class ServiceDesc {
             syncOperationToClass(oper, superClass);
         }
 
-        // Exception if sync fails to find method for operation 
+        // Exception if sync fails to find method for operation
         if (oper.getMethod() == null) {
-            InternalException ie = 
-                new InternalException(JavaUtils.getMessage("serviceDescOperSync00", 
+            InternalException ie =
+                new InternalException(JavaUtils.getMessage("serviceDescOperSync00",
                                                            oper.getName(),
                                                            implClass.getName()));
             throw ie;
@@ -656,10 +660,17 @@ public class ServiceDesc {
     /**
      * Fill in a service description by introspecting the implementation
      * class.
-     */    
+     */
     public void loadServiceDescByIntrospection(Class implClass) {
         if (introspectionComplete || implClass == null) {
             return;
+        }
+
+        // set the implementation class for the service description
+        this.implClass = implClass;
+        if (Skeleton.class.isAssignableFrom(implClass)) {
+            isSkeletonClass = true;
+            loadSkeletonOperations();
         }
 
         /** If the class knows what it should be exporting,
@@ -741,6 +752,12 @@ public class ServiceDesc {
         // Should we complain if the implClass changes???
         implClass = cls;
         this.tm = tm;
+
+        if (Skeleton.class.isAssignableFrom(implClass)) {
+            isSkeletonClass = true;
+            loadSkeletonOperations();
+        }
+
         loadServiceDescByIntrospection();
     }
 

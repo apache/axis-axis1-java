@@ -160,6 +160,12 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
     public boolean isNil(Attributes attrs);
 
     /**
+     * Get a Deserializer which can turn a given xml type into a given
+     * Java type
+     */ 
+    public Deserializer getDeserializer(Class cls, QName xmlType);
+
+    /**
      * Convenience method to get the Deserializer for a specific
      * xmlType.
      * @param xmlType is QName for a type to deserialize

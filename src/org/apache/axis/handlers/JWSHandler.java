@@ -57,12 +57,41 @@ package org.apache.axis.handlers;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.enum.Scope;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JWSClassLoader;
+import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.compiler.Compiler;
+import org.apache.axis.components.compiler.CompilerFactory;
+import org.apache.axis.components.compiler.CompilerError;
 import org.apache.commons.logging.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLClassLoader;
+import java.net.URL;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.
@@ -79,48 +108,367 @@ public class JWSHandler extends BasicHandler
     public final String OPTION_JWS_FILE_EXTENSION = "extension";
     public final String DEFAULT_JWS_FILE_EXTENSION = ".jws";
 
-    // Keep the processor Handler around so we can make it the service
-    // Handler for this request if appropriate.  No need for these to be
-    // static, since it may be desirable to have JWS handlers with different
-    // behaviours for different file extensions.
-    JWSProcessor jws = new JWSProcessor();
-    SOAPService processor = new SOAPService(jws);
+    protected static HashMap soapServices = new HashMap();
 
-    boolean firstTime = true;
-
+    /**
+     * Just set up the service, the inner service will do the rest...
+     */ 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         if (log.isDebugEnabled()) {
             log.debug("Enter: JWSHandler::invoke");
         }
 
-        if (firstTime) {
-            processor.setEngine(msgContext.getAxisEngine());
+        try {
+            setupService(msgContext);
+        } catch (Exception e) {
+            log.error( JavaUtils.getMessage("exception00"), e );
+            throw AxisFault.makeFault(e);
         }
-
+    }
+    
+    /**
+     * If our path ends in the right file extension (*.jws), handle all the
+     * work necessary to compile the source file if it needs it, and set
+     * up the "proxy" RPC service surrounding it as the MessageContext's
+     * active service.
+     *
+     */ 
+    protected void setupService(MessageContext msgContext) throws Exception {
         // FORCE the targetService to be JWS if the URL is right.
         String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
         String extension = (String)getOption(OPTION_JWS_FILE_EXTENSION);
         if (extension == null) extension = DEFAULT_JWS_FILE_EXTENSION;
-
+        
         if ((realpath!=null) && (realpath.endsWith(extension))) {
-            msgContext.setService(processor);
+            /* Grab the *.jws filename from the context - should have been */
+            /* placed there by another handler (ie. HTTPActionHandler)     */
+            /***************************************************************/
+            String   jwsFile = realpath;
+            String rel = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+            if (rel.charAt(0) == '/') {
+                rel = rel.substring(1);
+            }
+            
+            int lastSlash = rel.lastIndexOf('/');
+            String dir = null;
+            
+            if (lastSlash > 0) {
+                dir = rel.substring(0, lastSlash);
+            }
+            
+            String file = rel.substring(lastSlash + 1);
+            
+            String outdir = msgContext.getStrProp( Constants.MC_JWS_CLASSDIR );
+            if ( outdir == null ) outdir = "." ;
+            
+            // Build matching directory structure under the output
+            // directory.  In other words, if we have:
+            //    /webroot/jws1/Foo.jws
+            //
+            // That will be compiled to:
+            //    .../jwsOutputDirectory/jws1/Foo.class
+            if (dir != null) {
+                outdir = outdir + File.separator + dir;
+            }
+            
+            // Confirm output directory exists.  If not, create it IF we're
+            // allowed to.
+            // !!! TODO: add a switch to control this.
+            File outDirectory = new File(outdir);
+            if (!outDirectory.exists()) {
+                outDirectory.mkdirs();
+            }
+            
+            if (log.isDebugEnabled())
+                log.debug("jwsFile: " + jwsFile );
+            
+            String   jFile   = outdir + File.separator + file.substring(0, file.length()-3) +
+                    "java" ;
+            String   cFile   = outdir + File.separator + file.substring(0, file.length()-3) +
+                    "class" ;
+            
+            if (log.isDebugEnabled()) {
+                log.debug("jFile: " + jFile );
+                log.debug("cFile: " + cFile );
+                log.debug("outdir: " + outdir);
+            }
+            
+            File  f1 = new File( cFile );
+            File  f2 = new File( jwsFile );
+            
+            /* Get the class */
+            /*****************/
+            String clsName = null ;
+            //clsName = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+            if ( clsName == null ) clsName = f2.getName();
+            if ( clsName != null && clsName.charAt(0) == '/' )
+                clsName = clsName.substring(1);
+            
+            clsName = clsName.substring( 0, clsName.length()-4 );
+            clsName = clsName.replace('/', '.');
+            
+            if (log.isDebugEnabled())
+                log.debug("ClsName: " + clsName );
+            
+            /* Check to see if we need to recompile */
+            /****************************************/
+            if ( !f1.exists() || f2.lastModified() > f1.lastModified() ) {
+                /* If the class file doesn't exist, or it's older than the */
+                /* java file then recompile the java file.                 */
+                /* Start by copying the *.jws file to *.java               */
+                /***********************************************************/
+                log.debug(JavaUtils.getMessage("compiling00", jwsFile) );
+                log.debug(JavaUtils.getMessage("copy00", jwsFile, jFile) );
+                FileReader fr = new FileReader( jwsFile );
+                FileWriter fw = new FileWriter( jFile );
+                char[] buf = new char[4096];
+                int    rc ;
+                while ( (rc = fr.read( buf, 0, 4095)) >= 0 )
+                    fw.write( buf, 0, rc );
+                fw.close();
+                fr.close();
+                
+                /* Now run javac on the *.java file */
+                /************************************/
+                log.debug("javac " + jFile );
+                // Process proc = rt.exec( "javac " + jFile );
+                // proc.waitFor();
+                Compiler          compiler = CompilerFactory.getCompiler();
+                
+                compiler.setClasspath(getDefaultClasspath(msgContext));
+                compiler.setDestination(outdir);
+                compiler.addFile(jFile);
+                
+                boolean result   = compiler.compile();
+                
+                /* Delete the temporary *.java file and check return code */
+                /**********************************************************/
+                (new File(jFile)).delete();
+                
+                if ( !result ) {
+                    /* Delete the *class file - sometimes it gets created even */
+                    /* when there are errors - so erase it so it doesn't       */
+                    /* confuse us.                                             */
+                    /***********************************************************/
+                    (new File(cFile)).delete();
+                    
+                    Document doc = XMLUtils.newDocument();
+                    
+                    Element         root = doc.createElementNS("", "Errors");
+                    StringBuffer message = new StringBuffer("Error compiling ");
+                    message.append(jFile);
+                    message.append(":\n");
+                    
+                    List errors = compiler.getErrors();
+                    int count = errors.size();
+                    for (int i = 0; i < count; i++) {
+                        CompilerError error = (CompilerError) errors.get(i);
+                        if (i > 0) message.append("\n");
+                        message.append("Line ");
+                        message.append(error.getStartLine());
+                        message.append(", column ");
+                        message.append(error.getStartColumn());
+                        message.append(": ");
+                        message.append(error.getMessage());
+                    }
+                    root.appendChild( doc.createTextNode( message.toString() ) );
+                    throw new AxisFault( "Server.compileError",
+                                         JavaUtils.getMessage("badCompile00", jFile),
+                                         null, new Element[] { root } );
+                }
+                ClassUtils.removeClassLoader( clsName );
+                // And clean out the cached service.
+                soapServices.remove(clsName);
+            }
+            
+            ClassLoader cl = ClassUtils.getClassLoader(clsName);
+            if (cl == null) {
+                cl = new JWSClassLoader(clsName,
+                                        msgContext.getClassLoader(),
+                                        cFile);
+            }
+            
+            msgContext.setClassLoader(cl);
+            
+            /* Create a new RPCProvider - this will be the "service"   */
+            /* that we invoke.                                                */
+            /******************************************************************/
+            // Cache the rpc service created to handle the class.  The cache
+            // is based on class name, so only one .jws/.jwr class can be active
+            // in the system at a time.
+            SOAPService rpc = (SOAPService)soapServices.get(clsName);
+            if (rpc == null) {
+                rpc = new SOAPService(new RPCProvider());
+                rpc.setOption(RPCProvider.OPTION_CLASSNAME, clsName );
+                rpc.setEngine(msgContext.getAxisEngine());
+                
+                // Support specification of "allowedMethods" as a parameter.
+                String allowed = (String)getOption(RPCProvider.OPTION_ALLOWEDMETHODS);
+                if (allowed == null) allowed = "*";
+                rpc.setOption(RPCProvider.OPTION_ALLOWEDMETHODS, allowed);
+                // Take the setting for the scope option from the handler
+                // parameter named "scope"
+                String scope = (String)getOption(RPCProvider.OPTION_SCOPE);
+                if (scope == null) scope = Scope.DEFAULT.getName();
+                rpc.setOption(RPCProvider.OPTION_SCOPE, scope);
+                
+                // Set up service description
+                ServiceDesc sd = rpc.getServiceDescription();
+                
+                TypeMappingRegistry tmr = msgContext.getAxisEngine().getTypeMappingRegistry();
+                sd.setTypeMappingRegistry(tmr);
+                sd.setTypeMapping(msgContext.getTypeMapping());
+                
+                rpc.getInitializedServiceDesc(msgContext);
+                
+                soapServices.put(clsName, rpc);
+                
+            }
+            
+            // Set engine, which hooks up type mappings.
+            rpc.setEngine(msgContext.getAxisEngine());
+            
+            rpc.init();   // ??
+
+            // OK, this is now the destination service!
+            msgContext.setService( rpc );
         }
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: JWSHandler::invoke");
         }
     }
+    
+    private String getDefaultClasspath(MessageContext msgContext)
+    {
+        StringBuffer classpath = new StringBuffer();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-    public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        invoke(msgContext);
+        while(cl != null)
+        {
+            if(cl instanceof URLClassLoader)
+            {
+                URL[] urls = ((URLClassLoader) cl).getURLs();
+
+                for(int i=0; (urls != null) && i < urls.length; i++)
+                {
+                    String path = urls[i].getPath();
+                    //If it is a drive letter, adjust accordingly.
+                    if(path.charAt(0)=='/'&&path.charAt(2)==':')
+                        path = path.substring(1);
+                    classpath.append(path);
+                    classpath.append(File.pathSeparatorChar);
+
+                    // if its a jar extract Class-Path entries from manifest
+                    File file = new File(urls[i].getFile());
+                    if(file.isFile())
+                    {
+                        FileInputStream fis = null;
+
+                        try
+                        {
+                            fis = new FileInputStream(file);
+
+                            if(isJar(fis))
+                            {
+                                JarFile jar = new JarFile(file);
+                                Manifest manifest = jar.getManifest();
+                                if (manifest != null)
+                                {
+                                    Attributes attributes = manifest.
+                                            getMainAttributes();
+                                    if (attributes != null)
+                                    {
+                                        String s = attributes.
+                           getValue(java.util.jar.Attributes.Name.CLASS_PATH);
+                                        String base = file.getParent();
+
+                                        if (s != null)
+                                        {
+                                            StringTokenizer st =
+                                                  new StringTokenizer(s, " ");
+                                            while(st.hasMoreTokens())
+                                            {
+                                                String t = st.nextToken();
+                                                classpath.append(base +
+                                                      File.separatorChar + t);
+                                                classpath.append(
+                                                      File.pathSeparatorChar);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch(IOException ioe)
+                        {
+                            if(fis != null)
+                                try {
+                                    fis.close();
+                                } catch (IOException ioe2) {}
+                        }
+                    }
+                }
+            }
+
+            cl = cl.getParent();
+        }
+
+        // Just to be safe (the above doesn't seem to return the webapp
+        // classpath in all cases), manually do this:
+
+        String webBase = (String)msgContext.getProperty(
+                                         HTTPConstants.MC_HTTP_SERVLETLOCATION);
+        if (webBase != null) {
+            classpath.append(webBase + File.separatorChar + "classes" +
+                             File.pathSeparatorChar);
+            try {
+                String libBase = webBase + File.separatorChar + "lib";
+                File libDir = new File(libBase);
+                String [] jarFiles = libDir.list();
+                for (int i = 0; i < jarFiles.length; i++) {
+                    String jarFile = jarFiles[i];
+                    if (jarFile.endsWith(".jar")) {
+                        classpath.append(libBase +
+                                         File.separatorChar +
+                                         jarFile +
+                                         File.pathSeparatorChar);
+                    }
+                }
+            } catch (Exception e) {
+                // Oh well.  No big deal.
+            }
+        }
+
+        // boot classpath isn't found in above search
+        String bootClassPath = AxisProperties.getProperty("sun.boot.class.path");
+        if( bootClassPath != null) {
+            classpath.append(bootClassPath);
+        }
+
+        return classpath.toString();
+    }
+    
+    // an exception or emptiness signifies not a jar
+    public static boolean isJar(InputStream is) {
+        try {
+            JarInputStream jis = new JarInputStream(is);
+            if (jis.getNextEntry() != null) {
+                return true;
+            }
+        } catch (IOException ioe) {
+        }
+
+        return false;
     }
 
-    /**
-     * Propagate options set on this handler into the processor.
-     */
-    public void setOptions(Hashtable opts) {
-        super.setOptions(opts);
-        jws.setOptions(opts);
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        try {
+            setupService(msgContext);
+        } catch (Exception e) {
+            log.error( JavaUtils.getMessage("exception00"), e );
+            throw AxisFault.makeFault(e);
+        }
     }
 }

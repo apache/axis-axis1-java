@@ -492,13 +492,12 @@ public abstract class JavaProvider extends BasicProvider
         // Set up the Implementation class for the service
 
         String clsName = getServiceClassName(service);
+        if (clsName == null) {
+            throw new AxisFault(JavaUtils.getMessage("noServiceClass"));
+        }
+        Class cls = getServiceClass(clsName, service, msgContext);
         ServiceDesc serviceDescription = service.getServiceDescription();
 
-        if (clsName != null) {
-            Class cls = getServiceClass(clsName, service, msgContext);
-            serviceDescription.setImplClass(cls);
-        }
-        
         // And the allowed methods, if necessary
         if (serviceDescription.getAllowedMethods() == null && service != null) {
             String allowedMethods = getAllowedMethods(service);
@@ -512,7 +511,7 @@ public abstract class JavaProvider extends BasicProvider
             }
         }
 
-        serviceDescription.loadServiceDescByIntrospection();
+        serviceDescription.loadServiceDescByIntrospection(cls);
     }
     
 }
