@@ -58,7 +58,7 @@ public class TestSer
             SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader));
             adapter.setServiceDescription(service);
             TypeMappingRegistry reg = adapter.getContext().getTypeMappingRegistry();
-            reg.addDeserializerFactory(dataQName, DataSer.getFactory());
+            reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
             
             SOAPEnvelope env = adapter.getEnvelope();
             env.setMessageType(ServiceDescription.REQUEST);
