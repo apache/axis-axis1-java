@@ -60,6 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
@@ -68,6 +69,7 @@ import org.apache.commons.logging.Log;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -75,6 +77,7 @@ import java.util.Properties;
  *
  * @author Carl Woolf (cwoolf@macromedia.com)
  * @author Tom Jordahl (tomj@macromedia.com)
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class EJBProvider extends RPCProvider
 {
@@ -90,6 +93,9 @@ public class EJBProvider extends RPCProvider
     public static final String OPTION_BEANNAME = "beanJndiName";
     public static final String OPTION_HOMEINTERFACENAME = "homeInterfaceName";
     public static final String OPTION_REMOTEINTERFACENAME = "remoteInterfaceName";
+    public static final String OPTION_LOCALHOMEINTERFACENAME = "localHomeInterfaceName";
+    public static final String OPTION_LOCALINTERFACENAME = "localInterfaceName";
+    
     
     public static final String jndiContextClass = "jndiContextClass";
     public static final String jndiURL = "jndiURL";
@@ -116,38 +122,111 @@ public class EJBProvider extends RPCProvider
      * @return an object that implements the service
      */
     protected Object makeNewServiceObject(MessageContext msgContext,
-                                          String clsName)
+                                           String clsName)
         throws Exception
     {
-        // Get the EJB Home object from JNDI
-        Object ejbHome = getEJBHome(msgContext.getService(),
-                                    msgContext, clsName);
-
-        // Get the Home class name from the configuration file
-        // NOTE: Do we really need to have this in the config file
-        // since we can get it from ejbHome.getClass()???
-        String homeName = getStrOption(OPTION_HOMEINTERFACENAME, 
+        String remoteHomeName = getStrOption(OPTION_HOMEINTERFACENAME, 
                                                 msgContext.getService());
-        if (homeName == null) 
-            throw new AxisFault(
-                    Messages.getMessage("noOption00", 
-                                         OPTION_HOMEINTERFACENAME, 
-                                         msgContext.getTargetService()));
+        String localHomeName = getStrOption(OPTION_LOCALHOMEINTERFACENAME, 
+                                                msgContext.getService());
+        String homeName = (remoteHomeName != null ? remoteHomeName:localHomeName);
 
+        if (homeName == null) {
+            // cannot find both remote home and local home  
+            throw new AxisFault(
+                Messages.getMessage("noOption00", 
+                                    OPTION_HOMEINTERFACENAME, 
+                                    msgContext.getTargetService()));
+        }
+                                                        
         // Load the Home class name given in the config file
         Class homeClass = ClassUtils.forName(homeName, true, msgContext.getClassLoader());
 
-        // Make sure the object we got back from JNDI is the same type
-        // as the what is specified in the config file
+        // we create either the ejb using either the RemoteHome or LocalHome object
+        if (remoteHomeName != null)
+            return createRemoteEJB(msgContext, clsName, homeClass);
+        else 
+            return createLocalEJB(msgContext, clsName, homeClass);
+    }
+
+    /**
+     * Create an EJB using a remote home object
+     * 
+     * @param msgContext the message context
+     * @param beanJndiName The JNDI name of the EJB remote home class
+     * @param homeClass the class of the home interface
+     * @return an EJB
+     */
+    private Object createRemoteEJB(MessageContext msgContext, 
+                                    String beanJndiName,
+                                    Class homeClass)
+        throws Exception
+    {
+        // Get the EJB Home object from JNDI 
+        Object ejbHome = getEJBHome(msgContext.getService(),
+                                    msgContext, beanJndiName);
         Object ehome = javax.rmi.PortableRemoteObject.narrow(ejbHome, homeClass);
 
         // Invoke the create method of the ejbHome class without actually
         // touching any EJB classes (i.e. no cast to EJBHome)
         Method createMethod = homeClass.getMethod("create", empty_class_array);
         Object result = createMethod.invoke(ehome, empty_object_array);
+        
+        return result;        
+    }
 
+    /**
+     * Create an EJB using a local home object
+     * 
+     * @param msgContext the message context
+     * @param beanJndiName The JNDI name of the EJB local home class
+     * @param homeClass the class of the home interface
+     * @return an EJB
+     */
+    private Object createLocalEJB(MessageContext msgContext, 
+                                   String beanJndiName,
+                                   Class homeClass)
+        throws Exception
+    {
+        // Get the EJB Home object from JNDI 
+        Object ejbHome = getEJBHome(msgContext.getService(),
+                                    msgContext, beanJndiName);
+
+        // the home object is a local home object
+        Object ehome;
+        if (homeClass.isInstance(ejbHome))
+          ehome = ejbHome;
+        else
+          throw new ClassCastException(
+                  Messages.getMessage("badEjbHomeType"));
+          
+        // Invoke the create method of the ejbHome class without actually
+        // touching any EJB classes (i.e. no cast to EJBLocalHome)
+        Method createMethod = homeClass.getMethod("create", empty_class_array);
+        Object result = createMethod.invoke(ehome, empty_object_array);
+                               
         return result;
     }
+
+    /**
+     * Tells if the ejb that will be used to handle this service is a remote
+     * one
+     */
+    private boolean isRemoteEjb(SOAPService service)
+    {
+        return getStrOption(OPTION_HOMEINTERFACENAME,service) != null; 
+    }
+
+    /**
+     * Tells if the ejb that will be used to handle this service is a local
+     * one
+     */
+    private boolean isLocalEjb(SOAPService service)
+    {
+        return (!isRemoteEjb(service)) && 
+          (getStrOption(OPTION_LOCALHOMEINTERFACENAME,service) != null);
+    }
+
 
     /**
      * Return the option in the configuration that contains the service class
@@ -177,14 +256,67 @@ public class EJBProvider extends RPCProvider
             value = (String)getOption(optionName);
         return value;
     }
+
+    /**
+     * Get the remote interface of an ejb from its home class.
+     * This function can only be used for remote ejbs
+     * 
+     * @param beanJndiName the jndi name of the ejb
+     * @param service the soap service
+     * @param msgContext the message context (can be null)
+     */
+    private Class getRemoteInterfaceClassFromHome(String beanJndiName,
+                                                   SOAPService service,
+                                                   MessageContext msgContext)
+        throws Exception                                       
+    {
+        // Get the EJB Home object from JNDI
+        Object ejbHome = getEJBHome(service, msgContext, beanJndiName);
+
+        String homeName = getStrOption(OPTION_HOMEINTERFACENAME,
+                                       service);
+        if (homeName == null)
+            throw new AxisFault(
+                    Messages.getMessage("noOption00",
+                                        OPTION_HOMEINTERFACENAME,
+                                        service.getName()));
+
+        // Load the Home class name given in the config file
+        ClassLoader cl = (msgContext != null) ?
+                msgContext.getClassLoader() :
+                Thread.currentThread().getContextClassLoader();
+        Class homeClass = ClassUtils.forName(homeName, true, cl);
+
+
+        // Make sure the object we got back from JNDI is the same type
+        // as the what is specified in the config file
+        Object ehome = javax.rmi.PortableRemoteObject.narrow(ejbHome, homeClass);
+
+        // This code requires the use of ejb.jar, so we do the stuff below
+        //   EJBHome ejbHome = (EJBHome) ehome;
+        //   EJBMetaData meta = ejbHome.getEJBMetaData();
+        //   Class interfaceClass = meta.getRemoteInterfaceClass();
+
+        // Invoke the getEJBMetaData method of the ejbHome class without
+        // actually touching any EJB classes (i.e. no cast to EJBHome)
+        Method getEJBMetaData =
+                homeClass.getMethod("getEJBMetaData", empty_class_array);
+        Object metaData = getEJBMetaData.invoke(ehome, empty_object_array);
+        Method getRemoteInterfaceClass =
+                metaData.getClass().getMethod("getRemoteInterfaceClass",
+                                                  empty_class_array);
+        return (Class) getRemoteInterfaceClass.invoke(metaData,
+                                                       empty_object_array);
+    }                                      
+
     
     /**
-     * Get the class description for the EJB Remote Interface, which is what
-     * we are interested in exposing to the world (i.e. in WSDL).
+     * Get the class description for the EJB Remote or Local Interface, 
+     * which is what we are interested in exposing to the world (i.e. in WSDL).
      * 
-     * @param msgContext the message context
+     * @param msgContext the message context (can be null)
      * @param beanJndiName the JNDI name of the EJB
-     * @return the class info of the EJB remote interface
+     * @return the class info of the EJB remote or local interface
      */ 
     protected Class getServiceClass(String beanJndiName,
                                     SOAPService service,
@@ -193,56 +325,51 @@ public class EJBProvider extends RPCProvider
     {
         Class interfaceClass = null;
         
-        // First try to get the interface class from the configuation
-        String remoteName = 
-                getStrOption(OPTION_REMOTEINTERFACENAME, service);
         try {
-            ClassLoader cl = (msgContext != null) ?
-                    msgContext.getClassLoader() :
-                    Thread.currentThread().getContextClassLoader();
+            // First try to get the interface class from the configuation
+            // Note that we don't verify that remote remoteInterfaceName is used for
+            // remote ejb and localInterfaceName for local ejb. Should we ?
+            String remoteInterfaceName = 
+                    getStrOption(OPTION_REMOTEINTERFACENAME, service);
+            String localInterfaceName = 
+                    getStrOption(OPTION_LOCALINTERFACENAME, service);
+            String interfaceName = (remoteInterfaceName != null ? remoteInterfaceName : localInterfaceName);
 
-            if(remoteName != null){
-                interfaceClass = ClassUtils.forName(remoteName,
+            if(interfaceName != null){
+                ClassLoader cl = (msgContext != null) ?
+                        msgContext.getClassLoader() :
+                        Thread.currentThread().getContextClassLoader();
+                interfaceClass = ClassUtils.forName(interfaceName,
                                                     true,
                                                     cl);
-            }
+            } 
             else
             {
-                // Get the EJB Home object from JNDI
-                Object ejbHome = getEJBHome(service, msgContext, beanJndiName);
-
-                String homeName = getStrOption(OPTION_HOMEINTERFACENAME,
-                                                        service);
-                if (homeName == null)
+                // cannot get the interface name from the configuration, we get
+                // it from the EJB Home (if remote)
+                if (isRemoteEjb(service)) {
+                    String remoteHomeName = getStrOption(OPTION_HOMEINTERFACENAME, 
+                                                         service);
+                    interfaceClass = getRemoteInterfaceClassFromHome(beanJndiName,
+                                                                     service,
+                                                                     msgContext);
+                }
+                else 
+                if (isLocalEjb(service)) {
+                    // we cannot get the local interface from the local ejb home
+                    // localInterfaceName is mandatory for local ejbs
                     throw new AxisFault(
-                            Messages.getMessage("noOption00",
-                                                 OPTION_HOMEINTERFACENAME,
-                                                 service.getName()));
-
-                // Load the Home class name given in the config file
-                Class homeClass = ClassUtils.forName(homeName, true, cl);
-
-                // Make sure the object we got back from JNDI is the same type
-                // as the what is specified in the config file
-                Object ehome = javax.rmi.PortableRemoteObject.narrow(ejbHome, homeClass);
-
-                // This code requires the use of ejb.jar, so we do the stuff below
-                //   EJBHome ejbHome = (EJBHome) ehome;
-                //   EJBMetaData meta = ejbHome.getEJBMetaData();
-                //   Class interfaceClass = meta.getRemoteInterfaceClass();
-
-                // Invoke the getEJBMetaData method of the ejbHome class without
-                // actually touching any EJB classes (i.e. no cast to EJBHome)
-                Method getEJBMetaData =
-                        homeClass.getMethod("getEJBMetaData", empty_class_array);
-                Object metaData =
-                        getEJBMetaData.invoke(ehome, empty_object_array);
-                Method getRemoteInterfaceClass =
-                        metaData.getClass().getMethod("getRemoteInterfaceClass",
-                                                      empty_class_array);
-                interfaceClass =
-                        (Class) getRemoteInterfaceClass.invoke(metaData,
-                                                               empty_object_array);
+                            Messages.getMessage("noOption00", 
+                                                OPTION_LOCALINTERFACENAME, 
+                                                service.getName()));
+                }
+                else
+                {
+                    // neither a local ejb or a remote one ...
+                    throw new AxisFault(Messages.getMessage("noOption00", 
+                                                OPTION_HOMEINTERFACENAME,
+                                                service.getName()));
+                }
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
@@ -250,11 +377,12 @@ public class EJBProvider extends RPCProvider
 
         // got it, return it
        return interfaceClass;
-        
     }
 
     /**
      * Common routine to do the JNDI lookup on the Home interface object
+     * username and password for jndi lookup are got from the configuration or from
+     * the messageContext if not found in the configuration
      */ 
     private Object getEJBHome(SOAPService serviceHandler,
                               MessageContext msgContext,
@@ -352,6 +480,26 @@ public class EJBProvider extends RPCProvider
     {
         // Do the JNDI lookup
         return context.lookup(beanJndiName);
+    }
+
+    /**
+     * Fill in a service description with the correct impl class
+     * and typemapping set.  
+     */
+    public void initServiceDesc(SOAPService service, MessageContext msgContext)
+            throws AxisFault
+    {
+        // the service class used to fill service description is the EJB Remote/Local Interface
+        // we add EJBObject and EJBLocalObject as stop classes because we
+        // don't want any of their methods in the wsdl ...
+        ServiceDesc serviceDescription = service.getServiceDescription();
+        ArrayList stopClasses = serviceDescription.getStopClasses();
+        if (stopClasses == null)
+            stopClasses = new ArrayList();              	
+        stopClasses.add("javax.ejb.EJBObject");
+        stopClasses.add("javax.ejb.EJBLocalObject");
+        serviceDescription.setStopClasses(stopClasses);
+        super.initServiceDesc(service,msgContext);
     }
 
 }
