@@ -118,11 +118,16 @@ class BeanPropertyTarget implements Target {
                     field += "[" + index + "]";
                     i = 1;
                 }
-                log.error(JavaUtils.getMessage("cantConvert02",
-                                               new String[] {
-                                                   value.getClass().getName(),
-                                                   field,
-                                                   pd.getType().getName()}));
+                if (log.isErrorEnabled()) {
+                    String valueType = "null";
+                    if (value != null)
+                        valueType = value.getClass().getName();
+                    log.error(JavaUtils.getMessage("cantConvert02",
+                                                   new String[] {
+                                                       valueType,
+                                                       field,
+                                                       pd.getType().getName()}));
+                }
                 throw new SAXException(ex);
             }
         }
