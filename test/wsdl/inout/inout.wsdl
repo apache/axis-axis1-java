@@ -826,13 +826,6 @@
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
-    <fault name="TestFailed">
-        <soap:fault 
-            name="TestFailed"
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-            use="encoded"
-            namespace="http://www.apache.org/inout"/>
-    </fault>
   </binding>
 
   <!-- service decln -->
