@@ -75,7 +75,7 @@ import org.apache.axis.utils.QName ;
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class TestClient {
+public abstract class TestClient {
 
     private static ServiceClient call;
     private static TypeMappingRegistry map = new SOAPTypeMappingRegistry();
@@ -86,7 +86,7 @@ public class TestClient {
      * Determine if two objects are equal.  Handles nulls and recursively
      * verifies arrays are equal.
      */
-    private static boolean equals(Object obj1, Object obj2) {
+    protected boolean equals(Object obj1, Object obj2) {
        if (obj1 == null) return (obj2 == null);
        if (obj1.equals(obj2)) return true;
        if (!obj2.getClass().isArray()) return false;
@@ -103,7 +103,7 @@ public class TestClient {
      * @param method name of the method to invoke
      * @param toSend object of the correct type to be sent
      */
-    private static void test(String type, Object toSend) {
+    private void test(String type, Object toSend) {
 
         String method = "echo" + type;
         String arg = "input" + type;
@@ -130,41 +130,27 @@ public class TestClient {
             call.set(HTTPTransport.ACTION, action);
 
             // issue the request
-            Object gotBack = call.invoke(
-                "http://soapinterop.org/", method, args);
+            Object got= call.invoke("http://soapinterop.org/", method, args);
 
             // verify the result
-            if (equals(toSend,gotBack)) {
-                System.out.println(method + "\t OK");
-            } else {
-                System.out.println(method + "\t FAIL: " + gotBack);
-            }
+            verify(method, toSend, got);
+
         } catch (Exception e) {
-           System.out.println(method + "\t FAIL: " + e);
+            verify(method, toSend, e);
         }
     }
 
     /**
-     * Main entry point.  Tests a variety of echo methods and reports
-     * on their results.
-     *
-     * Arguments are of the form:
-     *   -h localhost -p 8080 -s /soap/servlet/rpcrouter
+     * Set up the call object.
      */
-    public static void main(String args[]) throws Exception {
-        // set up the call object
-        Options opts = new Options(args);
-        
-        addMethodToAction = (opts.isFlagSet('m') > 0);
-        
-        String action = opts.isValueSet('a');
-        if (action != null)
-            soapAction = action;
-        
-        call = new ServiceClient(new HTTPTransport());
-        call.set(HTTPTransport.URL, opts.getURL());
-        call.set(HTTPTransport.ACTION, "http://soapinterop.org/");
+    public void setURL(String url) {
+        call = new ServiceClient(url);
+    }
 
+    /**
+     * Execute the tests
+     */
+    public void execute() throws Exception {
         // register the SOAPStruct class
         QName ssqn = new QName("http://soapinterop.org/xsd", "SOAPStruct");
         Class cls = SOAPStruct.class;
@@ -187,4 +173,42 @@ public class TestClient {
         test("Date", new Date());
     }
 
+    /**
+     * Verify that the object sent was, indeed, the one you got back.
+     * Subclasses are sent to override this with their own output.
+     */
+    protected abstract void verify(String method, Object sent, Object gotBack);
+
+    /**
+     * Main entry point.  Tests a variety of echo methods and reports
+     * on their results.
+     *
+     * Arguments are of the form:
+     *   -h localhost -p 8080 -s /soap/servlet/rpcrouter
+     */
+    public static void main(String args[]) throws Exception {
+
+        // set up tests so that the results are sent to System.out
+        TestClient client = new TestClient() {
+            public void verify(String method, Object sent, Object gotBack) {
+                if (equals(sent, gotBack)) {
+                    System.out.println(method + "\t OK");
+                } else {
+                    System.out.println(method + "\t Fail: " + gotBack);
+                }
+            }
+        };
+
+        // set up the call object
+        Options opts = new Options(args);
+        client.setURL(opts.getURL());
+        
+        // support for tests with non-compliant applications
+        client.addMethodToAction = (opts.isFlagSet('m') > 0);
+        
+        String action = opts.isValueSet('a');
+        if (action != null) client.soapAction = action;
+        
+        client.execute();
+    }
 }
