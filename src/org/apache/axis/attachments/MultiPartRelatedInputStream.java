@@ -144,7 +144,6 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         super(null);    // don't cache this stream.
 
         try {
-            PushbackInputStream is = new PushbackInputStream(stream);
             
             // First find the start and boundary parameters. There are real weird rules regard what
             // can be in real headers what needs to be escaped etc  let mail parse it.
@@ -152,35 +151,34 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     new javax.mail.internet.ContentType(contentType);
             String rootPartContentId =
                     ct.getParameter("start");       // Get the root part content.
+
+            if (rootPartContentId != null) {
+                rootPartContentId = rootPartContentId.trim();
+
+                if (rootPartContentId.startsWith("<")) {
+                    rootPartContentId = rootPartContentId.substring(1);
+                }
+
+                if (rootPartContentId.endsWith(">")) {
+                    rootPartContentId = rootPartContentId.substring(0,
+                            rootPartContentId.length() - 1);
+                }
+
+            }
+
             if(ct.getParameter("boundary") != null) {
                 String boundaryStr =
                         "--"
                         + ct.getParameter(
                                 "boundary");    // The boundary with -- add as always the case.
 
-                if (rootPartContentId != null) {
-                    rootPartContentId = rootPartContentId.trim();
-
-                    if (rootPartContentId.startsWith("<")) {
-                        rootPartContentId = rootPartContentId.substring(1);
-                    }
-
-                    if (rootPartContentId.endsWith(">")) {
-                        rootPartContentId = rootPartContentId.substring(0,
-                                rootPartContentId.length() - 1);
-                    }
-
-                  //  if (!rootPartContentId.startsWith("cid:")) {
-                  //      rootPartContentId = "cid:" + rootPartContentId;
-                  //  }
-                }
 
                 // if start is null then the first attachment is the rootpart
                 // First read the start boundary -- this is done with brute force since the servlet may swallow the crlf between headers.
                 // after this we use the more efficient boundarydelimeted stream.  There should never be any data here anyway.
                 byte[][] boundaryMarker = new byte[2][boundaryStr.length() + 2];
 
-                is.read(boundaryMarker[0]);
+                stream.read(boundaryMarker[0]);
 
                 boundary = (boundaryStr + "\r\n").getBytes("US-ASCII");
 
@@ -196,7 +194,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                                 boundaryMarker[(current + 1) & 0x1], 0,
                                 boundaryMarker[0].length - 1);
 
-                        if (is.read(
+                        if (stream.read(
                                 boundaryMarker[(current + 1) & 0x1],
                                 boundaryMarker[0].length - 1, 1) < 1) {
                             throw new org.apache.axis.AxisFault(
@@ -212,24 +210,19 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                 boundary = boundaryStr.getBytes("US-ASCII");
             } else {
                 // Since boundary is not specified, we try to find one.
-                String boundaryStr = "--";
-                byte [] boundaryBytes = boundaryStr.getBytes("US-ASCII");
-                byte [] readBytes = new byte[boundaryBytes.length];
-                is.read(readBytes);
                 for (boolean found = false; !found;) {
-                    found = java.util.Arrays.equals(boundaryBytes, readBytes);
-                    if(!found && is.read(readBytes) < 1){
+                    boundary= readLine(stream);
+                    if( boundary == null)
                         throw new org.apache.axis.AxisFault(
                                 Messages.getMessage(
-                                        "mimeErrorNoBoundary", boundaryStr));
-                    }
+                                        "mimeErrorNoBoundary", "--"));
+                     found = boundary.length >4  && boundary[2] == '-' &&  boundary[3]== '-'; 
                 }
-                boundary = readLine(is).getBytes("US-ASCII");
-            }
+              }
 
             // create the boundary delmited stream.
             boundaryDelimitedStream =
-                    new org.apache.axis.attachments.BoundaryDelimitedStream(is,
+                    new org.apache.axis.attachments.BoundaryDelimitedStream(stream,
                             boundary, 1024);
 
             // Now read through all potential streams until we have found the root part.
@@ -387,33 +380,34 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         }
     }
 
-    public final String readLine(PushbackInputStream is) throws IOException {
+    //when searching for a MIME boundary it MUST be terminated with CR LF. LF alone is NOT sufficient.
+    private final byte[] readLine(java.io.InputStream is) throws IOException {
 
-        StringBuffer input = new StringBuffer();
-        int c = -1;
-        boolean eol = false;
+        java.io.ByteArrayOutputStream input = new java.io.ByteArrayOutputStream(1024);
+        int c = 0;
+        input.write('\r');
+        input.write('\n');
 
-        while (!eol) {
-            switch (c = is.read()) {
+        int next = -1;
+        for (;c != -1;) {
+            c = -1 != next ? next :  is.read();
+            next = -1;
+            switch (c) {
                 case -1:
-                case '\n':
-                    eol = true;
-                    break;
+                break;
                 case '\r':
-                    int next = is.read();
-                    if(next != '\n' && next != -1)
-                        is.unread(next);
-                    eol = true;
-                    break;
+                    next = is.read();
+                    if(next == '\n')  //found a line.
+                        return input.toByteArray();
+                    if(next == -1)  return null;
+                    //fall through
                 default:
-                    input.append((char)c);
-                    break;
+                    input.write((byte)c);
+                break;
             }
         }
-        if ((c == -1) && (input.length() == 0)) {
-            return null;
-        }
-        return input.toString();
+        //even if there is stuff in buffer if EOF then this can't be a boundary.
+        return null; 
     }
 
     /**
