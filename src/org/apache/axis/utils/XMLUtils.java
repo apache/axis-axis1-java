@@ -552,12 +552,15 @@ public class XMLUtils {
 
 
     /**
-     * Utility to get the bytes uri
+     * Utility to get the bytes uri.
+     * Does NOT handle authenticated URLs, 
+     * use getInputSourceFromURI(uri, username, password)
      *
      * @param uri the resource to get
+     * @see #getInputSourceFromURI(String uri, String username, String password)
      */
-    public static InputSource getInputSourceFromURI(String uri){
-        return getInputSourceFromURI(uri);
+    public static InputSource getInputSourceFromURI(String uri) {
+        return new InputSource(uri);
     }
 
     /**
