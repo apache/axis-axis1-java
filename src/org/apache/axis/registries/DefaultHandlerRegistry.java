@@ -62,10 +62,11 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Admin ;
 import org.apache.axis.utils.XMLUtils ;
+import org.apache.axis.handlers.* ;
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
 
-import org.w3c.dom.* ;
+import org.apache.axis.transport.http.* ;
 
 /** 
  *
@@ -74,51 +75,6 @@ import org.w3c.dom.* ;
 public class DefaultHandlerRegistry extends SupplierRegistry {
   private boolean dontSave = false ;
   private boolean onServer = false ;
-  private String  clientXML = 
-"<deploy>" +
-"  <!-- HTTP Transport Sender -->"+
-"  <handler name=\"HTTPSender\" "+
-"           class=\"org.apache.axis.transport.http.HTTPDispatchHandler\"/>"+
-"</deploy>" ;
-
-  private String  serverXML = 
-"<deploy>" +
-"  <!-- A Debug Header Handler -->"+
-"  <handler name=\"debug\"   class=\"org.apache.axis.handlers.DebugHandler\"/>"+
-""+
-"  <!-- SOAP Server Protocol Handler -->"+
-"  <handler name=\"SOAPServer\""+
-"           class=\"org.apache.axis.handlers.SOAPServerHandler\"/>"+
-""+
-"  <!-- Global input/output chains -->"+
-"  <chain name=\"global.input\" flow=\"debug\"/>"+
-"  <!-- <chain name=\"global.output\" flow=\"xxx\"/> -->"+
-""+
-"  <!-- Message processing dispatcher -->"+
-"  <handler name=\"MsgDispatcher\""+
-"           class=\"org.apache.axis.handlers.MsgDispatchHandler\"/>"+
-""+
-"  <!-- RPC processing dispatcher -->"+
-"  <handler name=\"RPCDispatcher\""+
-"           class=\"org.apache.axis.handlers.RPCDispatchHandler\"/>"+
-""+
-"  <!-- JWS file processor/executor and service -->"+
-"  <handler name=\"jwsprocessor\" "+
-"           class=\"org.apache.axis.handlers.JWSProcessor\"/>"+
-""+
-"  <!-- HTTP Transport Sender -->"+
-"  <handler name=\"HTTPSender\" "+
-"           class=\"org.apache.axis.transport.http.HTTPDispatchHandler\"/>"+
-""+
-"  <!-- Handler that sets the Target field of the bag based on the -->"+
-"  <!-- URL and/or the SOAPAction HTTP header field                -->"+
-"  <handler name=\"HTTPAction\""+
-"           class=\"org.apache.axis.handlers.HTTPActionHandler\"/>"+
-""+
-"  <!-- Define HTTP Transport Specific Input/Output Chains -->"+
-"  <chain name=\"HTTP.input\" flow=\"HTTPAction\"/>"+
-"  <!-- <chain name=\"HTTP.output\" flow=\"xxx\"/> -->"+
-"</deploy>" ;
 
   public DefaultHandlerRegistry(String fileName) {
    super( fileName );
@@ -151,18 +107,31 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
 
     MessageContext  msgContext = new MessageContext();
     Admin                 admin      = new Admin();
-    ByteArrayInputStream  input      = null ;
 
     msgContext.setProperty(Constants.HANDLER_REGISTRY, this);
-    input = new ByteArrayInputStream( (onServer ? serverXML : 
-                                                  clientXML).getBytes() );
 
-    try {
-      Document doc = XMLUtils.newDocument( input );
-      admin.AdminService( msgContext, doc );
+    Handler h = null ;
+    Chain   c = null ;
+
+    if ( onServer ) {
+      this.add( "debug"        , new DebugHandler() );
+      this.add( "SOAPServer"   , new SOAPServerHandler() );
+      this.add( "MsgDispatcher", new MsgDispatchHandler() );
+      this.add( "RPCDispatcher", new RPCDispatchHandler() );
+      this.add( "HTTPSender"   , new HTTPDispatchHandler() );
+      this.add( "HTTPAction"   , new HTTPActionHandler() );
+
+      c = new SimpleChain();
+      c.addHandler( this.find( "debug" ) );
+      this.add( "global.input", c );
+
+      c = new SimpleChain();
+      c.addHandler( this.find( "HTTPAction" ) );
+      this.add( "HTTP.input", c );
+
     }
-    catch( Exception e ) {
-      e.printStackTrace();
+    else {
+      this.add( "HTTPSender", new HTTPDispatchHandler() );
     }
 
     dontSave = false ;

@@ -62,6 +62,7 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Admin ;
 import org.apache.axis.utils.XMLUtils ;
+import org.apache.axis.handlers.* ;
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
 
@@ -75,22 +76,6 @@ public class DefaultServiceRegistry extends SupplierRegistry {
   private boolean          dontSave = false ;
   private HandlerRegistry  handlerRegistry = null ;
   private boolean          onServer = false ;
-
-  private String  clientXML = 
-"<deploy>" +
-"</deploy>" ;
-
-  private String  serverXML = 
-"<deploy>" +
-"  <!-- JWS file processor/executor and service -->"+
-"  <service name=\"JWSProcessor\" pivot=\"jwsprocessor\" />" +
-""+
-"<!-- Deploy the Admin Service so people can remotely deploy -->"+
-"  <service name=\"AdminService\" pivot=\"MsgDispatcher\">"+
-"    <option name=\"className\" value=\"org.apache.axis.utils.Admin\" />"+
-"    <option name=\"methodName\" value=\"AdminService\" />"+
-"  </service>"+
-"</deploy>" ;
 
   public DefaultServiceRegistry(String fileName) {
    super( fileName );
@@ -126,19 +111,25 @@ public class DefaultServiceRegistry extends SupplierRegistry {
 
     MessageContext  msgContext = new MessageContext();
     Admin                 admin      = new Admin();
-    ByteArrayInputStream  input      = null ;
 
     msgContext.setProperty(Constants.HANDLER_REGISTRY, handlerRegistry);
     msgContext.setProperty(Constants.SERVICE_REGISTRY, this);
-    input = new ByteArrayInputStream( (onServer ? serverXML : 
-                                                  clientXML).getBytes() );
 
-    try {
-      Document doc = XMLUtils.newDocument( input );
-      admin.AdminService( msgContext, doc );
+    SimpleTargetedChain  cc = null ;
+
+    if ( onServer ) {
+      handlerRegistry.add("JWSProcessor",handlerRegistry.find("jwsprocessor"));
+      this.add( "JWSProcessor", handlerRegistry.find( "jwsprocessor" ) );
+
+      cc = new SimpleTargetedChain();
+      cc.setPivotHandler( handlerRegistry.find( "MsgDispatcher" ) );
+      cc.addOption( "className", "org.apache.axis.utils.Admin" );
+      cc.addOption( "methodName", "AdminService" );
+      handlerRegistry.add( "AdminService", cc );
+      this.add( "AdminService", cc );
     }
-    catch( Exception e ) {
-      e.printStackTrace();
+    else {
+      // Do nothing
     }
 
     dontSave = false ;
