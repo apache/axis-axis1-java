@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Graham (IBM) -->
+<deployments name="wsddScenario12" xmlns="http://xml.apache.org/axis/wsdd" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd
+C:\xml-axis\java\wsdd\WSDD.xsd">
+	<serviceConfiguration name="*" type="org.apache.axis.SimpleTargetedChain">
+		<documentation>
+    The service deployment element is empty used in this example (defines global chains).
+    This defines a global input chain of 2 handlers, a global output chain of 2 handlers.
+    And a global fault chain.
+  		</documentation>
+		<serviceDeployment/>
+		<flow flowType="request" type="org.apache.axis.SimpleChain">
+			<documentation>The global input chain</documentation>
+			<handler id="inputHandler1" type="samples.handlers.testHandler1">
+				<parameter name="parm1">global output handler 1</parameter>
+			</handler>
+			<handler id="inputHandler2" type="samples.handlers.testHandler1">
+				<parameter name="parm1">global output handler 2</parameter>
+			</handler>
+		</flow>
+		<flow flowType="response">
+			<documentation>The global output chain</documentation>
+			<handler id="outputHandler1" type="samples.handlers.testHandler2"/>
+			<handler id="outputHandler2" type="samples.handlers.testHandler2"/>
+		</flow>
+		<flow flowType="fault">
+			<documentation>global fault chain (all faults)</documentation>
+			<handler id="faultHandler1" type="samples.handlers.testHandler3">
+				<parameter name="parm1">global fault handler 1</parameter>
+			</handler>
+			<handler id="faultHandler2" type="samples.handlers.testHandler4">
+				<parameter name="parm1">global fault handler 2</parameter>
+			</handler>
+		</flow>
+		<flow flowType="fault" name="Server.*">
+			<documentation>global fault chain (all server faults)</documentation>
+			<handler id="faultHandlerS1" type="samples.handlers.testHandler3">
+				<parameter name="parm1">global server fault handler 1</parameter>
+			</handler>
+			<handler id="faultHandlerS2" type="samples.handlers.testHandler4">
+				<parameter name="parm1">global server fault handler 2</parameter>
+			</handler>
+		</flow>
+	</serviceConfiguration>
+</deployments>

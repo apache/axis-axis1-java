@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Graham (IBM) -->
+<deployments name="Apache_SOAP_v2_mimeTest" xmlns="http://xml.apache.org/axis/wsdd" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd
+C:\xml-axis\java\wsdd\WSDD.xsd">
+	<documentation>
+    This is a model of the Apache SOAP v2.x example mime test.
+    Of course, there may be a different service handler for the mime stuff.
+    	</documentation>
+	<serviceConfiguration name="urn:mimetest">
+		<serviceDeployment style="message" supplierType="org.apache.axis.suppliers.RequestScopeSupplier">
+			<operation name="sendFile"/>
+			<operation name="loopFile"/>
+			<operation name="getFileVector"/>
+			<operation name="loopFileVector"/>
+			<operation name="getFileArray"/>
+			<operation name="loopFileArray"/>
+			<operation name="listAttachments"/>
+			<provider java:className="samples.mime.MimeTest" java:isStatic="false" serviceHandler="org.apache.axis.handler.ServiceHandler" xmlns:java="http://xml.apache.org/axis/providers/java"/>
+		</serviceDeployment>
+	</serviceConfiguration>
+</deployments>

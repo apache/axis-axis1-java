@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Graham (IBM) -->
+<deployments name="service_configuration_exercises_wsddScenario1" xmlns="http://xml.apache.org/axis/wsdd" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd
+C:\xml-axis\java\wsdd\WSDD.xsd">
+	<documentation>
+    This is a trivial service deployment.  It defines no chains, no handlers.  Just the service.
+   
+    Minimal deployment with no serviceDescription is required as the deployment identifies the type to use.
+
+    The serviceHandler is not specified, the default serviceHandler for javaProvider is used in this case.
+  	</documentation>
+	<serviceConfiguration name="urn:wsddScenario1-service-1">
+		<serviceDeployment xmlns:java="http://xml.apache.org/axis/providers/java">
+			<provider java:className="samples.wsdd.wsddScenario1"/>
+		</serviceDeployment>
+	</serviceConfiguration>
+</deployments>

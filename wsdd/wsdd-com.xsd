@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://xml.apache.org/axis/providers/com" 
+			xmlns:com="http://xml.apache.org/axis/providers/com" 
+			xmlns:xsd="http://www.w3.org/2000/10/XMLSchema" 
+			attributeFormDefault="qualified" 
+			version="1.0">
+	<xsd:attribute name="ProgID" type="xsd:string"/>
+	<xsd:attribute name="CLSID" type="xsd:string"/>
+	<xsd:attribute name="threadingModel">
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:NMTOKEN">
+				<xsd:enumeration value="multithreaded"/>
+				<xsd:enumeration value="apartment-threaded"/>
+				<xsd:enumeration value="single-apartment-threaded"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:attribute>
+</xsd:schema>
