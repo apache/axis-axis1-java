@@ -86,6 +86,8 @@ public class SOAPBody extends MessageElement
 
     private SOAPConstants soapConstants;
 
+    private boolean disableFormatting = false;
+
     SOAPBody(SOAPEnvelope env, SOAPConstants soapConsts) {
         soapConstants = soapConsts;
         try {
@@ -118,10 +120,18 @@ public class SOAPBody extends MessageElement
         ((SOAPEnvelope)parent).removeBody();
         super.detachNode();
     }
+   
+    public void disableFormatting() {
+        this.disableFormatting = true;
+    }
 
     protected void outputImpl(SerializationContext context) throws Exception {
         boolean oldPretty = context.getPretty();
-        context.setPretty(true);
+        if (!disableFormatting) {
+             context.setPretty(true);
+        } else {
+             context.setPretty(false);
+        }
 
         if (bodyElements.isEmpty()) {
             // This is a problem.

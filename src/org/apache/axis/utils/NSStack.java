@@ -241,7 +241,7 @@ public class NSStack {
 
         // If defaults are OK, and the given NS is the current default,
         // return "" as the prefix to favor defaults where possible.
-        if (!noDefault && currentDefaultNS > 0 && 
+        if (!noDefault && currentDefaultNS > 0 && stack[currentDefaultNS] != null &&
                 namespaceURI.equals(
                         stack[currentDefaultNS].getNamespaceURI()))
             return "";
