@@ -75,7 +75,7 @@ import javax.xml.rpc.encoding.DeserializerFactory;
 public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     private static DefaultTypeMappingImpl tm = null;
-    private boolean doneInit = false;   // have we completed initalization
+    private boolean jaxrpc11Compliance = false;
 
     /**
      * Obtain the singleton default typemapping.
@@ -551,6 +551,58 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
+        if(jaxrpc11Compliance) {
+            // Table 4-1 of the JAXRPC 1.1 spec
+            myRegisterSimple(Constants.XSD_UNSIGNEDINT, long.class);    
+            myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, int.class);    
+            myRegisterSimple(Constants.XSD_UNSIGNEDBYTE, short.class);   
+            myRegister(Constants.XSD_DATETIME,       java.util.Calendar.class,
+                       new DateSerializerFactory(java.util.Calendar.class,
+                                                 Constants.XSD_DATE),
+                       new DateDeserializerFactory(java.util.Calendar.class,
+                                                   Constants.XSD_DATE)
+            );
+            myRegister(Constants.XSD_DATE,       java.util.Calendar.class,
+                       new DateSerializerFactory(java.util.Calendar.class,
+                                                 Constants.XSD_DATE),
+                       new DateDeserializerFactory(java.util.Calendar.class,
+                                                   Constants.XSD_DATE)
+            );
+            myRegister(Constants.XSD_TIME,       java.util.Calendar.class,
+                       new DateSerializerFactory(java.util.Calendar.class,
+                                                 Constants.XSD_TIME),
+                       new DateDeserializerFactory(java.util.Calendar.class,
+                                                   Constants.XSD_TIME)
+            );
+            try {
+                myRegisterSimple(Constants.XSD_ANYURI, Class.forName("java.net.URI"));
+            } 
+            catch (ClassNotFoundException e) {
+                myRegisterSimple(Constants.XSD_ANYURI, java.lang.String.class);
+            }
+            
+            // Table 4-2 of JAXRPC 1.1 spec
+            myRegisterSimple(Constants.XSD_DURATION, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_YEARMONTH, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_YEAR, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_MONTHDAY, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_DAY, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_MONTH, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_NORMALIZEDSTRING, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_TOKEN, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_LANGUAGE, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_NAME, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_NCNAME, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_ID, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_NMTOKEN, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_NMTOKENS, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_NONPOSITIVEINTEGER, java.math.BigInteger.class);
+            myRegisterSimple(Constants.XSD_NEGATIVEINTEGER, java.math.BigInteger.class);
+            myRegisterSimple(Constants.XSD_NONNEGATIVEINTEGER, java.math.BigInteger.class);
+            myRegisterSimple(Constants.XSD_UNSIGNEDLONG, java.math.BigInteger.class);
+            myRegisterSimple(Constants.XSD_POSITIVEINTEGER, java.math.BigInteger.class);
+        }
+        
         // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
         myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,
                    new ArraySerializerFactory(),
@@ -595,8 +647,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         SchemaVersion.SCHEMA_1999.registerSchemaSpecificTypes(this);
         SchemaVersion.SCHEMA_2000.registerSchemaSpecificTypes(this);
         SchemaVersion.SCHEMA_2001.registerSchemaSpecificTypes(this);
-
-        doneInit = true;
     }
 
     /**
@@ -662,11 +712,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Don't allow anyone but init to modify us.
         super.register(javaType, xmlType, sf, dsf);
-//        if (doneInit && !doAutoTypes) {
-//            throw new JAXRPCException(Messages.getMessage("fixedTypeMapping"));
-//        }
-//        else {
-//        }
     }
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {

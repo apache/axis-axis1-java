@@ -166,10 +166,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         }  
         prevQName = elemQName;
 
-        // Fastpath nil checks...
-        if (context.isNil(attributes))
-            return null;
-        
         if (typeDesc != null) {       
             // Lookup the name appropriately (assuming an unqualified
             // name for SOAP encoding, using the namespace otherwise)
@@ -253,6 +249,18 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         if (dSer == null) {
             dSer = context.getDeserializerForClass(propDesc.getType());
         }
+
+        // Fastpath nil checks...
+        if (context.isNil(attributes)) {
+            if (propDesc != null && propDesc.isIndexed()) { 
+                if (!((dSer != null) && (dSer instanceof ArrayDeserializer)) ||
+                        propDesc.getType().isArray()) {
+                    collectionIndex++;
+                }
+            }
+            return null;
+        }            
+          
         if (dSer == null) {
             throw new SAXException(Messages.getMessage("noDeser00",
                                                        childXMLType.toString()));
