@@ -98,9 +98,13 @@ public class SimpleSerializer implements SimpleValueSerializer {
         if (value instanceof SimpleType)
             attributes = getObjectAttributes(value, attributes, context);
 
-        context.startElement(name, attributes);
+        String valueStr = null;
         if (value != null) {
-            context.writeSafeString(getValueAsString(value, context));
+            valueStr = getValueAsString(value, context);
+        }
+        context.startElement(name, attributes);
+        if (valueStr != null) {
+            context.writeSafeString(valueStr);
         }
         context.endElement();
     }
@@ -124,6 +128,8 @@ public class SimpleSerializer implements SimpleValueSerializer {
             } else if (data == Double.NEGATIVE_INFINITY) {
                 return "-INF";
             }
+        } else if (value instanceof QName) {
+            return context.qName2String((QName)value);
         }
 
         return value.toString();

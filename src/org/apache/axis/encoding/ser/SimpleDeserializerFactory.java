@@ -42,8 +42,13 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
         super(SimpleDeserializer.class, xmlType, javaType);
         try {
             if (!javaType.isPrimitive()) {
-                constructor = 
-                    javaType.getDeclaredConstructor(new Class [] {String.class});
+                if (QName.class.isAssignableFrom(javaType)) {
+                    constructor = 
+                        javaType.getDeclaredConstructor(new Class [] {String.class, String.class});
+                } else {
+                    constructor = 
+                        javaType.getDeclaredConstructor(new Class [] {String.class});
+                }
             }
             else {
                 Class wrapper = JavaUtils.getWrapperClass(javaType);
