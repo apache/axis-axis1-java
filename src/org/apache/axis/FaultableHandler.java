@@ -63,8 +63,9 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
 public class FaultableHandler implements Handler {
-  Handler    workHandler ;
-  Hashtable  faultHandlers ;
+  protected Handler    workHandler ;
+  protected Hashtable  faultHandlers ;
+  protected Hashtable  options ;
 
   public void init() {
     workHandler.init();
@@ -109,8 +110,31 @@ public class FaultableHandler implements Handler {
     return( workHandler.canHandleBlock(qname) );
   }
 
-  public QName[] getBlocksHandled() {
-    return( workHandler.getBlocksHandled() );
+  /**
+   * Add the given option (name/value) to this handler's bag of options
+   */
+  public void addOption(String name, Object value) {
+    if ( options == null ) options = new Hashtable();
+    options.put( name, value );
+  }
+
+  /**
+   * Returns the option corresponding to the 'name' given
+   */
+  public Object getOption(String name) {
+    if ( options == null ) return( null );
+    return( options.get(name) );
+  }
+
+  /**
+   * Return the entire list of options
+   */
+  public Hashtable getOptions() {
+    return( options );
+  }
+
+  public void setOptions(Hashtable opts) {
+    options = opts ;
   }
 
 };

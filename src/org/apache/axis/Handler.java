@@ -57,6 +57,7 @@
 
 package org.apache.axis ;
 
+import java.util.* ;
 import java.io.Serializable ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
@@ -96,8 +97,22 @@ public interface Handler extends Serializable {
   public boolean canHandleBlock(QName qname);
 
   /**
-   * Get the list of QNames that are processed by this Handler
+   * Add the given option (name/value) to this handler's bag of options
    */
-  public QName[] getBlocksHandled();
+  public void addOption(String name, Object value);
 
+  /**
+   * Returns the option corresponding to the 'name' given
+   */
+  public Object getOption(String name);
+
+  /**
+   * Return the entire list of options
+   */
+  public Hashtable getOptions();
+
+  /**
+   * Sets a whole list of options
+   */
+  public void setOptions(Hashtable opts);
 };

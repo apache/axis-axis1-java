@@ -59,6 +59,7 @@ package org.apache.axis.message ;
 
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
+import java.util.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
 import org.apache.xerces.parsers.* ;
@@ -70,17 +71,50 @@ public class SOAPBody {
   protected String    name ;
   protected String    namespace ;
   protected String    namespaceURI ;
-  protected NodeList  data ;
+  protected ArrayList data ;
 
   public SOAPBody() {
   }
 
   public SOAPBody(Element elem) {
-    String  value ;
+    String    value ;
+    NodeList  list ;
     namespace = elem.getPrefix();
     namespaceURI = elem.getNamespaceURI();
     name = elem.getLocalName();
-    data = elem.getChildNodes();
+    // setData( elem.getChildNodes() );
+    setData( elem.getElementsByTagName("*") );
+  }
+
+  public String  getName() { return( name ); }
+  public void    setName(String name) { this.name = name ; }
+
+  public String  getNamespace() { return( namespace ); }
+  public void    setNamespace(String ns) { namespace = ns; }
+
+  public String  getNamespaceURI() { return( namespaceURI ); }
+  public void    setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
+
+  public Vector getData() { 
+    if ( data == null || data.size() == 0 ) return( null );
+    Vector  v = new Vector();
+
+    for ( int i = 0 ;i < data.size() ; i++ )
+      v.add( data.get(i) );
+    return( v );
+  }
+
+  public void      addDataNode(Node n) { data.add(n); };
+
+  public void setData(NodeList nl) { 
+    data = null ;
+    if ( nl == null || nl.getLength() == 0 ) return ;
+    for ( int i = 0 ; i < nl.getLength() ; i++ ) {
+      Node n = nl.item(i);
+      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+      if ( data == null ) data = new ArrayList();
+      data.add( n );
+    }
   }
 
   public Element getAsXML(Document doc) {
@@ -88,8 +122,8 @@ public class SOAPBody {
                                          name );
     root.setAttribute( "xmlns:" + namespace, namespaceURI );
 
-    for ( int i = 0 ; data != null && i < data.getLength() ; i++ )
-      root.appendChild(doc.importNode( data.item(i), true ));
+    for ( int i = 0 ; data != null && i < data.size() ; i++ )
+      root.appendChild(doc.importNode( (Node) data.get(i), true ));
     return( root );
   }
 

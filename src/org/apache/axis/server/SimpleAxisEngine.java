@@ -57,6 +57,7 @@
 
 package org.apache.axis.server ;
 
+import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
@@ -66,6 +67,7 @@ public class SimpleAxisEngine implements Handler {
   /**
    * This entry point into the SOAP server 
    */
+  protected Hashtable options ;
 
   public void init() {
   }
@@ -81,7 +83,7 @@ public class SimpleAxisEngine implements Handler {
     // Load the simple deployed services registry and init it
     HandlerRegistry  sr = new SimpleServiceRegistry();
     sr.init();
-
+    
     String action = (String) msgContext.getProperty( "SOAPAction" );
     if ( action == null ) action = "EchoService" ;
 
@@ -92,6 +94,10 @@ public class SimpleAxisEngine implements Handler {
       msgContext.setOutgoingMessage( msg );
       return ;
     }
+
+    // Place in the bag so that handlers down the line can have access to
+    // it - ie. can look thru it's list of options
+    msgContext.setProperty( "ServiceHandler", h );
 
     h.init();
     try {
@@ -110,9 +116,31 @@ public class SimpleAxisEngine implements Handler {
   public boolean canHandleBlock(QName qname) {
     return( false );
   };
-
-  public QName[] getBlocksHandled() {
-    return( null );
+ 
+  /**
+   * Add the given option (name/value) to this handler's bag of options
+   */
+  public void addOption(String name, Object value) {
+    if ( options == null ) options = new Hashtable();
+    options.put( name, value );
   }
 
+  /**
+   * Returns the option corresponding to the 'name' given
+   */
+  public Object getOption(String name) {
+    if ( options == null ) return( null );
+    return( options.get(name) );
+  }
+
+  /**
+   * Return the entire list of options
+   */
+  public Hashtable getOptions() {
+    return( options );
+  }
+  
+  public void setOptions(Hashtable opts) {
+    options = opts ;
+  }
 };

@@ -24,7 +24,7 @@
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Axis" and "Apache Software Foundation" must
+ * 4. The names "Xerces" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
@@ -55,65 +55,90 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.message ;
 
-import java.io.* ;
+// !!!!***** Just a placeholder until we get the real stuff ***!!!!!
+
 import java.util.* ;
 import org.w3c.dom.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
+import org.xml.sax.InputSource ;
+import org.apache.xerces.parsers.* ;
+import org.apache.xerces.framework.* ;
+import org.apache.xml.serialize.* ;
+import org.apache.axis.message.* ;
 
-public class AdminHandler implements Handler {
-  public Hashtable  options ;
+public class RPCBody extends SOAPBody {
+  protected String    namespace ;
+  protected String    namespaceURI ;
+  protected ArrayList args ;                // RPCArgs
 
-  public void init() {
+  public RPCBody() {}
+
+  public RPCBody(Element elem) {
+    NodeList  list ;
+
+    namespace = elem.getPrefix();
+    namespaceURI = elem.getNamespaceURI();
+    name = elem.getLocalName();
+    parseArgs( elem.getChildNodes() );
   }
 
-  public void cleanup() {
+  public RPCBody(SOAPBody b) {
+    setMethodName( b.getName() );
+    setNamespace( b.getNamespace() );
+    setNamespaceURI( b.getNamespaceURI() );
+    Vector list = b.getData();
+    if ( list != null )
+      for ( int i = 0 ; i < list.size() ; i++ )
+        addArg( new RPCArg( (Element) list.get(i) ) );
   }
 
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    System.err.println("In AdminHandler");
+  public String getMethodName() { return( name ); }
+  public void   setMethodName(String name) { this.name = name ; }
 
-    Document doc = (Document) msgContext.getIncomingMessage().getAs("Document");
-    Admin    admin = new Admin();
+  public String getNamespace() { return( namespace ); }
+  public void   setNamespace(String ns) { namespace = ns; }
 
-    admin.process( doc );
-    Message msg = new Message( "Done processing deployment data", "String" );
-    msgContext.setOutgoingMessage( msg );
+  public String getNamespaceURI() { return( namespaceURI ); }
+  public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
+
+  public Vector getArgs() { 
+    if ( args == null || args.size() == 0 ) return( null );
+    Vector v = new Vector();
+    for ( int i = 0 ; i < args.size() ; i++ )
+      v.add( args.get(i) );
+    return( v );
   }
 
-  public void undo(MessageContext msgContext) { }
-
-  public boolean canHandleBlock(QName qname) {
-    return( false );
+  public void      addArg(RPCArg arg) { 
+    if ( args == null ) args = new ArrayList();
+    args.add( arg ); 
+  }
+  
+  public void      parseArgs(NodeList list) {
+    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
+      Node  n = list.item(i);
+      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+      if ( args == null ) args = new ArrayList();
+      args.add( new RPCArg( (Element) n ) );
+    }
   }
 
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-   public Hashtable getOptions() {
-     return( options );
-   }
- 
-  public void setOptions(Hashtable opts) {
-    this.options = opts ;
+  public Element getAsXML(Document doc) {
+    Element   root ;
+   
+    if ( namespace != null ) {
+      root = doc.createElementNS(namespace, namespace + ":" + name );
+      root.setAttribute( "xmlns:" + namespace, namespaceURI );
+    }
+    else {
+      root = doc.createElement( name );
+    }
+    for ( int i = 0 ; args != null && i < args.size() ; i++ ) {
+      RPCArg  arg = (RPCArg) args.get(i) ;
+      root.appendChild( arg.getAsXML(doc) );
+    }
+    return( root );
   }
 
 };

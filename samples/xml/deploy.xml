@@ -9,19 +9,24 @@
 
 <deploy>
   <handler name="log" class="org.apache.axis.handlers.LogHandler" />
-  <handler name="dispatch" class="org.apache.axis.handlers.LogHandler" />
+  <handler name="rpc-dispatch" class="org.apache.axis.handlers.RPCDispatchHandler" />
   <handler name="echo" class="org.apache.axis.handlers.EchoHandler" />
   <handler name="admin" class="org.apache.axis.handlers.AdminHandler" />
   <handler name="error" class="org.apache.axis.handlers.ErrorHandler" />
 
   <chain name="pre" flow="log" />
   <chain name="echoChain" input="log" pivot="echo" output="log" />
-  <chain name="rpc" input="log" pivot="dispatch" output="log" />
   <chain name="errorChain" input="log,log" pivot="error" output="log,log" />
 
   <service name="AdminService" handler="admin" />
   <service name="EchoService" handler="echoChain" />
-  <service name="RPCService" handler="rpc" />
   <service name="ErrorService" handler="errorChain" />
   <service name="ErrorService1" handler="error" />
+
+  <chain name="JavaRPC" flow="log,rpc-dispatch,log" />
+
+  <service name="urn:GetQuote" handler="JavaRPC" >
+    <option name="className" value="samples.stockquote.StockQuoteService" />
+    <option name="methodName" value="getQuote" />
+  </service>
 </deploy>

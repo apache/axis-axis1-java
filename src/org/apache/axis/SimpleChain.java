@@ -62,7 +62,8 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
 public class SimpleChain implements Chain {
-  private Vector  handlers ;
+  protected Vector     handlers ;
+  protected Hashtable  options ;
 
   public void init() {
     for ( int i = 0 ; i < handlers.size() ; i++ )
@@ -113,16 +114,31 @@ public class SimpleChain implements Chain {
     return( false );
   }
 
-  public QName[] getBlocksHandled() {
-    // Could there be dups??
-    if ( handlers.size() == 0 ) return( null );
-    ArrayList  result = new ArrayList();
-    for ( int i = 0 ; i < handlers.size() ; i++ ) {
-      QName[]  tmp = ((Handler) handlers.elementAt(i)).getBlocksHandled();
-      result.addAll( Arrays.asList( tmp ) );
-    }
+  /**
+   * Add the given option (name/value) to this handler's bag of options
+   */
+  public void addOption(String name, Object value) {
+    if ( options == null ) options = new Hashtable();
+    options.put( name, value );
+  }
 
-    return( (QName[]) result.toArray() );
+  /**
+   * Returns the option corresponding to the 'name' given
+   */
+  public Object getOption(String name) {
+    if ( options == null ) return( null );
+    return( options.get(name) );
+  }
+
+  /**
+   * Return the entire list of options
+   */
+  public Hashtable getOptions() {
+    return( options );
+  }
+
+  public void setOptions(Hashtable opts) {
+    options = opts ;
   }
 
   public void addHandler(Handler handler) {

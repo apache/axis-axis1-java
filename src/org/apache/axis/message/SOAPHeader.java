@@ -59,6 +59,7 @@ package org.apache.axis.message ;
 
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
+import java.util.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
 import org.apache.xerces.parsers.* ;
@@ -73,7 +74,7 @@ public class SOAPHeader {
   protected String    namespaceURI ;
   protected boolean   mustUnderstand ;
   protected String    actor ;
-  protected NodeList  data ;
+  protected ArrayList data ;
 
   public SOAPHeader(Element elem) {
     String  value ;
@@ -85,7 +86,32 @@ public class SOAPHeader {
     if ( "1".equals(value) ) mustUnderstand = true ;
     actor = elem.getAttributeNS( Constants.URI_SOAP_ENV,
                                 Constants.ATTR_ACTOR );
-    data = elem.getChildNodes();
+    setData( elem.getChildNodes() );
+  }
+
+  public String getName() { return( name ); }
+  public void   setName(String n) { name = n; }
+
+  public String getNamespace() { return( namespace ); }
+  public void   setNamespace(String ns) { namespace = ns; }
+
+  public String getNamespaceURI() { return( namespaceURI ); }
+  public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
+
+  public boolean getMustUnderstand() { return( mustUnderstand ); }
+  public void    setMustUnderstand(boolean b) { mustUnderstand = b ; }
+
+  public String  getActor() { return( actor ); }
+  public void    setActor(String a) { actor = a ; }
+
+  public Node[]    getData() { return( (Node[]) data.toArray() ); }
+  public void      addDataNode(Node n) { data.add(n); };
+
+  public void setData(NodeList nl) { 
+    data = null ;
+    if ( nl != null && nl.getLength() != 0 ) data = new ArrayList();
+    for ( int i = 0 ; i < nl.getLength() ; i++ )
+      data.add( nl.item(i) );
   }
 
   public Element getAsXML(Document doc) {
@@ -100,8 +126,8 @@ public class SOAPHeader {
       root.setAttributeNS( Constants.URI_SOAP_ENV,
                            Constants.ATTR_ACTOR,
                            actor );
-    for ( int i = 0 ; data != null && i < data.getLength() ; i++ )
-      root.appendChild(doc.importNode( data.item(i), true ));
+    for ( int i = 0 ; data != null && i < data.size() ; i++ )
+      root.appendChild(doc.importNode( (Node) data.get(i), true ));
     return( root );
   }
 

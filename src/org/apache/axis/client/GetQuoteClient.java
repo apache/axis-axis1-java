@@ -55,65 +55,65 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.client ;
 
-import java.io.* ;
-import java.util.* ;
-import org.w3c.dom.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
+import java.net.*;
+import java.io.*;
+import java.util.*;
 
-public class AdminHandler implements Handler {
-  public Hashtable  options ;
+public class GetQuoteClient {
 
-  public void init() {
-  }
+  public static void main(String args[]) {
 
-  public void cleanup() {
-  }
+    String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
+                 "Host: localhost:8080\n" +
+                 "Content-Type: text/xml;charset=utf-8\n" +
+                 "SOAPAction: urn:GetQuote\n";
 
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    System.err.println("In AdminHandler");
+    String msg = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
+                 "<SOAP-ENV:Body>\n" +
+                 "<m:getQuote xmlns:m=\"urn:GetQuote\">" +
+                 "<symbol>IBM</symbol>" +
+                 "</m:getQuote>" +
+                 "</SOAP-ENV:Body>\n" +
+                 "</SOAP-ENV:Envelope>" ;
 
-    Document doc = (Document) msgContext.getIncomingMessage().getAs("Document");
-    Admin    admin = new Admin();
+    try {
+      String  host = "localhost" ;
+      int     port = 8080 ;
 
-    admin.process( doc );
-    Message msg = new Message( "Done processing deployment data", "String" );
-    msgContext.setOutgoingMessage( msg );
-  }
+      for ( int i = 0 ; i < args.length ; i++ ) {
+        if ( args[i].charAt(0) == '-' ) {
+          switch( args[i].toLowerCase().charAt(1) ) {
+            case 'h': if ( args[i].length() > 2 )
+                        host = args[i].substring(2);
+                      break ;
+            case 'p': if ( args[i].length() > 2 )
+                        port = Integer.parseInt(args[i].substring(2));
+                      break ;
+            default: System.err.println( "Unknown option '" + 
+                                         args[i].charAt(1) + "'" );
+                     System.exit(1);
+          }
+        }
+      }
 
-  public void undo(MessageContext msgContext) { }
+      String         cl = "Content-Length: " + msg.length() + "\n\n" ;
+      Socket         sock = new Socket( host, port );
+      InputStream    inp = sock.getInputStream();
+      OutputStream   out = sock.getOutputStream();
+      byte           b ;
 
-  public boolean canHandleBlock(QName qname) {
-    return( false );
-  }
+      out.write( hdr.getBytes() );
+      out.write( cl.getBytes() );
+      out.write( msg.getBytes() );
 
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-   public Hashtable getOptions() {
-     return( options );
-   }
- 
-  public void setOptions(Hashtable opts) {
-    this.options = opts ;
-  }
+      while ( (b = (byte) inp.read()) != -1 ) 
+        System.out.write( b );
+    }
+    catch( Exception e ) {
+      System.err.println( e );
+    }
+  };
 
 };
