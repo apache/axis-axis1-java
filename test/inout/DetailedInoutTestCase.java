@@ -21,7 +21,7 @@ import junit.swingui.TestRunner;
  */
 public class DetailedInoutTestCase extends TestCase
 {
-    private static Inout io = new InoutService().getSOAPPort();
+    private static Inout io = new InoutService().getInoutService();
     
     public DetailedInoutTestCase(String name) {
         super(name);
