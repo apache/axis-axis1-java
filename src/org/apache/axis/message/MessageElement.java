@@ -51,6 +51,7 @@ import javax.xml.rpc.encoding.TypeMapping;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -418,7 +419,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                         if(child != null) {  // why child can be null?
                             NodeImpl clonedChild = (NodeImpl)child.cloneNode(deep); // deep == true
                             clonedChild.setParent(clonedSelf);
-                            clonedChild.setOwnerDocument(soapPart);
+                            clonedChild.setOwnerDocument(getOwnerDocument());
                             
                             clonedSelf.childDeepCloned( child, clonedChild );
                         }
@@ -1381,17 +1382,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @see javax.xml.soap.SOAPElement#addTextNode(String)
      */
     public SOAPElement addTextNode(String s) throws SOAPException {
-        Text text = null;
-        if (context != null && context.getEnvelope() != null &&
-                context.getEnvelope().getOwnerDocument() != null) {
-            Document doc = context.getEnvelope().getOwnerDocument();
-            text = doc.createTextNode(s);
-        }
-        if (text == null) {
-            text = new org.apache.axis.message.Text(s);
-        }
         try {
-             appendChild(text);
+            Text text = getOwnerDocument().createTextNode(s);
+            appendChild(text);
             return this;
         } catch (ClassCastException e) {
             throw new SOAPException(e);
@@ -2091,5 +2084,18 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             }
         }
         super.setValue(value);
+    }
+
+    public Document getOwnerDocument() {
+        Document doc = super.getOwnerDocument();
+        if (doc == null) {
+            if (context != null && context.getEnvelope() != null &&
+                    context.getEnvelope().getOwnerDocument() != null) {
+                doc = context.getEnvelope().getOwnerDocument();
+            } else {
+                doc = new SOAPDocumentImpl(null);
+            }
+        }
+        return doc;
     }
 }

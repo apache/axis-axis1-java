@@ -53,7 +53,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     protected String namespaceURI;
     protected transient Attributes attributes = NullAttributes.singleton;
 
-    protected org.apache.axis.SOAPPart soapPart = null;
+    protected Document document = null;
     protected NodeImpl parent = null;
     protected ArrayList children = null;
 
@@ -281,10 +281,10 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     /**
      * Set the owner document
      * 
-     * @param sp 
+     * @param doc 
      */
-    public void setOwnerDocument(org.apache.axis.SOAPPart sp) {
-        soapPart = sp;
+    public void setOwnerDocument(Document doc) {
+        document = doc;
     }
 
     /**
@@ -295,7 +295,16 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * <code>null</code>.
      */
     public Document getOwnerDocument() {
-        return soapPart;
+        if(document == null) {
+            NodeImpl node = getParent();
+            while(node != null) {
+                if(node.getOwnerDocument() != null) {
+                    return node.getOwnerDocument();
+                }
+                node = node.getParent();
+            }
+        }
+        return document;
     }
 
     /**
