@@ -106,9 +106,33 @@ public class AdminClient
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
         // 26 is the # of lines in resources.properties
-        for(int i=0;i<=26;i++) {
-            msg.append(Messages.getMessage("acUsage" + i)).append(lSep);
-        }
+        msg.append(Messages.getMessage("acUsage00")).append(lSep);
+        msg.append(Messages.getMessage("acUsage01")).append(lSep);
+        msg.append(Messages.getMessage("acUsage02")).append(lSep);
+        msg.append(Messages.getMessage("acUsage03")).append(lSep);
+        msg.append(Messages.getMessage("acUsage04")).append(lSep);
+        msg.append(Messages.getMessage("acUsage05")).append(lSep);
+        msg.append(Messages.getMessage("acUsage06")).append(lSep);
+        msg.append(Messages.getMessage("acUsage07")).append(lSep);
+        msg.append(Messages.getMessage("acUsage08")).append(lSep);
+        msg.append(Messages.getMessage("acUsage09")).append(lSep);
+        msg.append(Messages.getMessage("acUsage10")).append(lSep);
+        msg.append(Messages.getMessage("acUsage11")).append(lSep);
+        msg.append(Messages.getMessage("acUsage12")).append(lSep);
+        msg.append(Messages.getMessage("acUsage13")).append(lSep);
+        msg.append(Messages.getMessage("acUsage14")).append(lSep);
+        msg.append(Messages.getMessage("acUsage15")).append(lSep);
+        msg.append(Messages.getMessage("acUsage16")).append(lSep);
+        msg.append(Messages.getMessage("acUsage17")).append(lSep);
+        msg.append(Messages.getMessage("acUsage18")).append(lSep);
+        msg.append(Messages.getMessage("acUsage19")).append(lSep);
+        msg.append(Messages.getMessage("acUsage20")).append(lSep);
+        msg.append(Messages.getMessage("acUsage21")).append(lSep);
+        msg.append(Messages.getMessage("acUsage22")).append(lSep);
+        msg.append(Messages.getMessage("acUsage23")).append(lSep);
+        msg.append(Messages.getMessage("acUsage24")).append(lSep);
+        msg.append(Messages.getMessage("acUsage25")).append(lSep);
+        msg.append(Messages.getMessage("acUsage26")).append(lSep);
         return msg.toString();
     }
 
