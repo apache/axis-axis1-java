@@ -78,6 +78,7 @@ import org.apache.axis.encoding.ServiceDescription;
 public class SerializationContext
 {
     private static final boolean DEBUG_LOG = false;
+    private static final boolean pretty = false;
     
     public NSStack nsStack = new NSStack();
                                         
@@ -310,11 +311,12 @@ public class SerializationContext
         }
         
         if (writingStartTag) {
-            writer.write(">\n");
+            writer.write(">");
+            if (pretty) writer.write(">\n");
             indent++;
         }
         
-        for (int i=0; i<indent; i++) writer.write(' ');
+        if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
         StringBuffer buf = new StringBuffer();
         String elementQName = qName2String(qName);
         buf.append("<");
@@ -361,19 +363,20 @@ public class SerializationContext
         nsStack.peek().clear();
 
         if (writingStartTag) {
-            writer.write("/>\n");
+            writer.write("/>");
+            if (pretty) writer.write("/>");
             writingStartTag = false;
             return;
         }
         
         if (onlyXML) {
           indent--;
-          for (int i=0; i<indent; i++) writer.write(' ');
+          if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
         }
         writer.write("</");
         writer.write(elementQName);
         writer.write('>');
-        if (indent>0) writer.write('\n');
+        if (pretty) if (indent>0) writer.write('\n');
         writer.flush();
         onlyXML=true;
     }

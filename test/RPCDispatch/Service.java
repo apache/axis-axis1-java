@@ -1,6 +1,12 @@
 package test.RPCDispatch;
 
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.DOM2Writer;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Test WebService
@@ -32,6 +38,26 @@ public class Service {
      */
     public String targetService(MessageContext mc) throws Exception {
        return mc.getTargetService();
+    }
+
+    /**
+     * Return the target service (should be this!)
+     */
+    public String argAsDOM(MessageContext mc, Data input) throws Exception {
+
+       // get the first parameter
+       Message message = mc.getRequestMessage();
+       RPCElement body = (RPCElement)message.getAsSOAPEnvelope().getFirstBody();
+       NodeList parms = body.getAsDOM().getChildNodes();
+       Node parm1 = null;
+       for (int i=0; i<parms.getLength(); i++) {
+           parm1 = parms.item(i);
+           if (parm1.getNodeType() == Node.ELEMENT_NODE) break;
+       }
+
+       // convert it to a DOM and back to a string, and return the result.
+       return DOM2Writer.nodeToString(parm1, true);
+
     }
 
     /**
