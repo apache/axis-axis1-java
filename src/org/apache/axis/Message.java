@@ -157,8 +157,15 @@ public class Message {
       // Assumes we don't need a content length
       try {
         InputStream  inp = (InputStream) currentMessage ;
-        byte[]  buf = new byte[ inp.available() ];
-        inp.read( buf );
+        ByteArrayOutputStream  baos = new ByteArrayOutputStream();
+        byte[]  buf = new byte[4096];
+        int len ;
+        while ( (len = inp.read(buf,0,4096)) != -1 )
+          baos.write( buf, 0, len );
+        buf = baos.toByteArray();
+        // int len = inp.available();
+        // byte[]  buf = new byte[ len ];
+        // inp.read( buf );
         setCurrentMessage( buf, "Bytes" );
         Debug.Print( 2, "Exit: Message::getAsByes" );
         return( (byte[]) currentMessage );
