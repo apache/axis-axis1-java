@@ -63,7 +63,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import javax.wsdl.WSDLException;
 
@@ -282,11 +281,10 @@ public class Emitter extends Parser {
 
    /**
     * Sets the <code>WriterFactory Class</code> to use
-    * @param className the name of the factory <code>Class</code> 
+    * @param factory the name of the factory <code>Class</code>
     */
     public void setFactory(String factory) {
         try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
             setFactory((GeneratorFactory)
                        ClassUtils.forName(factory).newInstance());
         }

@@ -83,7 +83,7 @@ public class Utils {
      *   "nillable=true" attribute, the type should be an Integer (not an int).
      *   So in these circumstances, this routine is called with xsd:int to 
      *   get a suitable qname (soapenc:int) which maps to Integer.
-     * @param QName
+     * @param qName QName
      */
     public static QName getNillableQName(QName qName) {
         QName rc = qName;
@@ -268,7 +268,6 @@ public class Utils {
      * @param node of the reference
      * @param forElement output parameter is set to true if QName is for an element
      *                   (i.e. ref= or element= attribute was used).
-     * @param QName of type or element (depending on forElement setting)
      */
     public static QName getNodeTypeRefQName(Node node, BooleanHolder forElement) {
         if (node == null) return null;

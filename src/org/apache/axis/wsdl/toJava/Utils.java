@@ -201,8 +201,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Add package to name
-     * @param String full name of the class.
-     * @param String name of the package to append
+     * @param className full name of the class.
+     * @param newPkg name of the package to append
      * @return String name with package name added
      */
     public static String addPackageName(String className, String newPkg) {
@@ -220,8 +220,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Given a fault, return the fully qualified Java class name
      * of the exception to be generated from this fault
      * 
-     * @param fault - The WSDL fault object
-     * @param symbolTable - the symbol table
+     * @param fault The WSDL fault object
+     * @param emitter the Emitter being used
      * @return A Java class name for the fault
      */ 
     public static String getFullExceptionName(
@@ -517,13 +517,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Return the operation QName.  The namespace is determined from
      * the soap:body namespace, if it exists, otherwise it is "".
      * 
-     * @param operation the operation
+     * @param bindingOper the operation
      * @return the operation QName
      */ 
     public static QName getOperationQName(BindingOperation bindingOper) {
         Operation operation = bindingOper.getOperation();
         String operationName = operation.getName();
-        String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
         QName elementQName = null;
 
         String ns = null;

@@ -58,11 +58,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 
 /**
 * Emitter knows about WSDL writers, one each for PortType, Binding, Service,
@@ -155,8 +151,9 @@ public abstract class JavaClassWriter extends JavaWriter {
     /**
      * Constructor.
      * @param emitter The emitter instance
-     * @param fulClassName The fully qualified class name of the class
+     * @param fullClassName The fully qualified class name of the class
      *        to be generated.
+     * @param type
      */
     protected JavaClassWriter(
             Emitter emitter,

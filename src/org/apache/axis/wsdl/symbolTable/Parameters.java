@@ -57,8 +57,6 @@ package org.apache.axis.wsdl.symbolTable;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.namespace.QName;
-
 /**
  * This class simply collects all the parameter or message data for an operation into one place.
  */

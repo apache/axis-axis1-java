@@ -335,7 +335,6 @@ public class JavaDeployWriter extends JavaWriter {
                 Operation operation = bindingOper.getOperation();
                 OperationType type = operation.getStyle();
                 String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
-                String operationName = operation.getName();
 
                 // These operation types are not supported.  The signature
                 // will be a string stating that fact.

@@ -58,9 +58,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Vector;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -68,8 +65,6 @@ import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-
-import org.w3c.dom.Node;
 
 /**
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
@@ -197,8 +192,8 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl)elements.get(i);
-                String elemName = elem.getName().getLocalPart();
-                String javaName = Utils.xmlNameToJava(elemName);
+                // String elemName = elem.getName().getLocalPart();
+                // String javaName = Utils.xmlNameToJava(elemName);
 
                 // Changed the code to write meta data 
                 // for all of the elements in order to

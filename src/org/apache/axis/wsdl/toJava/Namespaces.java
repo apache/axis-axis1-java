@@ -203,7 +203,7 @@ public class Namespaces extends HashMap {
     /**
      * Set a package name that overrides the namespace map
      *
-     * @param a java package name (e.g. com.foo)
+     * @param defaultPackage a java package name (e.g. com.foo)
      */
     public void setDefaultPackage(String defaultPackage) {
         this.defaultPackage = defaultPackage;

@@ -62,8 +62,6 @@ import java.util.Vector;
 import javax.wsdl.Fault;
 import javax.xml.namespace.QName;
 
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 

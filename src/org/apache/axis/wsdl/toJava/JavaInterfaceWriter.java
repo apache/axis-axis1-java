@@ -62,8 +62,6 @@ import java.util.Iterator;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;

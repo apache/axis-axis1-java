@@ -193,7 +193,7 @@ public class SchemaUtils {
             return v;
         } else {
             // This may be a simpleType, return the type with the name "value"
-            QName simpleQName = getSimpleTypeBase(node, symbolTable);
+            QName simpleQName = getSimpleTypeBase(node);
             if (simpleQName != null) {
                 TypeEntry simpleType = symbolTable.getType(simpleQName);
                 if (simpleType != null) {
@@ -580,7 +580,7 @@ public class SchemaUtils {
      * If the specified node represents a 'normal' non-enumeration simpleType,
      * the QName of the simpleType base is returned.
      */
-    public static QName getSimpleTypeBase(Node node, SymbolTable symbolTable) {
+    public static QName getSimpleTypeBase(Node node) {
         QName baseQName = null;
 
         if (node == null) {

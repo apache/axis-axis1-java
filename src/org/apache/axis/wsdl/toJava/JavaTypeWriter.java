@@ -109,7 +109,7 @@ public class JavaTypeWriter implements Generator {
                        node, symbolTable);
                     if (base == null) {
                         QName baseQName = SchemaUtils.getSimpleTypeBase(
-                           node, symbolTable);
+                           node);
                         if (baseQName != null) {
                             base = symbolTable.getType(baseQName);
                         }

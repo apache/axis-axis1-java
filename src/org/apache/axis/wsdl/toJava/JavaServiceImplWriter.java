@@ -70,7 +70,6 @@ import javax.wsdl.Service;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.WSDLUtils;
-import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
