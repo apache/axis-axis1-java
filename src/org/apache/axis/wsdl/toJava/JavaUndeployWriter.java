@@ -117,7 +117,7 @@ public class JavaUndeployWriter extends JavaWriter {
      * @param pw 
      * @throws IOException 
      */
-    private void writeDeployServices(PrintWriter pw) throws IOException {
+    protected void writeDeployServices(PrintWriter pw) throws IOException {
 
         // deploy the ports on each service
         Map serviceMap = definition.getServices();
@@ -149,7 +149,7 @@ public class JavaUndeployWriter extends JavaWriter {
      * @param port 
      * @throws IOException 
      */
-    private void writeDeployPort(PrintWriter pw, Port port) throws IOException {
+    protected void writeDeployPort(PrintWriter pw, Port port) throws IOException {
 
         String serviceName = port.getName();
 

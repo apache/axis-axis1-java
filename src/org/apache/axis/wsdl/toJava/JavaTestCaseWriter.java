@@ -146,12 +146,10 @@ public class JavaTestCaseWriter extends JavaClassWriter {
      * @param pw       
      * @param portName 
      * @param portType 
-     * @param bEntry   
-     * @throws IOException 
+     * @param bEntry
      */
-    private final void writeServiceTestCode(
-            PrintWriter pw, String portName, PortType portType, BindingEntry bEntry)
-            throws IOException {
+    protected final void writeServiceTestCode(
+            PrintWriter pw, String portName, PortType portType, BindingEntry bEntry) {
 
         Iterator ops = portType.getOperations().iterator();
 
@@ -311,12 +309,10 @@ public class JavaTestCaseWriter extends JavaClassWriter {
      * 
      * @param pw          
      * @param bindingType 
-     * @param portName    
-     * @throws IOException 
+     * @param portName     
      */
     public final void writeBindingAssignment(
-            PrintWriter pw, String bindingType, String portName)
-            throws IOException {
+            PrintWriter pw, String bindingType, String portName) {
 
         pw.println("        " + bindingType + " binding;");
         pw.println("        try {");

@@ -80,7 +80,7 @@ public class JavaDefinitionWriter implements Generator {
      * 
      * @throws IOException 
      */
-    private void writeFaults() throws IOException {
+    protected void writeFaults() throws IOException {
 
         ArrayList faults = new ArrayList();
 

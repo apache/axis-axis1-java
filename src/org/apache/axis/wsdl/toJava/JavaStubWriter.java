@@ -88,10 +88,10 @@ public class JavaStubWriter extends JavaClassWriter {
                                                "org.apache.axis.description.ParameterDesc.INOUT"};
 
     /** Field styles */
-    static HashMap styles = new HashMap();
+    static Map styles = new HashMap();
 
     /** Field uses */
-    static HashMap uses = new HashMap();
+    static Map uses = new HashMap();
 
     static {
         styles.put(Style.DOCUMENT, "org.apache.axis.enum.Style.DOCUMENT");
@@ -464,7 +464,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param pw               a <code>PrintWriter</code> value
      * @param deferredBindings a <code>List</code> of TypeEntry objects
      */
-    private void writeBindingMethods(PrintWriter pw, List deferredBindings) {
+    protected void writeBindingMethods(PrintWriter pw, List deferredBindings) {
 
         int methodCount = calculateBindingMethodCount(deferredBindings);
 
@@ -495,7 +495,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * 
      * @param pw 
      */
-    private void writeOperationMap(PrintWriter pw) {
+    protected void writeOperationMap(PrintWriter pw) {
 
         List operations = binding.getBindingOperations();
 
@@ -808,7 +808,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param pw     
      * @param bindOp 
      */
-    private void writeFaultInfo(PrintWriter pw, BindingOperation bindOp) {
+    protected void writeFaultInfo(PrintWriter pw, BindingOperation bindOp) {
 
         Map faultMap = bEntry.getFaults();
 
@@ -855,7 +855,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param hasMIME   
      * @param namespace 
      */
-    private void writeSerializationDecls(PrintWriter pw, boolean hasMIME,
+    protected void writeSerializationDecls(PrintWriter pw, boolean hasMIME,
                                          String namespace) {
 
         pw.println("            java.lang.Class cls;");
@@ -908,7 +908,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param pw   
      * @param type 
      */
-    private void writeSerializationInit(PrintWriter pw, TypeEntry type) {
+    protected void writeSerializationInit(PrintWriter pw, TypeEntry type) {
 
         QName qname = type.getQName();
 
@@ -965,7 +965,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param oneway     
      * @param opIndex    
      */
-    private void writeOperation(PrintWriter pw, BindingOperation operation,
+    protected void writeOperation(PrintWriter pw, BindingOperation operation,
                                 Parameters parms, String soapAction,
                                 String opStyle, boolean oneway, int opIndex) {
 
@@ -1110,7 +1110,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param pw    
      * @param parms 
      */
-    private void writeParameters(PrintWriter pw, Parameters parms) {
+    protected void writeParameters(PrintWriter pw, Parameters parms) {
 
         // Write the input and inout parameter list
         boolean needComma = false;
@@ -1147,7 +1147,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param pw    
      * @param parms 
      */
-    private void writeResponseHandling(PrintWriter pw, Parameters parms) {
+    protected void writeResponseHandling(PrintWriter pw, Parameters parms) {
 
         pw.println("        if (_resp instanceof java.rmi.RemoteException) {");
         pw.println("            throw (java.rmi.RemoteException)_resp;");
@@ -1225,7 +1225,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param target   (either "return" or "something ="
      * @param source   (source String)
      */
-    private void writeOutputAssign(PrintWriter pw, String target,
+    protected void writeOutputAssign(PrintWriter pw, String target,
                                    Parameter param,
                                    String source) {
 

@@ -471,7 +471,7 @@ public class JavaSkelWriter extends JavaClassWriter {
      * @param soapAction 
      * @param namespace  
      */
-    private void writeOperation(PrintWriter pw, BindingOperation operation,
+    protected void writeOperation(PrintWriter pw, BindingOperation operation,
                                 Parameters parms, String soapAction,
                                 String namespace) {
 
