@@ -90,6 +90,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.rpc.JAXRPCException;
 
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -1058,6 +1059,11 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
              throws SAXException
     {
         recorder.comment(ch, start, length);
+    }
+
+    public InputSource resolveEntity(String publicId, String systemId) 
+    {
+        return XMLUtils.getEmptyInputSource();
     }
 }
 
