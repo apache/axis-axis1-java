@@ -165,7 +165,7 @@ public class WSDL2Java extends WSDL2 {
     /**
      * Instantiate a WSDL2Java emitter.
      */
-    public WSDL2Java() {
+    protected WSDL2Java() {
         // emitter is the same as the parent's parser variable.  Just cast it
         // here once so we don't have to cast it every time we use it.
         emitter = (Emitter) parser;
