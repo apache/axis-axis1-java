@@ -347,9 +347,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                 if(entry.getName() != null)
+                    continue;
 
-                // Use the type or the referenced type's QName to generate the java name.      
-                if (entry instanceof TypeEntry && entry.getName() == null) {
+                // Use the type or the referenced type's QName to generate the java name.
+                if (entry instanceof TypeEntry) {
                     TypeEntry tEntry = (TypeEntry) entry;
                     String dims = tEntry.getDimensions();
                     TypeEntry refType = tEntry.getRefType();
