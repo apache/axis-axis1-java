@@ -306,7 +306,6 @@ public class XMLUtils {
         try {
             db = getDocumentBuilder();
             Document doc = db.newDocument();
-            releaseDocumentBuilder(db);
             return doc;
         } finally {
             if (db != null) {
@@ -331,7 +330,6 @@ public class XMLUtils {
             db.setEntityResolver(new DefaultEntityResolver());
             db.setErrorHandler(new ParserErrorHandler());
             Document doc = db.parse(inp);
-            releaseDocumentBuilder(db);
             return doc;
         } finally {
             if (db != null) {
