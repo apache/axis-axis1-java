@@ -226,7 +226,7 @@ public class ServiceClient {
             
         } catch (MalformedURLException e) {
             throw new AxisFault("ServiceClient.setURL",
-                    "Malformed URL Exception: " + e.getMessage(), null, null);
+                    e.getMessage(), null, null);
         }
     }
 
