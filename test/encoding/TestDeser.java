@@ -55,7 +55,7 @@ public class TestDeser extends TestCase {
      * Verify that two objects have the same value, handling arrays...
      */
     private static boolean equals(Object obj1, Object obj2) {
-       if (obj1 == null) return (obj2 == null);
+       if ( (obj1 == null) || (obj2 == null) ) return (obj1 == obj2);
        if (obj1.equals(obj2)) return true;
        if (obj2.getClass().isArray() && obj1.getClass().isArray()) {
            if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
@@ -218,6 +218,34 @@ public class TestDeser extends TestCase {
                             "soapenc:arrayType=\"xsd:string[4]\"> " +
       "<item soapenc:position=\"[0]\" xsi:type=\"xsd:string\">abc</item>" +
       "<item soapenc:position=\"[2]\" xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    list);
+    }
+
+    public void testArrayWithNilInt() throws Exception {
+        ArrayList list = new ArrayList(4);
+        list.add(new Integer(1));
+        list.add(null);
+        list.add(new Integer(3));
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:int[3]\"> " +
+                       "<item xsi:type=\"xsd:int\">1</item>" +
+                       "<item xsi:nil=\"true\"/>" +
+                       "<item xsi:type=\"xsd:int\">3</item>" +
+                    "</result>",
+                    list);
+    }
+    
+    public void testArrayWithNilString() throws Exception {
+        ArrayList list = new ArrayList(4);
+        list.add("abc");
+        list.add(null);
+        list.add("def");
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[3]\"> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:nil=\"true\"/>" +
+                       "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
                     list);
     }
