@@ -131,9 +131,17 @@ public class AxisServletBase extends HttpServlet {
      */
     public void destroy() {
         super.destroy();
+
+        //if we have had anything to do with creating an axis server
         if (axisServer != null) {
-            axisServer.cleanup();
-            axisServer =null;
+            //then we lock it
+            synchronized(axisServer) {
+                //clean it up
+                axisServer.cleanup();
+                //and erase our history of it
+                axisServer =null;
+                storeEngine(getServletContext(),null);
+            }
         }
     }
 
@@ -295,5 +303,25 @@ public class AxisServletBase extends HttpServlet {
         finally {
             decLockCounter();
         }
+    }
+    
+    /**
+     * extract the base of our webapp from an inbound request
+     *
+     * @param request request containing http://foobar/axis/services/
+     * @return http://foobar/axis/services/
+     */
+    protected String getWebappBase(HttpServletRequest request) {
+        StringBuffer baseURL=new StringBuffer(128);
+        baseURL.append(request.getScheme());
+        baseURL.append("//");
+        baseURL.append(request.getServerName());
+        if(request.getServerPort()!=80) {
+            baseURL.append(":");
+            baseURL.append(request.getServerPort());
+        }
+        baseURL.append("/");
+        baseURL.append(request.getContextPath());
+        return baseURL.toString();
     }
 }
