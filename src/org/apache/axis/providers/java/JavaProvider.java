@@ -70,7 +70,6 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;

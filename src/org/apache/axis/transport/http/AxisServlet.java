@@ -705,17 +705,23 @@ public class AxisServlet extends AxisServletBase {
                   res.setHeader("WWW-Authenticate","Basic realm=\"AXIS\"");
                   // TODO: less generic realm choice?
                 res.setStatus(status);
-                responseMsg = new Message(e);
+                responseMsg = msgContext.getResponseMessage();
+                if (responseMsg == null)
+                    responseMsg = new Message(e);
                 contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
             } catch (Exception e) {
                 log.error(Messages.getMessage("exception00"), e);
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                responseMsg = new Message(AxisFault.makeFault(e));
+                responseMsg = msgContext.getResponseMessage();
+                if (responseMsg == null)
+                    responseMsg = new Message(AxisFault.makeFault(e));
                 contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
             }
         } catch (AxisFault fault) {
             log.error(Messages.getMessage("axisFault00"), fault);
-            responseMsg = new Message(fault);
+            responseMsg = msgContext.getResponseMessage();
+            if (responseMsg == null)
+                responseMsg = new Message(fault);
             contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
         }
         if( tlog.isDebugEnabled() ) {

@@ -92,6 +92,9 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     protected Vector handlers = new Vector();
     protected boolean invoked = false;
+    
+    private String CAUGHTFAULT_PROPERTY = 
+            "org.apache.axis.SimpleChain.caughtFaultInResponse";
 
     public void init() {
         for ( int i = 0 ; i < handlers.size() ; i++ )
@@ -154,10 +157,18 @@ public class SimpleChain extends BasicHandler implements Chain {
                 i++;
             }
         } catch( AxisFault f ) {
-           // Attach the fault to the response message; enabling access to the
-           // fault details while inside the handler onFault methods.
-            Message respMsg = new Message(f);
-            msgContext.setResponseMessage(respMsg);
+            // Something went wrong.  If we haven't already put this fault
+            // into the MessageContext's response message, do so and make sure
+            // we only do it once.  This allows onFault() methods to safely
+            // set headers and such in the response message without them
+            // getting stomped.
+            if (!msgContext.isPropertyTrue(CAUGHTFAULT_PROPERTY)) {
+                // Attach the fault to the response message; enabling access to the
+                // fault details while inside the handler onFault methods.
+                Message respMsg = new Message(f);
+                msgContext.setResponseMessage(respMsg);
+                msgContext.setProperty(CAUGHTFAULT_PROPERTY, Boolean.TRUE);
+            }
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).onFault( msgContext );
             throw f;
