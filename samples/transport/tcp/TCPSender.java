@@ -82,7 +82,7 @@ public class TCPSender extends BasicHandler {
             Category.getInstance(TCPSender.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.fatal( "Enter: TCPSender::invoke" );
+        category.info( "Enter: TCPSender::invoke" );
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -145,7 +145,7 @@ public class TCPSender extends BasicHandler {
             if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
             throw (AxisFault) e ;
         }
-        category.fatal( "Exit: TCPSender::invoke" );
+        category.info( "Exit: TCPSender::invoke" );
     }
 
     public void undo(MessageContext msgContext) {
