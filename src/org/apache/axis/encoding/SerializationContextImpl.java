@@ -84,6 +84,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.w3c.dom.CDATASection;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -1092,6 +1093,10 @@ public class SerializationContextImpl implements SerializationContext
             Node child = children.item(i);
             if (child instanceof Element) {
                 writeDOMElement((Element)child);
+            } else if (child instanceof CDATASection) {
+                writeString("<![CDATA[");
+                writeString(((Text)child).getData());
+                writeString("]]>");
             } else if (child instanceof Text) {
                 writeSafeString(((Text)child).getData());
             }

@@ -63,11 +63,22 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.util.Iterator;
+
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Text;
 
 /**
  * Test certain classes in the message package for java
@@ -111,5 +122,77 @@ public class TestJavaSerialization extends TestCase {
                      heName.getPrefix(), heName2.getPrefix());
         assertEquals("URI did not survive java ser+deser", 
                      heName.getURI(), heName2.getURI());
+    }
+    
+    public void testCDATASection() throws Exception {
+        // Create a SOAP envelope
+        SOAPEnvelope env = new org.apache.axis.message.SOAPEnvelope();
+        SOAPBody body = env.getBody();
+        SOAPBodyElement[] input = new SOAPBodyElement[3];
+
+        input[0] = new SOAPBodyElement(XMLUtils.StringToElement("urn:foo", 
+                                                                "e1", "Hello"));
+        input[1] = new SOAPBodyElement(XMLUtils.StringToElement("urn:foo", 
+                                                                "e1", "World"));
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc            = builder.newDocument();   
+        Element cdataElem       = doc.createElementNS("urn:foo", "e3");
+        CDATASection cdata      = doc.createCDATASection("Text with\n\tImportant  <b>  whitespace </b> and tags! ");	    
+        cdataElem.appendChild(cdata);
+		
+        input[2] = new SOAPBodyElement(cdataElem);
+        
+        for(int i=0; i<input.length; i++) {
+            body.addChildElement(input[i]);
+        }
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(env.toString().getBytes());
+        SOAPEnvelope env2 = new org.apache.axis.message.SOAPEnvelope(bais);
+        
+        Iterator iterator = env2.getBody().getChildElements();
+        Element element = null;
+        for(int i=0;iterator.hasNext();i++) {
+            MessageElement e = (MessageElement) iterator.next();
+            element = e.getAsDOM();
+        }
+        String xml = element.getFirstChild().getNodeValue();
+        assertEquals(xml, cdata.getData());
+    }
+    
+    public void testComments() throws Exception {
+        // Create a SOAP envelope
+        SOAPEnvelope env = new org.apache.axis.message.SOAPEnvelope();
+        SOAPBody body = env.getBody();
+        SOAPBodyElement[] input = new SOAPBodyElement[3];
+
+        input[0] = new SOAPBodyElement(XMLUtils.StringToElement("urn:foo", 
+                                                                "e1", "Hello"));
+        input[1] = new SOAPBodyElement(XMLUtils.StringToElement("urn:foo", 
+                                                                "e1", "World"));
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc            = builder.newDocument();   
+        Element commentsElem       = doc.createElementNS("urn:foo", "e3");
+        Text text = doc.createTextNode("This is a comment");
+        commentsElem.appendChild(text);
+		
+        input[2] = new SOAPBodyElement(commentsElem);
+        
+        for(int i=0; i<input.length; i++) {
+            body.addChildElement(input[i]);
+        }
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(env.toString().getBytes());
+        SOAPEnvelope env2 = new org.apache.axis.message.SOAPEnvelope(bais);
+        
+        Iterator iterator = env2.getBody().getChildElements();
+        Element element = null;
+        for(int i=0;iterator.hasNext();i++) {
+            MessageElement e = (MessageElement) iterator.next();
+            element = e.getAsDOM();
+        }
+        String xml = element.getFirstChild().getNodeValue();
+        assertEquals(xml, text.getData());
     }
 }

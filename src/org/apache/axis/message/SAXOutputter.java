@@ -61,18 +61,20 @@ import org.apache.commons.logging.Log;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.namespace.QName;
 
 import java.io.IOException;
 
-public class SAXOutputter extends DefaultHandler
+public class SAXOutputter extends DefaultHandler implements LexicalHandler
 {
     protected static Log log =
         LogFactory.getLog(SAXOutputter.class.getName());
     
     SerializationContext context;
+    boolean isCDATA = false;
     
     public SAXOutputter(SerializationContext context)
     {
@@ -101,7 +103,11 @@ public class SAXOutputter extends DefaultHandler
             log.debug("SAXOutputter.characters ['" + new String(p1, p2, p3) + "']");
         }
         try {
-            context.writeChars(p1, p2, p3);
+            if(!isCDATA) {
+                context.writeChars(p1, p2, p3);
+            } else { 
+                context.writeString(new String(p1, p2, p3));
+            }
         } catch (IOException e) {
             throw new SAXException(e);
         }
@@ -146,6 +152,67 @@ public class SAXOutputter extends DefaultHandler
         
         try {
             context.endElement();
+        } catch (IOException e) {
+            throw new SAXException(e);
+        }
+    }
+
+    public void startDTD(java.lang.String name,
+                     java.lang.String publicId,
+                     java.lang.String systemId)
+              throws SAXException
+    {
+    }
+    
+    public void endDTD()
+            throws SAXException
+    {
+    }
+    
+    public void startEntity(java.lang.String name)
+                 throws SAXException
+    {
+    }
+    
+    public void endEntity(java.lang.String name)
+               throws SAXException
+    {
+    }
+    
+    public void startCDATA()
+                throws SAXException
+    {
+        try {
+            isCDATA = true;
+            context.writeString("<![CDATA[");
+        } catch (IOException e) {
+            throw new SAXException(e);
+        }
+    }
+    
+    public void endCDATA()
+              throws SAXException
+    {
+        try {
+            isCDATA = false;
+            context.writeString("]]>");
+        } catch (IOException e) {
+            throw new SAXException(e);
+        }
+    }
+    
+    public void comment(char[] ch,
+                    int start,
+                    int length)
+             throws SAXException
+    {
+        if (log.isDebugEnabled()) {
+            log.debug("SAXOutputter.comment ['" + new String(ch, start, length) + "']");
+        }
+        try {
+            context.writeString("<!--");
+            context.writeChars(ch, start, length);
+            context.writeString(">");
         } catch (IOException e) {
             throw new SAXException(e);
         }
