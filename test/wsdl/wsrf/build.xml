@@ -61,7 +61,9 @@ Copyright:
                testcase="no">
         <mapping namespace="http://www.tempuri.org" package="test.wsdl.wsrf"/>
         <mapping namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" package="test.wsdl.wsrf.draft"/>
-        <mapping namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" package="test.wsdl.wsrf.draft.xsd"/>
+        <mapping namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" package="test.wsdl.wsrf.draft"/>
+        <mapping namespace="http://schemas.xmlsoap.org/ws/2003/03/addressing" package="test.wsdl.wsrf.addressing"/>
+        <mapping namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" package="test.wsdl.wsrf.draft"/>
     </wsdl2java>
 
     <copy todir="${build.dir}/work/test/wsdl/wsrf" overwrite="yes">

@@ -935,7 +935,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     protected String getPortJavaNameHook(String portName) {
         return null;
     }
-
+    
     /**
      * Messages, PortTypes, Bindings, and Services can share the same name.  If they do in this
      * Definition, force their names to be suffixed with _PortType and _Service, respectively.
@@ -946,49 +946,38 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
         // Keep a list of anonymous types so we don't try to resolve them twice.
         HashSet anonTypes = new HashSet();
-        Iterator it = symbolTable.getHashMap().values().iterator();
-
-        // MUST check Name Collisions between different namespaces 
-        // in case package name is set with default package name.
-        // To do it, reconstruct iterator.
-        if (emitter.getPackageName() != null) {
-            List entries = new ArrayList();
-            List namespaceURIs = new ArrayList();
-            List localParts = new ArrayList();
+        List collisionCanidates = new ArrayList();      // List of vector of SymbolTable entry
+        
+        List localParts = new ArrayList();      // all localparts in all symboltable entries        
+        for (Iterator i = symbolTable.getHashMap().keySet().iterator(); i.hasNext(); ) {
+            QName qName = (QName)i.next();
+            String localPart = qName.getLocalPart();
+            if (!localParts.contains(localPart))
+                localParts.add(localPart);
+        }
             
-            // Collect namespaceURIs and names related to the all entry of SymbolTable.
-            HashMap map = symbolTable.getHashMap();
-            Set keySet = map.keySet();
-            for (Iterator itr = keySet.iterator(); itr.hasNext(); ) {
-                QName qName = (QName)itr.next();
-
-                String namespaceURI = qName.getNamespaceURI();
-                if (!namespaceURIs.contains(namespaceURI))
-                    namespaceURIs.add(namespaceURI);
-
-                String localPart = qName.getLocalPart();
-                if (!localParts.contains(localPart))
-                    localParts.add(localPart);
-            }
-            
+        Map pkg2NamespacesMap = emitter.getNamespaces().getPkg2NamespacesMap();
+        for (Iterator i = pkg2NamespacesMap.values().iterator(); i.hasNext(); ) {            
+            Vector namespaces = (Vector)i.next();  // namepaces mapped to same package
+                    
             // Combine entry vectors, which have the same entry name, into a new entry vector.
-            for (int i = 0; i < localParts.size(); i++) {
+            for (int j = 0; j < localParts.size(); j++) {
                 Vector v = new Vector();
-                for (int j = 0; j < namespaceURIs.size(); j++) {
-                    QName qName = new QName((String)namespaceURIs.get(j), (String)localParts.get(i));
-                    if (map.get(qName) != null) {
-                        v.addAll((Vector)map.get(qName));
+                for (int k = 0; k < namespaces.size(); k++) {
+                    QName qName = new QName((String)namespaces.get(k), (String)localParts.get(j));
+                    if (symbolTable.getHashMap().get(qName) != null) {
+                        v.addAll((Vector)symbolTable.getHashMap().get(qName));
                     }
                 }
-                entries.add(v);
-            }
-            it = entries.iterator();
-        }                
+                collisionCanidates.add(v);
+            }                            
+        }
+        Iterator it = collisionCanidates.iterator();        
         
         while (it.hasNext()) {
             Vector v = new Vector(
                     (Vector) it.next());    // New vector we can temporarily add to it
-
+          
             // Remove MessageEntries since they are not mapped
             int index = 0;
 

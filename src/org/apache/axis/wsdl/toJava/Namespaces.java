@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * This class is essentially a HashMap of <namespace, package name> pairs with
@@ -40,6 +41,9 @@ public class Namespaces extends HashMap {
 
     /** Field javaPkgSeparator */
     private static final char javaPkgSeparator = pkgSeparators[0];
+    
+    /** Field pkg2Namespaces : reverse mapping of Namespaces */
+    private Map pkg2NamespacesMap = new HashMap();
 
     /**
      * Method normalizePackageName
@@ -243,5 +247,23 @@ public class Namespaces extends HashMap {
      */
     public void setDefaultPackage(String defaultPackage) {
         this.defaultPackage = defaultPackage;
+    }
+    
+    public Object put(Object key, Object value) {
+        // Store pakcage->namespaces vector mapping
+        Vector v = null;
+        if (!pkg2NamespacesMap.containsKey(value)) {
+            v = new Vector();                       
+        } else {
+            v = (Vector)pkg2NamespacesMap.get(value);
+        }
+        v.add(key);
+        pkg2NamespacesMap.put(value, v);
+         
+        return super.put(key, value);
+    }
+    
+    public Map getPkg2NamespacesMap() {
+        return pkg2NamespacesMap;
     }
 }    // class Namespaces
