@@ -113,9 +113,9 @@ public class SerializationContext
         
         if ((uri != null) && (prefix != null) && !prefix.equals("") &&
             !uri.equals("")) {
-            if ((pendingNSMappings.get(uri) != null) ||
+            /*if ((pendingNSMappings.get(uri) != null) ||
                 (nsStack.getPrefix(uri) != null))
-                return;
+                return;*/
             
             pendingNSMappings.put(uri, prefix);
         }
@@ -146,12 +146,6 @@ public class SerializationContext
         
         String nsURI = qName.getNamespaceURI();
         
-        if (!pendingNSMappings.isEmpty()) {
-            nsStack.push((Hashtable)pendingNSMappings.clone());
-        } else {
-            nsStack.push();
-        }
-        
         //nsStack.dump();
         
         String elementQName;
@@ -159,12 +153,18 @@ public class SerializationContext
         buf.append("<");
         
         if ((nsURI != null) && (!nsURI.equals(""))) {
-            elementQName = nsStack.getPrefix(nsURI) + ":";
+            elementQName = getPrefixForURI(nsURI) + ":";
         } else {
             elementQName = "";
         }
         elementQName += qName.getLocalPart();
         buf.append(elementQName);
+        
+        if (!pendingNSMappings.isEmpty()) {
+            nsStack.push((Hashtable)pendingNSMappings.clone());
+        } else {
+            nsStack.push();
+        }
         
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
