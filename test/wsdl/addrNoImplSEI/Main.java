@@ -89,7 +89,7 @@ public class Main {
         phone1.setAreaCode(765);
         phone1.setExchange("494");
         phone1.setNumber("4900");
-        addr1.setPhoneNumber(phone1);
+        addr1.setPhone(phone1);
         
     }
     private static void printAddress (Address ad) {
@@ -101,7 +101,7 @@ public class Main {
                                 ad.getStreetName());
         System.err.println ("\t" + ad.getCity() + ", " + ad.getState() + " " +
                                 ad.getZip());
-        Phone ph = ad.getPhoneNumber();
+        Phone ph = ad.getPhone();
         System.err.println ("\tPhone: (" + ph.getAreaCode() + ") " +
                                 ph.getExchange() + "-" + ph.getNumber());
     }
