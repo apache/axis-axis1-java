@@ -30,6 +30,10 @@ import org.w3c.dom.DOMException;
 public class Text extends NodeImpl implements javax.xml.soap.Text {
 
     public Text(org.w3c.dom.CharacterData data) {
+        if ( data == null )
+        {
+           throw new IllegalArgumentException( "Text value may not be null." );
+        }
         textRep = data;
     }
 
@@ -40,6 +44,11 @@ public class Text extends NodeImpl implements javax.xml.soap.Text {
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new InternalException(e);
         }
+    }
+
+    public Text()
+    {
+        this((String)null);
     }
 
     /**
@@ -92,9 +101,9 @@ public class Text extends NodeImpl implements javax.xml.soap.Text {
 
         // insert the first part again as a new node
         Text tailText = new Text(tailData);
-        org.w3c.dom.Node myParent = (org.w3c.dom.Node)getParentNode();
+        org.w3c.dom.Node myParent = getParentNode();
         if(myParent != null){
-            org.w3c.dom.NodeList brothers = (org.w3c.dom.NodeList)myParent.getChildNodes();
+            org.w3c.dom.NodeList brothers = myParent.getChildNodes();
             for(int i = 0;i  < brothers.getLength(); i++){
                 if(brothers.item(i).equals(this)){
                     myParent.insertBefore(tailText, this);
@@ -179,4 +188,28 @@ public class Text extends NodeImpl implements javax.xml.soap.Text {
     public void deleteData(int offset, int count) throws DOMException {
         textRep.deleteData(offset, count);
     }
+
+    public String toString()
+    {
+        return textRep.getNodeValue();
+    }
+
+    public boolean equals( Object obj )
+    {
+        if ( !( obj instanceof Text ) )
+        {
+            return false;
+        }
+        return this == obj || hashCode() == obj.hashCode();
+    }
+
+    public int hashCode()
+    {
+        if ( textRep == null )
+        {
+           return -1;
+        }
+        return ( textRep.getData() != null ? textRep.getData().hashCode() : 0 );
+    }
+
 }
