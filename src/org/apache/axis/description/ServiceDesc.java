@@ -597,11 +597,16 @@ public class ServiceDesc {
             return;
 
         // Find the method.  We do this once for each Operation.
+        
         Method [] methods = implClass.getDeclaredMethods();
+        // A place to keep track of possible matches
+        Method possibleMatch = null;
+        
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             if (Modifier.isPublic(method.getModifiers()) &&
-                    method.getName().equals(oper.getName())) {
+                    method.getName().equals(oper.getName()) &&
+                    method2OperationMap.get(method) == null) {
 
                 if (style == Style.MESSAGE) {
                     int messageOperType = checkMessageMethod(method);
@@ -618,23 +623,24 @@ public class ServiceDesc {
                     continue;
 
                 int j;
+                boolean conversionNecessary = false;
                 for (j = 0; j < paramTypes.length; j++) {
                     Class type = paramTypes[j];
-                    Class heldType = type;
+                    Class actualType = type;
                     if (Holder.class.isAssignableFrom(type)) {
-                        heldType = JavaUtils.getHolderValueType(type);
+                        actualType = JavaUtils.getHolderValueType(type);
                     }
                     ParameterDesc param = oper.getParameter(j);
                     QName typeQName = param.getTypeQName();
                     if (typeQName == null) {
                         // No typeQName is available.  Set it using
-                        // information from the held type.
+                        // information from the actual type.
                         // (Scenarios B and D)
                         // There is no need to try and match with
                         // the Method parameter javaType because
                         // the ParameterDesc is being constructed
                         // by introspecting the Method.
-                        typeQName = tm.getTypeQName(heldType);
+                        typeQName = tm.getTypeQName(actualType);
                         param.setTypeQName(typeQName);
                     } else {
                         // A type qname is available.
@@ -655,8 +661,13 @@ public class ServiceDesc {
                         // This is a match if the paramClass is somehow
                         // convertable to the "real" parameter type.  If not,
                         // break out of this loop.
-                        if (!JavaUtils.isConvertable(paramClass, heldType)) {
+                        if (!JavaUtils.isConvertable(paramClass, actualType)) {
                             break;
+                        }
+                        
+                        if (!actualType.isAssignableFrom(paramClass)) {
+                            // This doesn't fit without conversion
+                            conversionNecessary = true;
                         }
                     }
                     // In all scenarios the ParameterDesc javaType is set to
@@ -669,20 +680,32 @@ public class ServiceDesc {
                     // failed.
                     continue;
                 }
-
-                oper.setReturnClass(method.getReturnType());
-
-                // Do the faults
-                createFaultMetadata(method, oper);
                 
-                // At some point we might want to check here to see if this
-                // Method is already associated with another Operation, but
-                // this doesn't seem critital.
+                // This is our latest possibility
+                possibleMatch = method;
 
-                oper.setMethod(method);
-                method2OperationMap.put(method, oper);
-                return;
+                // If this is exactly it, stop now.  Otherwise keep looking
+                // just in case we find a better match.
+                if (!conversionNecessary) {
+                    break;
+                }
+
             }
+        }
+
+        // At this point, we may or may not have a possible match.
+        // FIXME : Should we prefer an exact match from a base class over
+        //         a with-conversion match from the target class?  If so,
+        //         we'll need to change the logic below.
+        if (possibleMatch != null) {
+            oper.setReturnClass(possibleMatch.getReturnType());
+
+            // Do the faults
+            createFaultMetadata(possibleMatch, oper);
+                
+            oper.setMethod(possibleMatch);
+            method2OperationMap.put(possibleMatch, oper);
+            return;
         }
 
         // Didn't find a match.  Try the superclass, if appropriate
