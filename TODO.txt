@@ -10,6 +10,8 @@ owner (if any) in "<>" brackets.  Example:
 
 BETA 3 MUST DO LIST
 -------------------
+! <> Update all version messages to beta 3.
+
 Bugzillas for beta 3:  must:  must fix; nice:  it would be nice to have; post:  post beta 3; pend:  pending more info, maybe beta 3.  The left column is there to give us a quick picture:  M is a must, _ is anything else, * means the bug is fixed.
 _ 7132 - nice - Glen
 _ 7407 - nice - Rich?
