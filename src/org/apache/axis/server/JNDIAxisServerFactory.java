@@ -57,7 +57,6 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
         }
         
         if (context != null) {
-            System.err.println("JNDI OK");
             // Figure out the name by looking in the servlet context (for
             // now)
             ServletContext servletContext = 
@@ -78,7 +77,6 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
                 
                 // We've got JNDI, so try to find an AxisServer at the
                 // specified name.
-                System.err.println("name is '" + name + "'");
                 try {
                     server = (AxisServer)context.lookup(name);
                 } catch (NamingException e) {
