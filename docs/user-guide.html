@@ -699,8 +699,8 @@ information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i>
 <a name="tcpmon"></a><h2>Using the Axis TCP Monitor (tcpmon) </h2>
 <p>The included &quot;tcpmon&quot; utility can be found in the org.apache.axis.utils 
   package. To run it from the command line:</p>
-<pre>% java org.apache.axis.utils.tcpmon</pre>
-<p>This will pop up a gui which looks like this:</p>
+<pre>% java org.apache.axis.utils.tcpmon [listenPort targetHost targetPort]</pre>
+<p>Without any of the optional arguments, you will get a gui which looks like this:</p>
 <p align="center"><img src="tcpmon1.jpg" width="599" height="599"></p>
 <p align="left">To use the program, you should select a local port which tcpmon 
   will monitor for incoming connections, a target host where it will forward such 
