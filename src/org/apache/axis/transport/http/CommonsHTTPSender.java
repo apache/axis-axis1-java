@@ -202,6 +202,13 @@ public class CommonsHTTPSender extends BasicHandler {
             }
             Message outMsg = new Message(method.getResponseBodyAsStream(),
             false, contentType, contentLocation);
+            // Transfer HTTP headers of HTTP message to MIME headers of SOAP message
+            Header[] responseHeaders = method.getResponseHeaders();
+            MimeHeaders responseMimeHeaders = outMsg.getMimeHeaders();
+            for (int i = 0; i < responseHeaders.length; i++) {
+                Header responseHeader = responseHeaders[i];
+                responseMimeHeaders.addHeader(responseHeader.getName(), responseHeader.getValue());
+            }
             // no need to invoke method.releaseConnection here, as that will
             // happen automatically when the response body is read.
             // issue: what if the stream is never closed?  Are we certain
