@@ -330,8 +330,20 @@ public class SOAPPart extends Part {
             try {
                 env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                AxisFault fault;
+                if (e instanceof AxisFault) {
+                    fault = (AxisFault)e;
+                } else {
+                    fault = new AxisFault(e);
+                }
+                // Start over, write the fault...
+                writer = new StringWriter();
+                try {
+                    fault.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+                } catch (Exception ex) {
+                    // OK, now we're *really* in trouble.
+                    return null;
+                }
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
             return (String)currentMessage;
