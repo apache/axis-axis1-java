@@ -109,8 +109,11 @@ GENERAL / UNCATEGORIZED
 ! <> Reorganize resources.properties into packages
 ! <> Remove search-for-first-MessageContext-arg code
 ! <> Remove ServiceClient
-! <> Before each release, make sure there aren't any English-language strings in the code.  Folks aren't very good about putting these strings into resources.properties!
-! <> Refactor AxisServiceConfig so it doesn't require object instantiation (static metadata)
+! <> Before each release, make sure there aren't any English-language 
+     strings in the code.  Folks aren't very good about putting these
+     strings into resources.properties!
+X <Glen> Refactor AxisServiceConfig so it doesn't require object
+         instantiation (static metadata)
 
 FUTURE ENHANCEMENTS (not necessary for current release)
 -------------------------------------------------------
