@@ -75,10 +75,10 @@ public class TypeMappingDelegate implements TypeMapping {
         getSerializer(Class javaType, QName xmlType)
         throws JAXRPCException
     {
-        SerializerFactory sf = (SerializerFactory)delegate.getSerializer(javaType, xmlType);
+        javax.xml.rpc.encoding.SerializerFactory sf = delegate.getSerializer(javaType, xmlType);
 
         if (sf == null && next != null) {
-            sf = (SerializerFactory)next.getSerializer(javaType, xmlType);
+            sf = next.getSerializer(javaType, xmlType);
         }
 
         if (sf == null) {
@@ -103,10 +103,10 @@ public class TypeMappingDelegate implements TypeMapping {
     public javax.xml.rpc.encoding.DeserializerFactory
             getDeserializer(Class javaType, QName xmlType, TypeMappingDelegate start)
             throws JAXRPCException {
-        DeserializerFactory df =
-                (DeserializerFactory)delegate.getDeserializer(javaType, xmlType, start);
+        javax.xml.rpc.encoding.DeserializerFactory df =
+                delegate.getDeserializer(javaType, xmlType, start);
         if (df == null && next != null) {
-            df = (DeserializerFactory)next.getDeserializer(javaType, xmlType, start);
+            df = next.getDeserializer(javaType, xmlType, start);
         }
         if (df == null) {
             df = delegate.finalGetDeserializer(javaType, xmlType, start);
