@@ -53,17 +53,14 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils;
+package org.apache.axis.i18n;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.axis.i18n.MessagesConstants;
-import org.apache.axis.i18n.ExtendMessages;
-
 /**
- * Root Messages classes.
+ * FUNCTIONAL TEMPLATE for Messages classes.
  * 
  * Copy this template to your package, edit the following attributes
  * as/if necessary:
@@ -87,7 +84,7 @@ public class Messages {
     private static final String resourceName = MessagesConstants.resourceName;
     private static final Locale locale = MessagesConstants.locale;
     private static final ClassLoader classLoader = thisClass.getClassLoader();
-    private static final ResourceBundle parent = null;
+    private static final ResourceBundle parent = MessagesConstants.rootBundle;
 
 
     /***** NO NEED TO CHANGE ANYTHING BELOW *****/
