@@ -186,7 +186,7 @@ public class EngineConfigurationFactoryServlet
             }
 
             if (config == null) {
-                log.error(Messages.getMessage("servletEngineWebInfError01",
+                log.error(Messages.getMessage("servletEngineWebInfError03",
                                                name));
             }
         }
