@@ -55,22 +55,18 @@
 
 package org.apache.axis.encoding.ser;
 
-import java.io.Serializable;
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.i18n.Messages;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.Map;
-import java.util.HashMap;
-import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.utils.ClassUtils;
 
 /**
  * Base class for Axis Deserialization Factory classes for code reuse
@@ -94,10 +90,17 @@ public abstract class BaseDeserializerFactory extends BaseFactory
      * @param deserClass is the class of the Deserializer
      */
     public BaseDeserializerFactory(Class deserClass) {
+        if (!Deserializer.class.isAssignableFrom(deserClass)) {
+            throw new ClassCastException(
+                    Messages.getMessage("BadImplementation00",
+                            deserClass.getName(),
+                            Deserializer.class.getName()));
+        }
         this.deserClass = deserClass;
         this.mechanisms = new Vector();
         this.mechanisms.add(Constants.AXIS_SAX);
     }
+
     public BaseDeserializerFactory(Class deserClass,
                                    QName xmlType,
                                    Class javaType) {
