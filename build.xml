@@ -205,7 +205,9 @@ Copyright:
       <exclude name="org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
+      <exclude name="org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/security/servlet/*" unless="servlet.present"/>
+      <exclude name="javax/xml/soap/*.java" unless="attachments.present"/>
       <exclude name="**/*TestSuite.java" unless="junit.present"/>
     </javac>
     <copy file="${src.dir}/org/apache/axis/server/server-config.wsdd"
