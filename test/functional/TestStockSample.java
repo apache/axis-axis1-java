@@ -93,7 +93,7 @@ public class TestStockSample extends TestCase {
           // e.printStackTrace();
           return;
         }
-        assertNull("not null");
+        assertNull("-sjws/AltStockQuoteService.jws did not fail as expected.");
     }
     
     public void doTestDeploy () throws Exception {
@@ -104,13 +104,13 @@ public class TestStockSample extends TestCase {
     public void doTestStock () throws Exception {
         String[] args = { "-uuser1", "-wpass1", "XXX" };
         float val = new GetQuote().getQuote(args);
-        assertEquals("TestStockSample.doTestStock(): stock price is 55.25", val, 55.25, 0.01);
+        assertEquals("Stock price is not the expected 55.25 +/- 0.01", val, 55.25, 0.01);
     }
     
     public void doTestStockNoAction () throws Exception {
         String[] args = { "-uuser1", "-wpass1", "XXX_noaction" };
         float val = new GetQuote().getQuote(args);
-        assertEquals("TestStockSample.doTestStock(): stock price is 55.25", val, 55.25, 0.01);
+        assertEquals("Stock price is not the expected 55.25 +/- 0.01", val, 55.25, 0.01);
     }
     
     public void doTestUndeploy () throws Exception {
