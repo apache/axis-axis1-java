@@ -56,6 +56,7 @@ package org.apache.axis.description;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
@@ -114,6 +115,10 @@ public class ServiceDesc {
     /** Lookup caches */
     private HashMap name2OperationsMap = null;
     private HashMap qname2OperationMap = null;
+    private HashMap method2OperationMap = new HashMap();
+    private ArrayList completedNames = new ArrayList();
+
+    private TypeMapping tm = null;
 
     /**
      * Default constructor
@@ -159,6 +164,22 @@ public class ServiceDesc {
         this.allowedMethods = allowedMethods;
     }
 
+    public Class getImplClass() {
+        return implClass;
+    }
+
+    public void setImplClass(Class implClass) {
+        this.implClass = implClass;
+    }
+
+    public TypeMapping getTypeMapping() {
+        return tm;
+    }
+
+    public void setTypeMapping(TypeMapping tm) {
+        this.tm = tm;
+    }
+
     public void addOperationDesc(OperationDesc operation)
     {
         operations.add(operation);
@@ -176,38 +197,42 @@ public class ServiceDesc {
         }
 
         overloads.add(operation);
-
-        // If we're adding these, we won't introspect (either because we
-        // trust the deployer/user to add everything instead, or because
-        // we're actually in the middle of introspecting right now)
-        hasOperationData = true;
     }
 
     public OperationDesc [] getOperationsByName(String methodName)
     {
+        getSyncedOperationsForName(methodName);
+
         if (name2OperationsMap == null)
             return null;
 
-        ArrayList result = (ArrayList)name2OperationsMap.get(methodName);
-        if (result == null)
+        ArrayList overloads = (ArrayList)name2OperationsMap.get(methodName);
+        if (overloads == null) {
             return null;
+        }
 
-        OperationDesc [] array = new OperationDesc [result.size()];
-        return (OperationDesc[])result.toArray(array);
+        OperationDesc [] array = new OperationDesc [overloads.size()];
+        return (OperationDesc[])overloads.toArray(array);
     }
 
     /**
      * Return an operation matching the given method name.  Note that if we
      * have multiple overloads for this method, we will return the first one.
      */
-    public OperationDesc getOperationDescByName(String methodName)
+    public OperationDesc getOperationByName(String methodName)
     {
+        // If we need to load up operations from introspection data, do it.
+        // This returns fast if we don't need to do anything, so it's not very
+        // expensive.
+        getSyncedOperationsForName(methodName);
+
         if (name2OperationsMap == null)
             return null;
 
         ArrayList overloads = (ArrayList)name2OperationsMap.get(methodName);
-        if (overloads == null)
+        if (overloads == null) {
             return null;
+        }
 
         return (OperationDesc)overloads.get(0);
     }
@@ -219,9 +244,13 @@ public class ServiceDesc {
     {
         // If we're a wrapped service (i.e. RPC or WRAPPED style), we expect
         // this qname to match one of our operation names directly.
-        // FIXME : Should this really ignore namespaces?
+
+        // FIXME : Should this really ignore namespaces?  Perhaps we should
+        //         just check by QName... (I think that's right, actually,
+        //         and the only time we should ignore namespaces is when
+        //         deserializing SOAP-encoded structures?)
         if (isWrapped()) {
-            return getOperationDescByName(qname.getLocalPart());
+            return getOperationByName(qname.getLocalPart());
         }
 
         // If we're MESSAGE style, we should only have a single operation,
@@ -246,55 +275,196 @@ public class ServiceDesc {
     }
 
     /**
-     * Fill in what we can of the service description by introspecting a
-     * Java class.  Only do this if we haven't already been filled in.
+     * Synchronize an existing OperationDesc to a java.lang.Method.
+     *
+     * This method is used when the deployer has specified operation metadata
+     * and we want to match that up with a real java Method so that the
+     * Operation-level dispatch carries us all the way to the implementation.
+     * Search the declared methods on the implementation class to find one
+     * with an argument list which matches our parameter list.
      */
-    public void loadServiceDescByIntrospection(Class jc, TypeMapping tm)
+    private void syncOperationToClass(OperationDesc oper)
     {
-        if (hasOperationData)
+        // If we're already mapped to a Java method, no need to do anything.
+        if (oper.getMethod() != null)
             return;
 
-        Method [] methods = jc.getDeclaredMethods();
+        // Find the method.  We do this once for each Operation.
+        Method [] methods = implClass.getDeclaredMethods();
+        for (int i = 0; i < methods.length; i++) {
+            Method method = methods[i];
+            if (method.getName().equals(oper.getName())) {
+                // Check params
+                Class [] paramTypes = method.getParameterTypes();
+                if (paramTypes.length != oper.getNumParams())
+                    continue;
+
+                int j;
+                for (j = 0; j < paramTypes.length; j++) {
+                    Class type = paramTypes[j];
+                    ParameterDesc param = oper.getParameter(j);
+                    // See if they match
+                    Class paramClass = tm.getClassForQName(
+                            param.getTypeQName());
+
+                    // This is a match if the paramClass is somehow
+                    // convertable to the "real" parameter type.
+                    if (JavaUtils.isConvertable(paramClass, type)) {
+                        param.setJavaType(type);
+                        continue;
+                    }
+                    break;
+                }
+
+                if (j != paramTypes.length) {
+                    // failed.
+                    continue;
+                }
+
+                // At some point we might want to check here to see if this
+                // Method is already associated with another Operation, but
+                // this doesn't seem critital.
+
+                oper.setMethod(method);
+                method2OperationMap.put(method, oper);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Fill in a service description by introspecting the implementation
+     * class.
+     */
+    public void loadServiceDescByIntrospection()
+    {
+        Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            String methodName = methods[i].getName();
-
-            // Skip it if it's not allowed
-            // FIXME : This should, if allowedMethods is null, search up the
-            //         inheritance/interface tree until we get to stop
-            //         classes?
-            if ((allowedMethods != null) &&
-                !allowedMethods.contains(methodName))
-                continue;
-
-            // Make an OperationDesc for each method
-            Method method = methods[i];
-            OperationDesc operation = new OperationDesc();
-            operation.setName(methodName);
-            Class [] paramTypes = method.getParameterTypes();
-            String [] paramNames =
-                    JavaUtils.getParameterNamesFromDebugInfo(method);
-            for (int k = 0; k < paramTypes.length; k++) {
-                Class type = paramTypes[k];
-                ParameterDesc paramDesc = new ParameterDesc();
-                if (paramNames != null) {
-                    paramDesc.setName(paramNames[k+1]);
-                } else {
-                    paramDesc.setName("in" + k);
-                }
-                Class heldClass = JavaUtils.getHolderValueType(type);
-                if (heldClass != null) {
-                    paramDesc.setMode(ParameterDesc.INOUT);
-                    paramDesc.setTypeQName(tm.getTypeQName(heldClass));
-                } else {
-                    paramDesc.setMode(ParameterDesc.IN);
-                    paramDesc.setTypeQName(tm.getTypeQName(type));
-                }
-                operation.addParameter(paramDesc);
-            }
-            addOperationDesc(operation);
+            getSyncedOperationsForName(methods[i].getName());
         }
 
-        hasOperationData = true;
+        // Setting this to null means there is nothing more to do, and it
+        // avoids future string compares.
+        completedNames = null;
+    }
+
+    /**
+     * Fill in a service description by introspecting the implementation
+     * class.  This version takes the implementation class and the in-scope
+     * TypeMapping.
+     */
+    public void loadServiceDescByIntrospection(Class cls, TypeMapping tm)
+    {
+        // Should we complain if the implClass changes???
+        implClass = cls;
+        this.tm = tm;
+        loadServiceDescByIntrospection();
+    }
+
+    /**
+     * Makes sure we have completely synchronized OperationDescs with
+     * the implementation class.
+     */
+    private void getSyncedOperationsForName(String methodName)
+    {
+        // If we have no implementation class, don't worry about it (we're
+        // probably on the client)
+        if (implClass == null)
+            return;
+
+        // If we're done introspecting, or have completed this method, return
+        if (completedNames == null || completedNames.contains(methodName))
+            return;
+
+        // Skip it if it's not a sanctioned method name
+        if ((allowedMethods != null) &&
+            !allowedMethods.contains(methodName))
+            return;
+
+        // OK, go find any current OperationDescs for this method name and
+        // make sure they're synced with the actual class.
+        if (name2OperationsMap != null) {
+            ArrayList currentOverloads = 
+                    (ArrayList)name2OperationsMap.get(methodName);
+            if (currentOverloads != null) {
+                // For each one, sync it to the implementation class' methods
+                for (Iterator i = currentOverloads.iterator(); i.hasNext();) {
+                    OperationDesc oper = (OperationDesc) i.next();
+                    if (oper.getMethod() == null) {
+                        syncOperationToClass(oper);
+                    }
+                }
+            }
+        }
+
+        // Now all OperationDescs from deployment data have been completely
+        // filled in.  So we now make new OperationDescs for any method
+        // overloads which were not covered above.
+        Method [] methods = implClass.getDeclaredMethods();
+
+        for (int i = 0; i < methods.length; i++) {
+            Method method = methods[i];
+            if (method.getName().equals(methodName))
+                createOperationForMethod(method);
+        }
+
+        // Note that we never have to look at this method name again.
+        completedNames.add(methodName);
+    }
+
+    /**
+     * Make an OperationDesc from a Java method.
+     *
+     * In the absence of deployment metadata, this code will introspect a
+     * Method and create an appropriate OperationDesc, using parameter names
+     * from the bytecode debugging info if available, or "in0", "in1", etc.
+     * if not.
+     */
+    private void createOperationForMethod(Method method) {
+        // If we've already got it, never mind
+        if (method2OperationMap.get(method) != null) {
+            return;
+        }
+
+        // Make an OperationDesc
+        OperationDesc operation = new OperationDesc();
+        operation.setName(method.getName());
+        operation.setMethod(method);
+        Class [] paramTypes = method.getParameterTypes();
+        String [] paramNames =
+                JavaUtils.getParameterNamesFromDebugInfo(method);
+
+        for (int k = 0; k < paramTypes.length; k++) {
+            Class type = paramTypes[k];
+            ParameterDesc paramDesc = new ParameterDesc();
+            // If we have a name for this param, use it, otherwise call
+            // it "in*"
+            if (paramNames != null) {
+                paramDesc.setName(paramNames[k+1]);
+            } else {
+                paramDesc.setName("in" + k);
+            }
+            paramDesc.setJavaType(type);
+
+            // If it's a Holder, mark it INOUT and set the type to the
+            // held type.  Otherwise it's IN with its own type.
+
+            Class heldClass = JavaUtils.getHolderValueType(type);
+            if (heldClass != null) {
+                paramDesc.setMode(ParameterDesc.INOUT);
+                paramDesc.setTypeQName(tm.getTypeQName(heldClass));
+            } else {
+                paramDesc.setMode(ParameterDesc.IN);
+                paramDesc.setTypeQName(tm.getTypeQName(type));
+            }
+            operation.addParameter(paramDesc);
+        }
+
+        operation.setReturnClass(method.getReturnType());
+        operation.setReturnType(tm.getTypeQName(method.getReturnType()));
+
+        addOperationDesc(operation);
+        method2OperationMap.put(method, operation);
     }
 }

@@ -6,8 +6,9 @@
 <!--   java org.apache.axis.client.http.AdminClient deploy.wsdd  -->
 <!--      after the axis server is running                      -->
 
- <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
+ <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/"
 			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
 			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
   <service name="echo" provider="java:RPC" >
     <namespace>http://soapinterop.org/</namespace>
@@ -63,6 +64,14 @@
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping
+        xmlns:ns="http://soapinterop.org/"
+        qname="ns:ArrayOf_tns2_Map"
+        type="java:java.util.HashMap[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
         xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:SOAPStructStruct"
         type="java:samples.echo.SOAPStructStruct"
@@ -87,5 +96,13 @@
         <handler type="java:samples.echo.echoHeaderStringHandler"/>
         <handler type="java:samples.echo.echoHeaderStructHandler"/>
     </responseFlow>
+
+    <operation name="echoStructAsSimpleTypes">
+      <parameter name="inputStruct" xmlns:ns="http://soapinterop.org/xsd"
+                 type="ns:SOAPStruct"/>
+      <parameter name="outputString" type="xsd:string" mode="OUT"/>
+      <parameter name="outputInteger" type="xsd:int" mode="OUT"/>
+      <parameter name="outputFloat" type="xsd:float" mode="OUT"/>
+    </operation>
   </service>
 </deployment>

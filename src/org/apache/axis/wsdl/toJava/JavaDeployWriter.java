@@ -87,7 +87,9 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Constructor.
      */
-    protected JavaDeployWriter(Emitter emitter, Definition definition, SymbolTable symbolTable) {
+    protected JavaDeployWriter(Emitter emitter, 
+                               Definition definition, 
+                               SymbolTable symbolTable) {
         super(emitter,
                 new QName(definition.getTargetNamespace(), "deploy"),
                 "",
@@ -119,7 +121,8 @@ public class JavaDeployWriter extends JavaWriter {
     protected void writeDeployServices() throws IOException {
         //deploy the ports on each service
         Map serviceMap = definition.getServices();
-        for (Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
+        for (Iterator mapIterator = serviceMap.values().iterator(); 
+             mapIterator.hasNext();) {
             Service myService = (Service) mapIterator.next();
 
             pw.println();
@@ -128,9 +131,12 @@ public class JavaDeployWriter extends JavaWriter {
                     + " -->");
             pw.println();
 
-            for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {
+            for (Iterator portIterator = myService.getPorts().values().iterator();
+                 portIterator.hasNext();) {
                 Port myPort = (Port) portIterator.next();
-                BindingEntry bEntry =  symbolTable.getBindingEntry(myPort.getBinding().getQName());
+                BindingEntry bEntry = 
+                        symbolTable.getBindingEntry(
+                                myPort.getBinding().getQName());
 
                 // If this isn't an SOAP binding, skip it
                 if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
@@ -177,7 +183,8 @@ public class JavaDeployWriter extends JavaWriter {
             if (localPart.startsWith(SymbolTable.ANON_TOKEN)) {
                 localPart = localPart.substring(1);
             }
-            QName qName = new QName(type.getQName().getNamespaceURI(), localPart);
+            QName qName = new QName(type.getQName().getNamespaceURI(), 
+                                    localPart);
 
             if (process) {
                 pw.println("      <typeMapping");
@@ -276,30 +283,64 @@ public class JavaDeployWriter extends JavaWriter {
             // interested in the return type for now.
             Parameters params =
                     symbolTable.getOperationParameters(operation, "", bEntry);
-            if (params.returnType instanceof DefinedElement) {
-                QName returnQName = params.returnType.getQName();
-                pw.println("      <operation name=\"" + operation.getName() +
-                         "\" returnQName=\"retNS:" +
-                         returnQName.getLocalPart() +
-                         "\" xmlns:retNS=\"" +
-                         returnQName.getNamespaceURI() +
-                         "\">");
+            String operName = JavaUtils.xmlNameToJava(operation.getName());
+            if (params != null) {
+                if (params.returnType instanceof DefinedElement) {
+                    QName returnQName = params.returnType.getQName();
+                    pw.println("      <operation name=\"" + operName +
+                             "\" returnQName=\"retNS:" +
+                             returnQName.getLocalPart() +
+                             "\" xmlns:retNS=\"" +
+                             returnQName.getNamespaceURI() +
+                             "\">");
 
-                // map doc/lit elements to this operation
-                Map parts = operation.getInput().getMessage().getParts();
-                if (!parts.isEmpty()) {
-                    Iterator i = parts.values().iterator();
-                    Part p = (Part) i.next();
-                    QName elementQName = p.getElementName();
-                    String ns = elementQName.getNamespaceURI();
-                    pw.println("        <elementMapping xmlns:ns=\"" +
-                            ns + "\" element=\"ns:" +
-                            elementQName.getLocalPart() + "\"/>");
+                    // map doc/lit elements to this operation
+                    Map parts = operation.getInput().getMessage().getParts();
+                    if (!parts.isEmpty()) {
+                        Iterator i = parts.values().iterator();
+                        Part p = (Part) i.next();
+                        QName elementQName = p.getElementName();
+                        String ns = elementQName.getNamespaceURI();
+                        pw.println("        <elementMapping xmlns:ns=\"" +
+                                   ns + "\" element=\"ns:" +
+                                   elementQName.getLocalPart() + "\"/>");
+                    }
+                } else {
+                    pw.println("      <operation name=\"" + 
+                               operName + "\">");
                 }
-
+                
+                Vector paramList = params.list;
+                for (int i = 0; i < paramList.size(); i++) {
+                    Parameter param = (Parameter) paramList.elementAt(i);
+                    QName paramQName = param.getQName();
+                    TypeEntry typeEntry = param.getType();
+                    QName paramType;
+                    if (typeEntry instanceof DefinedElement) {
+                        Node node = symbolTable.getTypeEntry(typeEntry.getQName(), true).getNode();
+                        paramType = Utils.getNodeTypeRefQName(node, "type");
+                        if (paramType == null)
+                            paramType = typeEntry.getQName(); // FIXME
+                    } else {
+                        paramType = typeEntry.getQName();
+                    }
+                    String mode = getModeString(param.getMode());
+                    pw.print("        <parameter ");
+                    if (paramQName == null || "".equals(paramQName.getLocalPart())) {
+                        pw.print("name=\"" + param.getName() + "\" " );
+                    } else {
+                        pw.print("qname=\"pns:" + paramQName.getLocalPart() +
+                                 "\" xmlns:pns=\"" + paramQName.getNamespaceURI() +
+                                 "\" ");
+                    }
+                    pw.print("type=\"tns:" + paramType.getLocalPart() + "\" " );
+                    pw.print("xmlns:tns=\"" + paramType.getNamespaceURI() + "\" " );
+                    pw.print("mode=\"" + mode + "\"" );
+                    pw.println("/>");
+                }
+                
                 pw.println("      </operation>");
             }
-
         }
 
         pw.print("      <parameter name=\"allowedMethods\" value=\"");
@@ -321,4 +362,14 @@ public class JavaDeployWriter extends JavaWriter {
         }
     } //writeDeployBinding
 
+    public String getModeString(byte mode)
+    {
+        if (mode == Parameter.IN) {
+            return "IN";
+        } else if (mode == Parameter.INOUT) {
+            return "INOUT";
+        } else {
+            return "OUT";
+        }
+    }
 } // class JavaDeployWriter

@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -88,29 +88,29 @@ import java.util.List;
 
 /**
  * @author Rich Scheuerle (scheu@us.ibm.com)
- * 
+ *
  * This is the implementation of the axis Default TypeMapping (which extends
  * the JAX-RPC TypeMapping interface) for SOAP 1.1.  If you want the JAX-RPC
  * SOAP 1.2 Type Mapping the use DefaultJAXRPCTypeMapping.
- * 
+ *
  * A TypeMapping is obtained from the singleton TypeMappingRegistry using
  * the namespace of the webservice.  The TypeMapping contains the tuples
  * {Java type, SerializerFactory, DeserializerFactory, Type QName)
  *
- * So if you have a Web Service with the namespace "XYZ", you call 
+ * So if you have a Web Service with the namespace "XYZ", you call
  * the TypeMappingRegistry.getTypeMapping("XYZ").
  *
  * The wsdl in your web service will use a number of types.  The tuple
  * information for each of these will be accessed via the TypeMapping.
  *
- * Because every web service uses the soap, schema, wsdl primitives, we could 
+ * Because every web service uses the soap, schema, wsdl primitives, we could
  * pre-populate the TypeMapping with these standard tuples.  Instead, if requested
  * namespace/class matches is not found in the TypeMapping but matches one these
  * known primitives, the request is delegated to this Default TypeMapping.
- * 
+ *
  */
-public class DefaultTypeMappingImpl extends TypeMappingImpl { 
-    
+public class DefaultTypeMappingImpl extends TypeMappingImpl {
+
     private static DefaultTypeMappingImpl tm = null;
     /**
      * Construct TypeMapping
@@ -128,45 +128,45 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Notes:
         // 1) The registration statements are order dependent.  The last one
-        //    wins.  So if two javaTypes of String are registered, the 
+        //    wins.  So if two javaTypes of String are registered, the
         //    ser factory for the last one registered will be chosen.  Likewise
-        //    if two javaTypes for XSD_DATE are registered, the deserializer 
+        //    if two javaTypes for XSD_DATE are registered, the deserializer
         //    factory for the last one registered will be chosen.
         //    Corollary:  Please be very careful with the order.  The
         //                runtime, Java2WSDL and WSDL2Java emitters all
         //                use this code to get type mapping information.
-        // 2) Even if the SOAP 1.1 format is used over the wire, an 
+        // 2) Even if the SOAP 1.1 format is used over the wire, an
         //    attempt is made to receive SOAP 1.2 format from the wire.
-        //    This is the reason why the soap encoded primitives are 
+        //    This is the reason why the soap encoded primitives are
         //    registered without serializers.
 
-        // SOAP Encoded strings are treated as primitives. 
+        // SOAP Encoded strings are treated as primitives.
         // Everything else is not.
         // Note that only deserializing is supported since we are flowing
         // SOAP 1.1 over the wire.
-        myRegister(Constants.SOAP_STRING,     java.lang.String.class,   
-                   null, null, true,  true); 
-        myRegister(Constants.SOAP_BOOLEAN,    java.lang.Boolean.class, 
+        myRegister(Constants.SOAP_STRING,     java.lang.String.class,
+                   null, null, true,  true);
+        myRegister(Constants.SOAP_BOOLEAN,    java.lang.Boolean.class,
                    null, null, false, true);
-        myRegister(Constants.SOAP_DOUBLE,     java.lang.Double.class,  
+        myRegister(Constants.SOAP_DOUBLE,     java.lang.Double.class,
                    null, null, false, true);
-        myRegister(Constants.SOAP_FLOAT,      java.lang.Float.class,  
+        myRegister(Constants.SOAP_FLOAT,      java.lang.Float.class,
                    null, null, false, true);
-        myRegister(Constants.SOAP_INT,        java.lang.Integer.class,   
+        myRegister(Constants.SOAP_INT,        java.lang.Integer.class,
                    null, null, false, true);
         myRegister(Constants.SOAP_INTEGER,    java.math.BigInteger.class,
                    null, null, false, true);
         myRegister(Constants.SOAP_DECIMAL,    java.math.BigDecimal.class,
                    null, null, false, true);
-        myRegister(Constants.SOAP_LONG,       java.lang.Long.class,     
+        myRegister(Constants.SOAP_LONG,       java.lang.Long.class,
                    null, null, false, true);
-        myRegister(Constants.SOAP_SHORT,      java.lang.Short.class,   
+        myRegister(Constants.SOAP_SHORT,      java.lang.Short.class,
                    null, null, false, true);
-        myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,     
+        myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,
                    null, null, false, true);
 
         // Hex binary data needs to use the hex binary serializer/deserializer
-        myRegister(Constants.XSD_HEXBIN,     Hex.class,   
+        myRegister(Constants.XSD_HEXBIN,     Hex.class,
                    new HexSerializerFactory(
                         Hex.class, Constants.XSD_HEXBIN),
                    new HexDeserializerFactory(
@@ -182,62 +182,62 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // Byte[] -ser-> array of Byte
         // XSD_BASE64 -deser-> byte[]
         // SOAP_BASE64 -deser->byte[]
-        myRegister(Constants.SOAP_BASE64,     byte[].class, 
-                   new Base64SerializerFactory(byte[].class,
+        myRegister(Constants.SOAP_BASE64,     Byte[].class,
+                   new Base64SerializerFactory(Byte[].class,
                                                Constants.SOAP_BASE64 ),
-                   new Base64DeserializerFactory(byte[].class,
+                   new Base64DeserializerFactory(Byte[].class,
                                                  Constants.SOAP_BASE64),
-                   true, true);      
-        myRegister(Constants.SOAP_ARRAY,     java.lang.Byte[].class,       
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory(),true);
-        myRegister(Constants.XSD_BASE64,     byte[].class,                                   
+                   true);
+//        myRegister(Constants.SOAP_ARRAY,     java.lang.Byte[].class,
+//                   new ArraySerializerFactory(),
+//                   new ArrayDeserializerFactory(),true);
+        myRegister(Constants.XSD_BASE64,     byte[].class,
                    new Base64SerializerFactory(byte[].class,
                                                Constants.XSD_BASE64 ),
                    new Base64DeserializerFactory(byte[].class,
                                            Constants.XSD_BASE64),true);
 
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
-        myRegister(Constants.XSD_STRING,     java.lang.String.class, 
-                   null, null, true); 
-        myRegister(Constants.XSD_BOOLEAN,    java.lang.Boolean.class, 
+        myRegister(Constants.XSD_STRING,     java.lang.String.class,
                    null, null, true);
-        myRegister(Constants.XSD_DOUBLE,     java.lang.Double.class,  
+        myRegister(Constants.XSD_BOOLEAN,    java.lang.Boolean.class,
                    null, null, true);
-        myRegister(Constants.XSD_FLOAT,      java.lang.Float.class,  
+        myRegister(Constants.XSD_DOUBLE,     java.lang.Double.class,
                    null, null, true);
-        myRegister(Constants.XSD_INT,        java.lang.Integer.class, 
+        myRegister(Constants.XSD_FLOAT,      java.lang.Float.class,
+                   null, null, true);
+        myRegister(Constants.XSD_INT,        java.lang.Integer.class,
                    null, null, true);
         myRegister(Constants.XSD_INTEGER,    java.math.BigInteger.class,
                    null, null, true);
         myRegister(Constants.XSD_DECIMAL,    java.math.BigDecimal.class,
                    null, null, true);
-        myRegister(Constants.XSD_LONG,       java.lang.Long.class,     
+        myRegister(Constants.XSD_LONG,       java.lang.Long.class,
                    null, null, true);
-        myRegister(Constants.XSD_SHORT,      java.lang.Short.class, 
+        myRegister(Constants.XSD_SHORT,      java.lang.Short.class,
                    null, null, true);
-        myRegister(Constants.XSD_BYTE,       java.lang.Byte.class,  
+        myRegister(Constants.XSD_BYTE,       java.lang.Byte.class,
                    null, null, true);
 
         // The XSD Primitives are mapped to java primitives.
-        myRegister(Constants.XSD_BOOLEAN,    boolean.class,        
+        myRegister(Constants.XSD_BOOLEAN,    boolean.class,
                    null, null,true);
-        myRegister(Constants.XSD_DOUBLE,     double.class,         
+        myRegister(Constants.XSD_DOUBLE,     double.class,
                    null, null,true);
         myRegister(Constants.XSD_FLOAT,      float.class,
                    null, null,true);
-        myRegister(Constants.XSD_INT,        int.class,  
+        myRegister(Constants.XSD_INT,        int.class,
                    null, null,true);
-        myRegister(Constants.XSD_LONG,       long.class, 
+        myRegister(Constants.XSD_LONG,       long.class,
                    null, null,true);
-        myRegister(Constants.XSD_SHORT,      short.class, 
+        myRegister(Constants.XSD_SHORT,      short.class,
                    null, null,true);
-        myRegister(Constants.XSD_BYTE,       byte.class, 
+        myRegister(Constants.XSD_BYTE,       byte.class,
                    null, null,true);
 
 
         // Map QNAME to the jax rpc QName class
-        myRegister(Constants.XSD_QNAME,      
+        myRegister(Constants.XSD_QNAME,
               javax.xml.rpc.namespace.QName.class,
               new BeanSerializerFactory(javax.xml.rpc.namespace.QName.class,
                                         Constants.XSD_QNAME),
@@ -246,21 +246,21 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    true);
 
         // The closest match for anytype is Object
-        myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,  
+        myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,
                    null, null, false);
 
-        // The xsd primitive for date has changed through the various 
+        // The xsd primitive for date has changed through the various
         // namespace versions.
-        // XSD_DATE is the current one, which is why it is 
+        // XSD_DATE is the current one, which is why it is
         // registered after the other two
-        myRegister(Constants.XSD_DATE2,      java.util.Date.class,                           
-                   new DateSerializerFactory(java.util.Date.class, 
+        myRegister(Constants.XSD_DATE2,      java.util.Date.class,
+                   new DateSerializerFactory(java.util.Date.class,
                                              Constants.XSD_DATE2),
                    new DateDeserializerFactory(java.util.Date.class,
                                                Constants.XSD_DATE2),
                    true);
-        myRegister(Constants.XSD_DATE3,      java.util.Date.class,                           
-                   new DateSerializerFactory(java.util.Date.class, 
+        myRegister(Constants.XSD_DATE3,      java.util.Date.class,
+                   new DateSerializerFactory(java.util.Date.class,
                                              Constants.XSD_DATE3),
                    new DateDeserializerFactory(java.util.Date.class,
                                                Constants.XSD_DATE3),
@@ -280,48 +280,47 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Serialize all extensions of Map to SOAP_MAP
         // The SOAP_MAP will be deserialized into a HashMap by default.
-        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,    
+        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,
                    new MapSerializerFactory(java.util.Map.class,
                                             Constants.SOAP_MAP),
                    new MapDeserializerFactory(java.util.HashMap.class,
                                               Constants.SOAP_MAP),
                    false);
-        myRegister(Constants.SOAP_MAP,       java.util.Map.class,    
+        myRegister(Constants.SOAP_MAP,       java.util.Map.class,
                    new MapSerializerFactory(java.util.Map.class,
                                             Constants.SOAP_MAP),
-                   new MapDeserializerFactory(java.util.HashMap.class,
-                                              Constants.SOAP_MAP),
+                   null,  // Make sure not to override the deser mapping
                    false);
 
         // Use the Element Serializeration for elements
-        myRegister(Constants.SOAP_ELEMENT,   org.w3c.dom.Element.class,    
+        myRegister(Constants.SOAP_ELEMENT,   org.w3c.dom.Element.class,
                    new ElementSerializerFactory(),
                    new ElementDeserializerFactory(), false);
-        myRegister(Constants.SOAP_VECTOR,    java.util.Vector.class,                                
+        myRegister(Constants.SOAP_VECTOR,    java.util.Vector.class,
                    new VectorSerializerFactory(java.util.Vector.class,
-                                               Constants.SOAP_VECTOR), 
+                                               Constants.SOAP_VECTOR),
                    new VectorDeserializerFactory(java.util.Vector.class,
-                                                 Constants.SOAP_VECTOR), 
+                                                 Constants.SOAP_VECTOR),
                    false);
 
         // All array objects automatically get associated with the SOAP_ARRAY.
-        // There is no way to do this with a hash table, 
+        // There is no way to do this with a hash table,
         // so it is done directly in getTypeQName.
         // Internally the runtime uses ArrayList objects to hold arrays...
-        // which is the reason that ArrayList is associated with SOAP_ARRAY.  
+        // which is the reason that ArrayList is associated with SOAP_ARRAY.
         // In addition, handle all objects that implement the List interface
         // as a SOAP_ARRAY
-        myRegister(Constants.SOAP_ARRAY,     java.util.List.class,               
+        myRegister(Constants.SOAP_ARRAY,     java.util.List.class,
                    new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory(), 
+                   new ArrayDeserializerFactory(),
                    false);
-        myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,               
+        myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
                    new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory(), 
+                   new ArrayDeserializerFactory(),
                    false);
-        myRegister(Constants.SOAP_ARRAY,     Object[].class,               
+        myRegister(Constants.SOAP_ARRAY,     Object[].class,
                    new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory(), 
+                   new ArrayDeserializerFactory(),
                    false);
     }
 
@@ -334,14 +333,14 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      * @param df is the deser factory (if null, the simple factory is used)
      * @param primitive indicates whether serializers can be shared
      * @param onlyDeserFactory indicates if only deserialization is desired.
-     */   
+     */
     protected void myRegister(QName xmlType, Class javaType,
                               SerializerFactory sf, DeserializerFactory df,
                               boolean primitive) {
         myRegister(xmlType, javaType, sf, df, primitive, false);
     }
     protected void myRegister(QName xmlType, Class javaType,
-                              SerializerFactory sf, DeserializerFactory df, 
+                              SerializerFactory sf, DeserializerFactory df,
                               boolean primitive, boolean onlyDeserFactory) {
 
         // If factories are not specified, use the Simple ser/deser factories.
@@ -362,7 +361,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         if (onlyDeserFactory) {
             sf = null;
         }
-        
+
         // Register all known flavors of the namespace.
         try {
             if (xmlType.getNamespaceURI().equals(
@@ -381,7 +380,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                     super.register(javaType, qName, sf, df);
                 }
             }
-            // Register with the specified xmlType. 
+            // Register with the specified xmlType.
             // This is the prefered mapping and the last registed one wins
             super.register(javaType, xmlType, sf, df);
         } catch (Exception e) {}
@@ -407,10 +406,10 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     // Don't allow anyone to muck with the default type mapping because
     // it is a singleton used for the whole system.
-    public void register(Class javaType, QName xmlType, 
+    public void register(Class javaType, QName xmlType,
                          javax.xml.rpc.encoding.SerializerFactory sf,
-                         javax.xml.rpc.encoding.DeserializerFactory dsf) 
-        throws JAXRPCException {        
+                         javax.xml.rpc.encoding.DeserializerFactory dsf)
+        throws JAXRPCException {
 
         throw new JAXRPCException();
     }

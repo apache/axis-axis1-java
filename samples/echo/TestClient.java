@@ -181,72 +181,44 @@ public abstract class TestClient {
 
         {
             String input = "abccdefg";
-            try {
-                output = binding.echoString(input);
-                verify("echoString", input, output);
-            } catch (Exception e) {
-                verify("echoString", input, e);
-            }
+            output = binding.echoString(input);
+            verify("echoString", input, output);
         }
         
         {
             String[] input = new String[] {"abc", "def"};
-            try {
-                output = binding.echoStringArray(input);
-                verify("echoStringArray", input, output);
-            } catch (Exception e) {
-                verify("echoStringArray", input, e);
-            }
+            output = binding.echoStringArray(input);
+            verify("echoStringArray", input, output);
         }
         
         {
             Integer input = new Integer(42);
-            try {
-                output = new Integer( binding.echoInteger(input.intValue()));
-                verify("echoInteger", input, output);
-            } catch (Exception e) {
-                verify("echoInteger", input, e);
-            }
+            output = new Integer( binding.echoInteger(input.intValue()));
+            verify("echoInteger", input, output);
         }
         
         {
             int[] input = new int[] {42};
-            try {
-                output = binding.echoIntegerArray(input);
-                verify("echoIntegerArray", input, output);
-            } catch (Exception e) {
-                verify("echoIntegerArray", input, e);
-            }
+            output = binding.echoIntegerArray(input);
+            verify("echoIntegerArray", input, output);
         }
         
         {
             Float input = new Float(3.7F);
-            try {
-                output = new Float(binding.echoFloat(input.floatValue()));
-                verify("echoFloat", input, output);
-            } catch (Exception e) {
-                verify("echoFloat", input, e);
-            }
+            output = new Float(binding.echoFloat(input.floatValue()));
+            verify("echoFloat", input, output);
         }
 
         {
             float[] input = new float[] {3.7F, 7F};
-            try {
-                output = binding.echoFloatArray(input);
-                verify("echoFloatArray", input, output);
-            } catch (Exception e) {
-                verify("echoFloatArray", input, e);
-            }
+            output = binding.echoFloatArray(input);
+            verify("echoFloatArray", input, output);
         }
 
         {
             SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
-            try {
-                output = binding.echoStruct(input);
-                verify("echoStruct", input, output);
-            } catch (Exception e) {
-                verify("echoStruct", input, e);
-            }
+            output = binding.echoStruct(input);
+            verify("echoStruct", input, output);
         }
         
         {
@@ -254,71 +226,43 @@ public abstract class TestClient {
                 new SOAPStruct(1, "one", 1.1F),
                 new SOAPStruct(2, "two", 2.2F),
                 new SOAPStruct(3, "three", 3.3F)};
-            try {
-                output = binding.echoStructArray(input);
-                verify("echoStructArray", input, output);
-            } catch (Exception e) {
-                verify("echoStructArray", input, e);
-            }
+            output = binding.echoStructArray(input);
+            verify("echoStructArray", input, output);
         }
 
         {
-            try {
-                binding.echoVoid();
-                verify("echoVoid", null, null);
-            } catch (Exception e) {
-                verify("echoVoid", null, e);
-            }
+            binding.echoVoid();
+            verify("echoVoid", null, null);
         }
 
         {
             byte[] input = "Base64".getBytes();
-            try {
-                output = binding.echoBase64(input);
-                verify("echoBase64", input, output);
-            } catch (Exception e) {
-                verify("echoBase64", input, e);
-            }
+            output = binding.echoBase64(input);
+            verify("echoBase64", input, output);
         }
         
         {
             Hex input = new Hex("3344");
-            try {
-                output = binding.echoHexBinary(input.getBytes());
-                verify("echoHexBinary", input, output);
-            } catch (Exception e) {
-                verify("echoHexBinary", input, e);
-            }
+            output = binding.echoHexBinary(input.getBytes());
+            verify("echoHexBinary", input, output);
         }
         
         {
             Date input = new Date();
-            try {
-                output = binding.echoDate(input);
-                verify("echoDate", input, output);
-            } catch (Exception e) {
-                verify("echoDate", input, e);
-            }
+            output = binding.echoDate(input);
+            verify("echoDate", input, output);
         }
         
         {
             BigDecimal input = new BigDecimal("3.14159");
-            try {
-                output = binding.echoDecimal(input);
-                verify("echoDecimal", input, output);
-            } catch (Exception e) {
-                verify("echoDecimal", input, e);
-            }
+            output = binding.echoDecimal(input);
+            verify("echoDecimal", input, output);
         }
         
         {
             Boolean input = Boolean.TRUE;
-            try {
-                output = new Boolean( binding.echoBoolean(input.booleanValue()));
-                verify("echoBoolean", input, output);
-            } catch (Exception e) {
-                verify("echoBoolean", input, e);
-            }
+            output = new Boolean( binding.echoBoolean(input.booleanValue()));
+            verify("echoBoolean", input, output);
         }
         
         HashMap map = new HashMap();
@@ -326,12 +270,8 @@ public abstract class TestClient {
         map.put("String Key", new Date());
         {
             HashMap input = map;
-            try {
-                output = binding.echoMap(input);
-                verify("echoMap", input, output);
-            } catch (Exception e) {
-                verify("echoMap", input, e);
-            }
+            output = binding.echoMap(input);
+            verify("echoMap", input, output);
         }
 
         HashMap map2 = new HashMap();
@@ -339,12 +279,8 @@ public abstract class TestClient {
         map2.put("test", new Float(411));
         {
             HashMap[] input = new HashMap [] {map, map2 };
-            try {
-                output = binding.echoMapArray(input);
-                verify("echoMapArray", input, output);
-            } catch (Exception e) {
-                verify("echoMapArray", input, e);
-            }
+            output = binding.echoMapArray(input);
+            verify("echoMapArray", input, output);
         }
     }
 
@@ -356,32 +292,24 @@ public abstract class TestClient {
         Object output = null;
         {
             SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
-            try {
-                StringHolder outputString = new StringHolder();
-                IntHolder outputInteger = new IntHolder();
-                FloatHolder outputFloat = new FloatHolder();
-                binding.echoStructAsSimpleTypes(input, outputString, outputInteger, outputFloat);
-                output = new SOAPStruct(outputInteger.value,
-                                        outputString.value,
-                                        outputFloat.value);
-                verify("echoStructAsSimpleTypes", 
-                       input, output);
-            } catch (Exception e) {
-                verify("echoStructAsSimpleTypes", input, e);
-            }
+            StringHolder outputString = new StringHolder();
+            IntHolder outputInteger = new IntHolder();
+            FloatHolder outputFloat = new FloatHolder();
+            binding.echoStructAsSimpleTypes(input, outputString, outputInteger, outputFloat);
+            output = new SOAPStruct(outputInteger.value,
+                                    outputString.value,
+                                    outputFloat.value);
+            verify("echoStructAsSimpleTypes", 
+                   input, output);
         }
 
         {
             SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
-            try {
-                output = binding.echoSimpleTypesAsStruct(
-                   input.getVarString(), input.getVarInt(), input.getVarFloat());
-                verify("echoSimpleTypesAsStruct", 
-                       input, 
-                       output);
-            } catch (Exception e) {
-                verify("echoSimpleTypesAsStruct", input, e);
-            }
+            output = binding.echoSimpleTypesAsStruct(
+                    input.getVarString(), input.getVarInt(), input.getVarFloat());
+            verify("echoSimpleTypesAsStruct", 
+                   input, 
+                   output);
         }
 
         {
@@ -390,14 +318,10 @@ public abstract class TestClient {
             input[0][1] = "01";
             input[1][0] = "10";
             input[1][1] = "11";
-            try {
-                output = binding.echo2DStringArray(input);
-                verify("echo2DStringArray", 
-                       input, 
-                       output);
-            } catch (Exception e) {
-                verify("echo2DStringArray", input, e);
-            }
+            output = binding.echo2DStringArray(input);
+            verify("echo2DStringArray", 
+                   input, 
+                   output);
         }
 
         {
@@ -405,24 +329,16 @@ public abstract class TestClient {
                                                           1,
                                                           3F,
                                                           new SOAPStruct(5, "Hello", 103F));
-            try {
-                output = binding.echoNestedStruct(input);
-                verify("echoNestedStruct", input, output);
-            } catch (Exception e) {
-                verify("echoNestedStruct", input, e);
-            }
+            output = binding.echoNestedStruct(input);
+            verify("echoNestedStruct", input, output);
         }
         {
             SOAPArrayStruct input = new SOAPArrayStruct("AXIS",
                                                         1,
                                                         3F,
                                                         new String[] {"one", "two", "three"});
-            try {
-                output = binding.echoNestedArray(input);
-                verify("echoNestedArray", input, output);
-            } catch (Exception e) {
-                verify("echoNestedArray", input, e);
-            }
+            output = binding.echoNestedArray(input);
+            verify("echoNestedArray", input, output);
         }
     }
 

@@ -42,7 +42,7 @@ public class MArrayTestsSOAPBindingImpl implements test.wsdl.marrays.MArrayTests
         }
         return in;
     }
-    public java.util.Map testMapFooArray(java.util.Map map)
+    public java.util.HashMap testMapFooArray(java.util.HashMap map)
         throws java.rmi.RemoteException {
         return map;
     }

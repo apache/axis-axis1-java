@@ -33,8 +33,7 @@ public class TestSer extends TestCase {
     public static void main(String [] args) throws Exception
     {
         TestSer tester = new TestSer("TestSer");
-        tester.testDataNoHrefs();
-        tester.testDataWithHrefs();
+        tester.testRPCElement();
     }
     
     public TestSer(String name) {
@@ -105,14 +104,18 @@ public class TestSer extends TestCase {
     /**
      * Test RPC element serialization when we have no MessageContext
      */
-    public void testRPCElement() throws Exception
+    public void testRPCElement()
     {
-        SOAPEnvelope env = new SOAPEnvelope();
-        RPCElement method = new RPCElement("ns",
-                                           "method",
-                                           new Object [] { "argument" });
-        env.addBodyElement(method);
-        String soapStr = env.toString();
+        try {
+            SOAPEnvelope env = new SOAPEnvelope();
+            RPCElement method = new RPCElement("ns",
+                                               "method",
+                                               new Object [] { "argument" });
+            env.addBodyElement(method);
+            String soapStr = env.toString();
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
 
         // If there was no exception, we succeeded in serializing it.
     }

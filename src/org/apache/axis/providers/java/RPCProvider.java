@@ -73,6 +73,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.holders.Holder;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
@@ -121,6 +122,11 @@ public class RPCProvider extends JavaProvider
         for ( int bNum = 0 ; bNum < bodies.size() ; bNum++ ) {
             RPCElement   body;
 
+            // If this is a regular old SOAPBodyElement, and it's a root,
+            // we're probably a non-wrapped doc/lit service.  In this case,
+            // we deserialize the element, and create an RPCElement "wrapper"
+            // around it which points to the correct method.
+            // FIXME : There should be a cleaner way to do this...
             if (!(bodies.get(bNum) instanceof RPCElement)) {
                 SOAPBodyElement bodyEl = (SOAPBodyElement)bodies.get(bNum);
                 if (bodyEl.isRoot() && operation != null) {
@@ -136,20 +142,48 @@ public class RPCProvider extends JavaProvider
                 body = (RPCElement) bodies.get( bNum );
             }
 
-            String       mName      = body.getMethodName();
-            Vector       args       = body.getParams();
-            Object[]     argValues  =  null ;
+            String methodName = body.getMethodName();
+            Vector args = body.getParams();
+            int numArgs = args.size();
 
+            // This may have changed, so get it again...
+            // FIXME (there should be a cleaner way to do this)
+            operation = msgContext.getOperation();
 
+            if (operation == null) {
+                QName qname = new QName(body.getNamespaceURI(),
+                                        body.getName());
+                operation = serviceDesc.getOperationByElementQName(qname);
+            }
+
+            // Create the array we'll use to hold the actual parameter
+            // values.  We know how big to make it from the metadata.
+            Object[]     argValues  =  new Object [operation.getNumParams()];
+
+            // A place to keep track of the out params (INOUTs and OUTs)
+            ArrayList outs = new ArrayList();
+
+            // Put the values contained in the RPCParams into an array
+            // suitable for passing to java.lang.reflect.Method.invoke()
+            // Make sure we respect parameter ordering if we know about it
+            // from metadata, and handle whatever conversions are necessary
+            // (values -> Holders, etc)
             if ( args != null && args.size() > 0 ) {
-                argValues = new Object[ args.size()];
-                for ( int i = 0 ; i < args.size() ; i++ ) {
+                for ( int i = 0 ; i < numArgs ; i++ ) {
                     RPCParam rpcParam = (RPCParam)args.get(i);
+                    Object value = rpcParam.getValue();
                     ParameterDesc paramDesc = rpcParam.getParamDesc();
+                    if (paramDesc != null && paramDesc.getJavaType() != null) {
+                        value = JavaUtils.convert(value,
+                                                  paramDesc.getJavaType());
+                        rpcParam.setValue(value);
+                        if (paramDesc.getMode() == ParameterDesc.INOUT)
+                            outs.add(rpcParam);
+                    }
                     if (paramDesc == null || paramDesc.getOrder() == -1) {
-                        argValues[i]  = rpcParam.getValue() ;
+                        argValues[i]  = value;
                     } else {
-                        argValues[paramDesc.getOrder()] = rpcParam.getValue();
+                        argValues[paramDesc.getOrder()] = value;
                     }
 
                     if (log.isDebugEnabled()) {
@@ -160,185 +194,69 @@ public class RPCProvider extends JavaProvider
             }
 
             // Check if we can find a Method by this name
-            checkMethodName(msgContext, allowedMethods, mName);
+            // FIXME : Shouldn't this type of thing have already occurred?
+            checkMethodName(msgContext, allowedMethods, methodName);
 
-            // Get the actual method to invoke.
-            int	numberOfBodyArgs = args.size();
-            Method[] methods = getMethod(msgContext, jc, mName);
-
-            // If the method wasn't found, maybe it needs some Java mangling (ie., it's a Java
-            // keyword or it's capitalized and the java mapping requires lowercase).
-            if (methods == null) {
-                mName = JavaUtils.xmlNameToJava(mName);
-                methods = getMethod(msgContext, jc, mName);
-            }
-
-            if ( methods == null )
-                throw new AxisFault( "AxisServer.error",
-                        JavaUtils.getMessage("noMethod00", mName, msgContext.getTargetService()),
-                        null, null );
-
-            Object objRes = null;
-            Class[] params = null;
-            Exception ex = null;
-
-            // There might be more than one method with this name, try them all.
-            int index = 0;
-            for (index = 0; index < methods.length; index++) {
-                Method method = methods[index];
-                ex = null;
-                params = method.getParameterTypes();
-
-                // Don't bother with this one if it has FEWER params
-                if (argValues != null) {
-                    if (params.length < argValues.length)
-                        continue;
-                }
-
-                // The number of method parameters must match the
-                // arguments taking into consideration output parameters.
-                Object[] newArgValues = new Object[params.length];
-                int old = 0;
-                boolean problem = false;
-                for (int n = 0; n < newArgValues.length; n++) {
-                    Class heldType = JavaUtils.getHolderValueType(params[n]);
-                    if (argValues != null && old < argValues.length) {
-                        newArgValues[n] = argValues[old++];
-                    } else if (heldType == null) {
-                        // The parameters that don't match the argValues must
-                        // be Holders.  Indicate problem occurred.
-                        problem = true;
+            // Now create any out holders we need to pass in
+            if (numArgs < argValues.length) {
+                ArrayList outParams = operation.getOutParams();
+                for (int i = 0; i < outParams.size(); i++) {
+                    ParameterDesc param = (ParameterDesc)outParams.get(i);
+                    Class holderClass = param.getJavaType();
+                    if (Holder.class.isAssignableFrom(holderClass)) {
+                        argValues[numArgs + i] = holderClass.newInstance();
+                        // Store an RPCParam in the outs collection so we
+                        // have an easy and consistent way to write these
+                        // back to the client below
+                        outs.add(new RPCParam(param.getQName(),
+                                              argValues[numArgs + i]));
                     } else {
-                        newArgValues[n] = null;
-                    }
-                    // Create holders for each argument that is null that should be a holder
-                    if (newArgValues[n] == null && heldType != null) {
-                        newArgValues[n] = JavaUtils.convert(newArgValues[n], params[n]);
-                    }
-                }
-                if (!problem) {
-                    argValues = newArgValues;  // Use newArgValues array if no problems
-                }
-
-                // Invoke the method and capture the returned object.
-                // Note that if the method returns a primitive, invoke(...) automatically
-                // wraps it in a java.lang class representing the primitive.
-                try {
-                    objRes = invokeMethod(msgContext, method, obj, argValues);
-                    break;
-                } catch (IllegalArgumentException e) {
-                    // Hm - maybe we can help this with a conversion or two...
-                    for (int i = 0; argValues != null && i < argValues.length &&
-                      i < params.length; i++) {
-                        Object thisArg = argValues[i];
-                        if (!params[i].isAssignableFrom(thisArg.getClass())) {
-                            // Attempt conversion for each non-assignable argument
-                            Object newArg = JavaUtils.convert(thisArg, params[i]);
-                            if (newArg != thisArg)
-                                argValues[i] = newArg;
-                        }
-                    }
-
-                    // OK, now try again...
-                    try {
-                        objRes = invokeMethod(msgContext, method, obj, argValues);
-                        break;
-                    } catch (IllegalArgumentException exp) {
-                        StringBuffer argbuf = new StringBuffer();
-                        String sep= "";
-                        for(int i = 0; argValues != null &&
-                          i < argValues.length; ++i) {
-                            argbuf.append(sep);
-                            sep = ", ";
-                            argbuf.append(argValues[i] == null ? "null" : argValues[i].getClass().getName());
-                        }
-                        String objName = obj == null ? "null" :
-                          obj.getClass().getName();
-                        String msg = JavaUtils.getMessage("triedArgs00",
-                                new String[] {
-                                exp.getMessage(),
-                                objName,
-                                method.getName(),
-                                argbuf.toString()});
-                        ex = new IllegalArgumentException(msg);
-                        continue;
+                        // !!! Throw a fault here?
                     }
                 }
             }
-            // If we've gone through all methods with the given name and there's
-            // an exception left over, throw that exception.
-            if (ex != null) {
-                throw ex;
-            }
 
-            // If we've finished iterating through all the methods, throw an exception.
-            if ( index == methods.length )
-                throw new AxisFault( "AxisServer.error",
-                        JavaUtils.getMessage("noMethod00", mName, msgContext.getTargetService()),
-                        null, null );
-
-            if (log.isDebugEnabled())
-                log.debug(JavaUtils.getMessage("result00", "" + objRes));
+            // OK!  Now we can invoke the method
+            Object objRes = operation.getMethod().invoke(obj, argValues);
 
             /* Now put the result in the result SOAPEnvelope */
             /*************************************************/
-            RPCElement resBody = new RPCElement(mName + "Response");
+            RPCElement resBody = new RPCElement(methodName + "Response");
             resBody.setPrefix( body.getPrefix() );
             resBody.setNamespaceURI( body.getNamespaceURI() );
             resBody.setEncodingStyle(msgContext.getEncodingStyle());
 
-            if ( objRes != null ) {
-                // In the old skeleton a param list was returned, which
-                // contained the RPC params.  Preserve this for now.
-                if (objRes instanceof ParamList) {
-                    ParamList list = (ParamList)objRes;
-                    for (int i = 0; i < list.size (); ++i) {
-                        if (list.get (i) instanceof RPCParam) {
-                            resBody.addParam ((RPCParam) list.get (i));
-                        }
-                        else {
-                            resBody.addParam (new RPCParam (getParameterName(obj, methods[index],i, mName),
-                                                            list.get (i)));
-                        }
-                    }
+            // Return first
+            if ( operation.getMethod().getReturnType() != Void.TYPE ) {
+                QName returnQName = operation.getReturnQName();
+                if (returnQName == null) {
+                    returnQName = new QName("", methodName + "Return");
                 }
-                else {
-                    QName returnQName = getReturnQName(serviceDesc, mName);
-                    RPCParam param = new RPCParam(returnQName, objRes);
-                    resBody.addParam(param);
-                }
-            } else if (methods[index].getReturnType() != Void.TYPE) {
-                QName returnQName = getReturnQName(serviceDesc, mName);
                 RPCParam param = new RPCParam(returnQName, objRes);
                 resBody.addParam(param);
             }
 
-            // The new skeleton (or no skeleton code) requires the runtime
-            // to recognize holders and automatically pass back the outputs.
-            for (int i=0; i < argValues.length; i++) {
-                Class heldType = JavaUtils.getHolderValueType(params[i]);
-                if (heldType != null) {
-                    // Create an RPCParam by converting the Holder back into
-                    // the held type.
-                    resBody.addParam (new RPCParam (getParameterName(obj,
-                                                                     methods[index],
-                                                                     i,
-                                                                     mName,
-                                                                     args),
-                                                    JavaUtils.convert(
-                                                            argValues[i],
-                                                            heldType)));
+            // Then any other out params
+            if (!outs.isEmpty()) {
+                for (Iterator i = outs.iterator(); i.hasNext();) {
+                    // We know this has a holder, so just unwrap the value
+                    RPCParam param = (RPCParam) i.next();
+                    Holder holder = (Holder)param.getValue();
+                    param.setValue(JavaUtils.getHolderValue(holder));
+                    resBody.addParam(param);
                 }
             }
 
-            resEnv.addBodyElement( resBody );
+            resEnv.addBodyElement(resBody);
         }
     }
 
-    protected Method[] getMethod(MessageContext msgContext, JavaClass jc, String mName)
+    protected Method[] getMethod(MessageContext msgContext,
+                                 JavaClass jc,
+                                 String methodName)
         throws Exception
     {
-        return jc.getMethod(mName);
+        return jc.getMethod(methodName);
     }
 
     protected Object invokeMethod(MessageContext msgContext,
@@ -349,19 +267,21 @@ public class RPCProvider extends JavaProvider
         return (method.invoke(obj, argValues));
     }
 
-    protected void checkMethodName(MessageContext msgContext, String allowedMethods, String mName)
+    protected void checkMethodName(MessageContext msgContext,
+                                   String allowedMethods,
+                                   String methodName)
         throws Exception
     {
         String methodNameMatch = allowedMethods;
 
         // allowedMethods may be a comma-delimited string of method names.
-        // If so, look for the one matching mname.
+        // If so, look for the one matching methodName.
         if (allowedMethods != null && allowedMethods.indexOf(' ') != -1) {
             StringTokenizer tok = new StringTokenizer(allowedMethods, " ");
             String nextMethodName = null;
             while (tok.hasMoreElements()) {
                 String token = tok.nextToken();
-                if (token.equals(mName)) {
+                if (token.equals(methodName)) {
                     nextMethodName = token;
                     break;
                 }
@@ -369,27 +289,29 @@ public class RPCProvider extends JavaProvider
             // didn't find a matching one...
             if (nextMethodName == null) {
                 throw new AxisFault( "AxisServer.error",
-                        JavaUtils.getMessage("namesDontMatch00", mName, allowedMethods),
+                        JavaUtils.getMessage("namesDontMatch00", methodName,
+                                             allowedMethods),
                         null, null );  // should they??
             }
             methodNameMatch = nextMethodName;
         }
 
-        if ( methodNameMatch != null && !methodNameMatch.equals(mName) )
+        if ( methodNameMatch != null && !methodNameMatch.equals(methodName) )
             throw new AxisFault( "AxisServer.error",
                     JavaUtils.getMessage("namesDontMatch01",
-                        new String[] {mName, methodNameMatch, allowedMethods}),
+                        new String[] {methodName, methodNameMatch,
+                                      allowedMethods}),
                     null, null );  // should they??
 
         if (log.isDebugEnabled()) {
-            log.debug( "mName: " + mName );
+            log.debug( "methodName: " + methodName );
             log.debug( "MethodNameMatch: " + methodNameMatch );
             log.debug( "MethodName List: " + allowedMethods );
         }
 
         ///////////////////////////////////////////////////////////////
         // If allowedMethods (i.e. methodNameMatch) is null,
-        //  then treat it as a wildcard automatically matching mName
+        //  then treat it as a wildcard automatically matching methodName
         ///////////////////////////////////////////////////////////////
         return;
     }
@@ -402,8 +324,8 @@ public class RPCProvider extends JavaProvider
     protected QName getParameterName(Object obj,
                                       Method method,
                                       int i,
-                                      String mName) {
-        return getParameterName(obj, method, i, mName, null);
+                                      String methodName) {
+        return getParameterName(obj, method, i, methodName, null);
     }
 
     /**
@@ -416,7 +338,7 @@ public class RPCProvider extends JavaProvider
     protected QName getParameterName(Object obj,
                                       Method method,
                                       int i,
-                                      String mName,
+                                      String methodName,
                                       Vector rpcParams) {
         QName parmName = null;
         // Emitter skeletons keep track of the parameter names
@@ -427,28 +349,10 @@ public class RPCProvider extends JavaProvider
                 if (rpcParams != null && rpcParams.size() > i) {
                     parmName = ((RPCParam)rpcParams.get(i)).getQName();
                 } else {
-                    parmName = new QName("", mName + "Result" + i);
+                    parmName = new QName("", methodName + "Result" + i);
                 }
             }
         }
         return parmName;
-    }
-
-    protected QName getReturnQName(ServiceDesc service, String methodName)
-    {
-        QName ret = null;
-
-        if (service != null) {
-            OperationDesc oper = service.getOperationDescByName(methodName);
-            if (oper != null) {
-                ret = oper.getReturnQName();
-            }
-        }
-
-        if (ret == null) {
-            ret = new QName("", methodName + "Result");
-        }
-
-        return ret;
     }
 }

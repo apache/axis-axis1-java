@@ -83,7 +83,7 @@ public class TestSerializedRPC extends TestCase {
         // be testing parameter dispatch by name, so if debug info isn't
         // compiled into the Service class, the names are going to be "in0",
         // etc.  Make sure they match.
-        OperationDesc oper = desc.getOperationDescByName("concatenate");
+        OperationDesc oper = desc.getOperationByName("concatenate");
         assertNotNull(oper);
         
         firstParamName = oper.getParameter(0).getName();

@@ -66,6 +66,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -158,36 +159,34 @@ public class RPCElement extends SOAPBodyElement
         if (service != null) {
             ServiceDesc serviceDesc = service.getServiceDescription();
 
-            // If we don't have a service description, create one
-            // via introspection and cache it in the SOAPService.
-            String clsName = (String)service.getOption("className");
+            if (serviceDesc.getImplClass() == null) {
+                String clsName = (String)service.getOption("className");
 
-            if (clsName != null) {
-                ClassLoader cl       = msgContext.getClassLoader();
-                ClassCache cache     = msgContext.getAxisEngine().
-                        getClassCache();
-                JavaClass       jc   = null;
-                try {
-                    jc = cache.lookup(clsName, cl);
-                } catch (ClassNotFoundException e) {
-                    throw new SAXException(e);
+                if (clsName != null) {
+                    ClassLoader cl       = msgContext.getClassLoader();
+                    ClassCache cache     = msgContext.getAxisEngine().
+                            getClassCache();
+                    JavaClass       jc   = null;
+                    try {
+                        jc = cache.lookup(clsName, cl);
+                    } catch (ClassNotFoundException e) {
+                        throw new SAXException(e);
+                    }
+                    TypeMapping tm = (TypeMapping)msgContext.
+                            getTypeMappingRegistry().
+                            getTypeMapping(msgContext.getEncodingStyle());
+                    serviceDesc.setTypeMapping(tm);
+                    serviceDesc.setImplClass(jc.getJavaClass());
                 }
-                TypeMapping tm = (TypeMapping)msgContext.
-                        getTypeMappingRegistry().
-                        getTypeMapping(msgContext.getEncodingStyle());
-                serviceDesc.loadServiceDescByIntrospection(jc.getJavaClass(),
-                                                           tm);
             }
 
-            if (serviceDesc != null) {
-                // If we've got a service description now, we want to use
-                // the matching operations in there.
-                operations = serviceDesc.getOperationsByName(name);
+            // If we've got a service description now, we want to use
+            // the matching operations in there.
+            operations = serviceDesc.getOperationsByName(name);
 
-                if (operations == null) {
-                    String lc = Utils.xmlNameToJava(name);
-                    operations = serviceDesc.getOperationsByName(lc);
-                }
+            if (operations == null) {
+                String lc = Utils.xmlNameToJava(name);
+                operations = serviceDesc.getOperationsByName(lc);
             }
         }
 
@@ -225,7 +224,8 @@ public class RPCElement extends SOAPBodyElement
 
                         publishToHandler((org.xml.sax.ContentHandler) context);
 
-                        // Success!!
+                        // Success!!  This is the right one...
+                        msgContext.setOperation(myOperation);
                         return;
                     } catch (SAXException e) {
                         // If there was a problem, try the next one.

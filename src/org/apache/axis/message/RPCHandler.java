@@ -193,11 +193,18 @@ public class RPCHandler extends SOAPHandler
 
                 if (type == null) {
                     type = paramDesc.getTypeQName();
+                } else if (paramDesc.getJavaType() != null) {
+                    // If we have an xsi:type, make sure it makes sense
+                    // with the current paramDesc type
+                    Class xsiClass = 
+                            context.getTypeMapping().getClassForQName(type);
+                    if (!JavaUtils.isConvertable(xsiClass,
+                                                 paramDesc.getJavaType())) {
+                        throw new SAXException("Bad types (" +
+                            xsiClass + " -> " + paramDesc.getJavaType() + ")"); // FIXME!
+                    }
                 }
             }
-
-            // FIXME : We should check here to make sure any specified
-            // xsi:type jibes with the expected type in the ParamDesc!!
         }
 
 
