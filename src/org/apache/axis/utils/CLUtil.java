@@ -74,7 +74,7 @@ public final class CLUtil
                 {
                     sb.append("=<value>");
                 }
-                sb.append( AxisProperties.LS );
+                sb.append( JavaUtils.LS );
             }
 
             if( null != description )
@@ -87,12 +87,12 @@ public final class CLUtil
                         description.substring( MAX_DESCRIPTION_COLUMN_LENGTH );
                     sb.append( "\t\t" );
                     sb.append( descriptionPart );
-                    sb.append( AxisProperties.LS );
+                    sb.append( JavaUtils.LS );
                 }
 
                 sb.append( "\t\t" );
                 sb.append( description );
-                sb.append( AxisProperties.LS );
+                sb.append( JavaUtils.LS );
             }
         }
         return sb;

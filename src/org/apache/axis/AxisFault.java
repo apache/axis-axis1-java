@@ -225,17 +225,17 @@ public class AxisFault extends java.rmi.RemoteException {
         if (faultDetails != null) {
             for (int i=0; i < faultDetails.size(); i++) {
                 Element e = (Element) faultDetails.get(i);
-                details += AxisProperties.LS
+                details += JavaUtils.LS
                           + "\t" +  e.getLocalName() + ": "
                           + XMLUtils.getInnerXMLString(e);
             }
         }
         
-        return "AxisFault" + AxisProperties.LS
-            + " faultCode: " + faultCode + AxisProperties.LS
-            + " faultString: " + faultString + AxisProperties.LS
-            + " faultActor: " + faultActor + AxisProperties.LS
-            + " faultDetail: " + details + AxisProperties.LS
+        return "AxisFault" + JavaUtils.LS
+            + " faultCode: " + faultCode + JavaUtils.LS
+            + " faultString: " + faultString + JavaUtils.LS
+            + " faultActor: " + faultActor + JavaUtils.LS
+            + " faultDetail: " + details + JavaUtils.LS
             ;
     }
 
