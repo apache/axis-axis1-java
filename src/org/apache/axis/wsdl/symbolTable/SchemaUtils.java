@@ -141,20 +141,21 @@ public class SchemaUtils {
             if (simpleContent != null) {
                 children = simpleContent.getChildNodes();
                 for (int j = 0; j < children.getLength() && extension == null; j++) {
-                    QName extensionKind = Utils.getNodeQName(children.item(j));
-                    if (extensionKind != null &&
-                        extensionKind.getLocalPart().equals("extension") &&
-                        Constants.isSchemaXSD(extensionKind.getNamespaceURI())) {
+                    QName extensionOrRestrictionKind = Utils.getNodeQName(children.item(j));
+                    if (extensionOrRestrictionKind != null &&
+                        (extensionOrRestrictionKind.getLocalPart().equals("extension") ||
+                         extensionOrRestrictionKind.getLocalPart().equals("restriction")) &&
+                        Constants.isSchemaXSD(extensionOrRestrictionKind.getNamespaceURI())) {
                         
-                        // get the type of the extension from the "base" attribute
-                        QName extendsType =
+                        // get the type of the extension/restriction from the "base" attribute
+                        QName extendsOrRestrictsType =
                             Utils.getTypeQName(children.item(j), new BooleanHolder(), false);
                         
                         // Return an element declaration with a fixed name
                         // ("value") and the correct type.                        
                         Vector v = new Vector();
                         ElementDecl elem = new ElementDecl();
-                        elem.setType(symbolTable.getTypeEntry(extendsType, false));
+                        elem.setType(symbolTable.getTypeEntry(extendsOrRestrictsType, false));
                         elem.setName(new javax.xml.namespace.QName("", "value"));
                         v.add(elem);
                         return v;
