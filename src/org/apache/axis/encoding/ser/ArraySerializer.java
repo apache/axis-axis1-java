@@ -64,6 +64,10 @@ import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.schema.SchemaVersion;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -102,6 +106,10 @@ public class ArraySerializer implements Serializer
     {
         if (value == null)
             throw new IOException(JavaUtils.getMessage("cantDoNullArray00"));
+
+        MessageContext msgContext = context.getMessageContext();
+        SchemaVersion schema = msgContext.getSchemaVersion();
+        SOAPConstants soap = msgContext.getSOAPConstants();
 
         Class cls = value.getClass();
         Collection list = null;
@@ -223,11 +231,11 @@ public class ArraySerializer implements Serializer
                 attrs = new AttributesImpl(attributes);
             }
 
-            if (attrs.getIndex(Constants.URI_DEFAULT_SOAP_ENC,
+            if (attrs.getIndex(soap.getEncodingURI(),
                                Constants.ATTR_ARRAY_TYPE) == -1) {
                 String encprefix =
-                       context.getPrefixForURI(Constants.URI_DEFAULT_SOAP_ENC);
-                attrs.addAttribute(Constants.URI_DEFAULT_SOAP_ENC,
+                       context.getPrefixForURI(soap.getEncodingURI());
+                attrs.addAttribute(soap.getEncodingURI(),
                                    Constants.ATTR_ARRAY_TYPE,
                                    encprefix + ":arrayType",
                                    "CDATA",
@@ -248,14 +256,14 @@ public class ArraySerializer implements Serializer
             //          and may be useful for operation overloading.
             //   Cons:  More interop test failures (as of 2/6/2002).
             //
-            int typeI = attrs.getIndex(Constants.URI_DEFAULT_SCHEMA_XSI,
+            int typeI = attrs.getIndex(schema.getXsiURI(),
                                        "type");
             if (typeI != -1) {
                 String qname = 
-                      context.getPrefixForURI(Constants.URI_DEFAULT_SCHEMA_XSI,
+                      context.getPrefixForURI(schema.getXsiURI(),
                                               "xsi") + ":type";
                 attrs.setAttribute(typeI, 
-                                   Constants.URI_DEFAULT_SCHEMA_XSI,
+                                   schema.getXsiURI(),
                                    "type",
                                    qname,
                                    "CDATA",
