@@ -60,18 +60,32 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
+ * These two imports added to facilitate copying to different packages...
+ * 
+ *    import org.apache.axis.i18n.MessageBundle;
+ *    import org.apache.axis.i18n.MessagesConstants;
+ */
+import org.apache.axis.i18n.MessageBundle;
+import org.apache.axis.i18n.MessagesConstants;
+
+
+/**
+ * @see org.apache.axis.i18n.Messages
+ * 
  * FUNCTIONAL TEMPLATE for Messages classes.
  * 
- * Copy this template to your package, edit the following attributes
+ * Copy this template to your package.
+ * 
+ * For AXIS, the following constants are set appropriately.
+ * To adapt this scheme to another project, edit these attributes
  * as/if necessary:
  * 
- *   projectName
  *   packageName
- *   resourceName
  *   classLoader
+ *   projectName
+ *   resourceName
  *   locale
- *   parent   - The ROOT Messages resource bundle should not define this..
- *              For all other bundles in AXIS, this should point to the root.
+ *   parent
  * 
  * @author Richard A. Sitze (rsitze@us.ibm.com)
  * @author Karl Moss (kmoss@macromedia.com)
@@ -79,22 +93,24 @@ import java.util.ResourceBundle;
  */
 public class Messages {
     private static final Class  thisClass = Messages.class;
-    private static final String projectName = MessagesConstants.projectName;
+
     private static final String packageName = getPackage(thisClass.getName());
+    private static final ClassLoader classLoader = thisClass.getClassLoader();
+
+    private static final String projectName = MessagesConstants.projectName;
     private static final String resourceName = MessagesConstants.resourceName;
     private static final Locale locale = MessagesConstants.locale;
-    private static final ClassLoader classLoader = thisClass.getClassLoader();
-    private static final ResourceBundle parent = MessagesConstants.rootBundle;
 
+    private static final ResourceBundle parent =
+        (MessagesConstants.rootPackageName == packageName)
+        ? null
+        : MessagesConstants.rootBundle;
 
     /***** NO NEED TO CHANGE ANYTHING BELOW *****/
 
-    private static final ExtendMessages rb = new ExtendMessages(resourceName, parent) {
-            protected String getPackageName() { return packageName; }
-            protected String getProjectName() { return projectName; }
-            protected ClassLoader getClassLoader() { return classLoader; }
-            protected Locale getLocale() { return locale; }
-        };
+    private static final MessageBundle messageBundle =
+        new MessageBundle(projectName, packageName, resourceName,
+                                     locale, classLoader, parent);
 
     /**
       * Get a message from resource.properties from the package of the given object.
@@ -106,7 +122,7 @@ public class Messages {
     public static String getMessage(String key)
         throws MissingResourceException
     {
-        return rb.getMessage(key);
+        return messageBundle.getMessage(key);
     }
 
     /**
@@ -120,7 +136,7 @@ public class Messages {
     public static String getMessage(String key, String arg0)
         throws MissingResourceException
     {
-        return rb.getMessage(key, arg0);
+        return messageBundle.getMessage(key, arg0);
     }
 
     /**
@@ -135,7 +151,7 @@ public class Messages {
     public static String getMessage(String key, String arg0, String arg1)
         throws MissingResourceException
     {
-        return rb.getMessage(key, arg0, arg1);
+        return messageBundle.getMessage(key, arg0, arg1);
     }
 
     /**
@@ -151,7 +167,7 @@ public class Messages {
     public static String getMessage(String key, String arg0, String arg1, String arg2)
         throws MissingResourceException
     {
-        return rb.getMessage(key, arg0, arg1, arg2);
+        return messageBundle.getMessage(key, arg0, arg1, arg2);
     }
 
     /**
@@ -168,7 +184,7 @@ public class Messages {
     public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3)
         throws MissingResourceException
     {
-        return rb.getMessage(key, arg0, arg1, arg2, arg3);
+        return messageBundle.getMessage(key, arg0, arg1, arg2, arg3);
     }
 
     /**
@@ -186,7 +202,7 @@ public class Messages {
     public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3, String arg4)
         throws MissingResourceException
     {
-        return rb.getMessage(key, arg0, arg1, arg2, arg3, arg4);
+        return messageBundle.getMessage(key, arg0, arg1, arg2, arg3, arg4);
     }
 
     /**
@@ -200,11 +216,15 @@ public class Messages {
     public static String getMessage(String key, String[] args)
         throws MissingResourceException
     {
-        return rb.getMessage(key, args);
+        return messageBundle.getMessage(key, args);
     }
     
-    public static ResourceBundle getMessageBundle() {
-        return rb.getMessageBundle();
+    public static ResourceBundle getResourceBundle() {
+        return messageBundle.getResourceBundle();
+    }
+    
+    public static MessageBundle getMessageBundle() {
+        return messageBundle;
     }
 
     private static final String getPackage(String name) {

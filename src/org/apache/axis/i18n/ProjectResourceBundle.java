@@ -289,7 +289,8 @@ public class ProjectResourceBundle extends ResourceBundle {
         }
         
         if (bundle == null) {
-            throw new MissingResourceException("Cannot find resource " + resourceName,
+            throw new MissingResourceException("Cannot find resource '" +
+                                               packageName + '.' + resourceName + "'",
                                                resourceName, "");
         }
         
