@@ -480,7 +480,10 @@ public class DimeBodyPart {
                     if (bytesread > 0) dataSize += bytesread;
                 }
                 while (bytesread > -1);
-                in.close();
+
+                //Leave the stream open for future reading
+                // and reset the stream pointer to the first byte
+                in.reset();            
             }
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
