@@ -229,7 +229,9 @@ public abstract class JavaProvider extends BasicProvider {
             
             processMessage(msgContext, serviceName, methodName, reqEnv, resEnv, jc, obj);
             
-            if (resMsg == null) {
+            // get the response message again!  it may have been explicitly set!
+            // (by, say, a proxy service :-) -- RobJ
+            if (msgContext.getResponseMessage() == null) {
                 resMsg = new Message(resEnv);
                 msgContext.setResponseMessage( resMsg );
             }

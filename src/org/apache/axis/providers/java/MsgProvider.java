@@ -68,6 +68,7 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.Handler;
 
 import org.w3c.dom.* ;
 import org.xml.sax.*;
@@ -87,37 +88,78 @@ public class MsgProvider extends JavaProvider {
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
                                 JavaClass jc,
+                    
                                 Object obj)
         throws Exception
     {
-        Class[]         argClasses = new Class[2];
-        Object[]        argObjects = new Object[2];
+        Handler targetService = msgContext.getServiceHandler();
         
-        SOAPBodyElement reqBody = reqEnv.getFirstBody();
+        // is this service a body-only service?
+        // if true (the default), the servic3e expects two args,
+        // a MessageContext and a Document which is the contents of the first body element.
+        // if false, the service expects just one MessageContext argument,
+        // and looks at the entire request envelope in the MessageContext
+        // (hence it's a "FullMessageService").
+        boolean bodyOnlyService = true;
+        if (targetService.getOption("FullMessageService") != null) {
+            bodyOnlyService = false;
+        }
         
-        StringWriter writer = new StringWriter();
-        reqBody.output(new SerializationContext(writer, msgContext));
+        Class[]         argClasses;
+        Object[]        argObjects;
         
-        Reader reader = new StringReader(writer.getBuffer().toString());
-        Document doc = XMLUtils.newDocument(new InputSource(reader));
+        /** !!! KLUDGE WARNING
+         * We need some way of associating ServiceDescriptions with actual
+         * services... and then at the point when we figure out which service
+         * we'll be calling (which might be right away (static dispatch), after
+         * looking at the URL (transport-level dispatch), or even after looking
+         * into the SOAP message itself...)
+         */
+        if (clsName.equals("org.apache.axis.utils.Admin")) {
+            ServiceDescription sd = new ServiceDescription("Admin", false);
+            msgContext.setServiceDescription(sd);
+        }
+        
+        // the document which is the contents of the first body element
+        // (generated only if we are not an envelope service)
+        Document doc;
+        
+        if (bodyOnlyService) {
+            // dig out just the body, and pass it with the MessageContext
+            argClasses = new Class[2];
+            argObjects = new Object[2];
+            SOAPBodyElement reqBody = reqEnv.getFirstBody();
+            
+            StringWriter writer = new StringWriter();
+            reqBody.output(new SerializationContext(writer, msgContext));
+            
+            Reader reader = new StringReader(writer.getBuffer().toString());
+            doc = XMLUtils.newDocument(new InputSource(reader));
+
+            /* If no methodName was specified during deployment then get it */
+            /* from the root of the Body element                            */
+            /* Hmmm, should we do this????                                  */
+            /****************************************************************/
+            if ( methodName == null || methodName.equals("") ) {
+                Element root = doc.getDocumentElement();
+                if ( root != null ) methodName = root.getLocalName();
+            }
+            argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
+            argClasses[1] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
+            argObjects[0] = msgContext ;
+            argObjects[1] = doc ;
+        } else {
+            // pass *just* the MessageContext (maybe don't even parse!!!)
+            argClasses = new Class[1];
+            argObjects = new Object[1];
+            argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
+            argObjects[0] = msgContext ;
+        }
+        
         
         // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL.  Some people will
         //     want DOM, but our examples should mostly lean towards the
         //     SAX side of things....
-        
-        /* If no methodName was specified during deployment then get it */
-        /* from the root of the Body element                            */
-        /* Hmmm, should we do this????                                  */
-        /****************************************************************/
-        if ( methodName == null || methodName.equals("") ) {
-            Element root = doc.getDocumentElement();
-            if ( root != null ) methodName = root.getLocalName();
-        }
-        
-        argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
-        argClasses[1] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
-        argObjects[0] = msgContext ;
-        argObjects[1] = doc ;
         
         Method       method = jc.getJavaClass().getMethod( methodName, argClasses );
         

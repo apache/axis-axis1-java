@@ -88,8 +88,9 @@ public class TestStockSample extends TestCase {
         args[3] = "-sjws/AltStockQuoteService.jws";
         try {
           val = new GetQuote().getQuote(args);
-        } catch (Exception e) {
-          e.printStackTrace();
+        } catch (AxisFault e) {
+            // Don't print stack trace unless there is an error
+          // e.printStackTrace();
           return;
         }
         assertNull("not null");
@@ -141,4 +142,5 @@ public class TestStockSample extends TestCase {
     }
     
 }
+
 

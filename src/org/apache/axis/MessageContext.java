@@ -95,13 +95,13 @@ public class MessageContext {
      * Just a placeholder until we figure out how many messages we'll actually
      * be passing around.
      */
-    private Message inMessage ;
+    private Message requestMessage ;
 
     /**
      * Just a placeholder until we figure out how many messages we'll actually
      * be passing around.
      */
-    private Message outMessage ;
+    private Message responseMessage ;
 
     /**
      * That unique key/name that the next router/dispatch handler should use
@@ -160,11 +160,11 @@ public class MessageContext {
 
     /**
      * Get the currently in-scope type mapping registry.
-     * 
+     *
      * By default, will return a reference to the AxisEngine's TMR until
      * someone sets our local one (usually as a result of setting the
      * serviceHandler).
-     * 
+     *
      * @return the type mapping registry to use for this request.
      */
     public TypeMappingRegistry getTypeMappingRegistry() {
@@ -231,28 +231,28 @@ public class MessageContext {
      * Placeholder.
      */
     public Message getRequestMessage() {
-        return inMessage ;
+        return requestMessage ;
     };
 
     /**
      * Placeholder.
      */
-    public void setRequestMessage(Message inMsg) {
-        inMessage = inMsg ;
-        if (inMessage != null) inMessage.setMessageContext(this);
+    public void setRequestMessage(Message reqMsg) {
+        requestMessage = reqMsg ;
+        if (requestMessage != null) requestMessage.setMessageContext(this);
     };
 
     /**
      * Placeholder.
      */
-    public Message getResponseMessage() { return outMessage ; }
+    public Message getResponseMessage() { return responseMessage ; }
 
     /**
      * Placeholder.
      */
-    public void setResponseMessage(Message outMsg) {
-        outMessage = outMsg ;
-        if (outMessage != null) outMessage.setMessageContext(this);
+    public void setResponseMessage(Message respMsg) {
+        responseMessage = respMsg ;
+        if (responseMessage != null) responseMessage.setMessageContext(this);
     };
 
     public AxisClassLoader getClassLoader() {

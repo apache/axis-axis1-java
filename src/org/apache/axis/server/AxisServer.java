@@ -65,6 +65,10 @@ import org.apache.axis.registries.* ;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
 
+// This is included in order to support getClientEngine()
+import org.apache.axis.client.AxisClient;
+
+
 import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.providers.java.*;
 /**
@@ -74,6 +78,11 @@ import org.apache.axis.providers.java.*;
  */
 public class AxisServer extends AxisEngine
 {
+    /**
+     * the AxisClient to be used by outcalling Services
+     */
+    private AxisEngine clientEngine;
+    
     public AxisServer()
     {
         super(Constants.SERVER_CONFIG_FILE);
@@ -111,6 +120,17 @@ public class AxisServer extends AxisEngine
     public void stop()
     {
         running = false;
+    }
+    
+    /**
+     * Get this server's client engine.  Create it if it does
+     * not yet exist.
+     */
+    public synchronized AxisEngine getClientEngine () {
+        if (clientEngine == null) {
+            clientEngine = new AxisClient();
+        }
+        return clientEngine;
     }
     
     /**

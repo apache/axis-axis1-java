@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,75 +53,68 @@
  * <http://www.apache.org/>.
  */
 
-package samples.misc ;
+package test.functional;
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
 
-import org.apache.axis.*;
+import org.apache.axis.AxisFault ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.transport.http.HTTPTransport ;
+import org.apache.axis.client.AdminClient;
+import org.apache.axis.client.ServiceClient;
 
-/**
- *
- * @author Doug Davis (dug@us.ibm.com)
- * @author Glen Daniels (gdaniels@allaire.com)
+import junit.framework.TestCase;
+
+import samples.misc.TestClient;
+
+/** Test the proxy sample code.
  */
-public class TestClient {
-    public static String msg = "<SOAP-ENV:Envelope " +
-        "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
-        "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" > " +
-        "<SOAP-ENV:Body>\n" +
-        "<echo:Echo xmlns:echo=\"EchoService\">\n" +
-        "<symbol>IBM</symbol>\n" +
-        "</echo:Echo>\n" +
-        "</SOAP-ENV:Body></SOAP-ENV:Envelope>\n";
-
-    /**
-     * Send a hardcoded message to the server, and print the response.
-     *
-     * @param args the command line arguments (mainly for specifying URL)
-     * @param service an optional service argument, which will be used for
-     * specifying the transport-level service
-     */
-    public static String doTest (String args[], String service) throws Exception {
-      Options      opts    = new Options( args );
-      String       url     = opts.getURL();
-      String       action  = "EchoService" ;
-        
-        if (service != null) {
-            action = service;
-        }
-
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-
-      args = opts.getRemainingArgs();
-      if ( args != null ) action = args[0];
-
-      ServiceClient client = new ServiceClient(new HTTPTransport());
-      client.set(HTTPTransport.URL, url);
-      client.set(HTTPTransport.ACTION, action);
-
-      Message        reqMsg      = new Message( msg );
-      Message        resMsg     = null ;
-
-      System.out.println( "Request:\n" + msg );
-        
-      client.setRequestMessage( reqMsg );
-      client.invoke();
-      resMsg = client.getMessageContext().getResponseMessage();
-
-      System.out.println( "Response:\n" + resMsg.getAsString() );
-        return (String)resMsg.getAsString();
+public class TestProxySample extends TestCase {
+    
+    public TestProxySample(String name) {
+        super(name);
     }
     
-  public static void main(String args[]) throws Exception{
-    doTest(args, null);
-  }
-  public static void mainWithService(String args[], String service) throws Exception{
-    doTest(args, service);
-  }
+    public void doTest () throws Exception {
+        String[] args = { "-d" };
+        TestClient.mainWithService(args, "ProxyService");
+    }
+    
+    // temp for debugging
+    public static void main (String[] args) throws Exception {
+        new TestProxySample("foo").doTest();
+    }
+    
+    public void testService () throws Exception {
+        try {
+            System.out.println("Testing proxy sample.");
+            
+            System.out.println("Testing deployment...");
+            
+            // deploy the proxy service
+            String[] args = { "samples/proxy/deploy.xml" };
+            AdminClient.main(args);
+            
+            System.out.println("Testing server-side client deployment...");
+            
+            // deploy the proxy service
+            String[] args2 = { "samples/proxy/client_deploy.xml" };
+            AdminClient.main(args2);
+            
+            // mysterious magic -- RobJ
+            ServiceClient.addTransportPackage("samples.transport");
+            
+            System.out.println("Testing service...");
+            doTest();
+            System.out.println("Test complete.");
+        }
+        catch( Exception e ) {
+            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+            e.printStackTrace();
+            throw new Exception("Fault returned from test: "+e);
+        }
+    }
 }
+

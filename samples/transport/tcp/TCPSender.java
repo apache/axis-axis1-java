@@ -78,7 +78,7 @@ import org.w3c.dom.* ;
  */
 public class TCPSender extends BasicHandler {
   public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: TCPSender::invoke" );
+    Debug.Print( 0, "Enter: TCPSender::invoke" );
     /* Find the service we're invoking so we can grab it's options */
     /***************************************************************/
     String   targetURL = null ;
@@ -140,7 +140,7 @@ public class TCPSender extends BasicHandler {
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
     }
-    Debug.Print( 1, "Exit: TCPSender::invoke" );
+    Debug.Print( 0, "Exit: TCPSender::invoke" );
   }
 
   public void undo(MessageContext msgContext) {

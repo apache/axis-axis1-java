@@ -112,7 +112,7 @@ public class TCPListener implements Runnable {
             System.exit(1);
         }
         
-        System.out.println("AxisListener is listening on port "+port+".");
+        System.out.println("TCPListener is listening on port "+port+".");
     }
     
     public void run () {
@@ -124,6 +124,7 @@ public class TCPListener implements Runnable {
         while (!done) {
             try {
                 sock = srvSocket.accept();
+                System.out.println("TCPListener received new connection: "+sock);
                 new Thread(new SocketHandler(sock)).start();
             } catch (IOException ex) {
                 /** stop complaining about this! it seems to happen on quit,

@@ -81,7 +81,7 @@ public class Admin {
 
   /**
    * Fill in options for a given handler.
-   * 
+   *
    * @param root the element containing the options
    * @param handler the Handler to set options on
    */
@@ -111,7 +111,7 @@ public class Admin {
   
   /**
    * Register a set of type mappings for a service.
-   * 
+   *
    * @param root the Element containing the service configuration
    * @param service the SOAPService we're working with.
    */
@@ -159,7 +159,7 @@ public class Admin {
   /** Process an engine configuration file by deploying appropriate stuff
    * into the specified AxisEngine, and then telling it to save itself
    * when we're done.
-   * 
+   *
    * @param doc an XML document containing an Axis engine configuration
    * @param engine the AxisEngine in which to deploy
    * @exception Exception (should be DeploymentException?)
@@ -194,12 +194,12 @@ public class Admin {
   }
   
   /** Deploy a set of individual items.
-   * 
+   *
    * NOTE: as it stands this doesn't care about the relationship between
    * these items and the enclosing tag.  We shouldn't really allow <service>
    * deployment underneath the <transports> tag, for instance.  Since this
    * is going to mutate some more, this is the simple way to do it for now.
-   * 
+   *
    * @param nl a DOM NodeList of deployable items.
    * @param engine the AxisEngine into which we deploy.
    * @exception Exception (should be DeploymentException?)
@@ -238,7 +238,7 @@ public class Admin {
   /**
    * The meat of the Admin service.  Process an xML document rooted with
    * a "deploy", "undeploy", "list", or "quit" element.
-   * 
+   *
    * @param msgContext the MessageContext we're processing
    * @param root the root Element of the XML
    * @return an XML Document indicating the results.
@@ -256,10 +256,11 @@ public class Admin {
       String            action = root.getLocalName();
       AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
 
-      if ( !action.equals("deploy") && !action.equals("undeploy") &&
+      if ( !action.equals("clientdeploy") && !action.equals("deploy") &&
+           !action.equals("undeploy") &&
            !action.equals("list") && !action.equals("quit") )
         throw new AxisFault( "Admin.error",
-                             "Root element must be 'deploy', 'undeploy', " +
+                             "Root element must be 'clientdeploy', 'deploy', 'undeploy', " +
                              "'list', or 'quit'",
                              null, null );
 
@@ -279,6 +280,11 @@ public class Admin {
       if ( action.equals("list") ) {
         return listConfig(engine);
       }
+        
+        if (action.equals("clientdeploy")) {
+            // set engine to client engine
+            engine = engine.getClientEngine();
+        }
   
       NodeList list = root.getChildNodes();
       for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
@@ -348,10 +354,10 @@ public class Admin {
   }
   
   /** Get an XML document representing this engine's configuration.
-   * 
+   *
    * This document is suitable for saving and reloading into the
    * engine.
-   * 
+   *
    * @param engine the AxisEngine to work with
    * @return an XML document holding the engine config
    * @exception AxisFault
@@ -387,7 +393,7 @@ public class Admin {
   /**
    * Return an XML Element containing the configuration info for one
    * of the engine's Handler registries.
-   * 
+   *
    * @param root the Element to work with (same as the one we return)
    * @param registry the registry to write into this Element
    * @return Element our config element, suitable for pumping back through
@@ -423,7 +429,7 @@ public class Admin {
   
   /**
    * Deploy a chain described in XML into an AxisEngine.
-   * 
+   *
    * @param elem the <chain> element
    * @param engine the AxisEngine in which to deploy
    */
@@ -504,7 +510,7 @@ public class Admin {
   
   /**
    * Deploy a service described in XML into an AxisEngine.
-   * 
+   *
    * @param elem the <service> element
    * @param engine the AxisEngine in which to deploy
    */
@@ -600,7 +606,7 @@ public class Admin {
   
   /**
    * Deploy a handler described in XML into an AxisEngine.
-   * 
+   *
    * @param elem the <handler> element
    * @param engine the AxisEngine in which to deploy
    */
@@ -635,7 +641,7 @@ public class Admin {
 
   /**
    * Deploy a transport described in XML into an AxisEngine.
-   * 
+   *
    * @param elem the <transport> element
    * @param engine the AxisEngine in which to deploy
    */
@@ -686,7 +692,7 @@ public class Admin {
 
   /**
    * Deploy a type mapping described in XML.
-   * 
+   *
    * @param root the type mapping element.
    * @param map the TypeMappingRegistry which gets this mapping.
    */
