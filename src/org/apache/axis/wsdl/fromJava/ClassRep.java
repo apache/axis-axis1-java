@@ -163,14 +163,6 @@ public class ClassRep extends BaseRep {
     private Vector   _stopList    = null;
     
     /**
-     * Cache of tt-bytecode BCClass objects which correspond to particular
-     * Java classes.
-     * 
-     * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
-     */ 
-    private static HashMap ttClassCache = new HashMap();
-
-    /**
      * Constructor
      * Create an empty ClassRep
      */ 
@@ -428,9 +420,9 @@ public class ClassRep extends BaseRep {
 
     /**
      * Get the list of parameter names for the specified method.
-     * This implementation uses Skeleton.getParameterNames or bcel to get the parameter names
-     * from the class file.  If parameter names are not available 
-     * for the method (perhaps the method is in an interface), the
+     * This implementation uses Skeleton.getParameterNames or bcel to get the
+     * parameter names from the class file.  If parameter names are not
+     * available for the method (perhaps the method is in an interface), the
      * corresponding method in the implClass is queried.
      * @param method is the Method to search.                
      * @param implClass  If the first search fails, the corresponding  
@@ -446,7 +438,7 @@ public class ClassRep extends BaseRep {
             return paramNames;
         }
         
-        paramNames = getParameterNamesFromDebugInfo(method); 
+        paramNames = JavaUtils.getParameterNamesFromDebugInfo(method); 
         
         // If failed, try getting a method of the impl class.
         if (paramNames == null && implClass != null) {
@@ -464,7 +456,7 @@ public class ClassRep extends BaseRep {
                 if (paramNames != null) {
                     return paramNames;
                 }
-                paramNames = getParameterNamesFromDebugInfo(m); 
+                paramNames = JavaUtils.getParameterNamesFromDebugInfo(m); 
             }
         }            
 
@@ -509,80 +501,6 @@ public class ClassRep extends BaseRep {
         return paramNames;
     }
 
-    /**
-     * get Parameter Names using bcel
-     * @param method
-     * @return list of names or null
-     */
-    public String[] 
-            getParameterNamesFromDebugInfo(java.lang.reflect.Method method) {
-        Class c = method.getDeclaringClass();
-        int numParams = method.getParameterTypes().length;
-        Vector temp = new Vector();
-
-        // Don't worry about it if there are no params.
-        if (numParams == 0)
-            return null;
-
-        // Try to obtain a tt-bytecode class object
-        BCClass bclass = (BCClass)ttClassCache.get(c);
-                    
-        if(bclass == null) {
-            try {
-                bclass = new BCClass(c);
-                ttClassCache.put(c, bclass);
-            } catch (IOException e) {
-                // what now?
-            }
-        }
-
-        // Obtain the exact method we're interested in.
-        BCMethod bmeth = bclass.getMethod(method.getName(), 
-                                          method.getParameterTypes());
-
-        if (bmeth == null)
-            return null;
-
-        // Get the Code object, which contains the local variable table.
-        Code code = bmeth.getCode();
-        if (code == null)
-            return null;
-
-        LocalVariableTableAttribute attr = 
-                (LocalVariableTableAttribute)code.getAttribute(Constants.ATTR_LOCALS);
-
-        if (attr == null)
-            return null;
-
-        // OK, found it.  Now scan through the local variables and record
-        // the names in the right indices.
-        LocalVariable [] vars = attr.getLocalVariables();
-
-        String [] argNames = new String[numParams + 1];
-        argNames[0] = null; // don't know return name
-
-        // NOTE: we scan through all the variables here, because I have been
-        // told that jikes sometimes produces unpredictable ordering of the
-        // local variable table.
-        for (int j = 0; j < vars.length; j++) {
-            LocalVariable var = vars[j];
-            if (! var.getName().equals("this")) {
-                if(temp.size() < var.getIndex() + 1)
-                    temp.setSize(var.getIndex() + 1);
-                temp.setElementAt(var.getName(), var.getIndex());
-            }
-        }
-        int k = 0;
-        for (int j = 0; j < temp.size(); j++) {
-            if (temp.elementAt(j) != null) {
-                k++;
-                argNames[k] = (String)temp.elementAt(j);
-                if(k + 1 == argNames.length)
-                    break;
-            }
-        }
-        return argNames;
-    }
 
     /**
      * Get the list of return/parameter modes for the specified method.
