@@ -1075,6 +1075,12 @@ public class SerializationContextImpl implements SerializationContext
     public void writeDOMElement(Element el)
         throws IOException
     {
+        // If el is a Text element, write the text and exit
+        if (el instanceof org.apache.axis.message.Text) {            
+            writeSafeString(((Text)el).getData());
+            return;
+        }   
+        
         AttributesImpl attributes = null;
         NamedNodeMap attrMap = el.getAttributes();
 

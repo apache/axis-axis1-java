@@ -102,7 +102,7 @@ public class Text extends MessageElement implements javax.xml.soap.Text {
     }
 
     public String getData() throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return textRep.getData();  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
     public String substringData(int offset, int count) throws DOMException {

@@ -62,6 +62,7 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.*;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.soap.SOAPFactoryImpl;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -84,6 +85,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.rpc.encoding.TypeMapping;
 import java.io.Reader;
 import java.io.Serializable;
@@ -91,6 +93,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 /*
@@ -344,7 +347,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public NodeList getChildNodes() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return new NodeListImpl( children); 
     }
 
     public boolean isSupported(String feature, String version) {
@@ -415,7 +418,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public NamedNodeMap getAttributes() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return new NamedNodeMapImpl(attributes);
     }
 
     public short getNodeType() {
@@ -435,13 +438,13 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public String getLocalName() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return name;  
     }
 
     public String getNamespaceURI() { return( namespaceURI ); }
 
     public String getNodeName() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return name;  
     }
 
     public String getNodeValue() throws DOMException {
@@ -1269,4 +1272,98 @@ public class MessageElement implements SOAPElement, Serializable
     // setEncodingStyle implemented above
 
     // getEncodingStyle() implemented above
+    
+    /**
+     * Implementation of org.w3c.dom.NodeList for SAAJ 1.2
+     * This inner class can be replaced or moved if there is an
+     * Implementation for the whole Axis project
+     */
+    class NodeListImpl implements NodeList {        
+
+        private ArrayList items = new ArrayList();
+    
+        NodeListImpl( List list) {
+        
+            if ( null == list)
+                return;
+        
+            Iterator iter = list.iterator();
+            while (iter.hasNext()) {
+                Node node = (Node) iter.next();
+                items.add( node);            
+            }
+        }
+
+        public int getLength() {
+            return items.size();
+        }
+
+        public Node item(int index) {
+            return (Node)items.get(index);
+        }
+    }
+    
+    /**
+     * Implementation of org.w3c.dom.NamedNodeMap for SAAJ 1.2
+     * This inner class can be replaced or moved if there is an
+     * Implementation for the whole Axis project 
+     */
+    class NamedNodeMapImpl implements NamedNodeMap {
+
+        private String[] name, namespaceURI;
+           
+        NamedNodeMapImpl(Attributes attributes) {
+        
+            name = new String[attributes.getLength()];
+            namespaceURI = new String[attributes.getLength()];
+        
+            for( int i = 0; i < attributes.getLength(); i++) {
+                name[i] = attributes.getLocalName(i);
+                namespaceURI[i] = attributes.getURI(i);
+            }
+        }
+    
+        public Node getNamedItem(String name) {
+            try {
+                for(int i = 0; i < name.length(); i++) {
+                    if (this.name[i].equals(name))
+                        return SOAPFactory.newInstance().createElement( this.name[i], null, namespaceURI[i]);
+                }
+            } catch (SOAPException e) {}
+            return null;
+        }
+    
+        public Node item(int i) {
+            try {
+                return SOAPFactory.newInstance().createElement( name[i], null, namespaceURI[i]);
+            } catch (SOAPException e) {
+                return null;
+            }        
+        }
+    
+        public int getLength() {
+            return name.length;
+        }
+    
+        public Node getNamedItemNS(String namespaceURI, String localName) {
+            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
+        }
+    
+        public Node setNamedItemNS(Node arg) throws DOMException {
+            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
+        }
+    
+        public Node setNamedItem(Node arg) throws DOMException {
+            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
+        }
+    
+        public Node removeNamedItem(String name) throws DOMException {
+            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
+        }
+
+        public Node removeNamedItemNS(String namespaceURI, String localName) throws DOMException {
+            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
+        }
+
+    }
 }

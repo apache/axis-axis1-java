@@ -101,7 +101,10 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
+import java.util.Vector;
 
 
 public class XMLUtils {
@@ -836,5 +839,24 @@ public class XMLUtils {
         if(lastIdx == 0)
             return "";
         return str.substring(0, lastIdx);
+    }
+    
+    /**
+     * Converts a List with org.w3c.dom.Element objects to an Array
+     * with org.w3c.dom.Element objects.
+     * @param list List containing org.w3c.dom.Element objects
+     * @return Element[] Array with org.w3c.dom.Element objects
+     */
+    public static Element[] asElementArray(List list) {
+                
+        Element[] elements = new Element[list.size()];        
+        
+        int i = 0;
+        Iterator detailIter = list.iterator();
+        while (detailIter.hasNext()) {
+            elements[i++] = (Element) detailIter.next();                                  
+        }
+        
+        return elements;
     }
 }
