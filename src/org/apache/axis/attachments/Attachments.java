@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
@@ -67,7 +66,6 @@ import org.apache.axis.Part;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Rick Rineholt
  */
-
 public interface Attachments {
 
     /**
@@ -75,18 +73,26 @@ public interface Attachments {
      * Note: Passed part will be bound to this message.
      * @param newPart new part to add
      * @returns Part old attachment with the same Content-ID, or null.
+     *
+     * @return
      * @throws org.apache.axis.AxisFault
      */
-     public Part addAttachmentPart(Part newPart) throws org.apache.axis.AxisFault;
+    public Part addAttachmentPart(Part newPart)
+            throws org.apache.axis.AxisFault;
 
     /**
      * This method uses getAttacmentByReference() to look for attachment.
      * If attachment has been found, it will be removed from the list, and
      * returned to the user.
      * @param  The reference that referers to an attachment.
+     *
+     * @param reference
      * @return The part associated with the removed attachment, or null.
+     *
+     * @throws org.apache.axis.AxisFault
      */
-     public Part removeAttachmentPart(String reference) throws org.apache.axis.AxisFault;
+    public Part removeAttachmentPart(String reference)
+            throws org.apache.axis.AxisFault;
 
     /**
      * Removes all <CODE>AttachmentPart</CODE> objects that have
@@ -100,16 +106,24 @@ public interface Attachments {
      * This method should look at a refernce and determine if it is a CID: or url
      * to look for attachment.
      * @param  The reference in the xml that referers to an attachment.
+     *
+     * @param reference
      * @return The part associated with the attachment.
-     */ 
-    public Part getAttachmentByReference(String reference) throws org.apache.axis.AxisFault;
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    public Part getAttachmentByReference(String reference)
+            throws org.apache.axis.AxisFault;
 
     /**
-     * This method will return all attachments as a collection. 
-     * 
-     * @return A collection of attachments. 
-     */ 
-    public java.util.Collection getAttachments() throws org.apache.axis.AxisFault;
+     * This method will return all attachments as a collection.
+     *
+     * @return A collection of attachments.
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    public java.util.Collection getAttachments()
+            throws org.apache.axis.AxisFault;
 
     /**
      * Retrieves all the <CODE>AttachmentPart</CODE> objects
@@ -122,69 +136,99 @@ public interface Attachments {
      * @return an iterator over all attachments that have a header
      *     that matches one of the given headers
      */
-    public java.util.Iterator getAttachments(javax.xml.soap.MimeHeaders headers);
+    public java.util.Iterator getAttachments(
+            javax.xml.soap.MimeHeaders headers);
 
     /**
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
-     * @param The part that is referenced 
-     */ 
-    public Part createAttachmentPart(Object part) throws org.apache.axis.AxisFault;
+     * @param The part that is referenced
+     *
+     * @param part
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    public Part createAttachmentPart(Object part)
+            throws org.apache.axis.AxisFault;
 
     /**
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
      */
     public Part createAttachmentPart() throws org.apache.axis.AxisFault;
 
     /**
      *  Will the attachments of this message to that of the colleciton.
-     */ 
-    public void setAttachmentParts( java.util.Collection parts) throws org.apache.axis.AxisFault;
+     *
+     * @param parts
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    public void setAttachmentParts(java.util.Collection parts)
+            throws org.apache.axis.AxisFault;
 
     /**
-     * From the complex stream return the SOAP part. 
+     * From the complex stream return the SOAP part.
      * @return will return the root part if the stream is supported,
      *         otherwise null.
-     */ 
+     */
     public Part getRootPart();
 
     /**
      * Sets the root part of this multipart block
+     *
+     * @param newRoot
      */
     public void setRootPart(Part newRoot);
 
     /**
-     * Get the content length of the stream. 
-     */ 
+     * Get the content length of the stream.
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
+     */
     public int getContentLength() throws org.apache.axis.AxisFault;
 
     /**
-     * Write the content to the stream. 
-     */ 
-    public void writeContentToStream(java.io.OutputStream os) throws org.apache.axis.AxisFault;
+     * Write the content to the stream.
+     *
+     * @param os
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    public void writeContentToStream(java.io.OutputStream os)
+            throws org.apache.axis.AxisFault;
 
     /**
-     * Write the content to the stream. 
-     */ 
-    public String getContentType()throws org.apache.axis.AxisFault;
+     * Write the content to the stream.
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    public String getContentType() throws org.apache.axis.AxisFault;
 
     /**
-     *This is the number of attachments.
-     **/
+     * This is the number of attachments.
+     *
+     * @return
+     */
     public int getAttachmentCount();
 
     /**
-     * Determine if an object is to be treated as an attchment. 
+     * Determine if an object is to be treated as an attchment.
      *
      * @param value the value that is to be determined if
      * its an attachment.
      *
-     * @return True if value should be treated as an attchment. 
+     * @return True if value should be treated as an attchment.
      */
-
-    public boolean isAttachment( Object value);
-
-
-    
+    public boolean isAttachment(Object value);
 }

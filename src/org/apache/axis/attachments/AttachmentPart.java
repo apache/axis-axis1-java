@@ -52,51 +52,81 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.SOAPUtils;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.soap.SOAPException;
-import java.util.Hashtable;
 import java.util.Iterator;
 
-public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Part {
+/**
+ * Class AttachmentPart
+ *
+ */
+public class AttachmentPart extends javax.xml.soap.AttachmentPart
+        implements Part {
+
+    /** Field log           */
     protected static Log log =
-        LogFactory.getLog(AttachmentPart.class.getName());
+            LogFactory.getLog(AttachmentPart.class.getName());
 
-    javax.activation.DataHandler datahandler= null;
+    /** Field datahandler           */
+    javax.activation.DataHandler datahandler = null;
 
-    //private Hashtable headers = new Hashtable();
-    private javax.xml.soap.MimeHeaders mimeHeaders = new javax.xml.soap.MimeHeaders();
+    // private Hashtable headers = new Hashtable();
+
+    /** Field mimeHeaders           */
+    private javax.xml.soap.MimeHeaders mimeHeaders =
+            new javax.xml.soap.MimeHeaders();
+
+    /** Field contentId           */
     private String contentId;
+
+    /** Field contentLocation           */
     private String contentLocation;
 
-
+    /**
+     * Constructor AttachmentPart
+     */
     public AttachmentPart() {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
-
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
+                SOAPUtils.getNewContentIdValue());
     }
 
-    public AttachmentPart(javax.activation.DataHandler dh ) {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
+    /**
+     * Constructor AttachmentPart
+     *
+     * @param dh
+     */
+    public AttachmentPart(javax.activation.DataHandler dh) {
 
-        datahandler= dh;
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , dh.getContentType());
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
+                SOAPUtils.getNewContentIdValue());
+
+        datahandler = dh;
+
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
     }
 
-    public javax.activation.DataHandler getActivationDataHandler(){
-      return datahandler;
+    /**
+     * Method getActivationDataHandler
+     *
+     * @return
+     */
+    public javax.activation.DataHandler getActivationDataHandler() {
+        return datahandler;
     }
 
     /**
      * TODO: everything!
+     *
+     * @return
      */
     public String getContentType() {
         return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE);
@@ -104,41 +134,49 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
 
     /**
      * Add the specified MIME header, as per JAXM.
+     *
+     * @param header
+     * @param value
      */
-    public void addMimeHeader (String header, String value) {
+    public void addMimeHeader(String header, String value) {
 
-        if(null == header) {
-            throw new IllegalArgumentException(JavaUtils.getMessage("headerNotNull"));
+        if (null == header) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("headerNotNull"));
         }
 
         header = header.trim();
 
-        if(header.length() == 0) {
+        if (header.length() == 0) {
             throw new IllegalArgumentException(
                     JavaUtils.getMessage("headerNotEmpty"));
         }
 
-        if(null == value) {
+        if (null == value) {
             throw new IllegalArgumentException(
                     JavaUtils.getMessage("headerValueNotNull"));
         }
+
         mimeHeaders.setHeader(header.toLowerCase(), value);
     }
 
     /**
      * Get the specified MIME header.
+     *
+     * @param header
+     *
+     * @return
      */
-    public String getFirstMimeHeader (String header) {
+    public String getFirstMimeHeader(String header) {
+
         String[] values = mimeHeaders.getHeader(header.toLowerCase());
-        if(values != null && values.length  > 0)
+
+        if ((values != null) && (values.length > 0)) {
             return values[0];
+        }
+
         return null;
     }
-
-    /**
-     * Total size in bytes (of all content and headers, as encoded).
-    public abstract int getSize();
-     */
 
     /**
      * Content location.
@@ -149,54 +187,74 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
 
     /**
      * Set content location.
+     *
+     * @param loc
      */
     public void setContentLocation(String loc) {
         addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
     }
 
     /**
-         * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
-         *  already defined.
-         * @param newCid new Content-Id
-         * @returns void
-         */
-        public void setContentId(String newCid){
-                if(!newCid.toLowerCase().startsWith("cid:")){
-                        newCid="cid:"+newCid;
-                }
-                addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
+     *     Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+     *      already defined.
+     *     @param newCid new Content-Id
+     *     @returns void
+     */
+    public void setContentId(String newCid) {
+
+        if (!newCid.toLowerCase().startsWith("cid:")) {
+            newCid = "cid:" + newCid;
         }
+
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
+    }
 
     /**
      * Content ID.
+     *
+     * @return
      */
     public String getContentId() {
-        String ret= getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
-        //Do not let the contentID ever be empty.
-        if(ret == null){
-            ret=SOAPUtils.getNewContentIdValue();
-            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+
+        String ret = getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
+
+        // Do not let the contentID ever be empty.
+        if (ret == null) {
+            ret = SOAPUtils.getNewContentIdValue();
+
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
         }
-        ret= ret.trim();
-        if(ret.length() ==0){
-            ret=SOAPUtils.getNewContentIdValue();
-            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+
+        ret = ret.trim();
+
+        if (ret.length() == 0) {
+            ret = SOAPUtils.getNewContentIdValue();
+
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
         }
+
         return ret;
     }
 
-
     /**
      * Get all headers that match
+     *
+     * @param match
+     *
+     * @return
      */
-    public java.util.Iterator getMatchingMimeHeaders( final String[] match){
+    public java.util.Iterator getMatchingMimeHeaders(final String[] match) {
         return mimeHeaders.getMatchingHeaders(match);
     }
 
     /**
      * Get all headers that do not match
+     *
+     * @param match
+     *
+     * @return
      */
-    public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
+    public java.util.Iterator getNonMatchingMimeHeaders(final String[] match) {
         return mimeHeaders.getNonMatchingHeaders(match);
     }
 
@@ -228,8 +286,8 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     there was a problem with the specified mime header name
      *     or value
      */
-    public void setMimeHeader(String name, String value){
-        mimeHeaders.setHeader(name,value);
+    public void setMimeHeader(String name, String value) {
+        mimeHeaders.setHeader(name, value);
     }
 
     /** Removes all the MIME header entries. */
@@ -310,20 +368,26 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     was a data transformation error
      */
     public Object getContent() throws SOAPException {
+
         javax.activation.DataSource ds = datahandler.getDataSource();
-        if(ds instanceof ManagedMemoryDataSource){
-            ManagedMemoryDataSource mds = (ManagedMemoryDataSource)ds;
-            if(ds.getContentType().equals("text/plain")){
+
+        if (ds instanceof ManagedMemoryDataSource) {
+            ManagedMemoryDataSource mds = (ManagedMemoryDataSource) ds;
+
+            if (ds.getContentType().equals("text/plain")) {
                 try {
                     java.io.InputStream is = ds.getInputStream();
                     byte[] bytes = new byte[is.available()];
+
                     is.read(bytes);
+
                     return new String(bytes);
-                } catch (java.io.IOException io){
+                } catch (java.io.IOException io) {
                     log.error(JavaUtils.getMessage("javaIOException00"), io);
                 }
             }
         }
+
         return null;
     }
 
@@ -335,9 +399,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      * the <CODE>Content-Type</CODE>. This depends on the particular
      * set of <CODE>DataContentHandler</CODE> objects in use.
      * @param  object  the Java object that makes up
-          the content for this attachment part
+     *     the content for this attachment part
      * @param  contentType the MIME string that
-          specifies the type of the content
+     *     specifies the type of the content
      * @throws java.lang.IllegalArgumentException if
      *     the contentType does not match the type of the content
      *     object, or if there was no <CODE>
@@ -346,18 +410,26 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      * @see #getContent() getContent()
      */
     public void setContent(Object object, String contentType) {
-        if(object instanceof String) {
+
+        if (object instanceof String) {
             try {
-                String s = (String)object;
-                java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(s.getBytes());
-                datahandler = new DataHandler(new ManagedMemoryDataSource(bais, 1024, contentType, true));
+                String s = (String) object;
+                java.io.ByteArrayInputStream bais =
+                        new java.io.ByteArrayInputStream(s.getBytes());
+
+                datahandler = new DataHandler(new ManagedMemoryDataSource(bais,
+                        1024, contentType, true));
+
                 return;
-            } catch (java.io.IOException io){
+            } catch (java.io.IOException io) {
                 log.error(JavaUtils.getMessage("javaIOException00"), io);
-                throw new java.lang.IllegalArgumentException(JavaUtils.getMessage("illegalAccessException00"));
+
+                throw new java.lang.IllegalArgumentException(
+                        JavaUtils.getMessage("illegalAccessException00"));
             }
         } else {
-            throw new java.lang.IllegalArgumentException(JavaUtils.getMessage("illegalAccessException00"));
+            throw new java.lang.IllegalArgumentException(
+                    JavaUtils.getMessage("illegalAccessException00"));
         }
     }
 
@@ -367,7 +439,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      * untouched.
      */
     public void clearContent() {
-        //TODO: Implement this.
+        // TODO: Implement this.
     }
 
     /**
@@ -380,7 +452,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     while trying to determine the size.
      */
     public int getSize() throws SOAPException {
-        //TODO: Implement this.
+        // TODO: Implement this.
         return -1;
     }
 
@@ -397,4 +469,3 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
         return mimeHeaders.getHeader(name);
     }
 }
-
