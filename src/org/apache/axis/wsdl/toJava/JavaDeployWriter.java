@@ -73,8 +73,7 @@ import javax.wsdl.Service;
 import org.apache.axis.Constants;
 
 import org.apache.axis.deployment.wsdd.WSDDConstants;
-
-import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.enum.Scope;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -353,15 +352,9 @@ public class JavaDeployWriter extends JavaWriter {
             pw.println(methodList.substring(1) + "\"/>");
         }
 
-        if (emitter.getScope() == JavaProvider.BYTE_SCOPE_APPLICATION) {
-            pw.println("      <parameter name=\"scope\" value=\"Application\"/>");
-        }
-        else if (emitter.getScope() == JavaProvider.BYTE_SCOPE_REQUEST) {
-            pw.println("      <parameter name=\"scope\" value=\"Request\"/>");
-        }
-        else if (emitter.getScope() == JavaProvider.BYTE_SCOPE_SESSION) {
-            pw.println("      <parameter name=\"scope\" value=\"Session\"/>");
-        }
+        Scope scope = emitter.getScope();
+        if (scope != null)
+            pw.println("      <parameter name=\"scope\" value=\"" + scope.getName() + "\"/>");
     } //writeDeployBinding
 
     /**

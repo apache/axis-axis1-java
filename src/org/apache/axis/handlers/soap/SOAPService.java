@@ -66,6 +66,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.enum.Style;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
@@ -257,11 +258,11 @@ public class SOAPService extends SimpleTargetedChain
         return true;
     }
 
-    public int getStyle() {
+    public Style getStyle() {
         return serviceDescription.getStyle();
     }
 
-    public void setStyle(int style) {
+    public void setStyle(Style style) {
         serviceDescription.setStyle(style);
     }
 

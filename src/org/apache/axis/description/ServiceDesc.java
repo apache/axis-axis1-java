@@ -54,20 +54,25 @@
  */
 package org.apache.axis.description;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.rpc.holders.Holder;
+import javax.xml.rpc.namespace.QName;
+
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.enum.*;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.bytecode.ExtractorFactory;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.wsdl.Skeleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.rpc.namespace.QName;
-import javax.xml.rpc.holders.Holder;
-import java.util.*;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 /**
  * A ServiceDesc is an abstract description of a service.
@@ -82,43 +87,6 @@ public class ServiceDesc {
     protected static Log log =
             LogFactory.getLog(ServiceDesc.class.getName());
 
-    public static final int STYLE_RPC = 0;
-    public static final int STYLE_DOCUMENT = 1;
-    public static final int STYLE_WRAPPED = 2;
-    public static final int STYLE_MESSAGE = 3;
-    
-    private static final String[] styleStrings = { "rpc", "document", "wrapped", "message" };
-    
-    /**
-     * Utility function to return a string representation of a style
-     * constant.
-     */
-    public static String getStringFromStyle(int style)
-    {
-        return (style >= STYLE_RPC && style <= STYLE_MESSAGE) ? styleStrings[style] : null;
-    }
-
-    /**
-     * Utility function to convert string to operation style constants
-     *
-     * @param operationStyle "rpc", "document", "wrapped", or "message"
-     * @return either STYLE_RPC, STYLE_DOCUMENT or STYLE_WRAPPED (all defined
-     *         in org.apache.axis.description.ServiceDesc)
-     */
-    public static int getStyleFromString(String operationStyle)
-    {
-        for (int idx = 0; idx <= styleStrings.length; idx++)
-            if (styleStrings[idx].equalsIgnoreCase(operationStyle))
-                return idx;
-
-        // Not one of the recognized values.  We're going to return RPC
-        // as the default, but log an error.
-        log.error(JavaUtils.getMessage("badStyle", operationStyle));
-
-        return ServiceDesc.STYLE_RPC;
-    }
-
-
     /** The name of this service */
     private String name = null;
 
@@ -130,7 +98,7 @@ public class ServiceDesc {
     private List disallowedMethods = null;
 
     /** Style */
-    private int style = STYLE_RPC;
+    private Style style = Style.RPC;
 
     /** Implementation class */
     private Class implClass = null;
@@ -184,11 +152,11 @@ public class ServiceDesc {
     public ServiceDesc() {
     }
 
-    public int getStyle() {
+    public Style getStyle() {
         return style;
     }
 
-    public void setStyle(int style) {
+    public void setStyle(Style style) {
         this.style = style;
     }
 
@@ -203,7 +171,7 @@ public class ServiceDesc {
      */
     public boolean isWrapped()
     {
-        return ((style == STYLE_RPC) || (style == STYLE_WRAPPED));
+        return ((style == Style.RPC) || (style == Style.WRAPPED));
     }
 
     public String getWSDLFile() {
@@ -384,7 +352,7 @@ public class ServiceDesc {
     {
         // If we're MESSAGE style, we should only have a single operation,
         // to which we'll pass any XML we receive.
-        if (style == STYLE_MESSAGE) {
+        if (style == Style.MESSAGE) {
             return new OperationDesc [] { (OperationDesc)operations.get(0) };
         }
 
@@ -396,7 +364,7 @@ public class ServiceDesc {
         ArrayList overloads = (ArrayList)qname2OperationsMap.get(qname);
 
         if (overloads == null) {
-            if ((style == STYLE_RPC) && (name2OperationsMap != null)) {
+            if ((style == Style.RPC) && (name2OperationsMap != null)) {
                 // Try ignoring the namespace....?
                 overloads = (ArrayList)name2OperationsMap.get(qname.getLocalPart());
             }

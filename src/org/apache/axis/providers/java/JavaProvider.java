@@ -68,6 +68,8 @@ import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Scope;
 import org.apache.axis.Constants;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -103,33 +105,11 @@ public abstract class JavaProvider extends BasicProvider
     
     public static final String OPTION_SCOPE = "scope";
 
-    // Values for the OPTION_SCOPE
-    public static final String OPTION_SCOPE_REQUEST = "Request";
-    public static final String OPTION_SCOPE_SESSION = "Session";
-    public static final String OPTION_SCOPE_APPLICATION = "Application";
-    public static final String OPTION_SCOPE_DEFAULT = OPTION_SCOPE_REQUEST;
-    
-    public static final byte BYTE_SCOPE_NOT_EXPLICIT = 0x00;
-    public static final byte BYTE_SCOPE_APPLICATION  = 0x01;
-    public static final byte BYTE_SCOPE_REQUEST      = 0x10;
-    public static final byte BYTE_SCOPE_SESSION      = 0x11;
-    public static final byte BYTE_SCOPE_DEFAULT      = BYTE_SCOPE_REQUEST;
-
-    public static boolean isValidScope(String scope)
-    {
-        return scope == null  ||
-               scope.length() == 0  ||
-               scope.equalsIgnoreCase(OPTION_SCOPE_REQUEST)  ||
-               scope.equalsIgnoreCase(OPTION_SCOPE_APPLICATION)  ||
-               scope.equalsIgnoreCase(OPTION_SCOPE_SESSION);
-    }
-    
-
     /**
      * Get the service object whose method actually provides the service.
      * May look up in session table.
      */
-    public Object getServiceObject (MessageContext msgContext,
+    private Object getServiceObject (MessageContext msgContext,
                                     Handler service,
                                     String clsName,
                                     IntHolder scopeHolder)
@@ -139,23 +119,14 @@ public abstract class JavaProvider extends BasicProvider
 
         // scope can be "Request", "Session", "Application"
         // (as with Apache SOAP)
-        String scope = (String)service.getOption(OPTION_SCOPE);
-        if (scope == null) {
-            // default is Request scope
-            scope = OPTION_SCOPE_DEFAULT;
-        }
+        Scope scope = Scope.getScope((String)service.getOption(OPTION_SCOPE), Scope.DEFAULT);
+        
+        scopeHolder.value = scope.getValue();
 
-        if (scope.equalsIgnoreCase(OPTION_SCOPE_REQUEST)) {
-            // Convey the scope upwards
-            scopeHolder.value = BYTE_SCOPE_REQUEST;
-
+        if (scope == Scope.REQUEST) {
             // make a one-off
             return getNewServiceObject(msgContext, clsName);
-
-        } else if (scope.equalsIgnoreCase(OPTION_SCOPE_SESSION)) {
-            // Convey the scope upwards
-            scopeHolder.value = BYTE_SCOPE_SESSION;
-
+        } else if (scope == Scope.SESSION) {
             // What do we do if serviceName is null at this point???
             if (serviceName == null)
                 serviceName = msgContext.getService().toString();
@@ -174,13 +145,10 @@ public abstract class JavaProvider extends BasicProvider
                 }
             } else {
                 // was no incoming session, sigh, treat as request scope
-                scopeHolder.value = BYTE_SCOPE_REQUEST;
+                scopeHolder.value = Scope.DEFAULT.getValue();
                 return getNewServiceObject(msgContext, clsName);
             }
-
-        } else if (scope.equalsIgnoreCase(OPTION_SCOPE_APPLICATION)) {
-            scopeHolder.value = BYTE_SCOPE_APPLICATION;
-
+        } else if (scope == Scope.APPLICATION) {
             // MUST be AxisEngine here!
             AxisEngine engine = msgContext.getAxisEngine();
             if (engine.getApplicationSession() != null) {
@@ -198,15 +166,12 @@ public abstract class JavaProvider extends BasicProvider
             } else {
                 // was no application session, sigh, treat as request scope
                 // FIXME : Should we bomb in this case?
-                scopeHolder.value = BYTE_SCOPE_REQUEST;
+                scopeHolder.value = Scope.DEFAULT.getValue();
                 return getNewServiceObject(msgContext, clsName);
             }
-
         } else {
-
             // NOTREACHED
             return null;
-
         }
     }
 
@@ -324,7 +289,7 @@ public abstract class JavaProvider extends BasicProvider
             } finally {
                 // If this is a request scoped service object which implements
                 // ServiceLifecycle, let it know that it's being destroyed now.
-                if (scope.value == BYTE_SCOPE_REQUEST &&
+                if (scope.value == Scope.REQUEST.getValue() &&
                         obj instanceof ServiceLifecycle) {
                     ((ServiceLifecycle)obj).destroy();
                 }
@@ -411,7 +376,10 @@ public abstract class JavaProvider extends BasicProvider
             String alias = (String)service.getOption("alias");
             if(alias != null) emitter.setServiceElementName(alias);
 
-            emitter.setMode(service.getStyle());
+            emitter.setMode( (service.getStyle() == Style.RPC)
+                             ? Emitter.MODE_RPC
+                             : Emitter.MODE_DOCUMENT);
+
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
             emitter.setIntfNamespace(interfaceNamespace);

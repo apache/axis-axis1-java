@@ -71,7 +71,7 @@ import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 
-import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.enum.Scope;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -92,6 +92,10 @@ import org.w3c.dom.Document;
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter extends Parser {
+//    public static final byte SCOPE_NOT_EXPLICIT = (byte)0xFF;
+//    public static final byte SCOPE_APPLICATION  = (byte)Scope.APPLICATION.getValue();
+//    public static final byte SCOPE_REQUEST      = (byte)Scope.REQUEST.getValue();
+//    public static final byte SCOPE_SESSION      = (byte)Scope.SESSION.getValue();
 
     protected HashMap namespaceMap = new HashMap();
     protected String typeMappingVersion = "1.2";
@@ -106,7 +110,7 @@ public class Emitter extends Parser {
     private boolean bGenerateAll = false;
     private boolean bHelperGeneration = false;
     private String packageName = null;
-    private byte scope = JavaProvider.BYTE_SCOPE_NOT_EXPLICIT;
+    private Scope scope = null;
     private GeneratedFileInfo fileInfo = new GeneratedFileInfo();
     private HashMap delayedNamespacesMap = new HashMap();
     private String outputDir = null;
@@ -229,20 +233,19 @@ public class Emitter extends Parser {
 
     /**
      * Set the scope for the deploy.xml file.
-     * @param scope One of JavaProvider.BYTE_SCOPE_NOT_EXPLICIT,
-     * JavaProvider.BYTE_SCOPE_APPLICATION, JavaProvider.BYTE_SCOPE_REQUEST,
-     * JavaProvider.BYTE_SCOPE_SESSION.  Anything else is equivalent to
-     * BYTE_SCOPE_NOT_EXPLICIT and no explicit scope tag will appear in
-     * deploy.xml.
+     * @param scope One of 'null',
+     * Scope.APPLICATION, Scope.REQUEST, Scope.SESSION.
+     * Anything else is equivalent to 'null' null and no explicit
+     * scope tag will appear in deploy.xml.
      */
-    public void setScope(byte scope) {
+    public void setScope(Scope scope) {
         this.scope = scope;
     } // setScope
 
     /**
      * Get the scope for the deploy.xml file.
      */
-    public byte getScope() {
+    public Scope getScope() {
         return scope;
     } // getScope
 

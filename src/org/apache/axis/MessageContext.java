@@ -60,6 +60,7 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.soap.SOAP11Constants;
@@ -180,10 +181,10 @@ public class MessageContext implements SOAPMessageContext {
      */
     private String  username       = null;
     private String  password       = null;
-    private int     operationStyle = ServiceDesc.STYLE_RPC;
+    private Style   operationStyle = Style.RPC;
+    private String  encodingStyle  = operationStyle.getEncoding();
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
-    private String  encodingStyle  = Constants.URI_DEFAULT_SOAP_ENC;
 
     /** Our SOAP namespaces and such - defaults to SOAP 1.1 */
     private SOAPConstants soapConstants = new SOAP11Constants();
@@ -571,8 +572,7 @@ public class MessageContext implements SOAPMessageContext {
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
             setOperationStyle(service.getStyle());
-            setEncodingStyle((service.getStyle() == ServiceDesc.STYLE_RPC) ?
-                                        Constants.URI_DEFAULT_SOAP_ENC : "");
+            setEncodingStyle(service.getStyle().getEncoding());
 
             // This MessageContext should now defer properties it can't find
             // to the Service's options.
@@ -653,7 +653,7 @@ public class MessageContext implements SOAPMessageContext {
      * If there, then...
      *   if its a Boolean, we'll return booleanValue()
      *   if its an Integer,  we'll return 'false' if its '0' else 'true'
-     *   if its a String, we'll return 'false' if its 'false' or '0' else 'true'
+     *   if its a String, we'll return 'false' if its 'false', 'no', or '0' - else 'true'
      *   All other types return 'true'
      */
     public boolean isPropertyTrue(String propName, boolean defaultVal) {
@@ -710,7 +710,7 @@ public class MessageContext implements SOAPMessageContext {
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
-            setOperationStyle(ServiceDesc.getStyleFromString((String)value));
+            setOperationStyle(Style.getStyle((String)value, Style.DEFAULT));
         }
         else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
@@ -787,7 +787,7 @@ public class MessageContext implements SOAPMessageContext {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
-                return ServiceDesc.getStringFromStyle(getOperationStyle());
+                return (getOperationStyle() == null) ? null : getOperationStyle().getName();
             }
             else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
                 return new Boolean(useSOAPAction());
@@ -846,14 +846,14 @@ public class MessageContext implements SOAPMessageContext {
     /**
      * Set the operation style.
      */
-    public void setOperationStyle(int operationStyle) {
+    public void setOperationStyle(Style operationStyle) {
         this.operationStyle = operationStyle;
     } // setOperationStyle
 
     /**
      * Get the operation style.
      */
-    public int getOperationStyle() {
+    public Style getOperationStyle() {
         return operationStyle;
     } // getOperationStyle
 

@@ -63,8 +63,8 @@ package org.apache.axis.message;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.enum.Style;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
@@ -152,8 +152,7 @@ public class BodyBuilder extends SOAPHandler
         } else if (!gotRPCElement) {
             if (isRoot &&
                 (operations == null ||
-                 (operations[0].getStyle() !=
-                  ServiceDesc.STYLE_MESSAGE))) {
+                 (operations[0].getStyle() != Style.MESSAGE))) {
                 gotRPCElement = true;
                 
                 try {
