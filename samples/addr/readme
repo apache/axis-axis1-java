@@ -1,6 +1,21 @@
-To generate files from the wsdl:
+The address book sample requires that you generate the Java bindings from the AddressBook.wsdl file.
 
-java org.apache.axis.wsdl.WSDL2Java -s samples\addr\AddressBook.wsdl 
-                                    -N urn:AddressFetcher2=samples.addr
+First, set up the CLASSPATH.  It must contain an XML parser (ie., xerces.jar); all the jars in the lib directory:  axis.jar, clutil.jar, log4j-core.jar, and wsdl4j.jar; and the directory containing the samples subdirectory.
 
-from the xml-axis\java directory.
+Now change directory to the directory that contains the samples subdirectory.
+
+Finally, run the command:
+
+java org.apache.axis.wsdl.WSDL2Java -s -Nurn:AddressFetcher2=samples.addr samples\addr\AddressBook.wsdl 
+
+This will generate all the bindings, both client-side and server-side, into the samples/addre subdirectory.
+
+Now you can change directory to samples/addr and compile the sample.  BUT FIRST, this sample depends on junit, so you have to get junit.jar (www.junit.org) and add it to your CLASSPATH.  THEN you can compile:
+
+javac *.java
+
+To run the sample, you will first need to run a server.  To run a very simple server you could run, in a separate window:
+
+java org.apache.axis.transport.http.SimpleAxisServer -p 8080
+
+Finally, to run the client, simple run testit.sh or testit.cmd, depending on your platform.
