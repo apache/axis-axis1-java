@@ -57,7 +57,6 @@
 package org.apache.axis.encoding;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.xml.namespace.QName;
 
@@ -92,9 +91,6 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param javaType is the "real" type of the value.
-     * @param xmlType is the qname of the type or null. (default is null)
-     * @param sendNull determines whether to send null values. (default is true)
-     * @param sendType determines whether to set xsi:type attribute. (default is true)
      */
     public void serialize(QName elemQName,
                           Attributes attributes,
@@ -102,13 +98,36 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
                           Class javaType)
         throws IOException;
 
+    /**
+     * Serialize the indicated value as an element with the name
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive, the
+     * javaType is the actual unwrapped object type.
+     * The xmlType (if specified) is the QName of the type that is used to set
+     * xsi:type.  If not specified, xsi:type is set by using the javaType to
+     * find an appopriate xmlType from the TypeMappingRegistry.
+     * The sendNull flag indicates whether null values should be sent over the
+     * wire (default is to send such values with xsi:nil="true").
+     * The sendType flag indicates whether the xsi:type flag should be sent
+     * (default is true).
+     * @param elemQName is the QName of the element
+     * @param attributes are additional attributes
+     * @param value is the object to serialize
+     * @param javaType is the "real" type of the value.
+     * @param xmlType is the qname of the type or null. (default is null)
+     * @param sendNull determines whether to send null values. (default is true)
+     * @param sendType determines whether to set xsi:type attribute. (default is true)
+     */
     public void serialize(QName elemQName,
                           Attributes attributes,
                           Object value,
                           Class javaType,
                           QName xmlType,
                           boolean sendNull,
-                          boolean sendType)
+                          Boolean sendType)
         throws IOException;
 
     /**
@@ -128,7 +147,7 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
                                 Object value, 
                                 Class javaType,
                                 QName xmlType,
-                                boolean sendType)
+                                Boolean sendType)
         throws IOException;
 
     /**
@@ -196,10 +215,20 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * we will add a new mapping and return a generated prefix of the form
      * "ns<num>".
      * @param uri is the namespace uri
-     * @param defaultPrefix optional parameter which is the default prefix
      * @return prefix
      */ 
     public String getPrefixForURI(String uri);
+
+    /**
+     * Get a prefix for a namespace URI.  This method will ALWAYS
+     * return a valid prefix - if the given URI is already mapped in this
+     * serialization, we return the previous prefix.  If it is not mapped,
+     * we will add a new mapping and return a generated prefix of the form
+     * "ns<num>".
+     * @param uri is the namespace uri
+     * @param defaultPrefix optional parameter which is the default prefix
+     * @return prefix
+     */
     public String getPrefixForURI(String uri, String defaultPrefix);
 
     /**
@@ -222,7 +251,7 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
 
     /**
      * Convert QName to a string of the form <prefix>:<localpart>
-     * @param QName
+     * @param qName
      * @return prefixed qname representation for serialization.
      */
     public String qName2String(QName qName);
@@ -230,14 +259,14 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
     /**
      * Convert attribute QName to a string of the form <prefix>:<localpart>
      * There are some special rules for attributes
-     * @param QName
+     * @param qName
      * @return prefixed qname representation for serialization.
      */
     public String attributeQName2String(QName qName);
 
     /**
      * Get the QName associated with the specified class.
-     * @param Class of an object requiring serialization.
+     * @param cls Class of an object requiring serialization.
      * @return appropriate QName associated with the class.
      */
     public QName getQNameForClass(Class cls);

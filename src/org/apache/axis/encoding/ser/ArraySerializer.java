@@ -284,7 +284,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, null, aValue, aClass,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      false); // Don't send xsi:type if it matches preferred QName
+                                      Boolean.FALSE); // Don't send xsi:type if it matches preferred QName
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -295,7 +295,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, null, aValue, aClass,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      false); // Don't send xsi:type if it matches preferred QName
+                                      Boolean.FALSE); // Don't send xsi:type if it matches preferred QName
 
                 }
             }

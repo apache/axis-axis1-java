@@ -155,12 +155,12 @@ public class SerializationContextImpl implements SerializationContext
         String id;
         Class javaType;
         QName xmlType;
-        boolean sendType;
+        Boolean sendType;
         Object value;
         MultiRefItem(String id,
                      Class javaType,
                      QName xmlType,
-                     boolean sendType, Object value) {
+                     Boolean sendType, Object value) {
             this.id = id;
             this.javaType = javaType;
             this.xmlType = xmlType;
@@ -562,7 +562,7 @@ public class SerializationContextImpl implements SerializationContext
                           Object value,
                           Class javaType)
         throws IOException {
-        serialize(elemQName, attributes, value, javaType, null, true, true);
+        serialize(elemQName, attributes, value, javaType, null, true, null);
     }
 
     /**
@@ -594,9 +594,11 @@ public class SerializationContextImpl implements SerializationContext
                           Class javaType,
                           QName xmlType,
                           boolean sendNull,
-                          boolean sendType)
+                          Boolean sendType)
         throws IOException
     {
+        boolean shouldSendType = (sendType == null) ? shouldSendXSIType() :
+            sendType.booleanValue();
         if (value == null) {
             // If the value is null, the element is
             // passed with xsi:nil="true" to indicate that no object is present.
@@ -604,7 +606,7 @@ public class SerializationContextImpl implements SerializationContext
                 AttributesImpl attrs = new AttributesImpl();
                 if (attributes != null && 0 < attributes.getLength())
                     attrs.setAttributes(attributes);
-                if (sendType)
+                if (shouldSendType)
                     attrs = (AttributesImpl) setTypeAttribute(attrs, xmlType);
                 String nil = schemaVersion.getNilQName().getLocalPart();
                 attrs.addAttribute(schemaVersion.getXsiURI(), nil, "xsi:" + nil,
@@ -624,7 +626,8 @@ public class SerializationContextImpl implements SerializationContext
                 //Attachment support and this is an object that should be treated as an attachment.
 
                 //Allow an the attachment to do its own serialization.
-                serializeActual(elemQName, attributes, value, javaType, xmlType, sendType);
+                serializeActual(elemQName, attributes, value, javaType,
+                                xmlType, sendType);
 
                 //No need to add to mulitRefs. Attachment data stream handled by
                 // the message;
@@ -777,7 +780,7 @@ public class SerializationContextImpl implements SerializationContext
                 serialize(multirefQName, attrs, mri.value,
                           mri.javaType, mri.xmlType,
                           true,
-                          true);   // mri.sendType
+                          null);   // mri.sendType
             }
 
             // Done processing the iterated values.  During the serialization
@@ -1089,9 +1092,12 @@ public class SerializationContextImpl implements SerializationContext
                                 Object value,
                                 Class javaType,
                                 QName xmlType,
-                                boolean sendType)
+                                Boolean sendType)
         throws IOException
     {
+        boolean shouldSendType = (sendType == null) ? shouldSendXSIType() :
+            sendType.booleanValue();
+
         if (value != null) {
             TypeMapping tm = getTypeMapping();
 
@@ -1113,8 +1119,8 @@ public class SerializationContextImpl implements SerializationContext
                 info = getSerializer(value.getClass(), value);
                 if (info != null) {
                     // Successfully found a serializer for the derived object.
-                    // Must serializer the type.
-                    sendType = true;
+                    // Must serialize the type.
+                    shouldSendType = true;
                     xmlType = null;
                 }
             }
@@ -1129,7 +1135,7 @@ public class SerializationContextImpl implements SerializationContext
                 info = getSerializer(javaType, value);
                 // Must send type if it does not match preferred type
                 if (xmlType != null) {
-                    sendType = true;
+                    shouldSendType = true;
                 }
                 xmlType = null;
             }
@@ -1137,7 +1143,7 @@ public class SerializationContextImpl implements SerializationContext
             if ( info != null ) {
 
                 // Send the xmlType if indicated.
-                if (sendType) {
+                if (shouldSendType) {
                     if (xmlType == null) {
                         xmlType = tm.getTypeQName(info.javaType);
                     }
