@@ -214,6 +214,8 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
+        String[] strValue = new String[] {"abc", "def"};
+        String[][] optArray = new String[][] {strValue};
         ElemWComplex elemWComplex = new ElemWComplex(
                 "one",
                 new QName[] {new QName("two")},
@@ -225,7 +227,8 @@ public class VerifyTestCase extends junit.framework.TestCase {
                 EnumDouble.value3,
                 EnumShort.value2,
                 EnumByte.value1,
-                new B(new A(3)));
+                new B(new A(3)),
+                optArray );
         try {
             binding.elemWComplexIn(elemWComplex);
         } catch (java.rmi.RemoteException re) {
