@@ -124,12 +124,15 @@ public class SymbolTable {
     // A list of the Type elements in the symbol table
     private Vector types = new Vector();
 
+    private boolean debug = false;
+
     /**
      * Construct a symbol table with the given Namespaces.
      */
-    public SymbolTable(Namespaces namespaces, boolean addImports) {
+    public SymbolTable(Namespaces namespaces, boolean addImports, boolean debug) {
         this.namespaces = namespaces;
         this.addImports = addImports;
+        this.debug = debug;
     } // ctor
 
     /**
@@ -332,6 +335,10 @@ public class SymbolTable {
         // Get the QName of the node's name attribute value
         QName qName = Utils.getNodeNameQName(node);
         if (qName != null) {
+            if (debug) {
+                System.out.println("Create Type From Def:" + qName);
+            }
+
             map(qName.getNamespaceURI());
 
             // If the node has a type or ref attribute, get the 
@@ -345,6 +352,10 @@ public class SymbolTable {
                     if (refType != null &&
                         refType.getNode() != null) {
                         refQName = Utils.getNodeTypeRefQName(refType.getNode());
+                        // A 'collection' type has a node that refers to itself.
+                        // so we need to break out of the loop to avoid an infinite loop.
+                        if (refQName != null && refQName.equals(refType.getQName()))
+                            refQName = null;
                     }                         
                 }
                 // Create a type from the referenced type
@@ -398,9 +409,14 @@ public class SymbolTable {
             Type type = getTypeEntry(qName);
             if (type == null) {
                 // Type not defined, add a base java type or a refdType
+                if (debug) {
+                    System.out.println("Create Type From Ref:" + qName);
+                }
                 String baseJavaName = Utils.getBaseJavaName(qName);
                 if (baseJavaName != null)
                     symbolTablePut(new BaseJavaType(qName));
+                else if (javaName.indexOf("[") > 0)
+                    symbolTablePut(new CollectionType(qName, javaName, node));
                 else
                     symbolTablePut(new RefdType(qName, javaName));
             } else {
@@ -420,6 +436,14 @@ public class SymbolTable {
      * Convert the specified QName into a full Java Name.
      */
     public String getJavaName(QName qName) {
+
+        // If this is one of our special 'collection' qnames.
+        // get the element type and append []
+        if (qName.getLocalPart().indexOf("[") > 0) {
+            String localPart = qName.getLocalPart().substring(0,qName.getLocalPart().indexOf("["));
+            QName eQName = new QName(qName.getNamespaceURI(), localPart);
+            return getJavaName(eQName) + "[]";
+        }
 
         // Handle the special "java" namespace for types
         if (qName.getNamespaceURI().equalsIgnoreCase("java")) {
