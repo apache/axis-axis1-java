@@ -499,6 +499,10 @@ public class MessageContext {
             setOperationStyle(service.getStyle());
             setEncodingStyle((service.getStyle() == ServiceDesc.STYLE_RPC) ?
                                         Constants.URI_CURRENT_SOAP_ENC : "");
+
+            // This MessageContext should now defer properties it can't find
+            // to the Service's options.
+            bag.setParent(sh.getOptions());
         }
     }
 

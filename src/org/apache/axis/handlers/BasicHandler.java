@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.LockableHashtable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,8 +82,18 @@ public abstract class BasicHandler implements Handler {
     protected static Log log =
         LogFactory.getLog(BasicHandler.class.getName());
 
-    protected Hashtable  options ;
+    protected Hashtable options;
     protected String name;
+
+    /** Should this Handler use a LockableHashtable for options? */
+    protected void initHashtable(boolean makeLockable)
+    {
+        if (makeLockable) {
+            options = new LockableHashtable();
+        } else {
+            options = new Hashtable();
+        }
+    }
 
     /** Stubbed-out methods.  Override in your child class to implement
      * any real behavior.
@@ -112,7 +123,7 @@ public abstract class BasicHandler implements Handler {
      * Set the given option (name/value) in this handler's bag of options
      */
     public void setOption(String name, Object value) {
-        if ( options == null ) options = new Hashtable();
+        if ( options == null ) initHashtable(false);
         options.put( name, value );
     }
     
