@@ -115,11 +115,11 @@ public class XMLUtils {
 
   public static String DocumentToString(Document doc) {
     try {
-      ByteArrayOutputStream  baos = new ByteArrayOutputStream();
-      XMLSerializer  xs = new XMLSerializer( baos, new OutputFormat() );
+      StringWriter sw = new StringWriter();
+      XMLSerializer  xs = new XMLSerializer( sw, new OutputFormat() );
       xs.serialize( (Document) doc );
-      baos.close();
-      return( baos.toString() );
+      sw.close();
+      return(sw.toString() );
     }
     catch( Exception e ) {
       e.printStackTrace();
