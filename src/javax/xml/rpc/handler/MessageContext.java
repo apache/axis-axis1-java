@@ -104,7 +104,7 @@ public interface MessageContext {
      * @throws java.lang.IllegalArgumentException if an illegal
      *        property name is specified
      */
-    public abstract void removeProperty(String nae);
+    public abstract void removeProperty(String name);
 
     /**
      * Returns true if the <code>MessageContext</code> contains a property
