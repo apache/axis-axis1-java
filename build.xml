@@ -278,6 +278,8 @@ Copyright:
       classpathref="classpath">
       <exclude name="**/old/**/*" />
       <exclude name="**/bak/**"/>
+      <exclude name="**/org/apache/axis/components/net/JSSE*.java" unless="jsse.present"/>
+      <exclude name="**/org/apache/axis/components/net/Fake*.java" unless="jsse.present"/>
       <exclude name="**/org/apache/axis/attachments/AttachmentsImpl.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/AttachmentPart.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/AttachmentUtils.java" unless="attachments.present"/>
@@ -302,7 +304,6 @@ Copyright:
       <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/handler/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/server/Servlet*.java" unless="servlet.present"/>
-      <exclude name="**/org/apache/axis/transport/http/FakeTrustSocketFactory.java" unless="jsse.present"/>
       <exclude name="**/*TestSuite.java" unless="junit.present"/>
     </javac>
     <copy file="${src.dir}/org/apache/axis/server/server-config.wsdd"
