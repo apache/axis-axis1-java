@@ -54,18 +54,6 @@
  */
 package org.apache.axis.components.net;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-
-import org.apache.axis.AxisProperties;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -76,8 +64,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.KeyStore;
-import java.security.Security;
 import java.util.Hashtable;
+
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
+import org.apache.axis.AxisProperties;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
+
 
 /**
  * SSL socket factory. It _requires_ a valid RSA key and
@@ -88,12 +83,6 @@ import java.util.Hashtable;
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class JDK14JSSESocketFactory extends DefaultSocketFactory {
-
-    /** Field keystoreType           */
-    private String keystoreType;
-
-    /** Field defaultKeystoreType           */
-    static String defaultKeystoreType = "JKS";
 
     /** Field defaultProtocol           */
     static String defaultProtocol = "TLS";
@@ -114,8 +103,6 @@ public class JDK14JSSESocketFactory extends DefaultSocketFactory {
     static String defaultKeystoreFile =
         System.getProperty("user.home") + "/.keystore";
 
-    /** Field defaultKeyPass           */
-    static String defaultKeyPass = "changeit";
 
     /**
      * Constructor JSSESocketFactory
@@ -262,16 +249,15 @@ public class JDK14JSSESocketFactory extends DefaultSocketFactory {
     private void initFactory() throws IOException {
 
         try {
-            Security.addProvider(new sun.security.provider.Sun());
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-
-            if(attributes == null) {
+            sslFactory = null;
+            
+            if (attributes != null) {
+                sslFactory = createSocketFactory();
+            }
+            
+            if(sslFactory == null) {
                 //No configuration specified. Get the default.
-                sslFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-            } else {
-                //Configuration specified in wsdd.
-                SSLContext context = getContext();
-                sslFactory = context.getSocketFactory();
+                sslFactory = (SSLSocketFactory)SSLSocketFactory.getDefault();
             }
         } catch (Exception e) {
             if (e instanceof IOException) {
@@ -287,26 +273,39 @@ public class JDK14JSSESocketFactory extends DefaultSocketFactory {
      * @return SSLContext
      * @throws Exception
      */
-    protected SSLContext getContext() throws Exception {
+    protected SSLSocketFactory createSocketFactory() throws Exception {
         // Please don't change the name of the attribute - other
         // software may depend on it ( j2ee for sure )
-        String keystoreFile = (String) attributes.get("keystore");
+        //
+        // Adding checks for system property as-per JSSE 1.0.3 users guide.
+        // Added alternate 'attribute' name also, just to be thorough.
+
+        String keystoreFile = AxisProperties.getProperty("javax.net.ssl.keyStore");
         if (keystoreFile == null) {
-            keystoreFile = defaultKeystoreFile;
+            keystoreFile = (String) attributes.get("javax.net.ssl.keyStore");
+            if (keystoreFile == null) {
+                keystoreFile = (String) attributes.get("keystore");
+                if (keystoreFile == null) {
+                    keystoreFile = defaultKeystoreFile;
+                }
+            }
         }
 
-        keystoreType = (String) attributes.get("keystoreType");
+        String keystoreType = AxisProperties.getProperty("javax.net.ssl.keyStoreType");
         if (keystoreType == null) {
-            keystoreType = defaultKeystoreType;
+            keystoreType = (String) attributes.get("javax.net.ssl.keyStoreType");
+            if (keystoreType == null) {
+                keystoreType = (String) attributes.get("keystoreType");
+                if (keystoreType == null) {
+                    keystoreType = KeyStore.getDefaultType();
+                }
+            }
         }
 
         // determine whether we want client authentication
         // the presence of the attribute enables client auth
         clientAuth = null != (String) attributes.get("clientauth");
         String keyPass = (String) attributes.get("keypass");
-        if (keyPass == null) {
-            keyPass = defaultKeyPass;
-        }
 
         String keystorePass = (String) attributes.get("keystorePass");
         if (keystorePass == null) {
@@ -327,31 +326,34 @@ public class JDK14JSSESocketFactory extends DefaultSocketFactory {
 
         // You can't use ssl without a server certificate.
         // Create a KeyStore ( to get server certs )
-        KeyStore kstore = initKeyStore(keystoreFile, keystorePass);
+        KeyStore kstore = initKeyStore(keystoreFile, keystorePass, keystoreType);
 
         // Key manager will extract the server key
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
-
-        kmf.init(kstore, keyPass.toCharArray());
-
-        // If client authentication is needed, set up TrustManager
-        TrustManager[] tm = null;
-
-        if (clientAuth) {
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-
-            tmf.init(kstore);
-            tm = tmf.getTrustManagers();
-        }
-
-        // Create a SSLContext ( to create the ssl factory )
-        // This is the only way to use server sockets with JSSE 1.0.1
-        SSLContext context = SSLContext.getInstance(protocol);    // SSL
-
-        // init context with the key managers
-        context.init(kmf.getKeyManagers(), tm,
-                new java.security.SecureRandom());
-        return context;
+//        KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
+//
+//        kmf.init(kstore, keyPass.toCharArray());
+//
+//        // If client authentication is needed, set up TrustManager
+//        TrustManager[] tm = null;
+//
+//        if (clientAuth) {
+//            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+//
+//            tmf.init(kstore);
+//            tm = tmf.getTrustManagers();
+//        }
+//
+//        // Create a SSLContext ( to create the ssl factory )
+//        // This is the only way to use server sockets with JSSE 1.0.1
+//        SSLContext context = SSLContext.getInstance(protocol);    // SSL
+//
+//        // init context with the key managers
+//        context.init(kmf.getKeyManagers(), tm,
+//                new java.security.SecureRandom());
+//
+//        return context.getSocketFactory();
+/* don't break build */
+return null;
     }
 
     /**
@@ -363,8 +365,11 @@ public class JDK14JSSESocketFactory extends DefaultSocketFactory {
      * @return keystore
      * @throws IOException
      */
-    private KeyStore initKeyStore(String keystoreFile, String keyPass)
-            throws IOException {
+    private static KeyStore initKeyStore(String keystoreFile,
+                                         String keyPass,
+                                         String keystoreType)
+            throws IOException
+    {
         try {
             KeyStore kstore = KeyStore.getInstance(keystoreType);
 
