@@ -198,7 +198,13 @@ Copyright:
     </condition>
 
 
-    <echo message="--- Build environment for ${Name} ---" />
+    <echo message="-----------------------------------------------------------------"/>
+    <echo message="       Build environment for ${Name} ${axis.version} [${year}]   "/>
+    <echo message="-----------------------------------------------------------------"/>
+    <echo message="Building with ${ant.version}"/>
+    <echo message="using build file ${ant.file}"/>
+    <echo message="-----------------------------------------------------------------"/>
+
     <echo message="--- Flags (Note: If the {property name} is displayed, "/>
     <echo message="           then the component is not present)" />
     <echo message=""/>

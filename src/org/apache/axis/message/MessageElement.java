@@ -754,11 +754,26 @@ public class MessageElement implements SOAPElement
     }
 
     // JAXM Node methods...
-
     /**
-     * Text nodes are not supported.
+     * Returns the the value of the immediate child of this <code>Node</code>
+     * object if a child exists and its value is text.
+     * @return  a <code>String</code> with the text of the immediate child of
+     *    this <code>Node</code> object if (1) there is a child and
+     *    (2) the child is a <code>Text</code> object;
+     *      <code>null</code> otherwise
      */
     public String getValue() {
+        try {
+            Element element = getAsDOM();
+            if(element.hasChildNodes()){
+                org.w3c.dom.Node node = element.getFirstChild();
+                if(node.getNodeType()==org.w3c.dom.Node.TEXT_NODE){
+                    return node.getNodeValue();
+                }
+            }
+        } catch (Exception t){
+            log.debug("getValue()", t);
+        }
         return null;
     }
 

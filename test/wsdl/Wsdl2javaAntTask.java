@@ -53,19 +53,15 @@
  */
 package test.wsdl;
 
-import org.apache.axis.utils.XMLUtils;
-
+import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.wsdl.toJava.Emitter;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.Authenticator;
 import java.util.HashMap;
 
 /**
@@ -144,6 +140,8 @@ public class Wsdl2javaAntTask extends Task
             emitter.setTypeMappingVersion(tm);
             emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));
             emitter.setTimeout(timeout);
+
+            Authenticator.setDefault(new DefaultAuthenticator(null,null));
 
             log("WSDL2Java " + url, Project.MSG_INFO);
             try {
@@ -263,6 +261,7 @@ public class Wsdl2javaAntTask extends Task
                 namespaceMap.put(namespace, packageName);
         }
     }
+
 }
 
 

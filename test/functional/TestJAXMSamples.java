@@ -60,6 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import samples.jaxm.UddiPing;
+import DelayedStockQuote;
 
 /**
  * Test the JAX-RPC compliance samples.
@@ -76,6 +77,29 @@ public class TestJAXMSamples extends TestCase {
             log.info("Testing JAXM UddiPing sample.");
             UddiPing.searchUDDI("IBM", "http://www-3.ibm.com/services/uddi/testregistry/inquiryapi");
             log.info("Test complete.");
+        } catch (Throwable t) {
+            if (t instanceof AxisFault) ((AxisFault) t).dump();
+            t.printStackTrace();
+            throw new Exception("Fault returned from test: " + t);
+        }
+    } // testGetQuote
+
+    public void testDelayedStockQuote() throws Exception {
+        try {
+            log.info("Testing JAXM DelayedStockQuote sample.");
+            DelayedStockQuote stockQuote = new DelayedStockQuote();
+            System.out.print("The last price for SUNW is " + stockQuote.getStockQuote("SUNW"));
+            log.info("Test complete.");
+        } catch (javax.xml.soap.SOAPException e) {
+            Throwable t = e.getCause();
+            if(t != null){
+                if (t instanceof AxisFault) ((AxisFault) t).dump();
+                t.printStackTrace();
+                throw new Exception("Fault returned from test: " + t);
+            } else {
+                e.printStackTrace();
+                throw new Exception("Exception returned from test: " + e);
+            }
         } catch (Throwable t) {
             if (t instanceof AxisFault) ((AxisFault) t).dump();
             t.printStackTrace();
