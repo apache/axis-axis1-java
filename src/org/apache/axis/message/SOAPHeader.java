@@ -63,7 +63,7 @@ import java.util.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
 import org.apache.axis.message.* ;
-import org.apache.axis.utils.* ;
+import org.apache.axis.* ;
 
 /**
  *

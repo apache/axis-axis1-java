@@ -103,11 +103,11 @@ public class SimpleAxisEngine implements Handler {
     HandlerRegistry hr = (HandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
     HandlerRegistry sr = (HandlerRegistry)getOption(Constants.SERVICE_REGISTRY);
 
-    /* The target web-server should be place in the MC_TARGET entry in the */
-    /* bag of the msgContext object.  If it's not there we need to scan    */
-    /* the incoming message to find it.                                    */
+    /* The target web-server should be place in the MC_HTTP_SOAPACTION     */
+    /* entry in the bag of the msgContext object.  If it's not there we    */
+    /* need to scan the incoming message to find it.                       */
     /***********************************************************************/
-    String action = (String) msgContext.getProperty( Constants.MC_TARGET );
+    String action = (String) msgContext.getProperty( Constants.MC_HTTP_SOAPACTION );
     if ( action == null ) action = "EchoService" ; // Temporary - need 2 scan
 
     Handler h = sr.find( action );
