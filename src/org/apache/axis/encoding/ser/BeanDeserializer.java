@@ -161,7 +161,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
 
         if (propDesc == null) {
             // look for a field by this name.
-            propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
+            propDesc = (BeanPropertyDescriptor) propertyMap.get(JavaUtils.xmlNameToJava(localName));
         }
         if (propDesc == null) {
             // No such field
