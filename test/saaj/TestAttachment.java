@@ -5,6 +5,12 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
 
 public class TestAttachment extends junit.framework.TestCase {
 
@@ -76,10 +82,43 @@ public class TestAttachment extends junit.framework.TestCase {
 	    }
         assertTrue(nAttachments==2);
     }
+    
+    public void testBadAttSize() throws Exception {
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage message = factory.createMessage();
+
+        class Src implements DataSource{
+            InputStream m_src;
+            String m_type;
+
+            public Src(InputStream data, String type){
+                m_src=data;
+                m_type=type;
+            }
+            public String getContentType(){
+                return m_type;
+            }
+            public InputStream getInputStream() throws IOException{
+                m_src.reset();
+                return m_src;
+            }
+            public String getName(){
+                return "Some-Data";
+            }
+            public OutputStream getOutputStream(){
+                throw new UnsupportedOperationException("I don't give output streams");
+            }
+        }
+        ByteArrayInputStream ins=new ByteArrayInputStream(new byte[5]);
+        DataHandler dh=new DataHandler(new Src(ins,"text/plain"));
+        AttachmentPart part = message.createAttachmentPart(dh);
+        assertEquals("Size should match",5,part.getSize());
+    }
 
     public static void main(String[] args) throws Exception {
         test.saaj.TestAttachment tester = new test.saaj.TestAttachment("TestSAAJ");
         tester.testMultipleAttachments();
         tester.testStringAttachment();
+        tester.testBadAttSize();
     }
 }
