@@ -82,6 +82,9 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          The name to use use for the binding element.
+ If not specified, the value of the
+ <tt>servicePortName</tt> + "SoapBinding" is used.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -95,6 +98,8 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          the class name to import, eg. org.example.Foo. Required.
+ The class must be on the classpath.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -108,6 +113,21 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Comma separated list of methods to exclude from the wsdl file.
+        </font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
+        </td>
+    </tr>
+    <!-- Attribute -->
+    <tr>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">extraclasses</font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          The setter for the "extraClasses" attribute
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -121,6 +141,8 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Sometimes extra information is available in the implementation class
+ file. Use this option to specify the implementation class.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -134,10 +156,15 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Optional attribute that indicates the name of the input wsdl file.
+ The output wsdl file will contain everything from the input wsdl
+ file plus the new constructs. If a new construct is already present
+ in the input wsdl file, it is not added. This option is useful for
+ constructing a wsdl file with multiple ports, bindings, or portTypes.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.io.File</font>
         </td>
     </tr>
     <!-- Attribute -->
@@ -147,6 +174,10 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          The url of the location of the service. The name after the last slash or
+ backslash is the name of the service port (unless overridden by the -s
+ option). The service port address location attribute is assigned the
+ specified value.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -160,6 +191,25 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          the location of the interface WSDL when generating an implementation WSDL
+ Required when <tt>outputImpl</tt> is set
+        </font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
+        </td>
+    </tr>
+    <!-- Attribute -->
+    <tr>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">methods</font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          If this option is specified, only the indicated methods in your
+ interface class will be exported into the WSDL file.  The methods list
+ must be comma separated.  If not specified, all methods declared in
+ the interface class will be exported into the WSDL file
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -173,6 +223,7 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          the target namespace. Required.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -186,6 +237,7 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Namespace of the implementation WSDL.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -199,10 +251,13 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          The name of the output WSDL file.
+ If not specified, a suitable default WSDL file is written into
+ the current directory.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.io.File</font>
         </td>
     </tr>
     <!-- Attribute -->
@@ -212,10 +267,13 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Use this option to indicate the name of the output implementation WSDL
+ file.  If specified, Java2WSDL will produce separate interface and implementation
+ WSDL files.  If not, a single WSDL file is generated
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.io.File</font>
         </td>
     </tr>
     <!-- Attribute -->
@@ -225,6 +283,23 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Indicates the name to use use for the portType element.
+ If not specified, the class-of-portType name is used.
+        </font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
+        </td>
+    </tr>
+    <!-- Attribute -->
+    <tr>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">serviceelementname</font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          the name of the service element.
+ If not specified, the service element is the <tt>portTypeName</tt>Service.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -238,6 +313,7 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          service port name (obtained from location if not specified)
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -251,6 +327,8 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Comma separated list of classes which stop the Java2WSDL
+ inheritance search.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -264,6 +342,10 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          The style of the WSDL document: RPC, DOCUMENT or WRAPPED.
+ If RPC, a rpc/encoded wsdl is generated. If DOCUMENT, a
+ document/literal wsdl is generated. If WRAPPED, a
+ document/literal wsdl is generated using the wrapped approach.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -277,6 +359,22 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          the default type mapping registry to use. Either 1.1 or 1.2.
+ Default is 1.1
+        </font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">org.apache.axis.tools.ant.wsdl.TypeMappingVersionEnum</font>
+        </td>
+    </tr>
+    <!-- Attribute -->
+    <tr>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">use</font>
+        </td>
+        <td bgcolor="#eeeeee" valign="top" align="left">
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          Set the use option
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -290,6 +388,7 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
+          should inherited methods be exported too? Default=false
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -319,13 +418,30 @@
       <tr><td>&nbsp;</td></tr>
       <tr><td bgcolor="#828DA6">
         <font color="#ffffff" face="arial,helvetica.sanserif" size="-1">
-          <strong>mapping</strong> (org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask.Mapping)</font>
+          <strong>mapping</strong> (org.apache.axis.tools.ant.wsdl.NamespaceMapping)</font>
       </td></tr>
       <tr><td><blockquote>
-        the command arguments
-<short-description><![CDATA[The command arguments.]]></short-description>
+        add a mapping of namespaces to packages
+<short-description><![CDATA[Add a mapping of namespaces to packages.]]></short-description>
 <description>
-          <![CDATA[the command arguments]]>
+          <![CDATA[add a mapping of namespaces to packages]]>
+        </description>
+
+      </blockquote></td></tr>
+    </table>
+    <!-- End Element -->
+    <!-- Start Element -->
+    <table border="0" cellspacing="0" cellpadding="2" width="100%">
+      <tr><td>&nbsp;</td></tr>
+      <tr><td bgcolor="#828DA6">
+        <font color="#ffffff" face="arial,helvetica.sanserif" size="-1">
+          <strong>mappingset</strong> (org.apache.axis.tools.ant.wsdl.MappingSet)</font>
+      </td></tr>
+      <tr><td><blockquote>
+        add a mapping of namespaces to packages
+<short-description><![CDATA[Add a mapping of namespaces to packages.]]></short-description>
+<description>
+          <![CDATA[add a mapping of namespaces to packages]]>
         </description>
 
       </blockquote></td></tr>

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Language" content="en-us">
-  <title>Axis-admin
+  <title>Runaxisfunctionaltests
  Task</title>
 </head>
 
@@ -16,9 +16,9 @@
     <td>
       <table border="0" width="100%"><tr>
           <td valign="bottom">
-            <font size="+3" face="arial,helvetica,sanserif"><strong>Axis-admin
+            <font size="+3" face="arial,helvetica,sanserif"><strong>Runaxisfunctionaltests
  Task</strong></font>
-            <br><font face="arial,helvetica,sanserif">Task to administer a local or remote Axis server.</font>
+            <br><font face="arial,helvetica,sanserif">Ant task for starting / stopping servers and running junit in the middle.</font>
           </td>
           <td>
             <!-- PROJECT LOGO -->
@@ -46,8 +46,12 @@
       </td></tr>
 
       <tr><td><blockquote>
-        Task to administer a local or remote Axis server. Remember, for remote admin,
- the server has to be accept remote management calls.
+        Ant task for starting / stopping servers and running junit in the middle.
+ Based on the Cactus org.apache.commons.cactus.ant package, heavily munged
+ and cruftily dumped into one file.
+ <p>
+ <i>For Axis development; there is no support or stability associated 
+  with this task</i>
       </blockquote></td></tr>
 
     </table>
@@ -79,40 +83,11 @@
     <!-- Attribute -->
     <tr>
         <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">debug</font>
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">httpservertarget</font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          set a debug flag
-        </font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">boolean</font>
-        </td>
-    </tr>
-    <!-- Attribute -->
-    <tr>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">failonerror</font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          Whether or not the build should halt if this task fails.
- Defaults to <code>true</code>.
-        </font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">boolean</font>
-        </td>
-    </tr>
-    <!-- Attribute -->
-    <tr>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">fileprotocol</font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          specifies that a simple file protocol be used
+          Sets the target to call to start server 2.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -122,11 +97,12 @@
     <!-- Attribute -->
     <tr>
         <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">hostname</font>
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">httpstoptarget</font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          name the host to admin
+          Sets the stop target.  This is the target which does
+ a HTTP admin shutdown on the simple server.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -136,11 +112,11 @@
     <!-- Attribute -->
     <tr>
         <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">newpassword</font>
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">tcpservertarget</font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          set a new password; only valid if action=passwd
+          Sets the target to call to start server 1.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -150,53 +126,11 @@
     <!-- Attribute -->
     <tr>
         <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">password</font>
+          <font color="#000000" size="-1" face="arial,helvetica,sanserif">testtarget</font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          the admin password
-        </font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
-        </td>
-    </tr>
-    <!-- Attribute -->
-    <tr>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">port</font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          the port to connect to
-        </font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">int</font>
-        </td>
-    </tr>
-    <!-- Attribute -->
-    <tr>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">servletpath</font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          the path to the AxisAdmin servlet
-        </font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
-        </td>
-    </tr>
-    <!-- Attribute -->
-    <tr>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">transportchain</font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          set the transport chain to use
+          Sets the target to call to run the tests.
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
@@ -210,39 +144,11 @@
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          full url to the admin endpoint
+          Sets the target URL (just http://host:port)
         </font>
         </td>
         <td bgcolor="#eeeeee" valign="top" align="left">
           <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
-        </td>
-    </tr>
-    <!-- Attribute -->
-    <tr>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">username</font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          username to log in as
-        </font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.lang.String</font>
-        </td>
-    </tr>
-    <!-- Attribute -->
-    <tr>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">xmlfile</font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">
-          the name of the XML file containing deployment information
-        </font>
-        </td>
-        <td bgcolor="#eeeeee" valign="top" align="left">
-          <font color="#000000" size="-1" face="arial,helvetica,sanserif">java.io.File</font>
         </td>
     </tr>
 
