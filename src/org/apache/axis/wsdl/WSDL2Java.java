@@ -63,6 +63,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.gen.WSDL2;
 import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.axis.wsdl.toJava.NamespaceSelector;
 
 /**
  * Command line interface to the WSDL2Java utility
@@ -119,9 +120,15 @@ public class WSDL2Java extends WSDL2 {
     /** Field bPackageOpt */
     protected boolean bPackageOpt = false;
 
+    /** Field namespace include */
+    protected static final int NS_INCLUDE_OPT = 'i';
+    
+    /** Filed namespace exclude */
+    protected static final int NS_EXCLUDE_OPT = 'x';
+
     /** Field emitter */
     private Emitter emitter;
-
+    
     /**
      * Define the understood options. Each CLOptionDescriptor contains:
      * - The "long" version of the option. Eg, "help" means that "--help" will
@@ -188,7 +195,17 @@ public class WSDL2Java extends WSDL2 {
                 new CLOptionDescriptor("classpath",
                         CLOptionDescriptor.ARGUMENT_OPTIONAL,
                         CLASSPATH_OPT,
-                        Messages.getMessage("optionClasspath"))
+                        Messages.getMessage("optionClasspath")),
+                new CLOptionDescriptor("nsInclude",
+                        CLOptionDescriptor.DUPLICATES_ALLOWED
+                        + CLOptionDescriptor.ARGUMENT_REQUIRED,
+                        NS_INCLUDE_OPT,
+                        Messages.getMessage("optionNSInclude")),
+                new CLOptionDescriptor("nsExclude",
+                        CLOptionDescriptor.DUPLICATES_ALLOWED
+                        + CLOptionDescriptor.ARGUMENT_REQUIRED,
+                        NS_EXCLUDE_OPT,
+                        Messages.getMessage("optionNSExclude"))
             };
 
     /**
@@ -211,7 +228,7 @@ public class WSDL2Java extends WSDL2 {
     protected Parser createParser() {
         return new Emitter();
     }    // createParser
-
+    
     /**
      * Parse an option
      * 
@@ -308,6 +325,17 @@ public class WSDL2Java extends WSDL2 {
                 ClassUtils.setDefaultClassLoader(ClassUtils.createClassLoader(
                         option.getArgument(),
                         this.getClass().getClassLoader()));
+                break;
+
+            case NS_INCLUDE_OPT:
+                NamespaceSelector include = new NamespaceSelector();
+                include.setNamespace(option.getArgument());
+                emitter.getNamespaceIncludes().add(include);
+                break;
+            case NS_EXCLUDE_OPT:
+                NamespaceSelector exclude = new NamespaceSelector();
+                exclude.setNamespace(option.getArgument());
+                emitter.getNamespaceExcludes().add(exclude);
                 break;
 
             default :

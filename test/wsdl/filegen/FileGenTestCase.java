@@ -62,6 +62,7 @@ package test.wsdl.filegen;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -104,6 +105,40 @@ public class FileGenTestCase extends junit.framework.TestCase {
                 "filegen";
     }
     
+    protected String getPrefix(String parent) {
+        if (parent == null || parent.length() == 0) {
+            return "";
+        }
+        else {
+            return parent + File.separator;
+        }
+    }
+
+    /** This method returns a array of String file paths, located within the
+     * supplied root directory. The string values are created relative to the 
+     * specified parent so that the names get returned in the form of 
+     * "file.java", "dir/file.java", "dir/dir/file.java", etc. This feature 
+     * asslows the various file specs to include files in sub-directories as
+     * well as the root directory.
+     */    
+    protected String[] getPaths(File root, String parent) {
+        File files[] = root.listFiles();
+        Set filePaths = new HashSet();
+        for(int i=0; i<files.length; i++) {
+            if (files[i].isDirectory()) {
+                String children[] = getPaths(files[i],
+                            getPrefix(parent) + files[i].getName());
+                filePaths.addAll(Arrays.asList(children));
+            }
+            else {
+                filePaths.add(getPrefix(parent) + files[i].getName());
+            }
+        }
+        String paths[] = new String[filePaths.size()];
+        return (String[]) filePaths.toArray(paths);
+    }
+
+    
     public void testFileGen() throws IOException {
         String rootDir = rootDir();
         Set shouldExist = shouldExist();
@@ -112,7 +147,7 @@ public class FileGenTestCase extends junit.framework.TestCase {
         // open up the output directory and check what files exist.
         File outputDir = new File(rootDir);
         
-        String[] files = outputDir.list();
+        String[] files = getPaths(outputDir, null);
 
         Vector shouldNotExist = new Vector();
 
@@ -129,11 +164,13 @@ public class FileGenTestCase extends junit.framework.TestCase {
         }
 
         if (shouldExist.size() > 0) {
-            fail("The following files should exist but do not:  " + shouldExist);
+            fail("The following files should exist in " + rootDir + 
+                ", but do not:  " + shouldExist);
         }
 
         if (shouldNotExist.size() > 0) {
-            fail("The following files should NOT exist, but do:  " + shouldNotExist);
+            fail("The following files should NOT exist in " + rootDir +
+                ", but do:  " + shouldNotExist);
         }
     }
 }

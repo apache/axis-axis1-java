@@ -56,12 +56,16 @@ package org.apache.axis.tools.ant.wsdl;
 import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.axis.wsdl.toJava.FactoryProperty;
+import org.apache.axis.wsdl.toJava.NamespaceSelector;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -132,6 +136,11 @@ public class Wsdl2javaAntTask extends Task
     private String username=null;
     private String password=null;
     private Path classpath=null;
+    private List nsIncludes = new ArrayList();
+    private List nsExcludes = new ArrayList();
+    private List properties = new ArrayList();
+    
+
 
     /**
      * do we print a stack trace when something goes wrong?
@@ -178,6 +187,9 @@ public class Wsdl2javaAntTask extends Task
         log("\tskeletonDeploy:" + skeletonDeploy, logLevel);
         log("\thelperGen:" + helperGen, logLevel);
         log("\tfactory:" + factory, logLevel);
+        log("\tnsIncludes:" + nsIncludes, logLevel);
+        log("\tnsExcludes:" + nsExcludes, logLevel);
+        log("\tfactoryProps:" + properties, logLevel);
         log("\ttestCase:" + testCase, logLevel);
         log("\tnoImports:" + noImports, logLevel);
         log("\tNStoPkg:" + namespaceMap, logLevel);
@@ -210,7 +222,7 @@ public class Wsdl2javaAntTask extends Task
         validate();
         try {
             // Instantiate the emitter
-            Emitter emitter = new Emitter();
+            Emitter emitter = createEmitter();
 
             //extract the scope
             Scope scope = Scope.getScope(deployScope, null);
@@ -230,9 +242,16 @@ public class Wsdl2javaAntTask extends Task
             }
             emitter.setTestCaseWanted(testCase);
             emitter.setHelperWanted(helperGen);
+//            if (factorySpec != null) {
+//                emitter.setFactorySpec(factorySpec);
+//            }
+//            else 
             if (factory != null) {
                 emitter.setFactory(factory);
             }
+            emitter.setNamespaceIncludes(nsIncludes);
+            emitter.setNamespaceExcludes(nsExcludes);
+            emitter.setProperties(properties);
             emitter.setImports(!noImports);
             emitter.setAllWanted(all);
             emitter.setOutputDir(output);
@@ -523,6 +542,44 @@ public class Wsdl2javaAntTask extends Task
             classpath = new Path(project);
         }
         return classpath.createPath();
+    }
+    
+    /** Adds an additional namespace to the list to be included
+     * in source code generation.
+     */    
+    public NamespaceSelector createNsInclude() {
+        NamespaceSelector selector = new NamespaceSelector();
+        nsIncludes.add(selector);
+        return selector;
+    }
+    
+    /** Adds an additional namespace to the list to be excluded
+     * from source code generation.
+     */
+    public NamespaceSelector createNsExclude() {
+        NamespaceSelector selector = new NamespaceSelector();
+        nsExcludes.add(selector);
+        return selector;
+    }
+    
+    /** Adds a property name/value pair for specialized 
+     * JavaGeneratorFactories.
+     */
+    public FactoryProperty createProperty() {
+        FactoryProperty property = new FactoryProperty();
+        properties.add(property);
+        return property;
+    }
+    
+    /** This factory method makes it easier to extend this Ant task
+     * with a custom Emitter, if necessary.
+     */
+    protected Emitter createEmitter() {
+        return new Emitter();
+    }
+        
+    protected NamespaceSelector createSelector() {
+        return new NamespaceSelector();
     }
     
     private void traceSystemSetting(String setting,int logLevel) {

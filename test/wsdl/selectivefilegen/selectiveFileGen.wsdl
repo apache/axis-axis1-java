@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="name selectivefilegen test"
+    targetNamespace="urn:services.selectivefilegen.wsdl.test"
+    xmlns:tns="urn:services.selectivefilegen.wsdl.test"
+    xmlns:bean1="urn:bean1.selectivefilegen.wsdl.test"
+    xmlns:bean2="urn:bean2.selectivefilegen.wsdl.test"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+   <!-- types
+        Define a couple of types in different namespaces to simulate importing
+        types from different packages. Some, we'll want to generate code for
+        and others we'll want to use use custom-generated types.
+       -->
+   <wsdl:types>
+       <xsd:schema targetNamespace="urn:bean1.selectivefilegen.wsdl.test"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:complexType name="Bean1">
+                <xsd:sequence>
+                    <xsd:element name="domain" type="xsd:string"/>
+                    <xsd:element name="service" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+       <xsd:schema targetNamespace="urn:bean2.selectivefilegen.wsdl.test"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:complexType name="Bean2">
+                <xsd:sequence>
+                    <xsd:element name="domain" type="xsd:string"/>
+                    <xsd:element name="service" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    
+    <!-- Messages
+    -->
+    <wsdl:message name="BeanMessage">
+        <wsdl:part name="b1" type="bean1:Bean1"/>
+        <wsdl:part name="b2" type="bean2:Bean2"/>
+    </wsdl:message>
+
+
+    <!-- port types
+        -->
+    <wsdl:portType name="Reporter">
+       <wsdl:operation name="sendBeans">
+          <wsdl:input name="beanMessage" message="tns:BeanMessage"/>
+       </wsdl:operation>
+    </wsdl:portType>  
+ 
+    <!-- bindings
+        -->
+    <wsdl:binding name="ReporterSoapBinding"
+              type="tns:Reporter">
+        <soap:binding style="rpc"
+                          transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="sendBeans">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="beanMessage">
+                <soap:body use="literal"
+                               namespace="urn:services.selectivefilegen.wsdl.test"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+
+</definitions>
