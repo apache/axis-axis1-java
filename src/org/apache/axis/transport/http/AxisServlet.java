@@ -857,6 +857,10 @@ public class AxisServlet extends AxisServletBase {
                     t2=System.currentTimeMillis();
                 }
                 responseMsg = msgContext.getResponseMessage();
+                if (responseMsg == null) {
+                    //tell everyone that something is wrong
+                    throw new Exception(Messages.getMessage("noResponse01"));
+                }
             } catch (AxisFault fault) {
                 //log and sanitize
                 processAxisFault(fault);
