@@ -28,7 +28,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
     public ExtensibilityQueryTestCase(String name) {
         super(name);
     }
-
+    
     public void testExtensibilityQueryPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
         java.net.URL url = new java.net.URL(new test.wsdl.extensibility.ExtensibilityQueryLocator().getExtensibilityQueryPortAddress() + "?WSDL");
@@ -91,57 +91,57 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Binding initialization Exception caught: " + e);
         }
         assertTrue("binding is null", binding != null);
-
-        try {
-        ExtensibilityType expression = new ExtensibilityType(); 
-
-        MessageElement [] elements = new MessageElement[4];
-
-            elements[0] = new Text("123");
-        elements[1] = new Text("  456");
         
+        try {
+            ExtensibilityType expression = new ExtensibilityType(); 
+            
+            MessageElement [] elements = new MessageElement[4];
+            
+            elements[0] = new Text("123");
+            elements[1] = new Text("  456");
+            
             BookType book = new BookType();
             book.setSubject("all");
             QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
             elements[2] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
-
-        elements[3] = new Text("789");
-
+            
+            elements[3] = new Text("789");
+            
             expression.set_any(elements);
-
+            
             // call the operation
             ExtensibilityType any = binding.mixedQuery(expression);
-
-        if (any == null) {
-        throw new Exception("No output returned");
-        }
-
-        // validate results
+            
+            if (any == null) {
+                throw new Exception("No output returned");
+            }
+            
+            // validate results
             MessageElement [] anyContent = any.get_any();
-
-        if (anyContent == null) {
-        throw new Exception("No any");
-        }
-        if (anyContent.length != 2) {
-        throw new Exception("Expected: 2 got: " + 
-                    anyContent.length + " element");
-        }
-
-        Object obj = anyContent[0].getObjectValue(BookType.class);
-        BookType bookQuery = (BookType)obj;
-        String subject = bookQuery.getSubject();
-        if (!"gotAll".equals(subject)) {
-        throw new Exception("Book subject query reply should be gotAll, instead was " + subject);
-        }
-
-        String expected = "ABCD";
-        String received = anyContent[1].toString();
-
-        if (!expected.equals(received)) {
-        throw new Exception("Expected: " + expected + 
-                    " received: " + received);
-        }
-        
+            
+            if (anyContent == null) {
+                throw new Exception("No any");
+            }
+            if (anyContent.length != 2) {
+                throw new Exception("Expected: 2 got: " + 
+                                    anyContent.length + " element");
+            }
+            
+            Object obj = anyContent[0].getObjectValue(BookType.class);
+            BookType bookQuery = (BookType)obj;
+            String subject = bookQuery.getSubject();
+            if (!"gotAll".equals(subject)) {
+                throw new Exception("Book subject query reply should be gotAll, instead was " + subject);
+            }
+            
+            String expected = "ABCD";
+            String received = anyContent[1].toString();
+            
+            if (!expected.equals(received)) {
+                throw new Exception("Expected: " + expected + 
+                                    " received: " + received);
+            }
+            
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -185,5 +185,16 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             assertTrue("Unable to deploy " + INPUT_FILE + ". ERROR: " + e, false);
         }
     }
+
+    public void testMixedType() {
+        MixedType1 t1 = new MixedType1();
+        assertTrue(t1 instanceof org.apache.axis.encoding.MixedContentType);
+        // restriction cases
+        MixedType2 t2 = new MixedType2();
+        assertFalse(t2 instanceof org.apache.axis.encoding.MixedContentType);
+        MixedType3 t3 = new MixedType3();
+        assertFalse(t3 instanceof org.apache.axis.encoding.MixedContentType);
+    }
+    
 }
 

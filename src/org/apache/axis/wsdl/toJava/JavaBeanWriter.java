@@ -290,18 +290,13 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
         }
 
-	if (!type.isSimpleType()) {
-	    Node node = type.getNode();
-	    String mixed = ((Element)node).getAttribute("mixed");
-	    if ("true".equalsIgnoreCase(mixed) ||
-		"1".equals(mixed)) {
-		isMixed = true;
-		if (!isAny) {
-		    names.add("org.apache.axis.message.MessageElement []");
-		    names.add(Constants.ANYCONTENT);
-		}
-	    }
-	}
+        if (enableMemberFields && SchemaUtils.isMixed(type.getNode())) {
+            isMixed = true;
+            if (!isAny) {
+                names.add("org.apache.axis.message.MessageElement []");
+                names.add(Constants.ANYCONTENT);
+            }
+        }
 
         // Add attribute names
         if (attributes != null) {
@@ -423,7 +418,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             implementsText += ", org.apache.axis.encoding.AnyContentType";
         }
 
-	if (isMixed) {
+        if (isMixed) {
             implementsText += ", org.apache.axis.encoding.MixedContentType";
         }
 
