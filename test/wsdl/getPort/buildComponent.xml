@@ -23,13 +23,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.getPort"/>
     <!-- This tests the getPort method in generated services.  -->
-    <wsdl2java url="test/wsdl/getPort/getPort.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/getPort/getPort.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes"
                testcase="no">
     </wsdl2java>
@@ -40,23 +40,14 @@
       <include name="test/wsdl/getPort/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/getPort/*.java" />
     </javac>
 </target>
 
-<target name="deploy"/>
-
-<target name="run"  depends="setenv" >
-    <runaxisfunctionaltests
-      url="http://localhost:8088"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
-      testTarget="component-junit-functional"
-      stopTarget="stop-functional-test-http-server" />
+<target name="run" >
+  <antcall target="execute-Component" />
 </target>
-
-<target name="undeploy"/>
 
 </project>
