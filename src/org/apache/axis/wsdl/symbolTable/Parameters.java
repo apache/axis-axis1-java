@@ -15,6 +15,7 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
+import javax.wsdl.OperationType;
 import java.util.Map;
 import java.util.Vector;
 
@@ -22,6 +23,8 @@ import java.util.Vector;
  * This class simply collects all the parameter or message data for an operation into one place.
  */
 public class Parameters {
+    /** The MEP for this operation (default is request-response) */
+    public OperationType mep = OperationType.REQUEST_RESPONSE;
 
     // This vector contains instances of the Parameter class
 

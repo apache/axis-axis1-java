@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
+import javax.wsdl.OperationType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -298,6 +299,11 @@ public class RPCProvider extends JavaProvider {
                     new String[]{methodSig, argClasses}),
                     e);
         }
+        
+        /** If this is a one-way operation, there is nothing more to do.
+         */ 
+        if (operation.getMep() == OperationType.ONE_WAY)
+            return;
         
         /* Now put the result in the result SOAPEnvelope */
         /*************************************************/

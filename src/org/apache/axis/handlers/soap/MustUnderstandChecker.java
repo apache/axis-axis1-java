@@ -19,6 +19,7 @@ package org.apache.axis.handlers.soap;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Message;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
@@ -52,8 +53,12 @@ public class MustUnderstandChecker extends BasicHandler {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("semanticCheck00"));
         }
-        SOAPEnvelope env =
-                (SOAPEnvelope) msgContext.getCurrentMessage().getSOAPEnvelope();
+        
+        Message msg = msgContext.getCurrentMessage();
+        if (msg == null)
+            return;  // nothing to do if there's no message
+        
+        SOAPEnvelope env = msg.getSOAPEnvelope();
         Vector headers = null;
         if (service != null) {
             ArrayList acts = service.getActors();

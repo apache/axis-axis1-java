@@ -88,6 +88,11 @@ public class WSDDOperation extends WSDDElement
         if (soapAction != null) {
             desc.setSoapAction(soapAction);
         }
+        
+        String mepString = e.getAttribute(ATTR_MEP);
+        if (mepString != null) {
+            desc.setMep(mepString);
+        }
 
         Element [] parameters = getChildElements(e, ELEM_WSDD_PARAM);
         for (int i = 0; i < parameters.length; i++) {

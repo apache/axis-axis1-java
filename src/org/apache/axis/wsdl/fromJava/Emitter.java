@@ -15,7 +15,6 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
-import com.ibm.wsdl.BindingFaultImpl;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
@@ -64,6 +63,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.wsdl.OperationType;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -784,7 +784,11 @@ public class Emitter {
                 if (standardTypes.getSerializer(mappedType) == null) { 
                     types.writeTypeForPart(mappedType, name); 
                 } 
-            } 
+            }
+            
+            // Don't bother checking for subtypes, since we already wrote
+            // all the possibilities.
+            types.mappedTypes = null;
         }
         
         return types;
@@ -1073,8 +1077,10 @@ public class Emitter {
      * @throws WSDLException 
      * @throws AxisFault     
      */
-    protected void writeMessages(
-            Definition def, Operation oper, OperationDesc desc, BindingOperation bindingOper)
+    protected void writeMessages(Definition def,
+                                 Operation oper,
+                                 OperationDesc desc,
+                                 BindingOperation bindingOper)
             throws WSDLException, AxisFault {
 
         Input input = def.createInput();
@@ -1091,23 +1097,25 @@ public class Emitter {
         bindingOper.getBindingInput().setName(name);
         oper.setInput(input);
         def.addMessage(msg);
-
-        msg = writeResponseMessage(def, desc, bindingOper);
-
-        Output output = def.createOutput();
-
-        output.setMessage(msg);
-
-        // Give the output element a name that matches the
-        // message.  This is necessary for overloading.
-        // The message QName is unique.
-        name = msg.getQName().getLocalPart();
-
-        output.setName(name);
-        bindingOper.getBindingOutput().setName(name);
-        oper.setOutput(output);
-        def.addMessage(msg);
-
+        
+        if (desc.getMep() == OperationType.REQUEST_RESPONSE) {
+            msg = writeResponseMessage(def, desc, bindingOper);
+            
+            Output output = def.createOutput();
+            
+            output.setMessage(msg);
+            
+            // Give the output element a name that matches the
+            // message.  This is necessary for overloading.
+            // The message QName is unique.
+            name = msg.getQName().getLocalPart();
+            
+            output.setName(name);
+            bindingOper.getBindingOutput().setName(name);
+            oper.setOutput(output);
+            def.addMessage(msg);
+        }
+        
         ArrayList exceptions = desc.getFaults();
 
         for (int i = 0; (exceptions != null) && (i < exceptions.size()); i++) {
@@ -1186,11 +1194,17 @@ public class Emitter {
      * @return 
      */
     protected BindingOperation writeBindingOperation(Definition def,
-                                                     Binding binding, Operation oper, OperationDesc desc) {
+                                                     Binding binding,
+                                                     Operation oper,
+                                                     OperationDesc desc) {
 
         BindingOperation bindingOper = def.createBindingOperation();
         BindingInput bindingInput = def.createBindingInput();
-        BindingOutput bindingOutput = def.createBindingOutput();
+        BindingOutput bindingOutput = null;
+        
+        // TODO : Make this deal with all MEPs
+        if (desc.getMep() == OperationType.REQUEST_RESPONSE)
+            bindingOutput = def.createBindingOutput();
 
         bindingOper.setName(oper.getName());
         bindingOper.setOperation(oper);
@@ -1231,16 +1245,18 @@ public class Emitter {
         // only when we write the Message and parts.
 
         // Add soap:body element to the binding <output> element
-        ExtensibilityElement outputBody = null;
-        outputBody = writeSOAPBody(desc.getReturnQName());
-        bindingOutput.addExtensibilityElement(outputBody);
+        if (bindingOutput != null) {
+            ExtensibilityElement outputBody = null;
+            outputBody = writeSOAPBody(desc.getReturnQName());
+            bindingOutput.addExtensibilityElement(outputBody);
+            bindingOper.setBindingOutput(bindingOutput);
 
-        // add soap:headers, if any, to binding <output> element
-        // only when we write the Message and parts.
-
-        // Add input and output to operation
+            // add soap:headers, if any, to binding <output> element
+            // only when we write the Message and parts.
+        }
+        
+        // Add input to operation
         bindingOper.setBindingInput(bindingInput);
-        bindingOper.setBindingOutput(bindingOutput);
 
         // Faults clause
         // Comment out the following part 
