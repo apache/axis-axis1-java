@@ -47,7 +47,9 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy" depends="setenv"/>
+<target name="copy" depends="setenv">
+   <copy file="${axis.home}/test/utils/resource.properties" toDir="${build.dir}/classes/test/utils"/>
+</target>
 
 <target name="compile" depends="copy">
   <echo message="Compiling test.utils.*"/>
