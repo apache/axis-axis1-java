@@ -261,7 +261,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                     String elemName = Utils.getLastLocalPart(elem.getName().getLocalPart());
                     variableName = Utils.xmlNameToJava(elemName);
                     
-                    if (elem.getMinOccursIs0()) {
+                    if (elem.getMinOccursIs0() || elem.getNillable()) {
                         typeName = Utils.getWrapperType(typeName);
                     }
                 }

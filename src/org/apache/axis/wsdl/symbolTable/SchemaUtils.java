@@ -48,10 +48,9 @@ public class SchemaUtils {
    * (excerpt from JAX-RPC spec 1.1 Maintenanace Review 2 Chapter 6 Section 4.1.)
    * 
    * @param node        
-   * @param symbolTable 
    * @return 
    */
-  public static boolean isWrappedType(Node node, SymbolTable symbolTable) {
+  public static boolean isWrappedType(Node node) {
     
     if (node == null) {
       return false;
@@ -1794,7 +1793,6 @@ public class SchemaUtils {
         }
         
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
         if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
             for (int j = 0; j < children.getLength(); j++) {

@@ -388,10 +388,6 @@ public class Utils {
             }
         }
 
-        if ("true".equals(getAttribute(node, "nillable"))) {
-            qName = getNillableQName(qName);
-        }
-        
         // A WSDL Part uses the element attribute instead of the ref attribute
         if (qName == null) {
             forElement.value = true;
