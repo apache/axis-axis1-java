@@ -63,6 +63,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.Constants;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
@@ -479,7 +480,7 @@ public class AxisServer extends AxisEngine
                         h = msgContext.getService();
                     }
                     if (h == null)
-                        throw new AxisFault("Server.NoService",
+                        throw new AxisFault(Constants.QNAME_NO_SERVICE_FAULT_CODE,
                                             JavaUtils.getMessage("noService05",
                                                                  "" + msgContext.getTargetService()),
                                             null, null );
