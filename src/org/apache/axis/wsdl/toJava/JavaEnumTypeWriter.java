@@ -158,8 +158,24 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         // A public static variable of the base type is generated for each enumeration value.
         // Each variable is preceded by an _.
         for (int i = 0; i < ids.size(); i++) {
-            pw.println("    public static final " + baseType + " _"
+            
+            // Need to catch the checked MalformedURIException for URI base types
+            if(baseType.equals("org.apache.axis.types.URI")) {
+                pw.println("    public static final " + baseType + " _" + ids.get(i) + ";");
+                pw.println("    static {");
+                pw.println("    	try {");
+                pw.println("            _" + ids.get(i) + " = " + values.get(i) + ";");
+                pw.println("        }");
+                pw.println("        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
+                pw.println("            throw new java.lang.RuntimeException(mue.toString());");
+                pw.println("        }");
+                pw.println("    }");
+                pw.println("");
+            }
+            else {
+                pw.println("    public static final " + baseType + " _"
                     + ids.get(i) + " = " + values.get(i) + ";");
+            }
         }
 
         // A public static variable is generated for each enumeration value.
