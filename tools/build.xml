@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <!DOCTYPE project [
-        <!ENTITY properties SYSTEM "file:../xmls/properties.xml">
-        <!ENTITY paths  SYSTEM "file:../xmls/path_refs.xml">
-        <!ENTITY taskdefs SYSTEM "file:../xmls/taskdefs.xml">
-        <!ENTITY targets SYSTEM "file:../xmls/targets.xml">
+        <!ENTITY properties SYSTEM "../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "../xmls/taskdefs.xml">
+        <!ENTITY targets SYSTEM "../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
@@ -98,18 +98,22 @@ Copyright:
     <include name="${componentName}/wsdl/*.java" />
   </javac>
 
-  <copy todir="${build.dir}/tools/${componentName}/foreach" >
+  <copy todir="${tools.build.dir}/${componentName}/foreach" >
      <fileset dir="${tools.dir}/${componentName}/foreach" excludes="**/*.java"/>
   </copy>
 
-  <tstamp/>
-  <jar jarfile="${build.lib}/axis-ant.jar" >
-    <fileset dir="${tools.build.dir}">
-      <include name="${componentName}/**"/>
-    </fileset>
+  <copy todir="${tools.build.dir}" >
     <fileset dir="${tools.dir}"
       includes="*-tasks.properties"/>
-    <fileset dir="." file="org/apache/axis.xml"/>
+    <fileset dir="${tools.dir}" includes="org/**/*.xml"/>
+    <fileset dir="${tools.dir}" file="log4j.properties"/>
+  </copy>
+  
+  <tstamp/>
+  <jar jarfile="${build.lib}/axis-ant.jar" >
+    <fileset dir="${tools.build.dir}"
+      includes="**/*.class, **/*.xml, **/*.properties">
+    </fileset>
     <manifest>
       <section name="org/apache/axis/tools">
         <attribute name="Implementation-Title" value="Apache Axis"/>

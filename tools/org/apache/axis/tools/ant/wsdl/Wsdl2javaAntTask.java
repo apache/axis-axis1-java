@@ -279,7 +279,9 @@ public class Wsdl2javaAntTask extends Task
                 traceParams(Project.MSG_INFO);
                 t.printStackTrace();
             }
-            throw new BuildException("Error while processing WSDL in Wsdl2javaAntTask for " + url, t);
+            //now throw an exception that includes the error text of the caught exception.
+            throw new BuildException("WSDL processing error for "
+                    + url +" :\n "+t.getMessage() , t);
         }
 
     }
