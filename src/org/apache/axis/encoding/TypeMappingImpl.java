@@ -70,27 +70,32 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * @author Rich Scheuerle (scheu@us.ibm.com)
- *
+ * <p>
  * This is the implementation of the axis TypeMapping interface (which extends
  * the JAX-RPC TypeMapping interface).
- *
+ * </p>
+ * <p>
  * A TypeMapping is obtained from the singleton TypeMappingRegistry using
  * the namespace of the webservice.  The TypeMapping contains the tuples
  * {Java type, SerializerFactory, DeserializerFactory, Type QName)
- *
+ * </p>
+ * <p>
  * So if you have a Web Service with the namespace "XYZ", you call
  * the TypeMappingRegistry.getTypeMapping("XYZ").
- *
+ * </p>
+ * <p>
  * The wsdl in your web service will use a number of types.  The tuple
  * information for each of these will be accessed via the TypeMapping.
- *
+ * </p>
+ * <p>
  * Because every web service uses the soap, schema, wsdl primitives, we could
  * pre-populate the TypeMapping with these standard tuples.  Instead,
  * if the namespace/class matches is not found in the TypeMapping
  * the request is delegated to the
  * Default TypeMapping or another TypeMapping
+ * </p>
  *
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class TypeMappingImpl implements TypeMapping
 {

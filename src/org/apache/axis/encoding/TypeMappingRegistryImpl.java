@@ -58,27 +58,25 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.Messages;
 
-import javax.xml.rpc.JAXRPCException;
 import java.util.HashMap;
 
 /**
- * @author James Snell (jasnell@us.ibm.com)
- * @author Sam Ruby (rubys@us.ibm.com)
- * Re-written for JAX-RPC Compliance by
- * @author Rich Scheuerle (scheu@us.ibm.com
- *
+ * <p>
  * The TypeMappingRegistry keeps track of the individual TypeMappings.
- * 
+ * </p>
+ * <p>
  * The TypeMappingRegistry for axis contains a default type mapping
  * that is set for either SOAP 1.1 or SOAP 1.2
  * The default type mapping is a singleton used for the entire
  * runtime and should not have anything new registered in it.
- *
+ * </p>
+ * <p>
  * Instead the new TypeMappings for the deploy and service are
  * made in a separate TypeMapping which is identified by
  * the soap encoding.  These new TypeMappings delegate back to 
  * the default type mapping when information is not found.
- *
+ * </p>
+ * <p>
  * So logically we have:
  * <pre>
  *         TMR
@@ -91,7 +89,8 @@ import java.util.HashMap;
  *
  * But in the implementation, the TMR references
  * "delegate" TypeMappings (TM') which then reference the actual TM's
- *
+ * </p>
+ * <p>
  * So the picture is really:
  * <pre>
  *         TMR
@@ -158,6 +157,12 @@ import java.util.HashMap;
  * So now the service uses the DefaultTM of the Deploy TMR, and
  * the Service TM properly delegates to the deploy's TM.  And
  * if either the deploy defaultTM or TMs change, the links are not broken.
+ * </p>
+ * 
+ * @author James Snell (jasnell@us.ibm.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
+ * Re-written for JAX-RPC Compliance by
+ * @author Rich Scheuerle (scheu@us.ibm.com
  */
 public class TypeMappingRegistryImpl implements TypeMappingRegistry { 
     
