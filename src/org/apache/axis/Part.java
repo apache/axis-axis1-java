@@ -71,7 +71,10 @@ import java.util.Hashtable;
  * when calculating content length.)
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
+ * @author Rick Rineholt
  */
+
+import org.apache.axis.transport.http.HTTPConstants;
 
 public abstract class Part {
 
@@ -80,29 +83,40 @@ public abstract class Part {
     private String contentId;
     private String contentLocation;
     
-    private static String CONTENT_ID_HEADER = "Content-Id";
-    private static String CONTENT_LOCATION_HEADER = "Content-Location";
-    
     /**
      * Fill in the Message field.  (Of course this can only be called by
      * subclass constructors since Part itself is abstract.)
      */
     public Part (Message parent) {
         msg = parent;
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , getNewContentIdValue());
+
     }
 
     /**
      * Add the specified MIME header, as per JAXM.
      */
     public void addMimeHeader (String header, String value) {
-        headers.put(header, value);
+
+        if(null == header) throw new IllegalArgumentException
+            ("Header may not be null!");
+
+        header= header.trim();    
+
+        if(header.length() == 0)
+            throw new IllegalArgumentException ("Header may not be empty!");
+
+        if(null == value) throw new IllegalArgumentException
+            ("Header value may not be null!");
+
+        headers.put(header.toLowerCase(), value);
     }
 
     /**
      * Get the specified MIME header.
      */
     public String getMimeHeader (String header) {
-        return (String) headers.get(header);
+        return (String) headers.get(header.toLowerCase());
     }
     
     /**
@@ -111,47 +125,83 @@ public abstract class Part {
     public Message getMessage () {
         return msg;
     }
-    
-    /**
-     * Add getAllMimeHeaders later....
-     */ 
-    
-    /**
-     * Content length (length in bytes of the encoded content only, no headers).
-     */
-    public abstract int getContentLength();
 
     /**
-     * Total size in bytes (of all content and headers, as encoded).
+     * Set the Message for this Part.
      */
+    public void setMessage (Message msg) {
+        this.msg= msg;
+    }
+    
+    /**
+     * Total size in bytes (of all content and headers, as encoded).
     public abstract int getSize();
+     */
 
     /**
      * Content location.
      */
     public String getContentLocation() {
-        return getMimeHeader(CONTENT_LOCATION_HEADER);
+        return getMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
     }
 
     /**
      * Set content location.
      */
     public void setContentLocation(String loc) {
-        addMimeHeader(CONTENT_LOCATION_HEADER, loc);
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
     }
 
     /**
      * Content ID.
      */
     public String getContentId() {
-        return getMimeHeader(CONTENT_ID_HEADER);
+        String ret= getMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
+        //Do not let the contentID ever be empty.
+        if(ret == null){
+            ret=getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        ret= ret.trim();
+        if(ret.length() ==0){
+            ret=getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        return ret;
+    }
+
+
+    /**
+     * Get all headers that match 
+     */
+    public java.util.Iterator getMatchingMimeHeaders( final String[] match){
+        java.util.LinkedList retList= new java.util.LinkedList();
+        if(null != match && 0 != match.length ){
+            for(int i= match.length-1 ; i > -1 ; --i){
+                    if(match[i] != null){
+                    retList.add( headers.get(match[i].toLowerCase())); 
+                }
+            }
+        }
+        return retList.iterator();
     }
 
     /**
-     * Set content ID.
+     * Get all headers that do not match 
      */
-    public void setContentId(String id) {
-        addMimeHeader(CONTENT_ID_HEADER, id);
+    public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
+        java.util.LinkedList retList= new java.util.LinkedList(headers.keySet());
+        if(null != match && 0 != match.length && !headers.isEmpty()){
+            for(int i= match.length-1 ; i > -1 ; --i){
+                    if(match[i] != null){
+                        String remItem= match[i].toLowerCase();
+                        if(headers.containsKey(remItem)){
+                            retList.remove(remItem); 
+                    }
+                }
+            }
+        }
+        return retList.iterator();
     }
 
     /**
@@ -159,12 +209,33 @@ public abstract class Part {
      */
     public abstract String getContentType();
 
-    /**
-     * Writing.  Writes all bytes, including headers (i.e. writes
-     * getSize() bytes).
-     * 
-     * ROBJDO: make this package method?
-     */
-    public abstract void writeTo(OutputStream out) throws IOException;
+
+    static String thisHost = null;
+
+    private static int count = (int) (Math.random() * 100);
+
+    public static String getNewContentIdValue() {
+        int lcount;
+
+        synchronized (org.apache.axis.Part.class  ) {
+            lcount = ++count;
+        }
+        if (null == thisHost) {
+            try {
+                thisHost = java.net.InetAddress.getLocalHost().getHostName();
+            } 
+            catch (java.net.UnknownHostException e) {
+                System.err.println("exception:" + e);
+                thisHost = "localhost";
+                e.printStackTrace();
+            }
+        }
+
+        StringBuffer s = new StringBuffer();
+
+        // Unique string is <hashcode>.<currentTime>.apache-soap.<hostname>
+        s.append("cid:").append( lcount).append(s.hashCode()).append('.').append(System.currentTimeMillis()).append(".AXIS@").append(thisHost);
+        return s.toString();
+    }
 }
 

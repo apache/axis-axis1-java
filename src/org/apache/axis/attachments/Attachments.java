@@ -69,6 +69,7 @@ import org.apache.axis.Part;
  */
 
 public interface Attachments {
+
     /**
      * This method should look at a refernce and determine if it is a CID: or url
      * to look for attachment.
@@ -83,6 +84,11 @@ public interface Attachments {
      * @param The part that is referenced 
      */ 
     public Part createAttachmentPart(Object part) throws org.apache.axis.AxisFault;
+
+    /**
+     *  Will the attachments of this message to that of the colleciton.
+     */ 
+    public void setAttachmentParts( java.util.Collection parts) throws org.apache.axis.AxisFault;
 
     /**
      * From the complex stream return the SOAP part. 
@@ -121,5 +127,7 @@ public interface Attachments {
      */
 
     public boolean isAttachment( Object value);
+
+
     
 }

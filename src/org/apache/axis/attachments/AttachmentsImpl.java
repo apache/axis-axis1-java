@@ -134,10 +134,24 @@ public class AttachmentsImpl implements Attachments {
              + "\" only supporting \"" + javax.activation.DataHandler.class.getName() +"\".");
          }
         Part ret= new AttachmentPart(msg, (javax.activation.DataHandler)datahandler);
-        String contentId= org.apache.axis.attachments.MimeUtils.getNewContentIdValue();
-        ret.setContentId(contentId);  
-        attachments.put(contentId, ret); 
+        attachments.put(ret.getContentId(), ret); 
         return ret;
+    }
+
+    /**
+     * Add the collection of parts. 
+     */
+    public void setAttachmentParts( java.util.Collection parts) throws org.apache.axis.AxisFault{
+       attachments.clear();
+       if(parts != null && !parts.isEmpty()){
+           for(java.util.Iterator i= parts.iterator(); i.hasNext();){
+               Part part= (Part ) i.next();    
+               if(null != part){
+                   part.setMessage(msg);
+                   attachments.put(part.getContentId(),  part);
+               }
+           }
+       }
     }
 
     /**
