@@ -357,7 +357,7 @@ Copyright:
       <exclude name="samples/userguide/example6/Main.java" />
       <exclude name="samples/userguide/example6/*Impl.java" />
       <exclude name="samples/userguide/example6/*TestCase.java" />
-      <exclude name="samples/attachments/**/*.java" unless="attachments.present"/>
+      <exclude name="samples/attachments/**/*.java" unless="attachments.present" />
       <exclude name="samples/security/**/*.java" unless="security.present"/>
     </javac>
   </target>
@@ -389,6 +389,7 @@ Copyright:
       <exclude name="test/wsdl/interop3/**/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/*.java" unless="attachments.present"/>
+      <exclude name="test/functional/TestAttachmentsSample.java" unless="attachments.present"/>
     </javac>
     <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
   </target>

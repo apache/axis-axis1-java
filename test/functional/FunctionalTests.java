@@ -56,7 +56,7 @@ public class FunctionalTests extends TestCase
         try{
           if( null !=  Class.forName("javax.activation.DataHandler") &&
               null != Class.forName("javax.mail.internet.MimeMultipart")){
-                suite.addTestSuite(TestAttachmentsSample.class);
+                suite.addTestSuite( Class.forName("test.functional.TestAttachmentsSample"));
           }
         }catch( Throwable t){;}
 
