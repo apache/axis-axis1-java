@@ -57,6 +57,7 @@ package org.apache.axis ;
 
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -115,7 +116,7 @@ public class FaultableHandler extends BasicHandler {
             workHandler.invoke( msgContext );
         }
         catch( Exception e ) {
-            entLog.info(JavaUtils.getMessage("toAxisFault00"), e );
+            entLog.info(Messages.getMessage("toAxisFault00"), e );
             AxisFault fault = AxisFault.makeFault(e);
 
 //            AxisEngine engine = msgContext.getAxisEngine();

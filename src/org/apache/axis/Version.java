@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.client.Call;
 
 /**
@@ -69,8 +70,8 @@ import org.apache.axis.client.Call;
 public class Version {
     public static String getVersion()
     {
-        return JavaUtils.getMessage("axisVersion") + "\n" +
-               JavaUtils.getMessage("builtOn");
+        return Messages.getMessage("axisVersion") + "\n" +
+               Messages.getMessage("builtOn");
     }
     
     /**

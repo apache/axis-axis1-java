@@ -57,6 +57,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataSource;
@@ -93,7 +94,7 @@ public class ImageDataSource implements DataSource {
             }
         }
         catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }
     } // ctor
 

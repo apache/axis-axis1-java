@@ -14,12 +14,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * This TestCase verifies:
  *   - the contents of axisNLS.properties for well-formedness, and
- *   - tests calls to JavaUtils.getMessage.
+ *   - tests calls to Messages.getMessage.
  */
 public class TestMessages extends TestCase {
     public TestMessages(String name) {
@@ -37,14 +37,14 @@ public class TestMessages extends TestCase {
         String arg0 = "arg0";
         String arg1 = "arg1";
         String[] args = {arg0, arg1, "arg2"};
-        Enumeration keys = JavaUtils.getFirstMessageResourceBundle().getKeys();
+        Enumeration keys = Messages.getFirstMessageResourceBundle().getKeys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             try {
-                String message = JavaUtils.getMessage(key);
-                message = JavaUtils.getMessage(key, arg0);
-                message = JavaUtils.getMessage(key, arg0, arg1);
-                message = JavaUtils.getMessage(key, args);
+                String message = Messages.getMessage(key);
+                message = Messages.getMessage(key, arg0);
+                message = Messages.getMessage(key, arg0, arg1);
+                message = Messages.getMessage(key, args);
             }
             catch (IllegalArgumentException iae) {
                 throw new AssertionFailedError("Test failure on key = " + key + ":  " + iae.getMessage());
@@ -57,44 +57,44 @@ public class TestMessages extends TestCase {
      */
     public void testTestMessages() {
         try {
-            String message = JavaUtils.getMessage("test00");
+            String message = Messages.getMessage("test00");
             String expected = "...";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test00", new String[0]);
+            message = Messages.getMessage("test00", new String[0]);
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test00", new String[] {"one", "two"});
+            message = Messages.getMessage("test00", new String[] {"one", "two"});
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test01");
+            message = Messages.getMessage("test01");
             expected = ".{0}.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test01", "one");
+            message = Messages.getMessage("test01", "one");
             expected = ".one.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test01", new String[0]);
+            message = Messages.getMessage("test01", new String[0]);
             expected = ".{0}.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test01", new String[] {"one"});
+            message = Messages.getMessage("test01", new String[] {"one"});
             expected = ".one.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test01", new String[] {"one", "two"});
+            message = Messages.getMessage("test01", new String[] {"one", "two"});
             expected = ".one.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test02");
+            message = Messages.getMessage("test02");
             expected = "{0}, {1}.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test02", new String[0]);
+            message = Messages.getMessage("test02", new String[0]);
             expected = "{0}, {1}.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test02", new String[] {"one"});
+            message = Messages.getMessage("test02", new String[] {"one"});
             expected = "one, {1}.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test02", new String[] {"one", "two"});
+            message = Messages.getMessage("test02", new String[] {"one", "two"});
             expected = "one, two.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test03", new String[] {"one", "two", "three"});
+            message = Messages.getMessage("test03", new String[] {"one", "two", "three"});
             expected = ".three, one, two.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
-            message = JavaUtils.getMessage("test04", new String[] {"one", "two", "three", "four", "five", "six"});
+            message = Messages.getMessage("test04", new String[] {"one", "two", "three", "four", "five", "six"});
             expected = ".one two three ... four three five six.";
             assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
         }
@@ -110,7 +110,7 @@ public class TestMessages extends TestCase {
 
     /**
      * If this test is run from xml-axis/java, then walk through the source tree looking for all
-     * calls to JavaUtils.getMessage.  For each of these calls:
+     * calls to Messages.getMessage.  For each of these calls:
      * 1.  Make sure the message key exists in axisNLS.properties
      * 2.  Make sure the actual number of parameters (in axisNLS.properties) matches the
      *     excpected number of parameters (in the source code).
@@ -145,7 +145,7 @@ public class TestMessages extends TestCase {
     } // walkTree
 
     /**
-     * Check all calls to JavaUtils.getMessages:
+     * Check all calls to Messages.getMessages:
      * 1.  Make sure the message key exists in axisNLS.properties
      * 2.  Make sure the actual number of parameters (in axisNLS.properties) matches the
      *     excpected number of parameters (in the source code).
@@ -156,10 +156,10 @@ public class TestMessages extends TestCase {
             byte[] bytes = new byte[fis.available()];
             fis.read(bytes);
             String string = new String(bytes);
-            int index = string.indexOf("JavaUtils.getMessage(");
+            int index = string.indexOf("Messages.getMessage(");
             while (index >= 0) {
 
-                // Bump the string past the "JavaUtils.getMessage(" string
+                // Bump the string past the "Messages.getMessage(" string
                 string = string.substring(index + 21);
 
                 // Get the arguments for the getMessage call
@@ -174,7 +174,7 @@ public class TestMessages extends TestCase {
                     // Get the raw message
                     String value = null;
                     try {
-                        value = JavaUtils.getMessage(key);
+                        value = Messages.getMessage(key);
                     }
                     catch (Throwable t) {
                         errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + LS;
@@ -190,7 +190,7 @@ public class TestMessages extends TestCase {
                         errors = errors + "File:  " + file.getPath() + " " + key + " has " + realParms + " parameters, " + expectedParms + " expected." + LS;
                     }
                 }
-                index = string.indexOf("JavaUtils.getMessage(");
+                index = string.indexOf("Messages.getMessage(");
             }
         }
         catch (Throwable t) {

@@ -60,6 +60,7 @@ import java.io.Serializable;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.w3c.dom.Node;
 
@@ -275,7 +276,7 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
                 undefined = false;
                 isBaseType = false;
                 node = null;                   
-                throw new IOException(JavaUtils.getMessage("undefinedloop00", getQName().toString()));
+                throw new IOException(Messages.getMessage("undefinedloop00", getQName().toString()));
             }
         }
 

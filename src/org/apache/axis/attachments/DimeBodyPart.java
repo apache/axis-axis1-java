@@ -67,6 +67,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -139,13 +140,13 @@ public class DimeBodyPart {
         this.dtnf = format; 
         this.type = type.getBytes();
         if (this.type.length > MAX_TYPE_LENGTH)
-            throw new IllegalArgumentException(JavaUtils.getMessage 
+            throw new IllegalArgumentException(Messages.getMessage 
                     ("attach.dimetypeexceedsmax",
                     "" + this.type.length, "" + MAX_TYPE_LENGTH));
         this.id = id.getBytes();
         if (this.id.length > MAX_ID_LENGTH)
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("attach.dimelengthexceedsmax", "" + this.id.length,
+                    Messages.getMessage("attach.dimelengthexceedsmax", "" + this.id.length,
                         "" + MAX_ID_LENGTH));
     }
 
@@ -165,12 +166,12 @@ public class DimeBodyPart {
             type = "application/octet-stream";
         this.type = type.getBytes();
         if (this.type.length > MAX_TYPE_LENGTH)
-            throw new IllegalArgumentException(JavaUtils.getMessage(
+            throw new IllegalArgumentException(Messages.getMessage(
                         "attach.dimetypeexceedsmax", 
                         "" + this.type.length, "" + MAX_TYPE_LENGTH));
         this.id = id.getBytes(); 
         if (this.id.length > MAX_ID_LENGTH)
-            throw new IllegalArgumentException(JavaUtils.getMessage(
+            throw new IllegalArgumentException(Messages.getMessage(
             "attach.dimelengthexceedsmax", 
             "" + this.id.length, "" + MAX_ID_LENGTH));
     }
@@ -251,9 +252,9 @@ public class DimeBodyPart {
     void write(java.io.OutputStream os, byte position, long maxchunk)
       throws java.io.IOException {
         if (maxchunk < 1) throw new IllegalArgumentException(
-                    JavaUtils.getMessage("attach.dimeMaxChunkSize0", "" + maxchunk)); 
+                    Messages.getMessage("attach.dimeMaxChunkSize0", "" + maxchunk)); 
         if (maxchunk > MAX_DWORD) throw new IllegalArgumentException(
-                    JavaUtils.getMessage("attach.dimeMaxChunkSize1", "" + maxchunk)); 
+                    Messages.getMessage("attach.dimeMaxChunkSize1", "" + maxchunk)); 
         if (data instanceof byte[]) send(os, position, (byte[]) data,
           maxchunk);
         if (data instanceof DataHandler) send(os, position,
@@ -451,7 +452,7 @@ public class DimeBodyPart {
 
                 if (!df.exists()) {
                     throw new RuntimeException(
-                            JavaUtils.getMessage("noFile", 
+                            Messages.getMessage("noFile", 
                                 df.getAbsolutePath()));
                 }
                 dataSize = df.length();
@@ -469,7 +470,7 @@ public class DimeBodyPart {
                 in.close();
             }
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }
         return dataSize;
     }

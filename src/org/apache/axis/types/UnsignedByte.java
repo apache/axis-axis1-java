@@ -54,9 +54,9 @@
  */
 package org.apache.axis.types;
 
-import java.lang.Number;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type UnsignedByte
@@ -91,7 +91,7 @@ public class UnsignedByte extends UnsignedShort {
      */
     public void setValue(long sValue) throws Exception {
         if (isValid(sValue) == false)
-            throw new Exception(JavaUtils.getMessage("badUnsignedByte00") +
+            throw new Exception(Messages.getMessage("badUnsignedByte00") +
                     String.valueOf(sValue) + "]");
         lValue = new Long(sValue);
     }

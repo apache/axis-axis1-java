@@ -57,6 +57,7 @@ package org.apache.axis.description;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
@@ -171,7 +172,7 @@ public class ParameterDesc implements Serializable {
         }
         
         throw new IllegalArgumentException(
-                JavaUtils.getMessage("badParameterMode", Byte.toString(mode)));
+                Messages.getMessage("badParameterMode", Byte.toString(mode)));
     }
 
     public QName getQName() {
@@ -224,7 +225,7 @@ public class ParameterDesc implements Serializable {
                 mode != IN && !isReturn &&
                 !javax.xml.rpc.holders.Holder.class.isAssignableFrom(javaType)) {
                 throw new IllegalArgumentException(
-                     JavaUtils.getMessage("setJavaTypeErr00", 
+                     Messages.getMessage("setJavaTypeErr00", 
                                           javaType.getName(),
                                           getModeAsString(mode)));
             }             

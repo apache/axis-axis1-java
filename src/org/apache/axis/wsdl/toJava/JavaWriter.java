@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.gen.Generator;
 
@@ -136,7 +137,7 @@ public abstract class JavaWriter implements Generator {
     public void generate() throws IOException {
         String file = getFileName();
         if (isFileGenerated(file)) {
-            throw new IOException(JavaUtils.getMessage("duplicateFile00", file));
+            throw new IOException(Messages.getMessage("duplicateFile00", file));
         }
         registerFile(file);
         if (emitter.isVerbose()) {
@@ -182,7 +183,7 @@ public abstract class JavaWriter implements Generator {
      * method if you want to provide more information.
      */
     protected String verboseMessage(String file) {
-        return JavaUtils.getMessage("generating", file);
+        return Messages.getMessage("generating", file);
     } // verboseMessage
 
     /**

@@ -64,6 +64,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
@@ -224,7 +225,7 @@ public class Parser {
 
         if (wsdlThread.isAlive()) {
             wsdlThread.interrupt();
-            throw new IOException(JavaUtils.getMessage("timedOut"));
+            throw new IOException(Messages.getMessage("timedOut"));
         }
 
         if (runnable.getFailure() != null) {

@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -95,7 +96,7 @@ public class HTTPActionHandler extends BasicHandler
             */
             if (action == null) {
                 throw new AxisFault( "Server.NoHTTPSOAPAction",
-                    JavaUtils.getMessage("noSOAPAction00"),
+                    Messages.getMessage("noSOAPAction00"),
                     null, null );
             }
             

@@ -64,6 +64,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 /**
@@ -154,7 +155,7 @@ public class EngineConfigurationFactoryServlet
             if (rootPath != null) {
                 name = rootPath + name;
             }
-            log.error(JavaUtils.getMessage("servletEngineWebInfError01",
+            log.error(Messages.getMessage("servletEngineWebInfError01",
                                            name));
             config = null;
         } else {

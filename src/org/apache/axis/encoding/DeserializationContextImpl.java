@@ -67,6 +67,7 @@ import org.apache.axis.message.NullAttributes;
 import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -418,13 +419,13 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             dserF = (DeserializerFactory) getTypeMapping().
                     getDeserializer(cls, xmlType);
         } catch (JAXRPCException e) {
-            log.error(JavaUtils.getMessage("noFactory00", xmlType.toString()));
+            log.error(Messages.getMessage("noFactory00", xmlType.toString()));
         }
         if (dserF != null) {
             try {
                 dser = (Deserializer) dserF.getDeserializerAs(Constants.AXIS_SAX);
             } catch (JAXRPCException e) {
-                log.error(JavaUtils.getMessage("noDeser00", xmlType.toString()));
+                log.error(Messages.getMessage("noDeser00", xmlType.toString()));
             }
         }
         return dser;
@@ -665,7 +666,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
              * occurs if the parent already has an explicit object value,
              * which should never occur during deserialization.
              */
-            log.fatal(JavaUtils.getMessage("exception00"), e);
+            log.fatal(Messages.getMessage("exception00"), e);
         }
         curElement = elem;
 
@@ -680,7 +681,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void pushElementHandler(SOAPHandler handler)
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("pushHandler00", "" + handler));
+            log.debug(Messages.getMessage("pushHandler00", "" + handler));
         }
 
         if (topHandler != null) pushedDownHandlers.add(topHandler);
@@ -711,9 +712,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         if (log.isDebugEnabled()) {
             if (result == null) {
-                log.debug(JavaUtils.getMessage("popHandler00", "(null)"));
+                log.debug(Messages.getMessage("popHandler00", "(null)"));
             } else {
-                log.debug(JavaUtils.getMessage("popHandler00", "" + result));
+                log.debug(Messages.getMessage("popHandler00", "" + result));
             }
         }
 
@@ -841,7 +842,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void processingInstruction(String p1, String p2) throws SAXException {
         // must throw an error since SOAP 1.1 doesn't allow
         // processing instructions anywhere in the message
-        throw new SAXException(JavaUtils.getMessage("noInstructions00"));
+        throw new SAXException(Messages.getMessage("noInstructions00"));
     }
 
     public void skippedEntity(String p1) throws SAXException {

@@ -60,6 +60,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -95,7 +96,7 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
                                                    localName,
                                                    attributes);
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
+            log.debug(Messages.getMessage("gotType00", "Deser", "" + type));
         }
         
         String href = attributes.getValue("href");
@@ -120,7 +121,7 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
                                     Attributes attributes,
                                     DeserializationContext context)
         throws SAXException {
-        throw new SAXException(JavaUtils.getMessage(
+        throw new SAXException(Messages.getMessage(
                 "noSubElements", namespace + ":" + localName));
     }
 }

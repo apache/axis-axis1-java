@@ -56,6 +56,7 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
@@ -101,7 +102,7 @@ public class WSDDJAXRPCHandlerInfo
             _classname = classnameStr;
         }
         else 
-            throw new WSDDException(JavaUtils.getMessage("noClassNameAttr00"));
+            throw new WSDDException(Messages.getMessage("noClassNameAttr00"));
         
         Element[] elements = getChildElements(e, ELEM_WSDD_PARAM);
         if (elements.length != 0) {
@@ -123,7 +124,7 @@ public class WSDDJAXRPCHandlerInfo
                 Element qElem = elements[i];
                 String headerStr = qElem.getAttribute(ATTR_QNAME);
                 if (headerStr == null ||  headerStr.equals("")) 
-                    throw new WSDDException(JavaUtils.getMessage("noValidHeader"));     
+                    throw new WSDDException(Messages.getMessage("noValidHeader"));     
 
                 QName headerQName = XMLUtils.getQNameFromString(headerStr, qElem);
                 if (headerQName != null) 

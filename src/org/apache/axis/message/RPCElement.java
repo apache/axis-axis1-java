@@ -66,6 +66,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -106,7 +107,7 @@ public class RPCElement extends SOAPBodyElement
                 if (serviceDesc == null) {
                     AxisFault.makeFault(
                             new ClassNotFoundException(
-                                    JavaUtils.getMessage("noClassForService00",
+                                    Messages.getMessage("noClassForService00",
                                                          lc)));
                 }
 
@@ -225,7 +226,7 @@ public class RPCElement extends SOAPBodyElement
                 throw savedException;
             } else {
                 throw new SAXException(
-                    JavaUtils.getMessage("noSuchOperation", name));
+                    Messages.getMessage("noSuchOperation", name));
             }
         }
 

@@ -59,6 +59,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import java.net.Socket;
@@ -129,13 +130,13 @@ public class DefaultSocketFactory implements SocketFactory {
         {
             sock = new Socket(host, port);
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("createdHTTP00"));
+                log.debug(Messages.getMessage("createdHTTP00"));
             }
         } else {
             sock = new Socket(tcp.getProxyHost(),
                               new Integer(tcp.getProxyPort()).intValue());
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("createdHTTP01", tcp.getProxyHost(),
+                log.debug(Messages.getMessage("createdHTTP01", tcp.getProxyHost(),
                           tcp.getProxyPort()));
             }
             useFullURL.value = true;
@@ -167,7 +168,7 @@ public class DefaultSocketFactory implements SocketFactory {
             String pattern = tokenizer.nextToken();
 
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("match00",
+                log.debug(Messages.getMessage("match00",
                         new String[]{"HTTPSender",
                                      host,
                                      pattern}));

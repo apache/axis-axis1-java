@@ -62,6 +62,7 @@ import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -165,7 +166,7 @@ public class MapDeserializer extends DeserializerImpl {
     public void setValue(Object value, Object hint) throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("gotValue00", "MapDeserializer", "" + value));
+            log.debug(Messages.getMessage("gotValue00", "MapDeserializer", "" + value));
         }
         ((Map)this.value).put(hint, value);
     }

@@ -61,6 +61,7 @@ import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -169,7 +170,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
             try {
                 config = (EngineConfiguration)environment.get(EngineConfiguration.PROPERTY_NAME);
             } catch (ClassCastException e) {
-                log.warn(JavaUtils.getMessage("engineConfigWrongClass00"), e);
+                log.warn(Messages.getMessage("engineConfigWrongClass00"), e);
                 // Fall through
             }
         }
@@ -186,16 +187,16 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
                     Class cls = ClassUtils.forName(configClass);
                     config = (EngineConfiguration)cls.newInstance();
                 } catch (ClassNotFoundException e) {
-                    log.warn(JavaUtils.getMessage("engineConfigNoClass00", configClass), e);
+                    log.warn(Messages.getMessage("engineConfigNoClass00", configClass), e);
                     // Fall through
                 } catch (InstantiationException e) {
-                    log.warn(JavaUtils.getMessage("engineConfigNoInstance00", configClass), e);
+                    log.warn(Messages.getMessage("engineConfigNoInstance00", configClass), e);
                     // Fall through
                 } catch (IllegalAccessException e) {
-                    log.warn(JavaUtils.getMessage("engineConfigIllegalAccess00", configClass), e);
+                    log.warn(Messages.getMessage("engineConfigIllegalAccess00", configClass), e);
                     // Fall through
                 } catch (ClassCastException e) {
-                    log.warn(JavaUtils.getMessage("engineConfigWrongClass01", configClass), e);
+                    log.warn(Messages.getMessage("engineConfigWrongClass01", configClass), e);
                     // Fall through
                 }
             }

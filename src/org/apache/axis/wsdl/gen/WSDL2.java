@@ -60,6 +60,7 @@ import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.net.Authenticator;
 import java.net.MalformedURLException;
@@ -79,27 +80,27 @@ public class WSDL2 {
         new CLOptionDescriptor("help",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
-                JavaUtils.getMessage("optionHelp00")),
+                Messages.getMessage("optionHelp00")),
         new CLOptionDescriptor("verbose",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 VERBOSE_OPT,
-                JavaUtils.getMessage("optionVerbose00")),
+                Messages.getMessage("optionVerbose00")),
         new CLOptionDescriptor("noImports",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 NOIMPORTS_OPT,
-                JavaUtils.getMessage("optionImport00")),
+                Messages.getMessage("optionImport00")),
         new CLOptionDescriptor("timeout",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NETWORK_TIMEOUT_OPT,
-                JavaUtils.getMessage("optionTimeout00")),
+                Messages.getMessage("optionTimeout00")),
         new CLOptionDescriptor("Debug",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 DEBUG_OPT,
-                JavaUtils.getMessage("optionDebug00")),
+                Messages.getMessage("optionDebug00")),
         new CLOptionDescriptor("noWrapped",
                  CLOptionDescriptor.ARGUMENT_DISALLOWED,
                  NOWRAP_OPT,
-                 JavaUtils.getMessage("optionNoWrap00"))
+                 Messages.getMessage("optionNoWrap00"))
     };
 
     protected String wsdlURI = null;
@@ -152,7 +153,7 @@ public class WSDL2 {
         switch (option.getId()) {
             case CLOption.TEXT_ARGUMENT:
                 if (wsdlURI != null) {
-                    System.out.println(JavaUtils.getMessage("w2jDuplicateWSDLURI00", 
+                    System.out.println(Messages.getMessage("w2jDuplicateWSDLURI00", 
                                                             wsdlURI, 
                                                             option.getArgument()));
                     printUsage();
@@ -198,7 +199,7 @@ public class WSDL2 {
      **/
     protected void validateOptions() {
         if (wsdlURI == null) {
-            System.out.println(JavaUtils.getMessage("w2jMissingWSDLURI00"));
+            System.out.println(Messages.getMessage("w2jMissingWSDLURI00"));
             printUsage();
         }
 
@@ -241,10 +242,10 @@ public class WSDL2 {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
         msg.append(
-                JavaUtils.getMessage("usage00",
+                Messages.getMessage("usage00",
                 "java " + getClass().getName() + " [options] WSDL-URI"))
                 .append(lSep);
-        msg.append(JavaUtils.getMessage("options00")).append(lSep);
+        msg.append(Messages.getMessage("options00")).append(lSep);
         msg.append(CLUtil.describeOptions(options).toString());
         System.out.println(msg.toString());
         System.exit(1);
@@ -262,7 +263,7 @@ public class WSDL2 {
         // Print parser errors, if any
         if (null != argsParser.getErrorString()) {
             System.err.println(
-                    JavaUtils.getMessage("error01", argsParser.getErrorString()));
+                    Messages.getMessage("error01", argsParser.getErrorString()));
             printUsage();
         }
 

@@ -60,6 +60,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -83,7 +84,7 @@ public class EchoHandler extends BasicHandler {
             msgContext.setResponseMessage( new Message( env ) );
         }
         catch( Exception e ) {
-            log.error( JavaUtils.getMessage("exception00"), e );
+            log.error( Messages.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
         log.debug("Exit: EchoHandler::invoke");

@@ -64,6 +64,7 @@ import org.apache.axis.components.net.SocketFactoryFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.SOAPException;
@@ -98,7 +99,7 @@ public class HTTPSender extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "HTTPSender::invoke"));
+            log.debug(Messages.getMessage("enter00", "HTTPSender::invoke"));
         }
         try {
             BooleanHolder useFullURL = new BooleanHolder(false);
@@ -132,7 +133,7 @@ public class HTTPSender extends BasicHandler {
             throw AxisFault.makeFault(e);
         }
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00",
+            log.debug(Messages.getMessage("exit00",
                     "HTTPDispatchHandler::invoke"));
         }
     }
@@ -430,7 +431,7 @@ public class HTTPSender extends BasicHandler {
 
                     AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
 
-                    fault.setFaultDetailString(JavaUtils.getMessage("return01",
+                    fault.setFaultDetailString(Messages.getMessage("return01",
                             "" + returnCode, ""));
                     throw fault;
                }
@@ -442,7 +443,7 @@ public class HTTPSender extends BasicHandler {
             try {
                 reqMessage.writeTo(out);
             } catch (SOAPException e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
             }
             out.flush();
             chunkedOutputStream.eos();
@@ -469,7 +470,7 @@ public class HTTPSender extends BasicHandler {
 
                     AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
 
-                    fault.setFaultDetailString(JavaUtils.getMessage("return01",
+                    fault.setFaultDetailString(Messages.getMessage("return01",
                             "" + returnCode, ""));
                     throw fault;
                }
@@ -482,13 +483,13 @@ public class HTTPSender extends BasicHandler {
                         .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
                 reqMessage.writeTo(out);
             } catch (SOAPException e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
             }
             // Flush ONLY once.
             out.flush();
         }
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("xmlSent00"));
+            log.debug(Messages.getMessage("xmlSent00"));
             log.debug("---------------------------------------------------");
             log.debug(header + reqEnv);
         }
@@ -627,7 +628,7 @@ public class HTTPSender extends BasicHandler {
             }
             AxisFault fault = new AxisFault("HTTP", "(" + returnCode + ")" + statusMessage, null, null);
 
-            fault.setFaultDetailString(JavaUtils.getMessage("return01",
+            fault.setFaultDetailString(Messages.getMessage("return01",
                     "" + returnCode, buf.toString()));
             throw fault;
         }
@@ -665,9 +666,9 @@ public class HTTPSender extends BasicHandler {
             if (log.isDebugEnabled()) {
                 if (null == contentLength) {
                     log.debug("\n"
-                            + JavaUtils.getMessage("no00", "Content-Length"));
+                            + Messages.getMessage("no00", "Content-Length"));
                 }
-                log.debug("\n" + JavaUtils.getMessage("xmlRecd00"));
+                log.debug("\n" + Messages.getMessage("xmlRecd00"));
                 log.debug("-----------------------------------------------");
                 log.debug((String) outMsg.getSOAPPartAsString());
             }

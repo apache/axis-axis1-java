@@ -61,6 +61,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -267,7 +268,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         }
         catch( Exception exp ) {
             throw new ServiceException(
-                    JavaUtils.getMessage("wsdlError00", "" + "", "\n" + exp) );
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
         }
     }
 
@@ -279,11 +280,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             this.wsdlService    = def.getService( serviceName );
             if ( this.wsdlService == null )
                 throw new ServiceException(
-                        JavaUtils.getMessage("noService00", "" + serviceName));
+                        Messages.getMessage("noService00", "" + serviceName));
         }
         catch( Exception exp ) {
             throw new ServiceException(
-                    JavaUtils.getMessage("wsdlError00", "" + "", "\n" + exp) );
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
         }
     }
 
@@ -301,11 +302,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                            throws ServiceException {
 
         if (wsdlService == null)
-            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
+            throw new ServiceException(Messages.getMessage("wsdlMissing00"));
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
-            throw new ServiceException( JavaUtils.getMessage("noPort00", "" + portName) );
+            throw new ServiceException( Messages.getMessage("noPort00", "" + portName) );
 
         // First, try to find a generated stub.  If that
         // returns null, then find a dynamic stub.
@@ -360,7 +361,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public Remote getPort(Class proxyInterface) throws ServiceException {
         if (wsdlService == null)
-            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
+            throw new ServiceException(Messages.getMessage("wsdlMissing00"));
 
         return getPort(null, null, proxyInterface);
     }
@@ -386,12 +387,12 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private Remote getPort(String endpoint, QName portName,
             Class proxyInterface) throws ServiceException {
         if (!proxyInterface.isInterface()) {
-            throw new ServiceException(JavaUtils.getMessage("mustBeIface00"));
+            throw new ServiceException(Messages.getMessage("mustBeIface00"));
         }
 
         if (!(Remote.class.isAssignableFrom(proxyInterface))) {
             throw new ServiceException(
-                            JavaUtils.getMessage("mustExtendRemote00"));
+                            Messages.getMessage("mustExtendRemote00"));
         }
 
         try {
@@ -435,12 +436,12 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
-            throw new ServiceException( JavaUtils.getMessage("noPort00", "" + portName) );
+            throw new ServiceException( Messages.getMessage("noPort00", "" + portName) );
 
         Binding   binding  = port.getBinding();
         PortType  portType = binding.getPortType();
         if ( portType == null )
-            throw new ServiceException( JavaUtils.getMessage("noPortType00", "" + portName) );
+            throw new ServiceException( Messages.getMessage("noPortType00", "" + portName) );
 
         // Get the URL
         ////////////////////////////////////////////////////////////////////
@@ -455,7 +456,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                 }
                 catch(Exception exp) {
                     throw new ServiceException(
-                            JavaUtils.getMessage("cantSetURI00", "" + exp) );
+                            Messages.getMessage("cantSetURI00", "" + exp) );
                 }
             }
         }
@@ -532,10 +533,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call[] getCalls(QName portName) throws ServiceException {
         if (portName == null)
-            throw new ServiceException(JavaUtils.getMessage("badPort00"));
+            throw new ServiceException(Messages.getMessage("badPort00"));
 
         if (wsdlService == null) 
-            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
+            throw new ServiceException(Messages.getMessage("wsdlMissing00"));
 
         javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[]{createCall(portName)};
         return array;

@@ -56,6 +56,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 
 /**
@@ -110,7 +111,7 @@ public class Duration {
 
         if (duration.indexOf("P") == -1)
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("badDuration"));
+                    Messages.getMessage("badDuration"));
 
         if (duration.startsWith("-")) {
             isNegative = true;

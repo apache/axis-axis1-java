@@ -62,6 +62,8 @@ import javax.activation.DataHandler;
 
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
+
 import javax.mail.internet.MimeUtility;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -117,7 +119,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
             if (null == ret) {
                 ret = readTillFound(id);
             }
-            log.debug(JavaUtils.getMessage("return02",
+            log.debug(Messages.getMessage("return02",
                     "getAttachmentByReference(\"" + id + "\"",
                     (ret == null ? "null" : ret.toString())));
         } catch (java.io.IOException e) {
@@ -257,7 +259,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
     public int read(byte[] b, int off, int len)
       throws java.io.IOException {
         if (closed) {
-            throw new java.io.IOException(JavaUtils.getMessage(
+            throw new java.io.IOException(Messages.getMessage(
               "streamClosed"));
         }
         if (eos) {
@@ -277,7 +279,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
 
     public int read() throws java.io.IOException {
         if (closed) {
-            throw new java.io.IOException(JavaUtils.getMessage(
+            throw new java.io.IOException(Messages.getMessage(
             "streamClosed"));
         }
         if (eos) {

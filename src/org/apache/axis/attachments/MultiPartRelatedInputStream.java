@@ -57,6 +57,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.Part;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -197,7 +198,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                                 boundaryMarker[(current + 1) & 0x1],
                                 boundaryMarker[0].length - 1, 1) < 1) {
                             throw new org.apache.axis.AxisFault(
-                                    JavaUtils.getMessage(
+                                    Messages.getMessage(
                                             "mimeErrorNoBoundary", new String(boundary)));
                         }
                     }
@@ -217,7 +218,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     found = java.util.Arrays.equals(boundaryBytes, readBytes);
                     if(!found && is.read(readBytes) < 1){
                         throw new org.apache.axis.AxisFault(
-                                JavaUtils.getMessage(
+                                Messages.getMessage(
                                         "mimeErrorNoBoundary", boundaryStr));
                     }
                 }
@@ -357,7 +358,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
             if (boundaryDelimitedStream == null) {
                 throw new org.apache.axis.AxisFault(
-                        JavaUtils.getMessage("noRoot", rootPartContentId));
+                        Messages.getMessage("noRoot", rootPartContentId));
             }
 
             soapStreamBDS = boundaryDelimitedStream;
@@ -374,13 +375,13 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
             // Read from the input stream all attachments prior to the root part.
         } catch (javax.mail.internet.ParseException e) {
             throw new org.apache.axis.AxisFault(
-                    JavaUtils.getMessage("mimeErrorParsing", e.getMessage()));
+                    Messages.getMessage("mimeErrorParsing", e.getMessage()));
         } catch (java.io.IOException e) {
             throw new org.apache.axis.AxisFault(
-                    JavaUtils.getMessage("readError", e.getMessage()));
+                    Messages.getMessage("readError", e.getMessage()));
         } catch (javax.mail.MessagingException e) {
             throw new org.apache.axis.AxisFault(
-                    JavaUtils.getMessage("readError", e.getMessage()));
+                    Messages.getMessage("readError", e.getMessage()));
         }
     }
 
@@ -433,7 +434,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
             ret = readTillFound(id);
         }
 
-        log.debug(JavaUtils.getMessage("return02",
+        log.debug(Messages.getMessage("return02",
                 "getAttachmentByReference(\"" + id
                 + "\"", ((ret == null)
                 ? "null"
@@ -695,7 +696,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
     public int read(byte[] b, int off, int len) throws java.io.IOException {
 
         if (closed) {
-            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+            throw new java.io.IOException(Messages.getMessage("streamClosed"));
         }
 
         if (eos) {
@@ -734,7 +735,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
     public int read() throws java.io.IOException {
 
         if (closed) {
-            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+            throw new java.io.IOException(Messages.getMessage("streamClosed"));
         }
 
         if (eos) {

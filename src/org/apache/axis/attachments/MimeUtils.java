@@ -62,6 +62,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -144,7 +145,7 @@ public class MimeUtils {
                 java.io.File df = fdh.getFile();
 
                 if (!df.exists()) {
-                    throw new RuntimeException(JavaUtils.getMessage("noFile",
+                    throw new RuntimeException(Messages.getMessage("noFile",
                             df.getAbsolutePath()));
                 }
 
@@ -171,7 +172,7 @@ public class MimeUtils {
                 }
             }
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }
 
         return dataSize + headerLength;
@@ -244,9 +245,9 @@ public class MimeUtils {
             message.saveChanges();
             message.writeTo(os, filter);
         } catch (javax.mail.MessagingException e) {
-            log.error(JavaUtils.getMessage("javaxMailMessagingException00"), e);
+            log.error(Messages.getMessage("javaxMailMessagingException00"), e);
         } catch (java.io.IOException e) {
-            log.error(JavaUtils.getMessage("javaIOException00"), e);
+            log.error(Messages.getMessage("javaIOException00"), e);
         }
     }
 
@@ -346,7 +347,7 @@ public class MimeUtils {
                 multipart.addBodyPart(messageBodyPart);
             }
         } catch (javax.mail.MessagingException e) {
-            log.error(JavaUtils.getMessage("javaxMailMessagingException00"), e);
+            log.error(Messages.getMessage("javaxMailMessagingException00"), e);
         }
 
         return multipart;

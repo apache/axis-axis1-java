@@ -57,6 +57,7 @@ package org.apache.axis.components.net;
 import com.sun.net.ssl.SSLContext;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 
 import javax.net.ssl.SSLSocket;
@@ -196,7 +197,7 @@ public class JSSESocketFactory extends DefaultSocketFactory {
             InputStream tunnelInputStream = tunnel.getInputStream();
 
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("isNull00", "tunnelInputStream",
+                log.debug(Messages.getMessage("isNull00", "tunnelInputStream",
                         "" + (tunnelInputStream
                         == null)));
             }
@@ -225,7 +226,7 @@ public class JSSESocketFactory extends DefaultSocketFactory {
             }
             if (!replyStr.startsWith("HTTP/1.0 200")
                     && !replyStr.startsWith("HTTP/1.1 200")) {
-                throw new IOException(JavaUtils.getMessage("cantTunnel00",
+                throw new IOException(Messages.getMessage("cantTunnel00",
                         new String[]{
                             tcp.getProxyHost(),
                             "" + tunnelPort,
@@ -235,14 +236,14 @@ public class JSSESocketFactory extends DefaultSocketFactory {
             // End of condensed reflective tunnel handshake method
             sslSocket = sslFactory.createSocket(tunnel, host, port, true);
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("setupTunnel00",
+                log.debug(Messages.getMessage("setupTunnel00",
                           tcp.getProxyHost(),
                         "" + tunnelPort));
             }
         }
         ((SSLSocket) sslSocket).startHandshake();
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("createdSSL00"));
+            log.debug(Messages.getMessage("createdSSL00"));
         }
         return sslSocket;
     }

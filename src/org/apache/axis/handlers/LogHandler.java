@@ -59,6 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -89,17 +90,17 @@ public class LogHandler extends BasicHandler {
                 Message outMsg = msgContext.getResponseMessage();
 
                 pw.println( "=======================================================" );
-                pw.println( "= " + JavaUtils.getMessage("elapsed00",
+                pw.println( "= " + Messages.getMessage("elapsed00",
                        "" + (System.currentTimeMillis() - start)));
-                pw.println( "= " + JavaUtils.getMessage("inMsg00",
+                pw.println( "= " + Messages.getMessage("inMsg00",
                        (inMsg == null ? "null" : inMsg.getSOAPPartAsString())));
-                pw.println( "= " + JavaUtils.getMessage("outMsg00",
+                pw.println( "= " + Messages.getMessage("outMsg00",
                        (outMsg == null ? "null" : outMsg.getSOAPPartAsString())));
                 pw.println( "=======================================================" );
 
                 pw.close();
             } catch( Exception e ) {
-                log.error( JavaUtils.getMessage("exception00"), e );
+                log.error( Messages.getMessage("exception00"), e );
                 throw AxisFault.makeFault(e);
             }
         }
@@ -112,11 +113,11 @@ public class LogHandler extends BasicHandler {
             FileWriter  fw   = new FileWriter( "axis.log", true );
             PrintWriter pw   = new PrintWriter( fw );
             pw.println( "=====================" );
-            pw.println( "= " + JavaUtils.getMessage("fault00") );
+            pw.println( "= " + Messages.getMessage("fault00") );
             pw.println( "=====================" );
             pw.close();
         } catch( Exception e ) {
-            log.error(JavaUtils.getMessage("exception00"), e );
+            log.error(Messages.getMessage("exception00"), e );
         }
         log.debug("Exit: LogHandler::undo");
     }

@@ -58,6 +58,7 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.encoding.Target;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -122,7 +123,7 @@ public class BeanPropertyTarget implements Target {
                     String valueType = "null";
                     if (value != null)
                         valueType = value.getClass().getName();
-                    log.error(JavaUtils.getMessage("cantConvert02",
+                    log.error(Messages.getMessage("cantConvert02",
                                                    new String[] {
                                                        valueType,
                                                        field,

@@ -65,6 +65,7 @@ import javax.wsdl.Port;
 import javax.wsdl.Service;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
@@ -120,14 +121,14 @@ public class JavaServiceIfaceWriter extends JavaClassWriter {
             Port p = (Port) portIterator.next();
             Binding binding = p.getBinding();
             if (binding == null) {
-                throw new IOException(JavaUtils.getMessage("emitFailNoBinding01",
+                throw new IOException(Messages.getMessage("emitFailNoBinding01",
                         new String[] {p.getName()}));
             }
             
             BindingEntry bEntry =
                     symbolTable.getBindingEntry(binding.getQName());
             if (bEntry == null) {
-                throw new IOException(JavaUtils.getMessage(
+                throw new IOException(Messages.getMessage(
                         "emitFailNoBindingEntry01",
                         new String[] {binding.getQName().toString()}));
             }
@@ -135,7 +136,7 @@ public class JavaServiceIfaceWriter extends JavaClassWriter {
             PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
                     binding.getPortType().getQName());
             if (ptEntry == null) {
-                throw new IOException(JavaUtils.getMessage(
+                throw new IOException(Messages.getMessage(
                         "emitFailNoPortType01",
                         new String[]
                         {binding.getPortType().getQName().toString()}));

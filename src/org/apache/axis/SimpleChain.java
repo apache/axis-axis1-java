@@ -55,13 +55,13 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.Message;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -197,12 +197,12 @@ public class SimpleChain extends BasicHandler implements Chain {
     public void addHandler(Handler handler) {
         if (handler == null)
             throw new InternalException(
-                JavaUtils.getMessage("nullHandler00",
+                Messages.getMessage("nullHandler00",
                                      "SimpleChain::addHandler"));
 
         if (invoked)
             throw new InternalException(
-              JavaUtils.getMessage("addAfterInvoke00",
+              Messages.getMessage("addAfterInvoke00",
                                    "SimpleChain::addHandler"));
 
         handlers.add( handler );
@@ -222,7 +222,7 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     public Element getDeploymentData(Document doc) {
         if (log.isDebugEnabled()) {
-            log.debug( JavaUtils.getMessage("enter00",
+            log.debug( Messages.getMessage("enter00",
                                             "SimpleChain::getDeploymentData") );
         }
 

@@ -61,6 +61,7 @@ package org.apache.axis.attachments;
 
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 
 /**
@@ -121,7 +122,7 @@ public final class DimeTypeNameFormat {
 
     public static DimeTypeNameFormat parseByte(byte x) {
         if (x < 0 || x > fromByte.length) {
-            throw new IllegalArgumentException(JavaUtils.getMessage(
+            throw new IllegalArgumentException(Messages.getMessage(
                         "attach.DimeStreamBadType", "" + x));
         }
         return fromByte[x];

@@ -63,6 +63,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JWSClassLoader;
@@ -122,7 +123,7 @@ public class JWSHandler extends BasicHandler
         try {
             setupService(msgContext);
         } catch (Exception e) {
-            log.error( JavaUtils.getMessage("exception00"), e );
+            log.error( Messages.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
     }
@@ -218,8 +219,8 @@ public class JWSHandler extends BasicHandler
                 /* java file then recompile the java file.                 */
                 /* Start by copying the *.jws file to *.java               */
                 /***********************************************************/
-                log.debug(JavaUtils.getMessage("compiling00", jwsFile) );
-                log.debug(JavaUtils.getMessage("copy00", jwsFile, jFile) );
+                log.debug(Messages.getMessage("compiling00", jwsFile) );
+                log.debug(Messages.getMessage("copy00", jwsFile, jFile) );
                 FileReader fr = new FileReader( jwsFile );
                 FileWriter fw = new FileWriter( jFile );
                 char[] buf = new char[4096];
@@ -274,7 +275,7 @@ public class JWSHandler extends BasicHandler
                     }
                     root.appendChild( doc.createTextNode( message.toString() ) );
                     throw new AxisFault( "Server.compileError",
-                                         JavaUtils.getMessage("badCompile00", jFile),
+                                         Messages.getMessage("badCompile00", jFile),
                                          null, new Element[] { root } );
                 }
                 ClassUtils.removeClassLoader( clsName );
@@ -467,7 +468,7 @@ public class JWSHandler extends BasicHandler
         try {
             setupService(msgContext);
         } catch (Exception e) {
-            log.error( JavaUtils.getMessage("exception00"), e );
+            log.error( Messages.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
     }

@@ -61,6 +61,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Part;
 import org.apache.axis.SOAPPart;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -282,7 +283,7 @@ public class AttachmentsImpl implements Attachments {
 
         if (!(datahandler instanceof javax.activation.DataHandler)) {
             throw new org.apache.axis.AxisFault(
-                    JavaUtils.getMessage(
+                    Messages.getMessage(
                             "unsupportedAttach", datahandler.getClass().getName(),
                             javax.activation.DataHandler.class.getName()));
         }
@@ -417,7 +418,7 @@ public class AttachmentsImpl implements Attachments {
             multipart = null;
             dimemultipart = null;
         } catch (ClassCastException e) {
-            throw new ClassCastException(JavaUtils.getMessage("onlySOAPParts"));
+            throw new ClassCastException(Messages.getMessage("onlySOAPParts"));
         }
     }
 
@@ -584,7 +585,7 @@ public class AttachmentsImpl implements Attachments {
             attachments.clear();
             orderedAttachments.clear();
         } catch (AxisFault af){
-            log.warn(JavaUtils.getMessage("exception00"));
+            log.warn(Messages.getMessage("exception00"));
         }
     }
 

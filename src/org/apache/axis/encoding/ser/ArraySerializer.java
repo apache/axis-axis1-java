@@ -59,6 +59,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -105,7 +106,7 @@ public class ArraySerializer implements Serializer
         throws IOException
     {
         if (value == null)
-            throw new IOException(JavaUtils.getMessage("cantDoNullArray00"));
+            throw new IOException(Messages.getMessage("cantDoNullArray00"));
 
         MessageContext msgContext = context.getMessageContext();
         SchemaVersion schema = msgContext.getSchemaVersion();
@@ -117,7 +118,7 @@ public class ArraySerializer implements Serializer
         if (!cls.isArray()) {
             if (!(value instanceof Collection)) {
                 throw new IOException(
-                        JavaUtils.getMessage("cantSerialize00", cls.getName()));
+                        Messages.getMessage("cantSerialize00", cls.getName()));
             }
             list = (Collection)value;
         }
@@ -160,7 +161,7 @@ public class ArraySerializer implements Serializer
 
         if (componentQName == null) {
             throw new IOException(
-                    JavaUtils.getMessage("noType00", componentType.getName()));
+                    Messages.getMessage("noType00", componentType.getName()));
         }
 
         String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());

@@ -59,6 +59,7 @@ import com.sun.net.ssl.TrustManager;
 import com.sun.net.ssl.X509TrustManager;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import java.util.Hashtable;
@@ -97,12 +98,12 @@ public class FakeTrustSocketFactory extends JSSESocketFactory {
                     new TrustManager[]{new FakeX509TrustManager()},
                     new java.security.SecureRandom());
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("ftsf00"));
+                log.debug(Messages.getMessage("ftsf00"));
             }
             return sc;
         } catch (Exception exc) {
-            log.error(JavaUtils.getMessage("ftsf01"), exc);
-            throw new Exception(JavaUtils.getMessage("ftsf02"));
+            log.error(Messages.getMessage("ftsf01"), exc);
+            throw new Exception(Messages.getMessage("ftsf02"));
         }
     }
 
@@ -126,7 +127,7 @@ public class FakeTrustSocketFactory extends JSSESocketFactory {
                 .X509Certificate[] chain) {
 
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("ftsf03"));
+                log.debug(Messages.getMessage("ftsf03"));
             }
             return true;
         }
@@ -142,7 +143,7 @@ public class FakeTrustSocketFactory extends JSSESocketFactory {
                 .X509Certificate[] chain) {
 
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("ftsf04"));
+                log.debug(Messages.getMessage("ftsf04"));
             }
             return true;
         }
@@ -155,7 +156,7 @@ public class FakeTrustSocketFactory extends JSSESocketFactory {
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("ftsf05"));
+                log.debug(Messages.getMessage("ftsf05"));
             }
             return null;
         }

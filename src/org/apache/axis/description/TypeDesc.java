@@ -59,6 +59,7 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -207,7 +208,7 @@ public class TypeDesc {
     {
         if (field == null) {
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("nullFieldDesc"));
+                    Messages.getMessage("nullFieldDesc"));
         }
         
         int numFields = 0;

@@ -64,6 +64,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -158,7 +159,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 value=javaType.newInstance();
             } catch (Exception e) {
                 // Failed to create an object.
-                throw new SAXException(JavaUtils.getMessage("cantCreateBean00", 
+                throw new SAXException(Messages.getMessage("cantCreateBean00", 
                                                             javaType.getName(), 
                                                             e.toString()));
             }
@@ -246,7 +247,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         if (propDesc == null) {
             // No such field
             throw new SAXException(
-                    JavaUtils.getMessage("badElem00", javaType.getName(), 
+                    Messages.getMessage("badElem00", javaType.getName(), 
                                          localName));
         }
 
@@ -332,7 +333,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             try {
                 value=javaType.newInstance();
             } catch (Exception e) {
-                throw new SAXException(JavaUtils.getMessage("cantCreateBean00", 
+                throw new SAXException(Messages.getMessage("cantCreateBean00", 
                                                             javaType.getName(), 
                                                             e.toString()));
             }
@@ -364,12 +365,12 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
                 if (dSer == null)
                     throw new SAXException(
-                            JavaUtils.getMessage("unregistered00",
+                            Messages.getMessage("unregistered00",
                                                  bpd.getType().toString()));
                 
                 if (! (dSer instanceof SimpleDeserializer))
                     throw new SAXException(
-                            JavaUtils.getMessage("AttrNotSimpleType00", 
+                            Messages.getMessage("AttrNotSimpleType00", 
                                                  bpd.getName(), 
                                                  bpd.getType().toString()));
                 

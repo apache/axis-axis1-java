@@ -60,6 +60,7 @@ import java.lang.reflect.Method;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.ClassLoaders;
@@ -158,7 +159,7 @@ public class EngineConfigurationFactoryFinder
             try {
                 factory = EngineConfigurationFactoryServlet.newFactory(obj);
             } catch (Exception e) {
-                log.warn(JavaUtils.getMessage("engineConfigInvokeNewFactory",
+                log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                               EngineConfigurationFactoryServlet.class.getName(),
                                               requiredMethod), e);
             }
@@ -168,7 +169,7 @@ public class EngineConfigurationFactoryFinder
                     // should NEVER return null.
                     factory = EngineConfigurationFactoryDefault.newFactory(obj);
                 } catch (Exception e) {
-                    log.warn(JavaUtils.getMessage("engineConfigInvokeNewFactory",
+                    log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                                   EngineConfigurationFactoryDefault.class.getName(),
                                                   requiredMethod), e);
                 }
@@ -177,9 +178,9 @@ public class EngineConfigurationFactoryFinder
 
         if (factory != null) {
             if(log.isDebugEnabled())
-                log.debug(JavaUtils.getMessage("engineFactory", factory.getClass().getName()));
+                log.debug(Messages.getMessage("engineFactory", factory.getClass().getName()));
         } else {
-            log.error(JavaUtils.getMessage("engineConfigFactoryMissing"));
+            log.error(Messages.getMessage("engineConfigFactoryMissing"));
             // we should be throwing an exception here,
             //
             // but again, requires more refactoring than we want to swallow
@@ -211,14 +212,14 @@ public class EngineConfigurationFactoryFinder
 
 
         if (method == null) {
-            log.warn(JavaUtils.getMessage("engineConfigMissingNewFactory",
+            log.warn(Messages.getMessage("engineConfigMissingNewFactory",
                                           service.getName(),
                                           requiredMethod));
         } else {
             try {
                 return (EngineConfigurationFactory)method.invoke(null, param);
             } catch (Exception e) {
-                log.warn(JavaUtils.getMessage("engineConfigInvokeNewFactory",
+                log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                               service.getName(),
                                               requiredMethod), e);
             }

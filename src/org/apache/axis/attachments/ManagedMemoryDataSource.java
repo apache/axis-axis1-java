@@ -57,6 +57,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -158,7 +159,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
         if (maxCached < MAX_MEMORY_DISK_CACHED) {
             throw new IllegalArgumentException(
-                    JavaUtils.getMessage("badMaxCached", "" + maxCached));
+                    Messages.getMessage("badMaxCached", "" + maxCached));
         }
 
         if (log.isDebugEnabled()) {
@@ -294,7 +295,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             throws java.io.IOException {
 
         if (closed) {
-            throw new java.io.IOException(JavaUtils.getMessage("streamClosed"));
+            throw new java.io.IOException(Messages.getMessage("streamClosed"));
         }
 
         int writesz = length;
@@ -408,7 +409,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
         memorybuflist = null;
 
-        log.debug(JavaUtils.getMessage("maxCached", "" + maxCached,
+        log.debug(Messages.getMessage("maxCached", "" + maxCached,
                 "" + totalsz));
 
         if (ml != null) {
@@ -427,7 +428,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                                     attdir));
 
                     log.debug(
-                            JavaUtils.getMessage(
+                            Messages.getMessage(
                                     "diskCache", diskCacheFile.getAbsolutePath()));
 
                     cachediskstream = new java.io.BufferedOutputStream(
@@ -458,7 +459,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                     cachediskstream = null;
                     maxCached = java.lang.Integer.MAX_VALUE;
 
-                    log.info(JavaUtils.getMessage("nodisk00"), se);
+                    log.info(Messages.getMessage("nodisk00"), se);
                 }
             }
         }
@@ -562,7 +563,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
             if (deleted) {
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("resourceDeleted"));
+                        Messages.getMessage("resourceDeleted"));
             }
 
             readers.put(this, null);
@@ -579,12 +580,12 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
             if (deleted) {
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("resourceDeleted"));
+                        Messages.getMessage("resourceDeleted"));
             }
 
             if (readClosed) {
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("streamClosed"));
+                        Messages.getMessage("streamClosed"));
             }
 
             int ret = totalsz - bread;
@@ -655,7 +656,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                 is_log.debug("reset()");
             }
 
-            throw new java.io.IOException(JavaUtils.getMessage("noResetMark"));
+            throw new java.io.IOException(Messages.getMessage("noResetMark"));
         }
 
         /**
@@ -676,12 +677,12 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
             if (deleted) {
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("resourceDeleted"));
+                        Messages.getMessage("resourceDeleted"));
             }
 
             if (readClosed) {
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("streamClosed"));
+                        Messages.getMessage("streamClosed"));
             }
 
             if (skipped < 1) {
@@ -754,31 +755,31 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
             if (deleted) {
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("resourceDeleted"));
+                        Messages.getMessage("resourceDeleted"));
             }
 
             if (readClosed) {
                 throw new java.io.IOException(
-                        JavaUtils.getMessage("streamClosed"));
+                        Messages.getMessage("streamClosed"));
             }
 
             if (b == null) {
-                throw new InternalException(JavaUtils.getMessage("nullInput"));
+                throw new InternalException(Messages.getMessage("nullInput"));
             }
 
             if (off < 0) {
                 throw new IndexOutOfBoundsException(
-                        JavaUtils.getMessage("negOffset", "" + off));
+                        Messages.getMessage("negOffset", "" + off));
             }
 
             if (len < 0) {
                 throw new IndexOutOfBoundsException(
-                        JavaUtils.getMessage("length", "" + len));
+                        Messages.getMessage("length", "" + len));
             }
 
             if (len + off > b.length) {
                 throw new IndexOutOfBoundsException(
-                        JavaUtils.getMessage("writeBeyond"));
+                        Messages.getMessage("writeBeyond"));
             }
 
             if (len == 0) {
@@ -831,19 +832,19 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
                 if ((bwritten == 0) && (null != diskCacheFile)) {
                     if (debugEnabled) {
-                        is_log.debug(JavaUtils.getMessage("reading", "" + len));
+                        is_log.debug(Messages.getMessage("reading", "" + len));
                     }
 
                     if (null == fin) {           // we are now reading from disk.
                         if (debugEnabled) {
                             is_log.debug(
-                                    JavaUtils.getMessage(
+                                    Messages.getMessage(
                                             "openBread",
                                             diskCacheFile.getCanonicalPath()));
                         }
 
                         if (debugEnabled) {
-                            is_log.debug(JavaUtils.getMessage("openBread",
+                            is_log.debug(Messages.getMessage("openBread",
                                     "" + bread));
                         }
 
@@ -856,14 +857,14 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
                     if (cachediskstream != null) {
                         if (debugEnabled) {
-                            is_log.debug(JavaUtils.getMessage("flushing"));
+                            is_log.debug(Messages.getMessage("flushing"));
                         }
 
                         cachediskstream.flush();
                     }
 
                     if (debugEnabled) {
-                        is_log.debug(JavaUtils.getMessage("flushing"));
+                        is_log.debug(Messages.getMessage("flushing"));
                         is_log.debug("len=" + len);
                         is_log.debug("off=" + off);
                         is_log.debug("b.length=" + b.length);
@@ -879,7 +880,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
             if (debugEnabled) {
                 is_log.debug(this.hashCode()
-                        + JavaUtils.getMessage("read", "" + bwritten));
+                        + Messages.getMessage("read", "" + bwritten));
             }
 
             return bwritten;
@@ -954,7 +955,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             fo.close();
             is.close();
         } catch (java.lang.Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }
     }
 }

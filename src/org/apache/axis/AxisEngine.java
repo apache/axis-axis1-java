@@ -62,6 +62,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
@@ -234,7 +235,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             config.writeEngineConfig(this);
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("saveConfigFail00"), e);
+            log.error(Messages.getMessage("saveConfigFail00"), e);
         }
     }
 
@@ -292,7 +293,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             tmr = config.getTypeMappingRegistry();
         } catch (ConfigurationException e) {
-            log.error(JavaUtils.getMessage("axisConfigurationException00"), e);
+            log.error(Messages.getMessage("axisConfigurationException00"), e);
         }
 
         return tmr;

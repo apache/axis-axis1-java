@@ -59,6 +59,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -109,7 +110,7 @@ public class MapSerializer implements Serializer
     {
         if (!(value instanceof Map))
             throw new IOException(
-                JavaUtils.getMessage("noMap00", "MapSerializer", value.getClass().getName()));
+                Messages.getMessage("noMap00", "MapSerializer", value.getClass().getName()));
 
         Map map = (Map)value;
 

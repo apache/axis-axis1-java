@@ -61,6 +61,7 @@ import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.security.simple.SimpleSecurityProvider;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -98,18 +99,18 @@ public class SimpleAuthenticationHandler extends BasicHandler {
         if (provider != null) {
             String  userID = msgContext.getUsername();
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("user00", userID) );
+                log.debug( Messages.getMessage("user00", userID) );
             }
 
             // in order to authenticate, the user must exist
             if ( userID == null || userID.equals(""))
                 throw new AxisFault( "Server.Unauthenticated",
-                    JavaUtils.getMessage("cantAuth00", userID),
+                    Messages.getMessage("cantAuth00", userID),
                     null, null );
 
             String passwd = msgContext.getPassword();
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("password00", passwd) );
+                log.debug( Messages.getMessage("password00", passwd) );
             }
 
             AuthenticatedUser authUser = provider.authenticate(msgContext);
@@ -117,11 +118,11 @@ public class SimpleAuthenticationHandler extends BasicHandler {
             // if a password is defined, then it must match
             if ( authUser == null)
                 throw new AxisFault( "Server.Unauthenticated",
-                    JavaUtils.getMessage("cantAuth01", userID),
+                    Messages.getMessage("cantAuth01", userID),
                     null, null );
 
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("auth00", userID) );
+                log.debug( Messages.getMessage("auth00", userID) );
             }
 
             msgContext.setProperty(MessageContext.AUTHUSER, authUser);

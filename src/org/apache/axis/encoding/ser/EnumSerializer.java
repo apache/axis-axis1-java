@@ -72,6 +72,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.InternalException;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -119,7 +120,7 @@ public class EnumSerializer extends SimpleSerializer
             }
             return (String) toStringMethod.invoke(value, null);
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
         }
         return null;
     }

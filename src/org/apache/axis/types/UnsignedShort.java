@@ -57,6 +57,7 @@ package org.apache.axis.types;
 import java.util.ArrayList;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type UnsignedShort
@@ -90,7 +91,7 @@ public class UnsignedShort extends UnsignedInt {
      */
     public void setValue(long sValue) throws Exception {
         if (isValid(sValue) == false)
-            throw new Exception(JavaUtils.getMessage("badUnsignedShort00") +
+            throw new Exception(Messages.getMessage("badUnsignedShort00") +
                     String.valueOf(sValue) + "]");
         lValue = new Long(sValue);
     }

@@ -61,6 +61,7 @@ import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * This is a simple provider for using Handler-based services which don't
@@ -77,15 +78,13 @@ public class WSDDHandlerProvider
     {
         String providerClass = service.getParameter("handlerClass");
         if (providerClass == null) {
-            throw new ConfigurationException(JavaUtils.
-                                            getMessage("noHandlerClass00"));
+            throw new ConfigurationException(Messages.getMessage("noHandlerClass00"));
         }
         
         Class _class = ClassUtils.forName(providerClass);
         
         if (!(Handler.class.isAssignableFrom(_class))) {
-            throw new ConfigurationException(JavaUtils.
-                                            getMessage("badHandlerClass00",
+            throw new ConfigurationException(Messages.getMessage("badHandlerClass00",
                                                        _class.getName()));
         }
 

@@ -60,6 +60,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
@@ -159,7 +160,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         pw.println("");
 
         // A protected constructor is used to create the static enumeration values
-        pw.println("    // " + JavaUtils.getMessage("ctor00"));
+        pw.println("    // " + Messages.getMessage("ctor00"));
         pw.println("    protected " + javaName + "(" + baseType + " value) {");
         pw.println("        _value_ = value;");
         if (baseClass.equals("java.lang.String") || 

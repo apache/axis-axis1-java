@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.tools.DefaultClassHolder;
 import org.apache.commons.discovery.tools.DiscoverClass;
 import org.apache.commons.discovery.tools.ManagedProperties;
@@ -242,7 +243,7 @@ public class AxisProperties {
                                                          (PropertiesHolder)null,
                                                          defaultClass);
                     } catch (Exception e) {
-                        log.error(JavaUtils.getMessage("exception00"), e);
+                        log.error(Messages.getMessage("exception00"), e);
                     }
                     return null;
                 }

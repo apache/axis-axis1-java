@@ -76,6 +76,7 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.enum.Scope;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -127,13 +128,13 @@ public class JavaDeployWriter extends JavaWriter {
      * Replace the default file header with the deployment doc file header.
      */
     protected void writeFileHeader(PrintWriter pw) throws IOException {
-        pw.println(JavaUtils.getMessage("deploy00"));
-        pw.println(JavaUtils.getMessage("deploy02"));
-        pw.println(JavaUtils.getMessage("deploy03"));
-        pw.println(JavaUtils.getMessage("deploy05"));
-        pw.println(JavaUtils.getMessage("deploy06"));
-        pw.println(JavaUtils.getMessage("deploy07"));
-        pw.println(JavaUtils.getMessage("deploy09"));
+        pw.println(Messages.getMessage("deploy00"));
+        pw.println(Messages.getMessage("deploy02"));
+        pw.println(Messages.getMessage("deploy03"));
+        pw.println(Messages.getMessage("deploy05"));
+        pw.println(Messages.getMessage("deploy06"));
+        pw.println(Messages.getMessage("deploy07"));
+        pw.println(Messages.getMessage("deploy09"));
         pw.println();
         pw.println("<deployment");
         pw.println("    xmlns=\"" + WSDDConstants.URI_WSDD +"\"");
@@ -160,7 +161,7 @@ public class JavaDeployWriter extends JavaWriter {
             Service myService = (Service) mapIterator.next();
 
             pw.println();
-            pw.println("  <!-- " + JavaUtils.getMessage(
+            pw.println("  <!-- " + Messages.getMessage(
                     "wsdlService00", myService.getQName().getLocalPart())
                     + " -->");
             pw.println();

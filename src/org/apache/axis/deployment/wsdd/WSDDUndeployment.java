@@ -57,6 +57,7 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -118,7 +119,7 @@ public class WSDDUndeployment
     {
         String attr = el.getAttribute(ATTR_NAME);
         if (attr == null || "".equals(attr))
-            throw new WSDDException(JavaUtils.getMessage("badNameAttr00"));
+            throw new WSDDException(Messages.getMessage("badNameAttr00"));
         return new QName("", attr);
     }
 

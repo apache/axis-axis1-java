@@ -66,6 +66,7 @@ import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -106,7 +107,7 @@ public class VectorSerializer implements Serializer
     {
         if (!(value instanceof Vector))
             throw new IOException(
-                JavaUtils.getMessage("noVector00", "VectorSerializer", 
+                Messages.getMessage("noVector00", "VectorSerializer", 
                                      value.getClass().getName()));
 
         Vector vector = (Vector)value;

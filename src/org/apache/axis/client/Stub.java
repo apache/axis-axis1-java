@@ -69,6 +69,7 @@ import javax.xml.rpc.Service;
 import org.apache.axis.AxisFault;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
 * This class is the base for all generated stubs.
@@ -125,13 +126,13 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     public void _setProperty(String name, Object value) {
         if (name == null || value == null) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage(name == null ?
+                    Messages.getMessage(name == null ?
                                          "badProp03" : "badProp04"));
         }
         else if (name.equals(Call.USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             cachedUsername = (String) value;
@@ -139,7 +140,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         else if (name.equals(Call.PASSWORD_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             cachedPassword = (String) value;
@@ -147,7 +148,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             try {
@@ -160,7 +161,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.Boolean",
                         value.getClass().getName()}));
@@ -170,7 +171,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         }
         else if (name.startsWith("java.") || name.startsWith("javax.")) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage("badProp05", name));
+                    Messages.getMessage("badProp05", name));
         }
         else {
             cachedProperties.put(name, value);
@@ -200,7 +201,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
             }
             else if (name.startsWith("java.") || name.startsWith("javax.")) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp05", name));
+                        Messages.getMessage("badProp05", name));
             }
             else {
                 return cachedProperties.get(name);

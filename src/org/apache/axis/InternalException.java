@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -120,7 +121,7 @@ public class InternalException extends RuntimeException {
             if (e instanceof InternalException) {
                 log.debug("InternalException: ", e);
             } else {
-                log.fatal(JavaUtils.getMessage("exception00"), e);
+                log.fatal(Messages.getMessage("exception00"), e);
             }
         }
     }

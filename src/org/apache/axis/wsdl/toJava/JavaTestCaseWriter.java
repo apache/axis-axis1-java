@@ -70,6 +70,7 @@ import javax.wsdl.PortType;
 import javax.xml.rpc.holders.BooleanHolder;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -291,7 +292,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
         pw.println("        }");
 
         pw.println("        assertTrue(\"" +
-                JavaUtils.getMessage("null00", "binding") +
+                Messages.getMessage("null00", "binding") +
                 "\", binding != null);");
         pw.println();
     } // writeBindingAssignment

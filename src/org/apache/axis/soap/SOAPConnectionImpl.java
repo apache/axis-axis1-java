@@ -60,6 +60,7 @@ import javax.xml.messaging.Endpoint;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.Messages;
 
 /**
  * SOAP Connection implementation
@@ -84,7 +85,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
     public SOAPMessage call(SOAPMessage request, Object endpoint)
         throws SOAPException {
         if(closed){
-            throw new SOAPException(org.apache.axis.utils.JavaUtils.getMessage("connectionClosed00"));
+            throw new SOAPException(Messages.getMessage("connectionClosed00"));
         }
         try {
             Call call = new Call(endpoint.toString());
@@ -107,7 +108,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
      */
     public void close() throws SOAPException {
         if(closed){
-            throw new SOAPException(org.apache.axis.utils.JavaUtils.getMessage("connectionClosed00"));
+            throw new SOAPException(Messages.getMessage("connectionClosed00"));
         }
         closed = true;
     }

@@ -56,6 +56,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.description.ParameterDesc;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -102,7 +103,7 @@ public class RPCParam implements Serializable
         try {
             valueSetMethod = cls.getMethod("set", new Class[] {Object.class});
         } catch (NoSuchMethodException e) {
-            log.error(JavaUtils.getMessage("noValue00", "" + e));
+            log.error(Messages.getMessage("noValue00", "" + e));
             System.exit(-1);
         }
     }

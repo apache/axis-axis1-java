@@ -213,7 +213,7 @@ public class SessionUtils {
             try {
                 thisHost = java.net.InetAddress.getLocalHost().getHostName();
             } catch (java.net.UnknownHostException e) {
-                log.error(JavaUtils.getMessage("javaNetUnknownHostException00"),
+                log.error(Messages.getMessage("javaNetUnknownHostException00"),
                         e);
                 thisHost = "localhost";
             }

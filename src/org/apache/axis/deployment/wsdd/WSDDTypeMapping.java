@@ -58,6 +58,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -209,8 +210,7 @@ public class WSDDTypeMapping
     {
         if (typeQName != null) {
             if (!URI_WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
-                throw new ClassNotFoundException(JavaUtils.
-                             getMessage("badTypeNamespace00",
+                throw new ClassNotFoundException(Messages.getMessage("badTypeNamespace00",
                                         typeQName.getNamespaceURI(),
                                         URI_WSDD_JAVA));
             }
@@ -221,7 +221,7 @@ public class WSDDTypeMapping
             return ClassUtils.forName(loadName);
         }
         
-        throw new ClassNotFoundException(JavaUtils.getMessage("noTypeQName00"));
+        throw new ClassNotFoundException(Messages.getMessage("noTypeQName00"));
     }
 
     /**

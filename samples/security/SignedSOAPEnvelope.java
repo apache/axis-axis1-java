@@ -65,7 +65,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.xml.security.c14n.Canonicalizer;
@@ -81,6 +81,7 @@ import java.io.StringWriter;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+
 
 public class SignedSOAPEnvelope extends SOAPEnvelope {
     static String SOAPSECNS = "http://schemas.xmlsoap.org/soap/security/2000-12";
@@ -179,7 +180,7 @@ public class SignedSOAPEnvelope extends SOAPEnvelope {
         Document doc = XMLUtils.newDocument(new InputSource(reader));
         if (doc == null)
             throw new Exception(
-                    JavaUtils.getMessage("noDoc00", writer.getBuffer().toString()));
+                    Messages.getMessage("noDoc00", writer.getBuffer().toString()));
         return doc;
     }
 }

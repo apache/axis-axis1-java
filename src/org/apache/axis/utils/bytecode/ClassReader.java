@@ -56,6 +56,7 @@
 package org.apache.axis.utils.bytecode;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -222,7 +223,7 @@ public class ClassReader extends ByteArrayInputStream {
         while (n > 0) {
             int c = (int) skip(n);
             if (c <= 0)
-                throw new EOFException(JavaUtils.getMessage("unexpectedEOF00"));
+                throw new EOFException(Messages.getMessage("unexpectedEOF00"));
             n -= c;
         }
     }
@@ -386,7 +387,7 @@ public class ClassReader extends ByteArrayInputStream {
                 default:
                     // corrupt class file
                     throw new IllegalStateException(
-                            JavaUtils.getMessage("unexpectedBytes00"));
+                            Messages.getMessage("unexpectedBytes00"));
             }
         }
     }

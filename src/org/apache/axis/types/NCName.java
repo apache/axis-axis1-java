@@ -54,9 +54,9 @@
  */
 package org.apache.axis.types;
 
-import java.lang.Character;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLChar;
 
 /**
@@ -84,7 +84,7 @@ public class NCName extends Name {
         }
         catch (Exception e) {
             // recast normalizedString exception as token exception
-            throw new Exception(JavaUtils.getMessage("badNCNameType00") + "data=[" +
+            throw new Exception(Messages.getMessage("badNCNameType00") + "data=[" +
                     stValue + "]");
         }
     }

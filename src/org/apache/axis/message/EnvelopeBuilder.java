@@ -58,6 +58,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -104,7 +105,7 @@ public class EnvelopeBuilder extends SOAPHandler
     {
         if (!localName.equals(Constants.ELEM_ENVELOPE))
             throw new SAXException(
-                    JavaUtils.getMessage("badTag00", localName));
+                    Messages.getMessage("badTag00", localName));
 
         if (namespace.equals(Constants.URI_SOAP11_ENV)) {
             // SOAP 1.1
@@ -114,7 +115,7 @@ public class EnvelopeBuilder extends SOAPHandler
             soapConstants = SOAPConstants.SOAP12_CONSTANTS;
         } else {
             throw new SAXException(
-                    JavaUtils.getMessage("badNamespace00", namespace));
+                    Messages.getMessage("badNamespace00", namespace));
         }
 
         // Indicate what version of SOAP we're using to anyone else involved
@@ -137,7 +138,7 @@ public class EnvelopeBuilder extends SOAPHandler
         QName thisQName = new QName(namespace, localName);
         if (thisQName.equals(soapConstants.getHeaderQName())) {
             if (gotHeader)
-                throw new SAXException(JavaUtils.getMessage("only1Header00"));
+                throw new SAXException(Messages.getMessage("only1Header00"));
 
             gotHeader = true;
             return new HeaderBuilder(envelope);
@@ -145,14 +146,14 @@ public class EnvelopeBuilder extends SOAPHandler
 
         if (thisQName.equals(soapConstants.getBodyQName())) {
             if (gotBody)
-                throw new SAXException(JavaUtils.getMessage("only1Body00"));
+                throw new SAXException(Messages.getMessage("only1Body00"));
 
             gotBody = true;
             return new BodyBuilder(envelope);
         }
 
         if (!gotBody)
-            throw new SAXException(JavaUtils.getMessage("noCustomElems00"));
+            throw new SAXException(Messages.getMessage("noCustomElems00"));
 
         MessageElement element = new MessageElement(namespace, localName, prefix,
                                      attributes, context);

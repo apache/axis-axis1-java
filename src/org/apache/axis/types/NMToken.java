@@ -57,6 +57,7 @@ package org.apache.axis.types;
 import java.util.ArrayList;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLChar;
 
 /**
@@ -86,7 +87,7 @@ public class NMToken extends Token {
         }
         catch (Exception e) {
             // recast normalizedString exception as token exception
-            throw new Exception(JavaUtils.getMessage("badNmtoken00") + "data=[" +
+            throw new Exception(Messages.getMessage("badNmtoken00") + "data=[" +
                     stValue + "]");
         }
     }

@@ -66,6 +66,7 @@ import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.ClassUtils;
@@ -138,7 +139,7 @@ public class FileProvider implements EngineConfiguration {
          * exception to make it easier to debug setup problems.
          */
         if (!dir.isDirectory() || !dir.canRead()) {
-            throw new ConfigurationException(JavaUtils.getMessage
+            throw new ConfigurationException(Messages.getMessage
                                              ("invalidConfigFilePath",
                                               basepath));
         }
@@ -159,7 +160,7 @@ public class FileProvider implements EngineConfiguration {
          * as configuration changes will not persist.
          */
         if (readOnly) {
-            log.info(JavaUtils.getMessage("readOnlyConfigFile"));
+            log.info(Messages.getMessage("readOnlyConfigFile"));
         }
     }
 
@@ -203,7 +204,7 @@ public class FileProvider implements EngineConfiguration {
 
             if (myInputStream == null) {
                 throw new ConfigurationException(
-                        JavaUtils.getMessage("noConfigFile"));
+                        Messages.getMessage("noConfigFile"));
             }
 
             WSDDDocument doc = new WSDDDocument(XMLUtils.

@@ -55,6 +55,7 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -118,10 +119,10 @@ public class Time {
         if ( source != null ) {
             if (source.charAt(2) != ':' || source.charAt(5) != ':')
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badTime00"));
+                        Messages.getMessage("badTime00"));
             if (source.length() < 8) {
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badTime00"));
+                        Messages.getMessage("badTime00"));
             }
         }
 
@@ -170,7 +171,7 @@ public class Time {
                         !Character.isDigit(source.charAt(pos+4)) ||
                         !Character.isDigit(source.charAt(pos+5)))
                         throw new NumberFormatException(
-                                JavaUtils.getMessage("badTimezone00"));
+                                Messages.getMessage("badTimezone00"));
 
                     int hours = (source.charAt(pos+1)-'0')*10
                         +source.charAt(pos+2)-'0';
@@ -191,7 +192,7 @@ public class Time {
 
             if (pos < source.length())
                 throw new NumberFormatException(
-                        JavaUtils.getMessage("badChars00"));
+                        Messages.getMessage("badChars00"));
         }
 
         calendar.setTime(date);

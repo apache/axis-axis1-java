@@ -84,6 +84,7 @@ import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -291,13 +292,13 @@ public class Call implements javax.xml.rpc.Call {
     public void setProperty(String name, Object value) {
         if (name == null || value == null) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage(name == null ?
+                    Messages.getMessage(name == null ?
                                          "badProp03" : "badProp04"));
         }
         else if (name.equals(USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setUsername((String) value);
@@ -305,7 +306,7 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(PASSWORD_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setPassword((String) value);
@@ -313,7 +314,7 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(SESSION_MAINTAIN_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.Boolean",
                         value.getClass().getName()}));
@@ -323,7 +324,7 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(OPERATION_STYLE_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setOperationStyle((String) value);
@@ -331,7 +332,7 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.Boolean",
                         value.getClass().getName()}));
@@ -341,7 +342,7 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(SOAPACTION_URI_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
                         value.getClass().getName()}));
@@ -351,7 +352,7 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(ENCODINGSTYLE_URI_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
                         value.getClass().getName()}));
@@ -361,7 +362,7 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[]
+                        Messages.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
                         value.getClass().getName()}));
@@ -371,7 +372,7 @@ public class Call implements javax.xml.rpc.Call {
         else if ( name.equals(TRANSPORT_NAME) ) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             transportName = (String) value ;
@@ -381,19 +382,19 @@ public class Call implements javax.xml.rpc.Call {
         else if ( name.equals(ATTACHMENT_ENCAPSULATION_FORMAT) ) {
             if (!(value instanceof String)) {
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badProp00", new String[] {
+                        Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             if(!value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MIME ) && 
                !value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_DIME ))
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("badattachmenttypeerr", new String[] {
+                        Messages.getMessage("badattachmenttypeerr", new String[] {
                         (String) value, ATTACHMENT_ENCAPSULATION_FORMAT_MIME + " "
                         +ATTACHMENT_ENCAPSULATION_FORMAT_DIME  }));
         }
         else if (name.startsWith("java.") || name.startsWith("javax.")) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage("badProp05", name));
+                    Messages.getMessage("badProp05", name));
         }
         callProperties.put(name, value);
     } // setProperty
@@ -407,8 +408,8 @@ public class Call implements javax.xml.rpc.Call {
     public Object getProperty(String name) {
         if (name == null || !isPropertySupported(name)) {
             throw new JAXRPCException(name == null ?
-                  JavaUtils.getMessage("badProp03") :
-                  JavaUtils.getMessage("badProp05", name));
+                  Messages.getMessage("badProp03") :
+                  Messages.getMessage("badProp05", name));
         }
         return callProperties.get(name);
     } // getProperty
@@ -421,8 +422,8 @@ public class Call implements javax.xml.rpc.Call {
      public void removeProperty(String name) {
          if (name == null || !isPropertySupported(name)) {
             throw new JAXRPCException(name == null ?
-                  JavaUtils.getMessage("badProp03") :
-                  JavaUtils.getMessage("badProp05", name));
+                  Messages.getMessage("badProp03") :
+                  Messages.getMessage("badProp05", name));
          }
          callProperties.remove(name);
      } // removeProperty
@@ -430,7 +431,7 @@ public class Call implements javax.xml.rpc.Call {
     public void setScopedProperty(String name, Object value) {
         if (name == null || value == null) {
             throw new JAXRPCException(
-                    JavaUtils.getMessage(name == null ?
+                    Messages.getMessage(name == null ?
                                          "badProp03" : "badProp04"));
         }
         scopedProperties.put(name, value);
@@ -531,7 +532,7 @@ public class Call implements javax.xml.rpc.Call {
         this.operationStyle = Style.getStyle(operationStyle, Style.DEFAULT);
 
 /*  Not being used for now... --GD
-        throw new IllegalArgumentException(JavaUtils.getMessage(
+        throw new IllegalArgumentException(Messages.getMessage(
                 "badProp01",
                 new String[] {OPERATION_STYLE_PROPERTY,
                               "\"rpc\", \"document\"", operationStyle}));
@@ -659,7 +660,7 @@ public class Call implements javax.xml.rpc.Call {
                 transport = getTransportForProtocol(protocol);
                 if (transport == null)
                     throw new AxisFault("Call.setTargetEndpointAddress",
-                                 JavaUtils.getMessage("noTransport01",
+                                 Messages.getMessage("noTransport01",
                                  protocol), null, null);
                 transport.setUrl(address.toString());
                 setTransport(transport);
@@ -667,7 +668,7 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
         catch( Exception exp ) {
-            log.error(JavaUtils.getMessage("exception00"), exp);
+            log.error(Messages.getMessage("exception00"), exp);
             // do what?
             // throw new AxisFault("Call.setTargetEndpointAddress",
             //"Malformed URL Exception: " + e.getMessage(), null, null);
@@ -772,7 +773,7 @@ public class Call implements javax.xml.rpc.Call {
         parmAndRetReq = true;
         //}
         //else {
-        //throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
+        //throw new JAXRPCException(Messages.getMessage("noParmAndRetReq"));
         //}
     }
 
@@ -862,7 +863,7 @@ public class Call implements javax.xml.rpc.Call {
         parmAndRetReq = true;
         //}
         //else {
-        //throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
+        //throw new JAXRPCException(Messages.getMessage("noParmAndRetReq"));
         //}
     }
 
@@ -925,7 +926,7 @@ public class Call implements javax.xml.rpc.Call {
         parmAndRetReq = true;
         //}
         //else {
-        //throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
+        //throw new JAXRPCException(Messages.getMessage("noParmAndRetReq"));
         //}
     }
 
@@ -959,7 +960,7 @@ public class Call implements javax.xml.rpc.Call {
 
     public void setOperation(QName portName, String opName) {
         if ( service == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noService04") );
+            throw new JAXRPCException( Messages.getMessage("noService04") );
 
         // Make sure we're making a fresh start.
         this.setPortName( portName );
@@ -976,16 +977,16 @@ public class Call implements javax.xml.rpc.Call {
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPort00", "" + portName) );
+            throw new JAXRPCException( Messages.getMessage("noPort00", "" + portName) );
 
         Binding   binding  = port.getBinding();
         PortType  portType = binding.getPortType();
         if ( portType == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPortType00", "" + portName) );
+            throw new JAXRPCException( Messages.getMessage("noPortType00", "" + portName) );
 
         List operations = portType.getOperations();
         if ( operations == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noOperation01", opName) );
+            throw new JAXRPCException( Messages.getMessage("noOperation01", opName) );
 
         Operation op = null ;
         for ( int i = 0 ; i < operations.size() ; i++, op=null ) {
@@ -993,7 +994,7 @@ public class Call implements javax.xml.rpc.Call {
             if ( opName.equals( op.getName() ) ) break ;
         }
         if ( op == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noOperation01", opName) );
+            throw new JAXRPCException( Messages.getMessage("noOperation01", opName) );
 
         // Get the URL
         ////////////////////////////////////////////////////////////////////
@@ -1008,7 +1009,7 @@ public class Call implements javax.xml.rpc.Call {
                 }
                 catch(Exception exp) {
                     throw new JAXRPCException(
-                            JavaUtils.getMessage("cantSetURI00", "" + exp) );
+                            Messages.getMessage("cantSetURI00", "" + exp) );
                 }
             }
         }
@@ -1018,7 +1019,7 @@ public class Call implements javax.xml.rpc.Call {
         BindingOperation bop = binding.getBindingOperation(opName,
                                                            null, null);
         if ( bop == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noOperation02",
+            throw new JAXRPCException( Messages.getMessage("noOperation02",
                                                             opName ));
         list = bop.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
@@ -1098,7 +1099,7 @@ public class Call implements javax.xml.rpc.Call {
                       type = new QName("java","org.w3c.dom.Element");
                     else
                       throw new JAXRPCException(
-                                  JavaUtils.getMessage("typeNotSet00", name) );
+                                  Messages.getMessage("typeNotSet00", name) );
                 }
 
                 QName qname = new QName(type.getNamespaceURI(),
@@ -1134,7 +1135,7 @@ public class Call implements javax.xml.rpc.Call {
                       type = new QName("java","org.w3c.dom.Element");
                     else
                       throw new JAXRPCException(
-                            JavaUtils.getMessage("typeNotSet00", "<return>") );
+                            Messages.getMessage("typeNotSet00", "<return>") );
                 }
                 QName qname = new QName(type.getNamespaceURI(),
                         type.getLocalPart());
@@ -1289,7 +1290,7 @@ public class Call implements javax.xml.rpc.Call {
             msg = msgContext.getResponseMessage();
             if (msg == null) {
               if (FAULT_ON_NO_RESPONSE) {
-                throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+                throw new AxisFault(Messages.getMessage("nullResponse00"));
               } else {
                 return null;
               }
@@ -1301,7 +1302,7 @@ public class Call implements javax.xml.rpc.Call {
 
 
         if ( operationName == null )
-            throw new AxisFault( JavaUtils.getMessage("noOperation00") );
+            throw new AxisFault( Messages.getMessage("noOperation00") );
         try {
             Object res=this.invoke(operationName.getNamespaceURI(),
                     operationName.getLocalPart(), params);
@@ -1316,8 +1317,8 @@ public class Call implements javax.xml.rpc.Call {
         }
         catch( Exception exp ) {
             //if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
-            entLog.info(JavaUtils.getMessage("toAxisFault00"), exp);
-            throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
+            entLog.info(Messages.getMessage("toAxisFault00"), exp);
+            throw new AxisFault( Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
 
@@ -1365,7 +1366,7 @@ public class Call implements javax.xml.rpc.Call {
             msg = msgContext.getResponseMessage();
             if (msg == null) {
               if (this.FAULT_ON_NO_RESPONSE) {
-                throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+                throw new AxisFault(Messages.getMessage("nullResponse00"));
               } else {
                 return null;
               }
@@ -1375,8 +1376,8 @@ public class Call implements javax.xml.rpc.Call {
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
-            entLog.info(JavaUtils.getMessage("toAxisFault00"), exp);
-            throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
+            entLog.info(Messages.getMessage("toAxisFault00"), exp);
+            throw new AxisFault( Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
 
@@ -1490,7 +1491,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if ( params == null || numParams != params.length )
             throw new JAXRPCException(
-                    JavaUtils.getMessage("parmMismatch00",
+                    Messages.getMessage("parmMismatch00",
                     "" + params.length, "" + numParams) );
 
         log.debug( "getParamList number of params: " + params.length);
@@ -1537,7 +1538,7 @@ public class Call implements javax.xml.rpc.Call {
     public void setTransport(Transport trans) {
         transport = trans;
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("transport00", "" + transport));
+            log.debug(Messages.getMessage("transport00", "" + transport));
     }
 
     /** Get the Transport registered for the given protocol.
@@ -1594,12 +1595,12 @@ public class Call implements javax.xml.rpc.Call {
             org.apache.axis.attachments.Attachments attachments= msg.getAttachmentsImpl();
             if(null == attachments) {
               throw new RuntimeException(
-                      JavaUtils.getMessage("noAttachments"));
+                      Messages.getMessage("noAttachments"));
             }
 
             attachments.setAttachmentParts(attachmentParts);
             }catch(org.apache.axis.AxisFault ex){
-              log.info(JavaUtils.getMessage("axisFault00"), ex);
+              log.info(Messages.getMessage("axisFault00"), ex);
               throw  new RuntimeException(ex.getMessage());
             }
         }
@@ -1760,7 +1761,7 @@ public class Call implements javax.xml.rpc.Call {
          */
         if (returnType != null && args != null && args.length != 0
                 && operation == null) {
-            throw new AxisFault(JavaUtils.getMessage("mustSpecifyParms"));
+            throw new AxisFault(Messages.getMessage("mustSpecifyParms"));
         }
 
         RPCElement  body = new RPCElement(namespace, method, getParamList(args));
@@ -1815,8 +1816,8 @@ public class Call implements javax.xml.rpc.Call {
         if (!invokeOneWay && operation.getNumParams() > 0 && returnType == null) {
             // TCK:
             // Issue an error if the return type was not set, but continue processing.
-            //throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
-            log.error(JavaUtils.getMessage("mustSpecifyReturnType"));
+            //throw new AxisFault(Messages.getMessage("mustSpecifyReturnType"));
+            log.error(Messages.getMessage("mustSpecifyReturnType"));
         }
 
         SOAPEnvelope         reqEnv = new SOAPEnvelope(msgContext.getSOAPConstants());
@@ -1841,7 +1842,7 @@ public class Call implements javax.xml.rpc.Call {
 
             invoke();
         } catch (Exception e) {
-            entLog.info(JavaUtils.getMessage("toAxisFault00"), e);
+            entLog.info(Messages.getMessage("toAxisFault00"), e);
             throw AxisFault.makeFault(e);
         }
 
@@ -1849,7 +1850,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if (resMsg == null) {
           if (FAULT_ON_NO_RESPONSE) {
-            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+            throw new AxisFault(Messages.getMessage("nullResponse00"));
           } else {
             return null;
           }
@@ -1861,7 +1862,7 @@ public class Call implements javax.xml.rpc.Call {
             try {
                 resArgs = ((RPCElement) bodyEl).getParams();
             } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.error(Messages.getMessage("exception00"), e);
                 throw AxisFault.makeFault(e);
             }
 
@@ -2028,7 +2029,7 @@ public class Call implements javax.xml.rpc.Call {
                 //if ( body.getPrefix() == null )       body.setPrefix( "m" );
                 if ( body.getNamespaceURI() == null ) {
                     throw new AxisFault("Call.invoke",
-                                        JavaUtils.getMessage("cantInvoke00", body.getName()),
+                                        Messages.getMessage("cantInvoke00", body.getName()),
                                         null, null);
                 } else {
                     msgContext.setTargetService(body.getNamespaceURI());
@@ -2043,7 +2044,7 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("targetService",
+            log.debug(Messages.getMessage("targetService",
                     msgContext.getTargetService()));
         }
 
@@ -2063,7 +2064,7 @@ public class Call implements javax.xml.rpc.Call {
                 reqEnv.output(ctx);
                 writer.close();
             } catch (Exception e) {
-                log.debug(JavaUtils.getMessage("exceptionPrinting"), e);
+                log.debug(Messages.getMessage("exceptionPrinting"), e);
             } finally {
                 log.debug(writer.getBuffer().toString());
             }
@@ -2090,7 +2091,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if (resMsg == null) {
           if (this.FAULT_ON_NO_RESPONSE) {
-            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+            throw new AxisFault(Messages.getMessage("nullResponse00"));
           } else {
             return;
           }
@@ -2114,7 +2115,7 @@ public class Call implements javax.xml.rpc.Call {
                 try {
                     service.getEngine().invoke( msgContext );
                 } catch (AxisFault af){
-                    log.debug(JavaUtils.getMessage("exceptionPrinting"), af);
+                    log.debug(Messages.getMessage("exceptionPrinting"), af);
                 }
             }
         };

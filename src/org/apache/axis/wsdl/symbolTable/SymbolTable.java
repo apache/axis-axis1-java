@@ -105,6 +105,7 @@ import javax.xml.rpc.holders.IntHolder;
 import org.apache.axis.Constants;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.URLHashSet;
 
@@ -316,7 +317,7 @@ public class SymbolTable {
      */
     public void dump(java.io.PrintStream out) {
         out.println();
-        out.println(JavaUtils.getMessage("symbolTable00"));
+        out.println(Messages.getMessage("symbolTable00"));
         out.println("-----------------------");
         Iterator it = symbolTable.values().iterator();
         while (it.hasNext()) {
@@ -342,11 +343,11 @@ public class SymbolTable {
 
     public void populate(String uri, String username, String password) throws IOException, WSDLException {
         if (verbose)
-            System.out.println(JavaUtils.getMessage("parsing00", uri));
+            System.out.println(Messages.getMessage("parsing00", uri));
 
         Document doc = XMLUtils.newDocument(uri, username, password);
         if (doc == null) {
-            throw new IOException(JavaUtils.getMessage("cantGetDoc00", uri));
+            throw new IOException(Messages.getMessage("cantGetDoc00", uri));
         }
         this.wsdlURI = uri;
         try {
@@ -399,12 +400,12 @@ public class SymbolTable {
                 if (binding.isUndefined()) {
                     if (filename == null) {
                         throw new IOException(
-                            JavaUtils.getMessage("emitFailtUndefinedBinding01",
+                            Messages.getMessage("emitFailtUndefinedBinding01",
                                     binding.getQName().getLocalPart()));
                     }
                     else {
                         throw new IOException(
-                            JavaUtils.getMessage("emitFailtUndefinedBinding02",
+                            Messages.getMessage("emitFailtUndefinedBinding02",
                                     binding.getQName().getLocalPart(), filename));
                     }
                 }
@@ -417,12 +418,12 @@ public class SymbolTable {
                 if (portType.isUndefined()) {
                     if (filename == null) {
                         throw new IOException(
-                            JavaUtils.getMessage("emitFailtUndefinedPort01",
+                            Messages.getMessage("emitFailtUndefinedPort01",
                                     portType.getQName().getLocalPart()));
                     }
                     else {
                         throw new IOException(
-                            JavaUtils.getMessage("emitFailtUndefinedPort02",
+                            Messages.getMessage("emitFailtUndefinedPort02",
                                     portType.getQName().getLocalPart(), filename));
                     }
                 }
@@ -439,7 +440,7 @@ public class SymbolTable {
                 Message message = (Message) i.next();
                 if (message.isUndefined()) {
                     throw new IOException(
-                            JavaUtils.getMessage("emitFailtUndefinedMessage01",
+                            Messages.getMessage("emitFailtUndefinedMessage01",
                                     message.getQName().getLocalPart()));
                 }
             }
@@ -468,7 +469,7 @@ public class SymbolTable {
                     (qn.getLocalPart().equals("timeInstant") &&
                      qn.getNamespaceURI().equals(Constants.URI_2001_SCHEMA_XSD))) {
                         throw new IOException(
-                                JavaUtils.getMessage("wrongNamespace00",
+                                Messages.getMessage("wrongNamespace00",
                                                      qn.getLocalPart(),
                                                      qn.getNamespaceURI()));
                     } 
@@ -477,18 +478,18 @@ public class SymbolTable {
                     // an unsupported message instead of undefined
                     if (SchemaUtils.isSimpleSchemaType(entry.getQName())) {
                         throw new IOException(
-                                JavaUtils.getMessage("unsupportedSchemaType00",
+                                Messages.getMessage("unsupportedSchemaType00",
                                                      qn.getLocalPart()));
                     }
                     
                     // last case, its some other undefined thing
                     throw new IOException(
-                            JavaUtils.getMessage("undefined00",
+                            Messages.getMessage("undefined00",
                                                  entry.getQName().toString()));
                 } // if undefined
                 else if (entry instanceof UndefinedElement) {
                     throw new IOException(
-                            JavaUtils.getMessage("undefinedElem00",
+                            Messages.getMessage("undefinedElem00",
                             entry.getQName().toString()));
                 }
             }
@@ -703,7 +704,7 @@ public class SymbolTable {
                                     !refType.isSimpleType())) {
                             // Problem if not simple
                             throw new IOException(
-                                                  JavaUtils.getMessage("AttrNotSimpleType01",
+                                                  Messages.getMessage("AttrNotSimpleType01",
                                                                        refQName.toString()));
                         }
                     }
@@ -776,7 +777,7 @@ public class SymbolTable {
                     if (name == null) {
                         name = "unknown";
                     }
-                    throw new IOException(JavaUtils.getMessage("emptyref00", name));
+                    throw new IOException(Messages.getMessage("emptyref00", name));
                 }
                 
                 // Now get the TypeEntry
@@ -887,7 +888,7 @@ public class SymbolTable {
                 if (name == null) {
                     name = "unknown";
                 }
-                throw new IOException(JavaUtils.getMessage("emptyref00", name));
+                throw new IOException(Messages.getMessage("emptyref00", name));
             }
         
             // Get Type or Element depending on whether type attr was used.
@@ -1026,7 +1027,7 @@ public class SymbolTable {
                 Map allInputs = inputMsg.getParts();
                 Collection orderedInputs = inputMsg.getOrderedParts(parameterOrder);
                 if (allInputs.size() != orderedInputs.size()) {
-                    throw new IOException(JavaUtils.getMessage("emitFail00", operation.getName()));
+                    throw new IOException(Messages.getMessage("emitFail00", operation.getName()));
                 }
             }
         }
@@ -1080,7 +1081,7 @@ public class SymbolTable {
                     addOutParm(outputs, outdex, parameters, true);
                 }
                 else {
-                    System.err.println(JavaUtils.getMessage("noPart00", name));
+                    System.err.println(Messages.getMessage("noPart00", name));
                 }
             }
         }
@@ -1168,7 +1169,7 @@ public class SymbolTable {
                 // part with the same name but different types.... guess
                 // it's not really an inout....
                 // 
-                //throw new IOException(JavaUtils.getMessage("differentTypes00", 
+                //throw new IOException(Messages.getMessage("differentTypes00", 
                 //     new String[] { p.getName(), 
                 //                    p.getType().getQName().toString(), 
                 //                   outParam.getType().getQName().toString()
@@ -1286,7 +1287,7 @@ public class SymbolTable {
                 } else {
                     // no type or element
                     throw new IOException(
-                            JavaUtils.getMessage("noTypeOrElement00", 
+                            Messages.getMessage("noTypeOrElement00", 
                                                  new String[] {partName, 
                                                                opName}));
                 }
@@ -1313,7 +1314,7 @@ public class SymbolTable {
                 String bindingName =
                   bindingEntry == null ? "unknown" : bindingEntry.getBinding().getQName().toString();
                 throw new IOException(
-                        JavaUtils.getMessage("literalTypePart00", 
+                        Messages.getMessage("literalTypePart00", 
                                              new String[] {partName, 
                                                            opName,  
                                                            bindingName}));
@@ -1340,7 +1341,7 @@ public class SymbolTable {
             // If we have nothing at this point, we're in trouble.
             if (node == null) {
                 throw new IOException(
-                        JavaUtils.getMessage("badTypeNode", 
+                        Messages.getMessage("badTypeNode", 
                                              new String[] {
                                                  partName, 
                                                  opName,  
@@ -1501,7 +1502,7 @@ public class SymbolTable {
                             if (obj instanceof SOAPBody) {
                                 String use = ((SOAPBody) obj).getUse();
                                 if (use == null) {
-                                    throw new IOException(JavaUtils.getMessage(
+                                    throw new IOException(Messages.getMessage(
                                             "noUse", bindOp.getName()));
                                 }
                                 if (use.equalsIgnoreCase("literal")) {
@@ -1528,7 +1529,7 @@ public class SymbolTable {
                             if (obj instanceof SOAPBody) {
                                 String use = ((SOAPBody) obj).getUse();
                                 if (use == null) {
-                                    throw new IOException(JavaUtils.getMessage(
+                                    throw new IOException(Messages.getMessage(
                                             "noUse", bindOp.getName()));
                                 }
                                 if (use.equalsIgnoreCase("literal")) {
@@ -1563,7 +1564,7 @@ public class SymbolTable {
                         if (obj instanceof SOAPBody) {
                             String use = ((SOAPBody) obj).getUse();
                             if (use == null) {
-                                throw new IOException(JavaUtils.getMessage(
+                                throw new IOException(Messages.getMessage(
                                         "noUse", bindOp.getName()));
                             }
                             if (use.equalsIgnoreCase("literal")) {
@@ -1613,7 +1614,7 @@ public class SymbolTable {
                 else if (obj instanceof SOAPBody) {
                     String use = ((SOAPBody) obj).getUse();
                     if (use == null) {
-                        throw new IOException(JavaUtils.getMessage(
+                        throw new IOException(Messages.getMessage(
                                 "noUse", bindOp.getName()));
                     }
                     if (use.equalsIgnoreCase("literal")) {
@@ -1637,7 +1638,7 @@ public class SymbolTable {
             if (service.getQName() == null ||
                 service.getQName().getLocalPart() == null || 
                 service.getQName().getLocalPart().equals("")) {
-                throw new IOException(JavaUtils.getMessage("BadServiceName00"));
+                throw new IOException(Messages.getMessage("BadServiceName00"));
             }
             
             ServiceEntry sEntry = new ServiceEntry(service);
@@ -1979,7 +1980,7 @@ public class SymbolTable {
                     // Problem if the undefined type was used in a 
                     // simple type context.
                     throw new IOException(
-                                          JavaUtils.getMessage("AttrNotSimpleType01",
+                                          Messages.getMessage("AttrNotSimpleType01",
                                                                name.toString()));
 
                 }
@@ -2043,7 +2044,7 @@ public class SymbolTable {
         }
         else {
             throw new IOException(
-                    JavaUtils.getMessage("alreadyExists00", "" + name));
+                    Messages.getMessage("alreadyExists00", "" + name));
         }
     } // symbolTablePut
 } // class SymbolTable

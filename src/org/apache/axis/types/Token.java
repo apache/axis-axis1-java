@@ -57,6 +57,7 @@ package org.apache.axis.types;
 import java.util.ArrayList;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type Token.
@@ -82,7 +83,7 @@ public class Token extends NormalizedString {
         }
         catch (Exception e) {
             // recast normalizedString exception as token exception
-            throw new Exception(JavaUtils.getMessage("badToken00") + "data=[" +
+            throw new Exception(Messages.getMessage("badToken00") + "data=[" +
                     stValue + "]");
         }
     }

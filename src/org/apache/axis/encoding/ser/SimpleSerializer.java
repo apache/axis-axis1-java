@@ -65,6 +65,7 @@ import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.w3c.dom.Element;
@@ -132,7 +133,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
         throws IOException
     {
         if (value != null && value.getClass() == java.lang.Object.class) {
-            throw new IOException(JavaUtils.getMessage("cantSerialize02"));
+            throw new IOException(Messages.getMessage("cantSerialize02"));
         }
 
         // get any attributes
@@ -285,7 +286,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
                         // Attribute must be a simple type, enum or SimpleType
                         if (!types.isAcceptableAsAttribute(fieldType)) {
-                            throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00",
+                            throw new AxisFault(Messages.getMessage("AttrNotSimpleType00",
                                     propName,
                                     fieldType.getName()));
                         }
@@ -307,7 +308,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
             Class type = bpd.getType();
             // Attribute must extend a simple type, enum or SimpleType
             if (!types.isAcceptableAsAttribute(type)) {
-                throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType01",
+                throw new AxisFault(Messages.getMessage("AttrNotSimpleType01",
                         type.getName()));
             }
             base = types.writeType(type);

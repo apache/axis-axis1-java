@@ -57,6 +57,7 @@ package org.apache.axis.types;
 import java.util.ArrayList;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type UnsignedLong
@@ -92,7 +93,7 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
      */
     public void setValue(double lValue) throws Exception {
         if (isValid(lValue) == false)
-            throw new Exception(JavaUtils.getMessage("badUnsignedLong00") +
+            throw new Exception(Messages.getMessage("badUnsignedLong00") +
                     String.valueOf(lValue) + "]");
         this.lValue = new Double(lValue);
     }

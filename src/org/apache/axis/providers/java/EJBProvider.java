@@ -64,6 +64,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -133,7 +134,7 @@ public class EJBProvider extends RPCProvider
                                                 msgContext.getService());
         if (homeName == null) 
             throw new AxisFault(
-                    JavaUtils.getMessage("noOption00", 
+                    Messages.getMessage("noOption00", 
                                          OPTION_HOMEINTERFACENAME, 
                                          msgContext.getTargetService()));
 
@@ -218,7 +219,7 @@ public class EJBProvider extends RPCProvider
                                                         service);
                 if (homeName == null)
                     throw new AxisFault(
-                            JavaUtils.getMessage("noOption00",
+                            Messages.getMessage("noOption00",
                                                  OPTION_HOMEINTERFACENAME,
                                                  service.getName()));
 
@@ -314,16 +315,16 @@ public class EJBProvider extends RPCProvider
 
             // if we didn't get a context, fail
             if (context == null)
-                throw new AxisFault( JavaUtils.getMessage("cannotCreateInitialContext00"));
+                throw new AxisFault( Messages.getMessage("cannotCreateInitialContext00"));
             
             ejbHome = getEJBHome(context, beanJndiName);
 
             if (ejbHome == null)
-                throw new AxisFault( JavaUtils.getMessage("cannotFindJNDIHome00",beanJndiName));
+                throw new AxisFault( Messages.getMessage("cannotFindJNDIHome00",beanJndiName));
         }
         // Should probably catch javax.naming.NameNotFoundException here 
         catch (Exception exception) {
-            entLog.info(JavaUtils.getMessage("toAxisFault00"), exception);
+            entLog.info(Messages.getMessage("toAxisFault00"), exception);
             throw AxisFault.makeFault(exception);
         }
 

@@ -61,6 +61,7 @@ import org.apache.axis.deployment.wsdd.providers.WSDDJavaEJBProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import java.util.Hashtable;
@@ -133,11 +134,11 @@ public abstract class WSDDProvider
         throws Exception
     {
         if (providerType == null)
-            throw new WSDDException(JavaUtils.getMessage("nullProvider00"));
+            throw new WSDDException(Messages.getMessage("nullProvider00"));
         
         WSDDProvider provider = (WSDDProvider)providers.get(providerType);
         if (provider == null) {
-            throw new WSDDException(JavaUtils.getMessage("noMatchingProvider00",
+            throw new WSDDException(Messages.getMessage("noMatchingProvider00",
                                     providerType.toString()));
         }
         

@@ -64,6 +64,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -204,7 +205,7 @@ public class MessageElement implements SOAPElement, Serializable
                    Attributes attributes, DeserializationContext context)
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("newElem00", super.toString(),
+            log.debug(Messages.getMessage("newElem00", super.toString(),
                                             "{" + prefix + "}" + localPart));
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
                 log.debug("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
@@ -366,7 +367,7 @@ public class MessageElement implements SOAPElement, Serializable
         }
 
         if(!encodingStyle.equals("") && !Constants.isSOAP_ENC(encodingStyle))
-                throw new IllegalArgumentException(JavaUtils.getMessage("illegalArgumentException01",encodingStyle));
+                throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException01",encodingStyle));
 
         this.encodingStyle = encodingStyle;
 
@@ -397,9 +398,8 @@ public class MessageElement implements SOAPElement, Serializable
     public void addChild(MessageElement el) throws SOAPException
     {
         if (objectValue != null) {
-            SOAPException exc = new SOAPException(JavaUtils.
-                                                  getMessage("valuePresent"));
-            log.error(JavaUtils.getMessage("valuePresent"), exc);
+            SOAPException exc = new SOAPException(Messages.getMessage("valuePresent"));
+            log.error(Messages.getMessage("valuePresent"), exc);
             throw exc;
         }
         if (children == null)
@@ -477,7 +477,7 @@ public class MessageElement implements SOAPElement, Serializable
             return parent.getNamespaceURI(prefix);
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
+            log.debug(Messages.getMessage("noPrefix00", "" + this, prefix));
         }
 
         return null;
@@ -510,21 +510,18 @@ public class MessageElement implements SOAPElement, Serializable
      */
     public void setObjectValue(Object newValue) throws SOAPException {
         if (children != null && !children.isEmpty()) {
-            SOAPException exc = new SOAPException(JavaUtils.
-                                                  getMessage("childPresent"));
-            log.error(JavaUtils.getMessage("childPresent"), exc);
+            SOAPException exc = new SOAPException(Messages.getMessage("childPresent"));
+            log.error(Messages.getMessage("childPresent"), exc);
             throw exc;
         }
         if (elementRep != null) {
-            SOAPException exc = new SOAPException(JavaUtils.
-                                                  getMessage("xmlPresent"));
-            log.error(JavaUtils.getMessage("xmlPresent"), exc);
+            SOAPException exc = new SOAPException(Messages.getMessage("xmlPresent"));
+            log.error(Messages.getMessage("xmlPresent"), exc);
             throw exc;
         }
         if (textRep != null) {
-            SOAPException exc = new SOAPException(JavaUtils.
-                                                  getMessage("xmlPresent"));
-            log.error(JavaUtils.getMessage("xmlPresent"), exc);
+            SOAPException exc = new SOAPException(Messages.getMessage("xmlPresent"));
+            log.error(Messages.getMessage("xmlPresent"), exc);
             throw exc;
         }
         this.objectValue = newValue;
@@ -533,11 +530,11 @@ public class MessageElement implements SOAPElement, Serializable
     public Object getValueAsType(QName type) throws Exception
     {
         if (context == null)
-            throw new Exception(JavaUtils.getMessage("noContext00"));
+            throw new Exception(Messages.getMessage("noContext00"));
 
         Deserializer dser = context.getDeserializerForType(type);
         if (dser == null)
-            throw new Exception(JavaUtils.getMessage("noDeser00", "" + type));
+            throw new Exception(Messages.getMessage("noDeser00", "" + type));
 
         context.pushElementHandler(new EnvelopeHandler((SOAPHandler)dser));
 
@@ -647,7 +644,7 @@ public class MessageElement implements SOAPElement, Serializable
         Document doc = XMLUtils.newDocument(new InputSource(reader));
         if (doc == null)
             throw new Exception(
-                    JavaUtils.getMessage("noDoc00", elementString));
+                    Messages.getMessage("noDoc00", elementString));
         return doc;
     }
 
@@ -676,7 +673,7 @@ public class MessageElement implements SOAPElement, Serializable
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
         if (recorder == null)
-            throw new SAXException(JavaUtils.getMessage("noRecorder00"));
+            throw new SAXException(Messages.getMessage("noRecorder00"));
 
         recorder.replay(startEventIndex, endEventIndex, handler);
     }
@@ -684,7 +681,7 @@ public class MessageElement implements SOAPElement, Serializable
     public void publishContents(ContentHandler handler) throws SAXException
     {
         if (recorder == null)
-            throw new SAXException(JavaUtils.getMessage("noRecorder00"));
+            throw new SAXException(Messages.getMessage("noRecorder00"));
 
         recorder.replay(startContentsIndex, endEventIndex-1, handler);
     }
@@ -787,7 +784,7 @@ public class MessageElement implements SOAPElement, Serializable
             return getAsString();
         }
         catch( Exception exp ) {
-            log.error(JavaUtils.getMessage("exception00"), exp);
+            log.error(Messages.getMessage("exception00"), exp);
             return null;
         }
     }
@@ -876,7 +873,7 @@ public class MessageElement implements SOAPElement, Serializable
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if(parent == null)
-            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00"));
+            throw new IllegalArgumentException(Messages.getMessage("nullParent00"));
         try {
             setParent((MessageElement)parent);
         } catch (Throwable t) {

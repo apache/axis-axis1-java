@@ -60,7 +60,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -132,7 +132,7 @@ public class LogHandler extends BasicHandler {
             FileWriter fw = new FileWriter(filename, true);
             PrintWriter pw = new PrintWriter(fw);
             pw.println("=====================");
-            pw.println("= " + JavaUtils.getMessage("fault00"));
+            pw.println("= " + Messages.getMessage("fault00"));
             pw.println("=====================");
             pw.close();
         } catch (Exception e) {

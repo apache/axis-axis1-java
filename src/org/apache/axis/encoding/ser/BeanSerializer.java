@@ -65,6 +65,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -250,10 +251,10 @@ public class BeanSerializer implements Serializer, Serializable {
             }
         } catch (InvocationTargetException ite) {
             Throwable target = ite.getTargetException();
-            log.error(JavaUtils.getMessage("exception00"), target);
+            log.error(Messages.getMessage("exception00"), target);
             throw new IOException(target.toString());
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.error(Messages.getMessage("exception00"), e);
             throw new IOException(e.toString());
         }
 
@@ -437,7 +438,7 @@ public class BeanSerializer implements Serializer, Serializable {
 
         // Attribute must be a simple type.
         if (!types.isAcceptableAsAttribute(fieldType)) {
-            throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00",
+            throw new AxisFault(Messages.getMessage("AttrNotSimpleType00",
                                                      fieldName,
                                                      fieldType.getName()));
         }
