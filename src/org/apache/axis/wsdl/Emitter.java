@@ -270,6 +270,9 @@ public class Emitter {
 
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
+
+            // FIXME - Skip portTypes that aren't mentioned in a SOAP rpc binding
+
             HashMap portTypeInfo = writePortType(portType);
             if (bEmitSkeleton && bMessageContext)
                 writeAxisPortType(portType);
@@ -602,8 +605,10 @@ public class Emitter {
         while (i.hasNext()) {
             Part part = (Part) i.next();
 
-            v.add(type(part.getTypeName().getLocalPart()));
-            v.add(part.getName());
+            if (part.getTypeName() != null) {
+                v.add(type(part.getTypeName().getLocalPart()));
+                v.add(part.getName());
+            }
         }
     } // partStrings
 
@@ -680,6 +685,11 @@ public class Emitter {
 
         while (i.hasNext()) {
             Binding binding = (Binding) i.next();
+
+            // If this isn't an RPC binding, skip it
+            if (!isRpcBinding(binding))
+                continue;
+
             HashMap portTypeInfo = (HashMap) portTypesInfo.get(binding.getPortType());
 
             writeBinding(binding, portTypeInfo);
@@ -937,7 +947,7 @@ public class Emitter {
                             pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) output.get(" + outdex++ + ")).getValue()"));
                         }
                     }
-                    
+
                 }
                 if (parms.outputs > 0)
                     pw.println ("            return " + getResponseString(parms.returnType, "resp"));
