@@ -221,7 +221,13 @@ public class RPCProvider extends JavaProvider
         for ( int i = 0 ; i < numArgs ; i++ ) {
             RPCParam rpcParam = (RPCParam)args.get(i);
             Object value = rpcParam.getValue();
+
+            // first check the type on the paramter
             ParameterDesc paramDesc = rpcParam.getParamDesc();
+            
+            // if we found some type info try to make sure the value type is
+            // correct.  For instance, if we deserialized a xsd:dateTime in
+            // to a Calendar and the service takes a Date, we need to convert
             if (paramDesc != null && paramDesc.getJavaType() != null) {
 
                 // Get the type in the signature (java type or its holder)
@@ -231,18 +237,14 @@ public class RPCProvider extends JavaProvider
                 value = JavaUtils.convert(value,
                                           sigType);
 
-/* Is this needed?  I think JavaUtils.convert does the work.
-                if (value != null && value.getClass().getName().equals(
-                        "javax.activation.DataHandler")) {
-                    value = getDataFromDataHandler(value, paramDesc);
-                }
-*/
-
                 rpcParam.setValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT) {
                     outs.add(rpcParam);
                 }
             }
+            
+            // Put the value (possibly converted) in the argument array
+            // make sure to use the parameter order if we have it
             if (paramDesc == null || paramDesc.getOrder() == -1) {
                 argValues[i]  = value;
             } else {
