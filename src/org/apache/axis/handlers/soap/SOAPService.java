@@ -281,6 +281,7 @@ public class SOAPService extends SimpleTargetedChain
                         jc = cache.lookup(clsName, cl);
                         serviceDescription.setImplClass(jc.getJavaClass());
                     } catch (ClassNotFoundException e) {
+                        log.error(JavaUtils.getMessage("exception00"), e);
                         return null;
                     }
                 } else {
@@ -288,6 +289,7 @@ public class SOAPService extends SimpleTargetedChain
                         Class cls = cl.loadClass(clsName);
                         serviceDescription.setImplClass(cls);
                     } catch (ClassNotFoundException e) {
+                        log.error(JavaUtils.getMessage("exception00"), e);
                         return null; // FIXME - throw?
                     }
                 }
