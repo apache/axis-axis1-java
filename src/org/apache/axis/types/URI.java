@@ -437,7 +437,7 @@ import java.io.Serializable;
   private void initialize(URI p_base, String p_uriSpec)
                          throws MalformedURIException {
 	  
-    String uriSpec = (p_uriSpec != null) ? p_uriSpec.trim() : null;
+    String uriSpec = p_uriSpec;
     int uriSpecLen = (uriSpec != null) ? uriSpec.length() : 0;
 	
     if (p_base == null && uriSpecLen == 0) {
@@ -456,28 +456,33 @@ import java.io.Serializable;
     // Check for scheme, which must be before '/', '?' or '#'. Also handle
     // names with DOS drive letters ('D:'), so 1-character schemes are not
     // allowed.
-    int colonIdx    = uriSpec.indexOf(':');
-    int slashIdx    = uriSpec.indexOf('/');
-    int queryIdx    = uriSpec.indexOf('?');
-    int fragmentIdx = uriSpec.indexOf('#');
-
-    if ((colonIdx < 2) ||
-        (colonIdx > slashIdx && slashIdx != -1) ||
-        (colonIdx > queryIdx && queryIdx != -1) ||
-        (colonIdx > fragmentIdx && fragmentIdx != -1)) {
-      // A standalone base is a valid URI according to spec
-      if (colonIdx == 0 || (p_base == null && fragmentIdx != 0)) {
-        throw new MalformedURIException("No scheme found in URI.");
-      }
+    int colonIdx = uriSpec.indexOf(':');
+    if (colonIdx != -1) {
+        final int searchFrom = colonIdx - 1;
+        // search backwards starting from character before ':'.
+        int slashIdx = uriSpec.lastIndexOf('/', searchFrom);
+        int queryIdx = uriSpec.lastIndexOf('?', searchFrom);
+        int fragmentIdx = uriSpec.lastIndexOf('#', searchFrom);
+       
+        if (colonIdx < 2 || slashIdx != -1 || 
+            queryIdx != -1 || fragmentIdx != -1) {
+            // A standalone base is a valid URI according to spec
+            if (colonIdx == 0 || (p_base == null && fragmentIdx != 0)) {
+                throw new MalformedURIException("No scheme found in URI.");
+            }
+        }
+        else {
+            initializeScheme(uriSpec);
+            index = m_scheme.length()+1;
+            
+            // Neither 'scheme:' or 'scheme:#fragment' are valid URIs.
+            if (colonIdx == uriSpecLen - 1 || uriSpec.charAt(colonIdx+1) == '#') {
+            	throw new MalformedURIException("Scheme specific part cannot be empty.");	
+            }
+        }
     }
-    else {
-      initializeScheme(uriSpec);
-      index = m_scheme.length()+1;
-      
-      // Neither 'scheme:' or 'scheme:#fragment' are valid URIs.
-      if (colonIdx == uriSpecLen - 1 || uriSpec.charAt(colonIdx+1) == '#') {
-      	throw new MalformedURIException("Scheme specific part cannot be empty.");	
-      }
+    else if (p_base == null && uriSpec.indexOf('#') != 0) {
+        throw new MalformedURIException("No scheme found in URI.");    
     }
 
     // Two slashes means we may have authority, but definitely means we're either
@@ -1488,6 +1493,17 @@ import java.io.Serializable;
     return false;
   }
 
+    /**
+     * Returns a hash-code value for this URI.  The hash code is based upon all
+     * of the URI's components, and satisfies the general contract of the
+     * {@link java.lang.Object#hashCode() Object.hashCode} method. </p>
+     *
+     * @return  A hash-code value for this URI
+     */
+    public int hashCode() {
+        return toString().hashCode();
+    }
+    
  /**
   * Get the URI as a string specification. See RFC 2396 Section 5.2.
   *
@@ -1954,3 +1970,4 @@ import java.io.Serializable;
     return true;
   }
 }
+
