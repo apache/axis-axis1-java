@@ -95,7 +95,6 @@ public class BeanSerializer extends DeserializerBase implements Serializer {
      * does NOT creates an instance of the bean.
      */
     public BeanSerializer(Class cls) throws Exception {
-            if (cls==null) throw new NullPointerException("baz");
         this.cls = cls;
         this.pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
     }
@@ -105,7 +104,6 @@ public class BeanSerializer extends DeserializerBase implements Serializer {
      * Called only for deserializers, so it DOES create an instance.
      */
     public BeanSerializer(Class cls, PropertyDescriptor[] pd) throws Exception {
-            if (cls==null) throw new NullPointerException("bar");
         this.cls = cls;
         this.pd = pd;
         this.value = cls.newInstance();
