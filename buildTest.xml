@@ -124,7 +124,7 @@ Copyright:
              <fileset dir="./" >
                <patternset>
                  <include name="test/**/buildComponent.xml"/>
-               <exclude name="test/httpunit/buildComponent.xml"/>
+                 <exclude name="test/httpunit/buildComponent.xml"/>
                </patternset>
              </fileset>
         </param>
@@ -207,21 +207,20 @@ Copyright:
   <!-- Prepares the JUnit functional test -->
   <!-- =================================================================== -->
   <target name="junit-functional-prepare" if="junit.present">
-    <mkdir dir="${test.functional.reportdir}" />
-    <path id="deploy.xml.files">
-    <fileset dir="${build.dir}/work">
-      <include name="**/deploy.wsdd"/>
-    </fileset>
-    </path>
+          <mkdir dir="${basedir}/${test.functional.reportdir}" />
+          <path id="deploy.xml.files">
+                <fileset dir="${build.dir}/work">
+                  <include name="**/deploy.wsdd"/>
+                </fileset>
+          </path>
 
-    <path id="undeploy.xml.files">
-    <fileset dir="${build.dir}/work">
-      <include name="**/undeploy.wsdd"/>
-    </fileset>
-    </path>
-
-    <property name="deploy.xml.property" refid="deploy.xml.files"/>
-    <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
+          <path id="undeploy.xml.files">
+                <fileset dir="${build.dir}/work">
+                  <include name="**/undeploy.wsdd"/>
+                </fileset>
+          </path>
+          <property name="deploy.xml.property" refid="deploy.xml.files"/>
+          <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
   </target>
 
   <!-- =================================================================== -->
