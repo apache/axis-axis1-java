@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="AirportWeather" targetNamespace="http://www.capeclear.com/AirportWeather.wsdl" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.capeclear.com/AirportWeather.wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://www.capeclear.com/AirportWeather.xsd">
+<types>
+<xsd:schema targetNamespace="http://www.capeclear.com/AirportWeather.xsd" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:complexType name="WeatherSummary">
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="location" type="xsd:string"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="wind" type="xsd:string"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="sky" type="xsd:string"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="temp" type="xsd:string"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="humidity" type="xsd:string"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="pressure" type="xsd:string"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="visibility" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>
+</types>
+<message name="getLocation">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getLocationResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<message name="getWind">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getWindResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<message name="getSkyConditions">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getSkyConditionsResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<message name="getVisibility">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getVisibilityResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<message name="getTemperature">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getTemperatureResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<message name="getPressure">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getPressureResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<message name="getHumidity">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getHumidityResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<message name="getSummary">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getSummaryResponse">
+<part name="return" type="xsd1:WeatherSummary"/>
+</message>
+<message name="getOb">
+<part name="arg0" type="xsd:string"/>
+</message>
+<message name="getObResponse">
+<part name="return" type="xsd:string"/>
+</message>
+<portType name="AirportWeather">
+<operation name="getLocation">
+<input message="tns:getLocation"/>
+<output message="tns:getLocationResponse"/>
+</operation>
+<operation name="getWind">
+<input message="tns:getWind"/>
+<output message="tns:getWindResponse"/>
+</operation>
+<operation name="getSkyConditions">
+<input message="tns:getSkyConditions"/>
+<output message="tns:getSkyConditionsResponse"/>
+</operation>
+<operation name="getVisibility">
+<input message="tns:getVisibility"/>
+<output message="tns:getVisibilityResponse"/>
+</operation>
+<operation name="getTemperature">
+<input message="tns:getTemperature"/>
+<output message="tns:getTemperatureResponse"/>
+</operation>
+<operation name="getPressure">
+<input message="tns:getPressure"/>
+<output message="tns:getPressureResponse"/>
+</operation>
+<operation name="getHumidity">
+<input message="tns:getHumidity"/>
+<output message="tns:getHumidityResponse"/>
+</operation>
+<operation name="getSummary">
+<input message="tns:getSummary"/>
+<output message="tns:getSummaryResponse"/>
+</operation>
+<operation name="getOb">
+<input message="tns:getOb"/>
+<output message="tns:getObResponse"/>
+</operation>
+</portType>
+<binding name="AirportWeatherBinding" type="tns:AirportWeather">
+<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+<operation name="getLocation">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getLocation"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getWind">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getWind"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getSkyConditions">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getSkyConditions"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getVisibility">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getVisibility"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getTemperature">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getTemperature"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getPressure">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getPressure"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getHumidity">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getHumidity"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getSummary">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getSummary"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+<operation name="getOb">
+<soap:operation soapAction="capeconnect:AirportWeather:com.capeclear.weatherstation.Station#getOb"/>
+<input>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</input>
+<output>
+<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="capeconnect:AirportWeather:com.capeclear.weatherstation.Station" use="encoded"/>
+</output>
+</operation>
+</binding>
+<service name="AirportWeather">
+<documentation>AirportWeather</documentation>
+<port binding="tns:AirportWeatherBinding" name="AirportWeather">
+<soap:address location="http://localhost:8080/axis/services/AirportWeather"/>
+</port>
+</service>
+
+</definitions>
