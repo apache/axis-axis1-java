@@ -181,6 +181,8 @@ Copyright:
           toDir="${build.dest}"/>
     <copy file="${test.dir}/wsdl/Wsdl2javaTestSuite.list"
           toDir="${build.dest}/test/wsdl"/>
+    <copy file="${src.dir}/org/apache/axis/utils/resources.properties"
+          toDir="${build.dest}/org/apache/axis/utils"/>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
       <include name="javax/**"/>
