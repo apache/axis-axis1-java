@@ -80,6 +80,8 @@ public abstract class AxisEngine extends BasicHandler
      * types for a (soap encoded!) array.
      */
     public static final String PROP_DOTNET_SOAPENC_FIX = "dotNetSoapEncFix";
+    /** Compliance with WS-I Basic Profile. */
+    public static final String PROP_BP10_COMPLIANCE = "ws-i.bp10Compliance";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
@@ -117,6 +119,19 @@ public abstract class AxisEngine extends BasicHandler
      * What actor URIs hold for the entire engine? Find them here.
      */
     private ArrayList actorURIs = new ArrayList();
+
+    /** Are we in JAX-RPC 1.1 compatibility mode? */
+    public static boolean jaxrpc11Compliance = false;
+    static {
+        try {
+            // We check a system property, but we can use use switches
+            // to control this in WSDL2Java and at runtime.
+            jaxrpc11Compliance =
+                    System.getProperty("axis.jaxrpc11Compliance", "false")
+                    .equalsIgnoreCase("true");
+        } catch (Throwable t) {
+        }
+    }
 
     /**
      * Thread local storage used for locating the active message context.

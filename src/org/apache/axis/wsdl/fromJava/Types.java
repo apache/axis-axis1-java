@@ -15,10 +15,7 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
-import org.apache.axis.InternalException;
-import org.apache.axis.MessageContext;
+import org.apache.axis.*;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
@@ -118,6 +115,9 @@ public class Types {
     
     /** Which types have we already written? */
     Class [] mappedTypes = null;
+
+    /** For WS-I BP compliance, we can't use "ArrayOf" as a type prefix - instead use "MyArrayOf" (gag) */
+    private String arrayTypePrefix = AxisEngine.jaxrpc11Compliance ? "MyArrayOf" : "ArrayOf";
 
     public static boolean isArray(Class clazz)
     {
@@ -727,13 +727,13 @@ public class Types {
 
             if (targetNamespace.equals(cqName.getNamespaceURI())) {
                 qName = new QName(targetNamespace,
-                        "ArrayOf" + cqName.getLocalPart());
+                        arrayTypePrefix + cqName.getLocalPart());
             } else {
                 String pre =
                         namespaces.getCreatePrefix(cqName.getNamespaceURI());
 
                 qName = new QName(targetNamespace,
-                        "ArrayOf_" + pre + "_"
+                        arrayTypePrefix + "_" + pre + "_"
                         + cqName.getLocalPart());
             }
 

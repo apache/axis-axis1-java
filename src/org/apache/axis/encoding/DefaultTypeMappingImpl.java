@@ -17,6 +17,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.attachments.OctetStream;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
@@ -75,18 +76,6 @@ import javax.xml.rpc.encoding.DeserializerFactory;
 public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     private static DefaultTypeMappingImpl tm = null;
-    private static boolean jaxrpc11Compliance = false;
-    
-    static {
-        try {
-            // We check a system property, but we can use use switches
-            // to control this in WSDL2Java and at runtime.
-            jaxrpc11Compliance =
-                    System.getProperty("axis.jaxrpc11Compliance", "false")
-                    .equalsIgnoreCase("true");
-        } catch (Throwable t) {
-        }
-    }
 
     /**
      * Obtain the singleton default typemapping.
@@ -563,7 +552,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
-        if (jaxrpc11Compliance) {
+        if (AxisEngine.jaxrpc11Compliance) {
             // Table 4-1 of the JAXRPC 1.1 spec
             myRegisterSimple(Constants.XSD_UNSIGNEDINT, long.class);    
             myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, int.class);    
@@ -608,6 +597,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
             myRegisterSimple(Constants.XSD_ID, java.lang.String.class);
             myRegisterSimple(Constants.XSD_NMTOKEN, java.lang.String.class);
             myRegisterSimple(Constants.XSD_NMTOKENS, java.lang.String.class);
+            myRegisterSimple(Constants.XSD_STRING, java.lang.String.class);
             myRegisterSimple(Constants.XSD_NONPOSITIVEINTEGER, java.math.BigInteger.class);
             myRegisterSimple(Constants.XSD_NEGATIVEINTEGER, java.math.BigInteger.class);
             myRegisterSimple(Constants.XSD_NONNEGATIVEINTEGER, java.math.BigInteger.class);

@@ -1105,6 +1105,16 @@ public class JavaServiceDesc implements ServiceDesc {
         completedNames.add(methodName);
     }
 
+    private String getUniqueOperationName(String name) {
+        int i = 1;
+        String candidate;
+        do {
+            candidate = name + i++;
+        } while (name2OperationsMap.get(candidate) != null);
+
+        return candidate;
+    }
+
     /**
      * Look for methods matching this name, and for each one, create an
      * OperationDesc (if it's not already in our list).
