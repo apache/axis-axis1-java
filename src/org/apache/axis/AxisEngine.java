@@ -87,6 +87,8 @@ public abstract class AxisEngine extends BasicHandler
     protected HandlerRegistry _serviceRegistry;
     protected String _serviceRegFilename;
     
+    protected String _transportRegFilename;
+    
     private boolean readRegistryFiles = true;
     private boolean dontSaveYet = false;
     
@@ -155,7 +157,9 @@ public abstract class AxisEngine extends BasicHandler
      * @param handlerRegFilename the name of the Handler registry file.
      * @param serviceRegFilename the name of the Service registry file.
      */
-    public AxisEngine(String handlerRegFilename, String serviceRegFilename)
+    public AxisEngine(String handlerRegFilename,
+                      String serviceRegFilename,
+                      String transportRegFilename)
     {
         this();
         setHandlerRegistry(new SupplierRegistry());
@@ -163,6 +167,7 @@ public abstract class AxisEngine extends BasicHandler
         
         _handlerRegFilename = handlerRegFilename;
         _serviceRegFilename = serviceRegFilename;
+        _transportRegFilename = transportRegFilename;
         
         init();
     }
@@ -302,6 +307,37 @@ public abstract class AxisEngine extends BasicHandler
     
     public void initializeTransports()
     {
+      if (!readRegistryFiles)
+        return;
+      
+      dontSaveYet = true;
+      try {
+        FileInputStream    fis = new FileInputStream(_transportRegFilename);
+        
+        Document doc = XMLUtils.newDocument(fis);
+        
+        Element root = doc.getDocumentElement();
+        
+        NodeList list = root.getChildNodes();
+        for (int i = 0; i < list.getLength(); i++) {
+          if (!(list.item(i) instanceof Element))
+            continue;
+          Element elem = (Element)list.item(i);
+          Admin.registerTransport(elem, this);
+        }
+        
+        fis.close();
+        return;
+      }
+      catch( Exception e ) {
+        if ( !(e instanceof FileNotFoundException) ) {
+          e.printStackTrace( System.err );
+        }
+      } finally {
+        dontSaveYet = false;
+      }
+
+      Debug.Print(2, "Deploying default transports...");
       deployDefaultTransports();
     }
 
@@ -348,7 +384,8 @@ public abstract class AxisEngine extends BasicHandler
       try {
         FileOutputStream fos = new FileOutputStream(_handlerRegFilename);
         Document doc = XMLUtils.newDocument();
-        Element el = Admin.list(doc, this, false);
+        Element el = doc.createElement("handlers");
+        Admin.list(el, getHandlerRegistry());
         doc.appendChild(el);
         XMLUtils.DocumentToStream(doc, fos);
         fos.close();
@@ -365,7 +402,26 @@ public abstract class AxisEngine extends BasicHandler
       try {
         FileOutputStream fos = new FileOutputStream(_serviceRegFilename);
         Document doc = XMLUtils.newDocument();
-        Element el = Admin.list(doc, this, true);
+        Element el = doc.createElement("services");
+        Admin.list(el, getServiceRegistry());
+        doc.appendChild(el);
+        XMLUtils.DocumentToStream(doc, fos);
+        fos.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    
+    public void saveTransportRegistry()
+    {
+      if (dontSaveYet || (_transportRegFilename == null))
+        return;
+      
+      try {
+        FileOutputStream fos = new FileOutputStream(_transportRegFilename);
+        Document doc = XMLUtils.newDocument();
+        Element el = doc.createElement("transports"); 
+        Admin.list(el, getTransportRegistry());
         doc.appendChild(el);
         XMLUtils.DocumentToStream(doc, fos);
         fos.close();
@@ -451,7 +507,9 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void deployTransport(String key, Handler transport)
     {
+        transport.setName(key);
         transportRegistry.add(key, transport);
+        saveTransportRegistry();
     }
     
     /**
@@ -460,6 +518,7 @@ public abstract class AxisEngine extends BasicHandler
     public void deployTransport(String key, Supplier supplier)
     {
         transportRegistry.add(key, supplier);
+        saveTransportRegistry();
     }
     
     /**
@@ -468,6 +527,7 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployTransport(String key)
     {
         transportRegistry.remove(key);
+        saveTransportRegistry();
     }
 
     /**

@@ -95,6 +95,9 @@ public class TargetedChainSupplier implements Supplier
     
     private void addHandlersToChain(Vector names, Chain chain)
     {
+      if (names == null)
+        return;
+      
       Enumeration e = names.elements();
       while (e.hasMoreElements()) {
         String hName = (String)e.nextElement();
@@ -114,25 +117,29 @@ public class TargetedChainSupplier implements Supplier
         c.setOptions(_options);
         c.setName(_myName);
         
-        if (_requestNames.size() == 1) {
-          h = _registry.find((String)_requestNames.elementAt(0));
-          c.setRequestHandler(h);
-        } else {
-          Chain chain = new SimpleChain();
-          addHandlersToChain(_requestNames, chain);
+        if (!_requestNames.isEmpty()) {
+          if (_requestNames.size() == 1) {
+            h = _registry.find((String)_requestNames.elementAt(0));
+            c.setRequestHandler(h);
+          } else {
+            Chain chain = new SimpleChain();
+            addHandlersToChain(_requestNames, chain);
+            c.setRequestHandler(chain);
+          }
         }
         
         h = _registry.find(_pivotName);
-        if (h == null)
-          return null;  // Should maybe throw an exception here?
         c.setPivotHandler(h);
 
-        if (_responseNames.size() == 1) {
-          h = _registry.find((String)_responseNames.elementAt(0));
-          c.setRequestHandler(h);
-        } else {
-          Chain chain = new SimpleChain();
-          addHandlersToChain(_responseNames, chain);
+        if (!_responseNames.isEmpty()) {
+          if (_responseNames.size() == 1) {
+            h = _registry.find((String)_responseNames.elementAt(0));
+            c.setResponseHandler(h);
+          } else {
+            Chain chain = new SimpleChain();
+            addHandlersToChain(_responseNames, chain);
+            c.setResponseHandler(chain);
+          }
         }
         
         _chain = c;

@@ -100,7 +100,7 @@ public class LocalSender extends BasicHandler {
     String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
     if (action != null) {
        serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
-       serverContext.setProperty(MessageContext.TRANS_REQUEST , "HTTPAction");
+       serverContext.setTransportName("http");
     }
 
     // set the realpath if possible

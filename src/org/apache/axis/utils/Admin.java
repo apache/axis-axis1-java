@@ -119,7 +119,7 @@ public class Admin {
     throws Exception
   {
     NodeList list = root.getElementsByTagName("bean");
-    Debug.Print(1, "Registering " + list.getLength() + " service-specific beans.");
+    Debug.Print(2, "Registering " + list.getLength() + " service-specific beans.");
     for (int i = 0; list != null && i < list.getLength(); i++) {
       Element el = (Element)list.item(i);
       registerBeanMapping(el, service.getTypeMappingRegistry());
@@ -187,12 +187,18 @@ public class Admin {
         Element tmpEl = doc.createElement("engineConfig");
         doc.appendChild(tmpEl);
         
-        Element el = list(doc, engine, false);
+        Element el = doc.createElement("handlers");
+        list(el, engine.getHandlerRegistry());
         tmpEl.appendChild(el);
         
-        el = list(doc, engine, true);
+        el = doc.createElement("services");
+        list(el, engine.getServiceRegistry());
         tmpEl.appendChild(el);
         
+        el = doc.createElement("transports");
+        list(el, engine.getTransportRegistry());
+        tmpEl.appendChild(el);
+
         return( doc );
       }
   
@@ -269,11 +275,10 @@ public class Admin {
    * @return Element our config element, suitable for pumping back through
    *                 Admin processing later, to redeploy.
    */
-  public static Element list(Document doc, AxisEngine engine, boolean doServices)
+  public static Element list(Element root, HandlerRegistry registry)
     throws AxisFault
   {
-    String elementName = doServices ? "services" : "handlers";
-    Element root = doc.createElement( elementName );
+    Document doc = root.getOwnerDocument();
 
     Element    elem = null ;
     Hashtable  opts = null ;
@@ -281,13 +286,6 @@ public class Admin {
     Handler    h ;
     int        i ;
     
-    HandlerRegistry registry;
-    if (doServices) {
-      registry = engine.getServiceRegistry();
-    } else {
-      registry = engine.getHandlerRegistry();
-    }
-
     names = registry.list();
 
     for( i = 0 ; names != null && i < names.length ; i++ ) {
@@ -373,6 +371,8 @@ public class Admin {
                                                              hr);
       hr.add(name,supp);
     }
+    
+    engine.saveHandlerRegistry();
   }
   
   /**
@@ -512,11 +512,9 @@ public class Admin {
   public static void registerTransport(Element elem, AxisEngine engine)
     throws AxisFault
   {
-    SupplierRegistry tr = engine.getTransportRegistry();
-    
     String   name    = elem.getAttribute( "name" );
     String   request   = elem.getAttribute( "request" );
-    String   sender   = elem.getAttribute( "sender" );
+    String   sender   = elem.getAttribute( "pivot" );
     String   response  = elem.getAttribute( "response" );
     Hashtable options = new Hashtable();
 
@@ -530,24 +528,30 @@ public class Admin {
     Vector reqNames = new Vector();
     Vector respNames = new Vector();
 
-    st = new StringTokenizer( request, " \t\n\r\f," );
-    while ( st.hasMoreElements() ) {
-      reqNames.addElement(st.nextToken());
+    if (request != null) {
+      st = new StringTokenizer( request, " \t\n\r\f," );
+      while ( st.hasMoreElements() ) {
+        reqNames.addElement(st.nextToken());
+      }
+    }
+
+    if (response != null) {
+      st = new StringTokenizer( response, " \t\n\r\f," );
+      while ( st.hasMoreElements() ) {
+        respNames.addElement(st.nextToken());
+      }
     }
     
-    st = new StringTokenizer( response, " \t\n\r\f," );
-    while ( st.hasMoreElements() ) {
-      respNames.addElement(st.nextToken());
-    }
     getOptions( elem, options );
     
+    HandlerRegistry hr = engine.getHandlerRegistry();
     TargetedChainSupplier supp = new TargetedChainSupplier(name,
                                                            reqNames,
                                                            respNames,
                                                            sender,
                                                            options,
-                                                           tr);
-    tr.add(name,supp);
+                                                           hr);
+    engine.deployTransport(name, supp);
   }
 
   /**

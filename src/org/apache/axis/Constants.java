@@ -148,4 +148,6 @@ public class Constants {
   public static String SERVER_HANDLER_REGISTRY = "handler-server.reg" ;
   public static String CLIENT_SERVICE_REGISTRY = "service-client.reg" ;
   public static String SERVER_SERVICE_REGISTRY = "service-server.reg" ;
+  public static String CLIENT_TRANSPORT_REGISTRY = "transport-client.reg" ;
+  public static String SERVER_TRANSPORT_REGISTRY = "transport-server.reg" ;
 }

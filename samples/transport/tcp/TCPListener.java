@@ -75,8 +75,7 @@ import java.net.*;
  */
 public class TCPListener implements Runnable {
     // These have default values.
-    private String transportReqName = "TCP.request";
-    private String transportRespName = "TCP.response";
+    private String transportName = "TCPTransport";
     
     private static final String AXIS_ENGINE = "AxisEngine" ;
     
@@ -151,10 +150,12 @@ public class TCPListener implements Runnable {
                 HandlerRegistry hr = engine.getHandlerRegistry();
                 HandlerRegistry sr = engine.getServiceRegistry();
                 // add the TCPSender
-                hr.add("TCPSender", new TCPSender());
+                //hr.add("TCPSender", new TCPSender());
                 
-                SimpleChain c = new SimpleChain();
-                hr.add( transportReqName, c );
+                SimpleTargetedChain c = new SimpleTargetedChain();
+                c.setPivotHandler(new TCPSender());
+                
+                engine.deployTransport(transportName, c);
             }
             
             /* Place the Request message in the MessagContext object - notice */
@@ -233,8 +234,7 @@ public class TCPListener implements Runnable {
             
             /* Set the Transport Specific Request/Response chains IDs */
             /******************************************************/
-            msgContext.setProperty(MessageContext.TRANS_REQUEST , transportReqName );
-            msgContext.setProperty(MessageContext.TRANS_RESPONSE, transportRespName );
+            msgContext.setTransportName(transportName);
             
             try {
                 /* Invoke the Axis engine... */

@@ -6,4 +6,5 @@
 
 <deploy>
   <handler name="FileSender" class="samples.transport.FileSender" />
+  <transport name="FileTransport" pivot="FileSender"/>
 </deploy>
