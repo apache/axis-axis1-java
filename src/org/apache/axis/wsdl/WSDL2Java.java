@@ -64,8 +64,15 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaWriterFactory;
 
+import org.w3c.dom.Document;
+
+import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.List;
+
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
 
 /**
  * Command line interface to the wsdl2java utility
@@ -84,6 +91,15 @@ public class WSDL2Java {
     protected static final int NOIMPORTS_OPT = 'n';
     protected static final int PACKAGE_OPT = 'p';
     protected static final int DEBUG_OPT = 'D';
+
+    // Scope constants
+    public static final byte NO_EXPLICIT_SCOPE = 0x00;
+    public static final byte APPLICATION_SCOPE = 0x01;
+    public static final byte REQUEST_SCOPE     = 0x10;
+    public static final byte SESSION_SCOPE     = 0x11;
+
+    // The emitter framework Emitter class.
+    private Emitter emitter;
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -138,9 +154,165 @@ public class WSDL2Java {
     };
 
     /**
+     * Instantiate a WSDL2Java emitter.
+     */
+    public WSDL2Java() {
+        // Instantiate the emitter
+        JavaWriterFactory writerFactory = new JavaWriterFactory();
+        emitter = new Emitter(writerFactory);
+        writerFactory.setEmitter(emitter);
+    } // ctor
+
+    ///////////////////////////////////////////////////
+    //
+    // Command line switches
+    //
+
+    /**
+     * Turn on/off server skeleton creation
+     * @param boolean value
+     */
+    public void generateSkeleton(boolean value) {
+        emitter.generateSkeleton(value);
+    }
+
+    /**
+     * Indicate if we should be emitting server side code and deploy/undeploy
+     */ 
+    public boolean getGenerateSkeleton() {
+        return emitter.getGenerateSkeleton();
+    }
+
+    /**
+     * Turn on/off test case creation
+     * @param boolean value
+     */
+    public void generateTestCase(boolean value) {
+        emitter.generateTestCase(value);
+    }
+
+    /**
+     * Return the current definition
+     */ 
+    public Definition getCurrentDefinition() {
+        return emitter.getCurrentDefinition();
+    }
+    
+    /**
+     * Turn on/off generation of elements from imported files.
+     * @param boolean generateImports
+     */
+    public void generateImports(boolean generateImports) {
+        emitter.generateImports(generateImports);
+    } // generateImports
+
+    /**
+     * Turn on/off debug messages.
+     * @param boolean value
+     */
+    public void debug(boolean value) {
+        emitter.debug(value);
+    } // debug
+
+    /**
+     * Return the status of the debug switch.
+     */
+    public boolean getDebug() {
+        return emitter.getDebug();
+    } // getDebug
+
+    /**
+     * Turn on/off verbose messages
+     * @param boolean value
+     */
+    public void verbose(boolean value) {
+        emitter.verbose(value);
+    }
+
+    /**
+     * Return the status of the verbose switch
+     */ 
+    public boolean getVerbose() {
+        return emitter.getVerbose();
+    }
+
+    /**
+     * Set a map of namespace -> Java package names
+     */ 
+    public void setNamespaceMap(HashMap map) {
+        emitter.setNamespaceMap(map);
+    }
+
+
+    /**
+     * Set the output directory to use in emitted source files
+     */
+    public void setOutputDir(String outputDir) {
+        emitter.setOutputDir(outputDir);
+    }
+
+    /**
+     * Get global package name to use instead of mapping namespaces
+     */ 
+    public String getPackageName() {
+        return emitter.getPackageName();
+    }
+
+    /**
+     * Set a global package name to use instead of mapping namespaces
+     */ 
+    public void setPackageName(String packageName) {
+        emitter.setPackageName(packageName);
+    }
+    
+    /**
+     * Get the output directory to use for emitted source files
+     */
+    public String getOutputDir() {
+        return emitter.getOutputDir();
+    }
+    
+    /**
+     * Set the scope for the deploy.xml file.
+     * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.
+     */
+    public void setScope(byte scope) {
+        emitter.setScope(scope);
+    } // setScope
+
+    /**
+     * Get the scope for the deploy.xml file.
+     */
+    public byte getScope() {
+        return emitter.getScope();
+    } // getScope
+
+    //
+    // Command line switches
+    //
+    ///////////////////////////////////////////////////
+
+    /**
+     * Call this method if you have a uri for the WSDL document
+     */
+    public void emit(String wsdlURI)
+            throws IOException, WSDLException {
+        emitter.emit(wsdlURI);
+    } // emit
+
+    /**
+     * Call this method if your WSDL document has already been parsed as an XML DOM document.
+     */
+    public void emit(Document doc)
+            throws IOException, WSDLException {
+        emitter.emit(doc);
+    } // emit
+
+    /**
      * Main
      */
     public static void main(String args[]) {
+        WSDL2Java wsdl2java = new WSDL2Java();
         boolean bSkeleton = false;
         boolean bTestClass = false;
         String wsdlURI = null;
@@ -162,12 +334,6 @@ public class WSDL2Java {
         int size = clOptions.size();
 
         try {
-
-            // Instantiate the emitter
-            JavaWriterFactory writerFactory = new JavaWriterFactory();
-            Emitter emitter = new Emitter(writerFactory);
-            writerFactory.setEmitter(emitter);
-
             // Parse the options and configure the emitter as appropriate.
             for (int i = 0; i < size; i++) {
                 CLOption option = (CLOption)clOptions.get(i);
@@ -185,12 +351,12 @@ public class WSDL2Java {
                         break;
 
                     case VERBOSE_OPT:
-                        emitter.verbose(true);
+                        wsdl2java.verbose(true);
                         break;
 
                     case SKELETON_OPT:
                         bSkeleton = true;
-                        emitter.generateSkeleton(true);
+                        wsdl2java.generateSkeleton(true);
                         break;
 
                     case NAMESPACE_OPT:
@@ -201,23 +367,23 @@ public class WSDL2Java {
 
                     case PACKAGE_OPT:
                         bPackageOpt = true;
-                        emitter.setPackageName(option.getArgument());
+                        wsdl2java.setPackageName(option.getArgument());
                         break;
 
                     case OUTPUT_OPT:
-                        emitter.setOutputDir(option.getArgument());
+                        wsdl2java.setOutputDir(option.getArgument());
                         break;
 
                     case SCOPE_OPT:
                         String scope = option.getArgument();
                         if ("Application".equals(scope)) {
-                            emitter.setScope(Emitter.APPLICATION_SCOPE);
+                            wsdl2java.setScope(Emitter.APPLICATION_SCOPE);
                         }
                         else if ("Request".equals(scope)) {
-                            emitter.setScope(Emitter.REQUEST_SCOPE);
+                            wsdl2java.setScope(Emitter.REQUEST_SCOPE);
                         }
                         else if ("Session".equals(scope)) {
-                            emitter.setScope(Emitter.SESSION_SCOPE);
+                            wsdl2java.setScope(Emitter.SESSION_SCOPE);
                         }
                         else {
                             System.err.println(
@@ -227,15 +393,15 @@ public class WSDL2Java {
 
                     case TEST_OPT:
                         bTestClass = true;
-                        emitter.generateTestCase(true);
+                        wsdl2java.generateTestCase(true);
                         break;
 
                     case NOIMPORTS_OPT:
-                        emitter.generateImports(false);
+                        wsdl2java.generateImports(false);
                         break;
 
                     case DEBUG_OPT:
-                        emitter.debug(true);
+                        wsdl2java.debug(true);
                         break;
                 }
             }
@@ -251,10 +417,10 @@ public class WSDL2Java {
             }
 
             if (!namespaceMap.isEmpty()) {
-                emitter.setNamespaceMap(namespaceMap);
+                wsdl2java.setNamespaceMap(namespaceMap);
             }
 
-            emitter.emit(wsdlURI);
+            wsdl2java.emit(wsdlURI);
             
             // everything is good
             System.exit(0);
@@ -263,7 +429,6 @@ public class WSDL2Java {
             t.printStackTrace();
             System.exit(1);
         }
-
     }
 
     /**
