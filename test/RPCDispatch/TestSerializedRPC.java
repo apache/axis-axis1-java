@@ -72,7 +72,7 @@ public class TestSerializedRPC extends TestCase {
         MessageContext msgContext = new MessageContext(engine);
         
         // Set the dispatch either by SOAPAction or methodNS
-        String methodNS = "";
+        String methodNS = "urn:dont.match.me";
         if (setService) {
             msgContext.setTargetService(SOAPAction);
         } else {
