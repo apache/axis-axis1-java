@@ -157,25 +157,65 @@ public class ClassRep {
             if (Modifier.isPublic(mod))
                 _methods.add(new MethodRep(m[i]));
         }
+
         // Constructs a FieldRep for every public field and
         // for every field that has JavaBean accessor methods
         for (int i=0; i < cls.getDeclaredFields().length; i++) {
             Field f = cls.getDeclaredFields()[i];
             int mod = f.getModifiers();
             if (Modifier.isPublic(mod) ||
-                isJavaBeanNormalField(cls, f) ||
-                isJavaBeanIndexedField(cls, f)) {
-                if (!isJavaBeanIndexedField(cls, f)) {
-                    _fields.add(new FieldRep(f));
+                isJavaBeanNormal(cls, f.getName(), f.getType()) ||
+                isJavaBeanIndexed(cls, f.getName(), f.getType())) {
+                if (!isJavaBeanIndexed(cls, f.getName(), f.getType())) {
+                    FieldRep fr = new FieldRep(f);
+                    if (!_fields.contains(fr))
+                        _fields.add(fr);
                 } else {
                     FieldRep fr = new FieldRep();
                     fr.setName(f.getName());
                     fr.setType(f.getType().getComponentType());
                     fr.setIndexed(true);
-                    _fields.add(fr);
+                    if (!_fields.contains(fr))
+                        _fields.add(fr);
                 }
             }
         }
+
+        // Now add FieldReps for any remaining bean accessors.
+        for (int i=0; i < cls.getDeclaredMethods().length; i++) {
+            Method method = cls.getDeclaredMethods()[i];
+            int mod = method.getModifiers();
+            if (Modifier.isPublic(mod) &&
+                (method.getName().startsWith("is") ||
+                 method.getName().startsWith("get"))) {
+                String name = method.getName();
+                if (name.startsWith("is")) {
+                    name = name.substring(2);
+                } else {
+                    name = name.substring(3);
+                }
+                Class type = method.getReturnType();
+                if (isJavaBeanNormal(cls, name, type) ||
+                    isJavaBeanIndexed(cls, name, type)) {
+                    if (!isJavaBeanIndexed(cls, name, type)) {
+                        FieldRep fr = new FieldRep();
+                        fr.setName(name);
+                        fr.setType(type);
+                        if (!_fields.contains(fr))
+                            _fields.add(fr);
+                    } else {
+                        FieldRep fr = new FieldRep();
+                        fr.setName(name);
+                        fr.setType(type.getComponentType());
+                        fr.setIndexed(true);
+                        if (!_fields.contains(fr))
+                            _fields.add(fr);
+                    }
+                }
+                
+            }
+        }
+
     }
        
     /**
@@ -198,24 +238,35 @@ public class ClassRep {
 
 
     /**
-     * Determines if the Field in the Class has Bean compliant accessors. If so returns true,
+     * Determines if the Property in the class has been compliant accessors. If so returns true,
      * else returns false
-     * @param type the Class
-     * @param field the Field
-     * @return true if the Field has JavaBean style accessor
+     * @param cls the Class
+     * @param name is the name of the property
+     * @param type is the type of the property
+     * @return true if the Property has JavaBean style accessors
      */
-    public static boolean isJavaBeanNormalField(Class type, Field field) {
+    public static boolean isJavaBeanNormal(Class cls, String name, Class type) {
         try {
-            String fieldName =  field.getName().substring(0,1).toUpperCase()
-                + field.getName().substring(1);
-            String setter = "set" + fieldName;
+            String propName = name.substring(0,1).toUpperCase()
+                + name.substring(1);
+            String setter = "set" + propName;
             String getter = null;
-            if (field.getType().getName() == "boolean")
-                getter = "is" + fieldName;
+            if (type.getName() == "boolean")
+                getter = "is" + propName;
             else
-                getter = "get" + fieldName;
-            type.getMethod(setter, new Class[] {field.getType()});
-            type.getMethod(getter, null);
+                getter = "get" + propName;
+
+            Method m = cls.getDeclaredMethod(setter, new Class[] {type});
+            int mod = m.getModifiers();
+            if (!Modifier.isPublic(mod)) {
+                return false;
+            }
+
+            m = cls.getDeclaredMethod(getter, null);
+            mod = m.getModifiers();
+            if (!Modifier.isPublic(mod)) {
+                return false;
+            }       
         }
         catch (NoSuchMethodException ex) {
             return false;
@@ -224,34 +275,46 @@ public class ClassRep {
     }
 
     /**
-     * Determines if the Field in the Class has bean compliant indexed accessors. If so returns true,
+     * Determines if the Property in the Class has bean compliant indexed accessors. If so returns true,
      * else returns false
-     * @param type the Class
-     * @param field the Field
-     * @return true if the Field has JavaBean indexed style accessors
+     * @param cls the Class
+     * @param name is the name of the property
+     * @param type is the type of the property
+     * @return true if the Property has JavaBean style accessors
      */
-    public static boolean isJavaBeanIndexedField(Class type, Field field) {
+    public static boolean isJavaBeanIndexed(Class cls, String name, Class type) {
         // Must be an array
-        if (!field.getType().isArray())
+        if (!type.isArray())
             return false;
 
         try {
-            String fieldName =  field.getName().substring(0,1).toUpperCase()
-                + field.getName().substring(1);
-            String setter = "set" + fieldName;
+            String propName =  name.substring(0,1).toUpperCase()
+                + name.substring(1);
+            String setter = "set" + propName;
             String getter = null;
-            if (field.getType().getName().startsWith("boolean["))
-                getter = "is" + fieldName;
+            if (type.getName().startsWith("boolean["))
+                getter = "is" + propName;
             else
-                getter = "get" + fieldName;
-            type.getMethod(setter, new Class[] {int.class, field.getType().getComponentType()});
-            type.getMethod(getter, new Class[] {int.class});
+                getter = "get" + propName;
+
+            Method m = type.getDeclaredMethod(setter, new Class[] {int.class, type.getComponentType()});
+            int mod = m.getModifiers();
+            if (!Modifier.isPublic(mod)) {
+                return false;
+            }
+
+            m = type.getDeclaredMethod(getter, new Class[] {int.class});
+            mod = m.getModifiers();
+            if (!Modifier.isPublic(mod)) {
+                return false;
+            }       
         }
         catch (NoSuchMethodException ex) {
             return false;
         }
         return true;
     }
+
 
     /**
      * Determines if the Class is a Holder class. If so returns Class of held type
