@@ -173,6 +173,13 @@
         <xsd:sequence />
       </xsd:complexType>
 
+      <xsd:element name="faultElement" type="typens:faultType" />
+      <xsd:complexType name="faultType">
+        <xsd:sequence>
+           <xsd:element name="userData" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
       <xsd:complexType name="emptyComplexType">
         <xsd:sequence />
       </xsd:complexType>
@@ -803,6 +810,10 @@
     <part name="theFault" type="typens:emptyFault" />
   </message>
 
+  <message name="faultWithElement">
+    <part name="fault2" element="typens:faultElement" />
+  </message>
+
   <message name="emptyComplexType">
     <part name="emptyComplexType" type="typens:emptyComplexType" />
   </message>
@@ -955,6 +966,7 @@
       <input message="tns:emptyComplexType"/>
       <output message="tns:empty"/>
       <fault name="emptyFault" message="tns:emptyFault"/>
+      <fault name="faultWithElement" message="tns:faultWithElement"/>
     </operation>
     <operation name="emptyComplexTypeInout" parameterOrder="emptyComplexType">
       <input message="tns:emptyComplexType"/>
