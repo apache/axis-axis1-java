@@ -48,7 +48,7 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy">
+<target name="copy" depends="setenv,clean">
 <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
 </target>
 

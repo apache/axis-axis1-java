@@ -48,7 +48,7 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy" depends="setenv">
+<target name="copy" depends="setenv,clean">
    <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
 </target>
 

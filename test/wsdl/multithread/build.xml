@@ -50,7 +50,7 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy" depends="setenv">
+<target name="copy" depends="setenv,clean">
   <ant antfile="${axis.home}/samples/addr/build.xml"/>
 </target>
 
