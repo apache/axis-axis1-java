@@ -237,6 +237,10 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 boolean wroteAttrDecl = false;
 
                 for (int i = 0; i < attributes.size(); i += 2) {
+                    if(((i+1)%10) == 0) {
+                        pw.println("    }");
+                        pw.println("    static {");
+                    }
                     TypeEntry te = (TypeEntry) attributes.get(i);
                     QName attrName = (QName) attributes.get(i + 1);
                     String attrLocalName = attrName.getLocalPart();
@@ -262,6 +266,11 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 boolean wroteElemDecl = false;
                 
                 for (int i=0; i<elementMetaData.size(); i++) {
+                    if(((i+1)%10) == 0) {
+                        pw.println("    }");
+                        pw.println("    static {");
+                        wroteElemDecl = false;
+                    }
                     ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
 
                     if (elem.getAnyElement()) {

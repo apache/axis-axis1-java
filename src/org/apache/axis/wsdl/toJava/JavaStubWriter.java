@@ -365,6 +365,11 @@ public class JavaStubWriter extends JavaClassWriter {
                 operations.size() + "];");
         pw.println("        org.apache.axis.description.OperationDesc oper;");
         for (int i = 0; i < operations.size(); ++i) {
+            if(((i+1)%10) == 0) {
+                pw.println("    }");
+                pw.println("    static {");
+                pw.println("        org.apache.axis.description.OperationDesc oper;");
+            }
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
                     bEntry.getParameters(operation.getOperation());
