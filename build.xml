@@ -82,6 +82,8 @@ Copyright:
   <property name="clutil.jar" value="lib/clutil.jar"/>
   <property name="tt-bytecode.jar" value="lib/tt-bytecode.jar"/>
 
+  <property name="regexp.jar" value="test/lib/jakarta-oro-2.0.5.jar"/>
+
   <property name="junit.jar" value="lib/junit.jar"/>
 
   <property name="packages" value="org.*,javax.*"/>
@@ -107,6 +109,7 @@ Copyright:
   <path id="classpath">
     <pathelement location="${clutil.jar}"/>
     <pathelement location="${xerces.jar}"/>
+    <pathelement location="${regexp.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${excalibur.jar}"/>
     <pathelement location="${java.home}/../lib/tools.jar"/>
@@ -122,6 +125,10 @@ Copyright:
 
     <available property="servlet.present"
       classname="javax.servlet.Servlet"
+      classpathref="classpath"/>
+
+    <available property="regexp.present"
+      classname="org.apache.oro.text.regex.Pattern"
       classpathref="classpath"/>
 
     <available property="junit.present"
@@ -190,6 +197,7 @@ Copyright:
     <echo message=""/>
     <echo message="--- Optional Libraries ---" />
     <echo message="servlet.present=${servlet.present}" />
+    <echo message="regexp.present=${regexp.present}" />
     <echo message="junit.present=${junit.present}" />
     <echo message="activation.present=${activation.present}" />
     <echo message="mailapi.present=${mailapi.present}" />
@@ -317,6 +325,7 @@ Copyright:
         <path refid="classpath"/>
       </classpath>
       <include name="test/**/*.java" />
+      <exclude name="test/lib/*.java"/>
       <exclude name="test/inout/*.java" />
       <exclude name="test/wsdl/*/*.java" />
       <exclude name="test/wsdl/interop3/groupE/**/*.java" />
