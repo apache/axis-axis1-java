@@ -590,9 +590,12 @@ public class SchemaUtils {
                 }
             }
         } else {
-            BooleanHolder forElement = new BooleanHolder();
-            QName nodeName = Utils.getTypeQName(groupNode, forElement, false);
-            TypeEntry type = symbolTable.getTypeEntry(nodeName, forElement.value);
+            QName nodeName = Utils.getNodeNameQName(groupNode);
+            QName nodeType = Utils.getTypeQName(groupNode, new BooleanHolder(), false);
+            // The value of the second argument is 'false' since global model group
+            // definitions are always represented by objects whose type is
+            // assignment compatible with 'org.apache.axis.wsdl.symbolTable.Type'.
+            TypeEntry type = symbolTable.getTypeEntry(nodeType, false);
 
             if (type != null) {
                 v.add(new ElementDecl(type, nodeName));
