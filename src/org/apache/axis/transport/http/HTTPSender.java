@@ -30,6 +30,8 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -40,6 +42,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -346,6 +349,17 @@ public class HTTPSender extends BasicHandler {
                         .append(": ")
                         .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
                         .append("\r\n");
+            }
+        }
+
+        MimeHeaders mimeHeaders = reqMessage.getMimeHeaders();
+        if (mimeHeaders != null) {
+            for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
+                MimeHeader mimeHeader = (MimeHeader) i.next();
+                header.append(mimeHeader.getName())
+                .append(": ")
+                .append(mimeHeader.getValue())
+                .append("\r\n");
             }
         }
 
