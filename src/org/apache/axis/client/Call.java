@@ -132,6 +132,7 @@ import java.util.Vector;
  *     SEND_TYPE_ATTR - Should we send the XSI type attributes (true/false)
  *     TIMEOUT        - Timeout used by transport sender in seconds
  *     TRANSPORT_NAME - Name of transport handler to use
+ *     ATTACHMENT_ENCAPSULATION_FORMAT- Send attachments as MIME the default, or DIME. 
  * </pre>
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -196,6 +197,22 @@ public class Call implements javax.xml.rpc.Call {
     // response message from the server.  Otherwise, the
     // invoke method will return a null.
     public static final boolean FAULT_ON_NO_RESPONSE = false;
+
+    /**
+     * Property for setting attachment format.
+     */
+    public static final String ATTACHMENT_ENCAPSULATION_FORMAT=
+      "attachment_encapsulation_format";
+    /**
+     * Property value for setting attachment format as MIME.
+     */
+    public static final String ATTACHMENT_ENCAPSULATION_FORMAT_MIME=
+      "axis.attachment.style.mime";
+    /**
+     * Property value for setting attachment format as DIME.
+     */
+    public static final String ATTACHMENT_ENCAPSULATION_FORMAT_DIME=
+      "axis.attachment.style.dime";
 
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
@@ -350,6 +367,19 @@ public class Call implements javax.xml.rpc.Call {
             if (transport != null)
                 transport.setTransportName((String) value);
         }
+        else if ( name.equals(ATTACHMENT_ENCAPSULATION_FORMAT) ) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            if(!value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MIME ) && 
+               !value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_DIME ))
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badattachmenttypeerr", new String[] {
+                        (String) value, ATTACHMENT_ENCAPSULATION_FORMAT_MIME + " "
+                        +ATTACHMENT_ENCAPSULATION_FORMAT_DIME  }));
+        }
         else {
             throw new IllegalArgumentException(
                     JavaUtils.getMessage("badProp05", name));
@@ -410,11 +440,13 @@ public class Call implements javax.xml.rpc.Call {
         propertyNames.add(USERNAME_PROPERTY);
         propertyNames.add(PASSWORD_PROPERTY);
         propertyNames.add(SESSION_MAINTAIN_PROPERTY);
+        propertyNames.add(ATTACHMENT_ENCAPSULATION_FORMAT);
         propertyNames.add(OPERATION_STYLE_PROPERTY);
         propertyNames.add(SOAPACTION_USE_PROPERTY);
         propertyNames.add(SOAPACTION_URI_PROPERTY);
         propertyNames.add(ENCODINGSTYLE_URI_PROPERTY);
         propertyNames.add(TRANSPORT_NAME);
+            propertyNames.add(ATTACHMENT_ENCAPSULATION_FORMAT);
     }
 
     public Iterator getPropertyNames() {
@@ -1483,6 +1515,22 @@ public class Call implements javax.xml.rpc.Call {
      * @param msg the new request message.
      */
     public void setRequestMessage(Message msg) {
+         String attachformat= (String)getProperty(
+           ATTACHMENT_ENCAPSULATION_FORMAT);
+
+         if(null != attachformat){
+              org.apache.axis.attachments.Attachments attachments=
+                msg.getAttachmentsImpl();
+              if(null != attachments) {
+                  if( null != attachformat && attachformat.equals(
+                    ATTACHMENT_ENCAPSULATION_FORMAT_MIME)) 
+                    attachments.setSendType(attachments.SEND_TYPE_MIME);
+                  else if( null != attachformat && attachformat.equals(
+                      ATTACHMENT_ENCAPSULATION_FORMAT_DIME)) {
+                    attachments.setSendType(attachments.SEND_TYPE_DIME);
+                  }
+              }
+         }
 
         if(null != attachmentParts && !attachmentParts.isEmpty()){
             try{

@@ -720,6 +720,15 @@ public class JavaUtils
     } // getMessage
 
     /**
+     * Get the message with the given key.  If arguments are specified in the message (in the
+     * format of "{0} {1}") then fill them in with the values of var1 and var2, respectively.
+     */
+    public static String getMessage(String key, String var1, String var2, String var3)
+            throws MissingResourceException {
+        return MessageFormat.format(getMessage(key), new String[]{var1, var2, var3});
+    } // getMessage
+
+    /**
      * Get the message with the given key.  Replace each "{X}" in the message with vars[X].  If
      * there are more vars than {X}'s, then the extra vars are ignored.  If there are more {X}'s
      * than vars, then a java.text.ParseException (subclass of RuntimeException) is thrown.

@@ -643,7 +643,7 @@ public class AxisServlet extends HttpServlet
             res.setStatus(HttpServletResponse.SC_NO_CONTENT);
             if(isDebug) log.debug("NO AXIS MESSAGE TO RETURN!");
             //String resp = JavaUtils.getMessage("noData00");
-            //res.setContentLength(resp.getBytes().length);
+            //res.setContentLength((int) resp.getBytes().length);
             //res.getWriter().print(resp);
         } else {
             if(isDebug) {

@@ -68,7 +68,7 @@ import javax.mail.internet.MimeUtility;
  *
  * @author Rick Rineholt
  */
-public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
+public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
     /** Field log           */
     protected static Log log =
