@@ -78,7 +78,7 @@ public class XMLEncoderFactory {
     public static XMLEncoder getEncoder(String encoding) throws UnsupportedEncodingException {
         XMLEncoder encoder = (XMLEncoder) encoderMap.get(encoding);
         if (encoder == null) {
-            throw new UnsupportedEncodingException(Messages.getMessage("unsupportedEncoding00", encoding));
+            encoderMap.put(encoding, new DefaultXMLEncoder(encoding));
         }
         return encoder;
     }
