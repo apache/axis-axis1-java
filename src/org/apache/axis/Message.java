@@ -125,6 +125,8 @@ public class Message extends javax.xml.soap.SOAPMessage {
 
     private MimeHeaders headers;
 
+    private boolean saveRequired = true;
+
     /**
      * Returns name of the class prividing Attachment Implementation
      * @returns class Name
@@ -477,7 +479,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *     was a problem saving changes to this message.
      */
     public void saveChanges() throws SOAPException {
-        //TODO: Flesh it out.
+        saveRequired = false;
     }
 
     /**
@@ -489,8 +491,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *     false</CODE> otherwise.
      */
     public boolean saveRequired() {
-        //TODO: Flesh it out.
-        return false;
+        return saveRequired;
     }
 
     /**
