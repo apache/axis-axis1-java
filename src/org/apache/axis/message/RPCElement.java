@@ -130,19 +130,33 @@ public class RPCElement extends SOAPBodyElement
         super(namespace, localName, attrs, context);
         this.methodName = localName;
     }
-    
+
     public RPCElement(String methodName, Object [] args)
     {
         this.methodName = methodName;
         this.name = methodName;
         
-        for (int i = 0; i < args.length; i++) {
+        for (int i = 0; args != null && i < args.length; i++) {
             if (args[i] instanceof RPCParam) {
                 addParam((RPCParam)args[i]);
             } else {
                 addParam(new RPCParam("arg" + i, args[i]));
             }
         }
+    }
+    
+    public RPCElement(String namespace, String methodName, Object[] args ) {
+        this.methodName = methodName;
+        this.name = methodName;
+        
+        for (int i = 0; args != null && i < args.length; i++) {
+            if (args[i] instanceof RPCParam) {
+                addParam((RPCParam)args[i]);
+            } else {
+                addParam(new RPCParam("arg" + i, args[i]));
+            }
+        }
+        this.setNamespaceURI( namespace );
     }
     
     public RPCElement(String methodName)
