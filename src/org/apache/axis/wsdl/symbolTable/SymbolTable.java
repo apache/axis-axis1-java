@@ -1958,13 +1958,21 @@ public class SymbolTable {
     /**
      * This method returns a vector containing Parameters which represent
      * each Part (shouldn't we call these "Parts" or something?)
-     * 
-     * @param v            
-     * @param parts        
-     * @param literal      
-     * @param opName       
-     * @param bindingEntry 
-     * @throws IOException 
+     *
+     * This routine does the wraped doc/lit processing.
+     * It is also used for generating Faults, and this really confuses things
+     * but we need to do the same processing for the fault messages.
+     *
+     * This whole method is waaaay too complex.
+     * It needs rewriting (for instance, we sometimes new up
+     * a Parameter, then ignore it in favor of another we new up.)
+     *
+     * @param v       The output vector of parameters
+     * @param parts   The parts of the message
+     * @param literal Are we in a literal operation (or fault)?
+     * @param opName  The operation (or fault) name
+     * @param bindingEntry The binding for this operation - can be NULL if we are looking at a fault
+     * @throws IOException when encountering an error in the WSDL
      */
     public void getParametersFromParts(Vector v,
                                        Collection parts,
@@ -1973,10 +1981,6 @@ public class SymbolTable {
                                        BindingEntry bindingEntry)
             throws IOException {
 
-        // HACK ALERT!  This whole method is waaaay too complex.
-        // It needs rewriting (for instance, we sometimes new up
-        // a Parameter, then ignore it in favor of another we new up.)
-        
         // Determine if there's only one element.  For wrapped
         // style, we normally only have 1 part which is an
         // element.  But with MIME we could have any number of
@@ -1999,7 +2003,7 @@ public class SymbolTable {
             }
         }
 
-        // Hack alert - Try to sense "wrapped" document literal mode
+        // Try to sense "wrapped" document literal mode
         // if we haven't been told not to.
         // Criteria:
         // - If there is a single element part,
@@ -2020,9 +2024,9 @@ public class SymbolTable {
             QName typeName = part.getTypeName();
             String partName = part.getName();
 
-            // We're either:
-            // 1. encoded
-            // 2. literal & not wrapped.
+            // if we are either:
+            //   1. encoded
+            //   2. literal & not wrapped.
             if (!literal || !wrapped || (elementName == null)) {
                 param.setName(partName);
 
@@ -2058,7 +2062,7 @@ public class SymbolTable {
             Node node = null;
 
             if ((typeName != null)
-                    && (bindingEntry.getMIMETypes().size() == 0)) {
+                    && (bindingEntry == null || bindingEntry.getMIMETypes().size() == 0)) {
 
                 // Since we can't (yet?) make the Axis engine generate the right
                 // XML for literal parts that specify the type attribute,
@@ -2164,36 +2168,38 @@ public class SymbolTable {
     }                        // getParametersFromParts
 
     /**
-     * Method fillParamInfo
+     * Set the header information for this paramter
      * 
-     * @param param        
-     * @param bindingEntry 
-     * @param opName       
-     * @param partName     
+     * @param param        Parameter to modify
+     * @param bindingEntry Binding info for this operation/parameter
+     * @param opName       the operation we are processing
+     * @param partName     the part we are processing
      */
     private void fillParamInfo(Parameter param, BindingEntry bindingEntry,
                                String opName, String partName) {
 
-        setMIMEInfo(param, (bindingEntry == null)
-                ? null
-                : bindingEntry.getMIMEInfo(opName, partName));
+        // If we don't have a binding, can't do anything
+        if (bindingEntry == null)
+            return;
+
+        setMIMEInfo(param, bindingEntry.getMIMEInfo(opName, partName));
 
         boolean isHeader = false;
 
-        if ((bindingEntry != null)
-                && bindingEntry.isInHeaderPart(opName, partName)) {
+        // Is this parameter in an Input header?
+        if (bindingEntry.isInHeaderPart(opName, partName)) {
             isHeader = true;
-
             param.setInHeader(true);
         }
 
-        if ((bindingEntry != null)
-                && bindingEntry.isOutHeaderPart(opName, partName)) {
+        // Is this parameter in an Output header?
+        if (bindingEntry.isOutHeaderPart(opName, partName)) {
             isHeader = true;
-
             param.setOutHeader(true);
         }
 
+        // If this parameter is part of a header, find the binding operation
+        // that we are processing and get the QName of the parameter.
         if (isHeader && (bindingEntry.getBinding() != null)) {
             List list = bindingEntry.getBinding().getBindingOperations();
 
