@@ -4,6 +4,7 @@ import org.apache.axis.Constants;
 import junit.framework.TestCase;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.HashMap;
 
 /** 
  * Test deserialization of SOAP responses
@@ -49,6 +50,23 @@ public class TestDeser2001 extends TestDeser {
                        "1999-05-31T12:01:30.150-05:00" + 
                      "</result>",
                      date.getTime());
+    }
+
+    public void testMapWithNils() throws Exception {
+        HashMap m = new HashMap();
+        m.put(null, new Boolean("false"));
+        m.put("hi", null);
+        deserialize("<result xsi:type=\"xmlsoap:Map\" " +
+                    "xmlns:xmlsoap=\"http://xml.apache.org/xml-soap\"> " +
+                      "<item>" +
+                       "<key xsi:nil=\"true\"/>" +
+                       "<value xsi:type=\"xsd:boolean\">false</value>" + 
+                      "</item><item>" +
+                       "<key xsi:type=\"string\">hi</key>" +
+                       "<value xsi:nil=\"true\"/>" +
+                      "</item>" +
+                    "</result>",
+                    m);
     }
 
 }
