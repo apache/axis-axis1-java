@@ -174,13 +174,11 @@ public class Emitter {
         Document doc = WSDLFactory.newInstance().
             newWSDLWriter().getDocument(intf);
         types.insertTypesFragment(doc);
-        XMLUtils.PrettyDocumentToStream(doc, 
-                    new FileOutputStream(new File(filename1)));
+        prettyDocumentToFile(doc, filename1);
 
         // Write out the implementation def 
         doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(impl);
-        XMLUtils.PrettyDocumentToStream(doc, 
-                    new FileOutputStream(new File(filename2)));
+        prettyDocumentToFile(doc, filename2);
     }
 
     /**
@@ -280,9 +278,8 @@ public class Emitter {
                 break;
             }
         }
-            
-        XMLUtils.PrettyDocumentToStream(doc, 
-          new FileOutputStream(new File(filename)));
+
+        prettyDocumentToFile(doc, filename);
     }
 
     /**
@@ -782,6 +779,20 @@ public class Emitter {
         }
         return qName;
     }
+
+    /**
+     * Write a prettified document to a file.
+     *
+     * @param doc the Document to write
+     * @param filename the name of the file to be written
+     * @throws Exception various file i/o exceptions
+     */
+    private void prettyDocumentToFile(Document doc, String filename) 
+        throws Exception {
+        FileOutputStream fos = new FileOutputStream(new File(filename));  
+        XMLUtils.PrettyDocumentToStream(doc, fos);
+        fos.close();
+     }
 
     // -------------------- Parameter Query Methods ----------------------------//
     
