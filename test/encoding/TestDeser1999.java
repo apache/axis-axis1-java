@@ -18,13 +18,19 @@ public class TestDeser1999 extends TestDeser {
         HashMap m = new HashMap();
         m.put(null, new Boolean("false"));
         m.put("hi", null);
+        // Test map with nulls and
+        // Test type references to the default namespace.
         deserialize("<result xsi:type=\"xmlsoap:Map\" " +
                     "xmlns:xmlsoap=\"http://xml.apache.org/xml-soap\"> " +
                       "<item>" +
                        "<key xsi:null=\"true\"/>" +
-                       "<value xsi:type=\"xsd:boolean\">false</value>" + 
+                       "<value xsi:type=\"boolean\" xmlns=\"" +
+                         Constants.URI_1999_SCHEMA_XSD +
+                         "\">false</value>" + 
                       "</item><item>" +
-                       "<key xsi:type=\"xsd:string\">hi</key>" +
+                       "<key xsi:type=\"string\" xmlns=\"" +
+                         Constants.URI_1999_SCHEMA_XSD +
+                         "\">hi</key>" +
                        "<value xsi:null=\"true\"/>" +
                       "</item>" +
                     "</result>",
