@@ -109,12 +109,10 @@ public class MessageElement implements SOAPElement, Serializable
             new Mapping(Constants.URI_DEFAULT_SOAP_ENC,
                         "SOAP-ENC");
 
-    private static final Attributes nullAttributes = new AttributesImpl();
-
     protected String    name ;
     protected String    prefix ;
     protected String    namespaceURI ;
-    protected transient Attributes attributes = nullAttributes;
+    protected transient Attributes attributes = NullAttributes.singleton;
     protected String    id;
     protected String    href;
     protected boolean   _isRoot = true;
@@ -561,7 +559,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     protected AttributesImpl makeAttributesEditable() {
-        if (attributes == null || attributes == nullAttributes) {
+        if (attributes == null || attributes instanceof NullAttributes) {
             attributes =  new AttributesImpl();
         } else if (!(attributes instanceof AttributesImpl)) {
             attributes = new AttributesImpl(attributes);
