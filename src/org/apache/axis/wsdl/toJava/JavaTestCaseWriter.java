@@ -260,6 +260,8 @@ public class JavaTestCaseWriter extends JavaWriter {
                         pw.print("new java.math.BigDecimal(0)");
                     } else if (paramType.equals("java.math.BigInteger")) {
                         pw.print("new java.math.BigInteger(\"0\")");
+                    } else if (paramType.equals("java.lang.Object")) {
+                        pw.print("new java.lang.String()");
                     } else if (paramType.equals("byte[]")) {
                         pw.print("new byte[0]");
                     } else if (paramType.endsWith("[]")) {

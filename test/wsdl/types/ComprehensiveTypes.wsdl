@@ -251,6 +251,10 @@
     <part name="complexWComplex" type="typens:complexWComplex"/>
   </message>
 
+  <message name="any">
+    <part name="any" type="xsd:anyType"/>
+  </message>
+
   <!-- port type declns -->
   <portType name="TypeTest">
     <operation name="allPrimitivesIn">
@@ -350,6 +354,18 @@
     <operation name="complexWComplexOut">
       <input message="tns:empty"/>
       <output message="tns:complexWComplex"/>
+    </operation>
+    <operation name="anyIn">
+      <input message="tns:any"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="anyInout">
+      <input message="tns:any"/>
+      <output message="tns:any"/>
+    </operation>
+    <operation name="anyOut">
+      <input message="tns:empty"/>
+      <output message="tns:any"/>
     </operation>
   </portType>
 
@@ -706,6 +722,51 @@
       </output>
     </operation>
     <operation name="complexWComplexOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="anyIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="anyInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="anyOut">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
