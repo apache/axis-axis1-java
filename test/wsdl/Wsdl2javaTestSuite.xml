@@ -46,6 +46,18 @@
         <mapping namespace="urn:MultiRefTest2" package="test.multiref"/>
     </wsdl2java>
 
+    <!-- MultiRef Sample -->
+    <wsdl2java url="test/arrays/ArrayTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="urn:ArrayTest2" package="test.arrays"/>
+    </wsdl2java>
+
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated.             -->
     <wsdl2java url="test/import_/Import.wsdl"
