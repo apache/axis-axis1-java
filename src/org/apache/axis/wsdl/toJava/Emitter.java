@@ -133,10 +133,12 @@ public class Emitter {
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
         // calculate baseURI so that imported relative URI's work
-        int lastSlash = uri.lastIndexOf(File.separatorChar);
+        int lastSeparator = uri.lastIndexOf(File.separatorChar);
+        int lastSlash = uri.lastIndexOf('/');
+        int index = (lastSlash > lastSeparator) ? lastSlash : lastSeparator;
         String baseURI = null;
-        if (lastSlash > 0) {
-            baseURI = uri.substring(0, lastSlash + 1);
+        if (index > 0) {
+            baseURI = uri.substring(0, index + 1);
         }
         emit(baseURI, XMLUtils.newDocument(uri));
     } // emit
