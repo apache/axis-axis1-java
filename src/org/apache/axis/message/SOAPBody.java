@@ -300,7 +300,9 @@ public class SOAPBody extends MessageElement
         SOAPElement bodyEl;
         while (e.hasMoreElements()) {
             bodyEl = (SOAPElement)e.nextElement();
-            if (bodyEl.getElementName().equals(name)) {
+            Name cname = bodyEl.getElementName(); 
+            if (cname.getURI().equals(name.getURI()) &&
+                cname.getLocalName().equals(name.getLocalName())) {
                 v.addElement(bodyEl);
             }
         }
