@@ -180,9 +180,13 @@ public class JavaBindingWriter implements Generator {
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
                         + "Impl.java";
                 try {
-                    if (!Utils.fileExists(fileName,
+                    if (Utils.fileExists(fileName,
                             binding.getQName().getNamespaceURI(),
                             emitter.getNamespaces())) {
+                        System.out.println(JavaUtils.getMessage(
+                                "wontOverwrite", fileName));
+                    }
+                    else {
                         implWriter = getJavaImplWriter(
                                 emitter, bEntry, symbolTable);
                     }
