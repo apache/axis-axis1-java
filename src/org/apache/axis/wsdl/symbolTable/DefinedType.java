@@ -62,11 +62,27 @@ import javax.xml.namespace.QName;
  * always emitted.
  */
 public class DefinedType extends Type {
+    // cache lookups for our base type
+    protected TypeEntry extensionBase;
+    
     public DefinedType(QName pqName, Node pNode) {
         super(pqName, pNode);
     }
     public DefinedType(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);
+    }
+
+    /**
+     * Get a TypeEntry for the base type of this type, if one exists.
+     *
+     * @param symbolTable a <code>SymbolTable</code> value
+     * @return a <code>TypeEntry</code> value
+     */
+    public TypeEntry getComplexTypeExtensionBase(SymbolTable symbolTable) {
+        if (null == extensionBase) {
+            extensionBase = SchemaUtils.getComplexElementExtensionBase(getNode(), symbolTable);
+        }
+        return extensionBase;
     }
 };
 

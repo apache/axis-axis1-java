@@ -19,10 +19,10 @@
             <xsd:element name="number" type="xsd:string"/>
         </xsd:all>
         <!-- These attributes should be qualified -->
-        <attribute name="color" type="xsd:string"/>
-        <attribute name="hair" type="xsd:string" form="qualified"/>
+        <xsd:attribute name="color" type="xsd:string"/>
+        <xsd:attribute name="hair" type="xsd:string" form="qualified"/>
         <!-- This attribute should not -->
-        <attribute name="age" type="xsd:int" form="unqualified"/>
+        <xsd:attribute name="age" type="xsd:int" form="unqualified"/>
       </xsd:complexType>
 
       <xsd:element name="phone" type="s0:phone"/>

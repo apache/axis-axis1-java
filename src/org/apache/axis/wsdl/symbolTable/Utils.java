@@ -61,8 +61,10 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -72,7 +74,38 @@ import java.util.Vector;
  * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class Utils {
+    /** cache of namespaces -> maps of localNames -> QNames */
+    static final Map nsmap = new HashMap();
 
+    /**
+     * Find or create a QName with the specified namespace/localName.
+     *
+     * @param namespace
+     * @param localName
+     */
+    static QName findQName(String namespace, String localName) {
+        QName qname = null;
+
+        // get the inner map, using the namespace as a key
+        Map ln2qn = (Map)nsmap.get(namespace);
+        if (null == ln2qn) {    // cache miss
+            ln2qn = new HashMap();
+            nsmap.put(namespace, ln2qn);
+
+            qname = new QName(namespace, localName);
+            ln2qn.put(localName, qname);
+        } else {                // cache hit
+            qname = (QName)ln2qn.get(localName);
+            if (null == qname) { // cache miss
+                qname = new QName(namespace, localName);
+                ln2qn.put(localName, qname);
+            } else {
+                                // cache hit
+            }
+        }
+        return qname;
+    }
+    
     /**
      * getNillableQName returns the QName to use if the nillable=true
      * attribute is used.                             
@@ -95,13 +128,13 @@ public class Utils {
                 localName.equals("double") ||
                 localName.equals("boolean") ||
                 localName.equals("byte")) {
-                rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, 
+                rc = findQName(Constants.URI_DEFAULT_SOAP_ENC, 
                                qName.getLocalPart());
             }
             else if (localName.equals("base64Binary")) {
-                rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, "base64");
+                rc = findQName(Constants.URI_DEFAULT_SOAP_ENC, "base64");
             } else if (localName.equals("hexBinary")) {
-                rc = new QName(Constants.URI_DEFAULT_SCHEMA_XSD, "hexBinary");
+                rc = findQName(Constants.URI_DEFAULT_SCHEMA_XSD, "hexBinary");
             }
         }
        return rc;
@@ -186,7 +219,7 @@ public class Utils {
         }
         String namespace = node.getNamespaceURI();
 
-        return (new QName(namespace, localName));
+        return (findQName(namespace, localName));
     }
 
     /**
@@ -244,7 +277,7 @@ public class Utils {
         if (namespace == null) {
             namespace = getScopedAttribute(node, "targetNamespace");
         }
-        return (new QName(namespace, localName));
+        return (findQName(namespace, localName));
     }
 
     /**
@@ -308,7 +341,7 @@ public class Utils {
                 } else if (!maxOccursValue.equals("1") || !minOccursValue.equals("1")) {
                     String localPart = qName.getLocalPart();
                     localPart += "[" + maxOccursValue + "]";
-                    qName = new QName(qName.getNamespaceURI(), localPart);
+                    qName = findQName(qName.getNamespaceURI(), localPart);
                 }
             }
         }
@@ -412,7 +445,7 @@ public class Utils {
         else {
            namespace = getScopedAttribute(node, "xmlns:" + prefixedName.substring(0, prefixedName.lastIndexOf(":")));
         }
-        return (new QName(namespace, localName));
+        return (findQName(namespace, localName));
     }
 
     /**
@@ -427,32 +460,27 @@ public class Utils {
                    (type.getQName().getLocalPart().equals("anyType")||
                     type.getQName().getLocalPart().equals("any"))) {
             // All types are derived from anyType
-            types.addAll(symbolTable.getTypes());
+            types.addAll(symbolTable.getTypeIndex().values());
         }
         return types;
     } // getNestedTypes
 
-    private static void getDerivedTypes(
-            TypeEntry type, HashSet types, SymbolTable symbolTable) {
+    private static void getDerivedTypes(TypeEntry type, HashSet types, SymbolTable symbolTable) {
 
         // If all types are in the set, return
-        if (types.size() == symbolTable.getTypes().size()) {
+        if (types.size() == symbolTable.getTypeEntryCount()) {
             return;
         }
 
         // Search the dictionary for derived types of type
-        Vector allTypes = symbolTable.getTypes();
-        Iterator it = allTypes.iterator();
-        while(it.hasNext()) {
-            TypeEntry derivedType = (TypeEntry) it.next();
-            if (derivedType instanceof DefinedType &&
-                derivedType.getNode() != null &&
-                !types.contains(derivedType) &&
-                SchemaUtils.getComplexElementExtensionBase(
-                   derivedType.getNode(),
-                   symbolTable) == type) {
-                types.add(derivedType);
-                getDerivedTypes(derivedType, types, symbolTable);
+        for (Iterator it = symbolTable.getTypeIndex().values().iterator(); it.hasNext();) {
+            Type t = (Type)it.next();
+            if (t instanceof DefinedType &&
+                t.getNode() != null &&
+                !types.contains(t) &&
+                (((DefinedType)t).getComplexTypeExtensionBase(symbolTable) == type)) {
+                types.add(t);
+                getDerivedTypes(t, types, symbolTable);
             }
         }
     } // getDerivedTypes
@@ -483,7 +511,7 @@ public class Utils {
         }
         
         // If all types are in the set, return
-        if (types.size() == symbolTable.getTypes().size()) {
+        if (types.size() == symbolTable.getTypeEntryCount()) {
             return;
         }
         
