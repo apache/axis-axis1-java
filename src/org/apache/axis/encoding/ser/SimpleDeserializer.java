@@ -88,7 +88,6 @@ import java.util.Set;
  */
 public class SimpleDeserializer extends DeserializerImpl {
 
-    //StringBuffer val = new StringBuffer(); -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
     private final CharArrayWriter val = new CharArrayWriter();
     private Constructor constructor = null;
     private Map propertyMap = null;
@@ -149,7 +148,6 @@ public class SimpleDeserializer extends DeserializerImpl {
      * Reset deserializer for re-use
      */
     public void reset() {
-        //val.setLength(0); // Reset string buffer back to zero -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
         val.reset();
         attributeMap = null; // Remove attribute map
         isNil = false; // Don't know if nil
@@ -197,7 +195,6 @@ public class SimpleDeserializer extends DeserializerImpl {
     public void characters(char [] chars, int start, int end)
         throws SAXException
     {
-        //val.append(chars, start, end); -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
         val.write(chars,start,end);
     }
     
@@ -209,8 +206,7 @@ public class SimpleDeserializer extends DeserializerImpl {
                            DeserializationContext context)
         throws SAXException
     {
-        //if (isNil || val == null) {  -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
-        if (isNil) {
+        if (isNil || (val.size() == 0 && javaType != java.lang.String.class)) {
             value = null;
             return;
         }
