@@ -90,11 +90,25 @@ public class HTTPSender extends BasicHandler {
 
     protected static Log log = LogFactory.getLog(HTTPSender.class.getName());
 
+    /** Hook for creating a different SSL socket factory
+     * XXX The whole thing can be refactored to use something like tomcat.util, which
+     *  is cleaner and support PureTLS.
+     */
+    public static interface SocketFactoryFactory {
+
+        /** Returns an instance of SSLSocketFactory, possibly with
+         *  different parameters ( like different trust policies )
+         */
+        public Object createFactory() throws Exception;
+    }
+
+
     /**
      * Utility Class BooleanHolder
      */
     static class BooleanHolder {
         public boolean value;
+
         public BooleanHolder(boolean value) {
             this.value = value;
         }
@@ -108,8 +122,7 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws AxisFault
      */
-    public void invoke(MessageContext msgContext) throws AxisFault
-    {
+    public void invoke(MessageContext msgContext) throws AxisFault {
 
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("enter00", "HTTPSender::invoke"));
@@ -122,7 +135,7 @@ public class HTTPSender extends BasicHandler {
             String host = tmpURL.getHost();
             Socket sock = null;
 
-            try{
+            try {
 
                 // create socket based on the url protocol type
                 if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
@@ -139,11 +152,11 @@ public class HTTPSender extends BasicHandler {
                 // Send the SOAP request to the server
                 writeToSocket(sock, msgContext, tmpURL, otherHeaders, host,
                         useFullURL);
-           }finally{
-             // FIXME (DIMS): IS THIS REALLY NEEDED? SalesRankNPrice fails
-             // for a direct (non-proxy) connection if this is enabled.
-             //if(null != sock) sock.shutdownOutput(); //need to change for http 1.1
-           }
+            } finally {
+                // FIXME (DIMS): IS THIS REALLY NEEDED? SalesRankNPrice fails
+                // for a direct (non-proxy) connection if this is enabled.
+                //if(null != sock) sock.shutdownOutput(); //need to change for http 1.1
+            }
 
             // Read the response back from the server
             readFromSocket(sock, msgContext);
@@ -167,8 +180,7 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws Exception
      */
-    private Socket getSecureSocket(String host, URL tmpURL) throws Exception
-    {
+    private Socket getSecureSocket(String host, URL tmpURL) throws Exception {
         int port = 0;
         Socket sock = null;
 
@@ -200,7 +212,26 @@ public class HTTPSender extends BasicHandler {
                     SSLSocketFactoryClass.getMethod("getDefault", new Class[]{});
             Method startHandshakeMethod =
                     SSLSocketClass.getMethod("startHandshake", new Class[]{});
-            Object factory = getDefaultMethod.invoke(null,new Object[]{});
+
+            Object factory = null;
+
+            // Hook in a different SSL socket factory
+            String socketFactoryClass = System.getProperty("axis.socketFactory");
+            if (socketFactoryClass != null) {
+                try {
+                    Class c1 = Class.forName(socketFactoryClass);
+                    SocketFactoryFactory sff = (SocketFactoryFactory) c1.newInstance();
+                    factory = sff.createFactory();
+                    if (log.isDebugEnabled()) {
+                        log.debug("Created socket factory " + sff.getClass().getName());
+                    }
+                } catch (Exception ex) {
+                }
+            }
+
+
+            if (factory == null)
+                factory = getDefaultMethod.invoke(null, new Object[]{});
             Object sslSocket = null;
 
             if ((tunnelHost == null) || tunnelHost.equals("")) {
@@ -233,8 +264,8 @@ public class HTTPSender extends BasicHandler {
                         (OutputStream) SSLSocketClass.getMethod("getOutputStream",
                                 new Class[]{}).invoke(tunnel, new Object[]{});
                 PrintWriter out = new PrintWriter(
-                                    new BufferedWriter(
-                                       new OutputStreamWriter(tunnelOutputStream)));
+                        new BufferedWriter(
+                                new OutputStreamWriter(tunnelOutputStream)));
                 String tunnelUser = System.getProperty("https.proxyUser");
                 String tunnelPassword = System.getProperty("https.proxyPassword");
 
@@ -363,8 +394,7 @@ public class HTTPSender extends BasicHandler {
      */
     private Socket getSocket(
             String host, URL tmpURL, StringBuffer otherHeaders, BooleanHolder useFullURL)
-            throws IOException
-    {
+            throws IOException {
 
         int port = 0;
         Socket sock = null;
@@ -421,8 +451,7 @@ public class HTTPSender extends BasicHandler {
      */
     private void writeToSocket(
             Socket sock, MessageContext msgContext, URL tmpURL, StringBuffer otherHeaders, String host, BooleanHolder useFullURL)
-            throws IOException
-    {
+            throws IOException {
 
         OutputStream out = new BufferedOutputStream(sock.getOutputStream(),
                 8 * 1024);
@@ -531,7 +560,7 @@ public class HTTPSender extends BasicHandler {
                 .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
         try {
             reqMessage.writeTo(out);
-        } catch (SOAPException e){
+        } catch (SOAPException e) {
             log.error(JavaUtils.getMessage("exception00"), e);
         }
         out.flush();
@@ -551,8 +580,7 @@ public class HTTPSender extends BasicHandler {
      * @throws IOException
      */
     private void readFromSocket(Socket sock, MessageContext msgContext)
-            throws IOException
-    {
+            throws IOException {
         Message outMsg = null;
         byte b;
         int len = 0;
@@ -723,8 +751,7 @@ public class HTTPSender extends BasicHandler {
      * @param msgContext
      */
     public void handleCookie(String cookieName, String setCookieName,
-                             Hashtable headers, MessageContext msgContext)
-    {
+                             Hashtable headers, MessageContext msgContext) {
 
         if (headers.containsKey(setCookieName.toLowerCase())) {
             String cookie = (String) headers.get(setCookieName.toLowerCase());
@@ -748,8 +775,7 @@ public class HTTPSender extends BasicHandler {
      *
      * @return true/false
      */
-    private boolean isHostInNonProxyList(String host, String nonProxyHosts)
-    {
+    private boolean isHostInNonProxyList(String host, String nonProxyHosts) {
         if ((nonProxyHosts == null) || (host == null)) {
             return false;
         }
@@ -785,8 +811,7 @@ public class HTTPSender extends BasicHandler {
      *         <code>false</code> otherwise.
      */
     private static boolean match(String pattern, String str,
-                                 boolean isCaseSensitive)
-    {
+                                 boolean isCaseSensitive) {
         char[] patArr = pattern.toCharArray();
         char[] strArr = str.toCharArray();
         int patIdxStart = 0;

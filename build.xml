@@ -80,6 +80,7 @@ Copyright:
   <property name="lib.dir" location="./lib"/>
 
   <property name="wsdl4j.jar" location="lib/wsdl4j.jar"/>
+  <property name="jsse.jar" location="lib/jsse.jar"/>
   <property name="commons-logging.jar" location="lib/commons-logging.jar"/>
   <property name="log4j-core.jar" location="lib/log4j-core.jar"/>
   <property name="tt-bytecode.jar" location="lib/tt-bytecode.jar"/>
@@ -117,6 +118,7 @@ Copyright:
     <pathelement location="${junit.jar}"/>
     <pathelement location="${excalibur.jar}"/>
     <pathelement location="${j2ee.jar}"/>
+    <pathelement location="${jsse.jar}"/>
     <pathelement location="${tools.jar}"/>
     <fileset dir="${axis.lib.dir}">
      <include name="*.jar"/>
@@ -172,6 +174,13 @@ Copyright:
       classname="javax.mail.internet.MimeMessage"
       classpathref="classpath"/>
 
+    <condition property="jsse.present" >
+      <and>
+        <available classname="com.sun.net.ssl.X509TrustManager" classpathref="classpath" />
+        <available classname="javax.net.SocketFactory" classpathref="classpath" />
+      </and>
+    </condition>
+
     <condition property="attachments.present" >
       <and>
         <available classname="javax.activation.DataHandler" classpathref="classpath" />
@@ -207,6 +216,7 @@ Copyright:
     <echo message="mailapi.present=${mailapi.present}" />
     <echo message="attachments.present=${attachments.present}" />
     <echo message="security.present=${security.present}" />
+    <echo message="jsse.present=${jsse.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
@@ -267,6 +277,7 @@ Copyright:
       <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/handler/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/server/Servlet*.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/FakeTrustSocketFactory.java" unless="jsse.present"/>
       <exclude name="**/*TestSuite.java" unless="junit.present"/>
     </javac>
     <copy file="${src.dir}/org/apache/axis/server/server-config.wsdd"
