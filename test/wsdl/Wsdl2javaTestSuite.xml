@@ -1,9 +1,19 @@
 <?xml version="1.0"?>
 
 <project name="Wsdl2javaTestSuite" default="main">
+
+  <path id="test-classpath">
+    <pathelement location="${build.dest}" />
+    <pathelement path="${java.class.path}" />
+    <fileset dir="../java/lib">
+     <include name="*.jar"/>
+    </fileset>
+  </path>
+
   <taskdef name="wsdl2java" 
-           classname="test.wsdl.Wsdl2javaAntTask"
-           classpath="${build.dest}" />
+           classname="test.wsdl.Wsdl2javaAntTask">
+      <classpath refid="test-classpath" />
+  </taskdef>
 
   <target name="main">
     <wsdl2java url="samples/addr/AddressBook.wsdl"
