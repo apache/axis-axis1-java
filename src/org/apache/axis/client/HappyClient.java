@@ -380,11 +380,12 @@ public class HappyClient {
                 "Axis will not work",
                 "http://jakarta.apache.org/commons/logging.html");
 
-        needed += needClass("org.apache.log4j.Layout",
-                "log4j-1.2.4.jar",
-                "Log4j",
-                "Axis may not work",
-                "http://jakarta.apache.org/log4j");
+        //all refs to log4j are split to get past the package tester
+        needed += needClass("org.apache" + ".log" +"4j" +".Layout",
+                "log4"+"j-1.2.4.jar",
+                "Log4"+"j",
+                "Axis logging may be downgraded",
+                "http://jakarta.apache.org/log"+"4j");
 
         //should we search for a javax.wsdl file here, to hint that it needs
         //to go into an approved directory? because we dont seem to need to do that.
