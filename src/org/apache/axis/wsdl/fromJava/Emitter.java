@@ -24,23 +24,21 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
 import org.apache.axis.Version;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
-import org.apache.axis.constants.Style;
-import org.apache.axis.constants.Use;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -59,13 +57,13 @@ import javax.wsdl.Import;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
-import javax.wsdl.OperationType;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -173,7 +171,7 @@ public class Emitter {
     private TypeMapping tm = null;              // Registered type mapping
 
     /** Field defaultTM */
-    private TypeMapping defaultTM = null;       // Default TM
+    private TypeMappingRegistry tmr;
 
     /** Field namespaces */
     private Namespaces namespaces;
@@ -567,6 +565,15 @@ public class Emitter {
             }
         }
 
+        if (tm == null) {
+            String encodingStyle = "";
+            if (use == Use.ENCODED) {
+                encodingStyle = Constants.URI_SOAP11_ENC;
+                /** TODO : Set this correctly if we do SOAP 1.2 support here */
+            }
+            tm = (TypeMapping)tmr.getTypeMapping(encodingStyle);
+        }
+
         // Set up a ServiceDesc to use to introspect the Service
         if (serviceDesc == null) {
             JavaServiceDesc javaServiceDesc = new JavaServiceDesc();
@@ -575,13 +582,7 @@ public class Emitter {
             javaServiceDesc.setImplClass(cls);
 
             // Set the typeMapping to the one provided.
-            // If not available use the default TM
-            if (tm != null) {
-                serviceDesc.setTypeMapping(tm);
-            } else {
-                tm = getDefaultTypeMapping();
-                serviceDesc.setTypeMapping(tm);
-            }
+            serviceDesc.setTypeMapping(tm);
 
             javaServiceDesc.setStopClasses(stopClasses);
             serviceDesc.setAllowedMethods(allowedMethods);
@@ -600,12 +601,7 @@ public class Emitter {
                 serviceDesc2.setImplClass(implCls);
 
                 // Set the typeMapping to the one provided.
-                // If not available use the default TM
-                if (tm != null) {
-                    serviceDesc2.setTypeMapping(tm);
-                } else {
-                    serviceDesc2.setTypeMapping(getDefaultTypeMapping());
-                }
+                serviceDesc2.setTypeMapping(tm);
 
                 serviceDesc2.setStopClasses(stopClasses);
                 serviceDesc2.setAllowedMethods(allowedMethods);
@@ -756,8 +752,8 @@ public class Emitter {
             throws IOException, WSDLException, SAXException,
             ParserConfigurationException {
 
-        types = new Types(def, tm, getDefaultTypeMapping(), namespaces, intfNS, stopClasses,
-                serviceDesc);
+        types = new Types(def, tm, (TypeMapping)tmr.getDefaultTypeMapping(),
+                          namespaces, intfNS, stopClasses, serviceDesc);
 
         if (inputWSDL != null) {
             types.loadInputTypes(inputWSDL);
@@ -2517,48 +2513,10 @@ public class Emitter {
     }
 
     /**
-     * Returns the default <code>TypeMapping</code> used by the service
-     * 
-     * @return the default <code>TypeMapping</code> used by the service
+     * Set the TypeMappingRegistry for this Emitter.
      */
-    public TypeMapping getDefaultTypeMapping() {
-        if (defaultTM == null) {
-            throw new RuntimeException(Messages.getMessage("noDefaultTypeMapping00"));
-        }
-        return defaultTM;
-    }
-
-    /**
-     * Sets the default <code>TypeMapping</code> used by the service
-     * 
-     * @param defaultTM the default <code>TypeMapping</code> used by the service
-     */
-    public void setDefaultTypeMapping(TypeMapping defaultTM) {
-        this.defaultTM = defaultTM;
-    }
-
-    /**
-     * Method setTypeMappingVersion
-     * 
-     * @param typeMappingVersion 
-     */
-    public void setTypeMappingVersion(String typeMappingVersion) {
-        if(defaultTM == null) {
-            if (typeMappingVersion.equals("1.0")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.getSingleton();
-            } else if (typeMappingVersion.equals("1.1")) {
-                // No SOAP encoding
-                defaultTM=DefaultTypeMappingImpl.getSingleton();
-            } else if (typeMappingVersion.equals("1.2")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
-            } else if (typeMappingVersion.equals("1.3")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.getSingleton();
-                defaultTM.setDelegate(DefaultJAXRPC11TypeMappingImpl.create());
-            } else {
-                throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
-            }
-            setDefaultTypeMapping(defaultTM);
-        }
+    public void setTypeMappingRegistry(TypeMappingRegistry tmr) {
+        this.tmr = tmr;
     }
     /**
      * getStyle

@@ -17,6 +17,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.ser.Base64SerializerFactory;
 import org.apache.axis.encoding.ser.Base64DeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
@@ -34,25 +35,32 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
     /**
      * Construct TypeMapping
      */
-    public static TypeMapping getSingleton() {
+    public static TypeMappingDelegate getSingleton() {
         if (tm == null) {
             tm = new DefaultSOAPEncodingTypeMappingImpl();
         }
-        return tm;
+        return new TypeMappingDelegate(tm);
     }
     
-    public static TypeMapping create() {
-        TypeMapping ret = new DefaultSOAPEncodingTypeMappingImpl();
+    public static TypeMappingImpl create() {
+        return new DefaultSOAPEncodingTypeMappingImpl();
+    }
 
-        // Removed by gdaniels 2/11/2005 - we don't seem to need this
-        // any more since delegation gets done by the TMR as necessary
-        //
-        // ret.setDelegate(DefaultTypeMappingImpl.getSingleton());
-
+    public static TypeMappingDelegate createWithDelegate() {
+        TypeMappingDelegate ret = new TypeMappingDelegate(new DefaultSOAPEncodingTypeMappingImpl());
+        MessageContext mc = MessageContext.getCurrentContext();
+        TypeMappingDelegate tm = null;
+        if (mc != null) {
+            tm = (TypeMappingDelegate)mc.getTypeMappingRegistry().getDefaultTypeMapping();
+        } else {
+            tm = DefaultTypeMappingImpl.getSingleton();
+        }
+        ret.setNext(tm);
         return ret;
     }
 
     protected DefaultSOAPEncodingTypeMappingImpl() {
+        super(true);
         registerSOAPTypes();
     }
 

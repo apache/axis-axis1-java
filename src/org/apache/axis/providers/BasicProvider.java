@@ -206,8 +206,7 @@ public abstract class BasicProvider extends BasicHandler {
 
             emitter.setLocationUrl(locationUrl);
             emitter.setServiceDesc(serviceDesc);
-            emitter.setTypeMapping((TypeMapping) msgContext.getTypeMappingRegistry().getTypeMapping(serviceDesc.getUse().getEncoding()));
-            emitter.setDefaultTypeMapping((TypeMapping) msgContext.getTypeMappingRegistry().getDefaultTypeMapping());
+            emitter.setTypeMappingRegistry(msgContext.getTypeMappingRegistry());
 
             String wsdlPortType = (String) service.getOption(OPTION_WSDL_PORTTYPE);
             String wsdlServiceElement = (String) service.getOption(OPTION_WSDL_SERVICEELEMENT);

@@ -25,11 +25,10 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.attachments.AttachmentsImpl;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializerFactory;
@@ -38,8 +37,6 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.constants.Style;
-import org.apache.axis.constants.Use;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
@@ -451,6 +448,8 @@ public class WSDDService
                                               respHandler);
         service.setStyle(style);
         service.setUse(use);
+        service.setServiceDescription(desc);
+
         service.setHighFidelityRecording(!streaming);
         service.setSendType(sendType);
 
@@ -469,15 +468,14 @@ public class WSDDService
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
 
-    // Set handlerInfoChain
-	if (_wsddHIchain != null) {
+        // Set handlerInfoChain
+        if (_wsddHIchain != null) {
             HandlerInfoChainFactory hiChainFactory = _wsddHIchain.getHandlerChainFactory();
 
-        service.setOption(Constants.ATTR_HANDLERINFOCHAIN, hiChainFactory);
-    }
+            service.setOption(Constants.ATTR_HANDLERINFOCHAIN, hiChainFactory);
+        }
 
         AxisEngine.normaliseOptions(service);
-        tmr.delegate(registry.getTypeMappingRegistry());
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
         if (faultFlows != null && faultFlows.length > 0) {
@@ -490,7 +488,6 @@ public class WSDDService
             }
         }
 
-        service.setServiceDescription(desc);
         try {
             service.getInitializedServiceDesc(MessageContext.getCurrentContext());
         } catch (AxisFault axisFault) {

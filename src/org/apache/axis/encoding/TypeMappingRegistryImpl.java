@@ -128,16 +128,18 @@ import java.util.HashMap;
 public class TypeMappingRegistryImpl implements TypeMappingRegistry { 
     
     private HashMap mapTM;          // Type Mappings keyed with Namespace URI
-    private TypeMapping defaultDelTM;  // Delegate to default Type Mapping 
+    private TypeMappingDelegate defaultDelTM;  // Delegate to default Type Mapping
+    private boolean isDelegated = false;
 
     /**
      * Construct TypeMappingRegistry
      * @param tm
      */ 
-    public TypeMappingRegistryImpl(TypeMapping tm) {
+    public TypeMappingRegistryImpl(TypeMappingImpl tm) {
         mapTM = new HashMap();
         defaultDelTM = new TypeMappingDelegate(tm);
-        register(Constants.URI_SOAP11_ENC, new DefaultSOAPEncodingTypeMappingImpl());
+        TypeMappingDelegate del = new TypeMappingDelegate(new DefaultSOAPEncodingTypeMappingImpl());
+        register(Constants.URI_SOAP11_ENC, del);
     }
 
     /**
@@ -145,11 +147,14 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public TypeMappingRegistryImpl() {
         mapTM = new HashMap();
-        defaultDelTM = 
-                new TypeMappingDelegate(DefaultTypeMappingImpl.getSingleton());
-        register(Constants.URI_SOAP11_ENC, new DefaultSOAPEncodingTypeMappingImpl());
+        defaultDelTM = DefaultTypeMappingImpl.getSingleton();
+        TypeMappingDelegate del = new TypeMappingDelegate(new DefaultSOAPEncodingTypeMappingImpl());
+        register(Constants.URI_SOAP11_ENC, del);
     }
-    
+
+    public TypeMappingRegistryImpl(boolean registerDefaults) {
+    }
+
     /**
      * delegate
      *
@@ -158,30 +163,42 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public void delegate(TypeMappingRegistry secondaryTMR) {
 
-        if (secondaryTMR == null || secondaryTMR == this) {
+        if (isDelegated || secondaryTMR == null || secondaryTMR == this) {
             return;
         }
+
+        isDelegated = true;
         String[]  keys = secondaryTMR.getRegisteredEncodingStyleURIs();
-//        String[]  keys = null;
+        TypeMappingDelegate otherDefault =
+                ((TypeMappingRegistryImpl)secondaryTMR).defaultDelTM;
         if (keys != null) {
-            for(int i=0; i < keys.length; i++) {
+            for (int i=0; i < keys.length; i++) {
                 try {
                     String nsURI = keys[i];
-                    TypeMapping tm = (TypeMapping) getTypeMapping(nsURI);
+                    TypeMappingDelegate tm = (TypeMappingDelegate) getTypeMapping(nsURI);
                     if (tm == null || tm == getDefaultTypeMapping() ) {
-                        tm = (TypeMapping) createTypeMapping();
+                        tm = (TypeMappingDelegate)createTypeMapping();
                         tm.setSupportedEncodings(new String[] { nsURI });
                         register(nsURI, tm);
                     }
-                    
+
                     if (tm != null) {
                         // Get the secondaryTMR's TM'
-                        TypeMapping del = (TypeMapping)
-                            ((TypeMappingRegistryImpl)
-                             secondaryTMR).mapTM.get(nsURI);
-                        tm.setDelegate(del);
+                        TypeMappingDelegate del = (TypeMappingDelegate)
+                            ((TypeMappingRegistryImpl)secondaryTMR).mapTM.get(nsURI);
+                        TypeMappingDelegate nu = new TypeMappingDelegate(del.delegate);
+                        tm.setNext(nu);
+                        nu.setNext(defaultDelTM);
+
+                        while (del.next != null) {
+                            if (del.next == otherDefault) {
+                                del.setNext(defaultDelTM);
+                                break;
+                            }
+                            del = del.next;
+                        }
                     }
-                    
+
                 } catch (Exception e) {
                 }
             }
@@ -189,8 +206,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         // Change our defaultDelTM to delegate to the one in 
         // the secondaryTMR
         if (defaultDelTM != null) {
-            defaultDelTM.setDelegate(
-            ((TypeMappingRegistryImpl)secondaryTMR).defaultDelTM);
+            defaultDelTM.setNext(otherDefault);
         }
         
     }            
@@ -214,7 +230,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
                          javax.xml.rpc.encoding.TypeMapping mapping) {
 //        namespaceURI = "";
         if (mapping == null || 
-            !(mapping instanceof TypeMapping)) {
+            !(mapping instanceof TypeMappingDelegate)) {
             throw new IllegalArgumentException(
                     Messages.getMessage("badTypeMapping"));
         } 
@@ -222,19 +238,16 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
             throw new java.lang.IllegalArgumentException(
                     Messages.getMessage("nullNamespaceURI"));
         }
-        // Get or create a TypeMappingDelegate and set it to 
-        // delegate to the new mapping.
-        TypeMappingDelegate del = (TypeMappingDelegate)
-            mapTM.get(namespaceURI);
-        if (del == null) {
-            del = new TypeMappingDelegate((TypeMapping) mapping);
-            mapTM.put(namespaceURI, del);
-            ((TypeMapping)mapping).setDelegate(defaultDelTM.getDelegate());
+
+        TypeMappingDelegate del = (TypeMappingDelegate)mapping;
+        TypeMappingDelegate old = (TypeMappingDelegate)mapTM.get(namespaceURI);
+        if (old == null) {
+            del.setNext(defaultDelTM);
         } else {
-            ((TypeMapping)mapping).setDelegate(del.getDelegate());
-            del.setDelegate((TypeMapping) mapping);
+            del.setNext(old);
         }
-        return null; // Needs works
+        mapTM.put(namespaceURI, del);
+        return old; // Needs works
     }
     
     /**
@@ -248,7 +261,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public void registerDefault(javax.xml.rpc.encoding.TypeMapping mapping) {
         if (mapping == null ||
-            !(mapping instanceof TypeMapping)) {
+            !(mapping instanceof TypeMappingDelegate)) {
             throw new IllegalArgumentException(
                     Messages.getMessage("badTypeMapping"));
         }
@@ -257,12 +270,12 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
          * the TMR's TypeMappings will be using the default type mapping
          * of the secondary TMR.
          */
-        if (defaultDelTM.getDelegate() instanceof TypeMappingDelegate) {
+        if (defaultDelTM.getNext() != null) {
             throw new IllegalArgumentException(
                     Messages.getMessage("defaultTypeMappingSet"));
         }
 
-        defaultDelTM.setDelegate((TypeMapping) mapping);
+        defaultDelTM = (TypeMappingDelegate)mapping;
     }
 
     /**
@@ -273,39 +286,28 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public void doRegisterFromVersion(String version) {
         if (version == null || version.equals("1.0") || version.equals("1.2")) {
+            TypeMappingImpl.dotnet_soapenc_bugfix = false;
             // Do nothing, just register SOAPENC mapping
         } else if (version.equals("1.1")) {
+            TypeMappingImpl.dotnet_soapenc_bugfix = true;
             // Do nothing, no SOAPENC mapping
             return;
         } else if (version.equals("1.3")) {
             // Reset the default TM to the JAXRPC version, then register SOAPENC
-            TypeMapping tm = DefaultJAXRPC11TypeMappingImpl.create();
-            defaultDelTM = new TypeMappingDelegate(tm);
+            defaultDelTM = new TypeMappingDelegate(DefaultJAXRPC11TypeMappingImpl.create());
         } else {
             throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
         }
-        registerSOAPENCDefault(DefaultSOAPEncodingTypeMappingImpl.getSingleton());
+        registerSOAPENCDefault(new TypeMappingDelegate(DefaultSOAPEncodingTypeMappingImpl.create()));
     }
     /**
      * Force registration of the given mapping as the SOAPENC default mapping
      * @param mapping
      */
-    private void registerSOAPENCDefault(TypeMapping mapping) {
-        registerForced(Constants.URI_SOAP11_ENC, mapping);
-        registerForced(Constants.URI_SOAP12_ENC, mapping);
-        mapping.setDelegate(defaultDelTM);
-    }
-
-    /**
-     * Force registration of a particular mapping for a given namespace,
-     * which will delegate back to the default.
-     *
-     * @param namespaceURI
-     * @param mapping
-     */
-    private void registerForced(String namespaceURI, TypeMapping mapping) {
-        mapTM.put(namespaceURI, new TypeMappingDelegate((TypeMapping) mapping));
-        ((TypeMapping)mapping).setDelegate(defaultDelTM.getDelegate());
+    private void registerSOAPENCDefault(TypeMappingDelegate mapping) {
+        mapTM.put(Constants.URI_SOAP11_ENC, mapping);
+        mapTM.put(Constants.URI_SOAP12_ENC, mapping);
+        mapping.setNext(defaultDelTM);
     }
 
     /**
@@ -319,17 +321,13 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     public javax.xml.rpc.encoding.TypeMapping 
         getTypeMapping(String namespaceURI) {
 //        namespaceURI = "";
-        TypeMapping del = (TypeMapping) mapTM.get(namespaceURI);
-        TypeMapping tm = null;
-        if (del != null) {
-            tm = del.getDelegate();
+        TypeMapping del = (TypeMappingDelegate) mapTM.get(namespaceURI);
+        if (del == null) {
+            del = (TypeMapping)getDefaultTypeMapping();
         }
-        if (tm == null) {
-            tm = (TypeMapping)getDefaultTypeMapping();
-        }
-        return tm;
+        return del;
     }
-    
+
     /**
      * Obtain a type mapping for the given encodingStyle.  If no specific
      * mapping exists for this encodingStyle, we will create and register
@@ -339,17 +337,13 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @return a registered TypeMapping for the given encodingStyle
      */ 
     public TypeMapping getOrMakeTypeMapping(String encodingStyle) {
-        TypeMapping del = (TypeMapping) mapTM.get(encodingStyle);
-        TypeMapping tm = null;
-        if (del != null) {
-            tm = del.getDelegate();
+        TypeMappingDelegate del = (TypeMappingDelegate) mapTM.get(encodingStyle);
+        if (del == null || del == defaultDelTM) {
+            del = (TypeMappingDelegate)createTypeMapping();
+            del.setSupportedEncodings(new String[] {encodingStyle});
+            register(encodingStyle, del);
         }
-        if (tm == null || tm instanceof DefaultTypeMappingImpl) {
-            tm = (TypeMapping)createTypeMapping();
-            tm.setSupportedEncodings(new String[] {encodingStyle});
-            register(encodingStyle, tm);
-        }
-        return tm;
+        return del;
     }
 
     /**
@@ -360,13 +354,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public javax.xml.rpc.encoding.TypeMapping 
         unregisterTypeMapping(String namespaceURI) {
-        TypeMapping del = (TypeMapping) mapTM.get(namespaceURI);
-        TypeMapping tm = null;
-        if (del != null) {
-            tm = del.getDelegate();
-            del.setDelegate(null);
-        }
-        return tm;
+        return (TypeMappingDelegate)mapTM.remove(namespaceURI);
     }
 
     /**
@@ -395,7 +383,10 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @return An empty generic TypeMapping object
      */
     public javax.xml.rpc.encoding.TypeMapping createTypeMapping() {
-        return new TypeMappingImpl(defaultDelTM);
+        TypeMappingImpl impl = new TypeMappingImpl();
+        TypeMappingDelegate del = new TypeMappingDelegate(impl);
+        del.setNext(defaultDelTM);
+        return del;
     }
         
 
@@ -431,11 +422,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @return TypeMapping or null
      **/
     public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping() {
-        TypeMapping defaultTM = defaultDelTM;
-        while(defaultTM != null && defaultTM instanceof TypeMappingDelegate) {
-            defaultTM = defaultTM.getDelegate();
-        }
-        return defaultTM;
+        return defaultDelTM;
     }
 
 }

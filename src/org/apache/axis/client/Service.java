@@ -237,7 +237,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             initService(parser, serviceName);
         } catch (Exception exp) {
             throw new ServiceException(
-                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp));
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp),
+                    exp);
         }
     }
 

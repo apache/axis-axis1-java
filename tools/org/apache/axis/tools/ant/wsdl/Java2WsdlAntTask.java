@@ -16,6 +16,8 @@
 package org.apache.axis.tools.ant.wsdl;
 
 import org.apache.axis.encoding.TypeMappingImpl;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.TypeMappingDelegate;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.AntClassLoader;
@@ -163,6 +165,7 @@ public class Java2WsdlAntTask extends Task
         try {
             traceParams(Project.MSG_VERBOSE);
             validate();
+
             // Instantiate the emitter
             Emitter emitter = new Emitter();
             //do the mappings, packages are the key for this map
@@ -194,14 +197,16 @@ public class Java2WsdlAntTask extends Task
                 emitter.setExtraClasses(extraClasses);
             }
 
-            emitter.setTypeMappingVersion(typeMappingVersion);
+            TypeMappingRegistryImpl tmr = new TypeMappingRegistryImpl();
+            tmr.doRegisterFromVersion(typeMappingVersion);
+            emitter.setTypeMappingRegistry(tmr);
+
             // Create TypeMapping and register complex types
-            TypeMappingImpl tmi = new TypeMappingImpl(emitter.getDefaultTypeMapping());
+            TypeMappingDelegate tmi = (TypeMappingDelegate)tmr.getDefaultTypeMapping();
             Iterator i = complexTypes.iterator();
             while (i.hasNext()) {
                 ((ComplexType) i.next()).register(tmi);
             }
-            emitter.setTypeMapping(tmi);
             
             if (style != null) {
                 emitter.setStyle(style);

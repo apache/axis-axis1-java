@@ -31,16 +31,6 @@ public interface TypeMapping
     extends javax.xml.rpc.encoding.TypeMapping {
 
     /**
-     * setDelegate sets the new Delegate TypeMapping
-     */
-    public void setDelegate(TypeMapping delegate);
-
-    /**
-     * getDelegate gets the new Delegate TypeMapping
-     */
-    public TypeMapping getDelegate();
-
-    /**
      * Gets the SerializerFactory registered for the specified pair
      * of Java type and XML data type.
      *
@@ -120,26 +110,6 @@ public interface TypeMapping
      * @throws javax.xml.rpc.JAXRPCException
      */
     QName getXMLType(Class javaType, QName xmlType, boolean encoded)
-        throws JAXRPCException;
-
-    /**
-     * Gets the DeserializerFactory registered for the specified XML data type.
-     * This version uses a particular "original" TypeMapping in order to do
-     * secondary lookups for array component types, if necessary.
-     *
-     * @param javaType - the desired Java class
-     * @param xmlType - Qualified name of the XML data type
-     * @param orig - the TypeMapping from which to do secondary lookups
-     *
-     * @return Registered DeserializerFactory
-     *
-     * @throws JAXRPCException - If there is no registered DeserializerFactory
-     * for this pair of Java type and  XML data type
-     * java.lang.IllegalArgumentException -
-     * If invalid or unsupported XML/Java type is specified
-     */
-    DeserializerFactory
-        getDeserializer(Class javaType, QName xmlType, TypeMappingImpl orig)
         throws JAXRPCException;
 }
 

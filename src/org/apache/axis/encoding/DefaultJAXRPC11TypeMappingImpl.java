@@ -23,7 +23,6 @@ import org.apache.axis.encoding.ser.DateDeserializerFactory;
 import org.apache.axis.encoding.ser.DateSerializerFactory;
 import org.apache.axis.encoding.ser.TimeDeserializerFactory;
 import org.apache.axis.encoding.ser.TimeSerializerFactory;
-import org.apache.axis.schema.SchemaVersion;
 
 /**
  * This is the implementation of the axis Default JAX-RPC SOAP Encoding TypeMapping
@@ -36,17 +35,15 @@ public class DefaultJAXRPC11TypeMappingImpl extends DefaultTypeMappingImpl {
     /**
      * Obtain the singleton default typemapping.
      */
-    public static synchronized TypeMapping getSingleton() {
+    public static synchronized TypeMappingDelegate getSingleton() {
         if (tm == null) {
             tm = new DefaultJAXRPC11TypeMappingImpl();
         }
-        return tm;
+        return new TypeMappingDelegate(tm);
     }
 
-    public static TypeMapping create() {
-        TypeMapping ret = new DefaultJAXRPC11TypeMappingImpl();
-        ret.setDelegate(DefaultJAXRPC11TypeMappingImpl.getSingleton());
-        return ret;
+    public static TypeMappingImpl create() {
+        return new DefaultJAXRPC11TypeMappingImpl();
     }
 
     protected DefaultJAXRPC11TypeMappingImpl() {

@@ -17,6 +17,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.utils.Messages;
+import org.apache.axis.Constants;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -28,13 +29,17 @@ import javax.xml.rpc.JAXRPCException;
  * 
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
-class TypeMappingDelegate implements TypeMapping { 
-    TypeMapping delegate;
-    
+public class TypeMappingDelegate implements TypeMapping {
+    TypeMappingImpl delegate;
+    TypeMappingDelegate next;
+
     /**
      * Construct TypeMapping
      */
-    TypeMappingDelegate(TypeMapping delegate) {
+    TypeMappingDelegate(TypeMappingImpl delegate) {
+        if (delegate == null) {
+            throw new RuntimeException(Messages.getMessage("NullDelegate"));
+        }
         this.delegate = delegate;
     }
 
@@ -44,16 +49,11 @@ class TypeMappingDelegate implements TypeMapping {
     // Delegate or throw an exception
     
     public String[] getSupportedEncodings() {
-        if (delegate != null) {
-            return delegate.getSupportedEncodings();
-        }
-        return null;
+        return delegate.getSupportedEncodings();
     }
 
     public void setSupportedEncodings(String[] namespaceURIs) {
-        if (delegate != null) {
-            delegate.setSupportedEncodings(namespaceURIs);
-        }
+        delegate.setSupportedEncodings(namespaceURIs);
     }
 
     /**
@@ -67,70 +67,57 @@ class TypeMappingDelegate implements TypeMapping {
     public void register(Class javaType, QName xmlType,
                          javax.xml.rpc.encoding.SerializerFactory sf,
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
-        throws JAXRPCException {        
-
-        throw new JAXRPCException(
-                Messages.getMessage("delegatedTypeMapping"));
+        throws JAXRPCException {
+        delegate.register(javaType, xmlType, sf, dsf);
     }
     
     public javax.xml.rpc.encoding.SerializerFactory 
         getSerializer(Class javaType, QName xmlType)
         throws JAXRPCException
     {
-        if (delegate != null) {
-            return delegate.getSerializer(javaType, xmlType);
+        SerializerFactory sf = (SerializerFactory)delegate.getSerializer(javaType, xmlType);
+
+        if (sf == null && next != null) {
+            sf = (SerializerFactory)next.getSerializer(javaType, xmlType);
         }
-        return null;
+
+        if (sf == null) {
+            sf = delegate.finalGetSerializer(javaType);
+        }
+
+        return sf;
     }
     public javax.xml.rpc.encoding.SerializerFactory
         getSerializer(Class javaType) 
         throws JAXRPCException 
     {
-        if (delegate != null) {
-            return delegate.getSerializer(javaType);
-        }
-        return null;
+        return getSerializer(javaType, null);
     }
 
     public javax.xml.rpc.encoding.DeserializerFactory
         getDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        if (delegate != null) {
-            return delegate.getDeserializer(javaType, xmlType);
-        }
-        return null;
+        return getDeserializer(javaType, xmlType, this);
     }
 
-    /**
-     * Gets the DeserializerFactory registered for the specified XML data type.
-     * This version uses a particular "original" TypeMapping in order to do
-     * secondary lookups for array component types, if necessary.
-     *
-     * @param javaType - the desired Java class
-     * @param xmlType - Qualified name of the XML data type
-     * @param orig - the TypeMapping from which to do secondary lookups
-     *
-     * @return Registered DeserializerFactory
-     *
-     * @throws JAXRPCException - If there is no registered DeserializerFactory
-     * for this pair of Java type and  XML data type
-     * java.lang.IllegalArgumentException -
-     * If invalid or unsupported XML/Java type is specified
-     */
-    public javax.xml.rpc.encoding.DeserializerFactory getDeserializer(Class javaType, QName xmlType, TypeMappingImpl orig) throws JAXRPCException {
-        if (delegate != null) {
-            return delegate.getDeserializer(javaType, xmlType, orig);
+    public javax.xml.rpc.encoding.DeserializerFactory
+            getDeserializer(Class javaType, QName xmlType, TypeMappingDelegate start)
+            throws JAXRPCException {
+        DeserializerFactory df =
+                (DeserializerFactory)delegate.getDeserializer(javaType, xmlType, start);
+        if (df == null && next != null) {
+            df = (DeserializerFactory)next.getDeserializer(javaType, xmlType, start);
         }
-        return null;
+        if (df == null) {
+            df = delegate.finalGetDeserializer(javaType, xmlType, start);
+        }
+        return df;
     }
 
     public javax.xml.rpc.encoding.DeserializerFactory
         getDeserializer(QName xmlType)
         throws JAXRPCException {
-        if (delegate != null) {
-            return delegate.getDeserializer(xmlType);
-        }
-        return null;
+        return getDeserializer(null, xmlType);
     }
 
     /**
@@ -158,10 +145,11 @@ class TypeMappingDelegate implements TypeMapping {
     }
 
    public boolean isRegistered(Class javaType, QName xmlType) {
-       if (delegate != null) {
-           return delegate.isRegistered(javaType, xmlType);
+       boolean result = delegate.isRegistered(javaType, xmlType);
+       if (result == false && next != null) {
+           return next.isRegistered(javaType, xmlType);
        }
-       return false;
+       return result;
    }
 
     /********* End JAX-RPC Compliant Method Definitions *****************/
@@ -172,10 +160,7 @@ class TypeMappingDelegate implements TypeMapping {
      * @return xmlType qname or null
      */
     public QName getTypeQName(Class javaType) {
-        if (delegate != null) {
-            return delegate.getTypeQName(javaType);
-        }
-        return null;
+        return delegate.getTypeQName(javaType, next);
     }
     
     /**
@@ -184,10 +169,7 @@ class TypeMappingDelegate implements TypeMapping {
      * @return javaType class for type or null for no mappingor delegate
      */
     public Class getClassForQName(QName xmlType) {
-        if (delegate != null) {
-            return delegate.getClassForQName(xmlType);
-        }
-        return null;
+        return getClassForQName(xmlType, null);
     }
 
     /**
@@ -197,10 +179,7 @@ class TypeMappingDelegate implements TypeMapping {
      * @return javaType class for type or null for no mappingor delegate
      */
     public Class getClassForQName(QName xmlType, Class javaType) {
-        if (delegate != null) {
-            return delegate.getClassForQName(xmlType, javaType);
-        }
-        return null;
+        return delegate.getClassForQName(xmlType, javaType, next);
     }
 
     /**
@@ -212,32 +191,33 @@ class TypeMappingDelegate implements TypeMapping {
      * @return
      */
     public QName getTypeQNameExact(Class javaType) {
-        if (delegate != null) {
-            return delegate.getTypeQNameExact(javaType);
-        }
-        return null;
+        QName result = delegate.getTypeQNameExact(javaType, next);
+
+        return result;
     }
 
     /**
      * setDelegate sets the new Delegate TypeMapping
      */
-    public void setDelegate(TypeMapping delegate) {
-        this.delegate = delegate;
+    public void setNext(TypeMappingDelegate next) {
+        if (next == this) {
+            return; // Refuse to set up tight loops (throw exception?)
+        }
+        this.next = next;
     }
 
     /**
      * getDelegate gets the new Delegate TypeMapping
      */
-    public TypeMapping getDelegate() {
-        return delegate;
+    public TypeMappingDelegate getNext() {
+        return next;
     }
 
     /**
      * Returns an array of all the classes contained within this mapping
      */
     public Class[] getAllClasses() {
-        if (delegate == null) return null;
-        return delegate.getAllClasses();
+        return delegate.getAllClasses(next);
     }
 
     /**
@@ -259,9 +239,14 @@ class TypeMappingDelegate implements TypeMapping {
      */
     public QName getXMLType(Class javaType, QName xmlType, boolean encoded)
             throws JAXRPCException {
-        if (delegate != null) {
-            return delegate.getXMLType(javaType, xmlType, encoded);
+        QName result = delegate.getXMLType(javaType, xmlType, encoded);
+        if (result == null && next != null) {
+            return next.getXMLType(javaType, xmlType, encoded);
         }
-        return null;
+        return result;
+    }
+
+    public void setDoAutoTypes(boolean doAutoTypes) {
+        delegate.setDoAutoTypes(doAutoTypes);
     }
 }

@@ -4,8 +4,8 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.encoding.TypeMappingImpl;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingDelegate;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.wsdl.fromJava.Namespaces;
 import org.apache.axis.wsdl.fromJava.Types;
@@ -24,7 +24,7 @@ public class TestAutoTypes extends TestCase {
     public void testAutoTypes() throws Exception
     {
         TypeMappingRegistry tmr = server.getTypeMappingRegistry();
-        TypeMappingImpl tm = (TypeMappingImpl) tmr.getDefaultTypeMapping();
+        TypeMappingDelegate tm = (TypeMappingDelegate)tmr.getDefaultTypeMapping();
         tm.setDoAutoTypes(true);
         
         QName qname = tm.getTypeQName( AttributeBean.class );

@@ -90,6 +90,7 @@ Copyright:
     <wsdl2java url="${axis.home}/build/work/test/wsdl/roundtrip2/roundtrip2.wsdl"
                output="${axis.home}/build/work"
                deployscope="session"
+               typeMappingVersion="1.3"
                serverSide="yes"
                testcase="yes">
     </wsdl2java>

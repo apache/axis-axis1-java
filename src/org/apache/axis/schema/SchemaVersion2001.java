@@ -17,7 +17,7 @@
 package org.apache.axis.schema;
 
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingImpl;
 import org.apache.axis.encoding.ser.CalendarDeserializerFactory;
 import org.apache.axis.encoding.ser.CalendarSerializerFactory;
 
@@ -67,7 +67,7 @@ public class SchemaVersion2001 implements SchemaVersion {
     /**
      * Register the schema specific type mappings
      */
-    public void registerSchemaSpecificTypes(TypeMapping tm) {
+    public void registerSchemaSpecificTypes(TypeMappingImpl tm) {
         
         // This mapping will convert a Java 'Date' type to a dateTime
         tm.register(java.util.Date.class,

@@ -75,49 +75,31 @@ public class TestJAXRPCSamples extends TestCase {
 //    } // testGetQuote
 
     public void testGetInfo() throws Exception {
-        try {
-            log.info("Testing JAX-RPC GetInfo sample.");
-            log.info("Testing deployment...");
-            doTestDeploy();
-            log.info("Testing service...");
-            String[] args = {"-uuser3", "-wpass3", "IBM", "symbol"};
-            GetInfo.main(args);
-            args = new String[] {"-uuser3", "-wpass3", "MACR", "name"};
-            GetInfo.main(args);
-            args = new String[] {"-uuser3", "-wpass3", "CSCO", "address"};
-            GetInfo.main(args);
-            log.info("Testing undeployment...");
-            doTestUndeploy();
-            log.info("Test complete.");
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-            throw new Exception("Fault returned from test: " + t);
-        }
+        log.info("Testing JAX-RPC GetInfo sample.");
+        log.info("Testing deployment...");
+        doTestDeploy();
+        log.info("Testing service...");
+        String[] args = {"-uuser3", "-wpass3", "IBM", "symbol"};
+        GetInfo.main(args);
+        args = new String[] {"-uuser3", "-wpass3", "MACR", "name"};
+        GetInfo.main(args);
+        args = new String[] {"-uuser3", "-wpass3", "CSCO", "address"};
+        GetInfo.main(args);
+        log.info("Testing undeployment...");
+        doTestUndeploy();
+        log.info("Test complete.");
     } // testGetInfo
 
     public void testHello() throws Exception {
-        try {
-            log.info("Testing JAX-RPC hello sample.");
-            samples.jaxrpc.hello.HelloClient.main(new String[]{});
-            log.info("Test complete.");
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-            throw new Exception("Fault returned from test: " + t);
-        }
+        log.info("Testing JAX-RPC hello sample.");
+        samples.jaxrpc.hello.HelloClient.main(new String[]{});
+        log.info("Test complete.");
     }
 
     public void testAddress() throws Exception {
-        try {
-            log.info("Testing JAX-RPC Address sample.");
-            samples.jaxrpc.address.AddressClient.main(new String[]{});
-            log.info("Test complete.");
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-            throw new Exception("Fault returned from test: " + t);
-        }
+        log.info("Testing JAX-RPC Address sample.");
+        samples.jaxrpc.address.AddressClient.main(new String[]{});
+        log.info("Test complete.");
     }
 
     public static void main(String args[]) throws Exception {

@@ -180,6 +180,7 @@ public class TestChainFault extends TestCase
             }
 
         } catch (Exception ex) {
+            ex.printStackTrace();
             assertTrue("Unexpected exception", false);
         }
     }
@@ -216,7 +217,8 @@ public class TestChainFault extends TestCase
             } catch (AxisFault f) {
                 // did we save off the fault string?
               assertEquals("faultstring does not match constant",
-                testHandler.getFaultCatch(),TestChainFault.FAULT_MESSAGE);
+                           TestChainFault.FAULT_MESSAGE,
+                           testHandler.getFaultCatch());
                 // does saved faultString match AxisFault?
               assertEquals("Fault not caught by handler",
                 testHandler.getFaultCatch(),f.getFaultString());

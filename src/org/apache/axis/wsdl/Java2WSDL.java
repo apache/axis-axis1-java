@@ -22,6 +22,8 @@ import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Emitter;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.TypeMappingImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -557,8 +559,9 @@ public class Java2WSDL {
                 emitter.setNamespaceMap(namespaceMap);
             }
 
-            // Set the TypeMappingVersion
-            emitter.setTypeMappingVersion(typeMappingVersion);
+            TypeMappingRegistryImpl tmr = new TypeMappingRegistryImpl();
+            tmr.doRegisterFromVersion(typeMappingVersion);
+            emitter.setTypeMappingRegistry(tmr);
 
             // Find the class using the name
             emitter.setCls(className);

@@ -15,11 +15,10 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.Constants;
 import org.apache.axis.constants.Scope;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -139,7 +138,9 @@ public class Emitter extends Parser {
 	
     /** Field defaultTM */
     private TypeMapping defaultTM = null;       // Default TM
-    
+
+    private TypeMappingRegistryImpl tmr = new TypeMappingRegistryImpl();
+
     /**
      * Default constructor.
      */
@@ -408,7 +409,7 @@ public class Emitter extends Parser {
     public TypeMapping getDefaultTypeMapping() {
         if (defaultTM == null) {
             defaultTM =
-                    DefaultSOAPEncodingTypeMappingImpl.create();
+                    (TypeMapping)tmr.getTypeMapping(Constants.URI_SOAP11_ENC);
         }
         return defaultTM;
     }
@@ -760,23 +761,8 @@ public class Emitter extends Parser {
      * @param typeMappingVersion 
      */
     public void setTypeMappingVersion(String typeMappingVersion) {
-        if(defaultTM == null) {
-            if (typeMappingVersion.equals("1.0")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.getSingleton();
-            } else if (typeMappingVersion.equals("1.1")) {
-                // No SOAP encoding
-                defaultTM=DefaultTypeMappingImpl.getSingleton();
-            } else if (typeMappingVersion.equals("1.2")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
-            } else if (typeMappingVersion.equals("1.3")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.getSingleton();
-                defaultTM.setDelegate(DefaultJAXRPC11TypeMappingImpl.create());
-            } else {
-                throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
-            }
-            this.typeMappingVersion = typeMappingVersion;
-            setDefaultTypeMapping(defaultTM);
-        }
+        this.typeMappingVersion = typeMappingVersion;
+        tmr.doRegisterFromVersion(typeMappingVersion);
         baseTypeMapping = new BaseTypeMapping() {
 
             final TypeMapping defaultTM = getDefaultTypeMapping();

@@ -226,7 +226,6 @@ public class SOAPService extends SimpleTargetedChain
         this.engine = engine;
         ((LockableHashtable)options).setParent(engine.getOptions());
         TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        serviceDescription.setTypeMapping((TypeMapping)tmr.getDefaultTypeMapping());
         getTypeMappingRegistry().delegate(tmr);
     }
 
@@ -297,7 +296,7 @@ public class SOAPService extends SimpleTargetedChain
             return;
         }
         this.serviceDescription = serviceDescription;
-        serviceDescription.setTypeMapping((TypeMapping)this.getTypeMappingRegistry().getDefaultTypeMapping());
+        //serviceDescription.setTypeMapping((TypeMapping)this.getTypeMappingRegistry().getDefaultTypeMapping());
     }
 
     public void setPropertyParent(Hashtable parent)

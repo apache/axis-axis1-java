@@ -79,17 +79,24 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
     /**
      * Obtain the singleton default typemapping.
      */
-    public static synchronized TypeMapping getSingleton() {
+    public static synchronized TypeMappingDelegate getSingleton() {
         if (tm == null) {
             tm = new DefaultTypeMappingImpl();
         }
-        return tm;
+        return new TypeMappingDelegate(tm);
     }
 
     protected DefaultTypeMappingImpl() {
-        super(null);
-        delegate = null;
+        initMappings();
+    }
 
+    protected DefaultTypeMappingImpl(boolean noMappings) {
+        if (!noMappings) {
+            initMappings();
+        }
+    }
+
+    protected void initMappings() {
         // Notes:
         // 1) The registration statements are order dependent.  The last one
         //    wins.  So if two javaTypes of String are registered, the

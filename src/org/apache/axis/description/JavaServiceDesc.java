@@ -141,7 +141,7 @@ public class JavaServiceDesc implements ServiceDesc {
     private ArrayList completedNames = new ArrayList();
 
     /** Our typemapping for resolving Java<->XML type issues */
-    private TypeMapping tm = null;
+    private TypeMapping tm = DefaultTypeMappingImpl.getSingleton();
     private TypeMappingRegistry tmr = null;
 
     private boolean haveAllSkeletonMethods = false;

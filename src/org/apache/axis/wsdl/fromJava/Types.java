@@ -161,7 +161,7 @@ public class Types {
 
         this.tm = tm;
         this.defaultTM = defaultTM;
-        
+
         mappedTypes = tm.getAllClasses();
         
         this.namespaces = namespaces;
@@ -334,7 +334,7 @@ public class Types {
 
                 QName qName = new QName(qNameIn.getNamespaceURI(),
                         qNameIn.getLocalPart());
-                Class cls = defaultTM.getClassForQName(qName);
+                Class cls = tm.getClassForQName(qName);
 
                 if (cls == null) {
                     return null;
@@ -702,13 +702,7 @@ public class Types {
         QName qName = null;
 
         // Use the typeMapping information to lookup the qName.
-        if (tm != null) {
-            qName = tm.getTypeQName(javaType);
-        }
-
-        if (qName == null) {
-            qName = defaultTM.getTypeQName(javaType);
-        }
+        qName = tm.getTypeQName(javaType);
 
         // If the javaType is an array and the qName is
         // SOAP_ARRAY, construct the QName using the
@@ -721,7 +715,7 @@ public class Types {
             // instead use "MyArrayOf" (gag) 
             String arrayTypePrefix = "ArrayOf";
 
-            if(tm instanceof DefaultJAXRPC11TypeMappingImpl || 
+            if (tm instanceof DefaultJAXRPC11TypeMappingImpl ||
                defaultTM instanceof DefaultJAXRPC11TypeMappingImpl) {
                 arrayTypePrefix = "MyArrayOf";
             }
@@ -1752,11 +1746,7 @@ public class Types {
 
         // look up the serializer in the TypeMappingRegistry
         SerializerFactory factory;
-        if (tm != null) {
-            factory = (SerializerFactory) tm.getSerializer(type, qName);
-        } else {
-            factory = (SerializerFactory) defaultTM.getSerializer(type, qName);
-        }
+        factory = (SerializerFactory) tm.getSerializer(type, qName);
 
         // If no factory is found, use the BeanSerializerFactory
         // if applicable, otherwise issue errors and treat as an anyType

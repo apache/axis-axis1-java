@@ -16,7 +16,7 @@
 
 package org.apache.axis.schema;
 
-import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingImpl;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
@@ -54,5 +54,5 @@ public interface SchemaVersion extends Serializable {
     /**
      * Register the schema specific type mappings
      */ 
-    public void registerSchemaSpecificTypes(TypeMapping tm);
+    public void registerSchemaSpecificTypes(TypeMappingImpl tm);
 }
