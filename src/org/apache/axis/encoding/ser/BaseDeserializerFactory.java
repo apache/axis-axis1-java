@@ -55,28 +55,17 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import javax.xml.rpc.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
-
-import java.io.IOException;
-import java.util.Vector;
-import java.util.Iterator;
-
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
 
+import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Base class for Axis Deserialization Factory classes for code reuse
@@ -89,8 +78,6 @@ public abstract class BaseDeserializerFactory
     static Vector mechanisms = null;
     
     protected Class deserClass = null;
-    protected boolean share = false;
-    protected Deserializer deser = null;
     protected QName xmlType = null;
     protected Class javaType = null;
     protected Constructor deserClassConstructor = null;
@@ -100,30 +87,24 @@ public abstract class BaseDeserializerFactory
     /**
      * Constructor
      * @param deserClass is the class of the Deserializer
-     * @param share indicates if deserializers can be shared. getDeserializerAs 
-     * will always return the same deserializer object if share is true.  
-     * Sharing is only valid for xml primitives.
      */
-    public BaseDeserializerFactory(Class deserClass, boolean share) {
+    public BaseDeserializerFactory(Class deserClass) {
         this.deserClass = deserClass;
-        this.share = share;
     }
-    public BaseDeserializerFactory(Class deserClass, boolean share, 
-                                   QName xmlType, Class javaType) {
+    public BaseDeserializerFactory(Class deserClass,
+                                   QName xmlType,
+                                   Class javaType) {
         this.deserClass = deserClass;
-        this.share = share;
         this.xmlType = xmlType;
         this.javaType = javaType;
     }
 
-    public javax.xml.rpc.encoding.Deserializer 
+    public javax.xml.rpc.encoding.Deserializer
         getDeserializerAs(String mechanismType)
         throws JAXRPCException {
+        Deserializer deser = null;
+
         // Need to add code to check against mechanisms vector.
-        if (share && deser != null) {
-            return deser;
-        }
-        deser = null;
         try {
             // Try getting a specialized Deserializer
             deser = getSpecialized(mechanismType);
@@ -235,8 +216,8 @@ public abstract class BaseDeserializerFactory
      * public <constructor>(Class javaType, QName xmlType)
      * public <constructor>()
      * @param factory class
-     * @param QName xmlType
-     * @param Class javaType
+     * @param javaType
+     * @param xmlType
      */
     public static DeserializerFactory createFactory(Class factory, 
                                                     Class javaType, 

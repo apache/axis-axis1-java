@@ -55,31 +55,11 @@
 
 package org.apache.axis.encoding.ser;
 
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.namespace.QName;
-
-import org.apache.axis.InternalException;
-import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.rpc.namespace.QName;
 
 /**
  * A JAFDataHandlerDeserializer Factory
@@ -90,13 +70,13 @@ public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
    protected static Log log = LogFactory.getLog(JAFDataHandlerDeserializerFactory.class.getName());
 
     public JAFDataHandlerDeserializerFactory(Class javaType, QName xmlType) {
-        super(JAFDataHandlerDeserializer.class, false, xmlType, javaType); 
+        super(JAFDataHandlerDeserializer.class, xmlType, javaType);
         log.debug(JavaUtils.getMessage("enter00",
                 "JAFDataHandlerDeserializerFactory(" + javaType + ", "
                 + xmlType + ")"));
     }
     public JAFDataHandlerDeserializerFactory() {
-        super(JAFDataHandlerDeserializer.class, false); 
+        super(JAFDataHandlerDeserializer.class);
         log.debug(JavaUtils.getMessage("enter00",
                 "JAFDataHandlerDeserializerFactory()"));
     }

@@ -63,6 +63,6 @@ import javax.xml.rpc.namespace.QName;
 public class QNameDeserializerFactory extends BaseDeserializerFactory {
 
     public QNameDeserializerFactory(Class javaType, QName xmlType) {
-        super(QNameDeserializer.class, false, xmlType, javaType); 
+        super(QNameDeserializer.class, xmlType, javaType);
     }
 }

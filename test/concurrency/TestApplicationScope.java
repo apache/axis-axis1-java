@@ -125,10 +125,11 @@ public class TestApplicationScope extends TestCase {
                         String respStr = msgContext.getResponseMessage().getSOAPPart().getAsString();
 
                         String reqStr = msgContext.getRequestMessage().getSOAPPart().getAsString();
-                        log.fatal("Got null response! Request message:\r\n" + reqStr + "\r\n\r\n" +
-                                  "Response message:\r\n" + respStr);
-                    }
-                    if (!ret.equals(TestService.MESSAGE)) {
+                        String nullStr = "Got null response! Request message:\r\n" + reqStr + "\r\n\r\n" +
+                                  "Response message:\r\n" + respStr;
+                        log.fatal(nullStr);
+                        setError(new Exception(nullStr));
+                    } else if (!ret.equals(TestService.MESSAGE)) {
                         setError(new Exception("Messages didn't match (got '" +
                                                ret +
                                                "' wanted '" +

@@ -55,20 +55,9 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.utils.JavaUtils;
 
 /**
  * DeserializerFactory for Bean
@@ -77,7 +66,7 @@ import org.apache.axis.utils.JavaUtils;
  */
 public class BeanDeserializerFactory extends BaseDeserializerFactory {
     public BeanDeserializerFactory(Class javaType, QName xmlType) {
-        super(BeanDeserializer.class, false, xmlType, javaType);  // Can't share deserializers 
+        super(BeanDeserializer.class, xmlType, javaType);
         
         // Sometimes an Enumeration class is registered as a Bean.
         // If this is the case, silently switch to the EnumDeserializer

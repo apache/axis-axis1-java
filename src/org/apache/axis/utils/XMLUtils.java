@@ -71,8 +71,8 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 
 import javax.xml.parsers.DocumentBuilder;
@@ -180,21 +180,18 @@ public class XMLUtils {
         return( dbf );
     }
 
-    private static DefaultHandler doNothingContentHandler = new DefaultHandler(); //no events should h
     private static boolean tryReset= true;
 
     /** Get a SAX parser instance from the JAXP factory.
      *
      * @return a SAXParser instance.
      */
-    public static SAXParser getSAXParser() {
-        synchronized (XMLUtils.class ) {
-          if(!saxParsers.empty()) 
-                 return (SAXParser )saxParsers.pop();
-         }
+    public synchronized static SAXParser getSAXParser() {
+        if(!saxParsers.empty())
+            return (SAXParser )saxParsers.pop();
+
         try {
-                return saxFactory.newSAXParser();
-            
+            return saxFactory.newSAXParser();
         } catch (ParserConfigurationException e) {
             log.error(JavaUtils.getMessage("parserConfigurationException00"), e);
             return null;
@@ -210,22 +207,24 @@ public class XMLUtils {
      */
     public static void releaseSAXParser(SAXParser parser) {
         if(!tryReset) return;
-       
+
         //Free up possible ref. held by past contenthandler.
         try{
-            XMLReader xmlReader= parser.getXMLReader(); 
+            XMLReader xmlReader= parser.getXMLReader();
             if(null != xmlReader){
-                xmlReader.setContentHandler(doNothingContentHandler); 
-                xmlReader.setDTDHandler(doNothingContentHandler); 
-                xmlReader.setEntityResolver(doNothingContentHandler);
-                xmlReader.setErrorHandler(doNothingContentHandler);
+//                xmlReader.setContentHandler(doNothingContentHandler);
+//                xmlReader.setDTDHandler(doNothingContentHandler);
+//                xmlReader.setEntityResolver(doNothingContentHandler);
+//                xmlReader.setErrorHandler(doNothingContentHandler);
                 synchronized (XMLUtils.class ) {
-                saxParsers.push(parser);
+                    saxParsers.push(parser);
                 }
-            }    
-            else     
-             tryReset= false;
-        }catch(org.xml.sax.SAXException e){ tryReset= false;}
+            }
+            else
+                tryReset= false;
+        } catch (org.xml.sax.SAXException e) {
+            tryReset= false;
+        }
     }
 
     public static Document newDocument() {
