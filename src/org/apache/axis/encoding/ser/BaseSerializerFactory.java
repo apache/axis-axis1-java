@@ -225,6 +225,9 @@ public abstract class BaseSerializerFactory extends BaseFactory
     public static SerializerFactory createFactory(Class factory, 
                                                   Class javaType, 
                                                   QName xmlType) {
+        if (factory == null) {
+            return null;
+        }
 
         SerializerFactory sf = null;
         try {

@@ -194,6 +194,9 @@ public abstract class BaseDeserializerFactory extends BaseFactory
     public static DeserializerFactory createFactory(Class factory, 
                                                     Class javaType, 
                                                     QName xmlType) {
+        if (factory == null) {
+            return null;
+        }
 
         DeserializerFactory df = null;
         try {
