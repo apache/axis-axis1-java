@@ -280,7 +280,7 @@ public class SimpleDeserializer extends DeserializerImpl {
             BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(fieldName);
             if (bpd != null) {
-                if (bpd.getWriteMethod() == null ) continue ;
+                if (!bpd.isWriteable() || bpd.isIndexed() ) continue ;
 
                 // determine the QName for this child element
                 TypeMapping tm = context.getTypeMapping();
@@ -301,21 +301,18 @@ public class SimpleDeserializer extends DeserializerImpl {
                                                  bpd.getName(),
                                                  type.toString()));
 
-                if (bpd.getWriteMethod().getParameterTypes().length == 1) {
-                    // Success!  Create an object from the string and save
-                    // it in our attribute map for later.
-                    if (attributeMap == null) {
-                        attributeMap = new HashMap();
-                    }
-                    try {
-                        Object val = ((SimpleDeserializer)dSer).
-                                makeValue(attributes.getValue(i));
-                        attributeMap.put(fieldName, val);
-                    } catch (Exception e) {
-                        throw new SAXException(e);
-                    }
+                // Success!  Create an object from the string and save
+                // it in our attribute map for later.
+                if (attributeMap == null) {
+                    attributeMap = new HashMap();
                 }
-
+                try {
+                    Object val = ((SimpleDeserializer)dSer).
+                        makeValue(attributes.getValue(i));
+                    attributeMap.put(fieldName, val);
+                } catch (Exception e) {
+                    throw new SAXException(e);
+                }
             } // if
         } // attribute loop
     } // onStartElement
@@ -338,11 +335,9 @@ public class SimpleDeserializer extends DeserializerImpl {
             
             BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(name);
-            if (bpd.getWriteMethod() == null) continue;
+            if (!bpd.isWriteable() || bpd.isIndexed()) continue;
             try {
-                if (bpd.getWriteMethod().getParameterTypes().length == 1) {
-                    bpd.getWriteMethod().invoke(value, new Object[] {val} );
-                }
+                bpd.set(value, val );
             } catch (Exception e) {
                 throw new SAXException(e);
             }

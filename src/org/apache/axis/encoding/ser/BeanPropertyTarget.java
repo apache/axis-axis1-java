@@ -99,17 +99,17 @@ class BeanPropertyTarget implements Target {
     public void set(Object value) throws SAXException {
         try {
             if (index < 0)
-                pd.getWriteMethod().invoke(object, new Object[] {value});
+                pd.set(object, value);
             else
-                pd.getWriteMethod().invoke(object, new Object[] {new Integer(index), value});
+                pd.set(object, index, value);
         } catch (Exception e) {
-            Class type = pd.getReadMethod().getReturnType();
+            Class type = pd.getType();
             value = JavaUtils.convert(value, type);
             try {
                 if (index < 0)
-                    pd.getWriteMethod().invoke(object, new Object[] {value});
+                    pd.set(object, value);
                 else
-                    pd.getWriteMethod().invoke(object, new Object[] {new Integer(index), value});
+                    pd.set(object, index, value);
             } catch (Exception ex) {
                 String field= pd.getName();
                 int i = 0;

@@ -62,6 +62,8 @@ import java.beans.PropertyDescriptor;
 import java.beans.Introspector;
 import java.util.Vector;
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class BeanUtils {
 
@@ -140,10 +142,14 @@ public class BeanUtils {
                   PropertyDescriptor[] rawPd, Class cls) {
         BeanPropertyDescriptor[] myPd = new BeanPropertyDescriptor[rawPd.length];
 
+        int index1 = 0;
         for (int i=0; i < rawPd.length; i++) {
-            myPd[i] = new BeanPropertyDescriptor(rawPd[i].getName(),
-                                               rawPd[i].getReadMethod(),
-                                               rawPd[i].getWriteMethod());
+            if (rawPd[i].getReadMethod() != null &&
+                rawPd[i].getWriteMethod() != null) {
+                myPd[index1++] = new BeanPropertyDescriptor(rawPd[i].getName(),
+                                                            rawPd[i].getReadMethod(),
+                                                            rawPd[i].getWriteMethod());
+            } 
         }
 
         try {
@@ -151,7 +157,7 @@ public class BeanUtils {
             int index = 0;
 
             // Build a new pd array
-            // defined by the order of the get methods.
+            // defined by the order of the set methods.
             BeanPropertyDescriptor[] newPd = new BeanPropertyDescriptor[rawPd.length];
             Method[] methods = cls.getMethods();
             for (int i=0; i < methods.length; i++) {
@@ -159,7 +165,8 @@ public class BeanUtils {
                 if (method.getName().startsWith("set")) {
                     boolean found = false;
                     for (int j=0; j < myPd.length && !found; j++) {
-                        if (myPd[j].getWriteMethod() != null &&
+                        if (myPd[j] != null &&
+                            myPd[j].getWriteMethod() != null &&
                             myPd[j].getWriteMethod().equals(method)) {
                             found = true;
                             newPd[index] = myPd[j];
@@ -199,7 +206,8 @@ public class BeanUtils {
                             methods[j].getParameterTypes()[0] == int.class &&
                             methods[i].getParameterTypes()[0] == int.class) {
                             for (int k=0; k < myPd.length; k++) {
-                                if (myPd[k].getReadMethod() != null &&
+                                if (myPd[k] != null &&
+                                    myPd[k].getReadMethod() != null &&
                                     myPd[k].getWriteMethod() != null &&
                                     myPd[k].getReadMethod().getName().equals(methods[j].getName()) &&
                                     myPd[k].getWriteMethod().getName().equals(methods[i].getName())) {
@@ -212,6 +220,41 @@ public class BeanUtils {
                     }
                 }
             }
+            ArrayList pd = new ArrayList();
+            for (int i=0; i < myPd.length; i++) {
+                if (myPd[i] != null) {
+                    pd.add(myPd[i]);
+                }
+            }
+            // Now look for public fields
+            Field fields[] = cls.getFields();
+            if (fields != null && fields.length > 0) {    
+                // See if the field is in the list of properties
+                // add it if not.
+                for (int i=0; i < fields.length; i++) {
+                    Field f = fields[i];
+                    String fName = f.getName();
+                    boolean found = false;
+                    for (int j=0; j<pd.size() && !found; j++) {
+                        String pName = 
+                            ((BeanPropertyDescriptor)pd.get(i)).getName();
+                        if (pName.length() == fName.length() &&
+                            pName.substring(0,1).equalsIgnoreCase(
+                               fName.substring(0,1))) {
+                            found = pName.length() == 1 ||
+                                pName.substring(1).equals(fName.substring(1));
+                        }
+                    }
+                    if (!found) {
+                        pd.add(new BeanPropertyDescriptor(f.getName(), f));
+                    }
+                }
+            }
+            myPd = new BeanPropertyDescriptor[pd.size()];
+            for (int i=0; i <pd.size(); i++) {
+                myPd[i] = (BeanPropertyDescriptor) pd.get(i);
+            }
+
         } catch (Exception e) {
             // Don't process Property Descriptors if problems occur
             return myPd;

@@ -193,12 +193,10 @@ public class SimpleSerializer implements Serializer {
                     qname = new QName("", propName);
                 }
 
-                Method readMethod = propertyDescriptor[i].getReadMethod();
-                if (readMethod != null &&
-                    readMethod.getParameterTypes().length == 0) {
+                if (propertyDescriptor[i].isReadable() &&
+                    !propertyDescriptor[i].isIndexed()) {
                     // add to our attributes
-                    Object propValue = readMethod.
-                                        invoke(value,BeanSerializer.noArgs);
+                    Object propValue = propertyDescriptor[i].get(value);
                     // If the property value does not exist, don't serialize
                     // the attribute.  In the future, the decision to serializer
                     // the attribute may be more sophisticated.  For example, don't 

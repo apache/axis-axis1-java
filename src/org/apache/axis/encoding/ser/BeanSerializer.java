@@ -97,8 +97,6 @@ public class BeanSerializer implements Serializer, Serializable {
     protected static Log log =
         LogFactory.getLog(BeanSerializer.class.getName());
 
-    public static final Object[] noArgs = new Object[] {};  // For convenience
-
     QName xmlType;
     Class javaType;
 
@@ -169,15 +167,16 @@ public class BeanSerializer implements Serializer, Serializable {
                     qname = new QName("", propName);
                 }
 
-                Method readMethod = propertyDescriptor[i].getReadMethod();
-                // if there is a read method for a property
-                if(readMethod != null) {
-                    Class baseJavaType = readMethod.getReturnType();
+                // Read the value from the property
+                if(propertyDescriptor[i].isReadable()) {
+                    Class baseJavaType = propertyDescriptor[i].getType();
                     Class javaType;
-                    if (readMethod.getParameterTypes().length == 0) {
+                    if (!propertyDescriptor[i].isIndexed()) {
                         // Normal case: serialize the value
-                        Object propValue = readMethod.invoke(value,noArgs);
-                        javaType = (propValue == null || baseJavaType.isPrimitive())
+                        Object propValue = 
+                            propertyDescriptor[i].get(value);
+                        javaType = (propValue == null || 
+                                    baseJavaType.isPrimitive())
                             ? baseJavaType : propValue.getClass();
                         context.serialize(qname,
                                           null,
@@ -189,8 +188,7 @@ public class BeanSerializer implements Serializer, Serializable {
                             Object propValue = null;
                             try {
                                 propValue = 
-                                    readMethod.invoke(value,
-                                         new Object[] { new Integer(j) });
+                                    propertyDescriptor[i].get(value, j);
                                 j++;
                             } catch (Exception e) {
                                 j = -1;
@@ -408,11 +406,10 @@ public class BeanSerializer implements Serializer, Serializable {
                     qname = new QName("", propName);
                 }
 
-                Method readMethod = propertyDescriptor[i].getReadMethod();
-                if (readMethod != null &&
-                    readMethod.getParameterTypes().length == 0) {
+                if (propertyDescriptor[i].isReadable() && 
+                    !propertyDescriptor[i].isIndexed()) {
                     // add to our attributes
-                    Object propValue = readMethod.invoke(value,noArgs);
+                    Object propValue = propertyDescriptor[i].get(value);
                     // If the property value does not exist, don't serialize
                     // the attribute.  In the future, the decision to serializer
                     // the attribute may be more sophisticated.  For example, don't

@@ -69,7 +69,9 @@ import java.util.HashMap;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TypeDesc {
-    public static Class [] noClasses = new Class [] {};
+    public static final Class [] noClasses = new Class [] {};
+    public static final Object[] noObjects = new Object[] {}; 
+
 
     public TypeDesc(Class javaClass) {
         this.javaClass = javaClass;
@@ -105,7 +107,7 @@ public class TypeDesc {
             }
             if (getTypeDesc != null) {
                 return (TypeDesc)getTypeDesc.invoke(null,
-                                                    BeanSerializer.noArgs);
+                                                    noObjects);
             }
         } catch (Exception e) {
         }
