@@ -46,6 +46,9 @@ public class Parser {
     /** Field debug */
     protected boolean debug = false;
 
+    /** Field quiet */
+    protected boolean quiet = false;
+
     /** Field imports */
     protected boolean imports = true;
 
@@ -92,6 +95,24 @@ public class Parser {
         this.debug = debug;
     }    // setDebug
 
+    /**
+     * Method isQuiet
+     * 
+     * @return 
+     */
+    public boolean isQuiet() {
+        return quiet;
+    }    
+
+    /**
+     * Method setQuiet
+     * 
+     * @param quiet
+     */
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
+    }   
+    
     /**
      * Method isImports
      * 
@@ -271,6 +292,7 @@ public class Parser {
 
         symbolTable = new SymbolTable(genFactory.getBaseTypeMapping(), imports,
                 verbose, nowrap);
+        symbolTable.setQuiet(quiet);
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(symbolTable, wsdlURI);

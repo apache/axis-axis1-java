@@ -78,6 +78,7 @@ public class Wsdl2javaAntTask extends Task
 {
     private boolean verbose = false;
     private boolean debug = false;
+    private boolean quiet = false;
     private boolean server = false;
     private boolean skeletonDeploy = false;
     private boolean testCase = false;
@@ -132,7 +133,16 @@ public class Wsdl2javaAntTask extends Task
         if (!outdir.isDirectory() || !outdir.exists()) {
             throw new BuildException("output directory is not valid");
         }
-
+        if (quiet) {
+            if (verbose) {
+                throw new BuildException("quiet and verbose options are " +
+                                         "exclusive");
+            }
+            if (debug) {
+                throw new BuildException("quiet and debug options are " +
+                                         "exclusive");
+            }
+        }
     }
 
     /**
@@ -144,6 +154,7 @@ public class Wsdl2javaAntTask extends Task
         log("Running Wsdl2javaAntTask with parameters:", logLevel);
         log("\tverbose:" + verbose, logLevel);
         log("\tdebug:" + debug, logLevel);
+        log("\tquiet:" + quiet, logLevel);
         log("\tserver-side:" + server, logLevel);
         log("\tskeletonDeploy:" + skeletonDeploy, logLevel);
         log("\thelperGen:" + helperGen, logLevel);
@@ -216,6 +227,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.setSkeletonWanted(skeletonDeploy);
             emitter.setVerbose(verbose);
             emitter.setDebug(debug);
+            emitter.setQuiet(quiet);
             emitter.setTypeMappingVersion(typeMappingVersion);
             emitter.setNowrap(noWrapped);
             if (namespaceMappingFile != null) {
@@ -286,6 +298,15 @@ public class Wsdl2javaAntTask extends Task
      */
     public void setDebug(boolean debug) {
         this.debug = debug;
+    }
+
+    /**
+     *  flag for quiet output; default=false
+     *
+     *@param  quiet  The new quiet value
+     */
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
     }
 
     /**
