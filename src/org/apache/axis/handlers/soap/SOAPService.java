@@ -101,7 +101,7 @@ import java.util.Vector;
  */
 public class SOAPService extends SimpleTargetedChain
 {
-    protected static Log log =
+    private static Log log =
         LogFactory.getLog(SOAPService.class.getName());
 
     /** Valid transports for this service
