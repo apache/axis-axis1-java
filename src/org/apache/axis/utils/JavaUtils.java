@@ -558,10 +558,12 @@ public class JavaUtils
         // The mapping indicates to convert first
         // character.
         int i = 0;
+        int firstRealChar = 0;
         while (i < nameLen
                 && (isPunctuation(nameArray[i])
                 || !Character.isJavaIdentifierStart(nameArray[i]))) {
             i++;
+            firstRealChar++;
         }
         if (i < nameLen) {
             // I've got to check for uppercaseness before lowercasing
@@ -572,7 +574,7 @@ public class JavaUtils
             // Don't lowercase if this is the first character and the 2nd
             // character is also uppercase, to follow Introspector rules.
             if (Character.isUpperCase(nameArray[i]) &&
-                ((i != 0) ||
+                ((i != firstRealChar) ||
                     (nameLen > 1 && Character.isLowerCase(nameArray[1])))) {
                 result.append(Character.toLowerCase(nameArray[i]));
             }

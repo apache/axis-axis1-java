@@ -47,6 +47,7 @@ public class TestJavaUtils extends TestCase
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u06DEbar"));
         assertEquals("fooBar", JavaUtils.xmlNameToJava("FooBar"));
         assertEquals("FOOBar", JavaUtils.xmlNameToJava("FOOBar"));
+        assertEquals("FOOBar", JavaUtils.xmlNameToJava("__FOOBar"));
 
         // the following cases are ambiguous in JSR-101
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo bar"));
