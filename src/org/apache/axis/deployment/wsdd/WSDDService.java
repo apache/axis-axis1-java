@@ -87,6 +87,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * A service represented in WSDD.
@@ -119,7 +121,8 @@ public class WSDDService
      */
     private QName providerQName;
 
-    private HandlerInfoChainFactory _hiChainFactory;
+//    private HandlerInfoChainFactory _hiChainFactory;
+	private WSDDJAXRPCHandlerInfoChain _wsddHIchain;
 
     ServiceDesc desc = new ServiceDesc();
 
@@ -221,11 +224,10 @@ public class WSDDService
             }
         }
 
-        // Add in JAX-RPC support for HandlerInfo chains
+	// Add in JAX-RPC support for HandlerInfo chains
         Element hcEl = getChildElement(e, ELEM_WSDD_JAXRPC_CHAIN);
         if (hcEl != null) {
-        WSDDJAXRPCHandlerInfoChain wsddHIChain = new WSDDJAXRPCHandlerInfoChain(hcEl);
-            _hiChainFactory = wsddHIChain.getHandlerChainFactory();
+	    	_wsddHIchain = new WSDDJAXRPCHandlerInfoChain(hcEl);
         }
 
         initTMR();
@@ -423,10 +425,12 @@ public class WSDDService
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
 
-        // Set handlerInfoChain
-        if (_hiChainFactory != null) {
-            service.setOption(Constants.ATTR_HANDLERINFOCHAIN, _hiChainFactory);
-        }
+	// Set handlerInfoChain
+	if (_wsddHIchain != null) {
+            HandlerInfoChainFactory hiChainFactory = _wsddHIchain.getHandlerChainFactory();
+
+	    service.setOption(Constants.ATTR_HANDLERINFOCHAIN, hiChainFactory);
+	}
 
         AxisEngine.normaliseOptions(service);
 
@@ -576,7 +580,14 @@ public class WSDDService
             context.endElement();
         }
 
+		if (_wsddHIchain != null) {
+			_wsddHIchain.writeToContext(context);
+
+		}
+		
         context.endElement();
+
+
     }
 
     public void setCachedService(SOAPService service)

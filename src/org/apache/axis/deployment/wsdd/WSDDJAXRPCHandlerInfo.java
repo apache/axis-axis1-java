@@ -64,17 +64,20 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Hashtable;
 
 
 /**
  *
  */
 public class WSDDJAXRPCHandlerInfo
-    extends WSDDDeployableItem
+    extends WSDDElement
 {
     private String _classname;
-    private QName[] _headers;
     private Map _map;
+    private QName[] _headers;
     
     /**
      * Default constructor
@@ -109,7 +112,7 @@ public class WSDDJAXRPCHandlerInfo
                 Element param = elements[i];
                 String pname = param.getAttribute(ATTR_NAME);
                 String value = param.getAttribute(ATTR_VALUE);
-                parameters.put(pname, value); 
+				_map.put(pname, value);
             }           
         }
         
@@ -122,8 +125,9 @@ public class WSDDJAXRPCHandlerInfo
                 if (headerStr == null ||  headerStr.equals("")) 
                     throw new WSDDException(JavaUtils.getMessage("noValidHeader"));     
 
-                QName headerQName = XMLUtils.getQNameFromString(headerStr, e);
-                headerList.add(headerQName); 
+                QName headerQName = XMLUtils.getQNameFromString(headerStr, qElem);
+                if (headerQName != null) 
+	                headerList.add(headerQName); 
             }
             QName[] headers = new QName[headerList.size()];
             _headers = (QName[]) headerList.toArray(headers);
@@ -148,7 +152,7 @@ public class WSDDJAXRPCHandlerInfo
     }
     
     public void setHandlerMap(Map map) {
-        _map = map;
+        // Add parameters to Parameters Table here
     }
     
     public QName[] getHeaders() {
@@ -162,19 +166,37 @@ public class WSDDJAXRPCHandlerInfo
     public void writeToContext(SerializationContext context)
         throws IOException
     {
-        // GLT - FIX THIS UP
-        AttributesImpl attrs = new AttributesImpl();
-        QName name = getQName();
-        if (name != null) {
-            attrs.addAttribute("", ATTR_NAME, ATTR_NAME,
-                               "CDATA", context.qName2String(name));
-        }
+	AttributesImpl attrs = new AttributesImpl();
+	attrs.addAttribute("", ATTR_CLASSNAME, ATTR_CLASSNAME,
+				   "CDATA", _classname);
+	context.startElement(WSDDConstants.QNAME_JAXRPC_HANDLERINFO, attrs);
 
-        attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE,
-                           "CDATA", context.qName2String(getType()));
-        context.startElement(WSDDConstants.QNAME_HANDLER, attrs);
-        writeParamsToContext(context);
-        context.endElement();
+	Map ht =  _map;
+	if (ht != null) {
+	    Set keys= ht.keySet();
+	    Iterator iter = keys.iterator();
+	    while (iter.hasNext()) {
+	    	String name = (String) iter.next();
+	    	String value = (String) ht.get(name);
+	    	attrs = new AttributesImpl();
+	    	attrs.addAttribute("",ATTR_NAME, ATTR_NAME, "CDATA", name);
+	    	attrs.addAttribute("",ATTR_VALUE, ATTR_VALUE, "CDATA", value);
+	    	context.startElement(WSDDConstants.QNAME_PARAM,attrs);
+	    	context.endElement();
+	    }
+	}
+
+	if (_headers != null) {
+	    for (int i=0 ; i < _headers.length ; i++) {
+		QName qname = _headers[i];
+		attrs = new AttributesImpl();
+		attrs.addAttribute("",ATTR_QNAME,ATTR_QNAME,"CDATA",context.qName2String(qname));
+		context.startElement(WSDDConstants.QNAME_JAXRPC_HEADER,attrs);
+		context.endElement();
+	    }
+	}
+
+	context.endElement();
     }
 
 }
