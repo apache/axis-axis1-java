@@ -92,6 +92,9 @@ public class SOAPHeader extends MessageElement
     private SOAPConstants soapConstants;
 
     SOAPHeader(SOAPEnvelope env, SOAPConstants soapConsts) {
+        super(Constants.ELEM_HEADER,
+              Constants.NS_PREFIX_SOAP_ENV,
+              soapConsts.getEnvelopeURI());
         soapConstants = soapConsts;
         try {
             setParentElement(env);
@@ -371,5 +374,23 @@ public class SOAPHeader extends MessageElement
         while ((i = headers.indexOf(child)) != -1) {
             headers.remove(i);
         }
+    }
+
+    /**
+     * we have to override this to enforce that SOAPHeader immediate 
+     * children are exclusively of type SOAPHeaderElement (otherwise
+     * we'll get mysterious ClassCastExceptions down the road... )
+     * 
+     * @param element child element
+     * @return soap element
+     * @throws SOAPException
+     */ 
+    public SOAPElement addChildElement(SOAPElement element) 
+      throws SOAPException
+    {
+      if (!(element instanceof javax.xml.soap.SOAPHeaderElement)) {
+        throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
+      } 
+      return super.addChildElement(element);
     }
 }

@@ -90,7 +90,10 @@ public class SOAPBody extends MessageElement
     private boolean disableFormatting = false;
 
     SOAPBody(SOAPEnvelope env, SOAPConstants soapConsts) {
-        soapConstants = soapConsts;
+       super(Constants.ELEM_BODY,
+             Constants.NS_PREFIX_SOAP_ENV,
+             soapConsts.getEnvelopeURI());
+       soapConstants = soapConsts;
         try {
             setParentElement(env);
         } catch (SOAPException ex) {
@@ -289,5 +292,23 @@ public class SOAPBody extends MessageElement
         while ((i = bodyElements.indexOf(child)) != -1) {
             bodyElements.remove(i);
         }
+    }
+
+    
+    /**
+     * we have to override this to enforce that SOAPHeader immediate 
+     * children are exclusively of type SOAPHeaderElement (otherwise
+     * we'll get mysterious ClassCastExceptions down the road...) 
+     * 
+     * @param element
+     * @return
+     * @throws SOAPException
+     */ 
+    public SOAPElement addChildElement(SOAPElement element) 
+      throws SOAPException {
+      if (!(element instanceof javax.xml.soap.SOAPBodyElement)) {
+        throw new SOAPException(Messages.getMessage("badSOAPBodyElement00"));
+      } 
+      return super.addChildElement(element);
     }
 }
