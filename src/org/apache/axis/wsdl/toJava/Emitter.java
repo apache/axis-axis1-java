@@ -326,7 +326,7 @@ public class Emitter extends Parser {
      * Get the Package name for the specified namespace
      */
     public String getPackage(String namespace) {
-        return (String) namespaces.getCreate(namespace);
+        return namespaces.getCreate(namespace);
     }
 
     /**
@@ -398,7 +398,7 @@ public class Emitter extends Parser {
         super.run(context, doc);
     } // run
 
-    private void setup() {
+    private void setup() throws IOException {
         if (baseTypeMapping == null) {
             setTypeMappingVersion(typeMappingVersion);
         }
@@ -440,20 +440,22 @@ public class Emitter extends Parser {
 	 * @see org.apache.axis.utils.ClassUtils#getResourceAsStream(java.lang.Class,String)
 	 * 
      */
-    private void getNStoPkgFromPropsFile(HashMap namespaces)
+    private void getNStoPkgFromPropsFile(HashMap namespaces) throws IOException
     {
 
         Properties mappings = new Properties();
         if (NStoPkgFilename != null) {
             try {
                 mappings.load(new FileInputStream(NStoPkgFilename));
-                System.out.println(
-                  Messages.getMessage("nsToPkgFileLoaded00", NStoPkgFilename)
-                );
+                if (verbose) {
+                    System.out.println(
+                        Messages.getMessage("nsToPkgFileLoaded00", NStoPkgFilename)
+                    );
+                }
             } catch (Throwable t) {
 				// loading the custom mapping file failed. We do not try
-				// to load the mapping from a default mapping file. 
-				System.err.println(
+				// to load the mapping from a default mapping file.
+                throw new IOException(
                         Messages.getMessage("nsToPkgFileNotFound00", NStoPkgFilename)
                 );
             }
@@ -461,24 +463,26 @@ public class Emitter extends Parser {
         else {
             try {
                 mappings.load(new FileInputStream(DEFAULT_NSTOPKG_FILE));
-                System.out.println(
-                  Messages.getMessage("nsToPkgFileLoaded00", DEFAULT_NSTOPKG_FILE)
-                );
+                if (verbose) {
+                    System.out.println(
+                      Messages.getMessage("nsToPkgFileLoaded00", DEFAULT_NSTOPKG_FILE)
+                    );
+                }
             } catch (Throwable t) {
             	try {
                     mappings.load(ClassUtils.getResourceAsStream(
                         Emitter.class, DEFAULT_NSTOPKG_FILE));
-                    System.out.println(
-                      Messages.getMessage("nsToPkgDefaultFileLoaded00", DEFAULT_NSTOPKG_FILE)
-                    );
+                    if (verbose) {
+                        System.out.println(
+                          Messages.getMessage("nsToPkgDefaultFileLoaded00", DEFAULT_NSTOPKG_FILE)
+                        );
+                    }
 
-            	} catch(Throwable t1) {
-					// loading the default mapping file failed. The built-in default
-					// mapping is used 
-					System.err.println(
-                            Messages.getMessage("nsToPkgDefaultFileNotFound00", DEFAULT_NSTOPKG_FILE)
-                    );                		
-            	}        
+                } catch(Throwable t1) {
+					// loading the default mapping file failed.
+					// The built-in default mapping is used
+                    // No message is given, since this is generally what happens
+                }
             }
         }
 
