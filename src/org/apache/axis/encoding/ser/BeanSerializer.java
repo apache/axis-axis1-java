@@ -199,7 +199,7 @@ public class BeanSerializer implements Serializer, Serializable {
                     // look up the type QName using the class
                     xmlType = context.getQNameForClass(propertyDescriptor[i].getType());
                 }
-                
+
                 // Read the value from the property
                 if(propertyDescriptor[i].isReadable()) {
                     if (!propertyDescriptor[i].isIndexed()) {
@@ -234,7 +234,8 @@ public class BeanSerializer implements Serializer, Serializable {
                             }
                             if (j >= 0) {
                                 context.serialize(qname, null,
-                                                  propValue);
+                                                  propValue, xmlType,
+                                                  true, null);
                             }
                         }
                     }

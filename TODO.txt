@@ -25,88 +25,25 @@ D - post 1.0
 E - evaluation
 NR - not rated
 
+(note from Glen : Dims and I edited this down to JUST the "should do for 1.0" ones.
+ This way bugzilla is the master source of info, and this list just tells us what's
+ "todo" for 1.0 - although really a bugzilla search on things targeted for 1.0 should
+ work too)
+
 7407 - B
-8419 - C
-8435 - C
-8598 - E - changed to WONTFIX
-9393 - D
-9452 - E
-9473 - closed
-9510 - closed
-9665 - closed
-9717 - E (C?) - Tom/discussion issue
-9773 - closed
-9780 - E
-9815 - C
-9818 - NR
-9881 - closed
-9882 - closed
-9966 - closed
-9967 - closed
-10019 - closed
-10056 - closed
-10058 - C
-10141 - C
-10211 - D 
-10246 - D
-10290 - closed
 10355 - A
 10365 - B
-10477 - closed
 10479 - B
 10512 - B
-10585 - NR
-10590 - A (invalid? follow-up)
-10605 - B - Tom
-10613 - closed
-10645 - C
-10739 - A, closed
-10841 - C
-10847 - A
-10853 - D
-10862 - B
-10864 - closed
-10872 - D
-10944 - B
-10966 - closed
-11055 - closed
-11120 - B
-11162 - A
-11170 - A
-11290 - C
-11295 - closed
-11296 - C
-11297 - closed
-11305 - closed
-11306 - A
-11315 - closed
-11337 - NR
-11345 - NR
-11350 - NR
-11376 - NR
-11450 - NR
-11532 - NR
-11539 - NR
-11595 - NR 
-11622 - NR 
-11690 - NR
-11706 - closed
-11707 - closed
-11713 - NR
-11718 - NR
-11720 - NR
-11726 - NR 
-11766 - NR
-11781 - NR
-11804 - presume fixed
-11815 - NR
-11855 - NR
-11874 - NR 
-11893 - NR
-11923 - NR
-11945 - General Performance Question, need more specific info
-12012 - NR
-12055 - NR
+10605 - B - Glen
+10847 - A - Glen
+10944 - B - Glen
+11766 - If this is real, it looks like an "A".  need to confirm.
+12167 - Glen will confirm
+12246 - Someone should confirm and fix for 1.0 if it's real
+12367 - Confirm, fix if real
+12572 - Glen will take a look (w/Rich)
+12781 - If this is real, we should fix for 1.0
 
 MESSAGE PARSING / ENCODING
 --------------------------
@@ -124,6 +61,7 @@ SCHEMA SUPPORT
 ! <> Support <xsd:list>
 ! <Chris> Support <xsd:PositiveInteger> <xsd:NegativeInteger> <xsd:NonPositiveInteger> <xsd:NonNegativeInteger>
 ! <> Support <xsd:language> <xsd:ID>: <xsd:IDREF> <xsd:IDREFS> <xsd:ENTITY> <xsd:ENTITIES> <xsd:NOTATION>
+! <> Support <xsd:restriction> facets correctly (do validation!)
 
 
 
