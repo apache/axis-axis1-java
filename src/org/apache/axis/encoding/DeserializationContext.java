@@ -659,8 +659,6 @@ public class DeserializationContext extends DefaultHandler
                 }
             }
             
-        } catch (SAXException e) {
-            e.printStackTrace();
         } finally {
             if (curElement != null)
                 curElement = curElement.getParent();
