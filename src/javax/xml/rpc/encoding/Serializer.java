@@ -56,11 +56,13 @@
 package javax.xml.rpc.encoding;
 
 /**
- * The javax.xml.rpc.encoding.Serializer interface defines a base interface for serializers. A Serializer serializes 
- * a Java object to an XML representation using a specific XML processing mechanism and based on the specified type 
+ * The javax.xml.rpc.encoding.Serializer interface defines 
+ * a base interface for serializers. A Serializer serializes 
+ * a Java object to an XML representation using a specific 
+ * XML processing mechanism and based on the specified type 
  * mapping and encoding style. 
  *
- * @version 0.1
+ * @version 0.6
  */
 public interface Serializer extends java.io.Serializable {
 

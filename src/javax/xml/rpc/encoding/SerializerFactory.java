@@ -59,10 +59,11 @@ import javax.xml.rpc.JAXRPCException;
 import java.util.Iterator;
 
 /**
- * The javax.xml.rpc.encoding.SerializerFactory is a factory of the serializers. A SerializerFactory is registered 
+ * The javax.xml.rpc.encoding.SerializerFactory is a factory of the serializers.
+ * A SerializerFactory is registered 
  * with a TypeMapping object as part of the TypeMappingRegistry.
  *
- * @version 0.1
+ * @version 0.6
  */
 public interface SerializerFactory extends java.io.Serializable {
 
