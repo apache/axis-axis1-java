@@ -58,6 +58,7 @@ import org.apache.axis.Constants;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.enum.Style;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
@@ -562,12 +563,34 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * the soap:body namespace, if it exists, otherwise it is "".
      * 
      * @param bindingOper the operation
+     * @param bEntry the symbol table binding entry
+     * @param symbolTable SymbolTable  
      * @return the operation QName
      */ 
-    public static QName getOperationQName(BindingOperation bindingOper) {
+    public static QName getOperationQName(BindingOperation bindingOper, 
+                                          BindingEntry bEntry,
+                                          SymbolTable symbolTable) {
+
         Operation operation = bindingOper.getOperation();
         String operationName = operation.getName();
-        QName elementQName = null;
+
+        // For the wrapped case, use the part element's name...which is
+        // is the same as the operation name, but may have a different
+        // namespace ?
+        // example:
+        //   <part name="paramters" element="ns:myelem">
+        if (bEntry.getBindingStyle() == Style.DOCUMENT &&
+            symbolTable.isWrapped()) {
+            Input input = operation.getInput();
+            if (input != null) {
+                Map parts = input.getMessage().getParts();
+                if (parts != null && !parts.isEmpty()) {
+                    Iterator i = parts.values().iterator();
+                    Part p = (Part) i.next();
+                    return p.getElementName();
+                }
+            }
+        }
 
         String ns = null;
 
@@ -594,32 +617,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         if (ns == null) {
             ns = "";
         }
-
-        // Get the qname from the first message part, if it is an element
-        // example:
-        //   <part name="paramters" element="ns:myelem">
-        Input input = operation.getInput();
-        if (input != null) {
-            Map parts = input.getMessage().getParts();
-            if (parts != null && !parts.isEmpty()) {
-                Iterator i = parts.values().iterator();
-                Part p = (Part) i.next();
-                elementQName = p.getElementName();
-            }
-        }
         
-        // NOTE: it is possible for someone to define a part as an element
-        // while using rpc/encoded, which is wrong and we might want to catch it
-        // here.
-        
-        // If we didn't find an element declared in the part (assume it's a
-        // type), so the QName will be the operation name with the
-        // namespace (if any) from the binding soap:body tag.
-        if (elementQName == null) {
-            elementQName = new QName(ns, operationName);
-        }
-
-        return elementQName;
+        return new QName(ns, operationName);
     }
 
     /**

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<wsdl:definitions 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:tns="urn:header.wsdl.test" 
+	targetNamespace="urn:header.wsdl.test" 
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+
+  <wsdl:types>
+    <xsd:schema>
+
+      <xsd:element name="Header" type="tns:HeaderType"/>
+      <xsd:complexType name="HeaderType">
+        <xsd:all>
+          <element name="e1" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="op1Request">
+    <wsdl:part name="parm1" type="xsd:int"/>
+    <wsdl:part name="parm2" type="xsd:string"/>
+    <wsdl:part name="header" element="tns:Header"/>
+  </wsdl:message>
+
+  <wsdl:message name="op1Response">
+<!--
+    <wsdl:part name="header" element="tns:Header"/>
+-->
+    <wsdl:part name="return" type="xsd:float"/>
+  </wsdl:message>
+
+  <wsdl:message name="op1Fault">
+    <wsdl:part name="message" type="xsd:string"/>
+  </wsdl:message>
+
+  <wsdl:portType name="PortType">
+    <wsdl:operation name="op1">
+      <wsdl:input message="tns:op1Request"/>
+      <wsdl:output message="tns:op1Response"/>
+<!--
+      <wsdl:fault name="op1Fault" message="tns:op1Fault"/>
+-->
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="Binding" type="tns:PortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+    <wsdl:operation name="op1">
+      <soap:operation/>
+      <wsdl:input>
+        <soap:body use="literal"
+                   namespace="urn:header.wsdl.test"
+                   parts="parm2"/>
+        <soap:header message="tns:op1Request"
+                     part="parm1"
+                     use="literal"
+                     namespace="urn:header.wsdl.test">
+<!--
+          <soap:headerfault message="tns:op1Fault"
+                            part="message"
+                            use="literal" 
+                            namespace="urn:header.wsdl.test"/>
+-->
+        </soap:header>
+        <soap:header message="tns:op1Request"
+                     part="header"
+                     use="literal"
+                     namespace="urn:header.wsdl.test">
+<!--
+          <soap:headerfault message="tns:op1Fault"
+                            part="message"
+                            use="literal" 
+                            namespace="urn:header.wsdl.test"/>
+-->
+        </soap:header>
+      </wsdl:input>
+      <wsdl:output>
+<!--
+        <soap:body use="literal"
+                   parts="header"
+                   namespace="urn:header.wsdl.test"/>
+-->
+<!--
+        <soap:header message="tns:op1Response"
+                     part="return"
+                     use="literal"
+                     namespace="urn:header.wsdl.test">
+        </soap:header>
+-->
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="HeaderService">
+    <wsdl:port name="header" binding="tns:Binding">
+      <soap:address location="http://localhost:8080/axis/services/header"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

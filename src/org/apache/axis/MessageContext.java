@@ -62,6 +62,7 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.soap.SOAPConstants;
@@ -78,6 +79,7 @@ import javax.xml.rpc.Call;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import java.io.File;
 import java.util.Hashtable;
+import java.util.ArrayList;
 
 /**
  * Some more general docs will go here.
@@ -185,7 +187,8 @@ public class MessageContext implements SOAPMessageContext {
     private String  username       = null;
     private String  password       = null;
     private Style   operationStyle = Style.RPC;
-    private String  encodingStyle  = operationStyle.getEncoding();
+    private Use     operationUse   = Use.ENCODED;
+    private String  encodingStyle  = operationUse.getEncoding();
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
 
@@ -207,6 +210,16 @@ public class MessageContext implements SOAPMessageContext {
         currentOperation = operation;
     }
 
+    /**
+     * getPossibleOperationsByQName
+     * Returns a list of operation descriptors that could may 
+     * possibly match a body containing an element of the given QName.
+     * For non-DOCUMENT, the list of operation descriptors that match
+     * the name is returned.  For DOCUMENT, all the operations that have
+     * qname as a parameter are returned
+     * @param qname of the first element in the body
+     * @return list of operation descriptions
+     */
     public OperationDesc [] getPossibleOperationsByQName(QName qname) throws AxisFault
     {
         if (currentOperation != null) {
@@ -235,11 +248,31 @@ public class MessageContext implements SOAPMessageContext {
             ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
 
             if (desc != null) {
-                possibleOperations = desc.getOperationsByQName(qname);
                 setOperationStyle(desc.getStyle());
+                setOperationUse(desc.getUse());
+                if (desc.getStyle() != Style.DOCUMENT) {
+                    possibleOperations = desc.getOperationsByQName(qname);
+                } else {
+                    // DOCUMENT Style
+                    // Get all of the operations that have qname as
+                    // a possible parameter QName
+                    ArrayList allOperations = desc.getOperations();
+                    ArrayList foundOperations = new ArrayList();
+                    for (int i=0; i < allOperations.size(); i++ ) {
+                        OperationDesc tryOp = 
+                            (OperationDesc) allOperations.get(i);
+                        if (tryOp.getParamByQName(qname) != null) {
+                            foundOperations.add(tryOp);
+                        }
+                    }
+                    if (foundOperations.size() > 0) {
+                        possibleOperations = (OperationDesc[])
+                            JavaUtils.convert(foundOperations, 
+                                              OperationDesc[].class);
+                    }
+                }
             }
         }
-
         return possibleOperations;
     }
 
@@ -401,7 +434,8 @@ public class MessageContext implements SOAPMessageContext {
      * Encoding
      */
     public boolean isEncoded() {
-        return soapConstants.getEncodingURI().equals(encodingStyle);
+        return (operationUse == Use.ENCODED);
+        //return soapConstants.getEncodingURI().equals(encodingStyle);
     }
 
     /**
@@ -614,9 +648,10 @@ public class MessageContext implements SOAPMessageContext {
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
             setOperationStyle(service.getStyle());
+            setOperationUse(service.getUse());
 
             // styles are not "soap version aware" so compensate...
-            setEncodingStyle(service.getStyle().getEncoding());
+            setEncodingStyle(service.getUse().getEncoding());
 
             // This MessageContext should now defer properties it can't find
             // to the Service's options.
@@ -770,6 +805,11 @@ public class MessageContext implements SOAPMessageContext {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setOperationStyle(Style.getStyle((String)value, Style.DEFAULT));
+            if (getOperationStyle() == Style.RPC) {
+                setOperationUse(Use.ENCODED);
+            } else if (getOperationStyle() == Style.DOCUMENT) {
+                setOperationUse(Use.LITERAL);
+            }
         }
         else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
@@ -912,6 +952,20 @@ public class MessageContext implements SOAPMessageContext {
     public Style getOperationStyle() {
         return operationStyle;
     } // getOperationStyle
+
+    /**
+     * Set the operation use.
+     */
+    public void setOperationUse(Use operationUse) {
+        this.operationUse = operationUse;
+    } // setOperationUse
+
+    /**
+     * Get the operation use.
+     */
+    public Use getOperationUse() {
+        return operationUse;
+    } // getOperationUse
 
     /**
      * Should soapAction be used?

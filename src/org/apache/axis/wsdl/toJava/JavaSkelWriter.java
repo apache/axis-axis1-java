@@ -185,12 +185,18 @@ public class JavaSkelWriter extends JavaClassWriter {
                     // Get the QNames representing the parameter name and type
                     QName paramName = p.getQName();
                     QName paramType = Utils.getXSIType(p);
+
+                    // Is this parameter a header?
+                    String inHeader = p.isInHeader() ? "true" : "false";
+                    String outHeader = p.isOutHeader() ? "true" : "false";
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
                         Utils.getNewQName(paramName) +
                         ", " + modeStr +
                         ", " + Utils.getNewQName(paramType) +
-                        ", " + Utils.getParameterTypeName(p) + ".class), ");
+                        ", " + Utils.getParameterTypeName(p) + ".class" +
+                        ", " + inHeader +
+                        ", " + outHeader + "), ");
                 }
 
                 pw.println("        };");
@@ -214,13 +220,18 @@ public class JavaSkelWriter extends JavaClassWriter {
 
                 if (retType != null) {
                     pw.println("        _oper.setReturnType(" +
-                               Utils.getNewQName(retType) + ");");            
+                               Utils.getNewQName(retType) + ");");
+                    if (parameters.returnParam != null &&
+                        parameters.returnParam.isOutHeader()) {
+                        pw.println("        _oper.setReturnHeader(true);");
+                    }
                 }
 
                 // If we need to know the QName (if we have a namespace or
                 // the actual method name doesn't match the XML we expect),
                 // record it in the OperationDesc
-                QName elementQName = Utils.getOperationQName(bindingOper);
+                QName elementQName = 
+                    Utils.getOperationQName(bindingOper, bEntry, symbolTable);
                 if (elementQName != null) {
                     pw.println("        _oper.setElementQName(" +
                             Utils.getNewQName(elementQName) + ");");
