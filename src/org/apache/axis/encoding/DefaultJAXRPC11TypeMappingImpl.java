@@ -40,7 +40,7 @@ public class DefaultJAXRPC11TypeMappingImpl extends DefaultTypeMappingImpl {
 
     public static TypeMapping createWithDelegate() {
         TypeMapping ret = new DefaultJAXRPC11TypeMappingImpl();
-        ret.setDelegate(DefaultTypeMappingImpl.getSingleton());
+        ret.setDelegate(DefaultJAXRPC11TypeMappingImpl.getSingleton());
         return ret;
     }
 
