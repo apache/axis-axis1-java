@@ -74,8 +74,10 @@ public class SOAPFaultReasonBuilder extends SOAPHandler implements Callback
 {
     /** Storage for the actual text */
     private ArrayList text = new ArrayList();
+    private SOAPFaultBuilder faultBuilder;
     
-    public SOAPFaultReasonBuilder() {
+    public SOAPFaultReasonBuilder(SOAPFaultBuilder faultBuilder) {
+        this.faultBuilder = faultBuilder;
     }
 
     public SOAPHandler onStartChild(String namespace,
@@ -90,7 +92,8 @@ public class SOAPFaultReasonBuilder extends SOAPHandler implements Callback
             Deserializer currentDeser = null;
             currentDeser = context.getDeserializerForType(Constants.XSD_STRING);
             if (currentDeser != null) {
-                currentDeser.registerValueTarget(new CallbackTarget(this, null));
+                currentDeser.registerValueTarget(
+                        new CallbackTarget(faultBuilder, thisQName));
             }
             return (SOAPHandler)currentDeser;
         } else {

@@ -110,7 +110,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     }
 
     static {
-        fields_soap12.put(Constants.ELEM_FAULT_REASON_SOAP12, Constants.XSD_STRING);
+        fields_soap12.put(Constants.ELEM_FAULT_REASON_SOAP12, null);
         fields_soap12.put(Constants.ELEM_FAULT_ROLE_SOAP12, Constants.XSD_STRING);
         fields_soap12.put(Constants.ELEM_FAULT_NODE_SOAP12, Constants.XSD_STRING);
         fields_soap12.put(Constants.ELEM_FAULT_DETAIL_SOAP12, null);
@@ -278,6 +278,8 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                 QName thisQName = new QName(namespace, name);
                 if (thisQName.equals(Constants.QNAME_FAULTCODE_SOAP12))
                     return (code = new SOAPFaultCodeBuilder());
+                else if (thisQName.equals(Constants.QNAME_FAULTREASON_SOAP12))
+                    return new SOAPFaultReasonBuilder(this);
                 else if (thisQName.equals(Constants.QNAME_FAULTDETAIL_SOAP12))
                     return new SOAPFaultDetailsBuilder(this);
 
@@ -333,7 +335,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         if (((QName)hint).getNamespaceURI().equals(Constants.URI_SOAP12_ENV)) {
             if (local.equals(Constants.ELEM_FAULT_ROLE_SOAP12)) {
                 faultActor = (String) value;
-            } else if (local.equals(Constants.ELEM_FAULT_REASON_SOAP12)) {
+            } else if (local.equals(Constants.ELEM_TEXT_SOAP12)) {
                 faultString = (String) value;
             } else if (local.equals(Constants.ELEM_FAULT_NODE_SOAP12)) {
                 faultNode = (String) value;
