@@ -119,7 +119,7 @@ public class LogHandler extends BasicHandler {
 
     }
 
-    public void undo(MessageContext msgContext) {
+    public void onFault(MessageContext msgContext) {
         try {
             Handler serviceHandler = msgContext.getService();
             String filename = (String) getOption("filename");

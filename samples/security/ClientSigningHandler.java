@@ -96,7 +96,7 @@ public class ClientSigningHandler extends BasicHandler {
         }
     }
 
-    public void undo(MessageContext msgContext) {
+    public void onFault(MessageContext msgContext) {
         try {
             // probably needs to fault.
         } catch (Exception e) {
