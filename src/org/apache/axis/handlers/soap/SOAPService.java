@@ -55,12 +55,14 @@
 package org.apache.axis.handlers.soap;
 
 import java.util.Vector;
+import java.util.Enumeration;
 import org.apache.axis.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
+import org.w3c.dom.*;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -171,6 +173,17 @@ public class SOAPService extends SimpleTargetedChain
     {
         Debug.Print( 1, "Enter: SOAPService::undo" );
         Debug.Print( 1, "Exit: SOAPService::undo" );
+    }
+
+    public Element getDeploymentData(Document doc) {
+      Debug.Print( 1, "Enter: SOAPService::getDeploymentData" );
+
+      Element  root = doc.createElement( "service" );
+
+      fillInDeploymentData(root);
+      
+      Debug.Print( 1, "Exit: SOAPService::getDeploymentData" );
+      return( root );
     }
 
     /*********************************************************************
