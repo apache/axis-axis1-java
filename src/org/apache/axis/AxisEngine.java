@@ -57,11 +57,14 @@ package org.apache.axis;
 
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.ClassCache;
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Call;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -71,6 +74,7 @@ import javax.xml.rpc.server.ServiceLifecycle;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Enumeration;
+
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -107,6 +111,7 @@ public abstract class AxisEngine extends BasicHandler
 
     // Default admin. password
     private static final String DEFAULT_ADMIN_PASSWORD = "admin";
+
 
     /** Our go-to guy for configuration... */
     protected EngineConfiguration config;
@@ -186,7 +191,7 @@ public abstract class AxisEngine extends BasicHandler
 
         /*Set the default attachment implementation */
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION,
-                         getProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
+                         AxisProperties.getProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
 
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
 
@@ -409,11 +414,12 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     protected void invokeJAXRPCHandlers(MessageContext context){
-        org.apache.axis.client.Service service = (org.apache.axis.client.Service) context.getProperty(org.apache.axis.client.Call.WSDL_SERVICE);
+        Service service
+            = (Service)context.getProperty(Call.WSDL_SERVICE);
         if(service == null)
             return;
 
-        QName portName = (QName) context.getProperty(org.apache.axis.client.Call.WSDL_PORT_NAME);
+        QName portName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
         if(portName == null)
             return;
 
@@ -426,7 +432,9 @@ public abstract class AxisEngine extends BasicHandler
         if(chain == null || chain.isEmpty())
             return;
 
-        org.apache.axis.handlers.HandlerChainImpl impl = new org.apache.axis.handlers.HandlerChainImpl(chain);
+        HandlerChainImpl impl
+            = new HandlerChainImpl(chain);
+
         if(!context.getPastPivot())
             impl.handleRequest(context);
         else

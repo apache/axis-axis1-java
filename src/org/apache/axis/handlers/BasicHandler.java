@@ -220,11 +220,4 @@ public abstract class BasicHandler implements Handler {
     public List getUnderstoodHeaders() {
         return null;
     }
-    
-    /**
-     * Hook to axis service... for now hardwire
-     */
-    protected static final String getProperty(String property) {
-        return AxisProperties.getProperty(property);
-    }
 }
