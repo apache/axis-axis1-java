@@ -117,7 +117,7 @@ public abstract class TestClient {
            Iterator i = keys1.iterator();
            while (i.hasNext()) {
                Object key = i.next();
-               if (!map1.get(key).equals(map2.get(key)))
+               if (!equals(map1.get(key), map2.get(key)))
                    return false;
            }
            return true;
@@ -253,8 +253,8 @@ public abstract class TestClient {
         test("Boolean     ", Boolean.TRUE);
 
         HashMap map = new HashMap();
-        map.put("stringKey", new Integer(5));
-        map.put(new Date(), "string value");
+        map.put(new Integer(5), "String Value");
+        map.put("String Key", new Date());
         test("Map         ", map);
 
         HashMap map2 = new HashMap();
