@@ -174,8 +174,8 @@ public class RPCProvider extends JavaProvider {
                 fault.addFaultSubCode(Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
                 throw new SAXException(fault);
             } else {
-                throw new AxisFault(Messages.getMessage("noSuchOperation",
-                                                        methodName));
+                throw new AxisFault(Constants.FAULT_CLIENT, Messages.getMessage("noSuchOperation", methodName),
+                        null, null);                        
             }
         }
         
