@@ -63,13 +63,13 @@ import java.util.Iterator;
 /**
  * class to list headers sent in request as a string array
  */
-public class echoHeaders {
+public class EchoHeaders {
 
     /**
      * demo message context stuff
-     * @return
+     * @return list of request headers
      */
-    public String[] getHeaders() {
+    public String[] list() {
         HttpServletRequest request = getRequest();
         Enumeration headers=request.getHeaderNames();
         ArrayList list=new ArrayList();
@@ -92,9 +92,17 @@ public class echoHeaders {
     public String whoami() {
         HttpServletRequest request = getRequest();
         String remote=request.getRemoteHost();
-        return "hello caller from "+remote;
+        return "Hello caller from "+remote;
     }
 
+    /**
+     * very simple method to echo the param.
+     * @param param
+     * @return
+     */
+    public String echo(String param) {
+        return param;
+    }
 
     /**
      * helper
