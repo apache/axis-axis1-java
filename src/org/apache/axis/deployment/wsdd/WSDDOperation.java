@@ -54,21 +54,16 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.handlers.soap.SOAPService;
+import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -88,16 +83,17 @@ public class WSDDOperation extends WSDDElement
     OperationDesc desc = new OperationDesc();
 
     /**
-     * Set operation descriptor 
-     * @throws WSDDException 
+     * Constructor
      */
     public WSDDOperation(OperationDesc desc) {
         this.desc = desc;
     }
         
     /**
+     * Constructor from XML
      *
-     * @param e (Element) XXX
+     * @param e (Element) the <operation> element
+     * @param parent our ServiceDesc.
      * @throws WSDDException XXX
      */
     public WSDDOperation(Element e, ServiceDesc parent)
@@ -105,6 +101,7 @@ public class WSDDOperation extends WSDDElement
     {
         super(e);
 
+        desc.setParent(parent);
         desc.setName(e.getAttribute("name"));
 
         String qNameStr = e.getAttribute("qname");
@@ -115,33 +112,16 @@ public class WSDDOperation extends WSDDElement
         if (retQNameStr != null && !retQNameStr.equals(""))
             desc.setReturnQName(XMLUtils.getQNameFromString(retQNameStr, e));
         
+        String retTypeStr = e.getAttribute("returnType");
+        if (retTypeStr != null && !retTypeStr.equals(""))
+            desc.setReturnType(XMLUtils.getQNameFromString(retTypeStr, e));
+
         Element [] parameters = getChildElements(e, "parameter");
         for (int i = 0; i < parameters.length; i++) {
             Element paramEl = parameters[i];
             WSDDParameter parameter = new WSDDParameter(paramEl, desc);
             desc.addParameter(parameter.getParameter());
         }
-
-        // FIXME: No longer needed now that we have the qname attribute on the
-        // operation itself.
-        /*
-        if (parent.getStyle() == ServiceDesc.STYLE_DOCUMENT) {
-            Element [] mappingElements = getChildElements(e, "elementMapping");
-            if (mappingElements.length > 1) {
-                // Can only have one for now
-                throw new WSDDException(JavaUtils.getMessage("onlyOneMapping"));
-            }
-
-            if (mappingElements.length > 0) {
-                // Register a mapping from an Element QName to a particular
-                // method so we can dispatch for doc/lit services.
-                Element el = mappingElements[0];
-                String elString = el.getAttribute("qname");
-                QName elQName = XMLUtils.getQNameFromString(elString, el);
-                desc.setElementQName(elQName);
-            }
-        }
-        */
     }
 
     /**
@@ -155,6 +135,12 @@ public class WSDDOperation extends WSDDElement
             attrs.addAttribute("", "returnQName", "returnQName",
                                "CDATA",
                                context.qName2String(desc.getReturnQName()));
+        }
+
+        if (desc.getReturnType() != null) {
+            attrs.addAttribute("", "returnType", "returnType",
+                               "CDATA",
+                               context.qName2String(desc.getReturnType()));
         }
 
         if (desc.getName() != null) {

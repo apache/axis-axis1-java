@@ -58,7 +58,6 @@ import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.Method;
-import java.lang.reflect.Array;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -86,17 +85,6 @@ public class OperationDesc {
     /** An XML QName which should dispatch to this method */
     private QName elementQName;
 
-    /** The return QName (if it should be different from <method>Result) */
-    private QName returnQName;
-
-    /** The return type */
-    private QName returnType;
-    
-    /** The return class */
-    private Class returnClass;
-    
-    // FIXME : Just have a return ParamDesc???
-
     /** The actual Java method associated with this operation, if known */
     private Method method;
 
@@ -112,6 +100,8 @@ public class OperationDesc {
     /** Faults for this operation */
     private ArrayList faults = null;
 
+    private ParameterDesc returnDesc = new ParameterDesc();
+
     /**
      * Default constructor.
      */
@@ -123,7 +113,7 @@ public class OperationDesc {
      */
     public OperationDesc(String name, ParameterDesc [] parameters, QName returnQName) {
         this.name = name;
-        this.returnQName = returnQName;
+        returnDesc.setQName(returnQName);
         for (int i = 0; i < parameters.length; i++) {
             addParameter(parameters[i]);
         }
@@ -144,28 +134,28 @@ public class OperationDesc {
     }
 
     public QName getReturnQName() {
-        return returnQName;
+        return returnDesc.getQName();
     }
 
     public void setReturnQName(QName returnQName) {
-        this.returnQName = returnQName;
+        returnDesc.setQName(returnQName);
     }
 
     public QName getReturnType() {
-        return returnType;
+        return returnDesc.getTypeQName();
     }
 
     public void setReturnType(QName returnType) {
         log.debug("@" + Integer.toHexString(hashCode())  + "setReturnType(" + returnType +")");
-        this.returnType = returnType;
+        returnDesc.setTypeQName(returnType);
     }
 
     public Class getReturnClass() {
-        return returnClass;
+        return returnDesc.getJavaType();
     }
 
     public void setReturnClass(Class returnClass) {
-        this.returnClass = returnClass;
+        returnDesc.setJavaType(returnClass);
     }
 
     public QName getElementQName() {
@@ -304,11 +294,10 @@ public class OperationDesc {
         }
 
         if ((param == null) || (param.getMode() == ParameterDesc.IN)) {
-            if (returnQName == null || qname.equals(returnQName)) {
-                param = new ParameterDesc();
+            if (returnDesc.getQName() == null ||
+                    qname.equals(returnDesc.getQName())) {
+                param = returnDesc;
                 param.setQName(qname);
-                param.setTypeQName(returnType);
-                param.setJavaType(returnClass);
             }
         }
 
@@ -339,6 +328,10 @@ public class OperationDesc {
     public ArrayList getFaults()
     {
         return faults;
+    }
+
+    public ParameterDesc getReturnParamDesc() {
+        return returnDesc;
     }
 }
 
