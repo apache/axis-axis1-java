@@ -58,6 +58,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -213,9 +214,11 @@ public class RPCParam implements Serializable
                 javaType = paramDesc.getJavaType() != null ?
                     paramDesc.getJavaType(): javaType;
             } else if (!(javaType.equals(paramDesc.getJavaType()))) {
-                // This must (assumedly) be a polymorphic type - in ALL
-                // such cases, we must send an xsi:type attribute.
-                wantXSIType = Boolean.TRUE;
+                if (!(javaType.equals(
+                        JavaUtils.getHolderValueType(paramDesc.getJavaType()))))
+                    // This must (assumedly) be a polymorphic type - in ALL
+                    // such cases, we must send an xsi:type attribute.
+                    wantXSIType = Boolean.TRUE;
             }
             xmlType = paramDesc.getTypeQName();
         }

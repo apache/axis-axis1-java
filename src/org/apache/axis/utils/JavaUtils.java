@@ -861,7 +861,7 @@ public class JavaUtils
         if (type != null) {
             Class[] intf = type.getInterfaces();
             boolean isHolder = false;
-            for (int i=0; i<intf.length; i++) {
+            for (int i=0; i<intf.length && !isHolder; i++) {
                 if (intf[i] == javax.xml.rpc.holders.Holder.class) {
                     isHolder = true;
                 }
