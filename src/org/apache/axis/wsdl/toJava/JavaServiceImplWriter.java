@@ -179,11 +179,9 @@ public class JavaServiceImplWriter extends JavaClassWriter {
             if (getPortIfaces.contains(bindingType)) {
                 printGetPortNotice = true;
             }
-            else {
-                getPortIfaces.add(bindingType);
-                getPortStubClasses.add(stubClass);
-                getPortPortNames.add(portName);
-            }
+            getPortIfaces.add(bindingType);
+            getPortStubClasses.add(stubClass);
+            getPortPortNames.add(portName);
 
             // Get endpoint address and validate it
             String address = WSDLUtils.getAddressFromPort(p);
@@ -208,7 +206,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         }
         writeGetPortClass(pw, getPortIfaces, getPortStubClasses,
                 getPortPortNames, printGetPortNotice);
-        writeGetPortQNameClass(pw);
+        writeGetPortQNameClass(pw, getPortPortNames);
         writeGetServiceName(pw, sEntry.getQName());
         writeGetPorts(pw, getPortPortNames);
     } // writeFileBody
@@ -339,16 +337,31 @@ public class JavaServiceImplWriter extends JavaClassWriter {
     /**
      * Write the getPort(QName portName, Class serviceInterfaceWriter) method.
      */
-    protected void writeGetPortQNameClass(PrintWriter pw) {
+    protected void writeGetPortQNameClass(PrintWriter pw,
+             Vector getPortPortNames) {
         pw.println("    /**");
         pw.println("     * " + Messages.getMessage("getPortDoc00"));
         pw.println("     * " + Messages.getMessage("getPortDoc01"));
         pw.println("     * " + Messages.getMessage("getPortDoc02"));
         pw.println("     */");
         pw.println("    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
-        pw.println("        java.rmi.Remote _stub = getPort(serviceEndpointInterface);");
-        pw.println("        ((org.apache.axis.client.Stub) _stub).setPortName(portName);");
-        pw.println("        return _stub;");
+        pw.println("        if (portName == null) {");
+        pw.println("            return getPort(serviceEndpointInterface);");
+        pw.println("        }");
+        pw.println("        String inputPortName = portName.getLocalPart();");
+        pw.print("        ");
+        for (int i = 0; i < getPortPortNames.size(); ++i) {
+            String portName = (String) getPortPortNames.get(i);
+            pw.println("if (\"" + portName + "\".equals(inputPortName)) {");
+            pw.println("            return get" + portName + "();");
+            pw.println("        }");
+            pw.print("        else ");
+        }
+        pw.println(" {");
+        pw.println("            java.rmi.Remote _stub = getPort(serviceEndpointInterface);");
+        pw.println("            ((org.apache.axis.client.Stub) _stub).setPortName(portName);");
+        pw.println("            return _stub;");
+        pw.println("        }");
         pw.println("    }");
         pw.println();
     } // writeGetPortQNameClass
