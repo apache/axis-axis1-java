@@ -87,8 +87,6 @@ public interface Call {
     // Constants for the standard properties
     public static final String ENCODINGSTYLE_URI_PROPERTY =
             "javax.xml.rpc.encodingstyle.namespace.uri";
-    public static final String ENDPOINT_ADDRESS_PROPERTY =
-            "javax.xml.rpc.service.endpoint.address";
     public static final String OPERATION_STYLE_PROPERTY =
             "javax.xml.rpc.soap.operation.style";
     public static final String PASSWORD_PROPERTY =
@@ -110,7 +108,7 @@ public interface Call {
      * metadata and the user is not allowed to mess with it. These methods
      * throw JAXRPCException if this method returns false.
      */
-    public boolean isParameterAndReturnSpecRequired();
+    public boolean isParameterAndReturnSpecRequired(QName operationName);
 
     /**
      * Adds a parameter type and mode for a specific operation. Note that the

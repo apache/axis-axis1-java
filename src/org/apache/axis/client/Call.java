@@ -308,7 +308,7 @@ public class Call implements javax.xml.rpc.Call {
             }
             setEncodingStyle((String) value);
         }
-        else if (name.equals(ENDPOINT_ADDRESS_PROPERTY)) {
+        else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
                         JavaUtils.getMessage("badProp00", new String[]
@@ -642,7 +642,7 @@ public class Call implements javax.xml.rpc.Call {
      * data and the user is not allowed to mess with it.  These methods throw JAXRPCException if
      * this method returns false.
      */
-    public boolean isParameterAndReturnSpecRequired() {
+    public boolean isParameterAndReturnSpecRequired(QName operationName) {
         return parmAndRetReq;
     } // isParameterAndReturnSpecRequired
 

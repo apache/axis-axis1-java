@@ -73,8 +73,8 @@ public interface Stub {
     /**
      * Target service endpoint address.
      */
-    public static final String ADDRESS_PROPERTY =
-            Call.ENDPOINT_ADDRESS_PROPERTY;
+    public static final String ENDPOINT_ADDRESS_PROPERTY =
+            "javax.xml.rpc.service.endpoint.address";
     /**
      * This boolean property is used by a service client to indicate
      * whether or not it wants to participate in a session with a service

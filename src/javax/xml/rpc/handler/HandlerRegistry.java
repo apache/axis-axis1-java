@@ -89,6 +89,6 @@ public interface HandlerRegistry extends Serializable {
      *  @throws java.lang.IllegalArgumentException If an invalid
      *     portName is specified
      */
-    public abstract void setRequestHandlerChain(
+    public abstract void setHandlerChain(
             QName portName, java.util.List chain);
 }

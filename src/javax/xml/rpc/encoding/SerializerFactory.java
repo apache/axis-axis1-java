@@ -74,10 +74,10 @@ public interface SerializerFactory extends java.io.Serializable {
      *
      * @return a Serializer for the specified XML processing mechanism type.
      *
-     * @throws JAXRPCException
+     * @throws JAXRPCException If SerializerFactory does not support the specified XML processing mechanism
+     * @throws java.lang.IllegalArgumentException If an invalid mechanism type is specified.
      */
-    public Serializer getSerializerAs(String mechanismType)
-        throws JAXRPCException;
+    public Serializer getSerializerAs(String mechanismType);
 
     /**
      * Returns a list of all XML processing mechanism types supported by this SerializerFactory.

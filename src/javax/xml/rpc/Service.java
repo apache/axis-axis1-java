@@ -168,7 +168,7 @@ public interface Service {
      * @throws ServiceException - If this Service class does not have access
      * to the required WSDL metadata or if an illegal portName is specified.
      */
-    public Call[] getCalls() throws ServiceException;
+    public Call[] getCalls(QName portName) throws ServiceException;
 
     /**
      * Returns the configured HandlerRegistry instance for this Service
@@ -199,8 +199,9 @@ public interface Service {
      * Gets the list of qualified names of the ports grouped by this service
      *
      * @return iterator containing list of qualified names of the ports  
+     * @throws ServiceException If this Service class does not have access to the required WSDL metadata
      */
-    public java.util.Iterator getPorts();
+    public java.util.Iterator getPorts() throws ServiceException;
 
     /**
      * Gets the TypeMappingRegistry registered with this Service object
