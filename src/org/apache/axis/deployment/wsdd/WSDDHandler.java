@@ -112,16 +112,4 @@ public class WSDDHandler
         writeParamsToContext(context);
         context.endElement();
     }
-
-    /**
-     *
-     * @param registry XXX
-     * @return XXX
-     * @throws Exception XXX
-     */
-    public Handler getInstance(DeploymentRegistry registry)
-        throws Exception
-    {
-        return makeNewInstance(registry);
-    }
 }
