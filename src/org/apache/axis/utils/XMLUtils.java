@@ -203,23 +203,24 @@ public class XMLUtils {
       return( null );
   }
   
-  public static String DocumentToString(Document doc) {
-      return privateElementToString(doc.getDocumentElement(), false);
-  }
-
-  public static void DocumentToStream(Document doc, OutputStream out) {
-      ElementToStream(doc.getDocumentElement(), out);
-  }
-
   public static String ElementToString(Element element) {
       return privateElementToString(element, true);
   }
   
-  public static void ElementToStream(Element element, OutputStream out) {
+  public static String DocumentToString(Document doc) {
+      return privateElementToString(doc.getDocumentElement(), false);
+  }
+
+  public static void privateElementToStream(Element element, OutputStream out,
+                                            boolean omitXMLDecl) {
     try {
       Transformer transformer = getTransformer();
       DOMSource source = new DOMSource(element);
       StreamResult result = new StreamResult(out);
+      Properties p = new Properties();
+      p.put(OutputKeys.OMIT_XML_DECLARATION,
+            omitXMLDecl ? "yes" : "no");
+      transformer.setOutputProperties(p);
       transformer.transform(source, result);
     }
     catch( Exception e ) {
@@ -227,6 +228,14 @@ public class XMLUtils {
     }
   }
   
+  public static void ElementToStream(Element element, OutputStream out) {
+    privateElementToStream(element, out, true);
+  }
+  
+  public static void DocumentToStream(Document doc, OutputStream out) {
+    privateElementToStream(doc.getDocumentElement(), out, false);
+  }
+
   public static String getInnerXMLString(Element element) {
       String elementString = ElementToString(element);
       int start, end;
