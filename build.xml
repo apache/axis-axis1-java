@@ -397,7 +397,7 @@ Copyright:
     <delete file="server-config.wsdd"/>
     <delete file="webapps/axis/WEB-INF/server-config.wsdd"/>
     <delete>
-      <fileset dir="webapps/axis" includes="**.*.class" />
+      <fileset dir="webapps/axis" includes="**/*.class" />
     </delete>
     <delete dir="test-reports"/>
     <delete file="TEST-test.functional.FunctionalTests.txt"/>
