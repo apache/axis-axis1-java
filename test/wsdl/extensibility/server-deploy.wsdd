@@ -40,7 +40,7 @@
 
       <typeMapping
         qname="query:QueryResultElement"
-        type="java:test.wsdl.extensibility.QueryResultElement"
+        type="java:test.wsdl.extensibility._QueryResultElement"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -72,7 +72,7 @@
 
         <typeMapping
            qname="query:FindBooksQueryExpressionElement"
-           type="java:test.wsdl.extensibility.FindBooksQueryExpressionElement"
+           type="java:test.wsdl.extensibility._FindBooksQueryExpressionElement"
            serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
            deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
            encodingStyle=""
