@@ -77,6 +77,13 @@ public interface Attachments {
      * @return The part associated with the attachment.
      */ 
     public Part getAttachmentByReference(String reference) throws org.apache.axis.AxisFault;
+
+    /**
+     * This method will return all attachments as a collection. 
+     * 
+     * @return A collection of attachments. 
+     */ 
+    public java.util.Collection getAttachments() throws org.apache.axis.AxisFault;
     
     /**
      * Create a new attachment Part in this Message.

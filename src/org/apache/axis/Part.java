@@ -179,7 +179,9 @@ public abstract class Part {
         if(null != match && 0 != match.length ){
             for(int i= match.length-1 ; i > -1 ; --i){
                     if(match[i] != null){
-                    retList.add( headers.get(match[i].toLowerCase())); 
+                      String key= match[i].toLowerCase();
+                      if(headers.containsKey(key))
+                         retList.add(match[i]); 
                 }
             }
         }
