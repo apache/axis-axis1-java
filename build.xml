@@ -123,11 +123,18 @@ Copyright:
       <exclude name="**/org/apache/axis/handlers/SOAPMonitorHandler.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/monitor/SOAPMonitorService.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/providers/ComProvider.java" unless="combridge.present"/>
+      <exclude name="**/org/apache/axis/transport/http/AbstractQueryStringHandler.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/AutoRegisterServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServletBase.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/AxisHTTPSessionListener.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/FilterPrintWriter.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/ServletEndpointContextImpl.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/QSWSDLHandler.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/QSMethodHandler.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/QSListHandler.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/configuration/EngineConfigurationFactoryServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/CommonsHTTPSender.java" unless="commons-httpclient.present"/>
       <exclude name="**/org/apache/axis/components/net/CommonsHTTPClientProperties.java" unless="commons-httpclient.present"/>
