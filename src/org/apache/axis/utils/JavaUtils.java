@@ -58,11 +58,13 @@ package org.apache.axis.utils;
 import org.apache.log4j.Category;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 
 import java.text.Collator;
 import java.text.MessageFormat;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -94,9 +96,9 @@ public class JavaUtils
 
     /** Utility function to convert an Object to some desired Class.
      * 
-     * Right now this only works for arrays <-> Lists, but it might be
-     * expanded into a more general form later.
-     * 
+     * Right now this works for:
+     *     arrays <-> Lists,
+     *     Holders <-> held values
      * @param arg the array to convert
      * @param destClass the actual class we want
      */
@@ -107,8 +109,6 @@ public class JavaUtils
                 arg.getClass().getName(), destClass.getName()));
         }
         
-        if (!(arg instanceof List))
-            return arg;
 
         // See if a previously converted value is stored in the argument.
         Object destValue = null;
@@ -117,7 +117,44 @@ public class JavaUtils
             if (destValue != null)
                 return destValue;
         }
-        
+
+        // Get the destination held type or the argument held type if they exist
+        Class destHeldType = getHolderValueType(destClass);
+        Class argHeldType = null;
+        if (arg != null) {
+            argHeldType = getHolderValueType(arg.getClass());
+        }
+
+        // Return if no conversion is available
+        if (!(arg instanceof List) && 
+            ((destHeldType == null && argHeldType == null) ||
+             (destHeldType != null && argHeldType != null))) {
+            return arg;
+        }
+
+        // Take care of Holder conversion
+        if (destHeldType != null) {
+            // Convert arg into Holder holding arg.
+            Object newArg = convert(arg, destHeldType);
+            Object argHolder = null;
+            try {
+                argHolder = destClass.newInstance();
+                setHolderValue(argHolder, newArg);
+                return argHolder;
+            } catch (Exception e) {
+                return arg;
+            }
+        } else if (argHeldType != null) {
+            // Convert arg into the held type
+            try {
+                Object newArg = getHolderValue(arg);
+                return convert(newArg, destClass);
+            } catch (HolderException e) {
+                return arg;
+            }
+        }
+            
+        // Flow to here indicates that neither arg or destClass is a Holder
         List list = (List)arg;
         int length = list.size();
         
@@ -171,6 +208,7 @@ public class JavaUtils
         }
         return destValue;
     }
+
 
     /**
      * These are java keywords as specified at the following URL (sorted alphabetically).
@@ -375,4 +413,68 @@ public class JavaUtils
 
         return new String(sb);
     }
+
+
+
+    /**
+     * Determines if the Class is a Holder class. If so returns Class of held type
+     * else returns null
+     * @param type the suspected Holder Class
+     * @return class of held type or null
+     */
+    public static Class getHolderValueType(Class type) {
+        if (type.getName() != null &&
+            type.getName().endsWith("Holder")) {
+            // Holder is supposed to have a public value field.
+            java.lang.reflect.Field field;
+            try {
+                field = type.getField("value");
+            } catch (Exception e) {
+                field = null;
+            }
+            if (field != null) {
+                return field.getType();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the Holder value. 
+     * @param holder Holder object            
+     * @return value object 
+     */
+    public static Object getHolderValue(Object holder) throws HolderException {
+        try {
+            Field valueField = holder.getClass().getField("value");
+            return valueField.get(holder);
+        } catch (Exception e) {
+            throw new HolderException();
+        }
+    }
+
+    /**
+     * Sets the Holder value. 
+     * @param holder Holder object            
+     * @param value is the object value 
+     */
+    public static void setHolderValue(Object holder, Object value) throws HolderException {
+        try {
+            Field valueField = holder.getClass().getField("value");
+            if (valueField.getType().isPrimitive()) {
+                if (value == null)
+                    ;  // Don't need to set anything
+                else
+                    valueField.set(holder, value);  // Automatically unwraps value to primitive
+            } else {
+                valueField.set(holder, value);
+            }
+        } catch (Exception e) {
+            throw new HolderException();
+        }
+    }
+    public static class HolderException extends Exception
+    {
+        public HolderException () {}
+    }; 
 }

@@ -104,6 +104,7 @@ public class Emitter {
     protected Definition def = null;
     protected boolean bDebug = false;
     protected boolean bEmitSkeleton = false;
+    protected boolean bDeploySkeleton = true;  
     protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
     protected boolean bGenerateImports = true;
@@ -262,6 +263,21 @@ public class Emitter {
      */ 
     public boolean getGenerateSkeleton() {
         return bEmitSkeleton;
+    }
+
+    /**
+     * Turn on/off server skeleton deploy
+     * @param boolean value
+     */
+    public void deploySkeleton(boolean value) {
+        bDeploySkeleton = value;
+    }
+
+    /**
+     * Indicate if we should be deploying skeleton or implementation
+     */ 
+    public boolean getDeploySkeleton() {
+        return bDeploySkeleton;
     }
 
     /**
