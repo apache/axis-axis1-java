@@ -345,7 +345,7 @@ public class SOAPService extends SimpleTargetedChain
         return serviceDescription;
     }
 
-    public void setServiceDescription(JavaServiceDesc serviceDescription) {
+    public void setServiceDescription(ServiceDesc serviceDescription) {
         if (serviceDescription == null) {
             // FIXME: Throw NPE?
             return;
