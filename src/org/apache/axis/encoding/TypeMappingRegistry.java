@@ -271,7 +271,8 @@ public class TypeMappingRegistry implements Serializer {
                         !_class.getName().equals("java.lang.Object")) 
                     classes.add( _class );
                 
-                _class = (Class) classes.remove( 0 );
+                _class = (!classes.isEmpty()) ? (Class) classes.remove( 0 ) :
+                            null;
             }
 
             if ( ser != null ) {
