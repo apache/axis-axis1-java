@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.utils.JavaUtils;
@@ -69,6 +70,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
+import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -99,6 +101,9 @@ import java.util.Vector;
  */
 public class JavaStubWriter extends JavaClassWriter {
 
+    /** Field log */
+    protected static Log log = LogFactory.getLog(JavaStubWriter.class.getName());
+    
     /** Field bEntry */
     private BindingEntry bEntry;
 
@@ -1090,11 +1095,16 @@ public class JavaStubWriter extends JavaClassWriter {
             // element.
             Map partsMap =
                     operation.getOperation().getInput().getMessage().getParts();
-            Part p = (Part) partsMap.values().iterator().next();
-            QName q = p.getElementName();
-
-            pw.println("        _call.setOperationName(" + Utils.getNewQName(q)
-                    + ");");
+            Iterator i = partsMap.values().iterator();
+            if(i.hasNext()) {
+                Part p = (Part) partsMap.values().iterator().next();
+                QName q = p.getElementName();
+    
+                pw.println("        _call.setOperationName(" + Utils.getNewQName(q)
+                        + ");");
+            } else {
+                log.warn(Messages.getMessage("missingPartsForMessage00",operation.getOperation().getInput().getMessage().getQName().toString())); 
+            }
         } else {
             QName elementQName = Utils.getOperationQName(operation, bEntry,
                     symbolTable);
