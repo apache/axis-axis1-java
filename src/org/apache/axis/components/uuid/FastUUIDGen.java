@@ -129,17 +129,4 @@ public class FastUUIDGen implements UUIDGen {
         return bitString;
     }
 
-    public static void main(String [] args) throws Exception {
-        String current = null;
-        String prev = null;
-        
-        FastUUIDGen g = new FastUUIDGen();
-        for (int i=0;i<1000;i++) {
-            current = g.nextUUID();
-            if (current.equals(prev)) {
-                throw new Exception(current + " " + prev);
-            }
-            prev = current;
-        }
-    }
 }
