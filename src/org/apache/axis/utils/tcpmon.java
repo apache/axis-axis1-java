@@ -1219,7 +1219,45 @@ public class tcpmon extends JFrame {
                 }
                 
                 InputStream in = null ;
-                in = new ByteArrayInputStream( conn.inputText.getText().getBytes() );
+                String      text = conn.inputText.getText();
+
+                // Fix Content-Length HTTP headers
+                if ( text.startsWith("POST ") || text.startsWith("GET ") ) {
+                  System.err.println("IN CL" );
+                  int         pos1, pos2, pos3 ;
+                  String      body, headers, headers1, header2 ;
+
+                  pos3 = text.indexOf( "\n\n" );
+                  if ( pos3 == -1 ) {
+                    pos3 = text.indexOf( "\r\n\r\n" );
+                    if ( pos3 != -1 ) pos3 = pos3 + 4 ;
+                  }
+                  else
+                    pos3 += 2 ;
+
+                  headers = text.substring( 0, pos3 );
+
+                  pos1 = headers.indexOf( "Content-Length:" );
+                  System.err.println("pos1: "+ pos1 );
+                  System.err.println("pos3: "+ pos3 );
+                  if ( pos1 != -1 ) {
+                    int  newLen = text.length()-pos3 ;
+
+                    pos2 = headers.indexOf( "\n", pos1 );
+
+                    System.err.println("CL: " + newLen );
+                    System.err.println("Hdrs: '" + headers + "'" );
+                    System.err.println("subTEXT: '" + 
+                                       text.substring(pos3,pos3+newLen)+"'");
+                    text = headers.substring(0,pos1) + 
+                           "Content-Length: " + newLen + "\n" +
+                           headers.substring(pos2+1) +
+                           text.substring(pos3) ;
+                    System.err.println("\nTEXT: '" + text + "'" );
+                  }
+                }
+
+                in = new ByteArrayInputStream( text.getBytes() );
                 new Connection( this, in );
             }
             catch( Exception e ) {
