@@ -102,7 +102,7 @@ public class RPCParam implements Serializable
             valueSetMethod = cls.getMethod("set", new Class[] {Object.class});
         } catch (NoSuchMethodException e) {
             log.error(Messages.getMessage("noValue00", "" + e));
-            System.exit(-1);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
