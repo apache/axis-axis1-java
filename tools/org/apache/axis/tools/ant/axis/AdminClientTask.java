@@ -21,7 +21,10 @@ import org.apache.axis.client.AdminClient;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.taskdefs.MatchingTask;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 
 import javax.xml.rpc.ServiceException;
 import java.io.File;
@@ -54,6 +57,8 @@ public class AdminClientTask extends MatchingTask {
     private boolean debug;
     private String newPassword;
     private LinkedList argslist;
+    private boolean fork = false;
+    private Path classpath = null;
 
     /**
      * set a debug flag
@@ -167,6 +172,15 @@ public class AdminClientTask extends MatchingTask {
      */
     public void setFailOnError(boolean fail) {
         failOnError = fail;
+    }
+
+    /**
+     * If true, forks the ant invocation.
+     *
+     * @param f "true|false|on|off|yes|no"
+     */
+    public void setFork(boolean f) {
+        fork = f;
     }
 
     /**
@@ -296,7 +310,40 @@ public class AdminClientTask extends MatchingTask {
             args[counter] = arg;
             counter++;
         }
+        if (fork) {
+            executeInForkedVM(args);
+        } else {
+            executeInCurrentVM(args);
+        }
+    }
 
+    private void executeInForkedVM(String[] args) {
+        try {
+            // Create an instance of the compiler, redirecting output to
+            // the project log
+            Java java = (Java) (getProject().createTask("java"));
+            getProject().log("using classpath: " + classpath,
+                    Project.MSG_DEBUG);
+            java.setClasspath(classpath);
+            java.setClassname("org.apache.axis.client.AdminClient");
+            for (int i = 0; i < args.length; i++) {
+                java.createArg().setValue(args[i]);
+            }
+            java.setFailonerror(failOnError);
+            //we are forking here to be sure that if AdminClient calls
+            //System.exit() it doesn't halt the build
+            java.setFork(true);
+            java.setTaskName("AdminClient");
+            java.execute();
+        } catch (BuildException e) {
+            //rethrow these
+            throw e;
+        } catch (Exception e) {
+            throw new BuildException("Exception in " + getTaskName(), e);
+        }
+    }
+
+    private void executeInCurrentVM(String[] args) {
         //now create a client and invoke it
         AdminClient admin = null;
         try {
@@ -380,4 +427,34 @@ public class AdminClientTask extends MatchingTask {
         }
     }
 
+    /**
+     * Set the optional classpath to the XSL processor
+     *
+     * @param classpath the classpath to use when loading the XSL processor
+     */
+    public void setClasspath(Path classpath) {
+        createClasspath().append(classpath);
+    }
+
+    /**
+     * Set the optional classpath to the XSL processor
+     *
+     * @return a path instance to be configured by the Ant core.
+     */
+    public Path createClasspath() {
+        if (classpath == null) {
+            classpath = new Path(getProject());
+        }
+        return classpath.createPath();
+    }
+
+    /**
+     * Set the reference to an optional classpath to the XSL processor
+     *
+     * @param r the id of the Ant path instance to act as the classpath
+     *          for loading the XSL processor
+     */
+    public void setClasspathRef(Reference r) {
+        createClasspath().setRefid(r);
+    }
 }
