@@ -195,18 +195,21 @@ public class SerializationContext
     }
     
     /**
-     * Classes which are known to not require multi-ref.  Doing multiref
-     * for these would not only tend to increase the size of the payload,
-     * they decrease interopability by utilizing an advanced function of
-     * the protocol unnecessarily.
+     * Classes which are known to not require multi-ref.  As multi-ref
+     * requires additional parsing overhead and not all implementations
+     * support this, only use this function when there is a possibility
+     * of circular references.
      */
     public boolean isPrimitive(Object value)
     {
-        if (value instanceof String) return true;
-        if (value instanceof Number) return true;
-        if (value instanceof Boolean) return true;
-        if (value instanceof Date) return true;
-        if (value instanceof byte[]) return true;
+        Class type = value.getClass();
+        if (type.isArray()) type = type.getComponentType();
+
+        if (String.class.isAssignableFrom(type)) return true;
+        if (Number.class.isAssignableFrom(type)) return true;
+        if (Boolean.class.isAssignableFrom(type)) return true;
+        if (Date.class.isAssignableFrom(type)) return true;
+        if (byte[].class.isAssignableFrom(type)) return true;
         return false;
     }
     
