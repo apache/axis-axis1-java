@@ -1104,9 +1104,9 @@ public class Emitter {
         if (names.size() > 0) {
             if (style == Style.WRAPPED) {
                 names.clear();
+            } else {
+                oper.setParameterOrdering(names);
             }
-
-            oper.setParameterOrdering(names);
         }
     }
 
