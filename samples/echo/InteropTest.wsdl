@@ -211,6 +211,20 @@
 		<part name="return" type="s:ArrayOfMap"/>
 	</message>
 
+	<message name="echoTokenRequest">
+		<part name="inputToken" type="xsd:token"/>
+	</message>
+	<message name="echoTokenResponse">
+		<part name="return" type="xsd:token"/>
+	</message>
+
+	<message name="echoNormalizedStringRequest">
+		<part name="inputNormalizedString" type="xsd:normalizedString"/>
+	</message>
+	<message name="echoNormalizedStringResponse">
+		<part name="return" type="xsd:normalizedString"/>
+	</message>
+
 	<portType name="InteropTestPortType">
 		<operation name="echoString" parameterOrder="inputString">
 			<input message="tns:echoStringRequest"/>
@@ -299,6 +313,16 @@
                 <operation name="echoMapArray" parameterOrder="input">
 			<input message="tns:echoMapArrayRequest"/>
 			<output message="tns:echoMapArrayResponse"/>
+		</operation>
+
+		<operation name="echoToken">
+			<input message="tns:echoTokenRequest"/>
+			<output message="tns:echoTokenResponse"/>
+		</operation>
+
+		<operation name="echoNormalizedString">
+			<input message="tns:echoNormalizedStringRequest"/>
+			<output message="tns:echoNormalizedStringResponse"/>
 		</operation>
 	</portType>
 
@@ -494,6 +518,26 @@
 			</input>
 			<output>
 				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoToken">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNormalizedString">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+			<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 			</output>
 		</operation>
 	</binding>

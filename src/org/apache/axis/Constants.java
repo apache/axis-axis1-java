@@ -426,8 +426,11 @@ public class Constants {
     public static final QName XSD_QNAME = new QName(URI_DEFAULT_SCHEMA_XSD, "QName");
     public static final QName XSD_DATE = new QName(URI_DEFAULT_SCHEMA_XSD, "dateTime");
     public static final QName XSD_DATE1 = new QName(URI_DEFAULT_SCHEMA_XSD, "date");
-    public static final QName XSD_DATE2= new QName(URI_1999_SCHEMA_XSD,    "timeInstant");
-    public static final QName XSD_DATE3= new QName(URI_2000_SCHEMA_XSD,    "timeInstant");
+    public static final QName XSD_DATE2 = new QName(URI_1999_SCHEMA_XSD,    "timeInstant");
+    public static final QName XSD_DATE3 = new QName(URI_2000_SCHEMA_XSD,    "timeInstant");
+
+    public static final QName XSD_NORMALIZEDSTRING = new QName(URI_2001_SCHEMA_XSD,    "normalizedString");
+    public static final QName XSD_TOKEN = new QName(URI_2001_SCHEMA_XSD,    "token");
     
     public static final QName SOAP_BASE64 = new QName(URI_DEFAULT_SOAP_ENC, "base64");
     public static final QName SOAP_STRING = new QName(URI_DEFAULT_SOAP_ENC, "string");

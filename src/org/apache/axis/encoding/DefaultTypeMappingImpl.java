@@ -323,6 +323,26 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                                  Constants.SOAP_VECTOR),
                    false);
 
+        // xsd:token
+        myRegister(Constants.XSD_TOKEN, org.apache.axis.encoding.Token.class,
+                new TokenSerializerFactory(org.apache.axis.encoding.Token.class,
+                    Constants.XSD_TOKEN),
+                new TokenDeserializerFactory(
+                    org.apache.axis.encoding.Token.class,
+                    Constants.XSD_TOKEN),
+                false);
+
+        // a xsd:normalizedString
+        myRegister(Constants.XSD_NORMALIZEDSTRING,
+                org.apache.axis.encoding.NormalizedString.class,
+                new NormalizedStringSerializerFactory(
+                    org.apache.axis.encoding.NormalizedString.class,
+                    Constants.XSD_NORMALIZEDSTRING),
+                new NormalizedStringDeserializerFactory(
+                    org.apache.axis.encoding.NormalizedString.class,
+                    Constants.XSD_NORMALIZEDSTRING),
+                false);
+
         // All array objects automatically get associated with the SOAP_ARRAY.
         // There is no way to do this with a hash table,
         // so it is done directly in getTypeQName.
