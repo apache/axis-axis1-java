@@ -642,7 +642,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     // In both cases, mangle the name.
                     if (symbolTable.getType(typeQName) != null ||
                             anonQNames.get(typeQName) != null) {
-                        localName += "Type" + unique+;
+                        localName += "Type" + uniqueNum++;
                         typeQName =
                             new QName(typeQName.getNamespaceURI(),
                                       localName);
