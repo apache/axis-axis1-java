@@ -97,11 +97,9 @@ public class CalendarSerializer implements Serializer {
         context.startElement(name, attributes);
 
         Calendar calendar = (Calendar) value;
-        SimpleDateFormat format = 
-          new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        format.setTimeZone(calendar.getTimeZone());
         Date date = calendar.getTime();
-        context.writeString(format.format(date));
+        // Serialize including convert to GMT
+        context.writeString(zulu.format(date));
 
         context.endElement();
     }
