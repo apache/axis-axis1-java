@@ -376,7 +376,12 @@
         <tr><td>Servlet version</td><td><%= servletVersion %></td></tr>
         <tr><td>XML Parser</td><td><%= xmlParser %></td></tr>
     </table>
+<%
+    if(xmlParser.indexOf("crimson")>=0) {
+        out.write("<p><b>Warning, we recommend Xerces over Crimson as the XML parser for Axis</b></p>");
+    }
 
+%>
     <h2>Examining System Properties</h2>
 <%
     /** 
