@@ -66,6 +66,10 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_SOAP_ALLOWED_VERSION = "singleSOAPVersion";
     public static final String PROP_TWOD_ARRAY_ENCODING = "enable2DArrayEncoding";
     public static final String PROP_XML_ENCODING = "axis.xmlEncoding";
+    public static final String PROP_BYTE_BUFFER_BACKING = "axis.byteBuffer.backing";
+    public static final String PROP_BYTE_BUFFER_CACHE_INCREMENT = "axis.byteBuffer.cacheIncrement";
+    public static final String PROP_BYTE_BUFFER_RESIDENT_MAX_SIZE = "axis.byteBuffer.residentMaxSize";
+    public static final String PROP_BYTE_BUFFER_WORK_BUFFER_SIZE = "axis.byteBuffer.workBufferSize";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
