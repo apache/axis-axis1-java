@@ -635,115 +635,36 @@ public class JavaStubWriter extends JavaWriter {
                                
                     pw.println("            java.util.Map output;");
                     pw.println("            output = call.getOutputParams();");
-                    // If expecting an array, need to call convert(..) because
-                    // the runtime stores arrays in a different form (ArrayList). 
-                    // NOTE A:
-                    // It seems that it should be the responsibility of the 
-                    // Call to convert the ArrayList into the proper array.
-                    if (p.getType().getName().endsWith("[]")) {
-                        pw.println("            // REVISIT THIS!");
-                        pw.println("            " + javifiedName
-                                    + ".value = (" + p.getType().getName()
-                                    + ") org.apache.axis.utils.JavaUtils.convert(output.get("
-                                    + qnameName + "), " + p.getType().getName()
-                                    + ".class);");
-                    }
-                    else {
-                        pw.println("            " + javifiedName + ".value = "
-                                + getResponseString(p.getType(),
-                                "output.get(" + qnameName + ")"));
-                    }
+                    writeOutputAssign(javifiedName + ".value =",
+                                      p.getType(),
+                                      "output.get(" + qnameName + ")");
                 }
                 else {
                     // (parms.outputs == 1)
                     // There is only one output and it is the return value.
-                    
-                    // If expecting an array, need to call convert(..) because
-                    // the runtime stores arrays in a different form (ArrayList). 
-                    // (See NOTE A)
-                    if (parms.returnType != null &&
-                        parms.returnType.getName() != null &&
-                        parms.returnType.getName().indexOf("[]") > 0) {
-                        pw.println("             // REVISIT THIS!");
-                        pw.println("             return ("+parms.returnType.getName() + ")" 
-                                   +"org.apache.axis.utils.JavaUtils.convert(resp,"
-                                   + parms.returnType.getName()+".class);");
-                    } else {
-                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
-                    }
+                    writeOutputAssign("return ",
+                                      parms.returnType, "resp");
                 }
             }
             else {
-                // There is more than 1 output.  resp is the first one.  The rest are from
-                // call.getOutputParams ().  Pull the Objects from the appropriate place -
-                // resp or call.getOutputParms - and put them in the appropriate place,
-                // either in a holder or as the return value.
+                // There is more than 1 output.  Get the outputs from getOutputParams.    
                 pw.println("            java.util.Map output;");
                 pw.println("            output = call.getOutputParams();");
-                boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
                     String javifiedName = Utils.xmlNameToJava(p.getName());
                     String qnameName = Utils.getNewQName(
                             Utils.getAxisQName(p.getQName()));
                     if (p.getMode() != Parameter.IN) {
-                        if (firstInoutIsResp) {
-                            firstInoutIsResp = false;
-                            // If expecting an array, need to call convert(..) because
-                            // the runtime stores arrays in a different form (ArrayList). 
-                            // (See NOTE A)
-                            if (p.getType().getName().endsWith("[]")) {
-                                pw.println("             // REVISIT THIS!");
-                                pw.println ("            " + javifiedName
-                                        + ".value = (" + p.getType().getName()
-                                        + ") org.apache.axis.utils.JavaUtils.convert(output.get(" + qnameName + "), "
-                                        + p.getType().getName() + ".class);");
-                            }
-                            else {
-                                pw.println ("            " + javifiedName +
-                                            ".value = " +
-                                            getResponseString(p.getType(),  "output.get(" + qnameName + ")"));
-                            }
-                        }
-                        else {
-                            // If expecting an array, need to call convert(..) because
-                            // the runtime stores arrays in a different form (ArrayList). 
-                            // (See NOTE A)
-                            if (p.getType().getName().endsWith("[]")) {
-                                pw.println("             // REVISIT THIS!");
-                                pw.println ("            " + javifiedName
-                                            + ".value = (" + p.getType().getName()
-                                            + ") org.apache.axis.utils.JavaUtils.convert("
-                                            + "output.get(" + qnameName + "), "
-                                            + p.getType().getName() + ".class);");
-                            }
-                            else {
-                                pw.println ("            " + javifiedName
-                                            + ".value = " + getResponseString(p.getType(),
-                                    "output.get(" + qnameName + ")"));
-                            }
-                        }
+                        writeOutputAssign(javifiedName + ".value =",
+                                          p.getType(),
+                                          "output.get(" + qnameName + ")");
                     }
-
                 }
                 if (parms.outputs > 0) {
-
-                    // If expecting an array, need to call convert(..) because
-                    // the runtime stores arrays in a different form (ArrayList). 
-                    // (See NOTE A)
-                    if (parms.returnType != null &&
-                        parms.returnType.getName() != null &&
-                        parms.returnType.getName().indexOf("[]") > 0) {
-                        pw.println("             // REVISIT THIS!");
-                        pw.println("             return ("
-                                + parms.returnType.getName() + ")"
-                                + "org.apache.axis.utils.JavaUtils.convert(output.get("
-                                + Utils.getNewQName(parms.returnName) + "),"
-                                + parms.returnType.getName()+".class);");
-                    } else if (parms.returnType != null) {
-                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
-                    }
-
+                    writeOutputAssign("return ",
+                                      parms.returnType,
+                                      "resp");
                 }
 
             }
@@ -753,4 +674,32 @@ public class JavaStubWriter extends JavaWriter {
         pw.println();
     } // writeOperation
 
+    /** 
+     * writeOutputAssign
+     * @param target (either "return" or "something ="
+     * @param type (source TypeEntry)
+     * @param source (source String)   
+     *
+     */
+    private void writeOutputAssign(String target,
+                                   TypeEntry type, 
+                                   String source) {
+        if (type != null && type.getName() != null) {
+            // Try casting the output to the expected output.
+            // If that fails, use JavaUtils.convert()
+            pw.println("            try {");
+            pw.println("                " + target +
+                       getResponseString(type, source));
+            pw.println("            } catch (Exception e) {");
+            pw.println("                " + target +
+                       getResponseString(type, 
+                                         "org.apache.axis.utils.JavaUtils.convert(" +
+                                         source + ", " + 
+                                         type.getName() + ".class)"));
+            pw.println("            }"); 
+        } else {
+            pw.println("              " + target +
+                       getResponseString(type, source));
+        }
+    }
 } // class JavaStubWriter
