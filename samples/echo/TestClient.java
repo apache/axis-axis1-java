@@ -56,8 +56,7 @@
 package samples.echo ;
 
 import java.lang.reflect.Array;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.math.BigDecimal;
 
 import org.apache.axis.AxisFault ;
@@ -97,11 +96,27 @@ public abstract class TestClient {
        if (obj1 instanceof Date && obj2 instanceof Date)
            if (Math.abs(((Date)obj1).getTime()-((Date)obj2).getTime())<1000)
                return true;
+       
+       if ((obj1 instanceof Map) && (obj2 instanceof Map)) {
+           Map map1 = (Map)obj1;
+           Map map2 = (Map)obj2;
+           Set keys1 = map1.keySet();
+           Set keys2 = map2.keySet();
+           if (!(keys1.equals(keys2))) return false;
+           Iterator i = keys1.iterator();
+           while (i.hasNext()) {
+               Object key = i.next();
+               if (!map1.get(key).equals(map2.get(key)))
+                   return false;
+           }
+           return true;
+       }
+
        if (obj1 instanceof List)
          obj1 = JavaUtils.convert(obj1, new Object[]{}.getClass());
        if (obj2 instanceof List)
          obj2 = JavaUtils.convert(obj2, new Object[]{}.getClass());
-       
+
        if (!obj2.getClass().isArray()) return false;
        if (!obj1.getClass().isArray()) return false;
        if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
@@ -119,6 +134,9 @@ public abstract class TestClient {
     private void test(String type, Object toSend) {
 
         String method = "echo" + type;
+        
+        type = type.trim();
+        
         String arg = "input" + type;
         String resultName = "output" + type;
         
@@ -143,7 +161,9 @@ public abstract class TestClient {
             call.set(HTTPTransport.ACTION, action);
 
             // issue the request
-            Object got= call.invoke("http://soapinterop.org/", method, args);
+            Object got= call.invoke("http://soapinterop.org/",
+                                    method.trim(),
+                                    args);
 
             // verify the result
             verify(method, toSend, got);
@@ -174,22 +194,27 @@ public abstract class TestClient {
         call.addDeserializerFactory(ssqn, cls, BeanSerializer.getFactory());
 
         // execute the tests
-        test("String", "abcdefg");
-        test("StringArray", new String[] {"abc", "def"});
-        test("Integer", new Integer(42));
+        test("String      ", "abcdefg");
+        test("StringArray ", new String[] {"abc", "def"});
+        test("Integer     ", new Integer(42));
         test("IntegerArray", new Integer[] {new Integer(42)});
-        test("Float", new Float(3.7F));
-        test("FloatArray", new Float[] {new Float(3.7F), new Float(7F)});
-        test("Struct", new SOAPStruct(5, "Hello", 10.3F));
-        test("StructArray", new SOAPStruct[] {
+        test("Float       ", new Float(3.7F));
+        test("FloatArray  ", new Float[] {new Float(3.7F), new Float(7F)});
+        test("Struct      ", new SOAPStruct(5, "Hello", 10.3F));
+        test("StructArray ", new SOAPStruct[] {
           new SOAPStruct(1, "one", 1.1F),
           new SOAPStruct(2, "two", 2.2F),
           new SOAPStruct(3, "three", 3.3F)});
-        test("Void", null);
-        test("Base64", "Base64".getBytes());
-        test("Date", new Date());
-        test("Decimal", new BigDecimal("3.14159"));
-        test("Boolean", Boolean.TRUE);
+        test("Void        ", null);
+        test("Base64      ", "Base64".getBytes());
+        test("Date        ", new Date());
+        test("Decimal     ", new BigDecimal("3.14159"));
+        test("Boolean     ", Boolean.TRUE);
+        
+        HashMap map = new HashMap();
+        map.put("stringKey", new Integer(5));
+        map.put(new Date(), "string value");
+        test("Map         ", map);
     }
 
     /**
