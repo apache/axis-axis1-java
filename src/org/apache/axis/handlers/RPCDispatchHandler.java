@@ -131,7 +131,6 @@ public class RPCDispatchHandler extends BasicHandler {
           }
         }
   
-  for ( int l = 0 ; argClasses != null && l < argClasses.length ; l++ )
         Method method = cls.getMethod( mName, argClasses );
         Object objRes = method.invoke( obj, argValues );
   
