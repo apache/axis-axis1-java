@@ -80,9 +80,10 @@ public class EJBProvider extends RPCProvider
     protected static Log log =
         LogFactory.getLog(EJBProvider.class.getName());
 
-    private static final String beanNameOption = "beanJndiName";
-    private static final String homeInterfaceNameOption = "homeInterfaceName";
-    private static final String remoteInterfaceNameOption = "remoteInterfaceName";
+    public static final String beanNameOption = "beanJndiName";
+    public static final String homeInterfaceNameOption = "homeInterfaceName";
+    public static final String remoteInterfaceNameOption = "remoteInterfaceName";
+    
     public static final String jndiContextClass = "jndiContextClass";
     public static final String jndiURL = "jndiURL";
     public static final String jndiUsername = "jndiUser";
