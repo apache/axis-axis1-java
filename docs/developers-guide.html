@@ -1,0 +1,349 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Axis System Integration Guide</title>
+<!-- saved from url=(0022)http://internet.e-mail -->
+<style type="text/css">
+<!--
+.example { background:#ccccff }
+.xml { background:#eeeeee }
+body {  font-family: Verdana, Arial, Helvetica, sans-serif; margin-left: 40px}
+h2 {  text-decoration: underline; background-color: #DCE1FF; background-position: left; margin-left: -30px}
+h3 {  margin-left: -10px}
+h1 {  margin-left: -30px}
+-->
+</style>
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+
+<center>
+<h1>
+<img SRC="axis.jpg" height=96 width=176></h1></center>
+
+<h1>
+Axis Developer's Guide</h1>
+<i>Alpha 3 Version</i>
+<h3>
+Table of Contents</h3>
+<a href="#Introduction">Introduction</a>
+<br><a href="#General Guidelines">General Guidelines</a>
+<br><a href="#Development Environment">Development Environment</a>
+<br><a href="#Compile And Run">Compile and Run</a>
+<br><a href="#Internationalization">Internationalization</a>
+<br><a href="#Adding Testcase">Adding Testcases</a>
+<br><a href="#Debugging">Debugging</a>
+<br>&nbsp;
+<h2>
+<a NAME="Introduction"></a>Introduction</h2>
+This guide is a collection of topics related to developing code for Axis.
+<h2>
+<a NAME="General Guidelines"></a>General Guidelines</h2>
+
+<ul>
+<li>
+Axis specific information (cvs repository access, mailing list info, etc.)
+can be found on the <a href="http://xml.apache.org/axis/index.html">Axis
+Home Page</a>.</li>
+
+<li>
+Axis uses the <a href="http://jakarta.apache.org/site/guidelines.html">Jakarta
+Project Guidelines.</a></li>
+
+<li>
+Code changes should comply with <a href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">"Code
+Conventions for the Java Programming Language"</a></li>
+</ul>
+
+<h2>
+<a NAME="Development Environment"></a>Development Environment</h2>
+The following packages are required for axis development:
+<ul>
+<li>
+<a href="http://jakarta.apache.org/ant/index.html">ant </a>- java based
+build tool</li>
+
+<li>
+<a href="http://www.junit.org">junit</a> - testing package</li>
+
+<li>
+<a href="http://xml.apache.org/dist/xerces-j">xerces</a> - xml processor</li>
+
+<li>
+Install Java 1.3.1 JDK (or later).</li>
+</ul>
+
+<p><br>The axis jar files are built in the <tt>xml-axis/java/build/lib</tt>
+directory.&nbsp;&nbsp; Here is an example CLASSPATH, which I use when developing
+code:
+<blockquote>
+<blockquote><tt><font color="#009900">D:\\xerces\\xerces-1_4_2\\xerces.jar</font></tt>
+<br><tt><font color="#009900">G:\\junit3.7\\junit.jar</font></tt>
+<br><tt><font color="#009900">G:\\xml-axis\\java\\build\\lib\\wsdl4j.jar</font></tt>
+<br><tt><font color="#009900">G:\\xml-axis\\java\\build\\lib\\axis.jar</font></tt>
+<br><tt><font color="#009900">G:\\xml-axis\\java\\build\\lib\\log4j-core.jar</font></tt>
+<br><tt><font color="#009900">G:\\xml-axis\\java\\build\\lib\\clutil.jar</font></tt>
+<br><tt><font color="#009900">G:\\xml-axis\\java\\build\\classes</font></tt></blockquote>
+</blockquote>
+
+<h2>
+<a NAME="Compile And Run"></a>Compile and Run</h2>
+The <tt>xml-axis/java/build.xml</tt> file is the primary 'make' file used
+by ant to build the application and run the tests.&nbsp; The <tt>build.xml</tt>
+file defines ant build <i>targets</i>.&nbsp; Read the build.xml file for
+more information.&nbsp; Here are some of the useful targets:<br>
+<BR>
+<ul>
+<li>
+<tt>compile -> compiles the source and creates xml-axis/java/build/lib/axis.jar</tt></li>
+
+<li>
+<tt>javadocs -> creates the javadocs in xml-axis/java/build/javadocs</tt></li>
+
+<li>
+<tt>functional-tests -> compiles and runs the functional tests</tt></li>
+
+<li>
+<tt>all-tests -> compiles and runs all of the tests</tt><br>
+<BR></li>
+</ul>
+To compile the source code:
+<blockquote><tt>cd xml-axis/java</tt>
+<br><tt>ant compile</tt></blockquote>
+To run the tests:
+<blockquote><tt>cd xml-axis/java</tt>
+<br><tt>ant functional-tests</tt></blockquote>
+<b>Please run <tt><font color="#009900">ant functional-tests</font></tt>
+and/or <tt><font color="#009900">ant all-tests</font></tt> before checking
+in new code.</b>
+<h2>
+<a NAME="Internationalization"></a>Internationalization</h2>
+If you make changes to the source code that results in the generation of
+text (error messages or debug information), you must follow the following
+guidelines to ensure that your text is properly translated.
+<br>&nbsp;
+<ol>
+<li>
+Your text string should be added as a property to the resource.properties
+file (xml-axis/java/src/org/apache/axis/utils/resource.properties).&nbsp;
+Note that some of the utility applications (i.e. tcpmon) have their own
+resource property files (tcpmon.properties).<br>
+<BR></li>
+
+<li>
+The resource.properties file contains translation and usage instructions.&nbsp;
+Here is an example message:<br>
+<BR></li>
+
+<br><font color="#009900">sample00=My name is {0}, and my title is {1}.</font><br>
+<BR>
+<ol>
+<li>
+sample00 is the key that the code will use to access this message.</li>
+
+<li>
+The text after the = is the message text.</li>
+
+<li>
+The <font color="#009900">{<i>number</i>}</font> syntax defines the location
+for inserts.<br>
+<BR></li>
+</ol>
+
+<li>
+The code should use the static method org.apache.axis.utils.JavaUtils.getMessage
+method to obtain the text and add inserts.&nbsp; Here is an example usage:<br>
+<BR></li>
+
+<br><font color="#009900">JavaUtils.getMessage("sample00", "Rich Scheuerle",
+"Software Developer");</font><br>
+<BR>
+<li>
+<font color="#000000">Please ensure that the properties in the resource
+file are kept in alphabetical order by key.</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">All keys in the properties file should use the syntax
+&lt;string>&lt;2-digit-suffix>.</font><br>
+<BR></li>
+
+<ol>
+<li>
+<font color="#000000"><b>Never change the message text in the properties
+file. </b>The message may be used in multiple places in the code.&nbsp;
+Plus translation is only done on new keys.</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">If a code change requires a change to a message,
+create a new entry with an incremented 2-digit suffix.</font></li>
+</ol>
+</ol>
+
+<h2>
+<a NAME="Adding Testcases"></a><font color="#000000">Adding Testcases</font></h2>
+<font color="#000000"><b>Editor's Note: </b>We need more effort to streamline
+and simplify the addition of tests.&nbsp; We also need to think about categorizing
+tests as the test bucket grows.</font><br>
+<BR>
+<p><font color="#000000">If you make changes to Axis, please add a test
+that uses your change.&nbsp; Why?</font>
+<ul>
+<li>
+<font color="#000000">The test validates that your new code works.</font></li>
+
+<li>
+<font color="#000000">The test protects your change from bugs introduced
+by future code changes.</font></li>
+
+<li>
+<font color="#000000">The test is an example to users of the features of
+Axis.</font></li>
+
+<li>
+<font color="#000000">The test can be used as a starting point for new
+development.</font></li>
+</ul>
+<br>
+<font color="#000000">Some general principles:</font>
+<ul>
+<li>
+<font color="#000000">Tests should be self-explanatory.</font></li>
+
+<li>
+<font color="#000000">Tests should not generate an abundance of output</font></li>
+
+<li>
+<font color="#000000">Tests should hook into the existing junit framework.</font></li>
+
+<li>
+<font color="#000000">Each test should have its own directory in the <tt>xml-axis/java/test</tt>
+directory</font></li>
+</ul>
+<br>
+<font color="#000000">One way to build a test is to "cut and paste" and
+existing tests, and then modify the test to suit your needs.&nbsp; This
+approach is becoming more complicated as the different kinds of tests grow.</font>
+<h4>
+<font color="#000000">Creating a WSDL Test</font></h4>
+<font color="#000000">Here are the steps that I used to create the <tt>sequence</tt>
+test, which generates code from a wsdl file and runs a sequence validation
+test:</font><br>
+<BR>
+<ol>
+<li>
+<font color="#000000">Created a <tt>xml-axis/java/test/sequence</tt> directory.</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">Created a <tt>SequenceTest.wsdl</tt> file defining
+the webservice.</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">Ran the Wsdl2java emitter to create java files:</font><br>
+<BR></li>
+
+<br><tt><font color="#993366">java org.apache.axis.wsdl.Wsdl2java -t -s
+SequenceTest.wsdl</font></tt><br>
+<BR>
+<li>
+<font color="#000000">The -t option causes the emitter to generate a *TestCase.java
+file that hooks into the test harness.&nbsp; No changes need to be made
+to the file.&nbsp; Copy the *TestCase.java file into the same directory
+as your wsdl file.</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">The -s option causes the emitter to generate a *SOAPBindingImpl.java
+file.&nbsp; Modify the file to add your service code to the generated methods.&nbsp;
+Copy the *SOAPBindingImpl.java file into the same directory as your wsdl
+file.</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">So you should have three files in your directory
+(wsdl file, *TestCase.java, and *SOAPBindingImpl.java).&nbsp; My sequence
+test has an another file due to some additional logic that I needed.</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">In the build.xml file, locate the "buildTest" target.&nbsp;
+You will need to add an &lt;exclude .../> clause to prevent your two java
+files from being compiled.&nbsp; (Note it would be nice if there was a
+better way to prevent this.) Here is the exclude clause for the sequence
+test:</font><br>
+<BR></li>
+
+<br><tt><font color="#993366">&lt;exclude name="test/sequence/*.java" /></font></tt><br>
+<BR>
+<li>
+<font color="#000000">The <tt>test/build_functional_tests.xml</tt> file
+controls the building of the tests.&nbsp; Locate the "wsdl-setup" target.&nbsp;
+You will see a clause that runs the Wsdl2java code:&nbsp;<br>
+<br>
+</font><tt><font color="#993366">&lt;ant antfile="test/wsdl/Wsdl2javaTestSuite.xml"/><br>
+<br>
+</font></tt><font color="#000000">Following this clause you will see some
+clauses that copy java files from the test directories.&nbsp; If you have
+additional files, you need to copy them over.&nbsp; Examine the clause
+that I added to copy over SequenceInfo.java.&nbsp; (Note it would be nice
+if there was a better way to do this.)</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">Now go to the <tt>test/wsdl/Wsdl2javaTestSuite.xml
+</tt>file.&nbsp;
+This file contains the clauses to run wsdl2java.&nbsp; Add a wsdl2java
+clause.&nbsp; Here is the one for SequenceTest:</font><br>
+<BR></li>
+
+<br><tt><font color="#663366">&nbsp;&nbsp;&nbsp; </font><font color="#993366">&lt;!--
+Sequence Test --></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;wsdl2java url="test/sequence/SequenceTest.wsdl"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+output="build/work"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+deployscope="session"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+skeleton="yes"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+messagecontext="no"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+noimports="no"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+verbose="no"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+testcase="no"></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;mapping namespace="urn:SequenceTest2" package="test.sequence"/></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;/wsdl2java></font></tt><br>
+<BR>
+<li>
+<font color="#000000">Open the file Wsdl2javaTestSuite.list and add the
+location of your wsdl document.&nbsp; (Note: Why is this necessary?)</font><br>
+<BR></li>
+
+<li>
+<font color="#000000">Done.&nbsp; Run </font><tt><font color="#993366">ant
+functional-tests</font><font color="#000000"> </font></tt><font color="#000000">to
+verify.&nbsp; Check in your test.</font></li>
+
+<br>&nbsp;</ol>
+
+<h2>
+<a NAME="Debugging"></a>Debugging</h2>
+
+<h4>
+Using tcpmon to monitor functional-tests</h4>
+Here is an easy way to monitor the messages while running functional-tests
+(or all-tests).
+<br>Start up tcpmon listening on 8080 and forwarding to a different port:
+<blockquote><tt>java org.apache.axis.utils.tcpmon 8080 localhost 8011</tt></blockquote>
+Run your tests, but use the forwarded port for the SimpleAxisServer:
+<blockquote><tt>ant functional-tests -Dtest.functional.SimpleAxisPort=8011</tt></blockquote>
+The SOAP messages for all of the tests should appear in the tcpmon window.
+</body>
+</html>
