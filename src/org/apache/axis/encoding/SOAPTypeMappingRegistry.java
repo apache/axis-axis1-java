@@ -285,7 +285,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             new DateSerializer.DateDeserializerFactory());
         
         addDeserializerFactory(XSD_ANYTYPE, java.lang.Object.class, new ObjDeserializerFactory());
-        //addSerializer(java.lang.Object.class, XSD_ANYTYPE, new ObjSerializer());
+        addSerializer(java.lang.Object.class, XSD_ANYTYPE, new ObjSerializer());
 
         // handle the various base64 QNames...
         addDeserializerFactory(SOAP_BASE64, byte[].class, base64Ser);
