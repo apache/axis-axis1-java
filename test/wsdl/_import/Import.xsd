@@ -12,11 +12,11 @@
     <complexType name="Address">
       <all>
         <element name="streetNum" type="int"/>
-        <element name="streetName" type="string"/>
-        <element name="city" type="string"/>
-        <element name="state" type="string"/>
+        <element name="streetName" nillable="true" type="string"/>
+        <element name="city" nillable="true" type="string"/>
+        <element name="state" nillable="true" type="string"/>
         <element name="zip" type="int"/>
-        <element name="phoneNumber" type="tns:PhoneNumber"/>
+        <element name="phoneNumber" nillable="true" type="tns:PhoneNumber"/>
       </all>
     </complexType>
 

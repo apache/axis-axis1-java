@@ -8,9 +8,12 @@
         <s:element name="Phone">
             <s:complexType>
                 <s:sequence>
-                    <s:element name="areaCode" type="s:string" maxOccurs="1" minOccurs="0"/>
-                    <s:element name="prefix" type="s:string" maxOccurs="1" minOccurs="0"/>
-                    <s:element name="number" type="s:string" maxOccurs="1" minOccurs="0"/>
+                    <!-- required element; not nillable -->
+                    <s:element name="areaCode" type="s:string" minOccurs="1" maxOccurs="1"/>
+                    <!-- optional element; not nillable -->
+                    <s:element name="prefix" type="s:string" minOccurs="0" maxOccurs="1"/>
+                    <!-- optional element; nillable -->
+                    <s:element name="number" type="s:string" nillable="true" minOccurs="0" maxOccurs="1"/>
                 </s:sequence>
             </s:complexType>
         </s:element>

@@ -368,6 +368,9 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     if (elem.getMinOccursIs0()) {
                         pw.println("        elemField.setMinOccurs(0);");
                     }
+                    if (elem.getNillable()) {
+                        pw.println("        elemField.setNillable(true);");
+                    }
 
                     pw.println("        typeDesc.addFieldDesc(elemField);");
                 }

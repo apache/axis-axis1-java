@@ -23,13 +23,17 @@ import java.io.Serializable;
  * XML element
  *
  * @author Glen Daniels (gdaniels@apache.org)
+ * @author Dominik Kacprzak (dominik@opentoolbox.com)
  */
 public class ElementDesc extends FieldDesc implements Serializable {
     /** The minOccurs value from the schema */
     private int minOccurs = 1;
     /** The maxOccurs value from the schema */
     private int maxOccurs = 1;
-    
+    /** The nillable value from the schema.
+     * By default, element cannot be nillable. */
+    private boolean nillable = false;
+
     /** If this is an array, this holds the array type */
     private QName arrayType;
     
@@ -55,6 +59,24 @@ public class ElementDesc extends FieldDesc implements Serializable {
 
     public void setMaxOccurs(int maxOccurs) {
         this.maxOccurs = maxOccurs;
+    }
+
+    /**
+     * Returns value of nillable property.
+     *
+     * @return
+     */
+    public boolean isNillable() {
+        return nillable;
+    }
+
+    /**
+     * Sets value of nillable property.  Default: <code>false</code>.
+     *
+     * @param nillable
+     */
+    public void setNillable(boolean nillable) {
+        this.nillable = nillable;
     }
 
     public QName getArrayType() {

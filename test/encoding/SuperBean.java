@@ -16,6 +16,8 @@
 
 package test.encoding;
 
+import org.apache.axis.description.ElementDesc;
+
 /**
  * A simple type with several elements for testing serialization
  */
@@ -79,20 +81,23 @@ public class SuperBean  {
 		new org.apache.axis.description.TypeDesc(SuperBean.class);
 
 	static {
-		org.apache.axis.description.FieldDesc field = new org.apache.axis.description.ElementDesc();
+		org.apache.axis.description.ElementDesc field = new org.apache.axis.description.ElementDesc();
 		field.setFieldName("zero");
 		field.setXmlName(new javax.xml.namespace.QName("", "zero"));
 		field.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        field.setNillable(true);
 		typeDesc.addFieldDesc(field);
 		field = new org.apache.axis.description.ElementDesc();
 		field.setFieldName("one");
 		field.setXmlName(new javax.xml.namespace.QName("", "one"));
 		field.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        field.setNillable(true);
 		typeDesc.addFieldDesc(field);
 		field = new org.apache.axis.description.ElementDesc();
 		field.setFieldName("two");
 		field.setXmlName(new javax.xml.namespace.QName("", "two"));
 		field.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        field.setNillable(true);
 		typeDesc.addFieldDesc(field);
 	};
 

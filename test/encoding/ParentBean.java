@@ -62,6 +62,7 @@ public class ParentBean {
         field = new ElementDesc();
         field.setFieldName("parentStr");
         field.setXmlName(new QName("", "parentElement"));
+        ((ElementDesc)field).setNillable(true);
         typeDesc.addFieldDesc(field);
     }
     

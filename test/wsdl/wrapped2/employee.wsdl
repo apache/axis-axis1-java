@@ -13,8 +13,8 @@
 			</xsd:complexType>
 			<xsd:complexType name="NameType">
 				<xsd:sequence>
-					<xsd:element name="firstName" type="xsd:string"/>
-					<xsd:element name="lastName" type="xsd:string"/>
+					<xsd:element name="firstName" nillable="true" type="xsd:string"/>
+					<xsd:element name="lastName" nillable="true" type="xsd:string"/>
 				</xsd:sequence>
 			</xsd:complexType>
 			<xsd:complexType name="NameArrayType">

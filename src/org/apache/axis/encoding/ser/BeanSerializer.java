@@ -21,6 +21,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
+import org.apache.axis.description.ElementDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.message.MessageElement;
@@ -122,29 +123,33 @@ public class BeanSerializer implements Serializer, Serializable {
                 QName qname = null;
                 QName xmlType = null;
                 boolean isOmittable = false;
+                // isNillable default value depends on the field type
+                boolean isNillable = Types.isNullable(propertyDescriptor[i].getType());
 
                 // If we have type metadata, check to see what we're doing
                 // with this field.  If it's an attribute, skip it.  If it's
                 // an element, use whatever qname is in there.  If we can't
                 // find any of this info, use the default.
-
                 if (typeDesc != null) {
                     FieldDesc field = typeDesc.getFieldByName(propName);
                     if (field != null) {
-                        if (!field.isElement())
+                        if (!field.isElement()) {
                             continue;
+                        }
+
+                        ElementDesc element = (ElementDesc)field;
 
                         // If we're SOAP encoded, just use the local part,
                         // not the namespace.  Otherwise use the whole
                         // QName.
                         if (isEncoded) {
-                            qname = new QName(
-                                          field.getXmlName().getLocalPart());
+                            qname = new QName(element.getXmlName().getLocalPart());
                         } else {
-                            qname = field.getXmlName();
+                            qname = element.getXmlName();
                         }
-                        isOmittable = field.isMinOccursZero();
-                        xmlType = field.getXmlType();
+                        isOmittable = element.isMinOccursZero();
+                        isNillable = element.isNillable();
+                        xmlType = element.getXmlType();
                     }
                 }
 
@@ -164,6 +169,13 @@ public class BeanSerializer implements Serializer, Serializable {
                         // Normal case: serialize the value
                         Object propValue =
                             propertyDescriptor[i].get(value);
+
+                        // an element cannot be null if nillable property is set to "false"
+                        // and the element cannot be omitted
+                        if (propValue == null && !isNillable && !isOmittable) {
+                            throw new IOException(Messages.getMessage("nullNonNillableElement", propName));
+                        }
+
                         // if meta data says minOccurs=0, then we can skip
                         // it if its value is null and we aren't doing SOAP
                         // encoding.
@@ -424,9 +436,18 @@ public class BeanSerializer implements Serializer, Serializable {
                 elementType = prefix + ":" + anyQN.getLocalPart();
             }
 
+            // isNillable default value depends on the field type
+            boolean isNillable = Types.isNullable(fieldType);
+            if (typeDesc != null) {
+                FieldDesc field = typeDesc.getFieldByName(fieldName);
+                if (field != null && field.isElement()) {
+                    isNillable = ((ElementDesc)field).isNillable();
+                }
+            }
+
             elem = types.createElement(fieldName,
                     elementType,
-                    types.isNullable(fieldType),
+                    isNillable,
                     isOmittable,
                     where.getOwnerDocument());
         }

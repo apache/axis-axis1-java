@@ -7,8 +7,8 @@
 
   <xsd:complexType name="address">
     <xsd:all>
-      <xsd:element name="streetNum" type="xsd:int"/>
-      <xsd:element name="streetName" type="xsd:string"/>
+      <xsd:element name="streetNum" nillable="true" type="xsd:int"/>
+      <xsd:element name="streetName" nillable="true" type="xsd:string"/>
       <xsd:element name="city" type="xsd:string"/>
       <xsd:element name="state" type="typens:stateType"/>
       <xsd:element name="zip" type="xsd:int"/>

@@ -137,9 +137,13 @@ public class Notation implements java.io.Serializable {
         typeDesc.addFieldDesc(field);
 
         // An element with a specified QName
-        field = new ElementDesc();
-        field.setFieldName("system");
-        field.setXmlName(Constants.XSD_ANYURI);
+        ElementDesc element = null;
+        element = new ElementDesc();
+        element.setFieldName("system");
+        element.setXmlName(Constants.XSD_ANYURI);
+        // per, http://www.w3.org/TR/xmlschema-1/#element-notation,
+        // "system" property can be null  
+        element.setNillable(true);
         typeDesc.addFieldDesc(field);
     }
 

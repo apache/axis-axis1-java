@@ -58,16 +58,16 @@
       <xsd:complexType name="complexAll">
         <xsd:all>
           <xsd:element name="areaCode" type="xsd:int"/>
-          <xsd:element name="exchange" type="xsd:string"/>
-          <xsd:element name="number" type="xsd:string"/>
+          <xsd:element name="exchange" nillable="true" type="xsd:string"/>
+          <xsd:element name="number" nillable="true" type="xsd:string"/>
         </xsd:all>
       </xsd:complexType>
 
       <xsd:complexType name="complexSequence">
         <xsd:sequence>
           <xsd:element name="areaCode" type="xsd:int"/>
-          <xsd:element name="exchange" type="xsd:string"/>
-          <xsd:element name="number" type="xsd:string"/>
+          <xsd:element name="exchange" nillable="true" type="xsd:string"/>
+          <xsd:element name="number" nillable="true" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
 
@@ -108,7 +108,7 @@
 
       <xsd:complexType name="complexWComplex">
         <xsd:sequence>
-          <xsd:element name="stock_quote">
+          <xsd:element name="stock_quote" nillable="true">
             <xsd:complexType>
               <xsd:attribute name="symbol" type="xsd:string"/> 
               <xsd:sequence>
@@ -118,7 +118,7 @@
                 <xsd:element name="pctchange" type="xsd:string"/>
                 <xsd:element name="bid" type="xsd:string"/>
                 <xsd:element name="ask" type="xsd:string"/>
-                <xsd:element name="choice" type="typens:complexChoice"/>
+                <xsd:element name="choice" nillable="true" type="typens:complexChoice"/>
               </xsd:sequence>
               <xsd:attribute name="last" type="xsd:string"/>
             </xsd:complexType>

@@ -16,8 +16,8 @@
               
       <xsd:complexType name="nodebase">
         <xsd:all>
-            <xsd:element name="left" type="typens:node" xsd:nillable="true"/>
-            <xsd:element name="right" type="typens:node" xsd:nillable="true"/>
+            <xsd:element name="left" type="typens:node" nillable="true"/>
+            <xsd:element name="right" type="typens:node" nillable="true"/>
         </xsd:all>
       </xsd:complexType>
 

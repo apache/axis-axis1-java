@@ -16,6 +16,8 @@
 
 package test.encoding;
 
+import org.apache.axis.description.ElementDesc;
+
 /**
  * A type used for testing serialization of inherited elements
  */
@@ -62,15 +64,17 @@ public class DerivatedBean extends SuperBean {
 		new org.apache.axis.description.TypeDesc(DerivatedBean.class);
 
 	static {
-		org.apache.axis.description.FieldDesc field = new org.apache.axis.description.ElementDesc();
+		org.apache.axis.description.ElementDesc field = new org.apache.axis.description.ElementDesc();
 		field.setFieldName("three");
 		field.setXmlName(new javax.xml.namespace.QName("", "three"));
 		field.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        field.setNillable(true);
 		typeDesc.addFieldDesc(field);
 		field = new org.apache.axis.description.ElementDesc();
 		field.setFieldName("four");
 		field.setXmlName(new javax.xml.namespace.QName("", "four"));
 		field.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        field.setNillable(true);
 		typeDesc.addFieldDesc(field);
 	};
 

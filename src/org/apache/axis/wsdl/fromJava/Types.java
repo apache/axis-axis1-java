@@ -1452,17 +1452,13 @@ public class Types {
     }
 
     /**
-     * Determines if the field is nullable. All non-primitives except
-     * for byte[] are nillable.
+     * Determines if the field is nullable. All non-primitives are nillable.
      *
      * @param type input Class
      * @return true if nullable
      */
-    public boolean isNullable(Class type) {
-
-        if (type.isPrimitive()
-                || (type.isArray()
-                && (type.getComponentType() == byte.class))) {
+    public static boolean isNullable(Class type) {
+        if (type.isPrimitive()) {
             return false;
         } else {
             return true;
