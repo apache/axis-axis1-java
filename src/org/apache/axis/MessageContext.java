@@ -144,11 +144,19 @@ public class MessageContext {
         mappingRegistry = reg;
     }
 
+    /**
+     * Get the currently in-scope type mapping registry.
+     * 
+     * By default, will return a reference to the AxisEngine's TMR until
+     * someone sets our local one (usually as a result of setting the
+     * serviceHandler).
+     * 
+     * @return the type mapping registry to use for this request.
+     */
     public TypeMappingRegistry getTypeMappingRegistry() {
-        if (mappingRegistry == null) {
-            mappingRegistry = new TypeMappingRegistry();
-            mappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
-        }
+        if (mappingRegistry == null)
+            return axisEngine.getTypeMappingRegistry();
+        
         return mappingRegistry;
     }
 
