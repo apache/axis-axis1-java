@@ -1,5 +1,5 @@
 axis-1_0
 build
-client-config.xml
-server-config.xml
+client-config.wsdd
+server-config.wsdd
 test-reports
