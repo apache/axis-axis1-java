@@ -696,6 +696,17 @@ public class Utils {
                 }
             }
         }
+        // Process attributes declared in this type
+        v = SchemaUtils.getComplexElementAttributes(type, symbolTable);
+        if (v != null) {
+            for (int i = 0; i < v.size(); i+=2) {
+                if (!types.contains(v.get(i))) {
+                    types.add(v.get(i));
+                    getNestedTypes(
+                            ((TypeEntry) v.get(i)).getNode(), types, symbolTable);
+                }
+            }
+        }
         // Process extended types
         TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(type, symbolTable);
         if (extendType != null) {

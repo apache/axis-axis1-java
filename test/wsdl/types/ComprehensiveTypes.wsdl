@@ -78,8 +78,10 @@
             <xsd:element name="nested" type="typens2:b"/>
             <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
             <xsd:element name="byteArray" type="typens:array_of_base64" />
+            <xsd:element name="parm" type="typens:StringParameter" />
           </xsd:all>
           <xsd:attribute name="attr" type="typens:enum" />
+          <xsd:attribute name="parmAttr" type="typens:StringParameter" />
         </xsd:complexType>
       </xsd:element>
 
@@ -206,6 +208,37 @@
           <xsd:enumeration value="3"/>                    
         </xsd:restriction>
       </xsd:simpleType>
+
+
+      <xsd:simpleType name="flowDirectionType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="in"/>
+          <xsd:enumeration value="inOut"/>
+          <xsd:enumeration value="out"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+
+<xsd:simpleType name="passModeType">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="passByValue"/>
+        <xsd:enumeration value="passByReference"/>
+     </xsd:restriction>
+</xsd:simpleType>
+
+
+<xsd:element name="StringParameter" type="typens:StringParameter" />
+ <xsd:complexType name="StringParameter">
+   <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="numBytes" type="xsd:int"/>
+        <xsd:attribute name="storageEncoding" type="xsd:string"/>
+        <xsd:attribute name="direction" type="typens:flowDirectionType"/>  <!-- in, out, or inOut -->
+        <xsd:attribute name="passMode" type="typens:passModeType"/>  <!-- passByValue or passByReference -->
+        <xsd:attribute name="description" type="xsd:string"/>
+      </xsd:extension>
+   </xsd:simpleContent>
+</xsd:complexType>
+
     </xsd:schema>
 
 

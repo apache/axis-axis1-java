@@ -56,6 +56,7 @@ import test.wsdl.types.comprehensive_types.EnumShort;
 import test.wsdl.types.comprehensive_types.EnumString;
 import test.wsdl.types.comprehensive_types.StockQuote;
 import test.wsdl.types.comprehensive_types.Time;
+import test.wsdl.types.comprehensive_types.StringParameter;
 import test.wsdl.types.comprehensive_types2.A;
 import test.wsdl.types.comprehensive_types2.B;
 
@@ -229,6 +230,8 @@ public class VerifyTestCase extends junit.framework.TestCase {
         a.setC(3);
         b.setD(a);
         ElemWComplex elemWComplex = new ElemWComplex();
+        StringParameter sp = new StringParameter("sweet!");
+        sp.setDescription("Pass this as an element and an attribute...wow!");
 
         elemWComplex.setOne( "one");
         elemWComplex.setTwo( new QName[] {new QName("two")});
@@ -244,6 +247,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
         elemWComplex.setOptArray( optArray );
         elemWComplex.setByteArray( byteArray );
         elemWComplex.setAttr(Enum.two);
+        elemWComplex.setParm(sp);
+        elemWComplex.setParmAttr(sp);
+
         try {
             binding.elemWComplexIn(elemWComplex);
         } catch (java.rmi.RemoteException re) {

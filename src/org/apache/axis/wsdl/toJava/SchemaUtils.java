@@ -338,6 +338,75 @@ public class SchemaUtils {
     }
 
     /**
+     * If the specified node is a simple type or contains simpleContent, return true
+     */
+    public static boolean isSimpleTypeOrSimpleContent(Node node) {
+        if (node == null) {
+            return false;
+        }
+
+        // If the node kind is an element, dive into it.
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            Node complexNode = null;
+            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
+                QName kind = Utils.getNodeQName(children.item(j));
+                if (kind != null &&
+                    kind.getLocalPart().equals("complexType") &&
+                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
+                    complexNode = children.item(j);
+                    node = complexNode;
+                }
+                if (kind != null &&
+                    kind.getLocalPart().equals("simpleType") &&
+                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
+                    return true;
+                }
+            }
+        }
+
+        // Expecting a schema complexType or simpleType
+        nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("simpleType") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            return true;
+        }
+
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("complexType") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+
+            // Under the complexType there could be complexContent/simpleContent
+            // and extension elements if this is a derived type.  Skip over these.
+            NodeList children = node.getChildNodes();
+            Node complexContent = null;
+            Node simpleContent = null;
+            Node extension = null;
+            for (int j = 0; j < children.getLength() && complexContent == null; j++) {
+                QName complexContentKind = Utils.getNodeQName(children.item(j));
+                if (complexContentKind != null &&
+                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI())) {
+                    if (complexContentKind.getLocalPart().equals("complexContent") )
+                        complexContent = children.item(j);
+                    else if (complexContentKind.getLocalPart().equals("simpleContent"))
+                        simpleContent = children.item(j);
+                }
+            }
+            if (complexContent != null) {
+                return false;
+            }
+            if (simpleContent != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * If the specified node represents a supported JAX-RPC complexType/element
      * which extends another complexType.  The Type of the base is returned.
      */
@@ -373,17 +442,21 @@ public class SchemaUtils {
             // Under the complexType there could be should be a complexContent &
             // extension elements if this is a derived type. 
             NodeList children = node.getChildNodes();
-            Node complexContent = null;
+            Node content = null;
             Node extension = null;
-            for (int j = 0; j < children.getLength() && complexContent == null; j++) {
-                QName complexContentKind = Utils.getNodeQName(children.item(j));
-                if (complexContentKind != null &&
-                    complexContentKind.getLocalPart().equals("complexContent") &&
-                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
-                    complexContent = children.item(j);
+            for (int j = 0; j < children.getLength() && content == null; j++) {
+                QName contentKind = Utils.getNodeQName(children.item(j));
+                if (contentKind != null &&
+                    contentKind.getLocalPart().equals("complexContent") &&
+                    Constants.isSchemaXSD(contentKind.getNamespaceURI()))
+                    content = children.item(j);
+                if (contentKind != null &&
+                    contentKind.getLocalPart().equals("simpleContent") &&
+                    Constants.isSchemaXSD(contentKind.getNamespaceURI()))
+                    content = children.item(j);
             }
-            if (complexContent != null) {
-                children = complexContent.getChildNodes();
+            if (content != null) {
+                children = content.getChildNodes();
                 for (int j = 0; j < children.getLength() && extension == null; j++) {
                     QName extensionKind = Utils.getNodeQName(children.item(j));
                     if (extensionKind != null &&
