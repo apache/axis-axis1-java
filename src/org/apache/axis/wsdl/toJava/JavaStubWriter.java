@@ -457,7 +457,7 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println(indent + "_operations[" + i + "] = oper;");
             pw.println("");
         }
-        pw.println("    };");
+        pw.println("    }");
     }
 
     /**
