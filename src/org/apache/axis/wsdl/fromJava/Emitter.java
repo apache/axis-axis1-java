@@ -597,7 +597,8 @@ public class Emitter {
             if (tm != null) {
                 serviceDesc.setTypeMapping(tm);
             } else {
-                serviceDesc.setTypeMapping(getDefaultTypeMapping());
+                tm = getDefaultTypeMapping();
+                serviceDesc.setTypeMapping(tm);
             }
 
             javaServiceDesc.setStopClasses(stopClasses);
