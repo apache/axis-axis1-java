@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
@@ -263,8 +265,16 @@ public class AxisFault extends java.rmi.RemoteException {
         }
 
         //add stack trace
-        addFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE,
-                JavaUtils.stackToString(target));
+        if (target == this) {
+            // only add stack trace. JavaUtils.stackToString() call would
+            // include dumpToString() info which is already sent as different
+            // elements of this fault.
+            addFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE,
+                           getPlainStackTrace());
+        } else {
+            addFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE,
+                           JavaUtils.stackToString(target));
+        }
 
         //add the hostname
         addHostnameIfNeeded();
@@ -752,6 +762,17 @@ public class AxisFault extends java.rmi.RemoteException {
      */
     public String toString() {
         return faultString;
+    }
+
+    /**
+     * Gets the stack trace as a string.
+     */
+    private String getPlainStackTrace() {
+        StringWriter sw = new StringWriter(512);
+        PrintWriter pw = new PrintWriter(sw); 
+        super.printStackTrace(pw);
+        pw.close();
+        return sw.toString();
     }
 
     /**
