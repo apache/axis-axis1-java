@@ -142,6 +142,7 @@ public class Emitter {
     private String portTypeName;
 
     private ServiceDesc serviceDesc;
+    private ServiceDesc serviceDesc2;
 
     /**
      * Construct Emitter.
@@ -211,12 +212,30 @@ public class Emitter {
             serviceDesc.setImplClass(cls);
             //serviceDesc.setStyle();
             TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
-            serviceDesc.setTypeMapping((TypeMapping)tmr.getDefaultTypeMapping());
+            serviceDesc.setTypeMapping((TypeMapping)
+                                       tmr.getDefaultTypeMapping());
         }
 
         serviceDesc.setStopClasses(stopClasses);
         serviceDesc.setAllowedMethods(allowedMethods);
         serviceDesc.setDisallowedMethods(disallowedMethods);
+
+        // If the class passed in is a portType, 
+        // there may be an implClass that is used to 
+        // obtain the method parameter names.  In this case,
+        // a serviceDesc2 is built to get the method parameter names. 
+        if (implCls != null &&
+            implCls != cls &&
+            serviceDesc2 == null) {
+            serviceDesc2 = new ServiceDesc();
+            serviceDesc2.setImplClass(implCls);
+            TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
+            serviceDesc2.setTypeMapping((TypeMapping)
+                                       tmr.getDefaultTypeMapping());
+            serviceDesc2.setStopClasses(stopClasses);
+            serviceDesc2.setAllowedMethods(allowedMethods);
+            serviceDesc2.setDisallowedMethods(disallowedMethods);
+        }
 
         Document doc = null;
         Definition def = null;
@@ -565,7 +584,46 @@ public class Emitter {
                                                           binding,
                                                           thisOper);
             Operation oper = bindingOper.getOperation();
-            writeMessages(def, oper, thisOper);
+
+            OperationDesc messageOper = thisOper;
+            if (serviceDesc2 != null) {
+                // If a serviceDesc contain an impl class is provided,
+                // try and locate the corresponding operation
+                // (same name, same parm types and modes).  If a
+                // corresponding operation is found, it is sent
+                // to the writeMessages method so that its parameter
+                // names will be used in the wsdl file.
+                OperationDesc[] operArray = 
+                    serviceDesc2.getOperationsByName(thisOper.getName());
+                boolean found = false;
+                if (operArray != null) {
+                    for (int j=0; 
+                         j < operArray.length && !found;
+                         j++) {
+                        OperationDesc tryOper = operArray[j];
+                        if (tryOper.getParameters().size() ==
+                            thisOper.getParameters().size()) {
+                            boolean parmsMatch = true;
+                            for (int k=0; 
+                                 k<thisOper.getParameters().size() && parmsMatch;
+                                 k++) {
+                                if (tryOper.getParameter(k).getMode() !=
+                                    thisOper.getParameter(k).getMode() ||
+                                    (! tryOper.getParameter(k).getJavaType().
+                                     equals(thisOper.getParameter(k).getJavaType()))) {
+                                    parmsMatch = false;
+                                }
+                                if (parmsMatch) {
+                                    messageOper = tryOper;
+                                    found = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            writeMessages(def, oper, messageOper);
             portType.addOperation(oper);
         }
 
