@@ -59,8 +59,10 @@ import java.util.*;
 import org.w3c.dom.* ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Message;
 import org.apache.axis.Handler;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Call;
 
 import samples.transport.tcp.TCPTransport;
 
@@ -79,30 +81,41 @@ public class ProxyService {
     public Document ProxyService(MessageContext msgContext)
         throws AxisFault
     {
-        // Look in the message context for our service
-        Handler self = msgContext.getServiceHandler();
+        try {
+            // Look in the message context for our service
+            Handler self = msgContext.getServiceHandler();
+            
+            // what is our target URL?
+            String dest = (String)self.getOption("URL");
+            
+            // use the server's client engine in case anything has 
+            // been deployed to it
+            Service service = new Service();
+            Call    call = (Call) service.createCall();
+            call.setEngine( msgContext.getAxisEngine().getClientEngine() );
+    
+            // add TCP for proxy testing
+            call.addTransportPackage("samples.transport");
+            call.setTransportForProtocol("tcp", TCPTransport.class);
+            
+            // NOW set the client's URL (since now the tcp handler exists)
+            call.setTargetEndpointAddress(new java.net.URL(dest));
+    
+            call.setRequestMessage(msgContext.getRequestMessage());
+            
+            call.invoke();
+            
+            Message msg = call.getResponseMessage();
+
+            msgContext.setResponseMessage(msg);
         
-        // what is our target URL?
-        String dest = (String)self.getOption("URL");
-        
-        // use the server's client engine in case anything has been deployed to it
-        ServiceClient client = new ServiceClient(msgContext.getAxisEngine().getClientEngine());
-        
-        // add TCP for proxy testing
-        client.addTransportPackage("samples.transport");
-        client.setTransportForProtocol("tcp", TCPTransport.class);
-        
-        // NOW set the client's URL (since now the tcp handler exists)
-        client.setURL(dest);
-        
-        client.setRequestMessage(msgContext.getRequestMessage());
-        
-        client.invoke();
-        
-        msgContext.setResponseMessage(client.getMessageContext().getResponseMessage());
-        
-        // return null so MsgProvider will not muck with our response
-        return null;
+            // return null so MsgProvider will not muck with our response
+            return null;
+        }
+        catch( Exception exp ) {
+            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
+            throw new AxisFault( exp );
+        }
     }
 }
 
