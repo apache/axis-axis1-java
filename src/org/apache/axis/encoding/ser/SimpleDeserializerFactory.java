@@ -84,12 +84,40 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
      * primitive java types or some basic Axis types.
      */
     public static boolean isBasic(Class javaType) {
-        return (javaType.isPrimitive() || 
+        return (javaType.isPrimitive() ||
                 javaType == java.lang.String.class ||
                 javaType == java.lang.Boolean.class ||
                 javaType == java.lang.Float.class ||
                 javaType == java.lang.Double.class ||
-                javaType == org.apache.axis.types.URI.class);
+                javaType == org.apache.axis.types.Day.class ||
+                javaType == org.apache.axis.types.Duration.class ||
+                javaType == org.apache.axis.types.Entities.class ||
+                javaType == org.apache.axis.types.Entity.class ||
+                javaType == org.apache.axis.types.HexBinary.class ||
+                javaType == org.apache.axis.types.Id.class ||
+                javaType == org.apache.axis.types.IDRef.class ||
+                javaType == org.apache.axis.types.IDRefs.class ||
+                javaType == org.apache.axis.types.Language.class ||
+                javaType == org.apache.axis.types.Month.class ||
+                javaType == org.apache.axis.types.MonthDay.class ||
+                javaType == org.apache.axis.types.Name.class ||
+                javaType == org.apache.axis.types.NCName.class ||
+                javaType == org.apache.axis.types.NegativeInteger.class ||
+                javaType == org.apache.axis.types.NMToken.class ||
+                javaType == org.apache.axis.types.NMTokens.class ||
+                javaType == org.apache.axis.types.NonNegativeInteger.class ||
+                javaType == org.apache.axis.types.NonPositiveInteger.class ||
+                javaType == org.apache.axis.types.NormalizedString.class ||
+                javaType == org.apache.axis.types.PositiveInteger.class ||
+                javaType == org.apache.axis.types.Time.class ||
+                javaType == org.apache.axis.types.Token.class ||
+                javaType == org.apache.axis.types.UnsignedByte.class ||
+                javaType == org.apache.axis.types.UnsignedInt.class ||
+                javaType == org.apache.axis.types.UnsignedLong.class ||
+                javaType == org.apache.axis.types.UnsignedShort.class ||
+                javaType == org.apache.axis.types.URI.class ||
+                javaType == org.apache.axis.types.Year.class ||
+                javaType == org.apache.axis.types.YearMonth.class);
     }
 
     /**
