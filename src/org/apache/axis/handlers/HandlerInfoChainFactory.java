@@ -20,8 +20,9 @@ import javax.xml.rpc.handler.HandlerChain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.io.Serializable;
 
-public class HandlerInfoChainFactory {
+public class HandlerInfoChainFactory implements Serializable {
 
     protected List handlerInfos = new ArrayList();
     protected String[] _roles = null;
