@@ -1713,10 +1713,8 @@ public class Call implements javax.xml.rpc.Call {
             env = new SOAPEnvelope(msgContext.getSOAPConstants(),
                                    msgContext.getSchemaVersion());
 
-            if ( !(params[0] instanceof SOAPEnvelope) ) {
-                for ( i = 0 ; i < params.length ; i++ ) {
-                    env.addBodyElement( (SOAPBodyElement) params[i] );
-                }
+            for (i = 0; i < params.length; i++) {
+                env.addBodyElement((SOAPBodyElement) params[i]);
             }
 
             Message msg = new Message( env );
@@ -1807,7 +1805,7 @@ public class Call implements javax.xml.rpc.Call {
             invoke();
             msg = msgContext.getResponseMessage();
             if (msg == null) {
-              if (this.FAULT_ON_NO_RESPONSE) {
+              if (FAULT_ON_NO_RESPONSE) {
                 throw new AxisFault(Messages.getMessage("nullResponse00"));
               } else {
                 return null;
@@ -2046,9 +2044,9 @@ public class Call implements javax.xml.rpc.Call {
               Attachments attachments=msg.getAttachmentsImpl();
               if(null != attachments) {
                   if( ATTACHMENT_ENCAPSULATION_FORMAT_MIME.equals(attachformat)) {
-                    attachments.setSendType(attachments.SEND_TYPE_MIME);
+                    attachments.setSendType(Attachments.SEND_TYPE_MIME);
                   } else if ( ATTACHMENT_ENCAPSULATION_FORMAT_DIME.equals(attachformat)) {
-                    attachments.setSendType(attachments.SEND_TYPE_DIME);
+                    attachments.setSendType(Attachments.SEND_TYPE_DIME);
                   }
               }
          }
@@ -2659,7 +2657,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if (resMsg == null) {
             //TODO: stevel: this is a constant. it is always true. so why the condition?
-          if (this.FAULT_ON_NO_RESPONSE) {
+          if (FAULT_ON_NO_RESPONSE) {
             throw new AxisFault(Messages.getMessage("nullResponse00"));
           } else {
             return;
