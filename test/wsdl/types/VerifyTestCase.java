@@ -29,8 +29,12 @@ import javax.xml.rpc.holders.StringHolder;
 
 import javax.xml.rpc.namespace.QName;
 
+import test.wsdl.types.comprehensive_types.Animal;
+import test.wsdl.types.comprehensive_types.AnimalHolder;
 import test.wsdl.types.comprehensive_types.ArrayHolder;
 import test.wsdl.types.comprehensive_types.ArrayMHolder;
+import test.wsdl.types.comprehensive_types.Cat;
+import test.wsdl.types.comprehensive_types.CatHolder;
 import test.wsdl.types.comprehensive_types.ComplexAll;
 import test.wsdl.types.comprehensive_types.ComplexAllHolder;
 import test.wsdl.types.comprehensive_types.ComplexSequence;
@@ -260,6 +264,39 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         try {
             java.lang.Object value = binding.anyOut();
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        Cat cat = new Cat("meow");
+        try {
+            binding.animalIn(cat);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            binding.animalInout(new AnimalHolder(cat));
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            Animal value = null;
+            value = binding.animalOut();
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            binding.catIn(cat);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            binding.catInout(new CatHolder(cat));
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            Cat value = null;
+            value = binding.catOut();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
