@@ -249,6 +249,8 @@ public class MessageExchangeImpl
             log.debug("Enter: MessageExchangeImpl::sendAndReceive");
         }
         holder = new Holder();
+        MessageExchangeEventListener oldListener = 
+          getMessageExchangeEventListener();
         Listener listener = new Listener(holder);
         setMessageExchangeEventListener(listener);
         try {
@@ -259,6 +261,8 @@ public class MessageExchangeImpl
               holder.waitForNotify();
         } catch (InterruptedException ie) {
             throw AxisFault.makeFault(ie);
+        } finally {
+          setMessageExchangeEventListener(oldListener);
         }
         if (log.isDebugEnabled()) {
             log.debug("Exit: MessageExchangeImpl::sendAndReceive");
