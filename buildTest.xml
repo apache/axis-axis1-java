@@ -61,59 +61,59 @@ Copyright:
 <!-- TESTS -->
 
   <target name="filegen" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/wsdl/filegen/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/wsdl/filegen/build.xml"/>
   </target>
 
   <target name="chains" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/chains/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/chains/build.xml"/>
   </target>
 
   <target name="faults" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/faults/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/faults/build.xml"/>
   </target>
 
   <target name="functional" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/functional/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/functional/build.xml"/>
   </target>
 
   <target name="session" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/session/buildComponent.xml" target="run" />
+    <ant inheritAll="true" antfile="${axis.home}/test/session/build.xml" target="run" />
   </target>
 
   <target name="refattr" depends="setenv" >
-    <ant inheritAll="true" antfile="${axis.home}/test/wsdl/refattr/buildComponent.xml" target="run" />
+    <ant inheritAll="true" antfile="${axis.home}/test/wsdl/refattr/build.xml" target="run" />
   </target>
 
   <target name="outparams" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/outparams/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/outparams/build.xml"/>
   </target>
 
   <target name="soap" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/soap/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/soap/build.xml"/>
   </target>
 
   <target name="utils" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/utils/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/utils/build.xml"/>
   </target>
 
   <target name="RPCDispatch" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/RPCDispatch/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/RPCDispatch/build.xml"/>
   </target>
 
   <target name="encoding" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/encoding/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/test/encoding/build.xml"/>
   </target>
 
   <target name="md5attach" depends="setenv">
-     <ant inheritAll="true" antfile="${axis.home}/test/md5attach/buildComponent.xml"/>
+     <ant inheritAll="true" antfile="${axis.home}/test/md5attach/build.xml"/>
   </target>
 
   <target name="wsdd" depends="setenv">
-     <ant inheritAll="true" antfile="${axis.home}/test/wsdd/buildComponent.xml"/>
+     <ant inheritAll="true" antfile="${axis.home}/test/wsdd/build.xml"/>
   </target>
 
   <target name="wsdl" depends="setenv">
-     <ant inheritAll="true" antfile="${axis.home}/test/wsdl/buildComponent.xml"/>
+     <ant inheritAll="true" antfile="${axis.home}/test/wsdl/build.xml"/>
   </target>
 
 <!-- =========================================================================== -->
@@ -123,8 +123,16 @@ Copyright:
         <param name="file">
              <fileset dir="${axis.home}" >
                <patternset>
-                 <include name="test/**/buildComponent.xml"/>
-                 <exclude name="test/httpunit/buildComponent.xml"/>
+                 <include name="test/**/build.xml"/>
+		 <exclude name="test/httpunit/build.xml" />
+		 <exclude name="test/wsdl/interop3/compound1/build.xml" />
+                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
+                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
+                 <exclude name="test/wsdl/interop3/import1/build.xml" />
+                 <exclude name="test/wsdl/interop3/import2/build.xml" />
+                 <exclude name="test/wsdl/interop3/import3/build.xml" />
                </patternset>
              </fileset>
         </param>
@@ -313,7 +321,15 @@ Copyright:
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>
-                 <include name="test/**/buildComponent.xml"/>
+                 <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
+                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
+                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
+                 <exclude name="test/wsdl/interop3/import1/build.xml" />
+                 <exclude name="test/wsdl/interop3/import2/build.xml" />
+                 <exclude name="test/wsdl/interop3/import3/build.xml" />
                 </patternset>
              </fileset>
         </param>
@@ -328,8 +344,15 @@ Copyright:
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>
-                 <include name="test/wsdl/**/buildComponent.xml"/>
-                 <include name="test/functional/buildComponent.xml"/>
+                 <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
+                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
+                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
+                 <exclude name="test/wsdl/interop3/import1/build.xml" />
+                 <exclude name="test/wsdl/interop3/import2/build.xml" />
+                 <exclude name="test/wsdl/interop3/import3/build.xml" />
                 </patternset>
              </fileset>
         </param>
@@ -349,7 +372,7 @@ Copyright:
 
     <echo message="Return to buildTest.xml"/>
 
-    <ant antfile="${axis.home}/test/functional/buildComponent.xml" target="run"/>
+    <ant antfile="${axis.home}/test/functional/build.xml" target="run"/>
    </target>
 
    <target name="batch-junit-functional" depends="start-signature-signing-and-verification">
@@ -357,7 +380,15 @@ Copyright:
         <param name="file">
              <fileset dir="." >
                 <patternset>
-                 <include name="test/wsdl/**/buildComponent.xml"/>
+                 <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
+                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
+                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
+                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
+                 <exclude name="test/wsdl/interop3/import1/build.xml" />
+                 <exclude name="test/wsdl/interop3/import2/build.xml" />
+                 <exclude name="test/wsdl/interop3/import3/build.xml" />
                 </patternset>
              </fileset>
         </param>
