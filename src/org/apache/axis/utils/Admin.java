@@ -114,7 +114,7 @@ public class Admin {
       Node    node  = list.item(i);
       if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
       Element elem  = (Element) node ;
-      if ( !"option".equals(elem.getLocalName()) ) continue ;
+      if ( !"option".equals(elem.getTagName()) ) continue ;
       String  name  = elem.getAttribute( "name" );
       String  value = elem.getAttribute( "value" );
 
@@ -156,7 +156,7 @@ public class Admin {
     try {
       init();
       AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
-      String            action = root.getLocalName();
+      String            action = root.getTagName();
 
       if ( !action.equals("deploy") && !action.equals("undeploy") &&
            !action.equals("list") && !action.equals("quit") )
@@ -241,7 +241,7 @@ public class Admin {
         if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
 
         Element  elem    = (Element) node ;
-        String   type    = elem.getLocalName();
+        String   type    = elem.getTagName();
         String   name    = elem.getAttribute( "name" );
 
         if ( name != null && name.equals("") ) name = null ;
