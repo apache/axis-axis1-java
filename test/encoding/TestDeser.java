@@ -159,6 +159,35 @@ public class TestDeser extends TestCase {
                     v);
     }
     
+    public void testSparseArray1() throws Exception {
+        ArrayList list = new ArrayList(4);
+        list.add(null);
+        list.add(null);
+        list.add("abc");
+        list.add("def");
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[4]\" " +
+                            "soapenc:offset=\"[2]\"> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" + 
+                       "<item xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    list);
+    }
+    
+    public void testSparseArray2() throws Exception {
+        ArrayList list = new ArrayList(4);
+        list.add("abc");
+        list.add(null);
+        list.add("def");
+        list.add(null);
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[4]\"> " +
+      "<item soapenc:position=\"[0]\" xsi:type=\"xsd:string\">abc</item>" + 
+      "<item soapenc:position=\"[2]\" xsi:type=\"xsd:string\">def</item>" + 
+                    "</result>",
+                    list);
+    }
+    
     public void testMap() throws Exception {
         HashMap m = new HashMap();
         m.put("abcKey", "abcVal");

@@ -63,7 +63,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import java.lang.reflect.Array;
 import java.io.IOException;
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 /** An ArraySerializer handles serializing and deserializing SOAP
@@ -166,8 +166,12 @@ public class ArraySerializer extends Deserializer
                     throw new SAXException("No component type for " +
                                            arrayItemType);
                 
-                value = new Vector(length);
-                ((Vector)value).setSize(length);
+                ArrayList list = new ArrayList(length);
+                // ArrayList lacks a setSize(), so...
+                for (int i = 0; i < length; i++) {
+                    list.add(null);
+                }
+                value = list;
 
             }
             catch (NumberFormatException e)
@@ -176,6 +180,24 @@ public class ArraySerializer extends Deserializer
                     "Explicit array length is not a valid integer '" +
                     lengthStr + "'.");
             }
+        }
+        
+        String offset = attributes.getValue(Constants.URI_SOAP_ENC,
+                                            Constants.ATTR_OFFSET);
+        if (offset != null) {
+            leftBracketIndex = offset.lastIndexOf('[');
+            rightBracketIndex = offset.lastIndexOf(']');
+
+            if (leftBracketIndex == -1
+                || rightBracketIndex == -1
+                || rightBracketIndex < leftBracketIndex)
+            {
+                throw new SAXException("Malformed offset attribute '" +
+                    offset + "'.");
+            }
+            
+            curIndex = Integer.parseInt(offset.substring(leftBracketIndex + 1,
+                                                         rightBracketIndex));
         }
         
         if (DEBUG_LOG) {
@@ -194,7 +216,27 @@ public class ArraySerializer extends Deserializer
             System.err.println("In ArraySerializer.onStartChild()");
         }
         
-        // !!! Check position attribute, type attribute....
+        if (attributes != null) {
+            String pos = attributes.getValue(Constants.URI_SOAP_ENC,
+                                             Constants.ATTR_POSITION);
+            if (pos != null) {
+                int leftBracketIndex = pos.lastIndexOf('[');
+                int rightBracketIndex = pos.lastIndexOf(']');
+
+                if (leftBracketIndex == -1
+                    || rightBracketIndex == -1
+                    || rightBracketIndex < leftBracketIndex)
+                {
+                    throw new SAXException("Malformed position attribute '" +
+                        pos + "'.");
+                }
+                
+                curIndex = 
+                       Integer.parseInt(pos.substring(leftBracketIndex + 1,
+                                                      rightBracketIndex));
+            }
+        }
+        
         QName itemType = context.getTypeFromAttributes(namespace,
                                                        localName,
                                                        attributes);
@@ -217,7 +259,7 @@ public class ArraySerializer extends Deserializer
             System.err.println("ArraySerializer got value [" + hint +
                                "] = " + value);
         }
-        ((Vector)this.value).set(((Integer)hint).intValue(), value);
+        ((ArrayList)this.value).set(((Integer)hint).intValue(), value);
     }
 
     public void serialize(QName name, Attributes attributes,

@@ -151,6 +151,8 @@ public class Constants {
     public static final String ATTR_HREF            = "href" ;
     public static final String ATTR_QNAME           = "qname";
     public static final String ATTR_ARRAY_TYPE      = "arrayType";
+    public static final String ATTR_OFFSET          = "offset";
+    public static final String ATTR_POSITION        = "position";
 
     // Fault Codes
     //////////////////////////////////////////////////////////////////////////
