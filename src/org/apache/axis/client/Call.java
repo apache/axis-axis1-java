@@ -168,6 +168,12 @@ public class Call implements javax.xml.rpc.Call {
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
     private static Hashtable transports  = new Hashtable();
+
+    /**
+     * A Hashtable mapping addresses (URLs) to Transports (objects)
+     */
+    private static Hashtable transportImpls = new Hashtable();
+
     private static boolean   initialized = false;
 
     /************************************************************************/
@@ -575,13 +581,22 @@ public class Call implements javax.xml.rpc.Call {
                 }
             }
 
-            Transport transport = getTransportForProtocol(protocol);
-            if (transport == null)
-                throw new AxisFault("Call.setTargetEndpointAddress",
-                        JavaUtils.getMessage("noTransport01", protocol),
-                        null, null);
-            transport.setUrl(address.toString());
-            setTransport(transport);
+            // Do we already have a transport for this address?
+            Transport transport = (Transport) transportImpls.get(address);
+            if (transport != null) {
+                setTransport(transport);
+            }
+            else {
+            // We don't already have a transport for this address.  Create one.
+                transport = getTransportForProtocol(protocol);
+                if (transport == null)
+                    throw new AxisFault("Call.setTargetEndpointAddress",
+                                 JavaUtils.getMessage("noTransport01",
+                                 protocol), null, null);
+                transport.setUrl(address.toString());
+                setTransport(transport);
+                transportImpls.put(address, transport);
+            }
         }
         catch( Exception exp ) {
             exp.printStackTrace();
