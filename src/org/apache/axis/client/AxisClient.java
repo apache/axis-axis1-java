@@ -62,6 +62,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
@@ -82,6 +83,11 @@ public class AxisClient extends AxisEngine
     public AxisClient(ConfigurationProvider provider)
     {
         super(provider);
+    }
+    
+    public AxisClient()
+    {
+        this(new FileProvider(Constants.CLIENT_CONFIG_FILE));
     }
 
     /**
