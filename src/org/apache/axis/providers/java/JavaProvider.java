@@ -253,6 +253,12 @@ public abstract class JavaProvider extends BasicProvider {
             category.debug(JavaUtils.getMessage("exit00", "JavaProvider::invoke (" + this + ")"));
     }
 
+    /**
+     * Generate the WSDL for this service.
+     * 
+     * Put in the "WSDL" property of the message context 
+     * as a org.w3c.dom.Document
+     */ 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         if (category.isDebugEnabled())
             category.debug(JavaUtils.getMessage("enter00", "JavaProvider::editWSDL (" + this + ")"));
@@ -264,18 +270,6 @@ public abstract class JavaProvider extends BasicProvider {
 
         /* Now get the service (RPC) specific info  */
         /********************************************/
-        String  clsName   = getServiceClassName(service);
-        Object obj        = null;
-        try {
-            obj = getServiceObject(msgContext,
-                                   service,
-                                   clsName);
-        } catch( Exception exp ) {
-            category.error( exp );
-            throw AxisFault.makeFault(exp);
-        }
-
-        JavaClass jc	  = JavaClass.find(obj.getClass());
         String  allowedMethods = getAllowedMethods(service);
 
         /** ??? Should we enforce setting methodName?  As it was,
@@ -293,19 +287,21 @@ public abstract class JavaProvider extends BasicProvider {
           allowedMethods = null;
 
         /** If the class knows what it should be exporting,
-        * respect its wishes.
-        */
-        if (obj instanceof AxisServiceConfig) {
-            allowedMethods = ((AxisServiceConfig)obj).getMethods();
-        }
+         * respect its wishes.
+         * XXX - this system (AxisSeriviceConfig interface) is going to be
+         * removed per the TODO list, so it wont work for WSDL right now
+         * tomj@macromedia.com
+         */
+//        if (obj instanceof AxisServiceConfig) {
+//            allowedMethods = ((AxisServiceConfig)obj).getMethods();
+//        }
 
         try {
-            ClassLoader cl     = msgContext.getClassLoader();
-            Class           cls    = jc.getJavaClass();
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String urn = (String)msgContext.getTargetService();
             String description = "Service";
 
+            Class cls = getServiceClass(msgContext, getServiceClassName(service));
             Emitter emitter = new Emitter();
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
@@ -343,7 +339,7 @@ public abstract class JavaProvider extends BasicProvider {
 
     /**
      * Default java service object comes from simply instantiating the
-     *   class wrapped in jc
+     * class wrapped in jc
      *
      */
     protected Object getNewServiceObject(MessageContext msgContext,
@@ -352,13 +348,13 @@ public abstract class JavaProvider extends BasicProvider {
     {
         ClassLoader cl     = msgContext.getClassLoader();
         ClassCache cache   = msgContext.getAxisEngine().getClassCache();
-        JavaClass       jc     = cache.lookup(clsName, cl);
+        JavaClass  jc      = cache.lookup(clsName, cl);
 
         return jc.getJavaClass().newInstance();
     }
 
     /**
-     *
+     * Return the class name of the service
      */
     protected String getServiceClassName(Handler service)
     {
@@ -366,10 +362,24 @@ public abstract class JavaProvider extends BasicProvider {
     }
 
     /**
-     *
+     * Return the option in the configuration that contains the service class
+     * name
      */
     protected String getServiceClassNameOptionName()
     {
         return classNameOption;
     }
+    
+    /**
+     * Returns the Class info about the service class.
+     */ 
+    protected Class getServiceClass(MessageContext msgContext, String clsName) throws Exception {
+        Handler service = msgContext.getServiceHandler();
+        Object obj = getServiceObject(msgContext,
+                                   service,
+                                   clsName);
+        
+        return obj.getClass();
+    }
+
 }
