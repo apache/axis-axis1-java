@@ -191,6 +191,7 @@ public class ForeachTask extends Task {
             callee2.setClassname("org.apache.tools.ant.Main");
             callee2.setAppend(true);
             callee2.setFork(true);
+            callee2.createJvmarg().setValue("-Xbootclasspath/p:" + System.getProperty("sun.boot.class.path"));
         /* }                      */
         String systemClassPath = System.getProperty("java.class.path");
         callee2.setClasspath(new Path(getProject(), systemClassPath));
