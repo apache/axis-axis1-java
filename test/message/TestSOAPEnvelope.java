@@ -55,29 +55,76 @@
 
 package test.message;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPException;
 
 /**
- * Test org.apache.axis.Message subsystem.
+ * Test SOAPEnvelope class.
  *
  * @author Glyn Normington (glyn@apache.org)
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
+public class TestSOAPEnvelope extends TestCase {
+
+    public TestSOAPEnvelope(String name) {
         super(name);
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
-        
-        suite.addTestSuite(TestMessageElement.class);
-        suite.addTestSuite(TestSOAPEnvelope.class);
- 
-        return suite;
+    // Test JAXM methods...
+
+    public void testName() throws Exception {
+        SOAPEnvelope env = new org.apache.axis.message.SOAPEnvelope();
+        Name n = env.createName("local", "pref", "urn:blah");
+        assertEquals("local part of name did not match", "local",
+                     n.getLocalName());
+        assertEquals("qname of name did not match", "urn:blah:local",
+                     n.getQualifiedName());
+        assertEquals("prefix of name did not match", "pref",
+                     n.getPrefix());
+        assertEquals("uri of name did not match", "urn:blah",
+                     n.getURI());
+        Name n2 = env.createName("loc");
+        assertEquals("local part of name2 did not match", "loc",
+                     n2.getLocalName());
+    }
+
+    public void testHeader() throws Exception {
+        SOAPEnvelope env = new org.apache.axis.message.SOAPEnvelope();
+        SOAPHeader h1 = env.getHeader();
+        assertTrue("null initial header", h1 != null);
+        h1.detachNode();
+        assertTrue("header not freed", env.getHeader() == null);
+        SOAPHeader h2 = env.addHeader();
+        assertTrue("null created header", h2 != null);
+        assertEquals("wrong header retrieved", h2, env.getHeader());
+        assertEquals("header parent incorrect", env,
+                     (SOAPEnvelope)h2.getParentElement());
+        try {
+            env.addHeader();
+            assertTrue("second header added", false);
+        } catch (SOAPException e) {
+        }
+    }
+
+    public void testBody() throws Exception {
+        SOAPEnvelope env = new org.apache.axis.message.SOAPEnvelope();
+        SOAPBody b1 = env.getBody();
+        assertTrue("null initial body", b1 != null);
+        b1.detachNode();
+        assertTrue("body not freed", env.getBody() == null);
+        SOAPBody b2 = env.addBody();
+        assertTrue("null created body", b2 != null);
+        assertEquals("wrong body retrieved", b2, env.getBody());
+        assertEquals("body parent incorrect", env,
+                     (SOAPEnvelope)b2.getParentElement());
+        try {
+            env.addBody();
+            assertTrue("second body added", false);
+        } catch (SOAPException e) {
+        }
     }
 }

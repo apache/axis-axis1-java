@@ -117,6 +117,7 @@ public class SOAPEnvelope extends MessageElement
     {
         this.soapConstants = soapConstants;
         header = new SOAPHeader(this, soapConstants);
+        body = new SOAPBody(this, soapConstants);
 
         if (registerPrefixes) {
             if (namespaces == null)
