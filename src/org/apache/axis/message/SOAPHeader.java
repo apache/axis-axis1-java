@@ -127,18 +127,39 @@ public class SOAPHeader extends MessageElement {
             if (idx > -1) {
                 // Got it, so replace it's value.
                 attributes.setValue(idx, b ? "1" : "0");
+                return;
             }
         } else {
             attributes = new AttributesImpl();
-            addAttribute(Constants.URI_SOAP_ENV,
-                         Constants.ATTR_MUST_UNDERSTAND,
-                         b ? "1" : "0");
         }
+        
+        addAttribute(Constants.URI_SOAP_ENV,
+                     Constants.ATTR_MUST_UNDERSTAND,
+                     b ? "1" : "0");
     }
 
     public String getActor() { return( actor ); }
     public void setActor(String a) {
         actor = a ;
+        if (attributes != null) {
+            int idx = attributes.getIndex(Constants.URI_SOAP_ENV,
+                                          Constants.ATTR_ACTOR);
+            if (idx > -1) {
+                // Got it, so replace it's value.
+                if (a != null) {
+                    attributes.setValue(idx, a);
+                } else {
+                    attributes.removeAttribute(idx);
+                }
+                return;
+            }
+        } else if (a != null) {
+            attributes = new AttributesImpl();
+        }
+
+        addAttribute(Constants.URI_SOAP_ENV,
+                     Constants.ATTR_ACTOR,
+                     a);
     }
 
     public void setProcessed(boolean value) {
