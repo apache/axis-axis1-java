@@ -12,11 +12,11 @@ public class WSDLInteropTestDocLitPortBindingImpl implements test.wsdl.interop3.
         return echoStringParam;
     }
 
-    public org.soapinterop.ArrayOfstringLiteral echoStringArray(org.soapinterop.ArrayOfstringLiteral echoStringArrayParam) throws java.rmi.RemoteException {
+    public test.wsdl.interop3.docLit.xsd.ArrayOfstringLiteral echoStringArray(test.wsdl.interop3.docLit.xsd.ArrayOfstringLiteral echoStringArrayParam) throws java.rmi.RemoteException {
         return echoStringArrayParam;
     }
 
-    public org.soapinterop.SOAPStruct echoStruct(org.soapinterop.SOAPStruct echoStructParam) throws java.rmi.RemoteException {
+    public test.wsdl.interop3.docLit.xsd.SOAPStruct echoStruct(test.wsdl.interop3.docLit.xsd.SOAPStruct echoStructParam) throws java.rmi.RemoteException {
         return echoStructParam;
     }
 
