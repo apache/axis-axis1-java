@@ -137,6 +137,7 @@ public class Admin {
         String[]   names ;
         Handler    h ;
         int        i, j ;
+        HandlerRegistry registry = hr;
 
         doc = XMLUtils.newDocument();
         root = doc.createElement( "Admin" );
@@ -148,13 +149,15 @@ public class Admin {
         /* Process Handlers first */
         /**************************/
         for ( int loop = 0 ; loop < 2 ; loop++ ) {
-          if ( loop == 0 )
-            names = hr.list();
-          else
-            names = sr.list();
+          if ( loop == 1 )
+            registry = sr;
+          
+          names = registry.list();
 
           for( i = 0 ; i < names.length ; i++ ) {
-            h = hr.find(names[i]);
+            h = registry.find(names[i]);
+            if (h == null)
+              throw new AxisFault("Server", "Couldn't find registered handler '" + names[i] + "'", null, null);
             elem = h.getDeploymentData(doc);
 
             if ( elem == null ) continue ;
@@ -174,6 +177,7 @@ public class Admin {
             root.appendChild( doc.importNode(elem,true) );
           }
         }
+
         return( doc );
       }
   
