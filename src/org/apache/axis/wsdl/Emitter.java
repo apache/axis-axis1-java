@@ -115,7 +115,7 @@ public class Emitter {
     public static final byte REQUEST_SCOPE     = 0x10;
     public static final byte SESSION_SCOPE     = 0x11;
 
-    private static boolean firstSer = true ;
+    private static volatile boolean firstSer = true ;
 
     private Document doc = null;
     private Definition def = null;
