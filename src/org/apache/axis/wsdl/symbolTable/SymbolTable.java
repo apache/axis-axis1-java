@@ -820,11 +820,10 @@ public class SymbolTable {
 
                 // Now get the TypeEntry
                 TypeEntry refType = getTypeEntry(refQName, forElement.value);
-                if (refType == null) {
-                    throw new IOException(Messages.getMessage("absentRef00", refQName.toString(), qName.toString()));
-                }
-
                 if (!belowSchemaLevel) {
+                    if (refType == null) {
+                        throw new IOException(Messages.getMessage("absentRef00", refQName.toString(), qName.toString()));
+                    }
                     symbolTablePut(new DefinedElement(qName, refType, node, ""));
                 }
             }
