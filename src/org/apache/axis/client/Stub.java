@@ -183,7 +183,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
                 return cachedPassword;
             }
             else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
-                return cachedEndpoint;
+                return cachedEndpoint.toString();
             }
             else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {
                 return maintainSessionSet ? new Boolean(maintainSession) : null;
