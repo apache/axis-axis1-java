@@ -70,11 +70,12 @@ public class TestSerializedRPC extends TestCase {
         SOAPService reverse = new SOAPService(new RPCProvider());
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "*");
-        provider.deployService(SOAPAction, reverse);
 
         JavaServiceDesc desc = new JavaServiceDesc();
         desc.loadServiceDescByIntrospection(Service.class, tm);
         reverse.setServiceDescription(desc);
+
+        provider.deployService(SOAPAction, reverse);
 
         // Now we've got the service description loaded up.  We're going to
         // be testing parameter dispatch by name, so if debug info isn't

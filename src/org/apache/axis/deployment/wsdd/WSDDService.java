@@ -249,7 +249,7 @@ public class WSDDService
     }
 
     private void createTMR() {
-        tmr = new TypeMappingRegistryImpl();
+        tmr = new TypeMappingRegistryImpl(false);
         String version = getParameter("typeMappingVersion");
         ((TypeMappingRegistryImpl)tmr).doRegisterFromVersion(version);
     }
@@ -677,7 +677,7 @@ public class WSDDService
         if (tmr == null) {
             return null;
         }
-        return (TypeMapping) tmr.getTypeMapping(encodingStyle);
+        return (TypeMapping) tmr.getOrMakeTypeMapping(encodingStyle);
     }
 
  

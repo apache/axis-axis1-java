@@ -166,7 +166,7 @@ public abstract class AxisEngine extends BasicHandler
         }
 
         // The SOAP/XSD stuff is in the default TypeMapping of the TypeMappingRegistry.
-        //getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
+        //getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingletonDelegate());
 
         try {
             config.configureEngine(this);

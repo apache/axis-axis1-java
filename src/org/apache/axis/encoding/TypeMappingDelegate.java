@@ -30,6 +30,8 @@ import javax.xml.rpc.JAXRPCException;
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class TypeMappingDelegate implements TypeMapping {
+    static final TypeMappingImpl placeholder = new TypeMappingImpl();
+
     TypeMappingImpl delegate;
     TypeMappingDelegate next;
 

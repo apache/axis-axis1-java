@@ -375,7 +375,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     {
         // Always allow the default mappings
         if (msgContext == null)
-            return DefaultTypeMappingImpl.getSingleton();
+            return DefaultTypeMappingImpl.getSingletonDelegate();
 
         String encodingStyle = msgContext.getEncodingStyle();
         if (encodingStyle == null)

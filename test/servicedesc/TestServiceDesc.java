@@ -37,7 +37,7 @@ public class TestServiceDesc extends TestCase {
  
     public void testFaultSynch() throws Exception {
         JavaServiceDesc desc = new JavaServiceDesc();
-        desc.setTypeMapping(DefaultTypeMappingImpl.getSingleton());
+        desc.setTypeMapping(DefaultTypeMappingImpl.getSingletonDelegate());
 
         desc.loadServiceDescByIntrospection(ServiceClass.class);
 

@@ -37,7 +37,7 @@ public class TestTypesNonBeanCompatible extends TestCase {
         protected void setUp() throws Exception {
 
                 Definition def = WSDLFactory.newInstance().newDefinition();
-                TypeMapping tm = DefaultTypeMappingImpl.getSingleton();
+                TypeMapping tm = DefaultTypeMappingImpl.getSingletonDelegate();
                 Namespaces namespaces = new Namespaces();
                 ServiceDesc serviceDesc = new JavaServiceDesc();
                 

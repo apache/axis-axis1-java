@@ -75,11 +75,12 @@ import javax.xml.rpc.encoding.DeserializerFactory;
 public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     private static DefaultTypeMappingImpl tm = null;
+    private boolean inInitMappings = false;
 
     /**
      * Obtain the singleton default typemapping.
      */
-    public static synchronized TypeMappingDelegate getSingleton() {
+    public static synchronized TypeMappingDelegate getSingletonDelegate() {
         if (tm == null) {
             tm = new DefaultTypeMappingImpl();
         }
@@ -97,6 +98,8 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
     }
 
     protected void initMappings() {
+        inInitMappings = true;
+
         // Notes:
         // 1) The registration statements are order dependent.  The last one
         //    wins.  So if two javaTypes of String are registered, the
@@ -543,6 +546,8 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         SchemaVersion.SCHEMA_1999.registerSchemaSpecificTypes(this);
         SchemaVersion.SCHEMA_2000.registerSchemaSpecificTypes(this);
         SchemaVersion.SCHEMA_2001.registerSchemaSpecificTypes(this);
+
+        inInitMappings = false;
     }
 
     /**
@@ -605,8 +610,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                          javax.xml.rpc.encoding.SerializerFactory sf,
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
         throws JAXRPCException {
-
-        // Don't allow anyone but init to modify us.
         super.register(javaType, xmlType, sf, dsf);
     }
     public void removeSerializer(Class javaType, QName xmlType)

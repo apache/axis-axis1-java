@@ -35,15 +35,11 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
     /**
      * Construct TypeMapping
      */
-    public static TypeMappingDelegate getSingleton() {
+    public static synchronized TypeMappingImpl getSingleton() {
         if (tm == null) {
             tm = new DefaultSOAPEncodingTypeMappingImpl();
         }
-        return new TypeMappingDelegate(tm);
-    }
-    
-    public static TypeMappingImpl create() {
-        return new DefaultSOAPEncodingTypeMappingImpl();
+        return tm;
     }
 
     public static TypeMappingDelegate createWithDelegate() {
@@ -53,7 +49,7 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
         if (mc != null) {
             tm = (TypeMappingDelegate)mc.getTypeMappingRegistry().getDefaultTypeMapping();
         } else {
-            tm = DefaultTypeMappingImpl.getSingleton();
+            tm = DefaultTypeMappingImpl.getSingletonDelegate();
         }
         ret.setNext(tm);
         return ret;

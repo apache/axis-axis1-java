@@ -595,10 +595,10 @@ public class TypeMappingImpl
                 Namespaces.makeNamespace( javaType.getName() ),
                 Types.getLocalNameFromFullName( javaType.getName() ) );
                 
-            register( javaType,
-                      xmlType, 
-                      new ArraySerializerFactory(),
-                      new ArrayDeserializerFactory() );
+            internalRegister( javaType,
+                              xmlType,
+                              new ArraySerializerFactory(),
+                              new ArrayDeserializerFactory() );
         }
         
         // Can only detect arrays via code
@@ -630,10 +630,10 @@ public class TypeMappingImpl
              * and getDeserializer() are called, this QName is returned and
              * these methods do not need to worry about creating a serializer.
              */
-            register( javaType,
-                      xmlType, 
-                      new BeanSerializerFactory(javaType, xmlType),
-                      new BeanDeserializerFactory(javaType, xmlType) );
+            internalRegister( javaType,
+                              xmlType,
+                              new BeanSerializerFactory(javaType, xmlType),
+                              new BeanDeserializerFactory(javaType, xmlType) );
         }
 
         //log.debug("getTypeQName xmlType =" + xmlType);
@@ -679,10 +679,10 @@ public class TypeMappingImpl
                 }
                 try {
                     javaType = ClassUtils.forName(className);
-                    register(javaType,
-                            xmlType,
-                            new BeanSerializerFactory(javaType, xmlType),
-                            new BeanDeserializerFactory(javaType, xmlType));
+                    internalRegister(javaType,
+                                     xmlType,
+                                     new BeanSerializerFactory(javaType, xmlType),
+                                     new BeanDeserializerFactory(javaType, xmlType));
                 } catch (ClassNotFoundException e) {
                 }
             }

@@ -138,21 +138,26 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     public TypeMappingRegistryImpl(TypeMappingImpl tm) {
         mapTM = new HashMap();
         defaultDelTM = new TypeMappingDelegate(tm);
-        TypeMappingDelegate del = new TypeMappingDelegate(new DefaultSOAPEncodingTypeMappingImpl());
-        register(Constants.URI_SOAP11_ENC, del);
+//        TypeMappingDelegate del = new TypeMappingDelegate(new DefaultSOAPEncodingTypeMappingImpl());
+//        register(Constants.URI_SOAP11_ENC, del);
     }
 
     /**
      * Construct TypeMappingRegistry
      */
     public TypeMappingRegistryImpl() {
-        mapTM = new HashMap();
-        defaultDelTM = DefaultTypeMappingImpl.getSingleton();
-        TypeMappingDelegate del = new TypeMappingDelegate(new DefaultSOAPEncodingTypeMappingImpl());
-        register(Constants.URI_SOAP11_ENC, del);
+        this(true);
     }
 
     public TypeMappingRegistryImpl(boolean registerDefaults) {
+        mapTM = new HashMap();
+        if (registerDefaults) {
+            defaultDelTM = DefaultTypeMappingImpl.getSingletonDelegate();
+            TypeMappingDelegate del = new TypeMappingDelegate(new DefaultSOAPEncodingTypeMappingImpl());
+            register(Constants.URI_SOAP11_ENC, del);
+        } else {
+            defaultDelTM = new TypeMappingDelegate(TypeMappingDelegate.placeholder);
+        }
     }
 
     /**
@@ -175,8 +180,8 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
             for (int i=0; i < keys.length; i++) {
                 try {
                     String nsURI = keys[i];
-                    TypeMappingDelegate tm = (TypeMappingDelegate) getTypeMapping(nsURI);
-                    if (tm == null || tm == getDefaultTypeMapping() ) {
+                    TypeMappingDelegate tm = (TypeMappingDelegate) mapTM.get(nsURI);
+                    if (tm == null) {
                         tm = (TypeMappingDelegate)createTypeMapping();
                         tm.setSupportedEncodings(new String[] { nsURI });
                         register(nsURI, tm);
@@ -186,16 +191,17 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
                         // Get the secondaryTMR's TM'
                         TypeMappingDelegate del = (TypeMappingDelegate)
                             ((TypeMappingRegistryImpl)secondaryTMR).mapTM.get(nsURI);
-                        TypeMappingDelegate nu = new TypeMappingDelegate(del.delegate);
-                        tm.setNext(nu);
-                        nu.setNext(defaultDelTM);
 
                         while (del.next != null) {
+                            TypeMappingDelegate nu = new TypeMappingDelegate(del.delegate);
+                            tm.setNext(nu);
+
                             if (del.next == otherDefault) {
-                                del.setNext(defaultDelTM);
+                                nu.setNext(defaultDelTM);
                                 break;
                             }
                             del = del.next;
+                            tm = nu;
                         }
                     }
 
@@ -205,8 +211,10 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         }
         // Change our defaultDelTM to delegate to the one in 
         // the secondaryTMR
-        if (defaultDelTM != null) {
+        if (defaultDelTM.delegate != TypeMappingDelegate.placeholder) {
             defaultDelTM.setNext(otherDefault);
+        } else {
+            defaultDelTM.delegate = otherDefault.delegate;
         }
         
     }            
@@ -294,11 +302,15 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
             return;
         } else if (version.equals("1.3")) {
             // Reset the default TM to the JAXRPC version, then register SOAPENC
-            defaultDelTM = new TypeMappingDelegate(DefaultJAXRPC11TypeMappingImpl.create());
+            defaultDelTM = new TypeMappingDelegate(
+                    DefaultJAXRPC11TypeMappingImpl.getSingleton());
         } else {
-            throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
+            throw new RuntimeException(
+                    Messages.getMessage("j2wBadTypeMapping00"));
         }
-        registerSOAPENCDefault(new TypeMappingDelegate(DefaultSOAPEncodingTypeMappingImpl.create()));
+        registerSOAPENCDefault(
+                new TypeMappingDelegate(DefaultSOAPEncodingTypeMappingImpl.
+                                        getSingleton()));
     }
     /**
      * Force registration of the given mapping as the SOAPENC default mapping
@@ -338,7 +350,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */ 
     public TypeMapping getOrMakeTypeMapping(String encodingStyle) {
         TypeMappingDelegate del = (TypeMappingDelegate) mapTM.get(encodingStyle);
-        if (del == null || del == defaultDelTM) {
+        if (del == null || del.delegate instanceof DefaultTypeMappingImpl) {
             del = (TypeMappingDelegate)createTypeMapping();
             del.setSupportedEncodings(new String[] {encodingStyle});
             register(encodingStyle, del);

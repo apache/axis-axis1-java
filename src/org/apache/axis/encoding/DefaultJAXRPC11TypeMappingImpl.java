@@ -35,15 +35,11 @@ public class DefaultJAXRPC11TypeMappingImpl extends DefaultTypeMappingImpl {
     /**
      * Obtain the singleton default typemapping.
      */
-    public static synchronized TypeMappingDelegate getSingleton() {
+    public static synchronized TypeMappingImpl getSingleton() {
         if (tm == null) {
             tm = new DefaultJAXRPC11TypeMappingImpl();
         }
-        return new TypeMappingDelegate(tm);
-    }
-
-    public static TypeMappingImpl create() {
-        return new DefaultJAXRPC11TypeMappingImpl();
+        return tm;
     }
 
     protected DefaultJAXRPC11TypeMappingImpl() {

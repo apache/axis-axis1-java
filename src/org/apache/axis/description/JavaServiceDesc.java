@@ -141,7 +141,7 @@ public class JavaServiceDesc implements ServiceDesc {
     private ArrayList completedNames = new ArrayList();
 
     /** Our typemapping for resolving Java<->XML type issues */
-    private TypeMapping tm = DefaultTypeMappingImpl.getSingleton();
+    private TypeMapping tm = null;
     private TypeMappingRegistry tmr = null;
 
     private boolean haveAllSkeletonMethods = false;
@@ -291,7 +291,8 @@ public class JavaServiceDesc implements ServiceDesc {
 
     public TypeMapping getTypeMapping() {
         if(tm == null) {
-            throw new RuntimeException(Messages.getMessage("noDefaultTypeMapping00"));
+            return DefaultTypeMappingImpl.getSingletonDelegate();
+//            throw new RuntimeException(Messages.getMessage("noDefaultTypeMapping00"));
         }
         return tm;
     }
@@ -1445,7 +1446,7 @@ public class JavaServiceDesc implements ServiceDesc {
 
     public TypeMappingRegistry getTypeMappingRegistry() {
         if (tmr == null) {
-            tmr = new TypeMappingRegistryImpl();
+            tmr = new TypeMappingRegistryImpl(false);
         }
         return tmr;
     }
