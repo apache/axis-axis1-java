@@ -32,7 +32,7 @@
   <service name="empty"/>
   <service name="serviceA">
     <documentation>
-    Service with all ports unique.
+    Service with all ports unique. /* Test Bug 13407 - embedded comments */
     </documentation>
     <port name="portOne" binding="tns:bindingOne">
       <soap:address location="http://localhost:8080/axis/services/portOne"/>
