@@ -420,7 +420,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                            "(value)." + simpleValueType + "Value();");
             } else {
                 if (simpleValueType.equals("byte[]")) {
-                    pw.println("        this.value = value.getBytes();");
+                    pw.println("        this.value = org.apache.axis.types.HexBinary.decode(value);");
                 }
                 else if (simpleValueType.equals("org.apache.axis.types.URI")) {
                     pw.println("        try {");
@@ -454,7 +454,11 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (wrapper != null) {
                 pw.println("        return new " + wrapper + "(value).toString();");
             } else {
-                pw.println("        return value == null ? null : value.toString();");
+                if(simpleValueType.equals("byte[]")) {
+                    pw.println("        return value == null ? null : org.apache.axis.types.HexBinary.encode(value);" );
+                } else {              
+                    pw.println("        return value == null ? null : value.toString();");
+                }
             }
             pw.println("    }");
             pw.println();
