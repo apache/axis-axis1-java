@@ -93,6 +93,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_BYTE = new QName(Constants.URI_SOAP_ENC, "byte");
     public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
 
+    public static final QName TYPE_MAP = new QName("http://xml.apache.org/xml-soap", "Map");
+
     public static       QName XSD_DATE;
     
     static {
@@ -286,6 +288,13 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);
+        
+        addSerializer(java.util.Hashtable.class, TYPE_MAP,
+                      new MapSerializer());
+        addSerializer(java.util.HashMap.class, TYPE_MAP,
+                      new MapSerializer());
+        addDeserializerFactory(TYPE_MAP, java.util.HashMap.class,
+                               MapSerializer.factory);
     }
     
     private static SOAPTypeMappingRegistry singleton = null;
