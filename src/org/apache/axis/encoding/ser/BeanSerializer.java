@@ -417,8 +417,12 @@ public class BeanSerializer implements Serializer, Serializable {
         
         if (beanAttributeNames.isEmpty())
             return attributes;
-        
-        AttributesImpl attrs = new AttributesImpl(attributes);
+
+        AttributesImpl attrs;
+        if (attributes != null)
+            attrs = new AttributesImpl(attributes);
+        else
+            attrs = new AttributesImpl();
         
         try {
             // Find each property that is an attribute 
