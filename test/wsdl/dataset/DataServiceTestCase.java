@@ -10,6 +10,7 @@ package test.wsdl.dataset;
 import org.apache.axis.AxisFault;
 
 import java.net.ConnectException;
+import java.io.IOException;
 
 public class DataServiceTestCase extends junit.framework.TestCase {
     public DataServiceTestCase(java.lang.String name) {
@@ -44,10 +45,12 @@ public class DataServiceTestCase extends junit.framework.TestCase {
                     System.err.println("DataService HTTP error: " + fault);
                     return;
                 }
+                if (fault.detail instanceof IOException) {
+                    System.err.println("DataService IO error: " + fault);
+                    return;
+                }
             }
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
-        } catch (java.io.IOException ioe){
-            System.err.println("DataService IO error: " + ioe);
         }
     }
 }
