@@ -55,15 +55,17 @@
 
 package org.apache.axis.configuration;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.servlet.ServletContext;
 
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
@@ -146,21 +148,46 @@ public class EngineConfigurationFactoryServlet
          * Use the WEB-INF directory (so the config files can't get
          * snooped by a browser)
          */
-        String name = "/WEB-INF/"+ SERVER_CONFIG_FILE;
-        InputStream is = ctx.getResourceAsStream(name);
+        String webInfPath = "/WEB-INF/";
+        String serverConfigFileName = webInfPath + SERVER_CONFIG_FILE;
 
-        FileProvider config;
-        if (is == null) {
-            String rootPath = ctx.getRealPath("/");
-            if (rootPath != null) {
-                name = rootPath + name;
-            }
-            log.error(Messages.getMessage("servletEngineWebInfError01",
-                                           name));
-            config = null;
+        URL configURL;
+        try {
+            configURL = ctx.getResource(serverConfigFileName);
+        } catch (MalformedURLException e) {
+            configURL = null;
+        }
+
+        FileProvider config = null;
+        if (configURL != null) {
+            config = new FileProvider(configURL.getFile().toString());
         } else {
-            // FileProvider assumes responsibility for 'is'.
-            config = new FileProvider(is);
+            String realWebInfPath = ctx.getRealPath(webInfPath);
+            if (realWebInfPath != null  &&
+                (new File(realWebInfPath, SERVER_CONFIG_FILE)).exists()) {
+
+                try {
+                    config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
+                } catch (ConfigurationException e) {
+                    log.error(Messages.getMessage("servletEngineWebInfError00",
+                                                   serverConfigFileName),
+                              e);
+                }
+            }
+        }
+        
+        if (config == null) {
+            InputStream is = ctx.getResourceAsStream(serverConfigFileName);
+            if (is != null) {
+                // FileProvider assumes responsibility for 'is':
+                // do NOT call is.close().
+                config = new FileProvider(is);
+            }
+
+            if (config == null) {
+                log.error(Messages.getMessage("servletEngineWebInfError01",
+                                               serverConfigFileName));
+            }
         }
 
         return config;
