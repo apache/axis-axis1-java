@@ -164,8 +164,6 @@ public class ServiceDescription
      */
     public QName getParamTypeByName(String messageType, String paramName)
     {
-        System.out.println("[" + messageType + "] - " + paramName);
-        
         if (messageType.equals(REQUEST))
             return getInputParamTypeByName(paramName);
         if (messageType.equals(RESPONSE))

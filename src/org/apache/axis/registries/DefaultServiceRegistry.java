@@ -127,6 +127,8 @@ public class DefaultServiceRegistry extends SupplierRegistry {
       cc.addOption( "methodName", "AdminService" );
       handlerRegistry.add( "AdminService", cc );
       this.add( "AdminService", cc );
+      
+      this.add( "EchoService", handlerRegistry.find( "EchoHandler" ) );
     }
     else {
       // Do nothing

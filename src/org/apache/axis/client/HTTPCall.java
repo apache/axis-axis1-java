@@ -220,12 +220,12 @@ public class HTTPCall {
     if (resMsg == null)
         throw new AxisFault(new Exception("Null response message!"));
     
-    resEnv = (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
-    
     /** This must happen before deserialization...
      */
-    resEnv.setServiceDescription(serviceDesc);
-    resEnv.setMessageType(ServiceDescription.RESPONSE);
+    resMsg.setServiceDescription(serviceDesc);
+    resMsg.setMessageType(ServiceDescription.RESPONSE);
+    
+    resEnv = (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
     
     body = (RPCElement)resEnv.getFirstBody();
     resArgs = body.getParams();

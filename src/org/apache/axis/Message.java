@@ -79,7 +79,7 @@ public class Message {
   private Object originalMessage ;
   private Object currentMessage ;
   private String currentForm ;
-  private boolean isResponse = false;
+  private String messageType ;
   private ServiceDescription serviceDesc = null;
 
   /**
@@ -104,7 +104,10 @@ public class Message {
     return( currentForm );
   }
   
-  public void markAsResponse() { isResponse = true; }
+  public void setMessageType(String messageType)
+  {
+    this.messageType = messageType;
+  }
   
   public ServiceDescription getServiceDescription()
   {
@@ -323,8 +326,10 @@ public class Message {
     ThreadedSAXAdapter parser = 
         new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
     parser.setServiceDescription(serviceDesc);
+    SOAPEnvelope env = parser.getEnvelope();
+    env.setMessageType(messageType);
     
-    setCurrentMessage( parser.getEnvelope(), "SOAPEnvelope" );
+    setCurrentMessage( env, "SOAPEnvelope" );
     Debug.Print( 2, "Exit: Message::getAsSOAPEnvelope" );
     return( (SOAPEnvelope) currentMessage );
   }

@@ -63,6 +63,7 @@ import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Admin ;
 import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.handlers.http.*;
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
 
@@ -120,12 +121,19 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
       this.add( "RPCDispatcher", new RPCDispatchHandler() );
       this.add( "HTTPSender"   , new HTTPDispatchHandler() );
       this.add( "HTTPAction"   , new HTTPActionHandler() );
+      this.add( "HTTPAuth"     , new HTTPAuthHandler() );
+      this.add( "JWSHandler"   , new JWSHandler() );
+      
+      // Want this around by default for testing.
+      this.add( "EchoHandler"  , new EchoHandler() );
 
       c = new SimpleChain();
       c.addHandler( this.find( "debug" ) );
       this.add( "global.input", c );
 
       c = new SimpleChain();
+      c.addHandler( this.find( "HTTPAuth" ) );
+      c.addHandler( this.find( "JWSHandler" ) );
       c.addHandler( this.find( "HTTPAction" ) );
       this.add( "HTTP.input", c );
 
