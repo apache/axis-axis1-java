@@ -52,19 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-// NOTE!!!  QName is supposed to be javax.xml.rpc.namespace.QName, but until
-// support this type, QName will remain a String.
-
-public final class QNameHolder implements java.io.Serializable {
+public final class StringHolder implements java.io.Serializable {
 
     public String _value;
 
-    public QNameHolder () {
+    public StringHolder () {
     }
 
-    public QNameHolder (String value) {
+    public StringHolder (String value) {
         this._value = value;
     }
 }

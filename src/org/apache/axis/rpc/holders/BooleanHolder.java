@@ -52,18 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-import java.math.BigDecimal;
+public final class BooleanHolder implements java.io.Serializable {
 
-public final class BigDecimalHolder implements java.io.Serializable {
+    public boolean _value;
 
-    public BigDecimal _value;
-
-    public BigDecimalHolder () {
+    public BooleanHolder () {
     }
 
-    public BigDecimalHolder (BigDecimal value) {
+    public BooleanHolder (boolean value) {
         this._value = value;
     }
 }

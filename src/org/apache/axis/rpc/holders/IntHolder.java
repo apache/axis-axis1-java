@@ -52,16 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-public final class FloatHolder implements java.io.Serializable {
+public final class IntHolder implements java.io.Serializable {
 
-    public float _value;
+    public int _value;
 
-    public FloatHolder () {
+    public IntHolder () {
     }
 
-    public FloatHolder (float value) {
+    public IntHolder (int value) {
         this._value = value;
     }
 }

@@ -52,16 +52,18 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-public final class ShortHolder implements java.io.Serializable {
+import java.math.BigInteger;
 
-    public short _value;
+public final class BigIntegerHolder implements java.io.Serializable {
 
-    public ShortHolder () {
+    public BigInteger _value;
+
+    public BigIntegerHolder () {
     }
 
-    public ShortHolder (short value) {
+    public BigIntegerHolder (BigInteger value) {
         this._value = value;
     }
 }

@@ -837,7 +837,7 @@ public class Emitter {
             System.out.println("Generating client-side stub: " + stubFileName);
 
         writeFileHeader(stubFileName, stubPW);
-        stubPW.println("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName + " {");
+        stubPW.println("public class " + stubName + " extends org.apache.axis.rpc.Stub implements " + portTypeName + " {");
         stubPW.println("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient(new org.apache.axis.transport.http.HTTPTransport());");
         stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable();");
         stubPW.println();
@@ -860,17 +860,17 @@ public class Emitter {
         stubPW.println("        properties.put(name, value);");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    // From org.apache.axis.rpc.Stub");
         stubPW.println("    public Object _getProperty(String name) {");
         stubPW.println("        return properties.get(name);");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    // From org.apache.axis.rpc.Stub");
         stubPW.println("    public void _setTargetEndpoint(java.net.URL address) {");
         stubPW.println("        call.set(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    // From org.apache.axis.rpc.Stub");
         stubPW.println("    public java.net.URL _getTargetEndpoint() {");
         stubPW.println("        try {");
         stubPW.println("            return new java.net.URL((String) call.get(org.apache.axis.transport.http.HTTPTransport.URL));");
@@ -880,7 +880,7 @@ public class Emitter {
         stubPW.println("        }");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From org.apache.axis.wsdl.Stub");
+        stubPW.println("    // From org.apache.axis.rpc.Stub");
         stubPW.println("    public synchronized void setMaintainSession(boolean session) {");
         stubPW.println("        call.setMaintainSession(session);");
         stubPW.println("    }");
@@ -1800,16 +1800,16 @@ public class Emitter {
      */
     private String holder(String typeValue) {
         if (typeValue.equals("String")) {
-            return "org.apache.axis.wsdl.holders.StringHolder";
+            return "org.apache.axis.rpc.holders.StringHolder";
         }
         else if (typeValue.equals("java.math.BigDecimal")) {
-            return "org.apache.axis.wsdl.holders.BigDecimalHolder";
+            return "org.apache.axis.rpc.holders.BigDecimalHolder";
         }
         else if (typeValue.equals("java.util.Date")) {
-            return "org.apache.axis.wsdl.holders.DateHolder";
+            return "org.apache.axis.rpc.holders.DateHolder";
         }
         else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
-            return "org.apache.axis.wsdl.holders.QNameHolder";
+            return "org.apache.axis.rpc.holders.QNameHolder";
         }
         else if (typeValue.equals("int")
                 || typeValue.equals("long")
@@ -1818,7 +1818,7 @@ public class Emitter {
                 || typeValue.equals("double")
                 || typeValue.equals("boolean")
                 || typeValue.equals("byte"))
-            return "org.apache.axis.wsdl.holders." + capitalize(typeValue) + "Holder";
+            return "org.apache.axis.rpc.holders." + capitalize(typeValue) + "Holder";
         else
             return typeValue + "Holder";
     } // holder

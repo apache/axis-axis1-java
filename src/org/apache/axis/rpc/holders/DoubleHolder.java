@@ -52,18 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-import java.util.Date;
+public final class DoubleHolder implements java.io.Serializable {
 
-public final class DateHolder implements java.io.Serializable {
+    public double _value;
 
-    public Date _value;
-
-    public DateHolder () {
+    public DoubleHolder () {
     }
 
-    public DateHolder (Date value) {
+    public DoubleHolder (double value) {
         this._value = value;
     }
 }
