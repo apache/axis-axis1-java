@@ -41,6 +41,7 @@ public abstract class BaseDeserializerFactory extends BaseFactory
 
     protected static Log log =
             LogFactory.getLog(BaseDeserializerFactory.class.getName());
+
     transient static Vector mechanisms = null;
     
     protected Class deserClass = null;
@@ -62,8 +63,6 @@ public abstract class BaseDeserializerFactory extends BaseFactory
                             Deserializer.class.getName()));
         }
         this.deserClass = deserClass;
-        mechanisms = new Vector();
-        mechanisms.add(Constants.AXIS_SAX);
     }
 
     public BaseDeserializerFactory(Class deserClass,
@@ -178,6 +177,10 @@ public abstract class BaseDeserializerFactory extends BaseFactory
      * @return List of unique identifiers for the supported XML processing mechanism types
      */
     public Iterator getSupportedMechanismTypes() {
+        if (mechanisms == null) {
+            mechanisms = new Vector(1);
+            mechanisms.add(Constants.AXIS_SAX);
+        }
         return mechanisms.iterator();
     }
 

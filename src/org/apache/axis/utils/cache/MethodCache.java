@@ -158,26 +158,24 @@ public class MethodCache {
         
         // Check the cache first.
         MethodKey key = new MethodKey(methodName, parameterTypes);
-        if (cache.containsKey(className)) {
-            methods = (Map) cache.get(className);
-            if (methods != null) {
-                Object o = methods.get(key);
-                if (o != null) {  // cache hit
-                    if (o instanceof Method) { // good cache hit
-                        return (Method) o;
-                    } else {                   // bad cache hit
-                        // we hit the NULL_OBJECT, so this is a search
-                        // that previously failed; no point in doing
-                        // it again as it is a worst case search
-                        // through the entire classpath.
-                        return null;
-                    }
-                } else {
-                    // cache miss: fall through to reflective search
+        methods = (Map) cache.get(className);
+        if (methods != null) {
+            Object o = methods.get(key);
+            if (o != null) {  // cache hit
+                if (o instanceof Method) { // good cache hit
+                    return (Method) o;
+                } else {                   // bad cache hit
+                    // we hit the NULL_OBJECT, so this is a search
+                    // that previously failed; no point in doing
+                    // it again as it is a worst case search
+                    // through the entire classpath.
+                    return null;
                 }
             } else {
                 // cache miss: fall through to reflective search
             }
+        } else {
+            // cache miss: fall through to reflective search
         }
 
         try {

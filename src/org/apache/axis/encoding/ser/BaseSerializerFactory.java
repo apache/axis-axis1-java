@@ -190,7 +190,7 @@ public abstract class BaseSerializerFactory extends BaseFactory
      */
     public Iterator getSupportedMechanismTypes() {
         if (mechanisms == null) {
-            mechanisms = new Vector();
+            mechanisms = new Vector(1);
             mechanisms.add(Constants.AXIS_SAX);
         }
         return mechanisms.iterator();

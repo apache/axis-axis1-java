@@ -49,6 +49,12 @@ import java.util.Set;
  */
 public class SimpleDeserializer extends DeserializerImpl {
     
+    private static final Class[] STRING_STRING_CLASS = 
+        new Class [] {String.class, String.class};
+
+    private static final Class[] STRING_CLASS = 
+        new Class [] {String.class};
+
     private final CharArrayWriter val = new CharArrayWriter();
     private Constructor constructor = null;
     private Map propertyMap = null;
@@ -259,10 +265,10 @@ public class SimpleDeserializer extends DeserializerImpl {
             try {
                 if (QName.class.isAssignableFrom(javaType)) {
                     constructor = 
-                        javaType.getDeclaredConstructor(new Class [] {String.class, String.class});
+                        javaType.getDeclaredConstructor(STRING_STRING_CLASS);
                 } else {
                     constructor = 
-                        javaType.getDeclaredConstructor(new Class [] {String.class});
+                        javaType.getDeclaredConstructor(STRING_CLASS);
                 }
             } catch (Exception e) {
                 return null;

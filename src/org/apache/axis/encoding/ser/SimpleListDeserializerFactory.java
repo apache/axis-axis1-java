@@ -32,6 +32,9 @@ import java.lang.reflect.Constructor;
  */
 public class SimpleListDeserializerFactory extends BaseDeserializerFactory {
 
+    private static final Class[] STRING_CLASS = 
+        new Class [] {String.class};
+
     private Constructor constructor = null;
     /**
      * Note that the factory is constructed with the QName and xmlType.  This is important
@@ -43,13 +46,13 @@ public class SimpleListDeserializerFactory extends BaseDeserializerFactory {
         try {
             if (!componentType.isPrimitive()) {
                 constructor = 
-                componentType.getDeclaredConstructor(new Class [] {String.class});
+                componentType.getDeclaredConstructor(STRING_CLASS);
             }
             else {
                 Class wrapper = JavaUtils.getWrapperClass(componentType);
                 if (wrapper != null)
                     constructor = 
-                        wrapper.getDeclaredConstructor(new Class [] {String.class});
+                        wrapper.getDeclaredConstructor(STRING_CLASS);
             }
         } catch (java.lang.NoSuchMethodException e) {
             throw new IllegalArgumentException(e.toString());

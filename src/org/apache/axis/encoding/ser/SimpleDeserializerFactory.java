@@ -33,6 +33,12 @@ import java.lang.reflect.Constructor;
  */
 public class SimpleDeserializerFactory extends BaseDeserializerFactory {
 
+    private static final Class[] STRING_STRING_CLASS = 
+        new Class [] {String.class, String.class};
+    
+    private static final Class[] STRING_CLASS = 
+        new Class [] {String.class};
+
     private Constructor constructor = null;
     /**
      * Note that the factory is constructed with the QName and xmlType.  This is important
@@ -44,17 +50,17 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
             if (!javaType.isPrimitive()) {
                 if (QName.class.isAssignableFrom(javaType)) {
                     constructor = 
-                        javaType.getDeclaredConstructor(new Class [] {String.class, String.class});
+                        javaType.getDeclaredConstructor(STRING_STRING_CLASS);
                 } else {
                     constructor = 
-                        javaType.getDeclaredConstructor(new Class [] {String.class});
+                        javaType.getDeclaredConstructor(STRING_CLASS);
                 }
             }
             else {
                 Class wrapper = JavaUtils.getWrapperClass(javaType);
                 if (wrapper != null)
                     constructor = 
-                        wrapper.getDeclaredConstructor(new Class [] {String.class});
+                        wrapper.getDeclaredConstructor(STRING_CLASS);
             }
         } catch (java.lang.NoSuchMethodException e) {
             throw new IllegalArgumentException(e.toString());
