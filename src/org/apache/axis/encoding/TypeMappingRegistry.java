@@ -236,6 +236,34 @@ public class TypeMappingRegistry implements Serializer {
                            "CDATA", context.qName2String(type));
         return attrs;
     }
+
+    /**
+     * Utility method to help us find an appropriate Serializer.
+     *
+     */ 
+    private Serializer findSerializer(Class cls)
+    {
+        if ((cls == null) || (cls == Object.class))
+            return null;
+      
+        // If we find one for this class itself, use it.
+        Serializer ser = getSerializer(cls);
+        if (ser != null)
+            return ser;
+        
+        // Search implemented interfaces
+        if (!cls.isInterface()) {
+            Class [] interfaces = cls.getInterfaces();
+            for (int i = 0 ; i < interfaces.length ; i++ ) { 
+                ser = findSerializer(interfaces[i]);
+                if (ser != null)
+                    return ser;
+            }
+        }
+        
+        // Search up the inheritance tree from here
+        return findSerializer(cls.getSuperclass());
+    }
     
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
@@ -245,33 +273,7 @@ public class TypeMappingRegistry implements Serializer {
             Serializer  ser     = null ;
             Class       _class  = null ;
 
-            // Check the most common case first
-            ser = getSerializer( _class = value.getClass() );
-            if ( ser == null ) {
-                // Use a Vector and remove(0) because it MUST be 
-                // first-in-first-out
-                Vector  classes = new Vector();
-                classes.add( _class );
-        
-                while( classes.size() != 0 ) {
-                    _class = (Class) classes.remove( 0 );
-                    if ( (ser = getSerializer(_class)) != null ) break ;
-                    if ( classes == null ) classes = new Vector();
-                    Class[] ifaces = _class.getInterfaces();
-                    for (int i = 0 ; i < ifaces.length ; i++ ) 
-                        classes.add( ifaces[i] );
-                    _class = _class.getSuperclass();
-
-                    // Add any non-null (and non-Object) class.  We skip
-                    // the Object class because if we reach that then
-                    // there's an error and this error message return 
-                    // here is better than the one returned by the
-                    // ObjSerializer.
-                    if ( _class != null &&
-                         !_class.getName().equals("java.lang.Object")) 
-                       classes.add( _class );
-                }
-            }
+            ser = findSerializer( _class = value.getClass() );
 
             if ( ser != null ) {
                 QName type = getTypeQName(_class);
