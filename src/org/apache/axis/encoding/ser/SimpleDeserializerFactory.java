@@ -123,7 +123,9 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
                     constructor = 
                         wrapper.getDeclaredConstructor(new Class [] {String.class});
             }
-        } catch (Exception e) {} 
+        } catch (java.lang.NoSuchMethodException e) {
+            throw new IllegalArgumentException(e.toString());
+        } 
     }
     
     /**

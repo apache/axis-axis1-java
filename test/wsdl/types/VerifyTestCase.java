@@ -243,6 +243,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         elemWComplex.setNested( b);
         elemWComplex.setOptArray( optArray );
         elemWComplex.setByteArray( byteArray );
+        elemWComplex.setAttr(Enum.two);
         try {
             binding.elemWComplexIn(elemWComplex);
         } catch (java.rmi.RemoteException re) {
