@@ -623,7 +623,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 typeQName = new QName(typeQName.getNamespaceURI(),
                         localName);
 
-                if (emitter.isTypeCollisionProtection()) {
+                if (emitter.isTypeCollisionProtection() &&
+                        !emitter.getNamespaceExcludes().contains(new NamespaceSelector(typeQName.getNamespaceURI()))) {
                     // If there is already an existing type,
                     // there will be a collision.
                     // If there is an existing anon type,
