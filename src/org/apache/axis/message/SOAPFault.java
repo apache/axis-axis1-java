@@ -152,7 +152,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
                 if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                     context.startElement(Constants.QNAME_FAULTREASON_SOAP12, null);
                     AttributesImpl attrs = new AttributesImpl();
-                    attrs.addAttribute("http://www.w3.org/XML/1998/namespace", "xml", "xml:lang", "CDATA", "en");
+                    attrs.addAttribute("http://www.w3.org/XML/1998/namespace", "lang", "xml:lang", "CDATA", "en");
                     context.startElement(Constants.QNAME_TEXT_SOAP12, attrs);
                 } else
                     context.startElement(Constants.QNAME_FAULTSTRING, null);
