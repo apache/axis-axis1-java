@@ -90,8 +90,9 @@ public class MethodRep {
     public MethodRep(Method method, Class[] types, short[] modes, String[] paramNames) {
         _name = method.getName();
         String retName = "return";
-        if (paramNames != null)
+        if ((paramNames != null) && (paramNames[0] != null)) {
             retName = paramNames[0];
+        }
         _returns = new ParamRep(retName, method.getReturnType(), ParamRep.OUT);
 
         // Create a ParamRep for each parameter.  The holderClass() method
