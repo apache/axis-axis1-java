@@ -262,14 +262,20 @@ public abstract class JavaProvider extends BasicProvider {
 
         /* Now get the service (RPC) specific info  */
         /********************************************/
-        String  clsName    = (String) service.getOption( "className" );
-        String  allowedMethods = getServiceAllowedMethods(service);
+        String  clsName   = getServiceClassName(service);
+        Object obj        = null;
+        try {
+            obj = getServiceObject(msgContext,
+                                   service,
+                                   clsName);
+        } catch( Exception exp ) {
+            category.error( exp );
+            if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
+            throw (AxisFault) exp ;
+        }
 
-        if ((clsName == null) || clsName.equals(""))
-          throw new AxisFault("Server.NoClassForService",
-            "No 'className' option was configured for the service '" +
-               serviceName + "'",
-            null, null);
+        JavaClass jc	  = new JavaClass(obj.getClass());
+        String  allowedMethods = getServiceAllowedMethods(service);
 
         /** ??? Should we enforce setting methodName?  As it was,
          * if it's null, we allowed any method.  This seems like it might
@@ -287,13 +293,15 @@ public abstract class JavaProvider extends BasicProvider {
         if (allowedMethods.equals("*"))
           allowedMethods = null;
 
+        /** If the class knows what it should be exporting,
+        * respect its wishes.
+        */
+        if (obj instanceof AxisServiceConfig) {
+            allowedMethods = ((AxisServiceConfig)obj).getMethods();
+        }
+
         try {
-            /* We know we're doing a Java/RPC call so we can ask for the */
-            /* SOAPBody as an RPCBody and process it accordingly.        */
-            /*************************************************************/
-            int             i ;
             AxisClassLoader cl     = msgContext.getClassLoader();
-            JavaClass       jc     = cl.lookup(clsName);
             Class           cls    = jc.getJavaClass();
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String urn = (String)msgContext.getTargetService();
