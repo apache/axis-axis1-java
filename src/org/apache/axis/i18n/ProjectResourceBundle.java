@@ -428,6 +428,11 @@ public class ProjectResourceBundle extends ResourceBundle {
 
         void setLoader(ClassLoader l) {
             _loader = (l != null) ? l : this.getClass().getClassLoader();
+            // START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16868
+            if (_loader == null) {
+                _loader = ClassLoader.getSystemClassLoader();
+            }
+            // END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16868
         }
         
         void setProjectName(String name) { _projectName = name.intern(); }
