@@ -264,6 +264,7 @@ Copyright:
       </classpath>
       <include name="test/**/*.java" />
       <exclude name="test/inout/*.java" />
+      <exclude name="test/faults/wsdl/*.java" />
       <exclude name="test/multiref/*.java" />
       <exclude name="test/arrays/*.java" />
       <exclude name="test/sequence/*.java" />
