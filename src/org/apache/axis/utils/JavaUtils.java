@@ -69,6 +69,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -319,7 +323,15 @@ public class JavaUtils
         else if (Collection.class.isAssignableFrom(destClass)) {
             Collection newList = null;
             try {
-                newList = (Collection)destClass.newInstance();
+                // if we are trying to create an interface, build something
+                // that implements the interface
+                if (destClass == Collection.class || destClass == List.class) {
+                    newList = new ArrayList();
+                } else if (destClass == Set.class) {
+                    newList = new HashSet();
+                } else {
+                    newList = (Collection)destClass.newInstance();
+                }
             } catch (Exception e) {
                 // Couldn't build one for some reason... so forget it.
                 return arg;

@@ -5,6 +5,13 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis.utils.JavaUtils;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Vector;
+
 public class TestJavaUtils extends TestCase
 {
 
@@ -53,5 +60,33 @@ public class TestJavaUtils extends TestCase
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo bar"));
         assertEquals("_1", JavaUtils.xmlNameToJava("-"));
         assertEquals("__", JavaUtils.xmlNameToJava("_"));
+    }
+    
+    /**
+     * test the convert() function which converts:
+     *     arrays <-> Lists,
+     *     Holders <-> held values
+     */ 
+    public void testConvert() {
+        Integer[] array = new Integer[4];
+        array[0] = new Integer(5); array[1] = new Integer(4);
+        array[2] = new Integer(3); array[3] = new Integer(2);
+        
+        Object ret = JavaUtils.convert(array, List.class);
+        assertTrue("Converted array not an ArrayList", (ret instanceof ArrayList));
+        ArrayList al = (ArrayList)ret;
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(array[i], al.get(i));
+        }
+        
+        ret = JavaUtils.convert(array, Collection.class);
+        assertTrue("Converted array not an ArrayList", (ret instanceof ArrayList));
+        
+        ret = JavaUtils.convert(array, Set.class);
+        assertTrue("Converted array not a HashSet", (ret instanceof HashSet));
+        
+        ret = JavaUtils.convert(array, Vector.class);
+        assertTrue("Converted array not a Vector", (ret instanceof Vector));
+        
     }
 }
