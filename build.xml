@@ -62,7 +62,7 @@ Copyright:
   <property name="docs.dir" value="./docs"/>
   <property name="samples.dir" value="./samples"/>
 
-  <property name="wsdl4j.jar" value="../wsdl4j/build/lib/wsdl4j.jar"/>
+  <property name="wsdl4j.jar" value="../../wsdl4j/build/lib/wsdl4j.jar"/>
 
   <property name="packages" value="org.*"/>
 
