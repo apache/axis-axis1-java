@@ -45,7 +45,8 @@ public class TestArrayListConversions extends TestCase {
     ServiceClient.initialize();
     AxisServer server = new AxisServer();
     HandlerRegistry hr = (HandlerRegistry) server.getHandlerRegistry();
-    Handler disp = hr.find("RPCDispatcher");    SOAPService service = new SOAPService(disp, "RPCDispatcher");
+    Handler disp = hr.find("RPCDispatcher");    
+    SOAPService service = new SOAPService(disp, "RPCDispatcher");
     service.addOption("className", "test.encoding.TestArrayListConversions");
     
     server.deployService(SERVICE_NAME, service);
