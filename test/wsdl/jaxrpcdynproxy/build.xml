@@ -71,6 +71,18 @@ Copyright:
     <classpath>
         <path refid="classpath"/>
     </classpath>
+    <include name="AddressBean.java"/>
+  </javac>
+  <javac srcdir="${build.dir}/work/test/wsdl/jaxrpcdynproxy" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
+    <classpath>
+        <path refid="classpath"/>
+    </classpath>
+    <include name="holders/AddressBeanHolder.java"/>
+  </javac>
+  <javac srcdir="${build.dir}/work/test/wsdl/jaxrpcdynproxy" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
+    <classpath>
+        <path refid="classpath"/>
+    </classpath>
     <include name="**/*.java"/>
   </javac>
 </target>
