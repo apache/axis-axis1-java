@@ -94,7 +94,7 @@ public class TestEchoSample extends TestCase {
 
         // run the tests using a local (in process) server
         client.setURL("local:");
-        client.execute();
+        client.executeAll();
 
         log.info("Test complete.");
     }

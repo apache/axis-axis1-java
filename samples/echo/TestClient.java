@@ -164,9 +164,17 @@ public abstract class TestClient {
     }
 
     /**
-     * Execute the tests
+     * Execute all the 2A tests
      */
-    public void execute() throws Exception {
+    public void executeAll() throws Exception {
+        execute2A();
+        execute2B();
+    }
+
+    /**
+     * Execute the 2A tests
+     */
+    public void execute2A() throws Exception {
         // execute the tests
         Object output = null;
 
@@ -256,8 +264,9 @@ public abstract class TestClient {
         {
             try {
                 binding.echoVoid();
+                verify("echoVoid", null, null);
             } catch (Exception e) {
-                verify("echoInteger", null, e);
+                verify("echoVoid", null, e);
             }
         }
 
@@ -336,7 +345,14 @@ public abstract class TestClient {
                 verify("echoMapArray", input, e);
             }
         }
+    }
 
+    /**
+     * Execute the 2B tests
+     */
+    public void execute2B() throws Exception {
+        // execute the tests
+        Object output = null;
         {
             SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
             try {
@@ -420,12 +436,14 @@ public abstract class TestClient {
      * on their results.
      *
      * Arguments are of the form:
-     *   -h localhost -p 8080 -s /soap/servlet/rpcrouter
+     *   -h localhost -p 8080 -s /soap/servlet/rpcrouter 
+     * -h indicats the host
      */
     public static void main(String args[]) throws Exception {
         Options opts = new Options(args);
 
         boolean testPerformance = opts.isFlagSet('k') > 0;
+        boolean allTests = opts.isFlagSet('A') > 0;
 
         // set up tests so that the results are sent to System.out
         TestClient client;
@@ -470,12 +488,20 @@ public abstract class TestClient {
         if (testPerformance) {
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < 10; i++) {
-                client.execute();
+                if (allTests) {
+                    client.executeAll();
+                } else {
+                    client.execute2A();
+                }
             }
             long stopTime = System.currentTimeMillis();
             System.out.println("That took " + (stopTime - startTime) + " milliseconds");
         } else {
-            client.execute();
+            if (allTests) {
+                client.executeAll();
+            } else {
+                client.execute2A();
+            }
         }
     }
 }
