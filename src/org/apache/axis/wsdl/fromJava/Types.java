@@ -827,6 +827,19 @@ public class Types {
     }
 
     /**
+     * @deprecated
+     * Please use writeSchemaElement(String namespaceURI, Element element) 
+     *
+     * @param qName qName to get the namespace of the schema node
+     * @param element      the Element to append to the Schema node
+     * @throws AxisFault
+     */
+    public void writeSchemaElement(QName qName, Element element)
+            throws AxisFault {
+        writeSchemaElement(qName.getNamespaceURI(), element);
+    }
+
+    /**
      * Write out the given Element into the appropriate schema node.
      * If need be create the schema node as well
      *
