@@ -136,5 +136,13 @@ public class SOAP11Constants implements SOAPConstants {
         return Constants.FAULT_VERSIONMISMATCH;
     }
 
+    /**
+     * Obtain the Qname of Mustunderstand fault code
+     */
+    public QName getMustunderstandFaultQName() {
+        return Constants.FAULT_MUSTUNDERSTAND;
+    }
+
+
 
 }

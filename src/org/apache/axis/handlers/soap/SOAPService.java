@@ -72,6 +72,7 @@ import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.providers.BasicProvider;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -191,20 +192,21 @@ public class SOAPService extends SimpleTargetedChain
                 }
             }
 
+            SOAPConstants soapConstants = msgContext.getSOAPConstants();
             // !!! we should indicate SOAP1.2 compliance via the
             // MessageContext, not a boolean here....
-            boolean doMisunderstoodHeaders = true;
 
             if (misunderstoodHeaders != null) {
                 AxisFault fault =
-                        new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
-                                      null,
-                                      null, null);
+                        new AxisFault(soapConstants.getMustunderstandFaultQName(),
+                                      null, null,
+                                      null, null,
+                                      null);
 
                 StringBuffer whatWasMissUnderstood= new StringBuffer(256);
 
                 // !!! If SOAP 1.2, insert misunderstood fault headers here
-                if (doMisunderstoodHeaders) {
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                     enum = misunderstoodHeaders.elements();
                     while (enum.hasMoreElements()) {
                         SOAPHeaderElement badHeader = (SOAPHeaderElement)enum.
