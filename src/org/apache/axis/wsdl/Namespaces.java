@@ -134,17 +134,6 @@ public class Namespaces extends HashMap {
     } // toDir
 
     /**
-     * Like HashMap's put, this adds an entry to the HashMap.  But it also makes a directory
-     * for the given package name.
-     */
-    public Object put(Object key, Object value) {
-        if (get(key) == null) {
-            mkdir((String) value);
-        }
-        return super.put(key, value);
-    } // put
-
-    /**
      * Like HashMap's putAll, this replaces the existing contents with the new contents.  But it
      * also makes a directory for each package name.
      */
@@ -182,7 +171,7 @@ public class Namespaces extends HashMap {
     /**
      * Make a directory for the given package under root.
      */
-    private void mkdir(String pkg) {
+    public void mkdir(String pkg) {
         String pkgDirString = toDir(pkg);
         File packageDir = new File(pkgDirString);
         packageDir.mkdirs();
