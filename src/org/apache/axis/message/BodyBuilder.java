@@ -6,8 +6,8 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -66,8 +66,7 @@ public class BodyBuilder extends SOAPHandler
          * a) have an non-root element, or
          * b) have a non-RPC service
          */
-        ServiceDescription serviceDesc = context.getMessageContext().
-                                                      getServiceDescription();
+        MessageContext msgContext = context.getMessageContext();
 
         if (localName.equals(Constants.ELEM_FAULT) &&
             namespace.equals(Constants.URI_SOAP_ENV)) {
@@ -77,11 +76,11 @@ public class BodyBuilder extends SOAPHandler
                                            context);
         } else if (!gotRPCElement &&
             isRoot && 
-            ((serviceDesc == null) || (serviceDesc.isRPC()))) {
-            gotRPCElement = true;
-            element = new RPCElement(namespace, localName, prefix,
-                                     attributes, context);
-            //handler = new RPCHandler((RPCElement)element);
+            msgContext.isPropertyTrue(MessageContext.ISRPC, true) ) {
+                gotRPCElement = true;
+                element = new RPCElement(namespace, localName, prefix,
+                                         attributes, context);
+                //handler = new RPCHandler((RPCElement)element);
         } else {
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);

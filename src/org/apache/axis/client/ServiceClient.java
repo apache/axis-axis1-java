@@ -645,11 +645,14 @@ public class ServiceClient {
         if (serviceDesc != null) uri = serviceDesc.getEncodingStyleURI();
         if (uri != null) reqEnv.setEncodingStyleURI(uri);
 
+        if (serviceDesc != null && serviceDesc.isRPC()) 
+            msgContext.setProperty(MessageContext.ISRPC, "true" );
+
         msgContext.setRequestMessage(reqMsg);
         msgContext.setResponseMessage(resMsg);
 
         reqEnv.addBodyElement(body);
-        reqEnv.setMessageType(ServiceDescription.REQUEST);
+        reqEnv.setMessageType(Message.REQUEST);
 
         if ( body.getPrefix() == null )       body.setPrefix( "m" );
         if ( body.getNamespaceURI() == null ) {
@@ -690,7 +693,7 @@ public class ServiceClient {
 
         /** This must happen before deserialization...
          */
-        resMsg.setMessageType(ServiceDescription.RESPONSE);
+        resMsg.setMessageType(Message.RESPONSE);
 
         resEnv = (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
 
@@ -750,7 +753,6 @@ public class ServiceClient {
             }
         }
 
-        msgContext.setServiceDescription(serviceDesc);
         msgContext.setMaintainSession(maintainSession);
 
         // set up message context if there is a transport

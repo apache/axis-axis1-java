@@ -58,6 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.client.Call;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.QName;
@@ -171,10 +172,9 @@ public class SerializationContext
         if (shouldSendMultiRefs != null)
             doMultiRefs = shouldSendMultiRefs.booleanValue();
 
-        ServiceDescription sd = msgContext.getServiceDescription();
-        if (sd != null) {
-            sendXSIType = sd.getSendTypeAttr();
-        }
+        // Only turn this off is the user tells us to
+        if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ) )
+            sendXSIType = false ;
     }
 
     public void setSendDecl(boolean sendDecl)
@@ -184,11 +184,6 @@ public class SerializationContext
 
     public boolean shouldSendXSIType() {
         return sendXSIType;
-    }
-
-    public ServiceDescription getServiceDescription()
-    {
-        return msgContext.getServiceDescription();
     }
 
     public TypeMappingRegistry getTypeMappingRegistry()

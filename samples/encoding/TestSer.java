@@ -63,12 +63,12 @@ public class TestSer
                 reader = new FileReader(args[0]);
             }
             
-            msgContext.setServiceDescription(service);
+            msgContext.setProperty( MessageContext.SERVICE_DESCRIPTION,service);
             TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
             
             DeserializationContext dser = new DeserializationContext(
-                new InputSource(reader), msgContext, ServiceDescription.REQUEST);
+                new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
             SOAPEnvelope env = dser.getEnvelope();
             
             RPCElement rpcElem = (RPCElement)env.getFirstBody();

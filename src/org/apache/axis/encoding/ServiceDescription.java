@@ -56,6 +56,7 @@ package org.apache.axis.encoding;
  */
 
 import org.apache.axis.Constants;
+import org.apache.axis.Message;
 import org.apache.axis.utils.QName;
 
 import java.util.Enumeration;
@@ -74,10 +75,6 @@ import java.util.Vector;
  */
 public class ServiceDescription
 {
-    public static final String REQUEST = "Request";
-    public static final String RESPONSE = "Response";
-
-    
     String name;
     boolean serviceIsRPC = true;
     private String encodingStyleURI = null;
@@ -152,16 +149,6 @@ public class ServiceDescription
         returnType = type;
     }
     
-    public void setSendTypeAttr(boolean sendType)
-    {
-        sendXsiType = sendType;
-    }
-    
-    public boolean getSendTypeAttr()
-    {
-        return sendXsiType;
-    }
-    
     Param findByName(String name, Vector list)
     {
         Enumeration e = list.elements();
@@ -209,9 +196,9 @@ public class ServiceDescription
     public QName getParamTypeByName(String messageType, String paramName)
     {
         if (messageType != null) {
-            if (messageType.equals(REQUEST))
+            if (messageType.equals(Message.REQUEST))
                 return getInputParamTypeByName(paramName);
-            if (messageType.equals(RESPONSE))
+            if (messageType.equals(Message.RESPONSE))
                 return getOutputParamTypeByName(paramName);
             
             // Only understand these two at present...

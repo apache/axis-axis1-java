@@ -7,6 +7,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.encoding.*;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.QName;
+import org.apache.axis.client.Call;
 
 import java.io.Writer;
 import java.io.StringWriter;
@@ -34,9 +35,9 @@ public class TestXsiType extends TestCase {
         ServiceDescription sd = new ServiceDescription("testXsiType", true);
 
         // Don't serialize xsi:type attributes
-        sd.setSendTypeAttr(false);
+        msgContext.setProperty(Call.SEND_TYPE_ATTR, "false" );
 
-        msgContext.setServiceDescription(sd);
+        msgContext.setProperty(MessageContext.SERVICE_DESCRIPTION, sd);
 
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam arg1 = new RPCParam("urn:myNamespace",

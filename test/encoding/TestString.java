@@ -39,7 +39,7 @@ public class TestString extends TestCase {
         StringReader reader = new StringReader(msgString);
         
         DeserializationContext dser = new DeserializationContext(
-            new InputSource(reader), msgContext, ServiceDescription.REQUEST);
+            new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
         dser.parse();
         
         SOAPEnvelope env = dser.getEnvelope();
