@@ -156,10 +156,17 @@ public class MessageContext {
      */
     private Hashtable bag ;
 
+    /**
+     * Get the active message context. 
+     * @return the current active message context
+     */
+    public static MessageContext getCurrentContext() {
+       return AxisEngine.getCurrentMessageContext();
+    }
+
     public MessageContext(AxisEngine engine) {
         this.axisEngine = engine;
     }
-
     
     /**
      * Mappings of QNames to serializers/deserializers (and therfore
