@@ -4,11 +4,9 @@ import junit.framework.TestCase;
 
 import org.apache.axis.*;
 import org.apache.axis.handlers.soap.*;
-import org.apache.axis.encoding.*;
 import org.apache.axis.message.*;
 import org.apache.axis.server.*;
 import org.apache.axis.registries.*;
-import org.apache.axis.utils.*;
 
 import java.util.Vector;
 
@@ -35,7 +33,6 @@ public class TestRPC extends TestCase {
     private AxisServer engine = new AxisServer();
     private HandlerRegistry hr;
     private Handler RPCDispatcher;
-    private TypeMappingRegistry tmr;
 
     private String SOAPAction = "urn:reverse";
     private String methodNS   = null;
@@ -44,7 +41,6 @@ public class TestRPC extends TestCase {
         super(name);
         engine.init();
         hr = (HandlerRegistry) engine.getOption(Constants.HANDLER_REGISTRY);
-        tmr = (TypeMappingRegistry)engine.getOption(Constants.TYPEMAP_REGISTRY);
         RPCDispatcher = hr.find("RPCDispatcher");
         // Debug.setDebugLevel(5);
     }
@@ -120,12 +116,6 @@ public class TestRPC extends TestCase {
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "reverseData");
         hr.add(SOAPAction, reverse);
-
-        // register the Data class
-        QName qn = new QName("http://xml.apache.org/Axis", "TestRPC");
-        Class cls = Data.class;
-        tmr.addSerializer(cls, qn, new BeanSerializer(cls));
-        tmr.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
 
         // invoke the service and verify the result
         Data input    = new Data(5, "abc", 3);
