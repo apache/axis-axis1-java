@@ -97,7 +97,7 @@ public class TestMessageElement extends TestCase {
                                                                    eb); 
         SOAPElement parent = new MessageElement("parent.names",
                                                 "parent",
-                                                "parns:parent",
+                                                "parns",
                                                 null,
                                                 dc);
         Name c1 = new PrefixedQName("child1.names", "child1" ,"c1ns");
@@ -130,7 +130,7 @@ public class TestMessageElement extends TestCase {
                                                                    eb); 
         SOAPElement parent = new MessageElement("parent.names",
                                                 "parent",
-                                                "parns:parent",
+                                                "parns",
                                                 null,
                                                 dc);
         SOAPElement child1 = parent.addChildElement("child1");

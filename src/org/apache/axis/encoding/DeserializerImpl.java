@@ -286,7 +286,7 @@ public class DeserializerImpl extends SOAPHandler
      *   - calling onStartElement to do the actual deserialization if not nill or href cases.
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qName of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attributes on the element...used to get the type
      * @param context is the DeserializationContext
      *
@@ -314,11 +314,11 @@ public class DeserializerImpl extends SOAPHandler
      * See the pre-existing Deserializers for more information.
      */
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
-        super.startElement(namespace, localName, qName, attributes, context);
+        super.startElement(namespace, localName, prefix, attributes, context);
 
         // If the nil attribute is present and true, set the value to null
         // and return since there is nothing to deserialize.
@@ -377,7 +377,7 @@ public class DeserializerImpl extends SOAPHandler
                     Deserializer dser = (Deserializer)context.getDeserializerForType(defaultType );
                     if(null != dser){          
                       dser.startElement(namespace, localName,
-                             qName, attributes,
+                             prefix, attributes,
                              context);
                       ref = dser.getValue();       
                              
@@ -392,7 +392,7 @@ public class DeserializerImpl extends SOAPHandler
             
         } else {
             isHref = false;
-            onStartElement(namespace, localName, qName, attributes,
+            onStartElement(namespace, localName, prefix, attributes,
                            context);
         }
     }
@@ -404,12 +404,12 @@ public class DeserializerImpl extends SOAPHandler
      * involves obtaining a correct Deserializer and plugging its handler.
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qName of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attributes on the element...used to get the type
      * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
@@ -442,7 +442,7 @@ public class DeserializerImpl extends SOAPHandler
                     dser.moveValueTargets(this);
                     context.replaceElementHandler((SOAPHandler) dser);
                     // And don't forget to give it the start event...
-                    dser.startElement(namespace, localName, qName,
+                    dser.startElement(namespace, localName, prefix,
                                       attributes, context);
                 } else {
                     throw new SAXException(

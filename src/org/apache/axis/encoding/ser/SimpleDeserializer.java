@@ -259,12 +259,12 @@ public class SimpleDeserializer extends DeserializerImpl {
      * deserialization (i.e. the element is not an href and the value is not nil.)
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qName of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attributes on the element...used to get the type
      * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
-                               String qName, Attributes attributes,
+                               String prefix, Attributes attributes,
                                DeserializationContext context)
             throws SAXException 
     {

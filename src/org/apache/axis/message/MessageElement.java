@@ -190,21 +190,19 @@ public class MessageElement implements SOAPElement, Serializable
         name = text.getLocalName();
     }
 
-    public MessageElement(String namespace, String localPart, String qName,
+    public MessageElement(String namespace, String localPart, String prefix,
                    Attributes attributes, DeserializationContext context)
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("newElem00", super.toString(), "" + qName));
+            log.debug(JavaUtils.getMessage("newElem00", super.toString(),
+                                            "{" + prefix + "}" + localPart));
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
                 log.debug("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }
         }
         this.namespaceURI = namespace;
         this.name = localPart;
-
-        int idx = qName.indexOf(":");
-        if (idx > 0)
-            this.prefix = qName.substring(0, idx);
+        this.prefix = prefix;
 
         this.context = context;
         this.startEventIndex = context.getStartOfMappingsPos();

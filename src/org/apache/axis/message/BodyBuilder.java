@@ -92,22 +92,22 @@ public class BodyBuilder extends SOAPHandler
     }
 
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
-        super.startElement(namespace, localName, qName, attributes, context);
+        super.startElement(namespace, localName, prefix, attributes, context);
         if (!context.isDoneParsing()) {
             envelope.setBody((SOAPBody)myElement);
         }
     }
 
     public MessageElement makeNewElement(String namespace, String localName,
-                                         String qName, Attributes attributes,
+                                         String prefix, Attributes attributes,
                                          DeserializationContext context) {
         return new SOAPBody(namespace,
                             localName,
-                            qName,
+                            prefix,
                             attributes,
                             context,
                             context.getMessageContext().getSOAPConstants());
@@ -165,19 +165,19 @@ public class BodyBuilder extends SOAPHandler
         } else if (!gotRPCElement) {
             if (isRoot && (style != Style.MESSAGE)) {
                 gotRPCElement = true;
-                
+
                 try {
-                    
+
                     element = new RPCElement(namespace, localName, prefix,
                             attributes, context, operations);
-                    
+
                 } catch (org.apache.axis.AxisFault e) {
                     // SAXException is already known to this method, so I
                     // don't have an exception-handling propogation explosion.
                     //
                     throw new SAXException(e);
                 }
-                
+
                 // Only deserialize this way if there is a unique operation
                 // for this QName.  If there are overloads,
                 // we'll need to start recording.  If we're making a high-

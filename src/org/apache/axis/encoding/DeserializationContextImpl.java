@@ -871,7 +871,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         
         pushElementHandler(nextHandler);
 
-        nextHandler.startElement(namespace, localName, qName,
+        nextHandler.startElement(namespace, localName, prefix,
                                  attributes, this);
         
         if (!doneParsing && (recorder != null)) {

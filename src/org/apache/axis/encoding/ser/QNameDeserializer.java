@@ -57,8 +57,6 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.encoding.DeserializationContext;
 
-import org.apache.axis.utils.JavaUtils;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -96,7 +94,7 @@ public class QNameDeserializer extends SimpleDeserializer {
     } // makeValue
 
     public void onStartElement(String namespace, String localName,
-                               String qName, Attributes attributes,
+                               String prefix, Attributes attributes,
                                DeserializationContext context)
             throws SAXException 
     {
