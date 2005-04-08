@@ -306,11 +306,30 @@ public class TestMessageElement extends AxisTestBase {
         this.assertXMLEqual(xmlIn,xmlOut);
     }
 
+    public void testElementConstructorUsingNamespaces() throws Exception {
+        String xmlIn = "<ns1:document xmlns:ns1=\"urn:someURI\">\n" +
+                       "  <ns2:child-element xmlns:ns2=\"urn:someOtherURI\">\n" +
+                       "    some text nodes insides\n" +
+                       "  </ns2:child-element>\n" +
+                       "</ns1:document>";
+
+        Document doc = XMLUtils.newDocument(new ByteArrayInputStream(xmlIn.getBytes()));
+        MessageElement me = new MessageElement(doc.getDocumentElement());
+        String xmlOut = me.getAsString();
+        System.out.println(xmlOut);
+        // check that the String version of the XML are the same :
+        // I ensure that the namespaces declaration have not been moved
+        // this is needed when some elements are signed :
+        // we sign an element (get a Hashcode)
+        // if the serialization change that element, the Hashcode will
+        // change and the signature check will fail.
+        this.assertEquals(xmlIn, xmlOut);
+    }
     /**
      * Test setting the text value on a MessageElement in various ways.
      *
      * @throws Exception on error
-     */ 
+     */
     public void testSetValue() throws Exception
     {
         MessageElement me;

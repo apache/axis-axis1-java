@@ -2014,7 +2014,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                 att.getNamespaceURI().equals(Constants.NS_URI_XMLNS) &&
                 "xmlns".equals(att.getPrefix())) {
                 Mapping map = new Mapping(att.getNodeValue(), att.getLocalName());
-                addMapping(map);
+                dest.addMapping(map);
             }
             if(att.getLocalName() != null) {
                 dest.addAttribute(att.getPrefix(),
