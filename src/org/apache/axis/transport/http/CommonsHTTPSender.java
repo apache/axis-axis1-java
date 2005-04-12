@@ -16,19 +16,19 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.CommonsHTTPClientProperties;
 import org.apache.axis.components.net.CommonsHTTPClientPropertiesFactory;
 import org.apache.axis.components.net.TransportClientProperties;
 import org.apache.axis.components.net.TransportClientPropertiesFactory;
-import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.NetworkUtils;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -37,32 +37,30 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.NTCredentials;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.logging.Log;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FilterInputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * This class uses Jakarta Commons's HttpClient to call a SOAP server.
@@ -91,8 +89,8 @@ public class CommonsHTTPSender extends BasicHandler {
     protected void initialize() {
         MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
         this.clientProperties = CommonsHTTPClientPropertiesFactory.create();
-        cm.setMaxConnectionsPerHost(clientProperties.getMaximumConnectionsPerHost());
-        cm.setMaxTotalConnections(clientProperties.getMaximumTotalConnections());
+        cm.getParams().setDefaultMaxConnectionsPerHost(clientProperties.getMaximumConnectionsPerHost());
+        cm.getParams().setMaxTotalConnections(clientProperties.getMaximumTotalConnections());
         this.connectionManager = cm;
     }
     
@@ -120,9 +118,8 @@ public class CommonsHTTPSender extends BasicHandler {
             // so sockets get recycled when possible.
             HttpClient httpClient = new HttpClient(this.connectionManager);
             // the timeout value for allocation of connections from the pool
-            httpClient.setHttpConnectionFactoryTimeout(
-                             this.clientProperties.getConnectionPoolTimeout());
-            
+            httpClient.getParams().setConnectionManagerTimeout(this.clientProperties.getConnectionPoolTimeout());
+
             HostConfiguration hostConfiguration = 
                 getHostConfiguration(httpClient, msgContext, targetURL);
             
@@ -168,7 +165,7 @@ public class CommonsHTTPSender extends BasicHandler {
             // overwrites the cookies from HttpState
             if (msgContext.getMaintainSession()) {
                 HttpState state = httpClient.getState();
-                state.setCookiePolicy(CookiePolicy.COMPATIBILITY);
+                method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
                 String host = hostConfiguration.getHost();
                 String path = targetURL.getPath();
                 boolean secure = hostConfiguration.getProtocol().isSecure();
@@ -343,8 +340,8 @@ public class CommonsHTTPSender extends BasicHandler {
                                             tcp.getProxyPassword(),
                                             tcp.getProxyHost(), domain);
                         }
-                    }                     
-                    client.getState().setProxyCredentials(null, null, proxyCred);
+                    }
+                    client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
                 }
                 int proxyPort = new Integer(tcp.getProxyPort()).intValue();
                 config.setProxy(tcp.getProxyHost(), proxyPort);
@@ -374,9 +371,9 @@ public class CommonsHTTPSender extends BasicHandler {
             /* ISSUE: these are not the same, but MessageContext has only one
                       definition of timeout */
             // SO_TIMEOUT -- timeout for blocking reads
-            httpClient.setTimeout(msgContext.getTimeout());
-            // timeout for initial connection 
-            httpClient.setConnectionTimeout(msgContext.getTimeout());
+            httpClient.getHttpConnectionManager().getParams().setSoTimeout(msgContext.getTimeout());
+            // timeout for initial connection
+            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(msgContext.getTimeout());
         }
         
         // Get SOAPAction, default to ""
@@ -413,15 +410,22 @@ public class CommonsHTTPSender extends BasicHandler {
             }
         }
         if (userID != null) {
-            Credentials cred = new UsernamePasswordCredentials(userID, passwd);
-            httpClient.getState().setCredentials(null, null, cred);
-            
-            // The following 3 lines should NOT be required. But Our SimpleAxisServer fails
-            // during all-tests if this is missing.
-            StringBuffer tmpBuf = new StringBuffer();
-            tmpBuf.append(userID).append(":").append((passwd == null) ? "" : passwd);
-            method.addRequestHeader(HTTPConstants.HEADER_AUTHORIZATION, 
-                                    "Basic " + Base64.encode(tmpBuf.toString().getBytes()));
+            Credentials proxyCred =
+                new UsernamePasswordCredentials(userID,
+                                                passwd);
+            // if the username is in the form "user\domain"
+            // then use NTCredentials instead.
+            int domainIndex = userID.indexOf("\\");
+            if (domainIndex > 0) {
+                String domain = userID.substring(0, domainIndex);
+                if (userID.length() > domainIndex + 1) {
+                    String user = userID.substring(domainIndex + 1);
+                    proxyCred = new NTCredentials(user,
+                                    passwd,
+                                    NetworkUtils.getLocalHostname(), domain);
+                }
+            }
+            httpClient.getState().setCredentials(AuthScope.ANY, proxyCred);
         }
         
         // Transfer MIME headers of SOAPMessage to HTTP headers. 
@@ -688,7 +692,7 @@ public class CommonsHTTPSender extends BasicHandler {
         }
 
         public boolean isRepeatable() {
-            return false;
+            return true;
         }
 
         public void writeRequest(OutputStream out) throws IOException {
