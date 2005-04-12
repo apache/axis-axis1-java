@@ -1449,7 +1449,7 @@ public class Emitter {
             // TODO: Support custom schema in WSDD for these operations
             QName qname = oper.getElementQName();
             types.writeElementDecl(qname, Object.class,
-                    Constants.XSD_ANYTYPE, false, false);
+                                   Constants.XSD_ANYTYPE, false, null);
 
             Part part = def.createPart();
 
@@ -1927,8 +1927,11 @@ public class Emitter {
             }
             names.add(qname.getLocalPart());
 
-            types.writeElementDecl(qname, param.getJavaType(),
-                    param.getTypeQName(), false, false);
+            types.writeElementDecl(qname,
+                                   param.getJavaType(),
+                                   param.getTypeQName(),
+                                   false,
+                                   param.getItemQName());
 
             part.setName(param.getName());
             part.setElementName(qname);

@@ -23,6 +23,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.constants.Style;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
@@ -252,6 +253,12 @@ public class RPCHandler extends SOAPHandler
             dser = context.getDeserializerForType(qname);
         } else {
             dser = context.getDeserializer(destClass, type);
+            // !!!
+            if (dser == null && destClass != null && destClass.isArray() &&
+                    operation.getStyle() == Style.DOCUMENT) {
+                dser = context.getDeserializerForClass(destClass);
+            }
+            // !!!
         }
         
         if (dser == null) {

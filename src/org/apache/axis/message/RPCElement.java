@@ -62,8 +62,6 @@ public class RPCElement extends SOAPBodyElement
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
 
-        MessageContext msgContext = context.getMessageContext();
-
         // Obtain our possible operations
         if (operations == null) {
             updateOperationsByName();

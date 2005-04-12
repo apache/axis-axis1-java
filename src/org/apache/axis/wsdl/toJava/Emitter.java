@@ -35,7 +35,6 @@ import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -151,7 +150,7 @@ public class Emitter extends Parser {
     private ServiceDesc serviceDesc;
 	
 	/** The deploy mode flag */
-    private boolean isDeploy;	
+    private boolean isDeploy;
 
     /**
      * Default constructor.
@@ -1071,13 +1070,16 @@ public class Emitter extends Parser {
      * @return true if exists, false if not
      */
     protected boolean doesExist(String className) {        
-        Class cls = null;
         try {
-            cls = ClassUtils.forName(className);            
+            ClassUtils.forName(className);
         } catch (ClassNotFoundException e) {
             return false;
         }		
         
         return true;
+    }
+
+    public void setUnwrapArrays(boolean unwrapArrays) {
+        this.unwrapArrays = unwrapArrays;
     }
 }

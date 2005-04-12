@@ -20,6 +20,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
+import org.apache.axis.description.ElementDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -254,14 +255,29 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                                             attributes);
 
         String href = attributes.getValue(soapConstants.getAttrHref());
+        Class fieldType = propDesc.getType();
 
         // If no xsi:type or href, check the meta-data for the field
         if (childXMLType == null && fieldDesc != null && href == null) {
-            childXMLType = fieldDesc.getXmlType();
+            if (fieldDesc instanceof ElementDesc) {
+                ElementDesc edesc = (ElementDesc)fieldDesc;
+                QName itemQName = edesc.getItemQName();
+                if (itemQName != null) {
+                    // This is actually a wrapped literal array and should be
+                    // deserialized with the ArrayDeserializer
+                    childXMLType = Constants.SOAP_ARRAY;
+                    fieldType = propDesc.getActualType();
+                } else {
+                    childXMLType = fieldDesc.getXmlType();
+                }
+            } else {
+                childXMLType = fieldDesc.getXmlType();
+            }
         }
         
         // Get Deserializer for child, default to using DeserializerImpl
-        Deserializer dSer = getDeserializer(childXMLType, propDesc.getType(), 
+        Deserializer dSer = getDeserializer(childXMLType,
+                                            fieldType,
                                             href,
                                             context);
 
@@ -275,9 +291,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // Fastpath nil checks...
         if (context.isNil(attributes)) {
-            if (propDesc != null && propDesc.isIndexed()) { 
-                if (!((dSer != null) && (dSer instanceof ArrayDeserializer)) ||
-                        propDesc.getType().isArray()) {
+            if (propDesc != null && propDesc.isIndexed()) {
+                if (!((dSer != null) && (dSer instanceof ArrayDeserializer))) {
                     collectionIndex++;
                     dSer.registerValueTarget(new BeanPropertyTarget(value,
                             propDesc, collectionIndex));
@@ -308,9 +323,13 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             // In this case, we want to use the collectionIndex and make sure
             // the deserialized value for the child element goes into the
             // right place in the collection.
-            if (propDesc.isIndexed() && (
-                    !(dSer instanceof ArrayDeserializer) || 
-                    propDesc.getType().isArray())) {
+
+            // list of deserializers that shouldn't use the indexed way to recreate the Bean
+            boolean shouldUseArray = (!(dSer instanceof ArrayDeserializer) &&
+                    !(dSer instanceof Base64Deserializer) &&
+                    !(dSer instanceof HexDeserializer) &&
+                    !(dSer instanceof SimpleListDeserializer));
+            if (propDesc.isIndexedOrArray() && shouldUseArray) {
                     collectionIndex++;
                     dSer.registerValueTarget(new BeanPropertyTarget(value,
                                                     propDesc, collectionIndex));

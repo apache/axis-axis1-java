@@ -58,7 +58,8 @@ Copyright:
                serverSide="no"
                skeletonDeploy="yes"
                noWrapped="true"
-               testcase="no">
+               testcase="no"
+               unwrapArrays="no">
         <mapping namespace="http://tempuri.org/" package="test.wsdl.qnameser"/>
     </wsdl2java>
 

@@ -55,6 +55,10 @@ public class ParameterDesc implements Serializable {
     private boolean isReturn = false;
     /** MIME type for this parameter, if there is one */
     private String mimeType = null;
+    /** If this ParamDesc represents a literal array, this QName will
+     * determine if it gets written as a "bare" or a "wrapped" schema.
+     */
+    private QName itemQName;
 
     /** Indicates whether input/output values are stored in the header */
     private boolean inHeader = false;
@@ -332,4 +336,11 @@ public class ParameterDesc implements Serializable {
         in.defaultReadObject();
     }
 
+    public QName getItemQName() {
+        return itemQName;
+    }
+
+    public void setItemQName(QName itemQName) {
+        this.itemQName = itemQName;
+    }
 } // class ParameterDesc

@@ -59,9 +59,7 @@ public class AddrBookServiceImplServiceTestCase extends junit.framework.TestCase
         addr.setStreetNum(1);
         addr.setZip(47907);
         addr.setPhoneNumber(ph1);
-        test.wsdl.arrays3.testclient.ArrayOfPhone arrph = new test.wsdl.arrays3.testclient.ArrayOfPhone();
-        arrph.setItem(new test.wsdl.arrays3.testclient.Phone[] { ph2, ph3});
-        addr.setOtherPhones(arrph);
+        addr.setOtherPhones(new test.wsdl.arrays3.testclient.Phone[] { ph2, ph3});
 
         test.wsdl.arrays3.testclient.Address[] addrs = null;
 
@@ -101,18 +99,13 @@ public class AddrBookServiceImplServiceTestCase extends junit.framework.TestCase
         assertEquals("retAddrs.length should be 1", 1, retAddrs.length);
         assertTrue("addr does not match", compareAddress(addr, retAddrs[0]));
         assertNull("retAddrs[0].getOtherPhones() should be null", retAddrs[0].getOtherPhones());
-       
-        test.wsdl.arrays3.testclient.ArrayOfPhone arrph1 = new test.wsdl.arrays3.testclient.ArrayOfPhone();
-        arrph1.setItem(new test.wsdl.arrays3.testclient.Phone[] { });
-        addr.setOtherPhones(arrph1);
+        test.wsdl.arrays3.testclient.Phone[] arrph = new test.wsdl.arrays3.testclient.Phone[] { };
+        addr.setOtherPhones(arrph);
         retAddrs = binding.echoAddresses(new test.wsdl.arrays3.testclient.Address[] { addr });
         assertEquals("retAddrs.length should be 1", 1, retAddrs.length);
 
-        // length-0 array echoes as null now. 
-        // So don't check object equality but check that value is null.
-        
-        // assertTrue("addr does not match", compareAddress(addr, retAddrs[0]));
-        assertNull("retAddrs[0].getOtherPhones() should be null", retAddrs[0].getOtherPhones());
+        assertTrue("addr does not match", compareAddress(addr, retAddrs[0]));
+        //assertNull("retAddrs[0].getOtherPhones() should be null", retAddrs[0].getOtherPhones());
 
         addr.setOtherPhones(arrph);
         retAddrs = binding.echoAddresses(new test.wsdl.arrays3.testclient.Address[] { addr });
@@ -166,28 +159,14 @@ public class AddrBookServiceImplServiceTestCase extends junit.framework.TestCase
             throw new AssertionFailedError("");
         }
 
-        if (!compareArrayOfPhone(addr1.getOtherPhones(), addr2.getOtherPhones())) {
+        if (!comparePhoneArray(addr1.getOtherPhones(), addr2.getOtherPhones())) {
             throw new AssertionFailedError("");
         }
 
         return true;
     }
 
-    public boolean compareArrayOfPhone(test.wsdl.arrays3.testclient.ArrayOfPhone aop1, 
-            test.wsdl.arrays3.testclient.ArrayOfPhone aop2) {
-        if (aop1 == null && aop2 != null) {
-            throw new AssertionFailedError("");
-        }
-        if (aop1 != null && aop2 == null) {
-            throw new AssertionFailedError("");
-        }
-        if (aop1 == null && aop2 == null) {
-            return true;
-        }
-        return comparePhoneArray(aop1.getItem(), aop2.getItem()); 
-    }
-
-    public boolean comparePhoneArray(test.wsdl.arrays3.testclient.Phone[] arr1, 
+    public boolean comparePhoneArray(test.wsdl.arrays3.testclient.Phone[] arr1,
             test.wsdl.arrays3.testclient.Phone[] arr2) {
         if (arr1 == null && arr2 != null) {
             throw new AssertionFailedError("");

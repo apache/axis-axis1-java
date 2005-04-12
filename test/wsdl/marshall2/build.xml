@@ -58,7 +58,8 @@ Copyright:
                deployscope="session"
                serverSide="yes"
                typeMappingVersion="1.3"
-               testcase="yes">
+               testcase="yes"
+               unwrapArrays="no">
     </wsdl2java>
 
     <copy todir="${build.dir}/work/test/wsdl/marshall2" overwrite="yes">

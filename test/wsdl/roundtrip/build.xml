@@ -130,7 +130,8 @@ Copyright:
                skeletonDeploy="yes"
                noimports="no"
                verbose="no"
-               testcase="no">
+               testcase="no"
+               unwrapArrays="no">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </wsdl2java>
 

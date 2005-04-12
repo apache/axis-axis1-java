@@ -61,6 +61,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.QNameHolder;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -165,7 +166,13 @@ public class SymbolTable {
 
     /** Field wsdlURI */
     private String wsdlURI = null;
-    
+
+    /** If this is true, we will "unwrap" literal arrays, generating a plan "String[]" instead
+     * of "ArrayOfString" when encountering an element containing a single maxOccurs="unbounded"
+     * inner element.
+     */
+    private boolean unwrapArrays;
+
     Set arrayTypeQNames = new HashSet();
 
     /**
@@ -1166,10 +1173,17 @@ public class SymbolTable {
                 // See if this is an array or simple type definition.
                 IntHolder numDims = new IntHolder();
 
+                // If we're supposed to unwrap arrays, supply someplace to put the "inner" QName
+                // so we can propagate it into the appropriate metadata container.
+                QNameHolder itemQName = unwrapArrays ? new QNameHolder() : null;
+
                 numDims.value = 0;
 
                 QName arrayEQName = 
-                        SchemaUtils.getArrayComponentQName(node, numDims, this);
+                        SchemaUtils.getArrayComponentQName(node,
+                                                           numDims,
+                                                           itemQName,
+                                                           this);
 
                 if (arrayEQName != null) {
 
@@ -1210,11 +1224,15 @@ public class SymbolTable {
                                new DefinedElement(qName, refType, node, dims);
                             // Save component type for ArraySerializer
                             defType.setComponentType(arrayEQName);
+                            if (itemQName != null)
+                                defType.setItemQName(itemQName.value);
                         }
                     } else {
                         defType = new DefinedType(qName, refType, node, dims);
                         // Save component type for ArraySerializer
                         defType.setComponentType(arrayEQName);
+                        if (itemQName != null)
+                            defType.setItemQName(itemQName.value);
                     }
 
                     if (defType != null) {
@@ -3667,7 +3685,7 @@ public class SymbolTable {
             return null;
         }
 
-        QName name = SchemaUtils.getCollectionComponentQName(node);
+        QName name = SchemaUtils.getCollectionComponentQName(node, new QNameHolder());
 
         if (name != null) {
             return name;
@@ -3757,5 +3775,13 @@ public class SymbolTable {
         }
 
         return messageEntries;
+    }
+
+    public boolean shouldUnwrapArrays() {
+        return unwrapArrays;
+    }
+
+    public void setUnwrapArrays(boolean unwrapArrays) {
+        this.unwrapArrays = unwrapArrays;
     }
 }    // class SymbolTable

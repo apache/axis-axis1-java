@@ -211,7 +211,12 @@ public class ArrayDeserializer extends DeserializerImpl
 
         // If no type QName and no defaultItemType qname, use xsd:anyType
         if (defaultItemType == null && typeQName == null) {
-            defaultItemType = Constants.XSD_ANYTYPE;
+            Class destClass = context.getDestinationClass();
+            if (destClass != null && destClass.isArray()) {
+                // This will get set OK down below...
+            } else {
+                defaultItemType = Constants.XSD_ANYTYPE;
+            }
         }
         
         // Determine the class type for the array.
@@ -240,23 +245,24 @@ public class ArrayDeserializer extends DeserializerImpl
                     }
                 } else {
                     dims += innerDimString;
+                }
             }
-        }
 
-        arrayItemClass = context.getTypeMapping().getClassForQName(compQName);
-        if (arrayItemClass != null) {
-            try {
-                String loadableArrayClassName = JavaUtils.getLoadableClassName(
-                                                    JavaUtils.getTextClassName(arrayItemClass.getName()) + dims);
-                arrayClass = ClassUtils.forName(loadableArrayClassName,
+
+            arrayItemClass = context.getTypeMapping().getClassForQName(compQName);
+            if (arrayItemClass != null) {
+                try {
+                    String loadableArrayClassName = JavaUtils.getLoadableClassName(
+                            JavaUtils.getTextClassName(arrayItemClass.getName()) + dims);
+                    arrayClass = ClassUtils.forName(loadableArrayClassName,
                                                     true,
                                                     arrayItemClass.getClassLoader());
-            } catch (Exception e) {
-                throw new SAXException(
-                   Messages.getMessage("noComponent00",  
-                                        "" + defaultItemType));
+                } catch (Exception e) {
+                    throw new SAXException(
+                            Messages.getMessage("noComponent00",
+                                                "" + defaultItemType));
+                }
             }
-        }
         }
         if (arrayClass == null) {
             arrayClass = context.getDestinationClass();

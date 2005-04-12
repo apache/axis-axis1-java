@@ -140,6 +140,9 @@ public class BeanSerializer implements Serializer, Serializable {
                 boolean isOmittable = false;
                 // isNillable default value depends on the field type
                 boolean isNillable = Types.isNullable(javaType);
+                // isArray
+                boolean isArray = false;
+                QName itemQName = null;
 
                 // If we have type metadata, check to see what we're doing
                 // with this field.  If it's an attribute, skip it.  If it's
@@ -164,7 +167,10 @@ public class BeanSerializer implements Serializer, Serializable {
                         }
                         isOmittable = element.isMinOccursZero();
                         isNillable = element.isNillable();
+                        isArray = element.isMaxOccursUnbounded();
                         xmlType = element.getXmlType();
+                        itemQName = element.getItemQName();
+                        context.setItemQName(itemQName);
                     }
                 }
 
@@ -179,8 +185,9 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
 
                 // Read the value from the property
-                if(propertyDescriptor[i].isReadable()) {
-                    if (!propertyDescriptor[i].isIndexed()) {
+                if (propertyDescriptor[i].isReadable()) {
+                    if (itemQName != null ||
+                            (!propertyDescriptor[i].isIndexed() && !isArray)) {
                         // Normal case: serialize the value
                         Object propValue =
                             propertyDescriptor[i].get(value);
@@ -397,18 +404,19 @@ public class BeanSerializer implements Serializer, Serializable {
                                    fieldType,
                                    propertyDescriptor[i].isIndexed(),
                                    field.isMinOccursZero(),
-                                   all, isAnonymous);
+                                   all, isAnonymous,
+                                   ((ElementDesc)field).getItemQName());
                     }
                 } else {
                     writeField(types,
                                propName,
                                null,
                                fieldType,
-                               propertyDescriptor[i].isIndexed(), false, all, false);
+                               propertyDescriptor[i].isIndexed(), false, all, false, null);
                 }
             } else {
                 boolean done = false;
-                if(propertyDescriptor[i] instanceof FieldPropertyDescriptor){
+                if (propertyDescriptor[i] instanceof FieldPropertyDescriptor){
                     FieldPropertyDescriptor fpd = (FieldPropertyDescriptor) propertyDescriptor[i];
                     Class clazz = fpd.getField().getType();
                     if(types.getTypeQName(clazz)!=null) {
@@ -416,7 +424,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                    propName,
                                    null,
                                    clazz,
-                                   false, false, all, false);
+                                   false, false, all, false, null);
                    
                         done = true;
                     }
@@ -426,7 +434,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                propName,
                                null,
                                propertyDescriptor[i].getType(),
-                               propertyDescriptor[i].isIndexed(), false, all, false);
+                               propertyDescriptor[i].isIndexed(), false, all, false, null);
                 }                    
                 
             }
@@ -444,6 +452,7 @@ public class BeanSerializer implements Serializer, Serializable {
      * @param fieldType type of the field
      * @param isUnbounded causes maxOccurs="unbounded" if set
      * @param where location for the generated schema node
+     * @param itemQName
      * @throws Exception
      */
     protected void writeField(Types types,
@@ -453,22 +462,41 @@ public class BeanSerializer implements Serializer, Serializable {
                               boolean isUnbounded,
                               boolean isOmittable,
                               Element where,
-                              boolean isAnonymous) throws Exception {
+                              boolean isAnonymous,
+                              QName itemQName) throws Exception {
         Element elem;
+        String elementType = null;
+
         if (isAnonymous) {
-            elem = types.createElementWithAnonymousType(fieldName,
-            fieldType, isOmittable, where.getOwnerDocument());
+            elem = types.
+                    createElementWithAnonymousType(fieldName,
+                                                   fieldType,
+                                                   isOmittable,
+                                                   where.getOwnerDocument());
+//        } else if (itemQName != null) {
+//            // This is a "wrapped" literal array, so write the element with
+//            // an anonymous complexType containing a sequence containing
+//            // an element of the right type with maxOccurs="unbounded"
+//            elem = types.createElement(fieldName, null, false, false, where.getOwnerDocument());
+//            String typeName = types.writeType(fieldType);
+//            Element complexType = types.createLiteralArrayElement(typeName,
+//                                                                  itemQName);
+//            elem.appendChild(complexType);
+//            where.appendChild(elem);
+//            return;
         } else {
-            if (!SchemaUtils.isSimpleSchemaType(xmlType) && Types.isArray(fieldType)) {
+            if (!SchemaUtils.isSimpleSchemaType(xmlType) &&
+                    Types.isArray(fieldType)) {
                 xmlType = null;
             }
             
-            String elementType = types.writeType(fieldType, xmlType);
+            elementType = types.writeType(fieldType, xmlType);
 
             if (elementType == null) {
-                // If writeType returns null, then emit an anytype in such situations.
+                // If writeType returns null, then emit an anytype.
                 QName anyQN = Constants.XSD_ANYTYPE;
-                String prefix = types.getNamespaces().getCreatePrefix(anyQN.getNamespaceURI());
+                String prefix = types.getNamespaces().
+                        getCreatePrefix(anyQN.getNamespaceURI());
                 elementType = prefix + ":" + anyQN.getLocalPart();
             }
 

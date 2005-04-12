@@ -218,4 +218,8 @@ public class BeanPropertyDescriptor
             return myPD.getPropertyType();
         }
     }
+
+    public Class getActualType() {
+        return myPD.getPropertyType();
+    }
 }

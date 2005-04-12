@@ -30,6 +30,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;
@@ -542,6 +543,8 @@ public class JavaStubWriter extends JavaClassWriter {
                         + "(){");
                 pw.println(
                         "        org.apache.axis.description.OperationDesc oper;");
+                pw.println(
+                        "        org.apache.axis.description.ParameterDesc param;");
             }
 
             BindingOperation operation = (BindingOperation) operations.get(i);
@@ -618,10 +621,23 @@ public class JavaStubWriter extends JavaClassWriter {
                 boolean isInHeader = p.isInHeader();
                 boolean isOutHeader = p.isOutHeader();
 
-                pw.println("        oper.addParameter(" + paramNameText + ", "
-                        + paramTypeText + ", " + javaType
-                        + modeStrings[p.getMode()] + ", " + isInHeader
-                        + ", " + isOutHeader + ");");
+                pw.println("        param = new org.apache.axis.description.ParameterDesc(" +
+                           paramNameText + ", " +
+                           modeStrings[p.getMode()] + ", " +
+                           paramTypeText + ", " +
+                           javaType +
+                           isInHeader + ", " + isOutHeader + ");");
+                TypeEntry te = p.getType();
+                if (te instanceof DefinedElement) {
+                    te = te.getRefType();
+                }
+                QName itemQName = te.getItemQName();
+                if (itemQName != null) {
+                    pw.println("        param.setItemQName(" +
+                               Utils.getNewQName(itemQName) + ");");
+                }
+
+                pw.println("        oper.addParameter(param);");
             }
 
             // set output type

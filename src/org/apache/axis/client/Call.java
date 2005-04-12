@@ -1593,7 +1593,6 @@ public class Call implements javax.xml.rpc.Call {
         // Make sure we're making a fresh start.
         this.setPortName( portName );
         this.setOperationName( opName );
-        this.setEncodingStyle( null );
         this.setReturnType( null );
         this.removeAllParameters();
 

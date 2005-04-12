@@ -34,9 +34,14 @@ public class ElementDesc extends FieldDesc implements Serializable {
      * By default, element cannot be nillable. */
     private boolean nillable = false;
 
+    /** maxOccurs="unbounded" */
+    private boolean unbounded = false;
+
     /** If this is an array, this holds the array type */
     private QName arrayType;
-    
+    /** If this is a "wrapped" array, this tells us the inner QName */
+    private QName itemQName;
+
     public ElementDesc() {
         super(true);
     }
@@ -59,6 +64,14 @@ public class ElementDesc extends FieldDesc implements Serializable {
 
     public void setMaxOccurs(int maxOccurs) {
         this.maxOccurs = maxOccurs;
+    }
+
+    public void setMaxOccursUnbounded(boolean ubnd) {
+        this.unbounded = ubnd;
+    }
+
+    public boolean isMaxOccursUnbounded() {
+        return unbounded;
     }
 
     /**
@@ -85,5 +98,13 @@ public class ElementDesc extends FieldDesc implements Serializable {
 
     public void setArrayType(QName arrayType) {
         this.arrayType = arrayType;
+    }
+
+    public QName getItemQName() {
+        return itemQName;
+    }
+
+    public void setItemQName(QName itemQName) {
+        this.itemQName = itemQName;
     }
 }

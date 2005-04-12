@@ -52,21 +52,23 @@ public class ElementDecl extends ContainedEntry {
     /** Field anyElement */
     private boolean anyElement = false;
 
+    /** Field maxOccursIsUnbounded */
+    private boolean maxOccursIsUnbounded = false;
 
     /**
      * Constructor ElementDecl
-     * 
-     * @param type 
-     * @param name 
+     *
+     * @param type
+     * @param name
      */
     public ElementDecl(TypeEntry type, QName name) {
         super(type, name);
-    }    
+    }
 
     /**
      * Method getMinOccursIs0
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean getMinOccursIs0() {
         return minOccursIs0;
@@ -74,17 +76,35 @@ public class ElementDecl extends ContainedEntry {
 
     /**
      * Method setMinOccursIs0
-     * 
-     * @param minOccursIs0 
+     *
+     * @param minOccursIs0
      */
     public void setMinOccursIs0(boolean minOccursIs0) {
         this.minOccursIs0 = minOccursIs0;
     }
 
     /**
+     * Method getMaxOccursIsUnbounded
+     *
+     * @return
+     */
+    public boolean getMaxOccursIsUnbounded() {
+        return maxOccursIsUnbounded;
+    }
+
+    /**
+     * Method setMinOccursIsUnbounded
+     *
+     * @param maxOccursIsUnbounded
+     */
+    public void setMaxOccursIsUnbounded(boolean maxOccursIsUnbounded) {
+        this.maxOccursIsUnbounded = maxOccursIsUnbounded;
+    }
+
+    /**
      * Method setNillable
-     * 
-     * @param nillable 
+     *
+     * @param nillable
      */
     public void setNillable(boolean nillable) {
         this.nillable = nillable;

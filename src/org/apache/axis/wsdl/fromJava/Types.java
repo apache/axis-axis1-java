@@ -23,7 +23,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Style;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
@@ -1060,18 +1059,23 @@ public class Types {
      * a SOAP-encoded array.
      *
      * @param componentType
-     * @param itemName
+     * @param itemName the QName of the inner element (right now we only use the localPart)
      * @return
      */
     public Element createLiteralArrayElement(String componentType,
                                              QName itemName) {
+        String itemLocalName = "item";
+        if (itemName != null) {
+            itemLocalName = itemName.getLocalPart();
+        }
+
         Element complexType = docHolder.createElement("complexType");
         Element sequence = docHolder.createElement("sequence");
 
         complexType.appendChild(sequence);
 
         Element elem = docHolder.createElement("element");
-        elem.setAttribute("name", "item");
+        elem.setAttribute("name", itemLocalName);
         elem.setAttribute("type", componentType);
         elem.setAttribute("minOccurs", "0");
         elem.setAttribute("maxOccurs", "unbounded");
@@ -1186,20 +1190,20 @@ public class Types {
     }
 
     /**
-     * Create Element
+     * Create a top-level element declaration in our generated schema
      *
      * @param qname
      * @param javaType
      * @param typeQName
      * @param nillable  nillable attribute of the element
-     * @param omittable
+     * @param itemQName
      * @throws AxisFault
      */
     public void writeElementDecl(QName qname,
                                  Class javaType,
                                  QName typeQName,
                                  boolean nillable,
-                                 boolean omittable)
+                                 QName itemQName)
             throws AxisFault {
 
         if (writtenElementQNames.contains(qname)) {
@@ -1217,6 +1221,9 @@ public class Types {
             element.setAttribute("nillable", "true");
         }
 
+        /*
+         * These are not legal on top-level elements!
+         * (feel free to delete this block after say Oct 2005)
         if (omittable) {
             element.setAttribute("minOccurs", "0");
             element.setAttribute("maxOccurs", "1");
@@ -1225,10 +1232,19 @@ public class Types {
         if (javaType.isArray()) {
             element.setAttribute("maxOccurs", "unbounded");
         }
+        */
 
-        // Write the type for this element, handling anonymous or named
-        // types appropriately.
-        makeTypeElement(javaType, typeQName, element);
+        if (javaType.isArray()) {
+            // TODO : Should check to see if this array type is specifically mapped
+            String componentType = writeType(javaType.getComponentType());
+            Element complexType = createLiteralArrayElement(componentType,
+                                                            itemQName);
+            element.appendChild(complexType);
+        } else {
+            // Write the type for this element, handling anonymous or named
+            // types appropriately.
+            makeTypeElement(javaType, typeQName, element);
+        }
 
         writeSchemaElementDecl(qname, element);
     }
@@ -1703,8 +1719,10 @@ public class Types {
      * @return
      * @throws AxisFault
      */
-    public Element createElementWithAnonymousType(
-            String elementName, Class fieldType, boolean omittable, Document ownerDocument)
+    public Element createElementWithAnonymousType(String elementName,
+                                                  Class fieldType,
+                                                  boolean omittable,
+                                                  Document ownerDocument)
             throws AxisFault {
 
         Element element = docHolder.createElement("element");
@@ -1743,8 +1761,9 @@ public class Types {
      * @return true if the type was already present or was added, false if there was a problem
      * @throws AxisFault
      */
-    private boolean makeTypeElement(
-            Class type, QName qName, Element containingElement)
+    private boolean makeTypeElement(Class type,
+                                    QName qName,
+                                    Element containingElement)
             throws AxisFault {
 
         // Get a corresponding QName if one is not provided

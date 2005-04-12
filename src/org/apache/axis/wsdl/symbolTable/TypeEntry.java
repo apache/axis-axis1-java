@@ -85,6 +85,11 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
 
     protected QName componentType = null;              // If this is an array, the component type
 
+    /** If this TypeEntry represents an array with elements inside a "wrapper"
+     * this field can optionally change the inner QName (default is <item>).
+     */
+    protected QName itemQName = null;
+
     /** Field undefined */
     protected boolean undefined;                       // If refType is an Undefined type
 
@@ -391,6 +396,14 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     public void setComponentType(QName componentType)
     {
         this.componentType = componentType;
+    }
+
+    public QName getItemQName() {
+        return itemQName;
+    }
+
+    public void setItemQName(QName itemQName) {
+        this.itemQName = itemQName;
     }
 
     /**

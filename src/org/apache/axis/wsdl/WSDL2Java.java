@@ -92,6 +92,9 @@ public class WSDL2Java extends WSDL2 {
 
     /** Field ALLOW_INVALID_URL_OPT */
     protected static final int ALLOW_INVALID_URL_OPT = 'u';
+    
+    /** */
+    protected static final int UNWRAP_ARRAYS_OPT = 'w';
 
     /** Field emitter */
     private Emitter emitter;
@@ -178,7 +181,11 @@ public class WSDL2Java extends WSDL2 {
 						IMPL_CLASS_OPT,
 						Messages.getMessage("implementationClassName")),
                 new CLOptionDescriptor("allowInvalidURL", CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                        ALLOW_INVALID_URL_OPT, Messages.getMessage("optionAllowInvalidURL"))
+                        ALLOW_INVALID_URL_OPT, Messages.getMessage("optionAllowInvalidURL")),
+                new CLOptionDescriptor("unwrapArrays",
+                                       CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                                       UNWRAP_ARRAYS_OPT,
+                                       Messages.getMessage("optionUnwrapArrays")),
                 };
 
     /**
@@ -322,7 +329,11 @@ public class WSDL2Java extends WSDL2 {
             case ALLOW_INVALID_URL_OPT:
                 emitter.setAllowInvalidURL(true);
                 break;
-                
+
+            case UNWRAP_ARRAYS_OPT:
+                emitter.setUnwrapArrays(false);
+                break;
+
             default :
                 super.parseOption(option);
         }

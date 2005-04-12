@@ -139,38 +139,38 @@ public class ArraySerializer implements Serializer
 
         // Get the QName of the componentType
         // if it wasn't passed in from the constructor
-        QName componentQName = this.componentType;
+        QName componentTypeQName = this.componentType;
 
         // Try the current XML type from the context
-        if (componentQName == null) {
-            componentQName = context.getCurrentXMLType();
-            if (componentQName != null) {
-                if ((componentQName.equals(xmlType) ||
-                     componentQName.equals(soap.getArrayType()))) {
-                         componentQName = null;
+        if (componentTypeQName == null) {
+            componentTypeQName = context.getCurrentXMLType();
+            if (componentTypeQName != null) {
+                if ((componentTypeQName.equals(xmlType) ||
+                     componentTypeQName.equals(soap.getArrayType()))) {
+                         componentTypeQName = null;
                      }
             }
         }
 
         // Then check the type mapping for the class
-        if (componentQName == null) {
-            componentQName = context.getQNameForClass(componentClass);
+        if (componentTypeQName == null) {
+            componentTypeQName = context.getQNameForClass(componentClass);
         }
 
         // If still not found, look at the super classes
-        if (componentQName == null) {
+        if (componentTypeQName == null) {
             Class searchCls = componentClass;
-            while(searchCls != null && componentQName == null) {
+            while(searchCls != null && componentTypeQName == null) {
                 searchCls = searchCls.getSuperclass();
-                componentQName = context.getQNameForClass(searchCls);
+                componentTypeQName = context.getQNameForClass(searchCls);
             }
-            if (componentQName != null) {
+            if (componentTypeQName != null) {
                 componentClass = searchCls;
             }
         }
 
         // Still can't find it?  Throw an error.
-        if (componentQName == null) {
+        if (componentTypeQName == null) {
             throw new IOException(
                     Messages.getMessage("noType00", componentClass.getName()));
         }
@@ -260,9 +260,10 @@ public class ArraySerializer implements Serializer
         // Need to distinguish if this is array processing for an
         // actual schema array or for a maxOccurs usage.
         // For the maxOccurs case, the currentXMLType of the context is
-        // the same as the componentQName.
-        boolean maxOccursUsage = !encoded &&
-                componentQName.equals(context.getCurrentXMLType());
+        // the same as the componentTypeQName.
+        QName componentQName = context.getItemQName();
+        boolean maxOccursUsage = !encoded && componentQName == null &&
+                componentTypeQName.equals(context.getCurrentXMLType());
 
         if (encoded) {
             AttributesImpl attrs;
@@ -274,7 +275,7 @@ public class ArraySerializer implements Serializer
                 attrs = new AttributesImpl(attributes);
             }
 
-            String compType = context.attributeQName2String(componentQName);
+            String compType = context.attributeQName2String(componentTypeQName);
 
             if (attrs.getIndex(soap.getEncodingURI(), soap.getAttrItemType()) == -1) {
                 String encprefix =
@@ -356,7 +357,8 @@ public class ArraySerializer implements Serializer
         if (!maxOccursUsage) {
             serializeAttr = null;  // since we are putting them here
             context.startElement(name, attributes);
-            elementName = Constants.QNAME_LITERAL_ITEM;
+            if (componentQName != null)
+                elementName = componentQName;
             // If we are doing SOAP encoded arrays, no need to add xsi:type to the items
         }
 
@@ -372,7 +374,7 @@ public class ArraySerializer implements Serializer
                             (serializeAttr == null ?
                             serializeAttr : new AttributesImpl(serializeAttr)),
                             aValue,
-                            componentQName); // prefered type QName
+                            componentTypeQName); // prefered type QName
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -383,7 +385,7 @@ public class ArraySerializer implements Serializer
                             (serializeAttr == null ?
                             serializeAttr : new AttributesImpl(serializeAttr)),
                             aValue,
-                            componentQName); // prefered type QName
+                            componentTypeQName); // prefered type QName
                 }
             }
         } else {
@@ -391,7 +393,7 @@ public class ArraySerializer implements Serializer
             for (int index = 0; index < len; index++) {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
-                    context.serialize(elementName, null, aValue, componentQName);
+                    context.serialize(elementName, null, aValue, componentTypeQName);
                 }
             }
         }

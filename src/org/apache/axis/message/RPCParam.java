@@ -20,6 +20,9 @@ import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.constants.Style;
+import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -182,6 +185,14 @@ public class RPCParam extends MessageElement implements Serializable
                 }
             }
             xmlType = paramDesc.getTypeQName();
+            QName itemQName = paramDesc.getItemQName();
+            if (itemQName == null) {
+                MessageContext mc = context.getMessageContext();
+                if (mc != null && mc.getOperation() != null && mc.getOperation().getStyle() == Style.DOCUMENT) {
+                    itemQName = Constants.QNAME_LITERAL_ITEM;
+                }
+            }
+            context.setItemQName(itemQName);
         }
         context.serialize(getQName(),  // element qname
                           null,   // no extra attrs

@@ -16,6 +16,7 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -25,6 +26,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.QNameHolder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -593,9 +595,9 @@ public class SchemaUtils {
                     elem.setAnyElement(true);
                     v.add(elem);
                 } else if (localName.equals("element")) {
-                    ElementDecl elem = processChildElementNode(kid, 
+                    ElementDecl elem = processChildElementNode(kid,
                                                                symbolTable);
-                    
+
                     if (elem != null) {
                         v.add(elem);
                     }
@@ -1249,15 +1251,18 @@ public class SchemaUtils {
      * 
      * @param node is the node
      * @param dims is the output value that contains the number of dimensions if return is not null
+     * @param itemQName will end up containing the "inner" QName for a
+     *                       wrapped literal array
      * @return QName or null
      */
     public static QName getArrayComponentQName(Node node,
                                                IntHolder dims,
+                                               QNameHolder itemQName,
                                                SymbolTable symbolTable) {
 
         dims.value = 1;    // assume 1 dimension
 
-        QName qName = getCollectionComponentQName(node);
+        QName qName = getCollectionComponentQName(node, itemQName);
 
         if (qName == null) {
             qName = getArrayComponentQName_JAXRPC(node, dims, symbolTable);
@@ -1272,32 +1277,86 @@ public class SchemaUtils {
      * <p/>
      * <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
      * returns qname for"xsd:string"
+     * <p/>
+     * <xsd:complexType>
+     *  <xsd:sequence>
+     *   <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
+     *  </xsd:sequence>
+     * </xsd:complexType>
+     * returns qname for"xsd:string"
+     * <p/>
      * <xsd:element ref="alias"  maxOccurs="unbounded"/>
      * returns qname for "alias"
      * 
      * @param node is the Node
      * @return QName of the compoent of the collection
      */
-    public static QName getCollectionComponentQName(Node node) {
+    public static QName getCollectionComponentQName(Node node,
+                                                    QNameHolder itemQName) {
+        // If we're going to turn "wrapped" arrays into types such that
+        // <complexType><sequence>
+        //   <element name="foo" type="xs:string" maxOccurs="unbounded"/>
+        // </sequence></complexType>
+        // becomes just "String []", we need to keep track of the inner
+        // element name "foo" in metadata... This flag indicates whether to
+        // do so.
+        boolean storeComponentQName = false;
 
         if (node == null) {
             return null;
         }
 
-        // If the node kind is an element, dive get its type.
+        if (itemQName != null && isXSDNode(node, "complexType")) {
+            // If this complexType is a sequence of exactly one element
+            // we will continue processing below using that element, and
+            // let the type checking logic determine if this is an array
+            // or not.
+            Node sequence = SchemaUtils.getChildByName(node, "sequence");
+            if (sequence == null) {
+                return null;
+            }
+            NodeList children = sequence.getChildNodes();
+            Node element = null;
+            for (int i = 0; i < children.getLength(); i++) {
+                if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                    if (element == null) {
+                        element = children.item(i);
+                    } else {
+                        return null;
+                    }
+                }
+            }
+            if (element == null) {
+                return null;
+            }
+
+            // OK, exactly one element child of <sequence>,
+            // continue the processing using that element ...
+            node = element;
+            storeComponentQName = true;
+        }
+
+        // If the node kind is an element, dive to get its type.
         if (isXSDNode(node, "element")) {
 
             // Compare the componentQName with the name of the
             // full name.  If different, return componentQName
             BooleanHolder forElement = new BooleanHolder();
-            QName componentQName = Utils.getTypeQName(node, forElement,
-                    true);
+            QName componentTypeQName = Utils.getTypeQName(node,
+                                                          forElement,
+                                                          true);
 
-            if (componentQName != null) {
+            if (componentTypeQName != null) {
                 QName fullQName = Utils.getTypeQName(node, forElement, false);
 
-                if (!componentQName.equals(fullQName)) {
-                    return componentQName;
+                if (!componentTypeQName.equals(fullQName)) {
+                    if (storeComponentQName) {
+                        String name = Utils.getAttribute(node, "name");
+                        if (name != null) {
+                            itemQName.value = new QName("", name);
+                        }
+                    }
+                    return componentTypeQName;
                 }
             }
         }

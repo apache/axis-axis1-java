@@ -373,6 +373,12 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         pw.println("        elemField.setNillable(false);");
                     }
 
+                    QName itemQName = elem.getType().getItemQName();
+                    if (itemQName != null) {
+                        pw.println("        elemField.setItemQName(" +
+                                   Utils.getNewQName(itemQName) + ");");
+                    }
+
                     pw.println("        typeDesc.addFieldDesc(elemField);");
                 }
             }
