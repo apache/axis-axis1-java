@@ -131,7 +131,7 @@ Copyright:
                noimports="no"
                verbose="no"
                testcase="no"
-               unwrapArrays="no">
+               wrapArrays="yes">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </wsdl2java>
 

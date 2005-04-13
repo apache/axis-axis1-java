@@ -66,8 +66,8 @@ public class Parser {
     /** Field password */
     protected String password = null;
 
-    /** If this is true, we'll prefer "String[]" to "ArrayOfString" for literal wrapped arrays */
-    protected boolean unwrapArrays = true;
+    /** If this is false, we'll prefer "String[]" to "ArrayOfString" for literal wrapped arrays */
+    protected boolean wrapArrays = false;
 
     // Timeout, in milliseconds, to let the Emitter do its work
 
@@ -296,7 +296,7 @@ public class Parser {
         symbolTable = new SymbolTable(genFactory.getBaseTypeMapping(), imports,
                 verbose, nowrap);
         symbolTable.setQuiet(quiet);
-        symbolTable.setUnwrapArrays(unwrapArrays);
+        symbolTable.setWrapArrays(wrapArrays);
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(symbolTable, wsdlURI);

@@ -63,7 +63,7 @@ Copyright:
 
     <wsdl2java url="${axis.home}/test/wsdl/clash/duplicate-element.wsdl"
                output="${axis.home}/build/work"
-               unwrapArrays="no">
+               wrapArrays="yes">
     </wsdl2java>
 
     <copy todir="${build.dir}/work/test/wsdl/clash" overwrite="yes">

@@ -1079,7 +1079,7 @@ public class Emitter extends Parser {
         return true;
     }
 
-    public void setUnwrapArrays(boolean unwrapArrays) {
-        this.unwrapArrays = unwrapArrays;
+    public void setWrapArrays(boolean wrapArrays) {
+        this.wrapArrays = wrapArrays;
     }
 }

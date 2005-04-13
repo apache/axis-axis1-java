@@ -59,7 +59,7 @@ Copyright:
                skeletonDeploy="yes"
                noWrapped="true"
                testcase="no"
-               unwrapArrays="no">
+               wrapArrays="yes">
         <mapping namespace="http://tempuri.org/" package="test.wsdl.qnameser"/>
     </wsdl2java>
 

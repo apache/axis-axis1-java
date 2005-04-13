@@ -118,7 +118,7 @@ public class Wsdl2javaAntTask extends Task
      */
     private boolean failOnNetworkErrors = false;
 
-    private boolean unwrapArrays = true;
+    private boolean wrapArrays = false;
 
     public Wsdl2javaAntTask() {
     }
@@ -245,7 +245,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.setTypeMappingVersion(typeMappingVersion);
             emitter.setNowrap(noWrapped);
             emitter.setAllowInvalidURL(allowInvalidURL);
-            emitter.setUnwrapArrays(unwrapArrays);
+            emitter.setWrapArrays(wrapArrays);
             if (namespaceMappingFile != null) {
                 emitter.setNStoPkg(namespaceMappingFile.toString());
             }
@@ -560,14 +560,14 @@ public class Wsdl2javaAntTask extends Task
 
 
     /**
-     * Set the unwrap arrays flag - if false this will make new classes
+     * Set the wrap arrays flag - if true this will make new classes
      * like "ArrayOfString" for literal "wrapped" arrays.  Otherwise it
      * will use "String []" and generate appropriate metadata.
      *
-     * @param unwrapArrays
+     * @param wrapArrays
      */
-    public void setUnwrapArrays(boolean unwrapArrays) {
-        this.unwrapArrays = unwrapArrays;
+    public void setWrapArrays(boolean wrapArrays) {
+        this.wrapArrays = wrapArrays;
     }
 
     /**

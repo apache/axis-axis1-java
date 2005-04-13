@@ -167,11 +167,11 @@ public class SymbolTable {
     /** Field wsdlURI */
     private String wsdlURI = null;
 
-    /** If this is true, we will "unwrap" literal arrays, generating a plan "String[]" instead
+    /** If this is false, we will "unwrap" literal arrays, generating a plan "String[]" instead
      * of "ArrayOfString" when encountering an element containing a single maxOccurs="unbounded"
      * inner element.
      */
-    private boolean unwrapArrays;
+    private boolean wrapArrays;
 
     Set arrayTypeQNames = new HashSet();
 
@@ -1175,7 +1175,7 @@ public class SymbolTable {
 
                 // If we're supposed to unwrap arrays, supply someplace to put the "inner" QName
                 // so we can propagate it into the appropriate metadata container.
-                QNameHolder itemQName = unwrapArrays ? new QNameHolder() : null;
+                QNameHolder itemQName = wrapArrays ? null : new QNameHolder();
 
                 numDims.value = 0;
 
@@ -3777,11 +3777,7 @@ public class SymbolTable {
         return messageEntries;
     }
 
-    public boolean shouldUnwrapArrays() {
-        return unwrapArrays;
-    }
-
-    public void setUnwrapArrays(boolean unwrapArrays) {
-        this.unwrapArrays = unwrapArrays;
+    public void setWrapArrays(boolean wrapArrays) {
+        this.wrapArrays = wrapArrays;
     }
 }    // class SymbolTable
