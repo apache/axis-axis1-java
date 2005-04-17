@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wsdl:definitions targetNamespace="urn:echo2.wsdl.test"
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:tns="urn:echo2.wsdl.test"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<wsdl:types>
+		<schema targetNamespace="urn:echo2.wsdl.test"
+			xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+
+			<complexType name="ArrayOfString_MaxOccursUnbounded">
+				<sequence>
+					<element name="varStringArray" nillable="true" type="xsd:string" maxOccurs="unbounded" />
+				</sequence>
+			</complexType>
+			<complexType name="ArrayOfString_SoapEncArray">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+					</restriction>
+				</complexContent>
+			</complexType>
+			<complexType name="MyBase64Bean">
+				<sequence>
+					<element name="varXsdByte" nillable="true" type="xsd:byte" />
+                    <element name="varSoapByte" nillable="true" type="soapenc:byte" />
+					<element name="varXsdBase64Binary" nillable="true" type="xsd:base64Binary" />
+                    <element name="varSoapBase64Binary" nillable="true" type="soapenc:base64Binary" />
+					<element name="varXsdHexBinary" nillable="true" type="xsd:hexBinary" />
+                    <element name="varSoapBase64" nillable="true" type="soapenc:base64" />
+				</sequence>
+			</complexType>
+			<complexType name="ArrayOfMyBase64Bean">
+				<sequence>
+					<element name="varMyBase64Bean" nillable="true" maxOccurs="unbounded" type="tns:MyBase64Bean" />
+				</sequence>
+			</complexType>
+		</schema>
+	</wsdl:types>
+
+	<wsdl:message name="echoMyBase64BeanRequest">
+		<wsdl:part type="tns:MyBase64Bean" name="input" />
+	</wsdl:message>
+	<wsdl:message name="echoMyBase64BeanResponse">
+		<wsdl:part type="tns:MyBase64Bean" name="return" />
+	</wsdl:message>
+
+	<wsdl:message name="echoArrayOfMyBase64BeanRequest">
+		<wsdl:part type="tns:ArrayOfMyBase64Bean" name="input" />
+	</wsdl:message>
+	<wsdl:message name="echoArrayOfMyBase64BeanResponse">
+		<wsdl:part type="tns:ArrayOfMyBase64Bean" name="return" />
+	</wsdl:message>
+
+	<wsdl:message name="echoArrayOfString_MaxOccursUnboundedRequest">
+		<wsdl:part type="tns:ArrayOfString_MaxOccursUnbounded" name="input" />
+	</wsdl:message>
+	<wsdl:message name="echoArrayOfString_MaxOccursUnboundedResponse">
+		<wsdl:part type="tns:ArrayOfString_MaxOccursUnbounded" name="return" />
+	</wsdl:message>
+
+	<wsdl:message name="echoArrayOfString_SoapEncArrayRequest">
+		<wsdl:part type="tns:ArrayOfString_SoapEncArray" name="input" />
+	</wsdl:message>
+	<wsdl:message name="echoArrayOfString_SoapEncArrayResponse">
+		<wsdl:part type="tns:ArrayOfString_SoapEncArray" name="return" />
+	</wsdl:message>
+
+	<wsdl:portType name="Echo2PT">
+		<wsdl:operation name="echoMyBase64Bean">
+			<wsdl:input message="tns:echoMyBase64BeanRequest" name="echoMyBase64BeanRequest" />
+			<wsdl:output message="tns:echoMyBase64BeanResponse" name="echoMyBase64BeanResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="echoArrayOfMyBase64Bean">
+			<wsdl:input message="tns:echoArrayOfMyBase64BeanRequest" name="echoArrayOfMyBase64BeanRequest" />
+			<wsdl:output message="tns:echoArrayOfMyBase64BeanResponse" name="echoArrayOfMyBase64BeanResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="echoArrayOfString_MaxOccursUnbounded">
+     		<wsdl:input message="tns:echoArrayOfString_MaxOccursUnboundedRequest" name="echoArrayOfString_MaxOccursUnboundedRequest" />
+			<wsdl:output message="tns:echoArrayOfString_MaxOccursUnboundedResponse" name="echoArrayOfString_MaxOccursUnboundedResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="echoArrayOfString_SoapEncArray">
+     		<wsdl:input message="tns:echoArrayOfString_SoapEncArrayRequest" name="echoArrayOfString_SoapEncArrayRequest" />
+			<wsdl:output message="tns:echoArrayOfString_SoapEncArrayResponse" name="echoArrayOfString_SoapEncArrayResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="Echo2SoapBinding" type="tns:Echo2PT">
+		<wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="echoMyBase64Bean">
+			<wsdlsoap:operation soapAction="" />
+			<wsdl:input name="echoMyBase64BeanRequest">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:input>
+			<wsdl:output name="echoMyBase64BeanResponse">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="echoArrayOfMyBase64Bean">
+			<wsdlsoap:operation soapAction="" />
+			<wsdl:input name="echoArrayOfMyBase64BeanRequest">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:input>
+			<wsdl:output name="echoArrayOfMyBase64BeanResponse">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="echoArrayOfString_MaxOccursUnbounded">
+			<wsdlsoap:operation soapAction="" />
+			<wsdl:input name="echoArrayOfString_MaxOccursUnboundedRequest">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:input>
+			<wsdl:output name="echoArrayOfString_MaxOccursUnboundedResponse">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="echoArrayOfString_SoapEncArray">
+			<wsdlsoap:operation soapAction="" />
+			<wsdl:input name="echoArrayOfString_SoapEncArrayRequest">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:input>
+			<wsdl:output name="echoArrayOfString_SoapEncArrayResponse">
+				<wsdlsoap:body
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+					namespace="urn:echo2.wsdl.test" use="encoded" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="Echo2Service">
+		<wsdl:port binding="tns:Echo2SoapBinding" name="Echo2">
+			<wsdlsoap:address
+				location="http://localhost:8080/axis/services/Echo2" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
