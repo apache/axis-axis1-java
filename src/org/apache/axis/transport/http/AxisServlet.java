@@ -251,58 +251,60 @@ public class AxisServlet extends AxisServletBase {
             }
 
             boolean hasNoPath = (pathInfo == null || pathInfo.equals(""));
-            if (!disableServicesList && hasNoPath) {
-                // If the user requested the servlet (i.e. /axis/servlet/AxisServlet)
-                // with no service name, present the user with a list of deployed
-                // services to be helpful
-                // Don't do this if has been turned off
-                reportAvailableServices(response, writer, request);
-            } else if (realpath != null) {
-                // We have a pathname, so now we perform WSDL or list operations
+            if (!disableServicesList) {
+                if(hasNoPath) {
+                    // If the user requested the servlet (i.e. /axis/servlet/AxisServlet)
+                    // with no service name, present the user with a list of deployed
+                    // services to be helpful
+                    // Don't do this if has been turned off
+                    reportAvailableServices(response, writer, request);
+                } else if (realpath != null) {
+                    // We have a pathname, so now we perform WSDL or list operations
 
-                // get message context w/ various properties set
-                MessageContext msgContext = createMessageContext(engine,
-                        request, response);
+                    // get message context w/ various properties set
+                    MessageContext msgContext = createMessageContext(engine,
+                            request, response);
 
-                // NOTE:  HttpUtils.getRequestURL has been deprecated.
-                // This line SHOULD be:
-                //    String url = req.getRequestURL().toString()
-                // HOWEVER!!!!  DON'T REPLACE IT!  There's a bug in
-                // req.getRequestURL that is not in HttpUtils.getRequestURL
-                // req.getRequestURL returns "localhost" in the remote
-                // scenario rather than the actual host name.
-                //
-                // But more importantly, getRequestURL() is a servlet 2.3
-                // API and to support servlet 2.2 (aka WebSphere 4)
-                // we need to leave this in for a while longer. tomj 10/14/2004
-                //
-                String url = HttpUtils.getRequestURL(request).toString();
+                    // NOTE:  HttpUtils.getRequestURL has been deprecated.
+                    // This line SHOULD be:
+                    //    String url = req.getRequestURL().toString()
+                    // HOWEVER!!!!  DON'T REPLACE IT!  There's a bug in
+                    // req.getRequestURL that is not in HttpUtils.getRequestURL
+                    // req.getRequestURL returns "localhost" in the remote
+                    // scenario rather than the actual host name.
+                    //
+                    // But more importantly, getRequestURL() is a servlet 2.3
+                    // API and to support servlet 2.2 (aka WebSphere 4)
+                    // we need to leave this in for a while longer. tomj 10/14/2004
+                    //
+                    String url = HttpUtils.getRequestURL(request).toString();
 
-                msgContext.setProperty(MessageContext.TRANS_URL, url);
+                    msgContext.setProperty(MessageContext.TRANS_URL, url);
 
-                // See if we can locate the desired service.  If we
-                // can't, return a 404 Not Found.  Otherwise, just
-                // print the placeholder message.
+                    // See if we can locate the desired service.  If we
+                    // can't, return a 404 Not Found.  Otherwise, just
+                    // print the placeholder message.
 
-                String serviceName;
-                if (pathInfo.startsWith("/")) {
-                    serviceName = pathInfo.substring(1);
-                } else {
-                    serviceName = pathInfo;
-                }
-
-                SOAPService s = engine.getService(serviceName);
-                if (s == null) {
-                    //no service: report it
-                    if (isJWSPage) {
-                        reportCantGetJWSService(request, response, writer);
+                    String serviceName;
+                    if (pathInfo.startsWith("/")) {
+                        serviceName = pathInfo.substring(1);
                     } else {
-                        reportCantGetAxisService(request, response, writer);
+                        serviceName = pathInfo;
                     }
 
-                } else {
-                    //print a snippet of service info.
-                    reportServiceInfo(response, writer, s, serviceName);
+                    SOAPService s = engine.getService(serviceName);
+                    if (s == null) {
+                        //no service: report it
+                        if (isJWSPage) {
+                            reportCantGetJWSService(request, response, writer);
+                        } else {
+                            reportCantGetAxisService(request, response, writer);
+                        }
+
+                    } else {
+                        //print a snippet of service info.
+                        reportServiceInfo(response, writer, s, serviceName);
+                    }
                 }
             } else {
                 // We didn't have a real path in the request, so just
