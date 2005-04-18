@@ -571,6 +571,16 @@ public class JavaDeployWriter extends JavaWriter {
                     + "\"");
         }
 
+        Parameter retParam = params.returnParam;
+        if (retParam != null) {
+            QName returnItemQName = Utils.getItemQName(retParam.getType());
+            if (returnItemQName != null) {
+                pw.print(" returnItemQName=\"");
+                pw.print(Utils.genQNameAttributeString(returnItemQName, "tns"));
+                pw.print("\"");
+            }
+        }
+
         if (SOAPAction != null) {
             pw.print(" soapAction=\""
                     + SOAPAction
@@ -627,6 +637,13 @@ public class JavaDeployWriter extends JavaWriter {
 
             if (param.isOutHeader()) {
                 pw.print(" outHeader=\"true\"");
+            }
+
+            QName itemQName = Utils.getItemQName(param.getType());
+            if (itemQName != null) {
+                pw.print(" itemQName=\"");
+                pw.print(Utils.genQNameAttributeString(itemQName, "tns"));
+                pw.print("\"");
             }
 
             pw.println("/>");

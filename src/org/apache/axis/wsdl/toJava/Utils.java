@@ -1298,4 +1298,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 && type.getNode().getLocalName().equals(
                         "attributeGroup"))));
     }
+
+    public static QName getItemQName(TypeEntry te) {
+        if (te instanceof DefinedElement) {
+            te = te.getRefType();
+        }
+        return te.getItemQName();
+    }
 }    // class Utils

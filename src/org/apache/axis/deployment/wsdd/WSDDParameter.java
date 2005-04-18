@@ -67,7 +67,12 @@ public class WSDDParameter extends WSDDElement
         if (typeStr != null && !typeStr.equals("")) {
             parameter.setTypeQName(XMLUtils.getQNameFromString(typeStr, e));
         }
-        
+
+        String itemQNameStr = e.getAttribute(ATTR_ITEMQNAME);
+        if (itemQNameStr != null && !itemQNameStr.equals("")) {
+            parameter.setItemQName(XMLUtils.getQNameFromString(itemQNameStr, e));
+        }
+
         Element docElem = getChildElement(e, ELEM_WSDD_DOC);
         if (docElem != null) {
             WSDDDocumentation documentation = new WSDDDocumentation(docElem);
@@ -124,7 +129,13 @@ public class WSDDParameter extends WSDDElement
             attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE, "CDATA",
                                context.qName2String(typeQName));            
         }
-        
+
+        QName itemQName = parameter.getItemQName();
+        if (itemQName != null) {
+            attrs.addAttribute("", ATTR_ITEMQNAME, ATTR_ITEMQNAME, "CDATA",
+                               context.qName2String(itemQName));
+        }
+
         context.startElement(getElementName(), attrs);
         
         if (parameter.getDocumentation() != null) {

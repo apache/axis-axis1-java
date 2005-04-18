@@ -627,11 +627,8 @@ public class JavaStubWriter extends JavaClassWriter {
                            paramTypeText + ", " +
                            javaType +
                            isInHeader + ", " + isOutHeader + ");");
-                TypeEntry te = p.getType();
-                if (te instanceof DefinedElement) {
-                    te = te.getRefType();
-                }
-                QName itemQName = te.getItemQName();
+
+                QName itemQName = Utils.getItemQName(p.getType());
                 if (itemQName != null) {
                     pw.println("        param.setItemQName(" +
                                Utils.getNewQName(itemQName) + ");");
@@ -641,13 +638,14 @@ public class JavaStubWriter extends JavaClassWriter {
             }
 
             // set output type
-            if (parameters.returnParam != null) {
+            Parameter returnParam = parameters.returnParam;
+            if (returnParam != null) {
 
                 // Get the QName for the return Type
-                QName returnType = Utils.getXSIType(parameters.returnParam);
+                QName returnType = Utils.getXSIType(returnParam);
 
                 // Get the javaType
-                String javaType = Utils.getParameterTypeName(parameters.returnParam);
+                String javaType = Utils.getParameterTypeName(returnParam);
 
                 if (javaType == null) {
                     javaType = "";
@@ -659,16 +657,24 @@ public class JavaStubWriter extends JavaClassWriter {
                         + Utils.getNewQName(returnType) + ");");
                 pw.println("        oper.setReturnClass(" + javaType + ");");
 
-                QName returnQName = parameters.returnParam.getQName();
+                QName returnQName = returnParam.getQName();
 
                 if (returnQName != null) {
                     pw.println("        oper.setReturnQName("
                             + Utils.getNewQNameWithLastLocalPart(returnQName) + ");");
                 }
 
-                if (parameters.returnParam.isOutHeader()) {
+                if (returnParam.isOutHeader()) {
                     pw.println("        oper.setReturnHeader(true);");
                 }
+
+                QName itemQName = Utils.getItemQName(returnParam.getType());
+                if (itemQName != null) {
+                    pw.println("        param = oper.getReturnParamDesc();");
+                    pw.println("        param.setItemQName(" +
+                               Utils.getNewQName(itemQName) + ");");
+                }
+
             } else {
                 pw.println(
                         "        oper.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");

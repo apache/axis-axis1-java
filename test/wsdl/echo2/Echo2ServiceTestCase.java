@@ -12,6 +12,10 @@ import org.apache.axis.client.Service;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.message.SOAPBody;
+import org.apache.axis.message.MessageElement;
+
+import java.util.List;
+import java.util.Iterator;
 
 public class Echo2ServiceTestCase extends junit.framework.TestCase {
     public Echo2ServiceTestCase(java.lang.String name) {
@@ -102,13 +106,37 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
         // Time out after a minute
         binding.setTimeout(60000);
         // Test operation
+        String [] args = new String[] {"one", "two", "", null};
 		java.lang.String[] value = null;
         value = binding
-                .echoArrayOfString_MaxOccursUnbounded(new String[]{"one", "two", "", null});
-        // TBD - validate results
+                .echoArrayOfString_MaxOccursUnbounded(args);
+
+        // Validate results - NOTE: This checks the XML directly, so if
+        // any changes are made to the WSDL/code for this test, equivalent
+        // changes must be made in this code.
         Service service = (Service)binding._getService();
         SOAPBody body = (SOAPBody)service.getCall().getResponseMessage().getSOAPBody();
-        System.out.println(body.toString());
+        MessageElement element;
+        QName responseQName = new QName("urn:echo2.wsdl.test", "echoArrayOfString_MaxOccursUnboundedResponse");
+        QName returnQName = new QName("", "return");
+        QName itemQName = new QName("", "varStringArray");
+        element = body.getChildElement(responseQName);
+        assertNotNull("Couldn't find response element", element);
+        element = element.getChildElement(returnQName);
+        assertNotNull("Couldn't find return element", element);
+        Iterator elements = element.getChildElements(itemQName);
+        assertNotNull("Couldn't find items", elements);
+        int count = 0;
+        while (elements.hasNext()) {
+            element = (MessageElement) elements.next();
+            count++;
+        }
+        assertEquals("Wrong # of items", 4, count);
+
+        // OK, now that we know the XML looked right, just for yuks check the values
+        for (int i = 0; i < value.length; i++) {
+            assertEquals("Item " + i + " didn't match!", args[i], value[i]);
+        }
     }
 
     public void test3Echo2EchoArrayOfString_SoapEncArray() throws Exception {
