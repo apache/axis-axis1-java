@@ -46,6 +46,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -243,17 +245,8 @@ public class HTTPSender extends BasicHandler {
         // don't forget the cookies!
         // mmm... cookies
         if (msgContext.getMaintainSession()) {
-            String cookie = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE);
-            String cookie2 = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE2);
-
-            if (cookie != null) {
-                otherHeaders.append(HTTPConstants.HEADER_COOKIE).append(": ")
-                        .append(cookie).append("\r\n");
-            }
-            if (cookie2 != null) {
-                otherHeaders.append(HTTPConstants.HEADER_COOKIE2).append(": ")
-                        .append(cookie2).append("\r\n");
-            }
+            fillHeaders(msgContext, HTTPConstants.HEADER_COOKIE, otherHeaders);
+            fillHeaders(msgContext, HTTPConstants.HEADER_COOKIE2, otherHeaders);
         }
 
         StringBuffer header2 = new StringBuffer();
@@ -515,6 +508,37 @@ public class HTTPSender extends BasicHandler {
         return inp;
     }
 
+    /**
+     * Get cookies from message context and add it to the headers 
+     * @param msgContext
+     * @param header
+     * @param otherHeaders
+     */
+    private void fillHeaders(MessageContext msgContext, String header, StringBuffer otherHeaders) {
+        Object ck1 = msgContext.getProperty(header);
+        if (ck1 != null) {
+            if (ck1 instanceof String[]) {
+                String [] cookies = (String[]) ck1;
+                for (int i = 0; i < cookies.length; i++) {
+                    addCookie(otherHeaders, header, cookies[i]);
+                }
+            } else {
+                addCookie(otherHeaders, header, (String) ck1);
+            }
+        }
+    }
+
+    /**
+     * add cookie to headers
+     * @param otherHeaders
+     * @param header
+     * @param cookie
+     */
+    private void addCookie(StringBuffer otherHeaders, String header, String cookie) {
+        otherHeaders.append(header).append(": ")
+                .append(cookie).append("\r\n");
+    }
+
     private InputStream readHeadersFromSocket(SocketHolder sockHolder,
                                               MessageContext msgContext,
                                               InputStream inp,
@@ -605,7 +629,22 @@ public class HTTPSender extends BasicHandler {
                     msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE,
                             name.substring(start + end + 1));
                 } else {
-                    headers.put(name.toLowerCase(), value);
+                    // if we are maintaining session state,
+                    // handle cookies (if any)
+                    if (msgContext.getMaintainSession()) {
+                        final String nameLowerCase = name.toLowerCase();
+                        if (nameLowerCase.equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE)) {
+                            handleCookie(HTTPConstants.HEADER_COOKIE,
+                                    HTTPConstants.HEADER_SET_COOKIE, value, msgContext);
+                        } else if (nameLowerCase.equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE2)) {
+                            handleCookie(HTTPConstants.HEADER_COOKIE2,
+                                    HTTPConstants.HEADER_SET_COOKIE2, value, msgContext);
+                        } else {
+                            headers.put(name.toLowerCase(), value);
+                        }
+                    } else {
+                        headers.put(name.toLowerCase(), value);
+                    }
                 }
                 len = 0;
             }
@@ -745,39 +784,42 @@ public class HTTPSender extends BasicHandler {
             log.debug(outMsg.getSOAPEnvelope().toString());
         }
 
-        // if we are maintaining session state,
-        // handle cookies (if any)
-        if (msgContext.getMaintainSession()) {
-            handleCookie(HTTPConstants.HEADER_COOKIE,
-                    HTTPConstants.HEADER_SET_COOKIE, headers, msgContext);
-            handleCookie(HTTPConstants.HEADER_COOKIE2,
-                    HTTPConstants.HEADER_SET_COOKIE2, headers, msgContext);
-        }
         return inp;
     }
 
     /**
-     * little helper function for cookies
+     * little helper function for cookies. fills up the message context with
+     * a string or an array of strings (if there are more than one Set-Cookie)
      *
      * @param cookieName
      * @param setCookieName
-     * @param headers
+     * @param cookie
      * @param msgContext
      */
     public void handleCookie(String cookieName, String setCookieName,
-                             Hashtable headers, MessageContext msgContext) {
-
-        if (headers.containsKey(setCookieName.toLowerCase())) {
-            String cookie = (String) headers.get(setCookieName.toLowerCase());
-            cookie = cookie.trim();
-
-            // chop after first ; a la Apache SOAP (see HTTPUtils.java there)
-            int index = cookie.indexOf(';');
-
-            if (index != -1) {
-                cookie = cookie.substring(0, index);
+                             String cookie, MessageContext msgContext) {
+        ArrayList cookies = new ArrayList();
+        Object oldCookies = msgContext.getProperty(cookieName);
+        if(oldCookies != null) {
+            if(oldCookies instanceof String[]) {
+                cookies.addAll(java.util.Arrays.asList((String[])oldCookies));
+            } else {
+                cookies.add((String)oldCookies);
             }
-            msgContext.setProperty(cookieName, cookie);
+        }
+        cookie = cookie.trim();
+        // chop after first ; a la Apache SOAP (see HTTPUtils.java there)
+        int index = cookie.indexOf(';');
+        if (index != -1) {
+            cookie = cookie.substring(0, index);
+        }
+        if(cookies.indexOf(cookie)==-1) {
+            cookies.add(cookie);
+        }
+        if(cookies.size()==1) {
+            msgContext.setProperty(cookieName, cookies.get(0));
+        } else if (cookies.size() > 1) {
+            msgContext.setProperty(cookieName, cookies.toArray(new String[cookies.size()]));
         }
     }
 }

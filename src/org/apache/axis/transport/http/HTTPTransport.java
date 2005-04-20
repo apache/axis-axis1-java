@@ -41,8 +41,8 @@ public class HTTPTransport extends Transport
      */
     public static final String URL = MessageContext.TRANS_URL;
 
-    private String cookie;
-    private String cookie2;
+    private Object cookie;
+    private Object cookie2;
     private String action;
     
     public HTTPTransport () {
@@ -91,7 +91,7 @@ public class HTTPTransport extends Transport
     }
 
     public void processReturnedMessageContext(MessageContext context) {
-        cookie = context.getStrProp(HTTPConstants.HEADER_COOKIE);
-        cookie2 = context.getStrProp(HTTPConstants.HEADER_COOKIE2);
+        cookie = context.getProperty(HTTPConstants.HEADER_COOKIE);
+        cookie2 = context.getProperty(HTTPConstants.HEADER_COOKIE2);
     }
 }

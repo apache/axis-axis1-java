@@ -61,6 +61,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
 
 /**
  * This class uses Jakarta Commons's HttpClient to call a SOAP server.
@@ -169,20 +170,8 @@ public class CommonsHTTPSender extends BasicHandler {
                 String host = hostConfiguration.getHost();
                 String path = targetURL.getPath();
                 boolean secure = hostConfiguration.getProtocol().isSecure();
-                String ck1 = (String)msgContext.getProperty(HTTPConstants.HEADER_COOKIE);
-                if (ck1 != null) {
-                    int index = ck1.indexOf('=');
-                    state.addCookie(new Cookie(host, ck1.substring(0, index),
-                                               ck1.substring(index+1), path,
-                                               null, secure));
-                }
-                String ck2 = (String)msgContext.getProperty(HTTPConstants.HEADER_COOKIE2);
-                if (ck2 != null) {
-                    int index = ck2.indexOf('=');
-                    state.addCookie(new Cookie(host, ck2.substring(0, index),
-                                               ck2.substring(index+1), path,
-                                               null, secure));
-                }
+                fillHeaders(msgContext, state, HTTPConstants.HEADER_COOKIE, host, path, secure);
+                fillHeaders(msgContext, state, HTTPConstants.HEADER_COOKIE2, host, path, secure);
                 httpClient.setState(state);
             }
 
@@ -257,15 +246,25 @@ public class CommonsHTTPSender extends BasicHandler {
             // handle cookies (if any)
             if (msgContext.getMaintainSession()) {
                 Header[] headers = method.getResponseHeaders();
+                ArrayList cookies = new ArrayList();
+                ArrayList cookies2 = new ArrayList();
                 for (int i = 0; i < headers.length; i++) {
-                    if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE))
-                        msgContext.setProperty(HTTPConstants.HEADER_COOKIE, 
-                                               cleanupCookie(headers[i].getValue()));
-                    else if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE2))
-                        msgContext.setProperty(HTTPConstants.HEADER_COOKIE2, 
-                                               cleanupCookie(headers[i].getValue()));
+                    if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE)) {
+                        cookies.add(cleanupCookie(headers[i].getValue()));
+                    } else if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE2)) {
+                        cookies2.add(cleanupCookie(headers[i].getValue()));
+                    }
                 }
-                
+                if(cookies.size()==1) {
+                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE, cookies.get(0));
+                } else if (cookies.size() > 1) {
+                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE, cookies.toArray(new String[cookies.size()]));
+                }
+                if(cookies2.size()==1) {
+                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE2, cookies2.get(0));
+                } else if (cookies2.size() > 1) {
+                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE2, cookies2.toArray(new String[cookies2.size()]));
+                }
             }
 
             // always release the connection back to the pool if 
@@ -284,7 +283,43 @@ public class CommonsHTTPSender extends BasicHandler {
                                           "CommonsHTTPSender::invoke"));
         }
     }
-    
+
+    /**
+     * Add cookies from message context
+     *
+     * @param msgContext
+     * @param state
+     * @param header
+     * @param host
+     * @param path
+     * @param secure
+     */
+    private void fillHeaders(MessageContext msgContext, HttpState state, String header, String host, String path, boolean secure) {
+        Object ck1 = msgContext.getProperty(header);
+        if (ck1 != null) {
+            if (ck1 instanceof String[]) {
+                String [] cookies = (String[]) ck1;
+                for (int i = 0; i < cookies.length; i++) {
+                    addCookie(state, cookies[i], host, path, secure);
+                }
+            } else {
+                addCookie(state, (String) ck1, host, path, secure);
+            }
+        }
+    }
+
+    /**
+     * add cookie to state
+     * @param state
+     * @param cookie
+     */
+    private void addCookie(HttpState state, String cookie,String host, String path, boolean secure) {
+        int index = cookie.indexOf('=');
+        state.addCookie(new Cookie(host, cookie.substring(0, index),
+                cookie.substring(index + 1), path,
+                null, secure));
+    }
+
     /**
      * cleanup the cookie value.
      *
@@ -296,7 +331,6 @@ public class CommonsHTTPSender extends BasicHandler {
         cookie = cookie.trim();
         // chop after first ; a la Apache SOAP (see HTTPUtils.java there)
         int index = cookie.indexOf(';');
-        
         if (index != -1) {
             cookie = cookie.substring(0, index);
         }
