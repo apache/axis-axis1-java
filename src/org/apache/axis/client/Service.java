@@ -82,7 +82,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     /**
      * Thread local storage used for storing the last call object
      */
-    private static ThreadLocal previousCall = new ThreadLocal();
+    private static Call previousCall = null;
     private static HashMap cachedWSDL = new HashMap();
     private static boolean cachingWSDL = true;
 
@@ -546,7 +546,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call createCall() throws ServiceException {
         Call call = new org.apache.axis.client.Call(this);
-        previousCall.set(call);
+        previousCall = call;
         return call;
     }
 
@@ -829,25 +829,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
     /**
      * Returns last Call object associated with 
-     * the current thread.
+     * this service.
      */
     public Call getCall() throws ServiceException {
-        Call call = (Call) previousCall.get();
-        return call;
-    }
-
-    /* Storing the last Call object on thread local storage leads to
-     * keeping references to objects longer then necessary. Especially
-     * in server environment with thread pools. This function helps to 
-     * reset the object associated with the thread. This should be called
-     * when the thread is done serving the request. 
-     */
-    /**
-     * Resets the Call object associated with
-     * the current thread.
-     */
-    public static void clearCall() {
-        previousCall.set(null);
+        return previousCall;
     }
 
     /**

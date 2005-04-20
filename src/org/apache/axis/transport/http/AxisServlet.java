@@ -772,9 +772,6 @@ public class AxisServlet extends AxisServletBase {
             res.setStatus(202);
         }
         
-        // reset last Call object associated with the current thread
-        Service.clearCall();
-        
         if (isDebug) {
             log.debug("Response sent.");
             log.debug("Exit: doPost()");
