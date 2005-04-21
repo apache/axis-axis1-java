@@ -17,26 +17,33 @@ package org.apache.axis.management;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
-import org.apache.axis.management.jmx.ServiceAdministrator;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.WSDDEngineConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDHandler;
+import org.apache.axis.deployment.wsdd.WSDDService;
+import org.apache.axis.deployment.wsdd.WSDDTransport;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.management.jmx.DeploymentAdministrator;
+import org.apache.axis.management.jmx.DeploymentQuery;
+import org.apache.axis.management.jmx.ServiceAdministrator;
 import org.apache.axis.server.AxisServer;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * The ServiceControl Object is responsible for starting and 
+ * The ServiceControl Object is responsible for starting and
  * stopping specific services
  *
  * @author bdillon
  * @version 1.0
  */
 public class ServiceAdmin {
-
     //Singleton AxisServer for Management
-    static private AxisServer axisServer = null;
+            static private AxisServer axisServer = null;
 
     /**
      * Start the Service
@@ -53,7 +60,7 @@ public class ServiceAdmin {
             service.start();
         } catch (ConfigurationException configException) {
             if (configException.getContainedException() instanceof AxisFault) {
-                throw (AxisFault) configException.getContainedException(); 
+                throw (AxisFault) configException.getContainedException();
             } else {
                 throw configException;
             }
@@ -75,7 +82,7 @@ public class ServiceAdmin {
             service.stop();
         } catch (ConfigurationException configException) {
             if (configException.getContainedException() instanceof AxisFault) {
-                throw (AxisFault) configException.getContainedException();//Throw Axis fault if ist. of 
+                throw (AxisFault) configException.getContainedException();//Throw Axis fault if ist. of
             } else {
                 throw configException;
             }
@@ -88,16 +95,16 @@ public class ServiceAdmin {
      * @return Map of Services (SOAPService objects, Key is the ServiceName)
      * @throws AxisFault ConfigurationException
      */
-    static public HashMap listServices()
+    static public String[] listServices()
             throws AxisFault, ConfigurationException {
+        ArrayList list = new ArrayList();
         AxisServer server = getEngine();
-        HashMap serviceMap = new HashMap();
         Iterator iter; // get list of ServiceDesc objects
         try {
             iter = server.getConfig().getDeployedServices();
         } catch (ConfigurationException configException) {
             if (configException.getContainedException() instanceof AxisFault) {
-                throw (AxisFault) configException.getContainedException();//Throw Axis fault if inst. of 
+                throw (AxisFault) configException.getContainedException();//Throw Axis fault if inst. of
             } else {
                 throw configException;
             }
@@ -105,11 +112,9 @@ public class ServiceAdmin {
         while (iter.hasNext()) {
             ServiceDesc sd = (ServiceDesc) iter.next();
             String name = sd.getName();
-            SOAPService service = server.getConfig().getService(
-                    new QName("", name));
-            serviceMap.put(name, service);
+            list.add(name);
         }
-        return serviceMap;
+        return (String[]) list.toArray(new String[list.size()]);
     }
 
     /**
@@ -129,11 +134,106 @@ public class ServiceAdmin {
 
     /**
      * Set the singleton engine
+     *
      * @param axisSrv
-     */ 
+     */
     static public void setEngine(AxisServer axisSrv, String name) {
         ServiceAdmin.axisServer = axisSrv;
-        Registrar.register(new ServiceAdministrator(), "AxisServer:name=" + name, "AxisServerContext");
+        Registrar.register(new ServiceAdministrator(), "axis:type=server", "ServiceAdministrator");
+        Registrar.register(new DeploymentAdministrator(), "axis:type=deploy", "DeploymentAdministrator");
+        Registrar.register(new DeploymentQuery(), "axis:type=query", "DeploymentQuery");
     }
 
+    static public void start() {
+        if (axisServer != null) {
+            axisServer.start();
+        }
+    }
+
+    static public void stop() {
+        if (axisServer != null) {
+            axisServer.stop();
+        }
+    }
+
+    static public void restart() {
+        if (axisServer != null) {
+            axisServer.stop();
+            axisServer.start();
+        }
+    }
+
+    static public void saveConfiguration() {
+        if (axisServer != null) {
+            axisServer.saveConfiguration();
+        }
+    }
+
+    static private WSDDEngineConfiguration getWSDDEngineConfiguration() {
+        if (axisServer != null) {
+            EngineConfiguration config = axisServer.getConfig();
+            if (config instanceof WSDDEngineConfiguration) {
+                return (WSDDEngineConfiguration) config;
+            } else {
+                throw new RuntimeException("WSDDDeploymentHelper.getWSDDEngineConfiguration(): EngineConguration not of type WSDDEngineConfiguration");
+            }
+        }
+        return null;
+    }
+
+    static public void setGlobalConfig(WSDDGlobalConfiguration globalConfig) {
+        getWSDDEngineConfiguration().getDeployment().setGlobalConfiguration(globalConfig);
+    }
+
+    static public WSDDGlobalConfiguration getGlobalConfig() {
+        return getWSDDEngineConfiguration().getDeployment().getGlobalConfiguration();
+    }
+
+    static public WSDDHandler getHandler(QName qname) {
+        return getWSDDEngineConfiguration().getDeployment().getWSDDHandler(qname);
+    }
+
+    static public WSDDHandler[] getHandlers() {
+        return getWSDDEngineConfiguration().getDeployment().getHandlers();
+    }
+
+    static public WSDDService getService(QName qname) {
+        return getWSDDEngineConfiguration().getDeployment().getWSDDService(qname);
+    }
+
+    static public WSDDService[] getServices() {
+        return getWSDDEngineConfiguration().getDeployment().getServices();
+    }
+
+    static public WSDDTransport getTransport(QName qname) {
+        return getWSDDEngineConfiguration().getDeployment().getWSDDTransport(qname);
+    }
+
+    static public WSDDTransport[] getTransports() {
+        return getWSDDEngineConfiguration().getDeployment().getTransports();
+    }
+
+    static public void deployHandler(WSDDHandler handler) {
+        getWSDDEngineConfiguration().getDeployment().deployHandler(handler);
+    }
+
+    static public void deployService(WSDDService service) {
+        getWSDDEngineConfiguration().getDeployment().deployService(service);
+    }
+
+    static public void deployTransport(WSDDTransport transport) {
+        getWSDDEngineConfiguration().getDeployment().deployTransport(transport);
+    }
+
+    static public void undeployHandler(QName qname) {
+        getWSDDEngineConfiguration().getDeployment().undeployHandler(qname);
+    }
+
+    static public void undeployService(QName qname) {
+        getWSDDEngineConfiguration().getDeployment().undeployService(qname);
+    }
+
+    static public void undeployTransport(QName qname) {
+        getWSDDEngineConfiguration().getDeployment().undeployTransport(qname);
+    }
 }

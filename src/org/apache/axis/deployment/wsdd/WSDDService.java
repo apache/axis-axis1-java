@@ -80,7 +80,7 @@ public class WSDDService
     /** Use   - encoded (the default) or literal */
     private Use use = Use.DEFAULT;
 
-    private SOAPService cachedService = null;
+    private transient SOAPService cachedService = null;
 
     /**
      * Our provider - used to figure out which Handler we use as a service

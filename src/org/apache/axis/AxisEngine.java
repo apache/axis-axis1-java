@@ -107,7 +107,7 @@ public abstract class AxisEngine extends BasicHandler
     protected boolean shouldSaveConfig = false;
 
     /** Java class cache. */
-    protected ClassCache classCache = new ClassCache();
+    protected transient ClassCache classCache = new ClassCache();
 
     /**
      * This engine's Session.  This Session supports "application scope"

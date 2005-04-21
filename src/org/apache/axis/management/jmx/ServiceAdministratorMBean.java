@@ -18,9 +18,6 @@ package org.apache.axis.management.jmx;
 import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
 
-import java.util.HashMap;
-import java.util.ArrayList;
-
 /**
  * The ServiceAdministrator MBean exposes the
  * org.apache.axis.management.ServiceAdmin object
@@ -29,6 +26,27 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public interface ServiceAdministratorMBean {
+    /**
+     * get the axis version
+     *
+     * @return
+     */
+    public String getVersion();
+
+    /**
+     * Start the server
+     */
+    public void start();
+
+    /**
+     * stop the server
+     */
+    public void stop();
+
+    /**
+     * restart the server
+     */
+    public void restart();
 
     /**
      * Start the Service
@@ -47,14 +65,4 @@ public interface ServiceAdministratorMBean {
      */
     public void stopService(String serviceName) throws AxisFault,
             ConfigurationException;
-
-    /**
-     * List all registered services
-     *
-     * @return Map of Services (SOAPService objects, Key is the ServiceName)
-     * @throws AxisFault,ConfigurationException
-     *
-     */
-    public ArrayList listServices() throws AxisFault, ConfigurationException;
-
 }

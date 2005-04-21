@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis.management;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -26,28 +25,29 @@ import java.lang.reflect.Method;
 /**
  * class to act as a dynamic loading registrar to commons-modeler, so
  * as to autoregister stuff
+ *
  * @link http://www.webweavertech.com/costin/archives/000168.html#000168
  */
 public class Registrar {
     /**
      * our log
      */
-    protected static Log log = LogFactory.getLog(Registrar.class.getName());
+            protected static Log log = LogFactory.getLog(Registrar.class.getName());
 
     /**
-     *  register using reflection. The perf hit is moot as jmx is
+     * register using reflection. The perf hit is moot as jmx is
      * all reflection anyway
+     *
      * @param objectToRegister
      * @param name
      * @param context
      */
     public static boolean register(Object objectToRegister,
                                    String name, String context) {
-
         if (isBound()) {
-            if(log.isDebugEnabled()) {
-                log.debug("Registering "+objectToRegister+" as "
-                    +name);
+            if (log.isDebugEnabled()) {
+                log.debug("Registering " + objectToRegister + " as "
+                        + name);
             }
             return modelerBinding.register(objectToRegister, name, context);
         } else {
@@ -58,6 +58,7 @@ public class Registrar {
     /**
      * Check for being bound to a modeler -this will force
      * a binding if none existed.
+     *
      * @return
      */
 
@@ -79,14 +80,13 @@ public class Registrar {
     /**
      * the inner class that does the binding
      */
-    private static ModelerBinding modelerBinding = null;
+            private static ModelerBinding modelerBinding = null;
 
     /**
      * This class provides a dynamic binding to the
      * commons-modeler registry at run time
      */
     static class ModelerBinding {
-
         /**
          * the constructor binds
          */
@@ -96,6 +96,7 @@ public class Registrar {
 
         /**
          * can the binding bind?
+         *
          * @return true iff the classes are bound
          */
         public boolean canBind() {
@@ -103,34 +104,22 @@ public class Registrar {
         }
 
         /**
-         * our log
+         * log
          */
-        protected static Log log = LogFactory.getLog(ModelerBinding.class.getName());
-
+                protected static Log log = LogFactory.getLog(ModelerBinding.class.getName());
         /**
          * registry object
          */
-        Object registry;
-
+                Object registry;
         /**
          * method to call
          */
-        Method registerComponent;
+                Method registerComponent;
 
-        /*
-         * this is what we could do without reflection
-         */
-        /*
-        void simpleRegister(Object objectToRegister, String name, String context)
-                throws Exception {
-            Registry.setUseContextClassLoader(true);
-            Registry reg = Registry.getRegistry(null, null);
-            reg.registerComponent(objectToRegister, name, context);
-        }
-*/
         /**
-         *  register using reflection. The perf hit is moot as jmx is
+         * register using reflection. The perf hit is moot as jmx is
          * all reflection anyway
+         *
          * @param objectToRegister
          * @param name
          * @param context
@@ -161,6 +150,7 @@ public class Registrar {
 
         /**
          * bind to the modeler; return success/failure flag
+         *
          * @return true if the binding worked
          */
         private boolean bindToModeler() {
@@ -174,14 +164,13 @@ public class Registrar {
                 return false;
             }
             try {
-                Class[] getRegistryArgs = new Class[]{Object.class, Object.class, };
+                Class[] getRegistryArgs = new Class[]{Object.class, Object.class,};
                 Method getRegistry = clazz.getMethod("getRegistry", getRegistryArgs);
                 Object[] getRegistryOptions = new Object[]{null, null};
                 registry = getRegistry.invoke(null, getRegistryOptions);
                 Class[] registerArgs = new Class[]{Object.class,
-                                                   String.class,
-                                                   String.class};
-
+                    String.class,
+                    String.class};
                 registerComponent = clazz.getMethod("registerComponent", registerArgs);
             } catch (IllegalAccessException e) {
                 ex = e;
@@ -204,8 +193,6 @@ public class Registrar {
                 //success
                 return true;
             }
-
         }
     }
-
 }

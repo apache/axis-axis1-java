@@ -104,7 +104,7 @@ public class JavaServiceDesc implements ServiceDesc {
     /** Lookup caches */
     private HashMap name2OperationsMap = null;
     private HashMap qname2OperationsMap = null;
-    private HashMap method2OperationMap = new HashMap();
+    private transient HashMap method2OperationMap = new HashMap();
     
     // THE FOLLOWING STUFF IS ALL JAVA-SPECIFIC, AND WILL BE FACTORED INTO
     // A JAVA-SPECIFIC SUBCLASS.  --Glen
@@ -126,7 +126,7 @@ public class JavaServiceDesc implements ServiceDesc {
     private boolean isSkeletonClass = false;
 
     /** Cached copy of the skeleton "getOperationDescByName" method */
-    private Method skelMethod = null;
+    private transient Method skelMethod = null;
 
     /** Classes at which we should stop looking up the inheritance chain
      *  when introspecting
@@ -134,7 +134,7 @@ public class JavaServiceDesc implements ServiceDesc {
     private ArrayList stopClasses = null;
 
     /** Lookup caches */
-    private HashMap method2ParamsMap = new HashMap();
+    private transient HashMap method2ParamsMap = new HashMap();
     private OperationDesc messageServiceDefaultOp = null;
 
     /** Method names for which we have completed any introspection necessary */
