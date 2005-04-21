@@ -43,6 +43,16 @@ public class DefaultCommonsHTTPClientProperties implements CommonsHTTPClientProp
     public static final String CONNECTION_POOL_TIMEOUT_KEY =
         "axis.http.client.connection.pool.timeout";
 
+    /** the key for the Axis Property that sets the default connection timeout
+        for the httpclient, can be overriden by the MessageContext  */
+    public static final String CONNECTION_DEFAULT_CONNECTION_TIMEOUT_KEY =
+        "axis.http.client.connection.default.connection.timeout";
+
+    /** the key for the Axis Property that sets the read timeout
+        for the httpclient */
+    public static final String CONNECTION_DEFAULT_SO_TIMEOUT_KEY =
+        "axis.http.client.connection.default.so.timeout";
+
     /**
      * Convert the value for <tt>property</tt> into an int or, if none is found,
      * use the <tt>dephault</tt> value instead.
@@ -91,6 +101,34 @@ public class DefaultCommonsHTTPClientProperties implements CommonsHTTPClientProp
         int i = getIntegerProperty(CONNECTION_POOL_TIMEOUT_KEY, "0");
         if (i < 0) {
             throw new IllegalStateException(CONNECTION_POOL_TIMEOUT_KEY + " must be >= 0");
+        }
+        return i;
+    }
+
+    /**
+     * Return the integer value associated with the property
+     * axis.http.client.connection.default.connection.timeout or a default of 0.
+     *
+     * @return an integer >= 0
+     */
+    public int getDefaultConnectionTimeout() {
+        int i = getIntegerProperty(CONNECTION_DEFAULT_CONNECTION_TIMEOUT_KEY, "0");
+        if (i < 0) {
+            throw new IllegalStateException(CONNECTION_DEFAULT_CONNECTION_TIMEOUT_KEY + " must be >= 0");
+        }
+        return i;
+    }
+
+    /**
+     * Return the integer value associated with the property
+     * axis.http.client.connection.default.so.timeout or a default of 0.
+     *
+     * @return an integer >= 0
+     */
+    public int getDefaultSoTimeout() {
+        int i = getIntegerProperty(CONNECTION_DEFAULT_SO_TIMEOUT_KEY, "0");
+        if (i < 0) {
+            throw new IllegalStateException(CONNECTION_DEFAULT_SO_TIMEOUT_KEY + " must be >= 0");
         }
         return i;
     }

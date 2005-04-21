@@ -51,4 +51,21 @@ public interface CommonsHTTPClientProperties {
      * @return an integer > 1 OR 0 for infinite timeout
      */
     public int getConnectionPoolTimeout();
+
+    /**
+     * Used to set the default amount of time, in milliseconds, spent waiting
+     * for a connection. This can be overridden by the MessageContext
+     *   
+     * @return an integer >= 0
+     */
+    public int getDefaultConnectionTimeout();
+
+    /**
+     * Used to set the default amount of time, in milliseconds, spent waiting
+     * for a reponse. This can be overridden by the MessageContext
+     *
+     * @return an integer >= 0
+     */
+    public int getDefaultSoTimeout();
+
 }

@@ -92,6 +92,14 @@ public class CommonsHTTPSender extends BasicHandler {
         this.clientProperties = CommonsHTTPClientPropertiesFactory.create();
         cm.getParams().setDefaultMaxConnectionsPerHost(clientProperties.getMaximumConnectionsPerHost());
         cm.getParams().setMaxTotalConnections(clientProperties.getMaximumTotalConnections());
+        // If defined, set the default timeouts
+        // Can be overridden by the MessageContext
+        if(this.clientProperties.getDefaultConnectionTimeout()>0) {
+           cm.getParams().setConnectionTimeout(this.clientProperties.getDefaultConnectionTimeout());
+        }
+        if(this.clientProperties.getDefaultSoTimeout()>0) {
+           cm.getParams().setSoTimeout(this.clientProperties.getDefaultSoTimeout());
+        }
         this.connectionManager = cm;
     }
     
