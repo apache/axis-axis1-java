@@ -80,10 +80,7 @@ public class FastUUIDGen implements UUIDGen {
         
         synchronized(this) {
             if (time - lastTime <= 0) {
-                int oldClockSequence = clockSequence;
-                while ( oldClockSequence == clockSequence) {
-                    clockSequence = getClockSequence();
-                }
+                clockSequence = ((clockSequence + 1) & 16383);
             }
             lastTime = time;
         }
