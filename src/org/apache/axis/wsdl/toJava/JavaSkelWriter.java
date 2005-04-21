@@ -197,7 +197,7 @@ public class JavaSkelWriter extends JavaClassWriter {
                     pw.println(
                             "            "
                             + "new org.apache.axis.description.ParameterDesc("
-                            + Utils.getNewQName(paramName) + ", " + modeStr + ", "
+                            + Utils.getNewQNameWithLastLocalPart(paramName) + ", " + modeStr + ", "
                             + Utils.getNewQName(paramType) + ", "
                             + Utils.getParameterTypeName(p) + ".class" + ", "
                             + inHeader + ", " + outHeader + "), ");
