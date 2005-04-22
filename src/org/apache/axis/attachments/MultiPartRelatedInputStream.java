@@ -87,6 +87,9 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
     /** Field contentId           */
     protected String contentId = null;
 
+    /** Field MAX_CACHED */
+    private static final int MAX_CACHED = 16 * 1024;
+
     /**
      * Create a new Multipart stream.
      * @param contentType  the string that holds the contentType
@@ -271,7 +274,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     javax.activation.DataHandler dh =
                             new javax.activation.DataHandler(
                                     new org.apache.axis.attachments.ManagedMemoryDataSource(
-                                            decodedStream, 16 * 1024, contentType, true));
+                                            decodedStream, MAX_CACHED, contentType, true));
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) {
