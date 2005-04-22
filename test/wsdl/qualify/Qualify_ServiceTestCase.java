@@ -41,9 +41,9 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
 
     public void test1QualifySimple() {
         Qualify_ServiceLocator locator = new Qualify_ServiceLocator();
-        Qualify_PortType binding;
+        Qualify_BindingStub binding;
         try {
-            binding = locator.getQualify();
+            binding = (Qualify_BindingStub)locator.getQualify();
         } catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
@@ -57,11 +57,7 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
             // Validate XML reponse to make sure elements are properly qualified
             // or not per the WSDL
             MessageContext mc = null;
-            try {
-                mc = locator.getCall().getMessageContext();
-            } catch (ServiceException e) {
-                throw new AssertionFailedError("Unable to get call object from service");
-            }
+            mc = binding._getCall().getMessageContext();
             Message response = mc.getResponseMessage();
             SOAPEnvelope env = response.getSOAPEnvelope();
             String responseString = response.getSOAPPartAsString();
@@ -102,9 +98,9 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
 
     public void test2QualifyFormOverride() {
         Qualify_ServiceLocator locator = new Qualify_ServiceLocator();
-        test.wsdl.qualify.Qualify_PortType binding;
+        test.wsdl.qualify.Qualify_BindingStub binding;
         try {
-            binding = locator.getQualify();
+            binding = (test.wsdl.qualify.Qualify_BindingStub)locator.getQualify();
         } catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
@@ -120,11 +116,7 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
             // Validate XML reponse to make sure elements are properly qualified
             // or not per the WSDL
             MessageContext mc = null;
-            try {
-                mc = locator.getCall().getMessageContext();
-            } catch (ServiceException e) {
-                throw new AssertionFailedError("Unable to get call object from service");
-            }
+            mc = binding._getCall().getMessageContext();
             Message response = mc.getResponseMessage();
             SOAPEnvelope env = response.getSOAPEnvelope();
             String responseString = response.getSOAPPartAsString();

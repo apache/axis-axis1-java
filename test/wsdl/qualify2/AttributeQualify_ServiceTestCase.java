@@ -40,10 +40,10 @@ public class AttributeQualify_ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test1AttributeQualifyEchoPhone() {
-        test.wsdl.qualify2.AttributeQualify_PortType binding;
+        test.wsdl.qualify2.AttributeQualify_BindingStub binding;
         test.wsdl.qualify2.AttributeQualify_ServiceLocator locator = new test.wsdl.qualify2.AttributeQualify_ServiceLocator();
         try {
-            binding = locator.getAttributeQualify();
+            binding = (test.wsdl.qualify2.AttributeQualify_BindingStub)locator.getAttributeQualify();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -67,11 +67,7 @@ public class AttributeQualify_ServiceTestCase extends junit.framework.TestCase {
             // Validate XML reponse to make sure attributes are properly 
             // qualified or not per the WSDL
             MessageContext mc = null;
-            try {
-                mc = locator.getCall().getMessageContext();
-            } catch (ServiceException e) {
-                throw new AssertionFailedError("Unable to get call object from service");
-            }
+            mc = binding._getCall().getMessageContext();
             Message response = mc.getResponseMessage();
             SOAPEnvelope env = response.getSOAPEnvelope();
             String responseString = response.getSOAPPartAsString();

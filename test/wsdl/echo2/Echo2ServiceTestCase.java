@@ -114,8 +114,7 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
         // Validate results - NOTE: This checks the XML directly, so if
         // any changes are made to the WSDL/code for this test, equivalent
         // changes must be made in this code.
-        Service service = (Service)binding._getService();
-        SOAPBody body = (SOAPBody)service.getCall().getResponseMessage().getSOAPBody();
+        SOAPBody body = (SOAPBody)binding._getCall().getResponseMessage().getSOAPBody();
         MessageElement element;
         QName responseQName = new QName("urn:echo2.wsdl.test", "echoArrayOfString_MaxOccursUnboundedResponse");
         QName returnQName = new QName("", "return");
