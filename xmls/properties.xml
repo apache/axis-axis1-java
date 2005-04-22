@@ -43,11 +43,11 @@
 <property name="lib.dir" location="${axis.lib.dir}"/>
 
 <!-- jar files -->
-<property name="wsdl4j.jar" location="${lib.dir}/wsdl4j.jar"/>
+<property name="wsdl4j.jar" location="${lib.dir}/wsdl4j-1.5.1.jar"/>
 <property name="jsse.jar" location="${lib.dir}/jsse.jar"/>
-<property name="commons-logging.jar" location="${lib.dir}/commons-logging.jar"/>
-<property name="commons-discovery.jar" location="${lib.dir}/commons-discovery.jar"/>
-<property name="commons-httpclient.jar" location="${lib.dir}/commons-httpclient.jar"/>
+<property name="commons-logging.jar" location="${lib.dir}/commons-logging-1.0.4.jar"/>
+<property name="commons-discovery.jar" location="${lib.dir}/commons-discovery-0.2.jar"/>
+<property name="commons-httpclient.jar" location="${lib.dir}/commons-httpclient-3.0-rc2.jar"/>
 <property name="commons-net.jar" location="${lib.dir}/commons-net-1.0.0-dev.jar"/>
 <property name="log4j-core.jar" location="${lib.dir}/log4j-1.2.8.jar"/>
 <property name="junit.jar" location="${lib.dir}/junit.jar"/>
