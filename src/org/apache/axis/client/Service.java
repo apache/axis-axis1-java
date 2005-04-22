@@ -79,10 +79,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private HandlerRegistryImpl registry = new HandlerRegistryImpl();
     private Parser wsdlParser = null;
 
-    /**
-     * Thread local storage used for storing the last call object
-     */
-    private static Call previousCall = null;
     private static HashMap cachedWSDL = new HashMap();
     private static boolean cachingWSDL = true;
 
@@ -160,7 +156,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      *
      * @param parser          Parser for this service
      * @param serviceName      Qualified name of the desired service
-     * @throws ServiceException If there's an error 
+     * @throws ServiceException If there's an error
      */
     public Service(Parser parser, QName serviceName) throws ServiceException {
         this.serviceName = serviceName;
@@ -266,7 +262,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
     /**
      *  Code for building up the Service from a Parser
-     * 
+     *
      * @param parser            Parser for this service
      * @param serviceName       Qualified name of the desired service
      * @throws ServiceException If there's an error finding or parsing the WSDL
@@ -376,7 +372,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             // If not found, just pick the first port.
             port = (Port) ports.values().iterator().next();
         }
-        
+
         // First, try to find a generated stub.  If that
         // returns null, then find a dynamic stub.
         Remote stub = getGeneratedStub(new QName(port.getName()), proxyInterface);
@@ -416,16 +412,16 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             Port port = wsdlService.getPort(portName.getLocalPart());
             if (port == null)
                 throw new ServiceException(Messages.getMessage("noPort00", "" + proxyInterface.getName()));
-    
+
             Binding binding = port.getBinding();
             SymbolTable symbolTable = wsdlParser.getSymbolTable();
             BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
             if(bEntry.getParameters().size() !=  proxyInterface.getMethods().length) {
                 throw new ServiceException(Messages.getMessage("incompatibleSEI00", "" + proxyInterface.getName()));
-            }  
+            }
             // TODO: Check the methods and the parameters as well.
         }
-        
+
         try {
             Call call = null;
             if (portName == null) {
@@ -546,7 +542,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call createCall() throws ServiceException {
         Call call = new org.apache.axis.client.Call(this);
-        previousCall = call;
         return call;
     }
 
@@ -586,7 +581,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             javax.xml.rpc.Call call = createCall(QName.valueOf(port.getName()),
                                    QName.valueOf(operation.getName()));
             calls.add(call);
-        }        
+        }
         javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[calls.size()];
         calls.toArray(array);
         return array;
@@ -766,10 +761,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * lazy engine instantiation work, and not have to duplicate every single
      * Service constructor with a EngineConfiguration argument.
      * <p>
-     * If you need to use a non-default <code>EngineConfiguration</code>, do 
+     * If you need to use a non-default <code>EngineConfiguration</code>, do
      * the following before calling the Service constructor:<p><code>
-     * 
-     *   AxisProperties.setProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME, 
+     *
+     *   AxisProperties.setProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME,
      *                              "classname.of.new.EngineConfigurationFactory");
      * </code><p>
      * Where the second parameter is the name of your new class that implements
@@ -786,7 +781,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * the getClientEngineConfig() of your own EngineConfigurationFactory will be
      * called, and your configuration will be used in the constructed Service object.<p>
      *
-     * Another way is to use the "discovery" method of 
+     * Another way is to use the "discovery" method of
      * <code>EngineConfigurationFactoryFinder</code>.
      *
      * @param config the EngineConfiguration we want to use.
@@ -828,11 +823,12 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     }
 
     /**
-     * Returns last Call object associated with 
+     * Returns last Call object associated with
      * this service.
+     * @deprecated please use Stub._getCall
      */
     public Call getCall() throws ServiceException {
-        return previousCall;
+        throw new ServiceException(Messages.getMessage("useStubsGetCallMethod"));
     }
 
     /**

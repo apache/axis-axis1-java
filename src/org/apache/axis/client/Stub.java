@@ -64,6 +64,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     // a synchronized block in the generated stub code.
     private boolean firstCall = true;
 
+    // The last call object
+    private Call _call = null;
+
     /**
      * Is this the first time the type mappings are being registered?
      */
@@ -325,10 +328,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     public SOAPHeaderElement getResponseHeader(String namespace, String partName) {
         try
         {
-            Call lastCall = ((org.apache.axis.client.Service)service).getCall();
-            if (lastCall == null)
+            if (_call == null)
                 return null;
-            return lastCall.getResponseMessage().getSOAPEnvelope().getHeaderByName(namespace, partName);
+            return _call.getResponseMessage().getSOAPEnvelope().getHeaderByName(namespace, partName);
         }
         catch (Exception e)
         {
@@ -352,10 +354,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         SOAPHeaderElement[] array = new SOAPHeaderElement[0];
         try
         {
-            Call lastCall = ((org.apache.axis.client.Service)service).getCall();
-            if (lastCall == null)
+            if (_call == null)
                 return array;
-            Vector h = lastCall.getResponseMessage().getSOAPEnvelope().getHeaders();
+            Vector h = _call.getResponseMessage().getSOAPEnvelope().getHeaders();
             array = new SOAPHeaderElement[h.size()];
             h.copyInto(array);
             return array;
@@ -394,6 +395,10 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     }
 
     protected void setRequestHeaders(org.apache.axis.client.Call call) throws AxisFault {        
+        // HACK: store the _call object.
+        _call = call;
+
+        // Set the call headers.
         SOAPHeaderElement[] headers = getHeaders();
         for(int i=0;i<headers.length;i++){
             call.addHeader(headers[i]);
@@ -407,6 +412,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
      * @throws AxisFault
      */
     protected void setAttachments(org.apache.axis.client.Call call) throws AxisFault {
+        // Set the attachments.
         Object[] attachments = getAttachments();
         for(int i=0;i<attachments.length;i++){
             call.addAttachmentPart(attachments[i]);
@@ -415,14 +421,22 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     }
 
     /**
-     * Provide access to the service object, through which you can get the Call
-     * that is used to process the operations.
-     * Not part of JAX-RPC
+     * Provide access to the service object. Not part of JAX-RPC
+     *
      * @return the service object for this stub
      */
     public Service _getService() {
         return service;
     }
+
+    /**
+     * Returns last Call object associated with
+     * this stub.
+     */
+    public Call _getCall() {
+        return _call;
+    }
+
     /**
      * Helper method for updating headers from the response.
      *
