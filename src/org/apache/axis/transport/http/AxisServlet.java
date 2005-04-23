@@ -727,6 +727,14 @@ public class AxisServlet extends AxisServletBase {
                 responseMsg = convertExceptionToAxisFault(e, responseMsg);
                 ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).
                         getMessage().setMessageContext(msgContext);
+            } catch (Throwable t) {
+                logException(t);
+                //other exceptions are internal trouble
+                responseMsg = msgContext.getResponseMessage();
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                responseMsg = new Message(new AxisFault(t.toString(),t));
+                ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).
+                        getMessage().setMessageContext(msgContext);
             }
         } catch (AxisFault fault) {
             processAxisFault(fault);
