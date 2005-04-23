@@ -221,12 +221,14 @@ public class DimeBodyPart {
                     Messages.getMessage("attach.dimeMaxChunkSize0", "" + maxchunk));
         if (maxchunk > MAX_DWORD) throw new IllegalArgumentException(
                     Messages.getMessage("attach.dimeMaxChunkSize1", "" + maxchunk));
-        if (data instanceof byte[])
+        if (data instanceof byte[]) {
             send(os, position, (byte[]) data, maxchunk);
-        else if (data instanceof DynamicContentDataHandler) 
+        } else if (data instanceof DynamicContentDataHandler) {
             send(os, position, (DynamicContentDataHandler) data, maxchunk);
-        else if (data instanceof DataHandler)
-            send(os, position, (DataHandler) data, maxchunk);
+        } else if (data instanceof DataHandler) {
+            DynamicContentDataHandler dh2 = new DynamicContentDataHandler(((DataHandler)data).getDataSource());
+            send(os, position, dh2, maxchunk);
+        }
     }
 
     /**
