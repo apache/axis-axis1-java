@@ -16,8 +16,6 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.gen.Generator;
@@ -972,7 +970,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
         // Keep a list of anonymous types so we don't try to resolve them twice.
         HashSet anonTypes = new HashSet();
-        List collisionCanidates = new ArrayList();      // List of vector of SymbolTable entry
+        List collisionCandidates = new ArrayList();      // List of vector of SymbolTable entry
         
         List localParts = new ArrayList();      // all localparts in all symboltable entries        
         for (Iterator i = symbolTable.getHashMap().keySet().iterator(); i.hasNext(); ) {
@@ -995,10 +993,12 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         v.addAll((Vector)symbolTable.getHashMap().get(qName));
                     }
                 }
-                collisionCanidates.add(v);
-            }                            
+                if(v.size()>0) {
+                    collisionCandidates.add(v);
+                }
+            }
         }
-        Iterator it = collisionCanidates.iterator();        
+        Iterator it = collisionCandidates.iterator();
         
         while (it.hasNext()) {
             Vector v = new Vector(
