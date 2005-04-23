@@ -107,6 +107,16 @@ public class JavaFaultWriter extends JavaClassWriter {
         pw.println("    }");
         pw.println();
 
+        // Additional contructors
+        pw.println("    public " + className + "(java.lang.Exception target) {");
+        pw.println("        super(target);");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public " + className + "(java.lang.String message, java.lang.Throwable t) {");
+        pw.println("        super(message, t);");
+        pw.println("    }");
+        pw.println();
+
         // contructor that initializes data
         if (params.size() > 0) {
             pw.print("      public " + className + "(");
