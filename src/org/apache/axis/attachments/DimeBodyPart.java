@@ -226,7 +226,8 @@ public class DimeBodyPart {
         } else if (data instanceof DynamicContentDataHandler) {
             send(os, position, (DynamicContentDataHandler) data, maxchunk);
         } else if (data instanceof DataHandler) {
-            DynamicContentDataHandler dh2 = new DynamicContentDataHandler(((DataHandler)data).getDataSource());
+            DataSource source = ((DataHandler)data).getDataSource();
+            DynamicContentDataHandler dh2 = new DynamicContentDataHandler(source);
             send(os, position, dh2, maxchunk);
         }
     }
@@ -272,8 +273,6 @@ public class DimeBodyPart {
         final long maxchunk) throws java.io.IOException {
         java.io.InputStream in = null;
         try {
-            byte chunknext = 0;
-
             long dataSize = getDataSize();
             in = dh.getInputStream();
             byte[] readbuf = new byte[64 * 1024];
@@ -327,13 +326,13 @@ public class DimeBodyPart {
     		byte[] buffer2 = new byte[myChunkSize]; 
     		
     		int bytesRead1 = 0 , bytesRead2 = 0;
-    		byte chunknext = 0;
-    		
+
     		bytesRead1 = in.read(buffer1);
     		
     		if(bytesRead1 < 0) {
-    			//no data all.should we be sending an empty dime record?
-    			throw new IOException("No data found to send in DIME message");
+                sendHeader(os, position, 0, (byte) 0);
+                os.write(pad, 0, dimePadding(0));
+                return;
     		}
     		
     		do {
@@ -346,7 +345,7 @@ public class DimeBodyPart {
     				break;
     			}
     			
-    			sendChunk(os, position, buffer1, 0, bytesRead1, (byte)CHUNK);
+    			sendChunk(os, position, buffer1, 0, bytesRead1, CHUNK);
 
     			//now that we have written out buffer1, copy buffer2 into to buffer1
     			System.arraycopy(buffer2,0,buffer1,0,myChunkSize);

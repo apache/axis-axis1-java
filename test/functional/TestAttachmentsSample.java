@@ -52,6 +52,12 @@ public class TestAttachmentsSample extends TestCase {
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
     
+    public void doTestAttachmentsDimeLeaveEmpty() throws Exception {
+        Options opts = new Options( new String[]{});
+        boolean res = new EchoAttachment(opts).echo(true, "samples/attachments/leaveempty.txt");
+       assertEquals("Didn't process attachment correctly", res, true) ;
+    }
+
     public void doTestAttachments2() throws Exception {
         Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echoDir(false, "samples/attachments");
