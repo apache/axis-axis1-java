@@ -113,6 +113,7 @@ import java.rmi.RemoteException;
  *     TIMEOUT        - Timeout used by transport sender in milliseconds
  *     TRANSPORT_NAME - Name of transport handler to use
  *     ATTACHMENT_ENCAPSULATION_FORMAT- Send attachments as MIME the default, or DIME.
+ *     CHARACTER_SET_ENCODING - Character set encoding to use for request
  * </pre>
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -181,6 +182,13 @@ public class Call implements javax.xml.rpc.Call {
      * @see #setProperty
      */
     public static final String TRANSPORT_NAME    = "transport_name" ;
+
+    /**
+     * This is the character set encoding to use for the message
+     *
+     * @see #setProperty
+     */
+    public static final String CHARACTER_SET_ENCODING = SOAPMessage.CHARACTER_SET_ENCODING;
 
     /**
      * This is not the name of a property that can be set with
@@ -447,6 +455,9 @@ public class Call implements javax.xml.rpc.Call {
             verifyBooleanProperty(name, value);
             setStreaming(((Boolean) value).booleanValue());
         }
+        else if (name.equals(CHARACTER_SET_ENCODING)) {
+            verifyStringProperty(name, value);
+        }
         else if (name.startsWith("java.") || name.startsWith("javax.")) {
             throw new JAXRPCException(
                     Messages.getMessage("badProp05", name));
@@ -551,6 +562,7 @@ public class Call implements javax.xml.rpc.Call {
         propertyNames.add(TRANSPORT_NAME);
         propertyNames.add(ATTACHMENT_ENCAPSULATION_FORMAT);
         propertyNames.add(CONNECTION_TIMEOUT_PROPERTY);
+        propertyNames.add(CHARACTER_SET_ENCODING);
     }
 
     public Iterator getPropertyNames() {
@@ -1880,12 +1892,12 @@ public class Call implements javax.xml.rpc.Call {
      */
     public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault {
         try {
-            Message msg = null ;
-
-            msg = new Message( env );
-            if (msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING) != null) {
-                msg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
-             }
+            Message msg = new Message( env );
+            if (getProperty(CHARACTER_SET_ENCODING) != null) {
+                msg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, getProperty(CHARACTER_SET_ENCODING));
+            } else if (msgContext.getProperty(CHARACTER_SET_ENCODING) != null) {
+                msg.setProperty(CHARACTER_SET_ENCODING, msgContext.getProperty(CHARACTER_SET_ENCODING));
+            }
             setRequestMessage( msg );
             invoke();
             msg = msgContext.getResponseMessage();
