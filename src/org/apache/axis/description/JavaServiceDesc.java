@@ -799,9 +799,11 @@ public class JavaServiceDesc implements ServiceDesc {
                 return OperationDesc.MSG_METHOD_DOCUMENT;
             }
         } else if (params.length == 2) {
-            if ((params[0] == SOAPEnvelope.class) &&
-                    (params[1] == SOAPEnvelope.class) &&
-                    (method.getReturnType() == void.class)) {
+            if (((params[0] == SOAPEnvelope.class) &&
+                    (params[1] == SOAPEnvelope.class)) || 
+                ((params[0] == javax.xml.soap.SOAPEnvelope.class) &&
+                    (params[1] == javax.xml.soap.SOAPEnvelope.class)) &&
+                    (method.getReturnType() == void.class)){
                 return OperationDesc.MSG_METHOD_SOAPENVELOPE;
             }
         }
