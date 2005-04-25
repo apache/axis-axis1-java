@@ -13,6 +13,7 @@ import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.net.URI;
 
 import test.wsdl.marshall2.types.JavaBean;
@@ -48,8 +49,11 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
 
         // Test operation
         test.wsdl.marshall2.types.BigDecimalArrayTestResponse value = null;
-        value = binding.bigDecimalArrayTest(new test.wsdl.marshall2.types.BigDecimalArrayTest(new BigDecimal[]{new BigDecimal("5.0"),new BigDecimal("5.0")}));
-        // TBD - validate results
+        value = binding.bigDecimalArrayTest(new test.wsdl.marshall2.types.BigDecimalArrayTest(new BigDecimal[]{new BigDecimal("5.0"),
+                                                                                                               new BigDecimal("3512359.1456"),
+                                                                                                               new BigDecimal("3512360.1456"),
+                                                                                                               null
+                                                                                                               }));
     }
 
     public void test2Marshall2PortBigDecimalTest() throws Exception {
@@ -92,7 +96,11 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
 
         // Test operation
         test.wsdl.marshall2.types.BigIntegerArrayTestResponse value = null;
-        value = binding.bigIntegerArrayTest(new test.wsdl.marshall2.types.BigIntegerArrayTest(new BigInteger[]{new BigInteger("5"),new BigInteger("6")}));
+        value = binding.bigIntegerArrayTest(new test.wsdl.marshall2.types.BigIntegerArrayTest(new BigInteger[]{new BigInteger("5"),
+                                                                                              new BigInteger("3512359"),
+                                                                                              new BigInteger("3512360"),
+                                                                                              null
+                                                                                            }));
         // TBD - validate results
     }
 
@@ -444,7 +452,12 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
 
         // Test operation
         test.wsdl.marshall2.types.StringArrayTestResponse value = null;
-        value = binding.stringArrayTest(new test.wsdl.marshall2.types.StringArrayTest(new String[]{"foo","bar"}));
+        value = binding.stringArrayTest(new test.wsdl.marshall2.types.StringArrayTest(new String[]{	"foo1",
+                                                                                                    "foo2",
+                                                                                                    "foo3",
+                                                                                                    "",
+                                                                                                    null
+                                                                                                }));
         // TBD - validate results
     }
 
@@ -510,7 +523,10 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
 
         // Test operation
         test.wsdl.marshall2.types.QNameArrayTestResponse value = null;
-        value = binding.qnameArrayTest(new test.wsdl.marshall2.types.QNameArrayTest(new QName[]{Constants.QNAME_FAULTDETAIL_HOSTNAME,Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME}));
+        value = binding.qnameArrayTest(new test.wsdl.marshall2.types.QNameArrayTest(new QName[]{Constants.QNAME_FAULTDETAIL_HOSTNAME,Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME,	new QName("someLocalPart"),
+                                                                                                new QName("http://someURI.org/", "someLocalPart"),
+                                                                                                null
+                                                                                                }));
         // TBD - validate results
     }
 
@@ -532,8 +548,11 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
 
         // Test operation
         test.wsdl.marshall2.types.CalendarArrayTestResponse value = null;
-        value = binding.calendarArrayTest(new test.wsdl.marshall2.types.CalendarArrayTest(new Calendar[]{Calendar.getInstance(),Calendar.getInstance()}));
-        // TBD - validate results
+        value = binding.calendarArrayTest(new test.wsdl.marshall2.types.CalendarArrayTest(new Calendar[]{Calendar.getInstance(),
+                                                                                                         new GregorianCalendar(96,5,1),
+                                                                                                         new GregorianCalendar(99,10,25),
+                                                                                                         null
+                                                                                                         }));
     }
 
     public void test24Marshall2PortCalendarTest() throws Exception {

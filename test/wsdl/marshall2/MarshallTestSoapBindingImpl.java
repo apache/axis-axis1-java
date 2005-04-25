@@ -35,10 +35,15 @@ import test.wsdl.marshall2.types.ShortTestResponse;
 import test.wsdl.marshall2.types.StringArrayTestResponse;
 import test.wsdl.marshall2.types.StringTestResponse;
 
+import java.rmi.RemoteException;
+
 public class MarshallTestSoapBindingImpl implements test.wsdl.marshall2.
         MarshallTest {
     public test.wsdl.marshall2.types.BigDecimalArrayTestResponse bigDecimalArrayTest(test.wsdl.marshall2.types.BigDecimalArrayTest parameters)
             throws java.rmi.RemoteException {
+        if(parameters.getBigDecimalArray()==null) {
+            throw new RemoteException("BigDecimalArray is null");
+        }
         return new BigDecimalArrayTestResponse(parameters.getBigDecimalArray());
     }
 
@@ -49,6 +54,9 @@ public class MarshallTestSoapBindingImpl implements test.wsdl.marshall2.
 
     public test.wsdl.marshall2.types.BigIntegerArrayTestResponse bigIntegerArrayTest(test.wsdl.marshall2.types.BigIntegerArrayTest parameters)
             throws java.rmi.RemoteException {
+        if(parameters.getBigIntegerArray()==null) {
+            throw new RemoteException("BigIntegerArray is null");
+        }
         return new BigIntegerArrayTestResponse(parameters.getBigIntegerArray());
     }
 
@@ -129,6 +137,9 @@ public class MarshallTestSoapBindingImpl implements test.wsdl.marshall2.
 
     public test.wsdl.marshall2.types.StringArrayTestResponse stringArrayTest(test.wsdl.marshall2.types.StringArrayTest parameters)
             throws java.rmi.RemoteException {
+        if(parameters.getStringArray()==null) {
+            throw new RemoteException("StringArray is null");
+        }
         return new StringArrayTestResponse(parameters.getStringArray());
     }
 
@@ -144,11 +155,17 @@ public class MarshallTestSoapBindingImpl implements test.wsdl.marshall2.
 
     public test.wsdl.marshall2.types.QNameArrayTestResponse qnameArrayTest(test.wsdl.marshall2.types.QNameArrayTest parameters)
             throws java.rmi.RemoteException {
+        if(parameters.getQnameArray_1()==null) {
+            throw new RemoteException("QnameArray_1 is null");
+        }
         return new QNameArrayTestResponse(parameters.getQnameArray_1());
     }
 
     public test.wsdl.marshall2.types.CalendarArrayTestResponse calendarArrayTest(test.wsdl.marshall2.types.CalendarArrayTest parameters)
             throws java.rmi.RemoteException {
+        if(parameters.getCalendarArray()==null) {
+            throw new RemoteException("CalendarArray is null");
+        }
         return new CalendarArrayTestResponse(parameters.getCalendarArray());
     }
 
