@@ -1824,6 +1824,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @todo: this could be refactored to use getAttributeValue()
      */
     public String getAttributeNS(String namespaceURI, String localName) {
+    	if(namespaceURI == null) {
+    		namespaceURI = "";
+    	}
         for (int i = 0; i < attributes.getLength(); i++) {
             if (attributes.getURI(i).equals(namespaceURI) &&
                     attributes.getLocalName(i).equals(localName)) {
