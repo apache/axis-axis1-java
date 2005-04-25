@@ -267,9 +267,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println(
                 "    protected org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
         pw.println("        try {");
-        pw.println("            org.apache.axis.client.Call _call =");
-        pw.println(
-                "                    (org.apache.axis.client.Call) super.service.createCall();");
+        pw.println("            org.apache.axis.client.Call _call = super._createCall();");
         pw.println("            if (super.maintainSessionSet) {");
         pw.println(
                 "                _call.setMaintainSession(super.maintainSession);");

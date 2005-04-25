@@ -23,6 +23,7 @@ import org.apache.axis.utils.Messages;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.Service;
+import javax.xml.rpc.ServiceException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -65,7 +66,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     private boolean firstCall = true;
 
     // The last call object
-    private Call _call = null;
+    protected Call _call = null;
 
     /**
      * Is this the first time the type mappings are being registered?
@@ -395,9 +396,6 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     }
 
     protected void setRequestHeaders(org.apache.axis.client.Call call) throws AxisFault {        
-        // HACK: store the _call object.
-        _call = call;
-
         // Set the call headers.
         SOAPHeaderElement[] headers = getHeaders();
         for(int i=0;i<headers.length;i++){
@@ -430,8 +428,19 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     }
 
     /**
-     * Returns last Call object associated with
-     * this stub.
+     * Creates a call from the service.
+     * @return
+     */
+    public Call _createCall() throws ServiceException {
+        _call = (Call) service.createCall();
+
+        // TODO: There is a lot of code in the generated stubs that
+        // can be moved here.
+        return _call;
+    }
+
+    /**
+     * Returns last Call object associated with this stub.
      */
     public Call _getCall() {
         return _call;
