@@ -42,6 +42,11 @@ Copyright:
         &taskdefs_post_compile;
 	&targets;
 
+  <taskdef name="axis-admin" classname="org.apache.axis.tools.ant.axis.AdminClientTask"
+    loaderref="axis" >
+        <classpath refid="classpath"/>
+  </taskdef>
+
 <target name="clean"/>
 
 <target name="copy" depends="setenv"/>
@@ -57,10 +62,23 @@ Copyright:
   </javac>
 </target>
 
-<target name="deploy"/>
+<target name="deploy">
+		<axis-admin xmlfile="${basedir}/deploy.wsdd"/>
+</target>
 
-<target name="run"/>
 
-<target name="undeploy"/>
+<target name="run">
+
+			<java classname="samples.message.TestMsg"	fork="yes">
+				<classpath>
+						<path refid="classpath"/>
+				</classpath>
+			</java>
+
+</target>
+
+<target name="undeploy">
+		<axis-admin xmlfile="${basedir}/undeploy.wsdd"/>
+</target>
 
 </project>

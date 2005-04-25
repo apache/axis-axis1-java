@@ -4,6 +4,6 @@
   <!-- note that either style="message" OR provider="java:MSG" both work -->
   <service name="MessageService" style="message">
     <parameter name="className" value="samples.message.MessageService" />
-    <parameter name="allowedMethods" value="echoElements" />
+    <parameter name="allowedMethods" value="echoElements process" />
   </service>
 </deployment>
