@@ -27,18 +27,16 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.net.URL;
-import java.util.Vector;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.namespace.QName;
-import org.apache.axis.description.OperationDesc;
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.util.Vector;
 
 /**
  * Simple test driver for our message service.
@@ -112,25 +110,13 @@ public class TestMsg {
         SOAPPart sp = smsg.getSOAPPart();
         SOAPEnvelope se = (SOAPEnvelope)sp.getEnvelope();
 
-        Options opts = new Options(args);
-        opts.setDefaultURL("http://localhost:8080/axis/services/MessageService");
-
-        Service  service = new Service();
-        Call     call    = (Call) service.createCall();
-
-        OperationDesc operation = new OperationDesc();
-        operation.setName("process");
-        operation.setStyle(org.apache.axis.constants.Style.MESSAGE);
-        call.setOperation(operation);
-
-        call.setTargetEndpointAddress( new URL(opts.getURL()) );
-        call.invoke((org.apache.axis.message.SOAPEnvelope) se);
+        SOAPConnection conn = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = conn.call(smsg, "http://localhost:8080/axis/services/MessageService2");
     }
 
     public static void main(String[] args) throws Exception {
-        String res = (new TestMsg()).doit(args);
-        System.out.println(res);
-
-        (new TestMsg()).testEnvelope(args);
+        TestMsg testMsg = new TestMsg();
+        testMsg.doit(args);
+        testMsg.testEnvelope(args);
     }
 }
