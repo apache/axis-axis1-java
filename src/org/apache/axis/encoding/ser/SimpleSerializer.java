@@ -26,6 +26,7 @@ import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -71,7 +72,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
         // generate a fresh one.
         if (typeDesc != null) {
             propertyDescriptor = typeDesc.getPropertyDescriptors();
-        } else if (!SimpleDeserializerFactory.isBasic(javaType)) {
+        } else if (!JavaUtils.isBasic(javaType)) {
             propertyDescriptor = BeanUtils.getPd(javaType, null);
         }
     }

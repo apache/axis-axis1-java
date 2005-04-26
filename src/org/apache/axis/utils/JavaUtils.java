@@ -140,6 +140,50 @@ public class JavaUtils
         return null;
     }
 
+    /*
+         * Any builtin type that has a constructor that takes a String is a basic
+         * type.
+         * This is for optimization purposes, so that we don't introspect
+         * primitive java types or some basic Axis types.
+         */
+    public static boolean isBasic(Class javaType) {
+        return (javaType.isPrimitive() ||
+                javaType == String.class ||
+                javaType == Boolean.class ||
+                javaType == Float.class ||
+                javaType == Double.class ||
+                Number.class.isAssignableFrom(javaType) ||
+                javaType == org.apache.axis.types.Day.class ||
+                javaType == org.apache.axis.types.Duration.class ||
+                javaType == org.apache.axis.types.Entities.class ||
+                javaType == org.apache.axis.types.Entity.class ||
+                javaType == HexBinary.class ||
+                javaType == org.apache.axis.types.Id.class ||
+                javaType == org.apache.axis.types.IDRef.class ||
+                javaType == org.apache.axis.types.IDRefs.class ||
+                javaType == org.apache.axis.types.Language.class ||
+                javaType == org.apache.axis.types.Month.class ||
+                javaType == org.apache.axis.types.MonthDay.class ||
+                javaType == org.apache.axis.types.Name.class ||
+                javaType == org.apache.axis.types.NCName.class ||
+                javaType == org.apache.axis.types.NegativeInteger.class ||
+                javaType == org.apache.axis.types.NMToken.class ||
+                javaType == org.apache.axis.types.NMTokens.class ||
+                javaType == org.apache.axis.types.NonNegativeInteger.class ||
+                javaType == org.apache.axis.types.NonPositiveInteger.class ||
+                javaType == org.apache.axis.types.NormalizedString.class ||
+                javaType == org.apache.axis.types.PositiveInteger.class ||
+                javaType == org.apache.axis.types.Time.class ||
+                javaType == org.apache.axis.types.Token.class ||
+                javaType == org.apache.axis.types.UnsignedByte.class ||
+                javaType == org.apache.axis.types.UnsignedInt.class ||
+                javaType == org.apache.axis.types.UnsignedLong.class ||
+                javaType == org.apache.axis.types.UnsignedShort.class ||
+                javaType == org.apache.axis.types.URI.class ||
+                javaType == org.apache.axis.types.Year.class ||
+                javaType == org.apache.axis.types.YearMonth.class);
+    }
+
     /**
      * It the argument to the convert(...) method implements
      * the ConvertCache interface, the convert(...) method
