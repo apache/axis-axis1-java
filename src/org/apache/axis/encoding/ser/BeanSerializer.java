@@ -308,6 +308,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 superClass != java.lang.Object.class &&
                 superClass != java.lang.Exception.class &&
                 superClass != java.lang.Throwable.class &&
+                superClass != java.lang.RuntimeException.class &&
                 superClass != java.rmi.RemoteException.class &&
                 superClass != org.apache.axis.AxisFault.class &&
                 (stopClasses == null ||
