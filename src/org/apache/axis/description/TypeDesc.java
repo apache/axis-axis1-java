@@ -210,11 +210,10 @@ public class TypeDesc implements Serializable {
         
         for (int i = 0; i < newFields.length; i++) {
             FieldDesc field = newFields[i];
-            if (field.isElement()) {
-                fieldNameMap.put(field.getFieldName(), field);
-            } else {
+            if (!field.isElement()) {
                 _hasAttributes = true;
             }
+            fieldNameMap.put(field.getFieldName(), field);
         }
     }
 
