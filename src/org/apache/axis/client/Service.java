@@ -123,6 +123,17 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     }
 
     /**
+     * Constructs a Service using the supplied configuration and engine directly.
+     *
+     * @param engineConfiguration
+     * @param axisClient
+     */
+    public Service(EngineConfiguration engineConfiguration, AxisClient axisClient) {
+        this.config = engineConfiguration;
+        this.engine = axisClient;
+    }
+
+    /**
      * Constructs a new Service object as above, but also passing in
      * the EngineConfiguration which should be used to set up the
      * AxisClient.

@@ -82,6 +82,15 @@ public class SimpleProvider implements EngineConfiguration
     }
 
     /**
+     * Construct a SimpleProvider using the supplied TypeMappingRegistry.
+     *
+     * @param typeMappingRegistry
+     */
+    public SimpleProvider(TypeMappingRegistry typeMappingRegistry) {
+        this.tmr = typeMappingRegistry;
+    }
+
+    /**
      * Configure an AxisEngine.  Right now just calls the default
      * configuration if there is one, since we don't do anything special.
      */
