@@ -117,14 +117,18 @@ public class BeanPropertyTarget implements Target {
                     field += "[" + index + "]";
                 }
                 if (log.isErrorEnabled()) {
+                    //TODO: why is this just logged on the server-side and not thrown back to the client???
                     String valueType = "null";
                     if (value != null)
                         valueType = value.getClass().getName();
                     log.error(Messages.getMessage("cantConvert02",
-                                                   new String[] {
-                                                       valueType,
-                                                       field,
-                                                       pd.getType().getName()}));
+                            new String[]{
+                                valueType,
+                                field,
+                                (index >= 0) ?
+                                        pd.getType().getComponentType().getName() :
+                                        pd.getType().getName()
+                            }));
                 }
                 if(ex instanceof InvocationTargetException) {
                     Throwable t = ((InvocationTargetException)ex).getTargetException();
