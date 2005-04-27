@@ -146,6 +146,7 @@ public class ArraySerializer implements Serializer
             componentTypeQName = context.getCurrentXMLType();
             if (componentTypeQName != null) {
                 if ((componentTypeQName.equals(xmlType) ||
+                     componentTypeQName.equals(Constants.XSD_ANYTYPE) ||
                      componentTypeQName.equals(soap.getArrayType()))) {
                          componentTypeQName = null;
                      }
