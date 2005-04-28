@@ -461,7 +461,8 @@ public class TypeMappingImpl implements Serializable
             // deserializer... (sigh)
             if (xmlType != null) {
                 Class actualClass = start.getClassForQName(xmlType);
-                if (actualClass == componentType)
+                if (actualClass == componentType ||
+                    componentType.isAssignableFrom(actualClass))
                     return null;
             }
 
