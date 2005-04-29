@@ -12,4 +12,5 @@ public interface Echo2PT extends java.rmi.Remote {
     public test.wsdl.echo2.MyBase64Bean[] echoArrayOfMyBase64Bean(test.wsdl.echo2.MyBase64Bean[] input) throws java.rmi.RemoteException;
     public java.lang.String[] echoArrayOfString_MaxOccursUnbounded(java.lang.String[] input) throws java.rmi.RemoteException;
     public java.lang.String[] echoArrayOfString_SoapEncArray(java.lang.String[] input) throws java.rmi.RemoteException;
+    public Base64Type echoBase64Type(Base64Type input) throws java.rmi.RemoteException;
 }

@@ -19,6 +19,7 @@
       <parameter name="className" value="test.wsdl.echo2.Echo2SoapBindingImpl"/>
       <parameter name="wsdlPortType" value="Echo2PT"/>
       <parameter name="typeMappingVersion" value="1.3"/>
+      <parameter name="sendMultiRefs" value="false"/>
 
       <operation name="echoMyBase64Bean" qname="operNS:echoMyBase64Bean" xmlns:operNS="urn:echo2.wsdl.test" returnQName="return" returnType="rtns:MyBase64Bean" xmlns:rtns="urn:echo2.wsdl.test" soapAction="" >
         <parameter qname="input" type="tns:MyBase64Bean" xmlns:tns="urn:echo2.wsdl.test"/>
@@ -29,12 +30,23 @@
       <operation name="echoArrayOfString_SoapEncArray" qname="operNS:echoArrayOfString_SoapEncArray" xmlns:operNS="urn:echo2.wsdl.test" returnQName="return" returnType="rtns:ArrayOfString_SoapEncArray" xmlns:rtns="urn:echo2.wsdl.test" soapAction="" >
         <parameter qname="input" type="tns:ArrayOfString_SoapEncArray" xmlns:tns="urn:echo2.wsdl.test"/>
       </operation>
-      <parameter name="allowedMethods" value="echoArrayOfString_SoapEncArray echoArrayOfString_MaxOccursUnbounded echoMyBase64Bean"/>
+      <operation name="echoBase64Type" qname="operNS:echoBase64Type" xmlns:operNS="urn:echo2.wsdl.test" returnQName="return" returnType="xsd:base64Binary" soapAction="" >
+        <parameter qname="input" type="xsd:base64Binary"/>
+      </operation>
+      <parameter name="allowedMethods" value="echoArrayOfString_SoapEncArray echoArrayOfString_MaxOccursUnbounded echoMyBase64Bean echoBase64Type"/>
 
       <typeMapping
         xmlns:ns="urn:echo2.wsdl.test"
         qname="ns:MyBase64Bean"
         type="java:test.wsdl.echo2.MyBase64Bean"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="urn:echo2.wsdl.test"
+        qname="ns:Base64Type"
+        type="java:test.wsdl.echo2.Base64Type"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"

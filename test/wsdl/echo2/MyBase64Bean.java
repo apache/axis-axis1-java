@@ -36,7 +36,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Gets the varXsdByte value for this MyBase64Bean.
-     * 
+     *
      * @return varXsdByte
      */
     public java.lang.Byte getVarXsdByte() {
@@ -46,7 +46,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Sets the varXsdByte value for this MyBase64Bean.
-     * 
+     *
      * @param varXsdByte
      */
     public void setVarXsdByte(java.lang.Byte varXsdByte) {
@@ -56,7 +56,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Gets the varSoapByte value for this MyBase64Bean.
-     * 
+     *
      * @return varSoapByte
      */
     public java.lang.Byte getVarSoapByte() {
@@ -66,7 +66,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Sets the varSoapByte value for this MyBase64Bean.
-     * 
+     *
      * @param varSoapByte
      */
     public void setVarSoapByte(java.lang.Byte varSoapByte) {
@@ -76,7 +76,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Gets the varXsdBase64Binary value for this MyBase64Bean.
-     * 
+     *
      * @return varXsdBase64Binary
      */
     public byte[] getVarXsdBase64Binary() {
@@ -86,7 +86,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Sets the varXsdBase64Binary value for this MyBase64Bean.
-     * 
+     *
      * @param varXsdBase64Binary
      */
     public void setVarXsdBase64Binary(byte[] varXsdBase64Binary) {
@@ -96,7 +96,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Gets the varSoapBase64Binary value for this MyBase64Bean.
-     * 
+     *
      * @return varSoapBase64Binary
      */
     public byte[] getVarSoapBase64Binary() {
@@ -106,7 +106,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Sets the varSoapBase64Binary value for this MyBase64Bean.
-     * 
+     *
      * @param varSoapBase64Binary
      */
     public void setVarSoapBase64Binary(byte[] varSoapBase64Binary) {
@@ -116,7 +116,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Gets the varXsdHexBinary value for this MyBase64Bean.
-     * 
+     *
      * @return varXsdHexBinary
      */
     public byte[] getVarXsdHexBinary() {
@@ -126,7 +126,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Sets the varXsdHexBinary value for this MyBase64Bean.
-     * 
+     *
      * @param varXsdHexBinary
      */
     public void setVarXsdHexBinary(byte[] varXsdHexBinary) {
@@ -136,7 +136,7 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Gets the varSoapBase64 value for this MyBase64Bean.
-     * 
+     *
      * @return varSoapBase64
      */
     public byte[] getVarSoapBase64() {
@@ -146,7 +146,26 @@ public class MyBase64Bean  implements java.io.Serializable {
 
     /**
      * Sets the varSoapBase64 value for this MyBase64Bean.
-     * 
+     *
+     * @param varSoapBase64
+     */
+    public void setVarSoapBase64(int i, byte varSoapBase64) {
+        this.varSoapBase64[i] = varSoapBase64;
+    }
+
+    /**
+     * Gets the varSoapBase64 value for this MyBase64Bean.
+     *
+     * @return varSoapBase64
+     */
+    public byte getVarSoapBase64(int i) {
+        return varSoapBase64[i];
+    }
+
+
+    /**
+     * Sets the varSoapBase64 value for this MyBase64Bean.
+     *
      * @param varSoapBase64
      */
     public void setVarSoapBase64(byte[] varSoapBase64) {
@@ -164,23 +183,23 @@ public class MyBase64Bean  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.varXsdByte==null && other.getVarXsdByte()==null) || 
+        _equals = true &&
+            ((this.varXsdByte==null && other.getVarXsdByte()==null) ||
              (this.varXsdByte!=null &&
               this.varXsdByte.equals(other.getVarXsdByte()))) &&
-            ((this.varSoapByte==null && other.getVarSoapByte()==null) || 
+            ((this.varSoapByte==null && other.getVarSoapByte()==null) ||
              (this.varSoapByte!=null &&
               this.varSoapByte.equals(other.getVarSoapByte()))) &&
-            ((this.varXsdBase64Binary==null && other.getVarXsdBase64Binary()==null) || 
+            ((this.varXsdBase64Binary==null && other.getVarXsdBase64Binary()==null) ||
              (this.varXsdBase64Binary!=null &&
               java.util.Arrays.equals(this.varXsdBase64Binary, other.getVarXsdBase64Binary()))) &&
-            ((this.varSoapBase64Binary==null && other.getVarSoapBase64Binary()==null) || 
+            ((this.varSoapBase64Binary==null && other.getVarSoapBase64Binary()==null) ||
              (this.varSoapBase64Binary!=null &&
               java.util.Arrays.equals(this.varSoapBase64Binary, other.getVarSoapBase64Binary()))) &&
-            ((this.varXsdHexBinary==null && other.getVarXsdHexBinary()==null) || 
+            ((this.varXsdHexBinary==null && other.getVarXsdHexBinary()==null) ||
              (this.varXsdHexBinary!=null &&
               java.util.Arrays.equals(this.varXsdHexBinary, other.getVarXsdHexBinary()))) &&
-            ((this.varSoapBase64==null && other.getVarSoapBase64()==null) || 
+            ((this.varSoapBase64==null && other.getVarSoapBase64()==null) ||
              (this.varSoapBase64!=null &&
               java.util.Arrays.equals(this.varSoapBase64, other.getVarSoapBase64())));
         __equalsCalc = null;
@@ -303,10 +322,10 @@ public class MyBase64Bean  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
+           java.lang.String mechType,
+           java.lang.Class _javaType,
            javax.xml.namespace.QName _xmlType) {
-        return 
+        return
           new  org.apache.axis.encoding.ser.BeanSerializer(
             _javaType, _xmlType, typeDesc);
     }
@@ -315,10 +334,10 @@ public class MyBase64Bean  implements java.io.Serializable {
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
+           java.lang.String mechType,
+           java.lang.Class _javaType,
            javax.xml.namespace.QName _xmlType) {
-        return 
+        return
           new  org.apache.axis.encoding.ser.BeanDeserializer(
             _javaType, _xmlType, typeDesc);
     }

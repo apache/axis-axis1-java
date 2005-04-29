@@ -7,6 +7,8 @@
 
 package test.wsdl.echo2;
 
+import java.rmi.RemoteException;
+
 public class Echo2SoapBindingImpl implements test.wsdl.echo2.Echo2PT{
     public test.wsdl.echo2.MyBase64Bean echoMyBase64Bean(test.wsdl.echo2.MyBase64Bean input) throws java.rmi.RemoteException {
         return input;
@@ -20,6 +22,9 @@ public class Echo2SoapBindingImpl implements test.wsdl.echo2.Echo2PT{
     }
 
     public java.lang.String[] echoArrayOfString_SoapEncArray(java.lang.String[] input) throws java.rmi.RemoteException {
+        return input;
+    }
+    public Base64Type echoBase64Type(Base64Type input) throws RemoteException {
         return input;
     }
 

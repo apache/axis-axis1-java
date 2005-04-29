@@ -6,16 +6,12 @@
  */
 package test.wsdl.echo2;
 
-import javax.xml.namespace.QName;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.message.SOAPBody;
-import org.apache.axis.message.MessageElement;
-
-import java.util.List;
 import java.util.Iterator;
+import javax.xml.namespace.QName;
+import org.apache.axis.MessageContext;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.PrefixedQName;
+import org.apache.axis.message.SOAPBody;
 
 public class Echo2ServiceTestCase extends junit.framework.TestCase {
     public Echo2ServiceTestCase(java.lang.String name) {
@@ -40,25 +36,46 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
         assertNotNull("binding is null", binding);
         // Time out after a minute
         binding.setTimeout(60000);
-        /*
-        call.registerTypeMapping(
-                MyBase64Bean.class,
-                new QName("urn:echo2.wsdl.test", "MyBase64Bean"),
-                new BeanSerializerFactory(MyBase64Bean.class, new QName(
-                        "urn:echo2.wsdl.test", "MyBase64Bean")),
-                new BeanDeserializerFactory(MyBase64Bean.class, new QName(
-                        "urn:echo2.wsdl.test", "MyBase64Bean")));
-*/
-        // was causing serialization problem : cannot serializer for type MyBase64Bean ?!
-        //call.setClientHandlers(new ValidateSerializationHandler(), null);
 
         // message is more clear without multiref
-        binding._setProperty("sendMultiRefs", Boolean.FALSE);
+        //binding._setProperty("sendMultiRefs", Boolean.FALSE);
         // Test operation
         test.wsdl.echo2.MyBase64Bean input = new test.wsdl.echo2.MyBase64Bean();
         fillMyBase64Bean(input);
         test.wsdl.echo2.MyBase64Bean ret = binding.echoMyBase64Bean(input);
-        // TBD - validate results
+
+    }
+
+    public void test1Echo2EchoBase64Type() throws Exception {
+        test.wsdl.echo2.Echo2SoapBindingStub binding;
+        binding = (test.wsdl.echo2.Echo2SoapBindingStub) new test.wsdl.echo2.Echo2ServiceLocator()
+                .getEcho2();
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+
+        // message is more clear without multiref
+        //binding._setProperty("sendMultiRefs", Boolean.FALSE);
+        // Test operation
+        Base64Type input = new Base64Type(new byte[] {-127, 0, 127});
+        //byte[] input = new byte[] {-127, 0, 127};
+        Base64Type ret = binding.echoBase64Type(input);
+
+        binding._getCall().getResponseMessage().writeTo(System.out);
+        // Check message format
+        SOAPBody body = (SOAPBody) binding._getCall().getResponseMessage().getSOAPBody();
+
+        // Body
+        //  echoBase64TypeResponse
+        //   return HREF
+        //  multiRef : 1 element, no child
+
+        MessageElement element = body.getChildElement(new QName("", "multiRef"));
+        assertNotNull("no multiRef found", element);
+        MessageElement base64 = element.getChildElement(new QName("", "varXsdBase64Binary"));
+        assertNotNull("no varXsdBase64Binary found", base64);
+        assertNotNull("<varXsdBase64Binary> must have 1 and only 1 TextNode subelement", base64.getChildren());
+        assertEquals("<varXsdBase64Binary> should have only 1 children : the TextNode", 1, base64.getChildren().size());
     }
 
     public void test1Echo2EchoArrayOfMyBase64Bean() throws Exception {
@@ -114,6 +131,7 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
         // Validate results - NOTE: This checks the XML directly, so if
         // any changes are made to the WSDL/code for this test, equivalent
         // changes must be made in this code.
+
         SOAPBody body = (SOAPBody)binding._getCall().getResponseMessage().getSOAPBody();
         MessageElement element;
         QName responseQName = new QName("urn:echo2.wsdl.test", "echoArrayOfString_MaxOccursUnboundedResponse");
