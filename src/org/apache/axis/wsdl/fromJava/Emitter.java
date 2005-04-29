@@ -34,6 +34,7 @@ import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
@@ -170,8 +171,8 @@ public class Emitter {
     /** Field tm */
     private TypeMapping tm = null;              // Registered type mapping
 
-    /** Field defaultTM */
-    private TypeMappingRegistry tmr;
+    /** Field tmr */
+    private TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
 
     /** Field namespaces */
     private Namespaces namespaces;
@@ -2522,6 +2523,24 @@ public class Emitter {
      */
     public void setTypeMapping(TypeMapping tm) {
         this.tm = tm;
+    }
+
+    /**
+     * Returns the <code>defaultTypeMapping</code> used by the service
+     * @return the <code>defaultTypeMapping</code> used by the service
+     * @deprecated Use getTypeMappingRegistry instead
+     */
+    public TypeMapping getDefaultTypeMapping() {
+        return (TypeMapping) tmr.getDefaultTypeMapping();
+    }
+
+    /**
+     * Sets the <code>defaultTypeMapping</code> used by the service
+     * @param tm the <code>defaultTypeMapping</code> used by the service
+     * @deprecated Use setTypeMappingRegistry instead
+     */
+    public void setDefaultTypeMapping(TypeMapping tm) {
+        tmr.registerDefault(tm);
     }
 
     /**
