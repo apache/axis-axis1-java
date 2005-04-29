@@ -18,29 +18,29 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.description.ElementDesc;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
-import org.apache.axis.description.ElementDesc;
+import org.apache.axis.encoding.ConstructorTarget;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Target;
-import org.apache.axis.encoding.ConstructorTarget;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
-import java.io.Serializable;
 import java.io.CharArrayWriter;
-import java.util.Map;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 /**
  * General purpose deserializer for an arbitrary java bean.
@@ -293,6 +293,14 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         if (context.isNil(attributes)) {
             if (propDesc != null && propDesc.isIndexed()) {
                 if (!((dSer != null) && (dSer instanceof ArrayDeserializer))) {
+                    collectionIndex++;
+                    dSer.registerValueTarget(new BeanPropertyTarget(value,
+                            propDesc, collectionIndex));
+                    addChildDeserializer(dSer);
+                    return (SOAPHandler)dSer;
+                }
+            } else if (propDesc != null && fieldDesc != null && fieldDesc instanceof ElementDesc) {
+                if(((ElementDesc)fieldDesc).isMaxOccursUnbounded()){
                     collectionIndex++;
                     dSer.registerValueTarget(new BeanPropertyTarget(value,
                             propDesc, collectionIndex));
