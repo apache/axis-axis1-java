@@ -747,6 +747,10 @@ public class SchemaUtils {
                 elem.setMinOccursIs0(true);
             }
 
+            String maxOccurs = Utils.getAttribute(elementNode, "maxOccurs");
+            if (maxOccurs != null && maxOccurs.equals("unbounded")) {
+                    elem.setMaxOccursIsUnbounded(true);
+            }
             elem.setNillable(
                     JavaUtils.isTrueExplicitly(
                             Utils.getAttribute(elementNode, "nillable")));

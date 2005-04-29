@@ -373,6 +373,9 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         pw.println("        elemField.setNillable(false);");
                     }
 
+                    if(elem.getMaxOccursIsUnbounded()) {
+                        pw.println("        elemField.setMaxOccursUnbounded(true);");
+                    }
                     QName itemQName = elem.getType().getItemQName();
                     if (itemQName != null) {
                         pw.println("        elemField.setItemQName(" +
