@@ -757,7 +757,7 @@ public class tcpmon extends JFrame {
                                 tmpbuffer[i2++] = buffer[i1];
                             }
                         }
-                        message = new String( tmpbuffer, 0, i2, XMLUtils.getEncoding() );
+                        message = new String( tmpbuffer, 0, i2, getEncoding() );
                         if (numericEnc) {
                             textArea.append( StringUtils.escapeNumericChar(message) );
                         } else {
@@ -770,7 +770,7 @@ public class tcpmon extends JFrame {
                         }
                     }
                     else {
-                        message = new String( buffer, 0, len, XMLUtils.getEncoding() );
+                        message = new String( buffer, 0, len, getEncoding() );
                         if (numericEnc) {
                             textArea.append( StringUtils.escapeNumericChar(message) );
                         } else {
@@ -786,8 +786,8 @@ public class tcpmon extends JFrame {
             // we'll let the other side control when we're done
             //      if ( inSocket != null ) done = true ;
             }
-            catch ( Exception e ) {
-                e.printStackTrace();
+            catch ( Throwable t ) {
+                t.printStackTrace();
             }
             finally {
                 done = true ;
@@ -822,6 +822,15 @@ public class tcpmon extends JFrame {
             }
         }
 
+        private String getEncoding() {
+            try {
+            return XMLUtils.getEncoding();
+
+            } catch (Throwable t){
+                return "UTF-8";
+            }
+        }
+        
         public  void halt() {
             try {
                 if ( inSocket != null ) {
