@@ -41,4 +41,64 @@ public class ComplexEchoServiceTestCase extends junit.framework.TestCase {
         }
     }
 
+    public void test2ComplexEchoServiceEcho2() throws Exception {
+        test.wsdl.echo.ComplexEchoServiceSoapBindingStub binding;
+        try {
+            binding = (test.wsdl.echo.ComplexEchoServiceSoapBindingStub)
+                    new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoService();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        test.wsdl.echo.MyComplexType2 request = new test.wsdl.echo.MyComplexType2();
+        request.setUsername("xxx");
+        request.setPassword("yyy");
+        request.setOptions(new NamedValue[]{
+            new NamedValue("dummy1", "dummy_val1"),
+            new NamedValue("dummy2",
+                    new NamedValueSet (new NamedValue[]{
+                        new NamedValue("dummy2-1", "val2-1"),
+                        new NamedValue("dummy2-2", new Integer(314))
+                    }))
+        });
+        // Test operation
+        test.wsdl.echo.NamedValue[] value = null;
+        value = binding.echo2(request);
+        // TBD - validate results
+    }
+
+    public void test2ComplexEchoServiceEcho21() throws Exception {
+        test.wsdl.echo.ComplexEchoServiceSoapBindingStub binding;
+        try {
+            binding = (test.wsdl.echo.ComplexEchoServiceSoapBindingStub)
+                    new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoService();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        test.wsdl.echo.MyComplexType2 request = new test.wsdl.echo.MyComplexType2();
+        request.setUsername("xxx");
+        request.setPassword("yyy");
+        request.setOptions(new NamedValue[]{
+            new NamedValue("dummy1", "dummy_val1"),
+            new NamedValue("dummy2", new NamedValue[]{
+                new NamedValue("dummy2-1", "val2-1"),
+                new NamedValue("dummy2-2", new Integer(314))
+            })
+        });
+        // Test operation
+        test.wsdl.echo.NamedValue[] value = null;
+        value = binding.echo2(request);
+        // TBD - validate results
+    }
 }
