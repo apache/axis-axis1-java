@@ -1357,7 +1357,14 @@ public class SchemaUtils {
                     if (storeComponentQName) {
                         String name = Utils.getAttribute(node, "name");
                         if (name != null) {
-                            itemQName.value = new QName("", name);
+                            // check elementFormDefault on schema element
+                            String def = Utils.getScopedAttribute(node,
+                                    "elementFormDefault");
+                            String namespace = "";
+                            if ((def != null) && def.equals("qualified")) {
+                                 namespace = Utils.getScopedAttribute(node, "targetNamespace");
+                            }
+                            itemQName.value = new QName(namespace, name);
                         }
                     }
                     return componentTypeQName;
