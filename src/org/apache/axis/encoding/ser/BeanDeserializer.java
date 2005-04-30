@@ -321,26 +321,12 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 constructorTarget = new ConstructorTarget(constructorToUse, this);
             }
             dSer.registerValueTarget(constructorTarget);
-        } else if (propDesc.isWriteable()) {        // Register value target
-            // If this is an indexed property, and the deserializer we found
-            // was NOT the ArrayDeserializer, this is a non-SOAP array:
-            // <bean>
-            //   <field>value1</field>
-            //   <field>value2</field>
-            // ...
-            // In this case, we want to use the collectionIndex and make sure
-            // the deserialized value for the child element goes into the
-            // right place in the collection.
-
-            // list of deserializers that shouldn't use the indexed way to recreate the Bean
-            boolean shouldUseArray = (!(dSer instanceof ArrayDeserializer) &&
-                    !(dSer instanceof Base64Deserializer) &&
-                    !(dSer instanceof HexDeserializer) &&
-                    !(dSer instanceof SimpleListDeserializer));
-            if (propDesc.isIndexedOrArray() && shouldUseArray) {
-                    collectionIndex++;
-                    dSer.registerValueTarget(new BeanPropertyTarget(value,
-                                                    propDesc, collectionIndex));
+        } else if (propDesc.isWriteable()) {
+            // Register value target
+            if (isCollectionable(propDesc, dSer, context)) {
+                collectionIndex++;
+                dSer.registerValueTarget(new BeanPropertyTarget(value,
+                        propDesc, collectionIndex));
             } else {
                 // If we're here, the element maps to a single field value,
                 // whether that be a "basic" type or an array, so use the
@@ -357,7 +343,35 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         
         return (SOAPHandler)dSer;
     }
-    
+
+    private boolean isCollectionable(BeanPropertyDescriptor propDesc, Deserializer dSer, DeserializationContext context) {
+        // If the property is indexed/array and the deserializer happens
+        // to be DeserializerImpl then check the type of the class, if both
+        // the destination class and the actual type are the same class/array
+        // then use the BeanPropertyTarget with collectionIndex = -1
+        if (propDesc.isIndexedOrArray() && dSer instanceof DeserializerImpl &&
+                context.getDestinationClass() != null && propDesc.getActualType() != null) {
+            if (context.getDestinationClass().equals(propDesc.getActualType()))
+                return false;
+        }
+        // If this is an indexed property, and the deserializer we found
+        // was NOT the ArrayDeserializer, this is a non-SOAP array:
+        // <bean>
+        //   <field>value1</field>
+        //   <field>value2</field>
+        // ...
+        // In this case, we want to use the collectionIndex and make sure
+        // the deserialized value for the child element goes into the
+        // right place in the collection.
+
+        // list of deserializers that shouldn't use the indexed way to recreate the Bean
+        boolean shouldUseArray = (!(dSer instanceof ArrayDeserializer) &&
+                !(dSer instanceof Base64Deserializer) &&
+                !(dSer instanceof HexDeserializer) &&
+                !(dSer instanceof SimpleListDeserializer));
+        return propDesc.isIndexedOrArray() &&  shouldUseArray;
+    }
+
     /**
      * Get a BeanPropertyDescriptor which indicates where we should
      * put extensibility elements (i.e. XML which falls under the
