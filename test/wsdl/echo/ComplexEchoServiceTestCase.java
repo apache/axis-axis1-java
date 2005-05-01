@@ -98,8 +98,8 @@ public class ComplexEchoServiceTestCase extends junit.framework.TestCase {
         });
         // Test operation
         test.wsdl.echo.NamedValue[] value = null;
-        //TODO: Fix this
-        //value = binding.echo2(request);
+
+        value = binding.echo2(request);
         // TBD - validate results
     }
 }

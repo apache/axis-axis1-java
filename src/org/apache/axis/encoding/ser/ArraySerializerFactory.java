@@ -36,9 +36,17 @@ public class ArraySerializerFactory extends BaseSerializerFactory {
     }
 
     private QName componentType;
+    private QName componentQName;
+
     public ArraySerializerFactory(QName componentType) {
         super(ArraySerializer.class, Constants.SOAP_ARRAY, Object[].class);
         this.componentType = componentType;
+    }
+
+    public ArraySerializerFactory(QName componentType, QName componentQName) {
+        super(ArraySerializer.class, Constants.SOAP_ARRAY, Object[].class);
+        this.componentType = componentType;
+        this.componentQName = componentQName;
     }
 
     /**
@@ -52,6 +60,6 @@ public class ArraySerializerFactory extends BaseSerializerFactory {
         if (componentType == null)
             return super.getGeneralPurpose(mechanismType);
         else
-            return new ArraySerializer(javaType, xmlType, componentType);
+            return new ArraySerializer(javaType, xmlType, componentType, componentQName);
     }
 }

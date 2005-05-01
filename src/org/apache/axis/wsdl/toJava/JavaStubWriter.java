@@ -894,6 +894,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
         pw.println("            java.lang.Class cls;");
         pw.println("            javax.xml.namespace.QName qName;");
+        pw.println("            javax.xml.namespace.QName qName2;");
         pw.println(
                 "            java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
         pw.println(
@@ -962,10 +963,18 @@ public class JavaStubWriter extends JavaClassWriter {
                 // Both factories must be an instance, so we create a ArrayDeserializerFactory
                 if (type.getComponentType() != null) {
                     QName ct = type.getComponentType();
+                    QName name = type.getItemQName();
                     pw.println("            qName = new javax.xml.namespace.QName(\""
                             + ct.getNamespaceURI() + "\", \"" + ct.getLocalPart()
                             + "\");");
-                    pw.println("            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName));");
+                    if(name != null) {
+                        pw.println("            qName2 = new javax.xml.namespace.QName(\""
+                                + name.getNamespaceURI() + "\", \"" + name.getLocalPart()
+                                + "\");");
+                    } else {
+                        pw.println("            qName2 = null;");
+                    }
+                    pw.println("            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));");
                     pw.println("            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());");
                 } else {
                     pw.println("            cachedSerFactories.add(arraysf);");

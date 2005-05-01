@@ -54,6 +54,7 @@ public class ArraySerializer implements Serializer
     QName xmlType;
     Class javaType;
     QName componentType;
+    QName componentQName;
 
     /**
      * Constructor
@@ -72,6 +73,17 @@ public class ArraySerializer implements Serializer
         this.javaType = javaType;
         this.xmlType = xmlType;
         this.componentType = componentType;
+    }
+
+    /**
+     * Constructor
+     * Special constructor that takes the component type and QName of the array.
+     */
+    public ArraySerializer(Class javaType, QName xmlType, QName componentType, QName componentQName) {
+        this.javaType = javaType;
+        this.xmlType = xmlType;
+        this.componentType = componentType;
+        this.componentQName = componentQName;
     }
 
     protected static Log log =
@@ -262,8 +274,8 @@ public class ArraySerializer implements Serializer
         // actual schema array or for a maxOccurs usage.
         // For the maxOccurs case, the currentXMLType of the context is
         // the same as the componentTypeQName.
-        QName componentQName = context.getItemQName();
-        boolean maxOccursUsage = !encoded && componentQName == null &&
+        QName itemQName = context.getItemQName();
+        boolean maxOccursUsage = !encoded && itemQName == null &&
                 componentTypeQName.equals(context.getCurrentXMLType());
 
         if (encoded) {
@@ -358,9 +370,10 @@ public class ArraySerializer implements Serializer
         if (!maxOccursUsage) {
             serializeAttr = null;  // since we are putting them here
             context.startElement(name, attributes);
-            if (componentQName != null)
+            if (itemQName != null)
+                elementName = itemQName;
+            else if(componentQName != null)
                 elementName = componentQName;
-            // If we are doing SOAP encoded arrays, no need to add xsi:type to the items
         }
 
 
