@@ -72,7 +72,7 @@ public class JavaDeployWriter extends JavaWriter {
 
     /** Field emitter */
     protected Emitter emitter;
-    
+
     /**
      * Constructor.
      *
@@ -84,7 +84,7 @@ public class JavaDeployWriter extends JavaWriter {
                             SymbolTable symbolTable) {
 
         super(emitter, "deploy");
-        
+
         this.emitter = emitter;
         this.definition = definition;
         this.symbolTable = symbolTable;
@@ -399,7 +399,7 @@ public class JavaDeployWriter extends JavaWriter {
 
 		if (emitter.isSkeletonWanted()) {
 			 className += "Skeleton";
-		 } else 
+		 } else
 		 {
 			 String customClassName  = emitter.getImplementationClassName();
 			 if ( customClassName != null )
@@ -414,13 +414,13 @@ public class JavaDeployWriter extends JavaWriter {
         pw.println("      <parameter name=\"wsdlPortType\" value=\""
                 + binding.getPortType().getQName().getLocalPart() + "\"/>");
 
-        pw.println("      <parameter name=\"typeMappingVersion\" value=\"" 
+        pw.println("      <parameter name=\"typeMappingVersion\" value=\""
                    + emitter.getTypeMappingVersion() + "\"/>");
-        
+
         HashSet allowedMethods = new HashSet();
 
         String namespaceURI = binding.getQName().getNamespaceURI();
-		
+
         if (!emitter.isSkeletonWanted()) {
             Iterator operationsIterator =
                     binding.getBindingOperations().iterator();
@@ -437,7 +437,7 @@ public class JavaDeployWriter extends JavaWriter {
                         || (type == OperationType.SOLICIT_RESPONSE)) {
                     continue;
                 }
-                String javaOperName = null;				
+                String javaOperName = null;
 
                 ServiceDesc serviceDesc = emitter.getServiceDesc();
                 if (emitter.isDeploy() && serviceDesc != null) {
@@ -452,13 +452,13 @@ public class JavaDeployWriter extends JavaWriter {
                         log.warn("Can't find Java method for operation descriptor : " + operDesc.getName());
                         continue;
                     }
-                    
+
                     javaOperName = operDesc.getMethod().getName();
                 } else {
                     javaOperName =
                         JavaUtils.xmlNameToJava(operation.getName());
                 }
-                
+
                 allowedMethods.add(javaOperName);
 
                 // We pass "" as the namespace argument because we're just
@@ -586,7 +586,7 @@ public class JavaDeployWriter extends JavaWriter {
                     + SOAPAction
                     + "\"");
         }
-        
+
         if (params.mep != null &&
                 params.mep != OperationType.REQUEST_RESPONSE) {
             String mepString = getMepString(params.mep);
@@ -642,7 +642,7 @@ public class JavaDeployWriter extends JavaWriter {
             QName itemQName = Utils.getItemQName(param.getType());
             if (itemQName != null) {
                 pw.print(" itemQName=\"");
-                pw.print(Utils.genQNameAttributeString(itemQName, "tns"));
+                pw.print(Utils.genQNameAttributeString(itemQName, "itns"));
                 pw.print("\"");
             }
 
