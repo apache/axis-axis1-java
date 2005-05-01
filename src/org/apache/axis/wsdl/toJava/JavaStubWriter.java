@@ -55,6 +55,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Collections;
 
 /**
  * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -223,6 +226,15 @@ public class JavaStubWriter extends JavaClassWriter {
                 typeMappingCount++;
             }
         }
+
+        // Sort the TypeEntry's by their qname.
+        Collections.sort(deferredBindings, new Comparator() {
+            public int compare(Object a, Object b) {
+                TypeEntry type1 = (TypeEntry)a;
+                TypeEntry type2 = (TypeEntry)b;
+                return type1.getQName().toString().compareToIgnoreCase(type2.getQName().toString());
+            }
+        });
 
         // We need to write out the MIME mapping, even if we don't have
         // any type mappings
