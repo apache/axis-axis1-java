@@ -163,8 +163,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
-            if ((type == OperationType.NOTIFICATION)
-                    || (type == OperationType.SOLICIT_RESPONSE)) {
+            if ((OperationType.NOTIFICATION.equals(type))
+                    || (OperationType.SOLICIT_RESPONSE.equals(type))) {
                 pw.println("    " + params.signature);
 
                 continue;

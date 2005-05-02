@@ -295,7 +295,7 @@ public abstract class JavaProvider extends BasicProvider
             // associated with a one-way operation....
             OperationDesc operation = msgContext.getOperation();
             if (operation != null &&
-                    operation.getMep() == OperationType.ONE_WAY) {
+                    OperationType.ONE_WAY.equals(operation.getMep())) {
                 msgContext.setResponseMessage(null);
             } else {
                 Message        resMsg  = msgContext.getResponseMessage();

@@ -1390,14 +1390,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         Parameters parameters =
                                 bEntry.getParameters(operation);
 
-                        if (type == OperationType.SOLICIT_RESPONSE) {
+                        if (OperationType.SOLICIT_RESPONSE.equals(type)) {
                             parameters.signature =
                                     "    // "
                                     + Messages.getMessage("invalidSolResp00", javaOpName);
 
                             System.err.println(
                                     Messages.getMessage("invalidSolResp00", javaOpName));
-                        } else if (type == OperationType.NOTIFICATION) {
+                        } else if (OperationType.NOTIFICATION.equals(type)) {
                             parameters.signature =
                                     "    // "
                                     + Messages.getMessage("invalidNotif00", javaOpName);

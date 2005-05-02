@@ -1117,7 +1117,7 @@ public class Emitter {
         oper.setInput(input);
         def.addMessage(msg);
         
-        if (desc.getMep() == OperationType.REQUEST_RESPONSE) {
+        if (OperationType.REQUEST_RESPONSE.equals(desc.getMep())) {
             msg = writeResponseMessage(def, desc, bindingOper);
             
             Output output = def.createOutput();
@@ -1227,7 +1227,7 @@ public class Emitter {
         BindingOutput bindingOutput = null;
         
         // TODO : Make this deal with all MEPs
-        if (desc.getMep() == OperationType.REQUEST_RESPONSE)
+        if (OperationType.REQUEST_RESPONSE.equals(desc.getMep())) 
             bindingOutput = def.createBindingOutput();
 
         bindingOper.setName(oper.getName());

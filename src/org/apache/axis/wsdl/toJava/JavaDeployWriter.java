@@ -433,8 +433,8 @@ public class JavaDeployWriter extends JavaWriter {
 
                 // These operation types are not supported.  The signature
                 // will be a string stating that fact.
-                if ((type == OperationType.NOTIFICATION)
-                        || (type == OperationType.SOLICIT_RESPONSE)) {
+                if ((OperationType.NOTIFICATION.equals(type))
+                        || (OperationType.SOLICIT_RESPONSE.equals(type))) {
                     continue;
                 }
                 String javaOperName = null;
@@ -587,8 +587,7 @@ public class JavaDeployWriter extends JavaWriter {
                     + "\"");
         }
 
-        if (params.mep != null &&
-                params.mep != OperationType.REQUEST_RESPONSE) {
+        if (!OperationType.REQUEST_RESPONSE.equals(params.mep)) {
             String mepString = getMepString(params.mep);
             if (mepString != null) {
                 pw.print(" mep=\""
@@ -714,13 +713,13 @@ public class JavaDeployWriter extends JavaWriter {
         return new PrintWriter(writer);
     }
     
-    public static Map mepStrings = new HashMap();
+    private static final Map mepStrings = new HashMap();
     static {
-        mepStrings.put(OperationType.REQUEST_RESPONSE, "request-response");
-        mepStrings.put(OperationType.ONE_WAY, "oneway");
+        mepStrings.put(OperationType.REQUEST_RESPONSE.toString(), "request-response");
+        mepStrings.put(OperationType.ONE_WAY.toString(), "oneway");
     }
     
     String getMepString(OperationType mep) {
-        return (String)mepStrings.get(mep);
+        return (String)mepStrings.get(mep.toString());
     }
 }    // class JavaDeployWriter

@@ -161,7 +161,6 @@ public class RPCProvider extends JavaProvider {
             QName qname = new QName(body.getNamespaceURI(),
                     body.getName());
             operation = serviceDesc.getOperationByElementQName(qname);
-        }
 
         if (operation == null) {
             SOAPConstants soapConstants = msgContext == null ?
@@ -179,6 +178,9 @@ public class RPCProvider extends JavaProvider {
             } else {
                 throw new AxisFault(Constants.FAULT_CLIENT, Messages.getMessage("noSuchOperation", methodName),
                         null, null);                        
+            }
+            } else {
+                 msgContext.setOperation(operation);
             }
         }
         
@@ -304,7 +306,8 @@ public class RPCProvider extends JavaProvider {
         
         /** If this is a one-way operation, there is nothing more to do.
          */ 
-        if (operation.getMep() == OperationType.ONE_WAY)
+        if (OperationType.ONE_WAY.equals(operation.getMep())) 
+
             return;
         
         /* Now put the result in the result SOAPEnvelope */
@@ -372,6 +375,7 @@ public class RPCProvider extends JavaProvider {
 
     /**
      * This method encapsulates the method invocation.             
+     *
      * @param msgContext MessageContext
      * @param method the target method.
      * @param obj the target object
@@ -386,6 +390,7 @@ public class RPCProvider extends JavaProvider {
 
     /**
      * Throw an AxisFault if the requested method is not allowed.
+     *
      * @param msgContext MessageContext
      * @param allowedMethods list of allowed methods
      * @param methodName name of target method
