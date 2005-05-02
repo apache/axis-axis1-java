@@ -328,7 +328,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             // right place in the collection.
 
             // Register value target
-            if (itemQName != null || propDesc.isIndexed() || isArray) {
+            if ((itemQName != null || propDesc.isIndexed() || isArray) && !(dSer instanceof ArrayDeserializer)) {
                 collectionIndex++;
                 dSer.registerValueTarget(new BeanPropertyTarget(value,
                         propDesc, collectionIndex));
