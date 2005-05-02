@@ -75,7 +75,7 @@ Copyright:
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
-      <include name="test/wsdl/marshall3/*.java" />
+      <include name="test/wsdl/marshall3/**/*.java" />
     </javac>
 
 </target>
