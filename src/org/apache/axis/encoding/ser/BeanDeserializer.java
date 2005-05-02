@@ -190,13 +190,21 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         }  
         prevQName = elemQName;
 
-        if (typeDesc != null) {       
+        boolean isArray = false;
+        QName itemQName = null;
+        if (typeDesc != null) {
             // Lookup the name appropriately (assuming an unqualified
             // name for SOAP encoding, using the namespace otherwise)
             String fieldName = typeDesc.getFieldNameForElement(elemQName, 
                                                                isEncoded);
             propDesc = (BeanPropertyDescriptor)propertyMap.get(fieldName);
-            fieldDesc = typeDesc.getFieldByName(fieldName); 
+            fieldDesc = typeDesc.getFieldByName(fieldName);
+
+            if (fieldDesc != null) {
+               ElementDesc element = (ElementDesc)fieldDesc;
+               isArray = element.isMaxOccursUnbounded();
+               itemQName = element.getItemQName();
+           }
         }
 
         if (propDesc == null) {
@@ -259,17 +267,12 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // If no xsi:type or href, check the meta-data for the field
         if (childXMLType == null && fieldDesc != null && href == null) {
-            if (fieldDesc instanceof ElementDesc) {
-                ElementDesc edesc = (ElementDesc)fieldDesc;
-                QName itemQName = edesc.getItemQName();
-                if (itemQName != null) {
-                    // This is actually a wrapped literal array and should be
-                    // deserialized with the ArrayDeserializer
-                    childXMLType = Constants.SOAP_ARRAY;
-                    fieldType = propDesc.getActualType();
-                } else {
-                    childXMLType = fieldDesc.getXmlType();
-                }
+            childXMLType = fieldDesc.getXmlType();
+            if (itemQName != null) {
+                // This is actually a wrapped literal array and should be
+                // deserialized with the ArrayDeserializer
+                childXMLType = Constants.SOAP_ARRAY;
+                fieldType = propDesc.getActualType();
             } else {
                 childXMLType = fieldDesc.getXmlType();
             }
@@ -291,16 +294,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // Fastpath nil checks...
         if (context.isNil(attributes)) {
-            if (propDesc != null && propDesc.isIndexed()) {
+            if (propDesc != null && (propDesc.isIndexed()||isArray)) {
                 if (!((dSer != null) && (dSer instanceof ArrayDeserializer))) {
-                    collectionIndex++;
-                    dSer.registerValueTarget(new BeanPropertyTarget(value,
-                            propDesc, collectionIndex));
-                    addChildDeserializer(dSer);
-                    return (SOAPHandler)dSer;
-                }
-            } else if (propDesc != null && fieldDesc != null && fieldDesc instanceof ElementDesc) {
-                if(((ElementDesc)fieldDesc).isMaxOccursUnbounded()){
                     collectionIndex++;
                     dSer.registerValueTarget(new BeanPropertyTarget(value,
                             propDesc, collectionIndex));
@@ -322,8 +317,18 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             }
             dSer.registerValueTarget(constructorTarget);
         } else if (propDesc.isWriteable()) {
+            // If this is an indexed property, and the deserializer we found
+            // was NOT the ArrayDeserializer, this is a non-SOAP array:
+            // <bean>
+            //   <field>value1</field>
+            //   <field>value2</field>
+            // ...
+            // In this case, we want to use the collectionIndex and make sure
+            // the deserialized value for the child element goes into the
+            // right place in the collection.
+
             // Register value target
-            if (isCollectionable(propDesc, dSer, context)) {
+            if (itemQName != null || propDesc.isIndexed() || isArray) {
                 collectionIndex++;
                 dSer.registerValueTarget(new BeanPropertyTarget(value,
                         propDesc, collectionIndex));
@@ -342,34 +347,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         addChildDeserializer(dSer);
         
         return (SOAPHandler)dSer;
-    }
-
-    private boolean isCollectionable(BeanPropertyDescriptor propDesc, Deserializer dSer, DeserializationContext context) {
-        // If the property is indexed/array and the deserializer happens
-        // to be DeserializerImpl then check the type of the class, if both
-        // the destination class and the actual type are the same class/array
-        // then use the BeanPropertyTarget with collectionIndex = -1
-        if (propDesc.isIndexedOrArray() && dSer instanceof DeserializerImpl &&
-                context.getDestinationClass() != null && propDesc.getActualType() != null) {
-            if (context.getDestinationClass().equals(propDesc.getActualType()))
-                return false;
-        }
-        // If this is an indexed property, and the deserializer we found
-        // was NOT the ArrayDeserializer, this is a non-SOAP array:
-        // <bean>
-        //   <field>value1</field>
-        //   <field>value2</field>
-        // ...
-        // In this case, we want to use the collectionIndex and make sure
-        // the deserialized value for the child element goes into the
-        // right place in the collection.
-
-        // list of deserializers that shouldn't use the indexed way to recreate the Bean
-        boolean shouldUseArray = (!(dSer instanceof ArrayDeserializer) &&
-                !(dSer instanceof Base64Deserializer) &&
-                !(dSer instanceof HexDeserializer) &&
-                !(dSer instanceof SimpleListDeserializer));
-        return propDesc.isIndexedOrArray() &&  shouldUseArray;
     }
 
     /**
