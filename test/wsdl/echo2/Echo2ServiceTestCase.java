@@ -44,38 +44,84 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
         fillMyBase64Bean(input);
         test.wsdl.echo2.MyBase64Bean ret = binding.echoMyBase64Bean(input);
 
-    }
-
-    public void test1Echo2EchoBase64Type() throws Exception {
-        test.wsdl.echo2.Echo2SoapBindingStub binding;
-        binding = (test.wsdl.echo2.Echo2SoapBindingStub) new test.wsdl.echo2.Echo2ServiceLocator()
-                .getEcho2();
-        assertNotNull("binding is null", binding);
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // message is more clear without multiref
-        //binding._setProperty("sendMultiRefs", Boolean.FALSE);
-        // Test operation
-        Base64Type input = new Base64Type(new byte[] {-127, 0, 127});
-        //byte[] input = new byte[] {-127, 0, 127};
-        Base64Type ret = binding.echoBase64Type(input);
-
-        binding._getCall().getResponseMessage().writeTo(System.out);
-        // Check message format
-        SOAPBody body = (SOAPBody) binding._getCall().getResponseMessage().getSOAPBody();
-
         // Body
-        //  echoBase64TypeResponse
+        //  echoMyBase64BeanResponse
         //   return HREF
         //  multiRef : 1 element, no child
 
-        MessageElement element = body.getChildElement(new QName("", "multiRef"));
-        assertNotNull("no multiRef found", element);
-        MessageElement base64 = element.getChildElement(new QName("", "varXsdBase64Binary"));
-        assertNotNull("no varXsdBase64Binary found", base64);
-        assertNotNull("<varXsdBase64Binary> must have 1 and only 1 TextNode subelement", base64.getChildren());
-        assertEquals("<varXsdBase64Binary> should have only 1 children : the TextNode", 1, base64.getChildren().size());
+        // Check message format
+        binding._getCall().getResponseMessage().writeTo(System.out);
+        SOAPBody body = (SOAPBody) binding._getCall().getResponseMessage().getSOAPBody();
+
+        QName responseQName = new QName("urn:echo2.wsdl.test", "echoMyBase64BeanResponse");
+        QName returnQName = new QName("", "return");
+        QName xsdByteQName = new QName("", "varXsdByte");
+        QName soapByteQName = new QName("", "varSoapByte");
+        QName xsdBase64BinQName = new QName("", "varXsdBase64Binary");
+        QName soapBase64BinQName = new QName("", "varSoapBase64Binary");
+        QName xsdHexBinQName = new QName("", "varXsdHexBinary");
+        QName soapBase64QName = new QName("", "varSoapBase64");
+
+        MessageElement response = body.getChildElement(responseQName);
+        assertNotNull("no <ns1:echoMyBase64BeanResponse> found", response);
+        MessageElement return1 = response.getChildElement(returnQName);
+        assertNotNull("no <return> found", return1);
+        MessageElement realRet = return1.getRealElement();
+
+        Iterator it = realRet.getChildElements(xsdByteQName);
+        // only 1 element
+        MessageElement one = null;
+        while (it.hasNext()) {
+            assertNull("only 1 element named " + xsdByteQName, one);
+            one = (MessageElement) it.next();
+        }
+        assertNull(xsdByteQName + " is nil and shouldn't have any children", one.getChildren());
+
+        it = realRet.getChildElements(soapByteQName);
+        // only 1 element
+        one = null;
+        while (it.hasNext()) {
+            assertNull("only 1 element named " + soapByteQName, one);
+            one = (MessageElement) it.next();
+        }
+        assertNull(soapByteQName + " is nil and shouldn't have any children", one.getChildren());
+
+        it = realRet.getChildElements(xsdBase64BinQName);
+        // only 1 element
+        one = null;
+        while (it.hasNext()) {
+            assertNull("only 1 element named " + xsdBase64BinQName, one);
+            one = (MessageElement) it.next();
+        }
+        assertEquals(xsdBase64BinQName + " have wrong value", "fwCB", one.getFirstChild().getNodeValue());
+
+        it = realRet.getChildElements(soapBase64BinQName);
+        // only 1 element
+        one = null;
+        while (it.hasNext()) {
+            assertNull("only 1 element named " + soapBase64BinQName, one);
+            one = (MessageElement) it.next();
+        }
+        assertEquals(soapBase64BinQName + " have wrong value", "fwCB", one.getFirstChild().getNodeValue());
+
+        it = realRet.getChildElements(xsdHexBinQName);
+        // only 1 element
+        one = null;
+        while (it.hasNext()) {
+            assertNull("only 1 element named " + xsdHexBinQName, one);
+            one = (MessageElement) it.next();
+        }
+        assertEquals(xsdHexBinQName + " have wrong value", "7f0081", one.getFirstChild().getNodeValue());
+
+        it = realRet.getChildElements(soapBase64QName);
+        // only 1 element
+        one = null;
+        while (it.hasNext()) {
+            assertNull("only 1 element named " + soapBase64QName, one);
+            one = (MessageElement) it.next();
+        }
+        assertEquals(soapBase64QName + " have wrong value", "fwCB", one.getFirstChild().getNodeValue());
+
     }
 
     public void test1Echo2EchoArrayOfMyBase64Bean() throws Exception {

@@ -24,8 +24,5 @@ public class Echo2SoapBindingImpl implements test.wsdl.echo2.Echo2PT{
     public java.lang.String[] echoArrayOfString_SoapEncArray(java.lang.String[] input) throws java.rmi.RemoteException {
         return input;
     }
-    public Base64Type echoBase64Type(Base64Type input) throws RemoteException {
-        return input;
-    }
 
 }

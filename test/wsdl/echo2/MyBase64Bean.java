@@ -148,19 +148,19 @@ public class MyBase64Bean  implements java.io.Serializable {
      * Sets the varSoapBase64 value for this MyBase64Bean.
      *
      * @param varSoapBase64
-     */
+     *//*
     public void setVarSoapBase64(int i, byte varSoapBase64) {
         this.varSoapBase64[i] = varSoapBase64;
-    }
+    }*/
 
     /**
      * Gets the varSoapBase64 value for this MyBase64Bean.
      *
      * @return varSoapBase64
-     */
+     *//*
     public byte getVarSoapBase64(int i) {
         return varSoapBase64[i];
-    }
+    }*/
 
 
     /**

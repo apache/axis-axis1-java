@@ -38,11 +38,6 @@
 					<element name="varMyBase64Bean" nillable="true" maxOccurs="unbounded" type="tns:MyBase64Bean" />
 				</sequence>
 			</complexType>
-			<complexType name="Base64Type">
-				<sequence>
-					<element name="varXsdBase64Binary" nillable="true" type="xsd:base64Binary" />
-				</sequence>
-			</complexType>
 		</schema>
 	</wsdl:types>
 
@@ -74,13 +69,6 @@
 		<wsdl:part type="tns:ArrayOfString_SoapEncArray" name="return" />
 	</wsdl:message>
 
-	<wsdl:message name="echoBase64TypeRequest">
-		<wsdl:part type="tns:Base64Type" name="input" />
-	</wsdl:message>
-	<wsdl:message name="echoBase64TypeResponse">
-		<wsdl:part type="tns:Base64Type" name="return" />
-	</wsdl:message>
-
 	<wsdl:portType name="Echo2PT">
 		<wsdl:operation name="echoMyBase64Bean">
 			<wsdl:input message="tns:echoMyBase64BeanRequest" name="echoMyBase64BeanRequest" />
@@ -97,10 +85,6 @@
 		<wsdl:operation name="echoArrayOfString_SoapEncArray">
      		<wsdl:input message="tns:echoArrayOfString_SoapEncArrayRequest" name="echoArrayOfString_SoapEncArrayRequest" />
 			<wsdl:output message="tns:echoArrayOfString_SoapEncArrayResponse" name="echoArrayOfString_SoapEncArrayResponse" />
-		</wsdl:operation>
-		<wsdl:operation name="echoBase64Type">
-			<wsdl:input message="tns:echoBase64TypeRequest" name="echoBase64TypeRequest" />
-			<wsdl:output message="tns:echoBase64TypeResponse" name="echoBase64TypeResponse" />
 		</wsdl:operation>
 	</wsdl:portType>
 
@@ -153,19 +137,6 @@
 					namespace="urn:echo2.wsdl.test" use="encoded" />
 			</wsdl:input>
 			<wsdl:output name="echoArrayOfString_SoapEncArrayResponse">
-				<wsdlsoap:body
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-					namespace="urn:echo2.wsdl.test" use="encoded" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="echoBase64Type">
-			<wsdlsoap:operation soapAction="" />
-			<wsdl:input name="echoBase64TypeRequest">
-				<wsdlsoap:body
-					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-					namespace="urn:echo2.wsdl.test" use="encoded" />
-			</wsdl:input>
-			<wsdl:output name="echoBase64TypeResponse">
 				<wsdlsoap:body
 					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
 					namespace="urn:echo2.wsdl.test" use="encoded" />
