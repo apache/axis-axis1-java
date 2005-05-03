@@ -126,6 +126,10 @@ password to access the WSDL-URI <br>
 &lt;argument&gt; <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 use this as the implementation class <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -w, --wrapArrays
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Prefer generating JavaBean classes like &quot;ArrayOfString&quot; for certain schema array patterns (default is to use String []) <br>
 &nbsp; </p>
 <h4> -h, --help</h4>
 Print the usage statement and exit
@@ -283,6 +287,19 @@ followed by wsdl2java.&nbsp;If you are using the skeleton deploy option you must
 that your implementation class implements the port type name interface generated
 by wsdl2java.&nbsp;You should also make sure that all your exported methods throws
 java.lang.RemoteException.
+</p>
+<h4> -w, --wrapArrays</h4>
+<p>When processing a schema like this:</p>
+<pre>
+&lt;element name="array"&gt;
+ &lt;complexType&gt;
+  &lt;sequence&gt;
+   &lt;element name="item" type="xs:string"/&gt;
+  &lt;/sequence&gt;
+ &lt;/complexType&gt;
+&lt;/element&gt;
+</pre>
+The default behavior (as of Axis 1.2 final) is to map this XML construct to a Java String array (String[]).  If you would rather a specific JavaBean class (i.e. ArrayOfString) be generated for these types of schemas, you may specify the -w or --wrapArrays option.
 </p>
 <br>
 <h3><a name="Java2WSDL"></a>Java2WSDL Reference</h3>

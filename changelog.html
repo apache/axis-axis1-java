@@ -23,6 +23,7 @@ h1 {  margin-left: -30px}
  <li> Tons of changes to typemapping system to better support jax-rpc1.1 and .NET
  <li> Improved SAAJ 1.2 support
  <li> Much better for rpc/lit and doc/lit (especially for arrays)
+ <li>Map schema "wrapped" arrays (with inner &lt;item&gt; elements) into arrays of the item type, instead of JavaBeans, by default.  Introduce the "-w" or "--wrapArrays" option to WSDL2Java to switch back to the earlier behavior.
  <li> Fix some WS-I related bugs. Makes it easier to deploy WS-I BP compatible services.
  <li> Internationalized happyaxis jsp pages.
  <li> Updated to latest dependency jars. (ex wsdl4j-1.5.1.jar)
