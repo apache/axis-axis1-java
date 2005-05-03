@@ -1,11 +1,11 @@
-<wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap" 
-                  xmlns:impl="http://marshall.wsdl.test" 
-                  xmlns:intf="http://marshall.wsdl.test" 
-                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
-                  xmlns:tns1="http://marshall.wsdl.test/types" 
-                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
-                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
-                  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+<wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap"
+                  xmlns:impl="http://marshall.wsdl.test"
+                  xmlns:intf="http://marshall.wsdl.test"
+                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:tns1="http://marshall.wsdl.test/types"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                   targetNamespace="http://marshall.wsdl.test">
     <wsdl:types>
         <schema targetNamespace="http://marshall.wsdl.test/types" xmlns="http://www.w3.org/2001/XMLSchema">
@@ -32,6 +32,20 @@
                     </restriction>
                 </complexContent>
             </complexType>
+            <complexType name="ArrayOfSoapEncString">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="soapenc:string[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOfXsdString">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
         </schema>
     </wsdl:types>
     <wsdl:message name="MyBeanMultiArrayRequest">
@@ -52,6 +66,18 @@
     <wsdl:message name="MyBeanArrayRequest">
         <wsdl:part name="arrayOfMyBean_1" type="tns1:ArrayOfMyBean"/>
     </wsdl:message>
+    <wsdl:message name="ArrayOfSoapEncStringRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfSoapEncString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfSoapEncStringResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfSoapEncString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfXsdStringRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfXsdString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfXsdStringResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfXsdString"/>
+    </wsdl:message>
     <wsdl:portType name="MarshallPortType">
         <wsdl:operation name="MyBeanArray" parameterOrder="arrayOfMyBean_1">
             <wsdl:input name="MyBeanArrayRequest" message="impl:MyBeanArrayRequest"/>
@@ -64,6 +90,14 @@
         <wsdl:operation name="MyBean" parameterOrder="MyBean_1">
             <wsdl:input name="MyBeanRequest" message="impl:MyBeanRequest"/>
             <wsdl:output name="MyBeanResponse" message="impl:MyBeanResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfSoapEncString" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfSoapEncStringRequest" message="impl:ArrayOfSoapEncStringRequest"/>
+            <wsdl:output name="ArrayOfSoapEncStringResponse" message="impl:ArrayOfSoapEncStringResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfXsdString" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfXsdStringRequest" message="impl:ArrayOfXsdStringRequest"/>
+            <wsdl:output name="ArrayOfXsdStringResponse" message="impl:ArrayOfXsdStringResponse"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="MarshallBinding" type="impl:MarshallPortType">
@@ -87,6 +121,24 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="MyBean">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfSoapEncString">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfXsdString">
             <wsdlsoap:operation/>
             <wsdl:input>
                 <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>

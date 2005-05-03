@@ -20,4 +20,11 @@ public class MarshallBindingImpl implements test.wsdl.marshall.MarshallPortType{
         return null;
     }
 
+    public String[] arrayOfSoapEncString(String[] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
+
+    public String[] arrayOfXsdString(String[] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
 }

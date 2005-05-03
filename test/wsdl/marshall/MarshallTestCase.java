@@ -7,6 +7,11 @@
 
 package test.wsdl.marshall;
 
+import javax.xml.namespace.QName;
+import org.apache.axis.Message;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.SOAPBody;
+
 public class MarshallTestCase extends junit.framework.TestCase {
     public MarshallTestCase(java.lang.String name) {
         super(name);
@@ -85,4 +90,69 @@ public class MarshallTestCase extends junit.framework.TestCase {
         // TBD - validate results
     }
 
+    public void test4MarshallPortArrayOfSoapEncString() throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub)
+                    new test.wsdl.marshall.MarshallLocator().getMarshallPort();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+
+        assertNotNull("binding is null", binding);
+
+        // Time out after a minute
+        binding.setTimeout(60000);
+
+        // Test operation
+        String[] value = new String[]{"1", "2", "", null, "5"};
+        String[] ret = null;
+        ret = binding.arrayOfSoapEncString(value);
+
+        QName responseQName = new QName("http://marshall.wsdl.test", "ArrayOfSoapEncStringResponse");
+        QName returnQName = new QName("return");
+        Message m = binding._getCall().getResponseMessage();
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        MessageElement response = body.getChildElement(responseQName);
+        MessageElement returnE = response.getChildElement(returnQName);
+        String arrayType = returnE.getAttributeNS("http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
+        assertEquals("wrong array type", "soapenc:string[5]", arrayType);
+        // TBD - validate results
+    }
+
+    public void test5MarshallPortArrayOfXsdString() throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub)
+                    new test.wsdl.marshall.MarshallLocator().getMarshallPort();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+
+        assertNotNull("binding is null", binding);
+
+        // Time out after a minute
+        binding.setTimeout(60000);
+
+        // Test operation
+        String[] value = new String[]{"1", "2", "", null, "5"};
+        String[] ret = null;
+        ret = binding.arrayOfXsdString(value);
+
+        // TBD - validate results
+        QName responseQName = new QName("http://marshall.wsdl.test", "ArrayOfXsdStringResponse");
+        QName returnQName = new QName("return");
+        Message m = binding._getCall().getResponseMessage();
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        MessageElement response = body.getChildElement(responseQName);
+        MessageElement returnE = response.getChildElement(returnQName);
+        String arrayType = returnE.getAttributeNS("http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
+        assertEquals("wrong array type", "xsd:string[5]", arrayType);
+    }
 }
