@@ -90,11 +90,17 @@ public class WSDDOperation extends WSDDElement
             param.setItemQName(XMLUtils.getQNameFromString(retItemQName, e));
         }
 
+        String retItemType = e.getAttribute(ATTR_RETITEMTYPE);
+        if (retItemType != null && !retItemType.equals("")) {
+            ParameterDesc param = desc.getReturnParamDesc();
+            param.setItemType(XMLUtils.getQNameFromString(retItemType, e));
+        }
+
         String soapAction = e.getAttribute(ATTR_SOAPACTION);
         if (soapAction != null) {
             desc.setSoapAction(soapAction);
         }
-        
+
         String mepString = e.getAttribute(ATTR_MEP);
         if (mepString != null) {
             desc.setMep(mepString);
@@ -106,7 +112,7 @@ public class WSDDOperation extends WSDDElement
             WSDDParameter parameter = new WSDDParameter(paramEl, desc);
             desc.addParameter(parameter.getParameter());
         }
-        
+
         Element [] faultElems = getChildElements(e, ELEM_WSDD_FAULT);
         for (int i = 0; i < faultElems.length; i++) {
             Element faultElem = faultElems[i];
@@ -118,7 +124,7 @@ public class WSDDOperation extends WSDDElement
         if (docElem != null) {
             WSDDDocumentation documentation = new WSDDDocumentation(docElem);
             desc.setDocumentation(documentation.getValue());
-        }        
+        }
     }
 
     /**
@@ -147,10 +153,10 @@ public class WSDDOperation extends WSDDElement
         if (desc.getName() != null) {
             attrs.addAttribute("", ATTR_NAME, ATTR_NAME, "CDATA", desc.getName());
         }
-        
+
         if (desc.getElementQName() != null) {
-            attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME, 
-                               "CDATA", 
+            attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME,
+                               "CDATA",
                                context.qName2String(desc.getElementQName()));
         }
 

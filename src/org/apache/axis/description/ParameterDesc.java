@@ -59,14 +59,14 @@ public class ParameterDesc implements Serializable {
      * determine if it gets written as a "bare" or a "wrapped" schema.
      */
     private QName itemQName;
+    private QName itemType;
 
     /** Indicates whether input/output values are stored in the header */
     private boolean inHeader = false;
-    private boolean outHeader = false; 
+    private boolean outHeader = false;
 
     /** The documentation for the parameter */
 	private String documentation = null;
-
 
     public ParameterDesc() {
     }
@@ -74,7 +74,7 @@ public class ParameterDesc implements Serializable {
     /**
      * Constructor-copy
      *
-     * @param copy the copy 
+     * @param copy the copy
      */
     public ParameterDesc(ParameterDesc copy) {
         name = copy.name;
@@ -138,9 +138,9 @@ public class ParameterDesc implements Serializable {
         String text="";
         text+=indent + "name:       " + name + "\n";
         text+=indent + "typeEntry:  " + typeEntry + "\n";
-        text+=indent + "mode:       " + (mode == IN ? 
-                                         "IN" : mode == INOUT ? 
-                                         "INOUT" : "OUT") + "\n"; 
+        text+=indent + "mode:       " + (mode == IN ?
+                                         "IN" : mode == INOUT ?
+                                         "INOUT" : "OUT") + "\n";
         text+=indent + "position:   " + order + "\n";
         text+=indent + "isReturn:   " + isReturn + "\n";
         text+=indent + "typeQName:  " + typeQName + "\n";
@@ -149,15 +149,15 @@ public class ParameterDesc implements Serializable {
         text+=indent + "outHeader:  " + outHeader+ "\n";
         return text;
     } // toString
-    
+
     /**
      * Get a mode constant from a string.  Defaults to IN, and returns
      * OUT or INOUT if the string matches (ignoring case).
-     */ 
+     */
     public static byte modeFromString(String modeStr)
     {
         byte ret = IN;
-        if (modeStr == null) { 
+        if (modeStr == null) {
             return IN;
         } else if (modeStr.equalsIgnoreCase("out")) {
             ret = OUT;
@@ -166,7 +166,7 @@ public class ParameterDesc implements Serializable {
         }
         return ret;
     }
-    
+
     public static String getModeAsString(byte mode)
     {
         if (mode == INOUT) {
@@ -176,7 +176,7 @@ public class ParameterDesc implements Serializable {
         } else if (mode == IN) {
             return "in";
         }
-        
+
         throw new IllegalArgumentException(
                 Messages.getMessage("badParameterMode", Byte.toString(mode)));
     }
@@ -210,7 +210,7 @@ public class ParameterDesc implements Serializable {
         this.typeQName = typeQName;
     }
 
-    /** 
+    /**
      * Get the java type (note that this is javaType in the signature.)
      * @return Class javaType
      */
@@ -218,8 +218,8 @@ public class ParameterDesc implements Serializable {
         return javaType;
     }
 
-    /** 
-     * Set the java type (note that this is javaType in the signature.) 
+    /**
+     * Set the java type (note that this is javaType in the signature.)
      */
     public void setJavaType(Class javaType) {
         // The javaType must match the mode.  A Holder is expected for OUT/INOUT
@@ -230,10 +230,10 @@ public class ParameterDesc implements Serializable {
                 mode != IN && !isReturn &&
                 !javax.xml.rpc.holders.Holder.class.isAssignableFrom(javaType)) {
                 throw new IllegalArgumentException(
-                     Messages.getMessage("setJavaTypeErr00", 
+                     Messages.getMessage("setJavaTypeErr00",
                                           javaType.getName(),
                                           getModeAsString(mode)));
-            }             
+            }
         }
 
         this.javaType = javaType;
@@ -290,7 +290,7 @@ public class ParameterDesc implements Serializable {
      * get the documentation for the parameter
      */
 	public String getDocumentation() {
-    	return documentation; 
+    	return documentation;
     }
 
     /**
@@ -343,4 +343,12 @@ public class ParameterDesc implements Serializable {
     public void setItemQName(QName itemQName) {
         this.itemQName = itemQName;
     }
-} // class ParameterDesc
+
+    public QName getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(QName itemType) {
+        this.itemType = itemType;
+    }
+}

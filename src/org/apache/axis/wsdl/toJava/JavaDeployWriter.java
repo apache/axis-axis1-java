@@ -573,11 +573,20 @@ public class JavaDeployWriter extends JavaWriter {
 
         Parameter retParam = params.returnParam;
         if (retParam != null) {
-            QName returnItemQName = Utils.getItemQName(retParam.getType());
+            TypeEntry type = retParam.getType();
+            QName returnItemQName = Utils.getItemQName(type);
             if (returnItemQName != null) {
                 pw.print(" returnItemQName=\"");
                 pw.print(Utils.genQNameAttributeString(returnItemQName, "tns"));
                 pw.print("\"");
+            }
+            if(type.getComponentType()!=null){
+                QName returnItemType = type.getComponentType();
+                if (returnItemType != null) {
+                    pw.print(" returnItemType=\"");
+                    pw.print(Utils.genQNameAttributeString(returnItemType, "tns2"));
+                    pw.print("\"");
+                }
             }
         }
 

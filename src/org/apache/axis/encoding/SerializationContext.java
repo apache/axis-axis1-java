@@ -101,6 +101,8 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     private QName currentXMLType;
     /** The item QName if we're serializing a literal array... */
     private QName itemQName;
+    /** The item type if we're serializing a literal array... */
+    private QName itemType;
 
     /** The SOAP context we're using */
     private SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
@@ -167,7 +169,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
  
     /** The encoding to serialize */
     private String encoding = XMLEncoderFactory.DEFAULT_ENCODING;
-    
+
     class MultiRefItem {
         String id;
         QName xmlType;
@@ -1594,5 +1596,13 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
     public void setItemQName(QName itemQName) {
         this.itemQName = itemQName;
+    }
+
+    public QName getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(QName itemType) {
+        this.itemType = itemType;
     }
 }

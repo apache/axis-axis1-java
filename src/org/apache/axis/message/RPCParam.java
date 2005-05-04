@@ -193,6 +193,9 @@ public class RPCParam extends MessageElement implements Serializable
                 }
             }
             context.setItemQName(itemQName);
+
+            QName itemType = paramDesc.getItemType();
+            context.setItemType(itemType);
         }
         context.serialize(getQName(),  // element qname
                           null,   // no extra attrs

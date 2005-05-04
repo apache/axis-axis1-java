@@ -138,7 +138,9 @@ public class WSDDConstants
     public static final String ATTR_RETQNAME = "returnQName";
     public static final String ATTR_RETTYPE = "returnType";
     public static final String ATTR_RETITEMQNAME = "returnItemQName";
-    public static final String ATTR_ITEMQNAME = "itemQName";    
+    public static final String ATTR_RETITEMTYPE = "returnItemType";
+    public static final String ATTR_ITEMQNAME = "itemQName";
+    public static final String ATTR_ITEMTYPE = "itemType";
     public static final String ATTR_MODE = "mode";
     public static final String ATTR_INHEADER = "inHeader";
     public static final String ATTR_OUTHEADER = "outHeader";
