@@ -259,7 +259,10 @@ public class ArrayUtil {
             // set the destArray 
             for (int i = 0; i < arraylen; i++) {
                 Object comp = Array.get(array, i);
-                
+
+                if(comp == null)
+                    continue;
+
                 if (comp.getClass().isArray()) {
                     Class cls = Array.get(destArray, i).getClass();
                     Array.set(destArray, i, convertArrayToObject(comp, cls));
