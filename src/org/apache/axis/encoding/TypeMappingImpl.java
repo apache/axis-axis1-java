@@ -462,10 +462,10 @@ public class TypeMappingImpl implements Serializable
             if (xmlType != null) {
                 Class actualClass = start.getClassForQName(xmlType);
                 if (actualClass == componentType ||
-                    componentType.isAssignableFrom(actualClass))
+                    (actualClass != null && componentType.isAssignableFrom(actualClass))) {
                     return null;
+                }
             }
-
             Pair pair = (Pair) qName2Pair.get(Constants.SOAP_ARRAY);
             df = (DeserializerFactory) pair2DF.get(pair);
             if (df instanceof ArrayDeserializerFactory && javaType.isArray()) {
