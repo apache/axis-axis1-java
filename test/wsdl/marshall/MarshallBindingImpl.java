@@ -27,4 +27,22 @@ public class MarshallBindingImpl implements test.wsdl.marshall.MarshallPortType{
     public String[] arrayOfXsdString(String[] parameter) throws java.rmi.RemoteException {
         return parameter;
     }
+    public byte[][] arrayOfbase64Binary(byte[][] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
+    public byte[][] arrayOfhexBinary(byte[][] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
+    public byte[][] arrayOfsoapencbase64(byte[][] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
+    public byte[][] arrayOfbase64BinaryUnbounded(byte[][] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
+    public byte[][] arrayOfhexBinaryUnbounded(byte[][] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
+    public byte[][] arrayOfsoapencbase64Unbounded(byte[][] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
 }
