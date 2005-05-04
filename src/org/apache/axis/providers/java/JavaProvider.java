@@ -32,6 +32,7 @@ import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.session.Session;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
@@ -39,6 +40,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.server.ServiceLifecycle;
+import javax.xml.soap.SOAPMessage;
 import javax.wsdl.OperationType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -307,6 +309,8 @@ public abstract class JavaProvider extends BasicProvider
                                                msgContext.getSchemaVersion());
                     
                     resMsg = new Message(resEnv);
+                    String encoding = XMLUtils.getEncoding(msgContext);
+                    resMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, encoding);
                     msgContext.setResponseMessage( resMsg );
                 } else {
                     resEnv  = resMsg.getSOAPEnvelope();
