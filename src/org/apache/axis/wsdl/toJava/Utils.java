@@ -1305,4 +1305,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
         return te.getItemQName();
     }
+
+    public static QName getItemType(TypeEntry te) {
+        if (te instanceof DefinedElement) {
+            te = te.getRefType();
+        }
+        return te.getComponentType();
+    }
 }    // class Utils

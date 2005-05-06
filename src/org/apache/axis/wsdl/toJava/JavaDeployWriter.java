@@ -73,6 +73,9 @@ public class JavaDeployWriter extends JavaWriter {
     /** Field emitter */
     protected Emitter emitter;
 
+    /** Field use */
+    Use use = Use.DEFAULT;
+
     /**
      * Constructor.
      *
@@ -327,7 +330,6 @@ public class JavaDeployWriter extends JavaWriter {
         boolean hasMIME = Utils.hasMIME(bEntry);
         String prefix = WSDDConstants.NS_PREFIX_WSDD_JAVA;
         String styleStr = "";
-        Use use = Use.DEFAULT;
         Iterator iterator =
                 bEntry.getBinding().getExtensibilityElements().iterator();
 
@@ -580,9 +582,11 @@ public class JavaDeployWriter extends JavaWriter {
                 pw.print(Utils.genQNameAttributeString(returnItemQName, "tns"));
                 pw.print("\"");
             }
-            if(type.getComponentType()!=null){
-                QName returnItemType = type.getComponentType();
-                if (returnItemType != null) {
+            QName returnItemType = Utils.getItemType(type);
+            if(returnItemType!=null && use == Use.ENCODED){
+                if (Constants.isSchemaXSD(returnItemType.getNamespaceURI()) &&
+                    !(returnItemType.getLocalPart().equals("hexBinary")||
+                      returnItemType.getLocalPart().equals("base64Binary"))) {
                     pw.print(" returnItemType=\"");
                     pw.print(Utils.genQNameAttributeString(returnItemType, "tns2"));
                     pw.print("\"");
