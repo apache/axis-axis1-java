@@ -475,12 +475,21 @@ public class ArrayDeserializer extends DeserializerImpl
         addChildDeserializer(dSer);
 
         curIndex++;
+
+        // In case of multi-array, we need to specify the destination class
+        // of the children elements of this element array deserializer.
+        context.setDestinationClass(arrayClass.getComponentType());
         
         if (log.isDebugEnabled()) {
             log.debug("Exit: ArrayDeserializer.onStartChild()");
         }
         
         return (SOAPHandler)dSer;
+    }
+
+    public void onEndChild(String namespace, String localName, DeserializationContext context) throws SAXException {
+        // reverse onStartChild operation.
+        context.setDestinationClass(arrayClass);
     }
 
     public void characters(char[] chars, int i, int i1) throws SAXException {
