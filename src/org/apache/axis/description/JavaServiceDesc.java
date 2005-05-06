@@ -484,17 +484,30 @@ public class JavaServiceDesc implements ServiceDesc {
         initQNameMap();
 
         ArrayList overloads = (ArrayList)qname2OperationsMap.get(qname);
-
         if (overloads == null) {
             // Nothing specifically matching this QName.
-            if ((isWrapped() ||
-                 ((style==Style.MESSAGE) && 
-                  (getDefaultNamespace() == null))) &&
-                (name2OperationsMap != null)) {
-                // Try ignoring the namespace....?
-                overloads = (ArrayList)name2OperationsMap.get(qname.getLocalPart());
+            if (name2OperationsMap != null) {
+                if ((isWrapped() ||
+                     ((style == Style.MESSAGE) &&
+                      (getDefaultNamespace() == null)))) {
+                    // Try ignoring the namespace....?
+                    overloads = (ArrayList) name2OperationsMap.get(qname.getLocalPart());
+                } else {
+                    // TODO the above code is weird: a JavaServiceDesc can  be document or rpc and
+                    // still define a WSDL operation using a wrapper style  mapping.
+                    // The following code handles this case.
+                    Object ops = name2OperationsMap.get(qname.getLocalPart());
+                    if (ops != null) {
+                        overloads = new ArrayList((Collection) ops);
+                        for (Iterator iter = overloads.iterator(); iter.hasNext();) {
+                            OperationDesc operationDesc = (OperationDesc) iter.next();
+                            if (Style.WRAPPED != operationDesc.getStyle()) {
+                                iter.remove();
+                            }
+                        }
+                    }
+                }
             }
-
             // Handle the case where a single Message-style operation wants
             // to accept anything.
             if ((style == Style.MESSAGE) && (messageServiceDefaultOp != null))
