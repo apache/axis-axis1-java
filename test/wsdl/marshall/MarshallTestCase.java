@@ -173,8 +173,160 @@ public class MarshallTestCase extends junit.framework.TestCase {
         checkArrayReturnValues(value);
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfbase64BinaryResponse");
-        String innerTypeString = "xsd:base64";
-        String arrayTypeString = innerTypeString + "[2]";
+        String innerTypeString = "xsd:base64Binary";
+        String arrayTypeString = innerTypeString + "[][3]";
+        Message m = binding._getCall().getResponseMessage();
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        checkReturnMessage(body, responseQName, arrayTypeString,
+                innerTypeString);
+    }
+
+    public void test7MarshallPortArrayOfhexBinary() throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
+                    .getMarshallPort();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError(
+                    "JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        // Test operation
+        byte[][] value = null;
+        value = binding.arrayOfhexBinary(getBiDimensionnalByteArray());
+        // TBD - validate results
+        checkArrayReturnValues(value);
+        QName responseQName = new QName("http://marshall.wsdl.test",
+                "ArrayOfhexBinaryResponse");
+        String innerTypeString = "xsd:hexBinary";
+        String arrayTypeString = innerTypeString + "[][3]";
+        Message m = binding._getCall().getResponseMessage();
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        checkReturnMessage(body, responseQName, arrayTypeString,
+                innerTypeString);
+    }
+
+    public void test8MarshallPortArrayOfsoapencbase64() throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
+                    .getMarshallPort();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError(
+                    "JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        // Test operation
+        byte[][] value = null;
+        value = binding.arrayOfsoapencbase64(getBiDimensionnalByteArray());
+        // TBD - validate results
+        checkArrayReturnValues(value);
+        QName responseQName = new QName("http://marshall.wsdl.test",
+                "ArrayOfsoapencbase64Response");
+        String innerTypeString = "soapenc:base64";
+        String arrayTypeString = innerTypeString + "[][3]";
+        Message m = binding._getCall().getResponseMessage();
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        checkReturnMessage(body, responseQName, arrayTypeString,
+                innerTypeString);
+    }
+
+    public void test9MarshallPortArrayOfbase64BinaryUnbounded()
+            throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
+                    .getMarshallPort();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError(
+                    "JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        // Test operation
+        byte[][] value = null;
+        value = binding
+                .arrayOfbase64BinaryUnbounded(getBiDimensionnalByteArray());
+        // TBD - validate results
+        checkArrayReturnValues(value);
+
+        QName responseQName = new QName("http://marshall.wsdl.test",
+                "ArrayOfbase64BinaryUnboundedResponse");
+        String innerTypeString = "xsd:base64Binary";
+        String arrayTypeString = innerTypeString + "[][3]";
+        Message m = binding._getCall().getResponseMessage();
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        checkReturnMessage(body, responseQName, arrayTypeString,
+                innerTypeString);
+    }
+
+    public void test10MarshallPortArrayOfhexBinaryUnbounded() throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
+                    .getMarshallPort();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError(
+                    "JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        // Test operation
+        byte[][] value = null;
+        value = binding.arrayOfhexBinaryUnbounded(getBiDimensionnalByteArray());
+        // TBD - validate results
+        checkArrayReturnValues(value);
+
+        QName responseQName = new QName("http://marshall.wsdl.test",
+                "ArrayOfhexBinaryUnboundedResponse");
+        String innerTypeString = "xsd:hexBinary";
+        String arrayTypeString = innerTypeString + "[][3]";
+        Message m = binding._getCall().getResponseMessage();
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        checkReturnMessage(body, responseQName, arrayTypeString,
+                innerTypeString);
+    }
+
+    public void test11MarshallPortArrayOfsoapencbase64Unbounded()
+            throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
+                    .getMarshallPort();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError(
+                    "JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        // Test operation
+        byte[][] value = null;
+        value = binding
+                .arrayOfsoapencbase64Unbounded(getBiDimensionnalByteArray());
+        // TBD - validate results
+        checkArrayReturnValues(value);
+
+        QName responseQName = new QName("http://marshall.wsdl.test",
+                "ArrayOfsoapencbase64UnboundedResponse");
+        String innerTypeString = "soapenc:base64";
+        String arrayTypeString = innerTypeString + "[][3]";
         Message m = binding._getCall().getResponseMessage();
         SOAPBody body = (SOAPBody) m.getSOAPBody();
         checkReturnMessage(body, responseQName, arrayTypeString,
@@ -256,155 +408,4 @@ public class MarshallTestCase extends junit.framework.TestCase {
         return array;
     }
 
-    public void test7MarshallPortArrayOfhexBinary() throws Exception {
-        test.wsdl.marshall.MarshallBindingStub binding;
-        try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError(
-                    "JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-        // Time out after a minute
-        binding.setTimeout(60000);
-        // Test operation
-        byte[][] value = null;
-        value = binding.arrayOfhexBinary(getBiDimensionnalByteArray());
-        // TBD - validate results
-        checkArrayReturnValues(value);
-        QName responseQName = new QName("http://marshall.wsdl.test",
-                "ArrayOfhexBinaryResponse");
-        String innerTypeString = "xsd:hexBinary";
-        String arrayTypeString = innerTypeString + "[2]";
-        Message m = binding._getCall().getResponseMessage();
-        SOAPBody body = (SOAPBody) m.getSOAPBody();
-        checkReturnMessage(body, responseQName, arrayTypeString,
-                innerTypeString);
-    }
-
-    public void test8MarshallPortArrayOfsoapencbase64() throws Exception {
-        test.wsdl.marshall.MarshallBindingStub binding;
-        try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError(
-                    "JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-        // Time out after a minute
-        binding.setTimeout(60000);
-        // Test operation
-        byte[][] value = null;
-        value = binding.arrayOfsoapencbase64(getBiDimensionnalByteArray());
-        // TBD - validate results
-        checkArrayReturnValues(value);
-        QName responseQName = new QName("http://marshall.wsdl.test",
-                "ArrayOfsoapencbase64Response");
-        String innerTypeString = "soapenc:base64";
-        String arrayTypeString = innerTypeString + "[2]";
-        Message m = binding._getCall().getResponseMessage();
-        SOAPBody body = (SOAPBody) m.getSOAPBody();
-        checkReturnMessage(body, responseQName, arrayTypeString,
-                innerTypeString);
-    }
-
-    public void test9MarshallPortArrayOfbase64BinaryUnbounded()
-            throws Exception {
-        test.wsdl.marshall.MarshallBindingStub binding;
-        try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError(
-                    "JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-        // Time out after a minute
-        binding.setTimeout(60000);
-        // Test operation
-        byte[][] value = null;
-        value = binding
-                .arrayOfbase64BinaryUnbounded(getBiDimensionnalByteArray());
-        // TBD - validate results
-        checkArrayReturnValues(value);
-
-        QName responseQName = new QName("http://marshall.wsdl.test",
-                "ArrayOfbase64BinaryUnboundedResponse");
-        String innerTypeString = "xsd:base64";
-        String arrayTypeString = innerTypeString + "[2]";
-        Message m = binding._getCall().getResponseMessage();
-        SOAPBody body = (SOAPBody) m.getSOAPBody();
-        checkReturnMessage(body, responseQName, arrayTypeString,
-                innerTypeString);
-    }
-
-    public void test10MarshallPortArrayOfhexBinaryUnbounded() throws Exception {
-        test.wsdl.marshall.MarshallBindingStub binding;
-        try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError(
-                    "JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-        // Time out after a minute
-        binding.setTimeout(60000);
-        // Test operation
-        byte[][] value = null;
-        value = binding.arrayOfhexBinaryUnbounded(getBiDimensionnalByteArray());
-        // TBD - validate results
-        checkArrayReturnValues(value);
-
-        QName responseQName = new QName("http://marshall.wsdl.test",
-                "ArrayOfhexBinaryUnboundedResponse");
-        String innerTypeString = "xsd:hexBinary";
-        String arrayTypeString = innerTypeString + "[2]";
-        Message m = binding._getCall().getResponseMessage();
-        SOAPBody body = (SOAPBody) m.getSOAPBody();
-        checkReturnMessage(body, responseQName, arrayTypeString,
-                innerTypeString);
-    }
-
-    public void test11MarshallPortArrayOfsoapencbase64Unbounded()
-            throws Exception {
-        test.wsdl.marshall.MarshallBindingStub binding;
-        try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError(
-                    "JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-        // Time out after a minute
-        binding.setTimeout(60000);
-        // Test operation
-        byte[][] value = null;
-        value = binding
-                .arrayOfsoapencbase64Unbounded(getBiDimensionnalByteArray());
-        // TBD - validate results
-        checkArrayReturnValues(value);
-
-        QName responseQName = new QName("http://marshall.wsdl.test",
-                "ArrayOfsoapencbase64UnboundedResponse");
-        String innerTypeString = "xsd:hexBinary";
-        String arrayTypeString = innerTypeString + "[2]";
-        Message m = binding._getCall().getResponseMessage();
-        SOAPBody body = (SOAPBody) m.getSOAPBody();
-        checkReturnMessage(body, responseQName, arrayTypeString,
-                innerTypeString);
-    }
 }
