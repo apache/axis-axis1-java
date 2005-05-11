@@ -80,15 +80,15 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
 
         myRegister(Constants.SOAP_BASE64,     byte[].class,
                    new Base64SerializerFactory(byte[].class,
-                                               Constants.SOAP_BASE64 ),
+                                               Constants.SOAP_BASE64),
                    new Base64DeserializerFactory(byte[].class,
                                                  Constants.SOAP_BASE64)
         );
         myRegister(Constants.SOAP_BASE64BINARY,     byte[].class,
                    new Base64SerializerFactory(byte[].class,
-                                               Constants.SOAP_BASE64 ),
+                                               Constants.SOAP_BASE64BINARY),
                    new Base64DeserializerFactory(byte[].class,
-                                                 Constants.SOAP_BASE64)
+                                                 Constants.SOAP_BASE64BINARY)
         );
 
         myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,

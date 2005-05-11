@@ -13,6 +13,9 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPBody;
 
 public class MarshallTestCase extends junit.framework.TestCase {
+
+    private static final String DIMS = "[3]";
+
     public MarshallTestCase(java.lang.String name) {
         super(name);
     }
@@ -174,7 +177,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfbase64BinaryResponse");
         String innerTypeString = "xsd:base64Binary";
-        String arrayTypeString = innerTypeString + "[][3]";
+        String arrayTypeString = innerTypeString + DIMS;
         Message m = binding._getCall().getResponseMessage();
         SOAPBody body = (SOAPBody) m.getSOAPBody();
         checkReturnMessage(body, responseQName, arrayTypeString,
@@ -203,7 +206,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfhexBinaryResponse");
         String innerTypeString = "xsd:hexBinary";
-        String arrayTypeString = innerTypeString + "[][3]";
+        String arrayTypeString = innerTypeString + DIMS;
         Message m = binding._getCall().getResponseMessage();
         SOAPBody body = (SOAPBody) m.getSOAPBody();
         checkReturnMessage(body, responseQName, arrayTypeString,
@@ -232,7 +235,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfsoapencbase64Response");
         String innerTypeString = "soapenc:base64";
-        String arrayTypeString = innerTypeString + "[][3]";
+        String arrayTypeString = innerTypeString + DIMS;
         Message m = binding._getCall().getResponseMessage();
         SOAPBody body = (SOAPBody) m.getSOAPBody();
         checkReturnMessage(body, responseQName, arrayTypeString,
@@ -264,7 +267,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfbase64BinaryUnboundedResponse");
         String innerTypeString = "xsd:base64Binary";
-        String arrayTypeString = innerTypeString + "[][3]";
+        String arrayTypeString = innerTypeString + DIMS;
         Message m = binding._getCall().getResponseMessage();
         SOAPBody body = (SOAPBody) m.getSOAPBody();
         checkReturnMessage(body, responseQName, arrayTypeString,
@@ -294,7 +297,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfhexBinaryUnboundedResponse");
         String innerTypeString = "xsd:hexBinary";
-        String arrayTypeString = innerTypeString + "[][3]";
+        String arrayTypeString = innerTypeString + DIMS;
         Message m = binding._getCall().getResponseMessage();
         SOAPBody body = (SOAPBody) m.getSOAPBody();
         checkReturnMessage(body, responseQName, arrayTypeString,
@@ -326,7 +329,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfsoapencbase64UnboundedResponse");
         String innerTypeString = "soapenc:base64";
-        String arrayTypeString = innerTypeString + "[][3]";
+        String arrayTypeString = innerTypeString + DIMS;
         Message m = binding._getCall().getResponseMessage();
         SOAPBody body = (SOAPBody) m.getSOAPBody();
         checkReturnMessage(body, responseQName, arrayTypeString,

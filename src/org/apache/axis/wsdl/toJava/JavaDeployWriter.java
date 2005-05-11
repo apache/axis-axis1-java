@@ -583,14 +583,10 @@ public class JavaDeployWriter extends JavaWriter {
                 pw.print("\"");
             }
             QName returnItemType = Utils.getItemType(type);
-            if(returnItemType!=null && use == Use.ENCODED){
-                if (Constants.isSchemaXSD(returnItemType.getNamespaceURI()) &&
-                    !(returnItemType.getLocalPart().equals("hexBinary")||
-                      returnItemType.getLocalPart().equals("base64Binary"))) {
+            if (returnItemType != null && use == Use.ENCODED) {
                     pw.print(" returnItemType=\"");
                     pw.print(Utils.genQNameAttributeString(returnItemType, "tns2"));
                     pw.print("\"");
-                }
             }
         }
 

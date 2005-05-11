@@ -140,43 +140,42 @@ public class ArrayDeserializer extends DeserializerImpl
         String innerDimString = "";
         if (arrayTypeValue != null) {
             if (soapConstants != SOAPConstants.SOAP12_CONSTANTS) {
-            String arrayTypeValueNamespaceURI = 
-                arrayTypeValue.getNamespaceURI();
-            String arrayTypeValueLocalPart = 
-                arrayTypeValue.getLocalPart();
+                // Doing SOAP 1.1
+                // Array dimension noted like this : [][x]
+                String arrayTypeValueNamespaceURI =
+                    arrayTypeValue.getNamespaceURI();
+                String arrayTypeValueLocalPart =
+                    arrayTypeValue.getLocalPart();
 
-            int leftBracketIndex = 
-                arrayTypeValueLocalPart.lastIndexOf('[');
-            int rightBracketIndex = 
-                arrayTypeValueLocalPart.lastIndexOf(']');
-            if (leftBracketIndex == -1
-                || rightBracketIndex == -1
-                || rightBracketIndex < leftBracketIndex)
-                {
-                    throw new IllegalArgumentException(
-                      Messages.getMessage("badArrayType00", 
-                                           "" + arrayTypeValue));
+                int leftBracketIndex =
+                    arrayTypeValueLocalPart.lastIndexOf('[');
+                int rightBracketIndex =
+                    arrayTypeValueLocalPart.lastIndexOf(']');
+                if (leftBracketIndex == -1
+                    || rightBracketIndex == -1
+                    || rightBracketIndex < leftBracketIndex) {
+                        throw new IllegalArgumentException(
+                          Messages.getMessage("badArrayType00",
+                                               "" + arrayTypeValue));
                 }
-            
-            dimString = 
-                arrayTypeValueLocalPart.substring(leftBracketIndex + 1,
-                                                  rightBracketIndex);
-            arrayTypeValueLocalPart = 
-                arrayTypeValueLocalPart.substring(0, leftBracketIndex);
-            
-            // If multi-dim array set to soapenc:Array
-            if (arrayTypeValueLocalPart.endsWith("]")) {
-                defaultItemType = Constants.SOAP_ARRAY;
-                innerQName = new QName(
-                    arrayTypeValueNamespaceURI,
-                    arrayTypeValueLocalPart.substring(0,
-                        arrayTypeValueLocalPart.indexOf("["))); 
-                innerDimString = arrayTypeValueLocalPart.substring(
-                    arrayTypeValueLocalPart.indexOf("["));
-            } else {
-                defaultItemType = new QName(arrayTypeValueNamespaceURI,
-                                            arrayTypeValueLocalPart);
-            }
+
+                dimString =
+                    arrayTypeValueLocalPart.substring(leftBracketIndex + 1,
+                                                      rightBracketIndex);
+                arrayTypeValueLocalPart =
+                    arrayTypeValueLocalPart.substring(0, leftBracketIndex);
+
+                // If multi-dim array set to soapenc:Array
+                if (arrayTypeValueLocalPart.endsWith("]")) {
+                    defaultItemType = Constants.SOAP_ARRAY;
+                    int bracket = arrayTypeValueLocalPart.indexOf("[");
+                    innerQName = new QName(arrayTypeValueNamespaceURI,
+                                           arrayTypeValueLocalPart.substring(0, bracket));
+                    innerDimString = arrayTypeValueLocalPart.substring(bracket);
+                } else {
+                    defaultItemType = new QName(arrayTypeValueNamespaceURI,
+                                                arrayTypeValueLocalPart);
+                }
 
             } else {
                 String arraySizeValue = attributes.getValue(soapConstants.getEncodingURI(), Constants.ATTR_ARRAY_SIZE);
@@ -186,12 +185,12 @@ public class ArrayDeserializer extends DeserializerImpl
                 if (leftStarIndex != -1) {
                     // "*" => ""
                     if (leftStarIndex == 0 && arraySizeValue.length() == 1) {
-                    // "* *" => ""
+                        // "* *" => ""
                     } else if (leftStarIndex == (arraySizeValue.length() - 1)) {
                         throw new IllegalArgumentException(
                           Messages.getMessage("badArraySize00",
                                                "" + arraySizeValue));
-                    // "* N" => "N"
+                        // "* N" => "N"
                     } else {
                         dimString = arraySizeValue.substring(leftStarIndex + 2);
                         innerQName = arrayTypeValue;
@@ -238,20 +237,25 @@ public class ArrayDeserializer extends DeserializerImpl
                 compQName = innerQName;
 
                 if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    // With SOAP 1.2 Array, we append [] for each * found
                     int offset = 0;
                     while ((offset = innerDimString.indexOf('*', offset)) != -1) {
                         dims += "[]";
                         offset ++;
                     }
                 } else {
+                    // With SOAP 1.1 Array, we can append directly the complete innerDimString
                     dims += innerDimString;
                 }
             }
 
-
+            // item Class
             arrayItemClass = context.getTypeMapping().getClassForQName(compQName);
             if (arrayItemClass != null) {
                 try {
+                    // Append the dimension found to the classname computed from the itemClass
+                    // to form the array classname
+                    //
                     String loadableArrayClassName = JavaUtils.getLoadableClassName(
                             JavaUtils.getTextClassName(arrayItemClass.getName()) + dims);
                     arrayClass = ClassUtils.forName(loadableArrayClassName,

@@ -51,10 +51,10 @@ import java.util.Iterator;
  */
 public class ArraySerializer implements Serializer
 {
-    QName xmlType;
-    Class javaType;
-    QName componentType;
-    QName componentQName;
+    QName xmlType = null;
+    Class javaType = null;
+    QName componentType = null;
+    QName componentQName = null;
 
     /**
      * Constructor
@@ -70,8 +70,7 @@ public class ArraySerializer implements Serializer
      * Special constructor that takes the component type of the array.
      */
     public ArraySerializer(Class javaType, QName xmlType, QName componentType) {
-        this.javaType = javaType;
-        this.xmlType = xmlType;
+        this(javaType, xmlType);
         this.componentType = componentType;
     }
 
@@ -80,9 +79,7 @@ public class ArraySerializer implements Serializer
      * Special constructor that takes the component type and QName of the array.
      */
     public ArraySerializer(Class javaType, QName xmlType, QName componentType, QName componentQName) {
-        this.javaType = javaType;
-        this.xmlType = xmlType;
-        this.componentType = componentType;
+        this(javaType, xmlType, componentType);
         this.componentQName = componentQName;
     }
 
@@ -190,6 +187,12 @@ public class ArraySerializer implements Serializer
         if (componentTypeQName == null) {
             throw new IOException(
                     Messages.getMessage("noType00", componentClass.getName()));
+        }
+
+        if (Constants.XSD_BASE64.equals(componentTypeQName) || Constants.XSD_HEXBIN.equals(componentTypeQName)
+                || Constants.SOAP_BASE64.equals(componentTypeQName) || Constants.SOAP_BASE64BINARY.equals(componentTypeQName)) {
+            // Special case for base64 types : remove a []
+            dims = dims.substring(2);
         }
 
         int len = (list == null) ? Array.getLength(value) : list.size();

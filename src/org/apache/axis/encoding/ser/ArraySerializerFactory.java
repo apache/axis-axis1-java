@@ -35,8 +35,8 @@ public class ArraySerializerFactory extends BaseSerializerFactory {
         super(ArraySerializer.class, xmlType, javaType);
     }
 
-    private QName componentType;
-    private QName componentQName;
+    private QName componentType = null;
+    private QName componentQName = null;
 
     public ArraySerializerFactory(QName componentType) {
         super(ArraySerializer.class, Constants.SOAP_ARRAY, Object[].class);
@@ -44,8 +44,7 @@ public class ArraySerializerFactory extends BaseSerializerFactory {
     }
 
     public ArraySerializerFactory(QName componentType, QName componentQName) {
-        super(ArraySerializer.class, Constants.SOAP_ARRAY, Object[].class);
-        this.componentType = componentType;
+        this(componentType);
         this.componentQName = componentQName;
     }
 
