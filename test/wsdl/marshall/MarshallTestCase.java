@@ -6,6 +6,7 @@
  */
 package test.wsdl.marshall;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import javax.xml.namespace.QName;
 import org.apache.axis.Message;
@@ -357,6 +358,24 @@ public class MarshallTestCase extends junit.framework.TestCase {
         String[][] value = new String[][] {v1, v2, v3};
         String[][] ret = null;
         ret = binding.arrayOfArrayOfSoapEncString(value);
+
+        // print Array
+        for(int i = 0; i < ret.length; i++) {
+            System.out.print("[");
+            for(int j = 0; j < ret[i].length; j++) {
+                System.out.print("[" + ret[i][j] + "]");
+            }
+            System.out.println("]");
+        }
+
+        assertEquals("array size incorrect", value.length, ret.length);
+        for(int i = 0; i < value.length; i++) {
+            assertEquals("array size incorrect", value[i].length, ret[i].length);
+            for(int j = 0; j < value[i].length; j++) {
+                assertEquals("value not equals", value[i][j], ret[i][j]);
+            }
+        }
+
         QName responseQName = new QName("http://marshall.wsdl.test",
                 "ArrayOfArrayOfSoapEncStringResponse");
         QName returnQName = new QName("return");
@@ -382,6 +401,77 @@ public class MarshallTestCase extends junit.framework.TestCase {
                 String xsiType = returnE.getAttributeNS(
                         "http://www.w3.org/2001/XMLSchema", "type");
                 assertEquals("wrong xsi type", "soapenc:string", xsiType);
+
+
+            }
+        }
+        // TBD - validate results
+    }
+
+    public void test13MarshallPortArrayOfArrayOfinteger() throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
+                    .getMarshallPort();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError(
+                    "JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        // Test operation
+        BigInteger[] v1 = new BigInteger[] { new BigInteger("-3254687"), new BigInteger("0"), new BigInteger("3254687"), null};
+        BigInteger[] v2 = new BigInteger[] { new BigInteger("-3254688"), new BigInteger("0"), new BigInteger("3254688"), null};
+        BigInteger[] v3 = new BigInteger[] { new BigInteger("-3254689"), new BigInteger("0"), new BigInteger("3254689"), null};
+        BigInteger[][] value = new BigInteger[][] {v1, v2, v3};
+        BigInteger[][] ret = null;
+        ret = binding.arrayOfArrayOfinteger(value);
+
+        // print Array
+        for(int i = 0; i < ret.length; i++) {
+            System.out.print("[");
+            for(int j = 0; j < ret[i].length; j++) {
+                System.out.print("[" + ret[i][j] + "]");
+            }
+            System.out.println("]");
+        }
+
+        assertEquals("array size incorrect", value.length, ret.length);
+        for(int i = 0; i < value.length; i++) {
+            assertEquals("array size incorrect", value[i].length, ret[i].length);
+            for(int j = 0; j < value[i].length; j++) {
+                assertEquals("value not equals", value[i][j], ret[i][j]);
+            }
+        }
+
+        QName responseQName = new QName("http://marshall.wsdl.test",
+                "ArrayOfArrayOfintegerResponse");
+        QName returnQName = new QName("return");
+        Message m = binding._getCall().getResponseMessage();
+
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        MessageElement response = body.getChildElement(responseQName);
+        MessageElement returnE = response.getChildElement(returnQName);
+        String arrayType = returnE.getAttributeNS(
+                "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
+        assertEquals("wrong array type", "ns2:ArrayOfinteger[3]", arrayType);
+
+
+        for (Iterator it = response.getChildElements(returnQName); it.hasNext();) {
+            returnE = (MessageElement) it.next();
+            arrayType = returnE.getAttributeNS(
+                    "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
+            assertEquals("wrong array type", "xsd:integer[4]", arrayType);
+
+
+            for (Iterator it2 = response.getChildElements(returnQName); it2.hasNext();) {
+                returnE = (MessageElement) it2.next();
+                String xsiType = returnE.getAttributeNS(
+                        "http://www.w3.org/2001/XMLSchema", "type");
+                assertEquals("wrong xsi type", "xsd:integer", xsiType);
 
 
             }

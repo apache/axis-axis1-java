@@ -7,6 +7,8 @@
 
 package test.wsdl.marshall;
 
+import java.math.BigInteger;
+
 public class MarshallBindingImpl implements test.wsdl.marshall.MarshallPortType{
     public test.wsdl.marshall.types.MyBean[] myBeanArray(test.wsdl.marshall.types.MyBean[] arrayOfMyBean_1) throws java.rmi.RemoteException {
         return null;
@@ -29,6 +31,10 @@ public class MarshallBindingImpl implements test.wsdl.marshall.MarshallPortType{
     }
 
     public String[][] arrayOfArrayOfSoapEncString(String[][] parameter) throws java.rmi.RemoteException {
+        return parameter;
+    }
+
+    public BigInteger[][] arrayOfArrayOfinteger(BigInteger[][] parameter) throws java.rmi.RemoteException {
         return parameter;
     }
 
