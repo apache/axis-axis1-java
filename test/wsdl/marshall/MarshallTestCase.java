@@ -336,6 +336,59 @@ public class MarshallTestCase extends junit.framework.TestCase {
                 innerTypeString);
     }
 
+    public void test12MarshallPortArrayOfArrayOfSoapEncString() throws Exception {
+        test.wsdl.marshall.MarshallBindingStub binding;
+        try {
+            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
+                    .getMarshallPort();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            if (jre.getLinkedCause() != null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError(
+                    "JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+        // Time out after a minute
+        binding.setTimeout(60000);
+        // Test operation
+        String[] v1 = new String[] { "a1", "a2", "", null, "a5", null};
+        String[] v2 = new String[] { "b1", "b2", "", null, "b5", null };
+        String[] v3 = new String[] { "c1", "c2", "", null, "c5", null };
+        String[][] value = new String[][] {v1, v2, v3};
+        String[][] ret = null;
+        ret = binding.arrayOfArrayOfSoapEncString(value);
+        QName responseQName = new QName("http://marshall.wsdl.test",
+                "ArrayOfArrayOfSoapEncStringResponse");
+        QName returnQName = new QName("return");
+        Message m = binding._getCall().getResponseMessage();
+
+        SOAPBody body = (SOAPBody) m.getSOAPBody();
+        MessageElement response = body.getChildElement(responseQName);
+        MessageElement returnE = response.getChildElement(returnQName);
+        String arrayType = returnE.getAttributeNS(
+                "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
+        assertEquals("wrong array type", "ns2:ArrayOfSoapEncString[3]", arrayType);
+
+
+        for (Iterator it = response.getChildElements(returnQName); it.hasNext();) {
+            returnE = (MessageElement) it.next();
+            arrayType = returnE.getAttributeNS(
+                    "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
+            assertEquals("wrong array type", "soapenc:string[6]", arrayType);
+
+
+            for (Iterator it2 = response.getChildElements(returnQName); it2.hasNext();) {
+                returnE = (MessageElement) it2.next();
+                String xsiType = returnE.getAttributeNS(
+                        "http://www.w3.org/2001/XMLSchema", "type");
+                assertEquals("wrong xsi type", "soapenc:string", xsiType);
+
+
+            }
+        }
+        // TBD - validate results
+    }
+
     /**
      * @param m
      */

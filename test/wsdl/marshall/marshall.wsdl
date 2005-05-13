@@ -47,6 +47,15 @@
                 </complexContent>
             </complexType>
 
+            <!-- Multi Array -->
+            <complexType name="ArrayOfArrayOfSoapEncString">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:ArrayOfSoapEncString[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
 			<complexType name="ArrayOfbase64Binary">
 				<complexContent>
 					<restriction base="soapenc:Array">
@@ -130,6 +139,13 @@
         <wsdl:part name="return" type="tns1:ArrayOfXsdString"/>
     </wsdl:message>
 
+    <wsdl:message name="ArrayOfArrayOfSoapEncStringRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfArrayOfSoapEncString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfArrayOfSoapEncStringResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfArrayOfSoapEncString"/>
+    </wsdl:message>
+
 
 
     <wsdl:message name="ArrayOfbase64BinaryRequest">
@@ -199,6 +215,11 @@
             <wsdl:output name="ArrayOfXsdStringResponse" message="impl:ArrayOfXsdStringResponse"/>
         </wsdl:operation>
 
+        <wsdl:operation name="ArrayOfArrayOfSoapEncString" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfArrayOfSoapEncStringRequest" message="impl:ArrayOfArrayOfSoapEncStringRequest"/>
+            <wsdl:output name="ArrayOfArrayOfSoapEncStringResponse" message="impl:ArrayOfArrayOfSoapEncStringResponse"/>
+        </wsdl:operation>
+
         <wsdl:operation name="ArrayOfbase64Binary" parameterOrder="parameter">
             <wsdl:input name="ArrayOfbase64BinaryRequest" message="impl:ArrayOfbase64BinaryRequest"/>
             <wsdl:output name="ArrayOfbase64BinaryResponse" message="impl:ArrayOfbase64BinaryResponse"/>
@@ -264,6 +285,16 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="ArrayOfXsdString">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfArrayOfSoapEncString">
             <wsdlsoap:operation/>
             <wsdl:input>
                 <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
