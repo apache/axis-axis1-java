@@ -386,7 +386,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         MessageElement returnE = response.getChildElement(returnQName);
         String arrayType = returnE.getAttributeNS(
                 "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
-        assertEquals("wrong array type", "ns2:ArrayOfSoapEncString[3]", arrayType);
+        assertEquals("wrong array type", "soapenc:string[][3]", arrayType);
 
 
         for (Iterator it = response.getChildElements(returnQName); it.hasNext();) {
@@ -457,7 +457,7 @@ public class MarshallTestCase extends junit.framework.TestCase {
         MessageElement returnE = response.getChildElement(returnQName);
         String arrayType = returnE.getAttributeNS(
                 "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
-        assertEquals("wrong array type", "ns2:ArrayOfinteger[3]", arrayType);
+        assertEquals("wrong array type", "xsd:integer[][3]", arrayType);
 
 
         for (Iterator it = response.getChildElements(returnQName); it.hasNext();) {
