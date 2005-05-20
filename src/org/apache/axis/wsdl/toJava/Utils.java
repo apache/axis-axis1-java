@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,14 +52,14 @@ import java.util.Vector;
 
 /**
  * Class Utils
- * 
+ *
  * @version %I%, %G%
  */
 public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /** Field log */
     protected static Log log = LogFactory.getLog(Utils.class.getName());
-    
+
     /**
      * @see #holder(Parameter, Emitter)
      */
@@ -68,10 +68,10 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         // For other fields the default values will do.
         arg.setType(type);
         return holder(arg, emitter);
-    }    
+    }
     /**
      * Given a type, return the Java mapping of that type's holder.
-     * 
+     *
      * @param p          parameter whose holder class name we want to obtain.
      * @param emitter    the only {@link Emitter} object embodying the running
      *                   instance of WSDL2Java.
@@ -146,7 +146,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             }
 
             name = JavaUtils.replace(name, "java.lang.", "");
-            
+
             // This could be a special QName for a indexed property.
             // If so, change the [] to Array.
             name = JavaUtils.replace(name, "[]", "Array");
@@ -220,7 +220,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Add package to name
-     * 
+     *
      * @param className full name of the class.
      * @param newPkg    name of the package to append
      * @return String name with package name added
@@ -240,7 +240,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Given a fault message, return the fully qualified Java class name
      * of the exception to be generated from this fault
-     * 
+     *
      * @param faultMessage The WSDL fault message
      * @param symbolTable  the current symbol table
      * @return A Java class name for the fault
@@ -256,7 +256,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Given a fault message, return the XML type of the exception data.
-     * 
+     *
      * @param faultMessage The WSDL fault message object
      * @param symbolTable  the current symbol table
      * @return A QName for the XML type of the data
@@ -272,7 +272,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Given a fault message, return TRUE if the fault is a complex type fault
-     * 
+     *
      * @param faultMessage The WSDL fault message object
      * @param symbolTable  the current symbol table
      * @return A Java class name for the fault
@@ -297,10 +297,10 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * The first element in the vector is the base type (an TypeEntry).
      * Subsequent elements are values (Strings).
      * If this is not an enumeration, null is returned.
-     * 
-     * @param node        
-     * @param symbolTable 
-     * @return 
+     *
+     * @param node
+     * @param symbolTable
+     * @return
      */
     public static Vector getEnumerationBaseAndValues(Node node,
                                                      SymbolTable symbolTable) {
@@ -417,9 +417,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Capitalize the first character of the name.
-     * 
-     * @param name 
-     * @return 
+     *
+     * @param name
+     * @return
      */
     public static String capitalizeFirstChar(String name) {
 
@@ -440,9 +440,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Prepend an underscore to the name
-     * 
-     * @param name 
-     * @return 
+     *
+     * @param name
+     * @return
      */
     public static String addUnderscore(String name) {
 
@@ -455,9 +455,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Map an XML name to a valid Java identifier
-     * 
-     * @param name 
-     * @return 
+     *
+     * @param name
+     * @return
      */
     public static String xmlNameToJava(String name) {
 
@@ -470,9 +470,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Map an XML name to a valid Java identifier w/ capitolized first letter
-     * 
-     * @param name 
-     * @return 
+     *
+     * @param name
+     * @return
      */
     public static String xmlNameToJavaClass(String name) {
         return capitalizeFirstChar(xmlNameToJava(name));
@@ -480,9 +480,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Method makePackageName
-     * 
-     * @param namespace 
-     * @return 
+     *
+     * @param namespace
+     * @return
      */
     public static String makePackageName(String namespace) {
 
@@ -549,7 +549,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Massage <tt>word</tt> into a form suitable for use in a Java package name.
      * Append it to the target string buffer with a <tt>.</tt> delimiter iff
      * <tt>word</tt> is not the first word in the package name.
-     * 
+     *
      * @param sb        the buffer to append to
      * @param word      the word to append
      * @param firstWord a flag indicating whether this is the first word
@@ -589,9 +589,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Query Java Local Name
-     * 
-     * @param fullName 
-     * @return 
+     *
+     * @param fullName
+     * @return
      */
     public static String getJavaLocalName(String fullName) {
         return fullName.substring(fullName.lastIndexOf('.') + 1);
@@ -599,9 +599,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Query Java Package Name
-     * 
-     * @param fullName 
-     * @return 
+     *
+     * @param fullName
+     * @return
      */
     public static String getJavaPackageName(String fullName) {
 
@@ -614,12 +614,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Does the given file already exist in the given namespace?
-     * 
-     * @param name       
-     * @param namespace  
-     * @param namespaces 
-     * @return 
-     * @throws IOException 
+     *
+     * @param name
+     * @param namespace
+     * @param namespaces
+     * @return
+     * @throws IOException
      */
     public static boolean fileExists(
             String name, String namespace, Namespaces namespaces)
@@ -646,10 +646,10 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Return a string with "var" wrapped as an Object type if needed
-     * 
-     * @param type 
-     * @param var  
-     * @return 
+     *
+     * @param type
+     * @param var
+     * @return
      */
     public static String wrapPrimitiveType(TypeEntry type, String var) {
 
@@ -672,9 +672,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Return the Object variable 'var' cast to the appropriate type
      * doing the right thing for the primitive types.
-     * 
-     * @param var      
-     * @return 
+     *
+     * @param var
+     * @return
      */
     public static String getResponseString(Parameter param,
                                            String var) {
@@ -683,7 +683,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
         String typeName = param.getType().getName();
         MimeInfo mimeInfo = param.getMIMEInfo();
-        
+
         String mimeType = (mimeInfo == null)
                 ? null
                 : mimeInfo.getType();
@@ -716,7 +716,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
 
         String objType = (String) TYPES.get(typeName);
-        
+
         if (objType != null) {
             if (param.isOmittable()) {
                 typeName = objType;
@@ -725,29 +725,29 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                         "Value();";
             }
         }
-        
+
         return "(" + typeName + ") " + var + ";";
     }    // getResponseString
 
     /**
      * Method isPrimitiveType
-     * 
-     * @param type 
-     * @return 
+     *
+     * @param type
+     * @return
      */
     public static boolean isPrimitiveType(TypeEntry type) {
         return TYPES.get(type.getName()) != null;
     }    // isPrimitiveType
-    
+
     /**
      * Return a "wrapper" type for the given type name.  In other words,
      * if it's a primitive type ("int") return the java wrapper class
      * ("java.lang.Integer").  Otherwise return the type name itself.
-     * 
+     *
      * @param type
      * @return the name of a java wrapper class for the type, or the type's
      *         name if it's not primitive.
-     */ 
+     */
     public static String getWrapperType(String type) {
         String ret = (String)TYPES.get(type);
         return (ret == null) ? type : ret;
@@ -756,7 +756,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Return the operation QName.  The namespace is determined from
      * the soap:body namespace, if it exists, otherwise it is "".
-     * 
+     *
      * @param bindingOper the operation
      * @param bEntry      the symbol table binding entry
      * @param symbolTable SymbolTable
@@ -920,9 +920,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Common code for generating a QName in emitted code.  Note that there's
      * no semicolon at the end, so we can use this in a variety of contexts.
-     * 
-     * @param qname 
-     * @return 
+     *
+     * @param qname
+     * @return
      */
     public static String getNewQName(javax.xml.namespace.QName qname) {
         return "new javax.xml.namespace.QName(\"" + qname.getNamespaceURI()
@@ -938,9 +938,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Get the parameter type name.  If this is a MIME type, then
      * figure out the appropriate type from the MIME type, otherwise
      * use the name of the type itself.
-     * 
-     * @param parm 
-     * @return 
+     *
+     * @param parm
+     * @return
      */
     public static String getParameterTypeName(Parameter parm) {
 
@@ -971,7 +971,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Get the QName that could be used in the xsi:type
      * when serializing an object for this parameter/return
-     * 
+     *
      * @param param is a parameter
      * @return the QName of the parameter's xsi type
      */
@@ -987,7 +987,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Get the QName that could be used in the xsi:type
      * when serializing an object of the given type.
-     * 
+     *
      * @param te is the type entry
      * @return the QName of the type's xsi type
      */
@@ -1025,7 +1025,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Given a MIME type, return the AXIS-specific type QName.
-     * 
+     *
      * @param mimeName the MIME type name
      * @return the AXIS-specific QName for the MIME type
      */
@@ -1051,9 +1051,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Are there any MIME parameters in the given binding?
-     * 
-     * @param bEntry 
-     * @return 
+     *
+     * @param bEntry
+     * @return
      */
     public static boolean hasMIME(BindingEntry bEntry) {
 
@@ -1072,10 +1072,10 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Are there any MIME parameters in the given binding's operation?
-     * 
-     * @param bEntry    
-     * @param operation 
-     * @return 
+     *
+     * @param bEntry
+     * @param operation
+     * @return
      */
     public static boolean hasMIME(BindingEntry bEntry,
                                   BindingOperation operation) {
@@ -1182,11 +1182,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * <p/>
      * Caller should expect to wrap the construction in a try/catch block
      * if bThrow is set to <i>true</i>.
-     * 
+     *
      * @param param       info about the parameter we need a constructor for
      * @param symbolTable used to lookup enumerations
      * @param bThrow      set to true if contructor needs try/catch block
-     * @return 
+     * @return
      */
     public static String getConstructorForParam(Parameter param,
                                                 SymbolTable symbolTable,
@@ -1262,7 +1262,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
             return paramType + "." + enumeration;
         }
-        
+
         if(param.getType().getRefType()!= null){
             // Check for enumeration
             Vector v2 = Utils.getEnumerationBaseAndValues(param.getType().getRefType().getNode(),
@@ -1283,7 +1283,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     }
 
     public static boolean shouldEmit(TypeEntry type) {
-        // 1) Don't register types that are base (primitive) types or attributeGroups.
+        // 1) Don't register types that are base (primitive) types
+        //    or attributeGroups or xs:groups.
         // If the baseType != null && getRefType() != null this
         // is a simpleType that must be registered.
         // 2) Don't register the special types for collections
@@ -1295,9 +1296,20 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 || (type instanceof Element) || !type.isReferenced()
                 || type.isOnlyLiteralReferenced()
                 || ((type.getNode() != null)
-                && type.getNode().getLocalName().equals(
-                        "attributeGroup"))));
+                && (isXsNode(type.getNode(), "group") ||
+                        isXsNode(type.getNode(), "attributeGroup")))));
     }
+
+
+    /**
+    * Determines if the DOM Node represents an xs:<node>
+    */
+    public static boolean isXsNode (Node node, String nameName)
+    {
+		return (node.getLocalName().equals(nameName)
+                && Constants.isSchemaXSD (node.getNamespaceURI ()));
+	}
+
 
     public static QName getItemQName(TypeEntry te) {
         if (te instanceof DefinedElement) {

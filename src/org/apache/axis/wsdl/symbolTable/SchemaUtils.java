@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import java.util.Vector;
 
 /**
  * This class contains static utility methods specifically for schema type queries.
- * 
+ *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
 public class SchemaUtils {
@@ -58,7 +58,7 @@ public class SchemaUtils {
             // Under the complexType there could be complexContent with
             // mixed="true"
             NodeList children = node.getChildNodes();
-            
+
             for (int j = 0; j < children.getLength(); j++) {
                 Node kid = children.item(j);
                 if (isXSDNode(kid, "complexContent")) {
@@ -85,9 +85,9 @@ public class SchemaUtils {
         }
         return null;
     }
-    
+
     public static Node getListNode(Node node) {
-        // Expecting a schema simpleType 
+        // Expecting a schema simpleType
         if (isXSDNode(node, "simpleType")) {
             // Under the simpleType there could be list
             NodeList children = node.getChildNodes();
@@ -104,19 +104,19 @@ public class SchemaUtils {
     public static boolean isSimpleTypeWithUnion(Node node) {
         return (getUnionNode(node) != null);
     }
-    
+
   /**
    * This method checks out if the given node satisfies the 3rd condition
    * of the "wrapper" style:
    * such an element (a wrapper) must be of a complex type defined using the
    * xsd:sequence compositor and containing only elements declarations.
    * (excerpt from JAX-RPC spec 1.1 Maintenanace Review 2 Chapter 6 Section 4.1.)
-   * 
-   * @param node        
-   * @return 
+   *
+   * @param node
+   * @return
    */
   public static boolean isWrappedType(Node node) {
-    
+
     if (node == null) {
       return false;
     }
@@ -143,7 +143,7 @@ public class SchemaUtils {
       // Under the complexType there could be complexContent/simpleContent
       // and extension elements if this is a derived type.
       // A wrapper element must be complex-typed.
-      
+
       NodeList children = node.getChildNodes();
 
       for (int j = 0; j < children.getLength(); j++) {
@@ -158,8 +158,8 @@ public class SchemaUtils {
 
       // Under the complexType there may be choice, sequence, group and/or all nodes.
       // (There may be other #text nodes, which we will ignore).
-      // The complex type of a wrapper element must have only sequence 
-      // and again element declarations in the sequence. 
+      // The complex type of a wrapper element must have only sequence
+      // and again element declarations in the sequence.
       children = node.getChildNodes();
       int len =  children.getLength();
       for (int j = 0; j < len; j++) {
@@ -204,11 +204,11 @@ public class SchemaUtils {
               }
           }
       }
-    } 
+    }
     // allows void type
     return true;
   }
-  
+
     /**
      * If the specified node represents a supported JAX-RPC complexType or
      * simpleType, a Vector is returned which contains ElementDecls for the
@@ -221,10 +221,10 @@ public class SchemaUtils {
      * (use the getContainedAttributeTypes)
      * If the specified node is not a supported
      * JAX-RPC complexType/simpleType/element null is returned.
-     * 
-     * @param node        
-     * @param symbolTable 
-     * @return 
+     *
+     * @param node
+     * @param symbolTable
+     * @return
      */
     public static Vector getContainedElementDeclarations(Node node,
                                                          SymbolTable symbolTable) {
@@ -298,7 +298,7 @@ public class SchemaUtils {
                     if ((localName != null)
                         && (localName.equals("extension") || localName.equals("restriction"))
                         && Constants.isSchemaXSD(kid.getNamespaceURI())) {
-                        
+
                         // get the type of the extension/restriction from the "base" attribute
                         QName extendsOrRestrictsType =
                                 Utils.getTypeQName(children.item(j),
@@ -344,6 +344,12 @@ public class SchemaUtils {
 
             return v;
         } else if (isXSDNode(node, "group")) {
+			/*
+			* Does this else clause make any sense anymore if
+			* we're treating refs to xs:groups like a macro inclusion
+			* into the referencing type?
+			* Maybe this else clause should never be possible?
+			*
             NodeList children = node.getChildNodes();
             Vector v = new Vector();
             int len = children.getLength();
@@ -362,6 +368,8 @@ public class SchemaUtils {
                 }
             }
             return v;
+            */
+                return null;
         } else {
 
             // This may be a simpleType, return the type with the name "value"
@@ -400,10 +408,10 @@ public class SchemaUtils {
     /**
      * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath a Choice Node
-     * 
-     * @param choiceNode  
-     * @param symbolTable 
-     * @return 
+     *
+     * @param choiceNode
+     * @param symbolTable
+     * @return
      */
     private static Vector processChoiceNode(Node choiceNode,
                                             SymbolTable symbolTable) {
@@ -423,9 +431,9 @@ public class SchemaUtils {
                 } else if (localName.equals("group")) {
                     v.addAll(processGroupNode(kid, symbolTable));
                 } else if (localName.equals("element")) {
-                    ElementDecl elem = processChildElementNode(kid, 
+                    ElementDecl elem = processChildElementNode(kid,
                                                                symbolTable);
-                    
+
                     if (elem != null) {
                         // XXX: forces minOccurs="0" so that a null choice
                         // element can be serialized ok.
@@ -453,7 +461,7 @@ public class SchemaUtils {
 
     /**
      * Returns named child node.
-     * 
+     *
      * @param parentNode Parent node.
      * @param name Element name of child node to return.
      */
@@ -476,9 +484,9 @@ public class SchemaUtils {
     /**
      * Returns all textual nodes of a subnode defined by a parent node
      * and a path of element names to that subnode.
-     * 
+     *
      * @param root Parent node.
-     * @param path Path of element names to text of interest, delimited by "/". 
+     * @param path Path of element names to text of interest, delimited by "/".
      */
     public static String getTextByPath(Node root, String path) throws DOMException {
         StringTokenizer st = new StringTokenizer(path, "/");
@@ -490,7 +498,7 @@ public class SchemaUtils {
                 throw new DOMException(DOMException.NOT_FOUND_ERR, "could not find " + elementName);
             node = child;
         }
-    
+
         // should have found the node
         String text = "";
         NodeList children = node.getChildNodes();
@@ -510,10 +518,10 @@ public class SchemaUtils {
     }
 
     /**
-     * Returns the complete text of the child xsd:annotation/xsd:documentation 
-     * element from the provided node.  Only the first annotation element and 
+     * Returns the complete text of the child xsd:annotation/xsd:documentation
+     * element from the provided node.  Only the first annotation element and
      * the first documentation element in the annotation element will be used.
-     * 
+     *
      * @param typeNode Parent node.
      */
     public static String getAnnotationDocumentation(Node typeNode) {
@@ -536,7 +544,7 @@ public class SchemaUtils {
         } else {
             documentationNode = null;
         }
-        
+
         // should have found the node if it exists
         String text = "";
         if (documentationNode != null) {
@@ -560,10 +568,10 @@ public class SchemaUtils {
     /**
      * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath a Sequence Node
-     * 
-     * @param sequenceNode 
-     * @param symbolTable  
-     * @return 
+     *
+     * @param sequenceNode
+     * @param symbolTable
+     * @return
      */
     private static Vector processSequenceNode(Node sequenceNode,
                                               SymbolTable symbolTable) {
@@ -610,12 +618,12 @@ public class SchemaUtils {
 
     /**
      * Invoked by getContainedElementDeclarations to get the child element types
-     * and child element names underneath a group node. If a ref attribute is 
+     * and child element names underneath a group node. If a ref attribute is
      * specified, only the referenced group element is returned.
-     * 
-     * @param groupNode   
-     * @param symbolTable 
-     * @return 
+     *
+     * @param groupNode
+     * @param symbolTable
+     * @return
      */
     private static Vector processGroupNode(Node groupNode,
                                            SymbolTable symbolTable) {
@@ -646,8 +654,26 @@ public class SchemaUtils {
             // assignment compatible with 'org.apache.axis.wsdl.symbolTable.Type'.
             Type type = (Type) symbolTable.getTypeEntry(nodeType, false);
 
-            if (type != null) {
-                v.add(new ElementDecl(type, nodeName));
+            if (type != null && type.getNode() != null) {
+				//v.add(new ElementDecl(type, nodeName));
+				Node node = type.getNode();
+				NodeList children = node.getChildNodes();
+				for (int j = 0; j < children.getLength(); j++) {
+					QName subNodeKind = Utils.getNodeQName(children.item(j));
+					if ((subNodeKind != null)
+						&& Constants.isSchemaXSD(
+							subNodeKind.getNamespaceURI())) {
+						if (subNodeKind.getLocalPart().equals("sequence")) {
+							v.addAll(processSequenceNode(children.item(j),
+								 symbolTable));
+						} else if (subNodeKind.getLocalPart().equals("all")) {
+							v.addAll(processAllNode(children.item(j), symbolTable));
+							} else if (subNodeKind.getLocalPart().equals("choice")) {
+								v.addAll(processChoiceNode(children.item(j),
+									symbolTable));
+						}
+					}
+				}
             }
         }
         return v;
@@ -657,10 +683,10 @@ public class SchemaUtils {
     /**
      * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath an all node.
-     * 
-     * @param allNode     
-     * @param symbolTable 
-     * @return 
+     *
+     * @param allNode
+     * @param symbolTable
+     * @return
      */
     private static Vector processAllNode(Node allNode,
                                          SymbolTable symbolTable) {
@@ -689,10 +715,10 @@ public class SchemaUtils {
      * <p/>
      * If the specified node represents a supported JAX-RPC child element,
      * we return an ElementDecl containing the child element name and type.
-     * 
-     * @param elementNode 
-     * @param symbolTable 
-     * @return 
+     *
+     * @param elementNode
+     * @param symbolTable
+     * @return
      */
     private static ElementDecl processChildElementNode(Node elementNode,
                                                        SymbolTable symbolTable) {
@@ -702,7 +728,7 @@ public class SchemaUtils {
         BooleanHolder forElement = new BooleanHolder();
         String comments = null;
         comments = getAnnotationDocumentation(elementNode);
-        
+
         // The type qname is used to locate the TypeEntry, which is then
         // used to retrieve the proper java name of the type.
         QName nodeType = Utils.getTypeQName(elementNode, forElement, false);
@@ -770,9 +796,9 @@ public class SchemaUtils {
     /**
      * Returns the WSDL2Java QName for the anonymous type of the element
      * or null.
-     * 
-     * @param node 
-     * @return 
+     *
+     * @param node
+     * @return
      */
     public static QName getElementAnonQName(Node node) {
 
@@ -795,9 +821,9 @@ public class SchemaUtils {
     /**
      * Returns the WSDL2Java QName for the anonymous type of the attribute
      * or null.
-     * 
-     * @param node 
-     * @return 
+     *
+     * @param node
+     * @return
      */
     public static QName getAttributeAnonQName(Node node) {
 
@@ -819,9 +845,9 @@ public class SchemaUtils {
 
     /**
      * If the specified node is a simple type or contains simpleContent, return true
-     * 
-     * @param node 
-     * @return 
+     *
+     * @param node
+     * @return
      */
     public static boolean isSimpleTypeOrSimpleContent(Node node) {
 
@@ -890,7 +916,7 @@ public class SchemaUtils {
      * <p/>
      * This can be used to determine that a given Node defines a
      * schema "complexType" "element" and so forth.
-     * 
+     *
      * @param node            a <code>Node</code> value
      * @param schemaLocalName a <code>String</code> value
      * @return true if the node is matches the name in the schema namespace.
@@ -910,10 +936,10 @@ public class SchemaUtils {
     /**
      * Look for the base type of node iff node is a complex type that has been
      * derived by restriction; otherwise return null.
-     * 
-     * @param node        
-     * @param symbolTable 
-     * @return 
+     *
+     * @param node
+     * @param symbolTable
+     * @return
      */
     public static TypeEntry getComplexElementRestrictionBase(Node node,
                                                              SymbolTable symbolTable) {
@@ -993,10 +1019,10 @@ public class SchemaUtils {
     /**
      * If the specified node represents a supported JAX-RPC complexType/element
      * which extends another complexType.  The Type of the base is returned.
-     * 
-     * @param node        
-     * @param symbolTable 
-     * @return 
+     *
+     * @param node
+     * @param symbolTable
+     * @return
      */
     public static TypeEntry getComplexElementExtensionBase(Node node,
                                                            SymbolTable symbolTable) {
@@ -1085,9 +1111,9 @@ public class SchemaUtils {
     /**
      * If the specified node represents a 'normal' non-enumeration simpleType,
      * the QName of the simpleType base is returned.
-     * 
-     * @param node 
-     * @return 
+     *
+     * @param node
+     * @return
      */
     public static QName getSimpleTypeBase(Node node) {
 
@@ -1102,9 +1128,9 @@ public class SchemaUtils {
 
     /**
      * Method getContainedSimpleTypes
-     * 
-     * @param node 
-     * @return 
+     *
+     * @param node
+     * @return
      */
     public static QName[] getContainedSimpleTypes(Node node) {
 
@@ -1180,9 +1206,9 @@ public class SchemaUtils {
     /**
      * Returns the contained restriction or extension node underneath
      * the specified node.  Returns null if not found
-     * 
-     * @param node 
-     * @return 
+     *
+     * @param node
+     * @return
      */
     public static Node getRestrictionOrExtensionNode(Node node) {
 
@@ -1252,7 +1278,7 @@ public class SchemaUtils {
     /**
      * If the specified node represents an array encoding of one of the following
      * forms, then return the qname repesenting the element type of the array.
-     * 
+     *
      * @param node is the node
      * @param dims is the output value that contains the number of dimensions if return is not null
      * @param itemQName will end up containing the "inner" QName for a
@@ -1291,7 +1317,7 @@ public class SchemaUtils {
      * <p/>
      * <xsd:element ref="alias"  maxOccurs="unbounded"/>
      * returns qname for "alias"
-     * 
+     *
      * @param node is the Node
      * @return QName of the compoent of the collection
      */
@@ -1378,7 +1404,7 @@ public class SchemaUtils {
     /**
      * If the specified node represents an array encoding of one of the following
      * forms, then return the qname repesenting the element type of the array.
-     * 
+     *
      * @param node is the node
      * @param dims is the output value that contains the number of dimensions if return is not null
      * @return QName or null
@@ -1482,7 +1508,7 @@ public class SchemaUtils {
                     }
                 }
             }
-            
+
             // Under the restriction there should be an attribute OR a sequence/all group node.
             // (There may be other #text nodes, which we will ignore).
             Node groupNode = null;
@@ -1622,10 +1648,10 @@ public class SchemaUtils {
     /**
      * adds an attribute node's type and name to the vector
      * helper used by getContainedAttributeTypes
-     * 
-     * @param v           
-     * @param child       
-     * @param symbolTable 
+     *
+     * @param v
+     * @param child
+     * @param symbolTable
      */
     private static void addAttributeToVector(Vector v, Node child,
                                              SymbolTable symbolTable) {
@@ -1680,7 +1706,7 @@ public class SchemaUtils {
         if (type instanceof org.apache.axis.wsdl.symbolTable.Element) {
                 type = ((org.apache.axis.wsdl.symbolTable.Element) type).getRefType();
         }
-        
+
         // add type and name to vector, skip it if we couldn't parse it
         // XXX - this may need to be revisited.
         if ((type != null) && (attributeName != null)) {
@@ -1700,11 +1726,11 @@ public class SchemaUtils {
     /**
      * adds an attribute to the vector
      * helper used by addAttributeGroupToVector
-     * 
-     * @param v           
-     * @param symbolTable 
-     * @param type        
-     * @param name        
+     *
+     * @param v
+     * @param symbolTable
+     * @param type
+     * @param name
      */
     private static void addAttributeToVector(Vector v, SymbolTable symbolTable,
                                              QName type, QName name) {
@@ -1720,10 +1746,10 @@ public class SchemaUtils {
     /**
      * adds each attribute group's attribute node to the vector
      * helper used by getContainedAttributeTypes
-     * 
-     * @param v           
-     * @param attrGrpnode 
-     * @param symbolTable 
+     *
+     * @param v
+     * @param attrGrpnode
+     * @param symbolTable
      */
     private static void addAttributeGroupToVector(Vector v, Node attrGrpnode,
                                                   SymbolTable symbolTable) {
@@ -1815,10 +1841,10 @@ public class SchemaUtils {
      * <attribute name="Male" type="boolean" />
      * <attributeGroup ref="s0:MyAttrSet" />
      * </complexType>
-     * 
-     * @param node        
-     * @param symbolTable 
-     * @return 
+     *
+     * @param node
+     * @param symbolTable
+     * @return
      */
     public static Vector getContainedAttributeTypes(Node node,
                                                     SymbolTable symbolTable) {
@@ -1930,9 +1956,9 @@ public class SchemaUtils {
 
     /**
      * Determine if a string is a simple XML Schema type
-     * 
-     * @param s 
-     * @return 
+     *
+     * @param s
+     * @return
      */
     private static boolean isSimpleSchemaType(String s) {
 
@@ -1945,9 +1971,9 @@ public class SchemaUtils {
 
     /**
      * Determine if a QName is a simple XML Schema type
-     * 
-     * @param qname 
-     * @return 
+     *
+     * @param qname
+     * @return
      */
     public static boolean isSimpleSchemaType(QName qname) {
 
@@ -1962,21 +1988,21 @@ public class SchemaUtils {
      * Returns the base type of a given type with its symbol table.
      * This logic is extracted from JavaTypeWriter's constructor() method
      * for reusing.
-     * 
-     * @param type 
-     * @param symbolTable 
-     * @return 
+     *
+     * @param type
+     * @param symbolTable
+     * @return
      */
     public static TypeEntry getBaseType(TypeEntry type, SymbolTable symbolTable) {
-        Node node = type.getNode();     
+        Node node = type.getNode();
         TypeEntry base = getComplexElementExtensionBase(
                 node, symbolTable);
         if (base == null) {
             base = getComplexElementRestrictionBase(node, symbolTable);
-        }                    
-        
+        }
+
         if (base == null) {
-            QName baseQName = getSimpleTypeBase(node);                        
+            QName baseQName = getSimpleTypeBase(node);
             if (baseQName != null) {
                 base = symbolTable.getType(baseQName);
             }
@@ -1985,27 +2011,27 @@ public class SchemaUtils {
     }
 
     /**
-     * Returns whether the specified node represents a <xsd:simpleType> 
+     * Returns whether the specified node represents a <xsd:simpleType>
      * with a nested <xsd:list itemType="...">.
-     * @param node 
-     * @return 
+     * @param node
+     * @return
      */
     public static boolean isListWithItemType(Node node) {
-        
+
         return getListItemType(node) != null;
     }
 
     /**
-     * Returns the value of itemType attribute of <xsd:list> in <xsd:simpleType> 
-     * @param node 
-     * @return 
+     * Returns the value of itemType attribute of <xsd:list> in <xsd:simpleType>
+     * @param node
+     * @return
      */
     public static QName getListItemType(Node node) {
-        
+
         if (node == null) {
             return null;
         }
-        
+
         // If the node kind is an element, dive into it.
         if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
@@ -2022,7 +2048,7 @@ public class SchemaUtils {
             for (int j = 0; j < children.getLength(); j++) {
                 if (isXSDNode(children.item(j), "list")) {
                     Node listNode = children.item(j);
-                    org.w3c.dom.Element listElement = 
+                    org.w3c.dom.Element listElement =
                     (org.w3c.dom.Element) listNode;
                     String type = listElement.getAttribute("itemType");
                     if (type.equals("")) {

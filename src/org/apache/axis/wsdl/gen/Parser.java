@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.Document;
@@ -82,8 +83,8 @@ public class Parser {
 
     /**
      * Method isDebug
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isDebug() {
         return debug;
@@ -91,8 +92,8 @@ public class Parser {
 
     /**
      * Method setDebug
-     * 
-     * @param debug 
+     *
+     * @param debug
      */
     public void setDebug(boolean debug) {
         this.debug = debug;
@@ -100,26 +101,26 @@ public class Parser {
 
     /**
      * Method isQuiet
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isQuiet() {
         return quiet;
-    }    
+    }
 
     /**
      * Method setQuiet
-     * 
+     *
      * @param quiet
      */
     public void setQuiet(boolean quiet) {
         this.quiet = quiet;
-    }   
-    
+    }
+
     /**
      * Method isImports
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isImports() {
         return imports;
@@ -127,8 +128,8 @@ public class Parser {
 
     /**
      * Method setImports
-     * 
-     * @param imports 
+     *
+     * @param imports
      */
     public void setImports(boolean imports) {
         this.imports = imports;
@@ -136,8 +137,8 @@ public class Parser {
 
     /**
      * Method isVerbose
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isVerbose() {
         return verbose;
@@ -145,8 +146,8 @@ public class Parser {
 
     /**
      * Method setVerbose
-     * 
-     * @param verbose 
+     *
+     * @param verbose
      */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -154,8 +155,8 @@ public class Parser {
 
     /**
      * Method isNowrap
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isNowrap() {
         return nowrap;
@@ -163,8 +164,8 @@ public class Parser {
 
     /**
      * Method setNowrap
-     * 
-     * @param nowrap 
+     *
+     * @param nowrap
      */
     public void setNowrap(boolean nowrap) {
         this.nowrap = nowrap;
@@ -172,8 +173,8 @@ public class Parser {
 
     /**
      * Return the current timeout setting
-     * 
-     * @return 
+     *
+     * @return
      */
     public long getTimeout() {
         return timeoutms;
@@ -181,8 +182,8 @@ public class Parser {
 
     /**
      * Set the timeout, in milliseconds
-     * 
-     * @param timeout 
+     *
+     * @param timeout
      */
     public void setTimeout(long timeout) {
         this.timeoutms = timeout;
@@ -190,8 +191,8 @@ public class Parser {
 
     /**
      * Method getUsername
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getUsername() {
         return username;
@@ -199,8 +200,8 @@ public class Parser {
 
     /**
      * Method setUsername
-     * 
-     * @param username 
+     *
+     * @param username
      */
     public void setUsername(String username) {
         this.username = username;
@@ -208,8 +209,8 @@ public class Parser {
 
     /**
      * Method getPassword
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getPassword() {
         return password;
@@ -217,8 +218,8 @@ public class Parser {
 
     /**
      * Method setPassword
-     * 
-     * @param password 
+     *
+     * @param password
      */
     public void setPassword(String password) {
         this.password = password;
@@ -226,8 +227,8 @@ public class Parser {
 
     /**
      * Method getFactory
-     * 
-     * @return 
+     *
+     * @return
      */
     public GeneratorFactory getFactory() {
         return genFactory;
@@ -235,8 +236,8 @@ public class Parser {
 
     /**
      * Method setFactory
-     * 
-     * @param factory 
+     *
+     * @param factory
      */
     public void setFactory(GeneratorFactory factory) {
         this.genFactory = factory;
@@ -245,8 +246,8 @@ public class Parser {
     /**
      * Get the symbol table.  The symbol table is null until
      * run is called.
-     * 
-     * @return 
+     *
+     * @return
      */
     public SymbolTable getSymbolTable() {
         return symbolTable;
@@ -255,8 +256,8 @@ public class Parser {
     /**
      * Return the current definition.  The current definition is
      * null until run is called.
-     * 
-     * @return 
+     *
+     * @return
      */
     public Definition getCurrentDefinition() {
 
@@ -268,8 +269,8 @@ public class Parser {
     /**
      * Get the current WSDL URI.  The WSDL URI is null until
      * run is called.
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getWSDLURI() {
 
@@ -283,9 +284,9 @@ public class Parser {
      * <p/>
      * This method will time out after the number of milliseconds specified
      * by our timeoutms member.
-     * 
-     * @param wsdlURI 
-     * @throws Exception 
+     *
+     * @param wsdlURI
+     * @throws Exception
      */
     public void run(String wsdlURI) throws Exception {
 
@@ -326,7 +327,7 @@ public class Parser {
 
     /**
      * Class WSDLRunnable
-     * 
+     *
      * @version %I%, %G%
      */
     private class WSDLRunnable implements Runnable {
@@ -342,9 +343,9 @@ public class Parser {
 
         /**
          * Constructor WSDLRunnable
-         * 
-         * @param symbolTable 
-         * @param wsdlURI     
+         *
+         * @param symbolTable
+         * @param wsdlURI
          */
         public WSDLRunnable(SymbolTable symbolTable, String wsdlURI) {
             this.symbolTable = symbolTable;
@@ -366,8 +367,8 @@ public class Parser {
 
         /**
          * Method getFailure
-         * 
-         * @return 
+         *
+         * @return
          */
         public Exception getFailure() {
             return failure;
@@ -376,13 +377,13 @@ public class Parser {
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
-     * 
+     *
      * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
      * @param doc     doc This is the XML Document containing the WSDL.
-     * @throws IOException                  
-     * @throws SAXException                 
-     * @throws WSDLException                
-     * @throws ParserConfigurationException 
+     * @throws IOException
+     * @throws SAXException
+     * @throws WSDLException
+     * @throws ParserConfigurationException
      */
     public void run(String context, Document doc)
             throws IOException, SAXException, WSDLException,
@@ -401,8 +402,8 @@ public class Parser {
 
     /**
      * Method sanityCheck
-     * 
-     * @param symbolTable 
+     *
+     * @param symbolTable
      */
     protected void sanityCheck(SymbolTable symbolTable) {
 
@@ -411,9 +412,9 @@ public class Parser {
 
     /**
      * Method generate
-     * 
-     * @param symbolTable 
-     * @throws IOException 
+     *
+     * @param symbolTable
+     * @throws IOException
      */
     private void generate(SymbolTable symbolTable) throws IOException {
 
@@ -487,9 +488,9 @@ public class Parser {
     /**
      * Generate bindings (classes and class holders) for the complex types.
      * If generating serverside (skeleton) spit out beanmappings
-     * 
-     * @param symbolTable 
-     * @throws IOException 
+     *
+     * @param symbolTable
+     * @throws IOException
      */
     private void generateTypes(SymbolTable symbolTable) throws IOException {
 
@@ -501,7 +502,7 @@ public class Parser {
             // Write out the type if and only if:
             // - we found its definition (getNode())
             // - it is referenced
-            // - it is not a base type or an attributeGroup
+            // - it is not a base type or an attributeGroup or xs:group
             // - it is a Type (not an Element) or a CollectionElement
             // (Note that types that are arrays are passed to getGenerator
             // because they may require a Holder)
@@ -510,7 +511,8 @@ public class Parser {
                     || (type instanceof CollectionElement));
 
             if ((type.getNode() != null)
-                    && !type.getNode().getLocalName().equals("attributeGroup")
+                    && !Utils.isXsNode(type.getNode(), "attributeGroup")
+                    && !Utils.isXsNode(type.getNode(), "group")
                     && type.isReferenced() && isType
                     && (type.getBaseType() == null)) {
                 Generator gen = genFactory.getGenerator(type, symbolTable);
@@ -518,7 +520,7 @@ public class Parser {
                 gen.generate();
             }
         }
-        
+
         Map types = symbolTable.getTypeIndex();
         Collection typeCollection = types.values();
         for (Iterator i = typeCollection.iterator(); i.hasNext(); ) {
@@ -527,7 +529,7 @@ public class Parser {
             // Write out the type if and only if:
             // - we found its definition (getNode())
             // - it is referenced
-            // - it is not a base type or an attributeGroup
+            // - it is not a base type or an attributeGroup or xs:group
             // - it is a Type (not an Element) or a CollectionElement
             // (Note that types that are arrays are passed to getGenerator
             // because they may require a Holder)
@@ -536,7 +538,8 @@ public class Parser {
                     || (type instanceof CollectionElement));
 
             if ((type.getNode() != null)
-                    && !type.getNode().getLocalName().equals("attributeGroup")
+                    && !Utils.isXsNode(type.getNode(), "attributeGroup")
+                    && !Utils.isXsNode(type.getNode(), "group")
                     && type.isReferenced() && isType
                     && (type.getBaseType() == null)) {
                 Generator gen = genFactory.getGenerator(type, symbolTable);
