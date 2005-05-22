@@ -19,6 +19,8 @@ import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
+
+import java.io.ObjectStreamException;
 import java.lang.reflect.Constructor;
 
 /**
@@ -35,13 +37,15 @@ public class SimpleListDeserializerFactory extends BaseDeserializerFactory {
     private static final Class[] STRING_CLASS = 
         new Class [] {String.class};
 
-    private Constructor constructor = null;
+    private final Class clazzType;
+    private transient Constructor constructor = null;
     /**
      * Note that the factory is constructed with the QName and xmlType.  This is important
      * to allow distinction between primitive values and java.lang wrappers.
      **/
     public SimpleListDeserializerFactory(Class javaType, QName xmlType) {
         super(SimpleListDeserializer.class, xmlType, javaType.getComponentType());
+        clazzType = javaType;
         Class componentType = javaType.getComponentType();
         try {
             if (!componentType.isPrimitive()) {
@@ -73,5 +77,8 @@ public class SimpleListDeserializerFactory extends BaseDeserializerFactory {
             deser.setConstructor(constructor);
         return deser;
     }
-            
+    
+    private Object readResolve() throws ObjectStreamException {
+        return new SimpleListDeserializerFactory(clazzType, xmlType);
+    }
 }
