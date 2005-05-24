@@ -527,7 +527,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             currentEncoding = XMLUtils.getEncoding(msgObject, null);
             ByteArray array = new ByteArray();
             try {
-            	array.write(XMLUtils.ElementToString(this.getMessage().getSOAPEnvelope()).getBytes());
+            	writeTo(array);
                 array.flush();
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
