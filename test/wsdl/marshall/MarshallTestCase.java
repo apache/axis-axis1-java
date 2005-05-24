@@ -389,17 +389,17 @@ public class MarshallTestCase extends junit.framework.TestCase {
         assertEquals("wrong array type", "soapenc:string[][3]", arrayType);
 
 
-        for (Iterator it = response.getChildElements(returnQName); it.hasNext();) {
+        for (Iterator it = returnE.getChildElements(returnQName); it.hasNext();) {
             returnE = (MessageElement) it.next();
             arrayType = returnE.getAttributeNS(
                     "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
             assertEquals("wrong array type", "soapenc:string[6]", arrayType);
 
 
-            for (Iterator it2 = response.getChildElements(returnQName); it2.hasNext();) {
+            for (Iterator it2 = returnE.getChildElements(returnQName); it2.hasNext();) {
                 returnE = (MessageElement) it2.next();
                 String xsiType = returnE.getAttributeNS(
-                        "http://www.w3.org/2001/XMLSchema", "type");
+                        "http://www.w3.org/2001/XMLSchema-instance", "type");
                 assertEquals("wrong xsi type", "soapenc:string", xsiType);
 
 
@@ -460,17 +460,19 @@ public class MarshallTestCase extends junit.framework.TestCase {
         assertEquals("wrong array type", "xsd:integer[][3]", arrayType);
 
 
-        for (Iterator it = response.getChildElements(returnQName); it.hasNext();) {
+        for (Iterator it = returnE.getChildElements(returnQName); it.hasNext();) {
             returnE = (MessageElement) it.next();
             arrayType = returnE.getAttributeNS(
                     "http://schemas.xmlsoap.org/soap/encoding/", "arrayType");
             assertEquals("wrong array type", "xsd:integer[4]", arrayType);
 
 
-            for (Iterator it2 = response.getChildElements(returnQName); it2.hasNext();) {
+            for (Iterator it2 = returnE.getChildElements(returnQName); it2.hasNext();) {
                 returnE = (MessageElement) it2.next();
-                String xsiType = returnE.getAttributeNS(
-                        "http://www.w3.org/2001/XMLSchema", "type");
+                // we have multiRef to follow here
+                MessageElement real = returnE.getRealElement();
+                String xsiType = real.getAttributeNS(
+                        "http://www.w3.org/2001/XMLSchema-instance", "type");
                 assertEquals("wrong xsi type", "xsd:integer", xsiType);
 
 
