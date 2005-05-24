@@ -815,6 +815,17 @@ the <b>encodingStyle</b>, which is SOAP encoding.
 <tt>deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"</tt>, 
   and <tt>encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"</tt>, but clearly it 
   can save a lot of typing!) 
+<h4>Deploying array mappings - the &lt;arrayMapping> tag</h4>
+Another variation around typeMapping is arrayMapping. The arrayMapping tag is useful
+for advanced users wanting to exatly control how their arrays are serialized throught
+the wire. 
+<pre class="xml">&lt;arrayMapping qname="ns:ArrayOfthingy" xmlns:ns="someNamespaceURI"
+             languageSpecificType="java:my.java.array.thingy[]"
+			 innerType="ns2:thingy" xmlns:ns2="anotherNamespaceURI"
+             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></pre>
+No need here to specify a serializer/deserializer couple, the arrayMapping tag
+is only about arrays (no List, ...). The added attribute (<i>innerType</i>) is used
+to tell Axis what precisely is the item type of the Array.
 <h2>
 <a NAME="WSDL"></a>Using WSDL with Axis</h2>
 The <a href="http://www.w3.org/TR/wsdl">Web Service Description Language</a>

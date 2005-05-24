@@ -1,6 +1,6 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,9 @@ public class WSDDConstants
 {
     public static final String BEAN_SERIALIZER_FACTORY = "org.apache.axis.encoding.ser.BeanSerializerFactory";
     public static final String BEAN_DESERIALIZER_FACTORY = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
+
+    public static final String ARRAY_SERIALIZER_FACTORY = "org.apache.axis.encoding.ser.ArraySerializerFactory";
+    public static final String ARRAY_DESERIALIZER_FACTORY = "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
 
     public static final String URI_WSDD = "http://xml.apache.org/axis/wsdd/";
     
@@ -92,6 +95,7 @@ public class WSDDConstants
     public static final String ELEM_WSDD_GLOBAL = "globalConfiguration";
     public static final String ELEM_WSDD_TYPEMAPPING = "typeMapping";
     public static final String ELEM_WSDD_BEANMAPPING = "beanMapping";
+    public static final String ELEM_WSDD_ARRAYMAPPING = "arrayMapping";
     public static final String ELEM_WSDD_OPERATION = "operation";
     public static final String ELEM_WSDD_ELEMENTMAPPING = "elementMapping";
     public static final String ELEM_WSDD_WSDLFILE = "wsdlFile";
@@ -118,6 +122,7 @@ public class WSDDConstants
     public static final QName QNAME_GLOBAL = new QName(URI_WSDD, ELEM_WSDD_GLOBAL);
     public static final QName QNAME_TYPEMAPPING = new QName(URI_WSDD, ELEM_WSDD_TYPEMAPPING);
     public static final QName QNAME_BEANMAPPING = new QName(URI_WSDD, ELEM_WSDD_BEANMAPPING);
+    public static final QName QNAME_ARRAYMAPPING = new QName(URI_WSDD, ELEM_WSDD_ARRAYMAPPING);
     public static final QName QNAME_OPERATION = new QName(URI_WSDD, ELEM_WSDD_OPERATION);
     public static final QName QNAME_ELEMENTMAPPING = new QName(URI_WSDD, ELEM_WSDD_ELEMENTMAPPING);
     public static final QName QNAME_WSDLFILE = new QName(URI_WSDD, ELEM_WSDD_WSDLFILE);
@@ -159,4 +164,7 @@ public class WSDDConstants
     public static final String ATTR_CLASS = "class";
     public static final String ATTR_SOAPACTION = "soapAction";
     public static final String ATTR_MEP = "mep";
+    public static final String ATTR_INNER_TYPE = "innerType";
+    public static final String ATTR_INNER_NAME = "innerName";
+
 }

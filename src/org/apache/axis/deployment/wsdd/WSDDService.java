@@ -1,6 +1,6 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,7 @@ import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
@@ -170,6 +171,13 @@ public class WSDDService
         for (int i = 0; i < beanMappingElements.length; i++) {
             WSDDBeanMapping mapping =
                     new WSDDBeanMapping(beanMappingElements[i]);
+            typeMappings.add(mapping);
+        }
+
+        Element [] arrayMappingElements = getChildElements(e, ELEM_WSDD_ARRAYMAPPING);
+        for (int i = 0; i < arrayMappingElements.length; i++) {
+            WSDDArrayMapping mapping =
+                    new WSDDArrayMapping(arrayMappingElements[i]);
             typeMappings.add(mapping);
         }
 
@@ -534,6 +542,11 @@ public class WSDDService
                 ser = BaseSerializerFactory.createFactory(mapping.getSerializer(),
                                                           mapping.getLanguageSpecificType(),
                                                           mapping.getQName());
+            }
+            if (mapping instanceof WSDDArrayMapping && ser instanceof ArraySerializerFactory) {
+                WSDDArrayMapping am = (WSDDArrayMapping) mapping;
+                ArraySerializerFactory factory = (ArraySerializerFactory) ser;
+                factory.setComponentType(am.getInnerType());
             }
 
             if (mapping.getDeserializerName() != null &&

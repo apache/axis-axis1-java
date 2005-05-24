@@ -1,6 +1,6 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +48,32 @@ public class ArraySerializerFactory extends BaseSerializerFactory {
         this.componentQName = componentQName;
     }
 
+    /**
+     * @param componentQName The componentQName to set.
+     */
+    public void setComponentQName(QName componentQName) {
+        this.componentQName = componentQName;
+    }
+
+    /**
+     * @param componentType The componentType to set.
+     */
+    public void setComponentType(QName componentType) {
+        this.componentType = componentType;
+    }
+
+    /**
+     * @return Returns the componentQName.
+     */
+    public QName getComponentQName() {
+        return componentQName;
+    }
+    /**
+     * @return Returns the componentType.
+     */
+    public QName getComponentType() {
+        return componentType;
+    }
     /**
      * Obtains a serializer by invoking <constructor>(javaType, xmlType)
      * on the serClass.

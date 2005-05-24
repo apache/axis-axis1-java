@@ -27,6 +27,7 @@ import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -216,6 +217,14 @@ public class WSDDDeployment
             WSDDBeanMapping mapping = new WSDDBeanMapping(elements[i]);
             deployTypeMapping(mapping);
         }
+
+        elements = getChildElements(e, ELEM_WSDD_ARRAYMAPPING);
+        for (i = 0; i < elements.length; i++) {
+            WSDDArrayMapping mapping =
+                    new WSDDArrayMapping(elements[i]);
+            deployTypeMapping(mapping);
+        }
+
         Element el = getChildElement(e, ELEM_WSDD_GLOBAL);
         if (el != null)
             globalConfig = new WSDDGlobalConfiguration(el);
@@ -278,6 +287,13 @@ public class WSDDDeployment
                         mapping.getLanguageSpecificType(),
                         mapping.getQName());
             }
+
+            if ((mapping instanceof WSDDArrayMapping) && (ser instanceof ArraySerializerFactory)) {
+                WSDDArrayMapping am = (WSDDArrayMapping) mapping;
+                ArraySerializerFactory factory = (ArraySerializerFactory) ser;
+                factory.setComponentType(am.getInnerType());
+            }
+
             //log.debug("set ser factory");
 
             if (mapping.getDeserializerName() != null &&

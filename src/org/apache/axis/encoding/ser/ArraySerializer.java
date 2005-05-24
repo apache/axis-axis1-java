@@ -1,6 +1,6 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,28 +16,29 @@
 
 package org.apache.axis.encoding.ser;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Iterator;
+import javax.xml.namespace.QName;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.constants.Use;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.constants.Use;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
-import org.w3c.dom.Element;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * An ArraySerializer handles serializing of arrays.
@@ -130,22 +131,6 @@ public class ArraySerializer implements Serializer
         }
 
 
-        // Check to see if componentType is also an array.
-        // If so, set the componentType to the most nested non-array
-        // componentType.  Increase the dims string by "[]"
-        // each time through the loop.
-        // Note from Rich Scheuerle:
-        //    This won't handle Lists of Lists or
-        //    arrays of Lists....only arrays of arrays.
-        String dims = "";
-        while (componentClass.isArray()) {
-            componentClass = componentClass.getComponentType();
-            if (soap == SOAPConstants.SOAP12_CONSTANTS)
-                dims += "* ";
-            else
-                dims += "[]";
-        }
-
         // Get the QName of the componentType
         // if it wasn't passed in from the constructor
         QName componentTypeQName = this.componentType;
@@ -189,10 +174,28 @@ public class ArraySerializer implements Serializer
                     Messages.getMessage("noType00", componentClass.getName()));
         }
 
-        if (Constants.XSD_BASE64.equals(componentTypeQName) || Constants.XSD_HEXBIN.equals(componentTypeQName)
-                || Constants.SOAP_BASE64.equals(componentTypeQName) || Constants.SOAP_BASE64BINARY.equals(componentTypeQName)) {
-            // Special case for base64 types : remove a []
-            dims = dims.substring(2);
+        // Check to see if componentType is also an array.
+        // If so, set the componentType to the most nested non-array
+        // componentType.  Increase the dims string by "[]"
+        // each time through the loop.
+        // Note from Rich Scheuerle:
+        //    This won't handle Lists of Lists or
+        //    arrays of Lists....only arrays of arrays.
+        String dims = "";
+        TypeMapping tm = context.getTypeMapping();
+        SerializerFactory factory = (SerializerFactory) tm.getSerializer(componentClass, componentTypeQName);
+        while (componentClass.isArray() && factory instanceof ArraySerializerFactory) {
+            ArraySerializerFactory asf = (ArraySerializerFactory) factory;
+            componentClass = componentClass.getComponentType();
+            if (asf.getComponentType() != null) {
+                componentTypeQName = asf.getComponentType();
+            }
+            // update factory with the new values
+            factory = (SerializerFactory) tm.getSerializer(componentClass, componentTypeQName);
+            if (soap == SOAPConstants.SOAP12_CONSTANTS)
+                dims += "* ";
+            else
+                dims += "[]";
         }
 
         int len = (list == null) ? Array.getLength(value) : list.size();
@@ -202,10 +205,7 @@ public class ArraySerializer implements Serializer
             if (soap == SOAPConstants.SOAP12_CONSTANTS) {
                 arrayType = dims + len;
             } else {
-                if (componentType == null)
-                    arrayType = dims + "[" + len + "]";
-                else
-                    arrayType = "[" + len + "]";
+                arrayType = dims + "[" + len + "]";
             }
 
             // Discover whether array can be serialized directly as a two-dimensional

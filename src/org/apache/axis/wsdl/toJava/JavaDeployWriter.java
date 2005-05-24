@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2001-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -239,6 +239,7 @@ public class JavaDeployWriter extends JavaWriter {
                 String serializerFactory;
                 String deserializerFactory;
                 String encodingStyle = "";
+                QName innerType = null;
 
                 if (!hasLiteral) {
                     encodingStyle = use.getEncoding();
@@ -255,6 +256,7 @@ public class JavaDeployWriter extends JavaWriter {
                         "org.apache.axis.encoding.ser.ArraySerializerFactory";
                         deserializerFactory =
                         "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
+                        innerType = type.getComponentType();
                     }
                 } else if ((type.getNode() != null) && (Utils.getEnumerationBaseAndValues(
                         type.getNode(), symbolTable) != null)) {
@@ -279,12 +281,44 @@ public class JavaDeployWriter extends JavaWriter {
                             "org.apache.axis.encoding.ser.BeanDeserializerFactory";
                 }
 
-                writeTypeMapping(pw, namespaceURI, localPart, javaType,
+                if (innerType == null) {
+                    // no arrays
+                    writeTypeMapping(pw, namespaceURI, localPart, javaType,
                         serializerFactory, deserializerFactory,
                         encodingStyle);
+                } else {
+                    // arrays
+                    writeArrayTypeMapping(pw, namespaceURI, localPart, javaType,
+                            encodingStyle, innerType);
+                }
             }
         }
     }    // writeDeployTypes
+
+    /**
+     * Raw routine that writes out the typeMapping.
+     *
+     * @param pw
+     * @param namespaceURI
+     * @param localPart
+     * @param javaType
+     * @param serializerFactory
+     * @param deserializerFactory
+     * @param encodingStyle
+     * @throws IOException
+     */
+    protected void writeArrayTypeMapping(
+            PrintWriter pw, String namespaceURI, String localPart, String javaType, String encodingStyle, QName innerType)
+            throws IOException {
+
+        pw.println("      <arrayMapping");
+        pw.println("        xmlns:ns=\"" + namespaceURI + "\"");
+        pw.println("        qname=\"ns:" + localPart + '"');
+        pw.println("        type=\"java:" + javaType + '"');
+        pw.println("        innerType=\"" + Utils.genQNameAttributeString(innerType, "cmp-ns") + '"');
+        pw.println("        encodingStyle=\"" + encodingStyle + "\"");
+        pw.println("      />");
+    }
 
     /**
      * Raw routine that writes out the typeMapping.
