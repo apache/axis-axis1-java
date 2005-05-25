@@ -601,15 +601,17 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 "    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws "
                 + javax.xml.rpc.ServiceException.class.getName() + " {");
 
+        pw.println("        ");
         for (Iterator p = portNames.iterator(); p.hasNext();) {
             String name = (String) p.next();
 
-            pw.println("        if (\"" + name + "\".equals(portName)) {");
+            pw.println("if (\"" + name + "\".equals(portName)) {");
             pw.println("            set" + name + "EndpointAddress(address);");
             pw.println("        }");
+            pw.println("        else ");
         }
 
-        pw.println("        else { // Unknown Port Name");
+        pw.println("{ // Unknown Port Name");
         pw.println("            throw new "
                 + javax.xml.rpc.ServiceException.class.getName() + "(\" "
                 + Messages.getMessage("unknownPortName")
