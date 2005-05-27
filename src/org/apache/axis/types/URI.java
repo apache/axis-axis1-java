@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.io.Serializable;
 
 /**********************************************************************
-* <i>Axis Note: This class was 'borrowed' from Xerces 2.0.2</i>
+* <i>Axis Note: This class was 'borrowed' from Xerces 2:
+ * org.apache.xerces.util.URI.java, version 1.22 </i>
 * <p>
 * A class to represent a Uniform Resource Identifier (URI). This class
 * is designed to handle the parsing of URIs and provide access to
@@ -64,6 +65,9 @@ import java.io.Serializable;
   ********************************************************************/
   public static class MalformedURIException extends IOException {
 
+   /** Serialization version. */
+   static final long serialVersionUID = -6695054834342951930L;
+   
    /******************************************************************
     * Constructs a <code>MalformedURIException</code> with no specified
     * detail message.
@@ -82,6 +86,9 @@ import java.io.Serializable;
       super(p_msg);
     }
   }
+
+  /** Serialization version. */
+  static final long serialVersionUID = 1601921774685357214L;
 
   private static final byte [] fgLookupTable = new byte[128];
   
@@ -266,6 +273,29 @@ import java.io.Serializable;
   }
 
  /**
+   * Construct a new URI from a URI specification string. If the
+   * specification follows the "generic URI" syntax, (two slashes
+   * following the first colon), the specification will be parsed
+   * accordingly - setting the scheme, userinfo, host,port, path, query
+   * string and fragment fields as necessary. If the specification does
+   * not follow the "generic URI" syntax, the specification is parsed
+   * into a scheme and scheme-specific part (stored as the path) only.
+   * Construct a relative URI if boolean is assigned to "true"
+   * and p_uriSpec is not valid absolute URI, instead of throwing an exception. 
+   * 
+   * @param p_uriSpec the URI specification string (cannot be null or
+   *                  empty)
+   * @param allowNonAbsoluteURI true to permit non-absolute URIs, 
+   *                            false otherwise.
+   *
+   * @exception MalformedURIException if p_uriSpec violates any syntax
+   *                                   rules
+   */
+  public URI(String p_uriSpec, boolean allowNonAbsoluteURI) throws MalformedURIException {
+      this((URI)null, p_uriSpec, allowNonAbsoluteURI);
+  }
+  
+ /**
   * Construct a new URI from a base URI and a URI specification string.
   * The URI specification string may be a relative URI.
   *
@@ -279,6 +309,27 @@ import java.io.Serializable;
   */
   public URI(URI p_base, String p_uriSpec) throws MalformedURIException {
     initialize(p_base, p_uriSpec);
+  }
+
+ /**
+   * Construct a new URI from a base URI and a URI specification string.
+   * The URI specification string may be a relative URI.
+   * Construct a relative URI if boolean is assigned to "true"
+   * and p_uriSpec is not valid absolute URI and p_base is null
+   * instead of throwing an exception. 
+   *
+   * @param p_base the base URI (cannot be null if p_uriSpec is null or
+   *               empty)
+   * @param p_uriSpec the URI specification string (cannot be null or
+   *                  empty if p_base is null)
+   * @param allowNonAbsoluteURI true to permit non-absolute URIs, 
+   *                            false otherwise.
+   *
+   * @exception MalformedURIException if p_uriSpec violates any syntax
+   *                                  rules
+   */
+  public URI(URI p_base, String p_uriSpec, boolean allowNonAbsoluteURI) throws MalformedURIException {
+      initialize(p_base, p_uriSpec, allowNonAbsoluteURI);
   }
 
  /**
@@ -427,6 +478,127 @@ import java.io.Serializable;
   * @param p_uriSpec the URI spec string which may be an absolute or
   *                  relative URI (can only be null/empty if p_base
   *                  is not null)
+   * @param allowNonAbsoluteURI true to permit non-absolute URIs, 
+   *                         in case of relative URI, false otherwise.
+   *
+   * @exception MalformedURIException if p_base is null and p_uriSpec
+   *                                  is not an absolute URI or if
+   *                                  p_uriSpec violates syntax rules
+   */
+  private void initialize(URI p_base, String p_uriSpec, boolean allowNonAbsoluteURI)
+      throws MalformedURIException {
+      
+      String uriSpec = p_uriSpec;
+      int uriSpecLen = (uriSpec != null) ? uriSpec.length() : 0;
+      
+      if (p_base == null && uriSpecLen == 0) {
+          if (allowNonAbsoluteURI) {
+              m_path = "";
+              return;
+          }
+          throw new MalformedURIException("Cannot initialize URI with empty parameters.");
+      }
+      
+      // just make a copy of the base if spec is empty
+      if (uriSpecLen == 0) {
+          initialize(p_base);
+          return;
+      }
+      
+      int index = 0;
+      
+      // Check for scheme, which must be before '/', '?' or '#'.
+      int colonIdx = uriSpec.indexOf(':');
+      if (colonIdx != -1) {
+          final int searchFrom = colonIdx - 1;
+          // search backwards starting from character before ':'.
+          int slashIdx = uriSpec.lastIndexOf('/', searchFrom);
+          int queryIdx = uriSpec.lastIndexOf('?', searchFrom);
+          int fragmentIdx = uriSpec.lastIndexOf('#', searchFrom);
+          
+          if (colonIdx == 0 || slashIdx != -1 || 
+              queryIdx != -1 || fragmentIdx != -1) {
+              // A standalone base is a valid URI according to spec
+              if (colonIdx == 0 || (p_base == null && fragmentIdx != 0 && !allowNonAbsoluteURI)) {
+                  throw new MalformedURIException("No scheme found in URI.");
+              }
+          }
+          else {
+              initializeScheme(uriSpec);
+              index = m_scheme.length()+1;
+              
+              // Neither 'scheme:' or 'scheme:#fragment' are valid URIs.
+              if (colonIdx == uriSpecLen - 1 || uriSpec.charAt(colonIdx+1) == '#') {
+                  throw new MalformedURIException("Scheme specific part cannot be empty.");   
+              }
+          }
+      }
+      else if (p_base == null && uriSpec.indexOf('#') != 0 && !allowNonAbsoluteURI) {
+          throw new MalformedURIException("No scheme found in URI.");    
+      }
+      
+      // Two slashes means we may have authority, but definitely means we're either
+      // matching net_path or abs_path. These two productions are ambiguous in that
+      // every net_path (except those containing an IPv6Reference) is an abs_path. 
+      // RFC 2396 resolves this ambiguity by applying a greedy left most matching rule. 
+      // Try matching net_path first, and if that fails we don't have authority so 
+      // then attempt to match abs_path.
+      //
+      // net_path = "//" authority [ abs_path ]
+      // abs_path = "/"  path_segments
+      if (((index+1) < uriSpecLen) &&
+          (uriSpec.charAt(index) == '/' && uriSpec.charAt(index+1) == '/')) {
+          index += 2;
+          int startPos = index;
+          
+          // Authority will be everything up to path, query or fragment
+          char testChar = '\0';
+          while (index < uriSpecLen) {
+              testChar = uriSpec.charAt(index);
+              if (testChar == '/' || testChar == '?' || testChar == '#') {
+                  break;
+              }
+              index++;
+          }
+          
+          // Attempt to parse authority. If the section is an empty string
+          // this is a valid server based authority, so set the host to this
+          // value.
+          if (index > startPos) {
+              // If we didn't find authority we need to back up. Attempt to
+              // match against abs_path next.
+              if (!initializeAuthority(uriSpec.substring(startPos, index))) {
+                  index = startPos - 2;
+              }
+          }
+          else {
+              m_host = "";
+          }
+      }
+      
+      initializePath(uriSpec, index);
+      
+      // Resolve relative URI to base URI - see RFC 2396 Section 5.2
+      // In some cases, it might make more sense to throw an exception
+      // (when scheme is specified is the string spec and the base URI
+      // is also specified, for example), but we're just following the
+      // RFC specifications
+      if (p_base != null) {
+          absolutize(p_base);
+      }
+  }
+
+ /**
+  * Initializes this URI from a base URI and a URI specification string.
+  * See RFC 2396 Section 4 and Appendix B for specifications on parsing
+  * the URI and Section 5 for specifications on resolving relative URIs
+  * and relative paths.
+  *
+  * @param p_base the base URI (may be null if p_uriSpec is an absolute
+  *               URI)
+  * @param p_uriSpec the URI spec string which may be an absolute or
+  *                  relative URI (can only be null/empty if p_base
+  *                  is not null)
   *
   * @exception MalformedURIException if p_base is null and p_uriSpec
   *                                  is not an absolute URI or if
@@ -451,9 +623,7 @@ import java.io.Serializable;
 
     int index = 0;
 
-    // Check for scheme, which must be before '/', '?' or '#'. Also handle
-    // names with DOS drive letters ('D:'), so 1-character schemes are not
-    // allowed.
+    // Check for scheme, which must be before '/', '?' or '#'.
     int colonIdx = uriSpec.indexOf(':');
     if (colonIdx != -1) {
         final int searchFrom = colonIdx - 1;
@@ -462,7 +632,7 @@ import java.io.Serializable;
         int queryIdx = uriSpec.lastIndexOf('?', searchFrom);
         int fragmentIdx = uriSpec.lastIndexOf('#', searchFrom);
        
-        if (colonIdx < 2 || slashIdx != -1 || 
+        if (colonIdx == 0 || slashIdx != -1 || 
             queryIdx != -1 || fragmentIdx != -1) {
             // A standalone base is a valid URI according to spec
             if (colonIdx == 0 || (p_base == null && fragmentIdx != 0)) {
@@ -530,6 +700,16 @@ import java.io.Serializable;
     // is also specified, for example), but we're just following the
     // RFC specifications
     if (p_base != null) {
+        absolutize(p_base);
+    }
+  }
+
+  /**
+   * Absolutize URI with given base URI.
+   *
+   * @param p_base base URI for absolutization
+   */
+  public void absolutize(URI p_base) {
 
       // check to see if this is the current doc - RFC 2396 5.2 #2
       // note that this is slightly different from the RFC spec in that
@@ -549,6 +729,10 @@ import java.io.Serializable;
 
         if (m_queryString == null) {
           m_queryString = p_base.getQueryString();
+              
+              if (m_fragment == null) {
+                  m_fragment = p_base.getFragment();
+              }
         }
         return;
       }
@@ -600,7 +784,7 @@ import java.io.Serializable;
       path = path.concat(m_path);
 
       // 6c - remove all "./" where "." is a complete path segment
-      index = -1;
+      int index = -1;
       while ((index = path.indexOf("/./")) != -1) {
         path = path.substring(0, index+1).concat(path.substring(index+3));
       }
@@ -624,11 +808,13 @@ import java.io.Serializable;
             path = path.substring(0, segIndex+1).concat(path.substring(index+4));
             index = segIndex;
           }
-          else
+              else {
             index += 4;
         }
-        else
+          }
+          else {
           index += 4;
+      }
       }
 
       // 6f - remove ending "<segment>/.." where "<segment>" is a
@@ -642,7 +828,6 @@ import java.io.Serializable;
       }
       m_path = path;
     }
-  }
 
  /**
   * Initialize the scheme for this URI from a URI string spec.
@@ -1472,6 +1657,9 @@ import java.io.Serializable;
           ((m_userinfo == null && testURI.m_userinfo == null) ||
            (m_userinfo != null && testURI.m_userinfo != null &&
             m_userinfo.equals(testURI.m_userinfo))) &&
+          ((m_regAuthority == null && testURI.m_regAuthority == null) ||
+           (m_regAuthority != null && testURI.m_regAuthority != null &&
+            m_regAuthority.equals(testURI.m_regAuthority))) &&
           ((m_host == null && testURI.m_host == null) ||
            (m_host != null && testURI.m_host != null &&
             m_host.equals(testURI.m_host))) &&
@@ -1529,6 +1717,17 @@ import java.io.Serializable;
     // presence of the host (whether valid or empty) means
     // double-slashes which means generic uri
     return (m_host != null);
+  }
+
+ /**
+   * Returns whether this URI represents an absolute URI.
+   *
+   * @return true if this URI represents an absolute URI, false
+   *         otherwise
+   */
+  public boolean isAbsoluteURI() {
+      // presence of the scheme means absolute uri
+      return (m_scheme != null);
   }
 
  /**
