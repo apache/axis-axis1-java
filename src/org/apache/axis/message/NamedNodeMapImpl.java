@@ -200,7 +200,7 @@ public class NamedNodeMapImpl implements  NamedNodeMap {
      for(Iterator iter = nodes.iterator(); iter.hasNext();){
        Attr attr = (Attr)iter.next();
        if(namespaceURI.equals(attr.getNamespaceURI()) &&
-          namespaceURI.equals(attr.getLocalName())){
+          localName.equals(attr.getLocalName())){
          return attr;
        }
      }
