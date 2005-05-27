@@ -15,20 +15,18 @@
     <parameter name="className" value="samples.echo.InteropTestSoapBindingImpl" />
     <parameter name="allowedMethods" value="*" />
 
-      <typeMapping
+      <arrayMapping
         xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:ArrayOfstring"
         type="java:java.lang.String[]"
-        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        innerType="xsd:string"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
-      <typeMapping
+      <arrayMapping
         xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:ArrayOfString2D"
         type="java:java.lang.String[][]"
-        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        innerType="ns:ArrayOfstring"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping
