@@ -493,7 +493,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         ((NodeImpl) newChild).detachNode();
         children.add(newChild);
         ((NodeImpl) newChild).parent = this;
-        setDirty(true);
         return newChild;
     }
 
@@ -509,6 +508,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      */
     public Node removeChild(Node oldChild) throws DOMException {
         if (removeNodeFromChildList((NodeImpl) oldChild)) {
+            setDirty(true);
             return oldChild;
         }
         throw new DOMException(DOMException.NOT_FOUND_ERR,
@@ -526,7 +526,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
                 itr.remove();
             }
         }
-        setDirty(true);
         return removed;
     }
 
@@ -561,7 +560,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
             position = 0;
         }
         children.add(position, newChild);
-        setDirty(true);
         return newChild;
     }
 
@@ -597,7 +595,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         }
         children.remove(position);
         children.add(position, newChild);
-        setDirty(true);
         return oldChild;
     }
 
@@ -658,7 +655,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     public void detachNode() {
         if (parent != null) {
             parent.removeChild(this);
-            parent.setDirty(true);
             parent = null;
         }
     }
@@ -691,7 +687,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     public void setValue(String value) {
         if (this instanceof org.apache.axis.message.Text) {
             setNodeValue(value);
-            setDirty(true);
         } else if (children != null) {
             if (children.size() != 1) {
                 throw new IllegalStateException( "setValue() may not be called on a non-Text node with more than one child." );
