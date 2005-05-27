@@ -37,4 +37,15 @@ public class TestURI extends TestCase {
         assertEquals(uri1,uri2);
         assertEquals(uri1.hashCode(),uri2.hashCode());
     }
+
+    /**
+     * Bug AXIS-2015
+     */
+    public void testAxis2015() throws Exception {
+        URI uri1 = new URI("abc://@10");
+        URI uri2 = new URI("abc://@20");
+        assertFalse(uri1.equals(uri2));
+        assertFalse(uri1.hashCode() == uri2.hashCode());
+    }
+
 }
