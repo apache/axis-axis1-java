@@ -412,6 +412,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
             String namespaceURI,
             String localName) {
         try {
+        	NodeListImpl list = new NodeListImpl();
             if (soapPart != null) {
                 SOAPEnvelope soapEnv =
                     (org.apache.axis.message.SOAPEnvelope) soapPart
@@ -419,19 +420,19 @@ implements org.w3c.dom.Document, java.io.Serializable {
                 SOAPHeader header =
                     (org.apache.axis.message.SOAPHeader) soapEnv.getHeader();
                 if (header != null) {
-                    return header.getElementsByTagNameNS(
+                	list.addNodeList(header.getElementsByTagNameNS(
                             namespaceURI,
-                            localName);
+                            localName));
                 }
                 SOAPBody body =
                     (org.apache.axis.message.SOAPBody) soapEnv.getBody();
                 if (body != null) {
-                    return body.getElementsByTagNameNS(
+                	list.addNodeList(body.getElementsByTagNameNS(
                             namespaceURI,
-                            localName);
+                            localName));
                 }
             }
-            return null;
+            return list;
         } catch (SOAPException se) {
             throw new DOMException(DOMException.INVALID_STATE_ERR, "");
         }
