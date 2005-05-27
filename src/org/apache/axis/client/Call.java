@@ -2738,7 +2738,7 @@ public class Call implements javax.xml.rpc.Call {
                 requestMessage.getSOAPEnvelope().output(ctx);
                 writer.close();
             } catch (Exception e) {
-                log.debug(Messages.getMessage("exceptionPrinting"), e);
+                throw AxisFault.makeFault(e);
             } finally {
                 log.debug(writer.getBuffer().toString());
             }
