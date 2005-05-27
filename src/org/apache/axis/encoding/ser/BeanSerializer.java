@@ -491,7 +491,8 @@ public class BeanSerializer implements Serializer, Serializable {
                 xmlType = null;
             }
             
-            elementType = types.writeType(fieldType, xmlType);
+            QName typeQName = types.writeTypeAndSubTypeForPart(fieldType, xmlType);
+            elementType = types.getQNameString(typeQName);
 
             if (elementType == null) {
                 // If writeType returns null, then emit an anytype.
