@@ -472,15 +472,19 @@ public class Message extends javax.xml.soap.SOAPMessage
             ret = HTTPConstants.HEADER_ACCEPT_APPL_SOAP +"; charset=" + encoding;
         }
 
-        int sendType = Attachments.SEND_TYPE_NOTSET;
-        if ((msgContext != null) && (msgContext.getService() != null)) {
-            sendType = msgContext.getService().getSendType();
-        }
-        if (sendType != Attachments.SEND_TYPE_NONE && mAttachments != null &&
+        if (getSendType() != Attachments.SEND_TYPE_NONE && mAttachments != null &&
                 0 != mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentType();
         }
         return ret;
+    }
+
+    private int getSendType() {
+        int sendType = Attachments.SEND_TYPE_NOTSET;
+        if ((msgContext != null) && (msgContext.getService() != null)) {
+            sendType = msgContext.getService().getSendType();
+        }
+        return sendType;
     }
 
     //This will have to give way someday to HTTP Chunking but for now kludge.
@@ -517,7 +521,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      */
     public void writeTo(java.io.OutputStream os) throws SOAPException, IOException {
          //Do it the old fashion way.
-        if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
+        if (getSendType() == Attachments.SEND_TYPE_NONE || mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
                 String charEncoding = XMLUtils.getEncoding(this, msgContext);;
                 mSOAPPart.setEncoding(charEncoding);
