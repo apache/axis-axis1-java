@@ -55,6 +55,8 @@ public class ElementDecl extends ContainedEntry {
     /** Field maxOccursIsUnbounded */
     private boolean maxOccursIsUnbounded = false;
 
+    private boolean maxOccursExactOne;
+
     /**
      * Constructor ElementDecl
      *
@@ -93,12 +95,30 @@ public class ElementDecl extends ContainedEntry {
     }
 
     /**
-     * Method setMinOccursIsUnbounded
+     * Method setMaxOccursIsUnbounded
      *
      * @param maxOccursIsUnbounded
      */
     public void setMaxOccursIsUnbounded(boolean maxOccursIsUnbounded) {
         this.maxOccursIsUnbounded = maxOccursIsUnbounded;
+    }
+
+    /**
+     * Method getMaxOccursIsExactlyOne
+     *
+     * @return
+     */
+    public boolean getMaxOccursIsExactlyOne() {
+        return maxOccursExactOne;
+    }
+
+    /**
+     * Method setMaxOccursIsExactlyOne
+     *
+     * @param exactOne
+     */
+    public void setMaxOccursIsExactlyOne(boolean exactOne) {
+        maxOccursExactOne = exactOne;
     }
 
     /**

@@ -22,6 +22,9 @@ import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionTE;
+import org.apache.axis.wsdl.symbolTable.BaseType;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
@@ -32,9 +35,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
-import java.util.TreeSet;
-import java.util.TreeMap;
-import java.util.Map;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
@@ -270,10 +270,49 @@ public class JavaBeanWriter extends JavaClassWriter {
                     isAny = true;
                 } else {
                     variableName = elem.getName();
-                    
-                    if (elem.getMinOccursIs0() || elem.getNillable() ||
-		            elem.getOptional()) {
+
+                    /*
+                     * Quote from JAX-RPC 1.1, Section 4.2.1:
+                     * There are a number of cases in which a built-in simple
+                     * XML data type must be mapped to the corresponding Java
+                     * wrapper class for the Java primitive type:
+                     *   * an element declaration with the nillable attribute
+                     *     set to true;
+                     *   * an element declaration with the minOccurs attribute
+                     *     set to 0 (zero) and the maxOccurs attribute set
+                     *     to 1 (one) or absent;
+                     *   * an attribute declaration with the use attribute set
+                     *     to optional or absent and carrying neither
+                     *     the default nor the fixed attribute;
+                     */
+                    if (elem.getMinOccursIs0() && elem.getMaxOccursIsExactlyOne()
+                            || elem.getNillable() || elem.getOptional()) {
+                        String   dims = null;
+                        /*
+                         * Handle situations where the nillable property is
+                         * combined with a non-singular 'maxOccurs' value
+                         * and the component type is a primitive, e.g.
+                         * <xsd:element name="code" type="xsd:int" nillable="true" maxOccurs="unbounded"/>
+                         * Under these circumstances we still have to promote
+                         * the underlying type to the corresponding wrapper
+                         * class.
+                         */
+                        if (elem.getType() instanceof CollectionTE) {
+                            TypeEntry   te = elem.getType().getRefType();
+                            if (te instanceof BaseType
+                                ||  te instanceof DefinedElement
+                                    &&  te.getRefType() instanceof BaseType) {
+                                /*
+                                 * Deliberately looking at the dimensions introduced
+                                 * by the 'maxOccurs' only, further dimensions
+                                 * (if any) must be disregarded.
+                                 */
+                                dims = elem.getType().getDimensions();
+                                typeName = te.getName();
+                            }
+                        }
                         typeName = Utils.getWrapperType(typeName);
+                        if (dims != null)  typeName += dims;
                     }
                 }
 
@@ -312,10 +351,10 @@ public class JavaBeanWriter extends JavaClassWriter {
 
             for (int i = 0; i < attributes.size(); i++) {
                 ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
-                String typeName = attr.getType().getName(); 
+                String typeName = attr.getType().getName();
                 String variableName = attr.getName();
 
-		// TODO - What about MinOccurs and Nillable? 
+		// TODO - What about MinOccurs and Nillable?
 		// Do they make sense here?
 		if (attr.getOptional()) {
 		    typeName = Utils.getWrapperType(typeName);

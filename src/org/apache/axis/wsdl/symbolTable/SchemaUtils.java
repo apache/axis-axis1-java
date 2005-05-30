@@ -774,9 +774,17 @@ public class SchemaUtils {
             }
 
             String maxOccurs = Utils.getAttribute(elementNode, "maxOccurs");
-            if (maxOccurs != null && maxOccurs.equals("unbounded")) {
+            if (maxOccurs != null) {
+                if (maxOccurs.equals("unbounded")) {
                     elem.setMaxOccursIsUnbounded(true);
+                }
+                else if(maxOccurs.equals("1")) {
+                    elem.setMaxOccursIsExactlyOne(true);
+                }
             }
+            else {
+				elem.setMaxOccursIsExactlyOne(true);
+			}
             elem.setNillable(
                     JavaUtils.isTrueExplicitly(
                             Utils.getAttribute(elementNode, "nillable")));
