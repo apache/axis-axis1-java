@@ -130,10 +130,50 @@ public class ArraySerializer implements Serializer
             componentClass = Object.class;
         }
 
-
         // Get the QName of the componentType
         // if it wasn't passed in from the constructor
         QName componentTypeQName = this.componentType;
+
+        // Check to see if componentType is also an array.
+        // If so, set the componentType to the most nested non-array
+        // componentType.  Increase the dims string by "[]"
+        // each time through the loop.
+        // Note from Rich Scheuerle:
+        //    This won't handle Lists of Lists or
+        //    arrays of Lists....only arrays of arrays.
+        String dims = "";
+        
+        if (componentTypeQName != null) {
+            // if we have a Type QName at this point,
+            // this is because ArraySerializer has been instanciated with it
+            TypeMapping tm = context.getTypeMapping();
+            SerializerFactory factory = (SerializerFactory) tm.getSerializer(
+                    componentClass, componentTypeQName);
+            while (componentClass.isArray()
+                    && factory instanceof ArraySerializerFactory) {
+                ArraySerializerFactory asf = (ArraySerializerFactory) factory;
+                componentClass = componentClass.getComponentType();
+                if (asf.getComponentType() != null) {
+                    componentTypeQName = asf.getComponentType();
+                }
+                // update factory with the new values
+                factory = (SerializerFactory) tm.getSerializer(componentClass,
+                        componentTypeQName);
+                if (soap == SOAPConstants.SOAP12_CONSTANTS)
+                    dims += "* ";
+                else
+                    dims += "[]";
+            }
+        } else {
+            // compatibility mode
+            while (componentClass.isArray()) {
+                componentClass = componentClass.getComponentType();
+                if (soap == SOAPConstants.SOAP12_CONSTANTS)
+                    dims += "* ";
+                else
+                    dims += "[]";
+            }
+        }
 
         // Try the current XML type from the context
         if (componentTypeQName == null) {
@@ -172,30 +212,6 @@ public class ArraySerializer implements Serializer
         if (componentTypeQName == null) {
             throw new IOException(
                     Messages.getMessage("noType00", componentClass.getName()));
-        }
-
-        // Check to see if componentType is also an array.
-        // If so, set the componentType to the most nested non-array
-        // componentType.  Increase the dims string by "[]"
-        // each time through the loop.
-        // Note from Rich Scheuerle:
-        //    This won't handle Lists of Lists or
-        //    arrays of Lists....only arrays of arrays.
-        String dims = "";
-        TypeMapping tm = context.getTypeMapping();
-        SerializerFactory factory = (SerializerFactory) tm.getSerializer(componentClass, componentTypeQName);
-        while (componentClass.isArray() && factory instanceof ArraySerializerFactory) {
-            ArraySerializerFactory asf = (ArraySerializerFactory) factory;
-            componentClass = componentClass.getComponentType();
-            if (asf.getComponentType() != null) {
-                componentTypeQName = asf.getComponentType();
-            }
-            // update factory with the new values
-            factory = (SerializerFactory) tm.getSerializer(componentClass, componentTypeQName);
-            if (soap == SOAPConstants.SOAP12_CONSTANTS)
-                dims += "* ";
-            else
-                dims += "[]";
         }
 
         int len = (list == null) ? Array.getLength(value) : list.size();
