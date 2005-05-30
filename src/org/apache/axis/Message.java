@@ -472,7 +472,12 @@ public class Message extends javax.xml.soap.SOAPMessage
             ret = HTTPConstants.HEADER_ACCEPT_APPL_SOAP +"; charset=" + encoding;
         }
 
-        if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
+        int sendType = Attachments.SEND_TYPE_NOTSET;
+        if ((msgContext != null) && (msgContext.getService() != null)) {
+            sendType = msgContext.getService().getSendType();
+        }
+        if (sendType != Attachments.SEND_TYPE_NONE && mAttachments != null &&
+                0 != mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentType();
         }
         return ret;
