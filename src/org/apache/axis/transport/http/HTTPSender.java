@@ -327,11 +327,17 @@ public class HTTPSender extends BasicHandler {
         MimeHeaders mimeHeaders = reqMessage.getMimeHeaders();
 
         if (posting) {
-                String contentType;
-            if (mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE) != null) {
+            String contentType;
+            final String[] header = mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+            if (header != null && header.length > 0) {
                 contentType = mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0];
             } else {
                 contentType = reqMessage.getContentType(msgContext.getSOAPConstants());
+            }
+            
+            //fix for AXIS-2027
+            if (contentType == null || contentType.equals("")) {
+            	throw new Exception(Messages.getMessage("missingContentType"));
             }
             header2.append(HTTPConstants.HEADER_CONTENT_TYPE)
                     .append(": ")
