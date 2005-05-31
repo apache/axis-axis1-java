@@ -26,4 +26,8 @@ public class PersonalInfoBookSOAPBindingImpl implements test.wsdl.arrays.Persona
     public int getID2FromName(java.lang.String name) throws java.rmi.RemoteException {
         return ((test.wsdl.arrays.PersonalInfo) table.get(name)).getId2();
     }
+
+    public StructureType echoStruct(StructureType in) throws java.rmi.RemoteException {
+        return in;
+    }
 }
