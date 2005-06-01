@@ -317,8 +317,43 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @param mapping
      */
     private void registerSOAPENCDefault(TypeMappingDelegate mapping) {
-        mapTM.put(Constants.URI_SOAP11_ENC, mapping);
-        mapTM.put(Constants.URI_SOAP12_ENC, mapping);
+        // This get a bit ugly as we do not want to just overwrite
+        // an existing type mapping for SOAP encodings.  This happens
+        // when {client,server}-config.wsdd defines a type mapping for
+        // instance.
+        if (!mapTM.containsKey(Constants.URI_SOAP11_ENC)) {
+            mapTM.put(Constants.URI_SOAP11_ENC, mapping);
+        } else {
+            // We have to make sure the default type mapping is
+            // at the end of the chain.
+            // This is important if the default is switched to
+            // the JAX_RPC 1.1 default type mapping!
+            TypeMappingDelegate del =
+                    (TypeMappingDelegate) mapTM.get(Constants.URI_SOAP11_ENC);
+            while (del.getNext() != null && ! (del.delegate instanceof DefaultTypeMappingImpl)) {
+                del = del.getNext();
+            }
+            del.setNext(defaultDelTM);
+        }
+
+        if (!mapTM.containsKey(Constants.URI_SOAP12_ENC)) {
+            mapTM.put(Constants.URI_SOAP12_ENC, mapping);
+        } else {
+            // We have to make sure the default type mapping is
+            // at the end of the chain.
+            // This is important if the default is switched to
+            // the JAX_RPC 1.1 default type mapping!
+            TypeMappingDelegate del =
+                    (TypeMappingDelegate) mapTM.get(Constants.URI_SOAP12_ENC);
+            while (del.getNext() != null && ! (del.delegate instanceof DefaultTypeMappingImpl)) {
+                del = del.getNext();
+            }
+            del.setNext(defaultDelTM);
+        }
+        
+        // Just do this unconditionally in case we used mapping.
+        // This is important if the default is switched to
+        // the JAX_RPC 1.1 default type mapping!
         mapping.setNext(defaultDelTM);
     }
 
