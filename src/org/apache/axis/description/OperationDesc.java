@@ -252,10 +252,11 @@ public class OperationDesc implements Serializable {
     {
         // Should we enforce adding INs then INOUTs then OUTs?
 
+        param.setOrder(getNumParams());
         parameters.add(param);
         if ((param.getMode() == ParameterDesc.IN) ||
             (param.getMode() == ParameterDesc.INOUT)) {
-            param.setOrder(numInParams++);
+            numInParams++;
         }
         if ((param.getMode() == ParameterDesc.OUT) ||
             (param.getMode() == ParameterDesc.INOUT)) {
