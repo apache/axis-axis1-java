@@ -22,13 +22,15 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.util.Vector;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.apache.axis.AxisEngine;
 
 /**
  * Test org.apache.axis.handlers.RPCDispatcher
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class TestSerializedRPC extends TestCase {
+public class TestSerializedRPC extends XMLTestCase {
 
     private final String header =
         "<?xml version=\"1.0\"?>\n" +
@@ -205,7 +207,8 @@ public class TestSerializedRPC extends TestCase {
         arg += "</arg0>";
 
         // invoke the service and verify the result
-        assertEquals("Did not echo arg correctly.", arg, rpc("argAsDOM", arg, true));
+        engine.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
+        assertXMLEqual("Did not echo arg correctly.", arg, rpc("argAsDOM", arg, true).toString());
     }
 
     public void testWrappedTypes() throws Exception
