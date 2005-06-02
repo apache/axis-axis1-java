@@ -124,14 +124,15 @@ public class HTTPSender extends BasicHandler {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("enter00", "HTTPSender::invoke"));
         }
+
+        SocketHolder socketHolder = new SocketHolder(null);
+
         try {
             BooleanHolder useFullURL = new BooleanHolder(false);
             StringBuffer otherHeaders = new StringBuffer();
             targetURL = new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
             String host = targetURL.getHost();
             int port = targetURL.getPort();
-
-            SocketHolder socketHolder = new SocketHolder(null);
             
             // Send the SOAP request to the server
             InputStream inp = writeToSocket(socketHolder, msgContext, targetURL,
@@ -143,6 +144,16 @@ public class HTTPSender extends BasicHandler {
             readFromSocket(socketHolder, msgContext, inp, headers);
         } catch (Exception e) {
             log.debug(e);
+            //fix for AXIS-2008
+            try {
+	            if (socketHolder.getSocket() != null && !socketHolder.getSocket().isClosed()) {
+	            	socketHolder.getSocket().close();
+	            }
+            } catch (IOException ie) {
+            	// we have already made a check if socket exists and is not already closed, so
+            	// we would never end up here. But for compilation purposes had to add this
+            	// internal try catch block.
+            }
             throw AxisFault.makeFault(e);
         }
         if (log.isDebugEnabled()) {
