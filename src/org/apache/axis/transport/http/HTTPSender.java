@@ -144,15 +144,12 @@ public class HTTPSender extends BasicHandler {
             readFromSocket(socketHolder, msgContext, inp, headers);
         } catch (Exception e) {
             log.debug(e);
-            //fix for AXIS-2008
             try {
 	            if (socketHolder.getSocket() != null && !socketHolder.getSocket().isClosed()) {
 	            	socketHolder.getSocket().close();
 	            }
             } catch (IOException ie) {
-            	// we have already made a check if socket exists and is not already closed, so
-            	// we would never end up here. But for compilation purposes had to add this
-            	// internal try catch block.
+            	// we shouldn't get here.
             }
             throw AxisFault.makeFault(e);
         }
