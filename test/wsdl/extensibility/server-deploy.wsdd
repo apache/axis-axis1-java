@@ -27,14 +27,6 @@
 
         <typeMapping
           xmlns:ns="urn:ExtensibilityQuery"
-          qname="ns:>queryResponse"
-          type="java:test.wsdl.extensibility.QueryResponse"
-          serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-          deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-          encodingStyle=""
-        />
-        <typeMapping
-          xmlns:ns="urn:ExtensibilityQuery"
           qname="ns:ExtensibilityType"
           type="java:test.wsdl.extensibility.ExtensibilityType"
           serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
