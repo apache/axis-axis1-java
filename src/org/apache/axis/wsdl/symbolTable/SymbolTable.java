@@ -3287,7 +3287,13 @@ public class SymbolTable {
             	continue;
             }
 
-            if ((refType != null) && !refType.equals(nestedType)
+            // If this entry has a referenced type that isn't
+            // the same as the nested type
+            // AND the OnlyLiteral reference switch is on
+            // THEN turn the OnlyLiteral reference switch off.
+            // If only someone had put a comment here saying why we do this...
+            if ((refType != null)
+                    && !refType.equals(nestedType)
                     && nestedType.isOnlyLiteralReferenced()) {
                 nestedType.setOnlyLiteralReference(false);
             }

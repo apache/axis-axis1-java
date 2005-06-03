@@ -22,12 +22,7 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class contains static utility methods for the emitter.
@@ -526,12 +521,18 @@ public class Utils {
 
         if ((type != null) && (type.getNode() != null)) {
             getDerivedTypes(type, types, symbolTable);
-        } else if (Constants.isSchemaXSD(type.getQName().getNamespaceURI())
+        }
+        else if (type != null && Constants.isSchemaXSD(type.getQName().getNamespaceURI())
                 && (type.getQName().getLocalPart().equals("anyType")
                 || type.getQName().getLocalPart().equals("any"))) {
 
-            // All types are derived from anyType
-            types.addAll(symbolTable.getTypeIndex().values());
+            // All types are derived from anyType, except anonymous ones
+            final Collection typeValues = symbolTable.getTypeIndex().values();
+            for (Iterator it = typeValues.iterator(); it.hasNext();) {
+                SymTabEntry e = (SymTabEntry) it.next();
+                if (! e.getQName().getLocalPart().startsWith(SymbolTable.ANON_TOKEN))
+                    types.add(e);
+            }
         }
 
         return types;
