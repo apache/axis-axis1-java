@@ -29,6 +29,7 @@ import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NetworkUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -82,6 +83,7 @@ public class CommonsHTTPSender extends BasicHandler {
     
     protected HttpConnectionManager connectionManager;
     protected CommonsHTTPClientProperties clientProperties;
+    boolean httpChunkStream = true; //Use HTTP chunking or not.
     
     public CommonsHTTPSender() {
         initialize();
@@ -154,7 +156,7 @@ public class CommonsHTTPSender extends BasicHandler {
                 addContextInfo(method, httpClient, msgContext, targetURL);
 
                 ((PostMethod)method).setRequestEntity(
-                                               new MessageRequestEntity(method, reqMessage));
+                                               new MessageRequestEntity(method, reqMessage, httpChunkStream));
             } else {
                 method = new GetMethod(targetURL.toString());
                 addContextInfo(method, httpClient, msgContext, targetURL);
@@ -500,6 +502,11 @@ public class CommonsHTTPSender extends BasicHandler {
                     value.equalsIgnoreCase(HTTPConstants.HEADER_EXPECT_100_Continue)) {
                     method.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE,
                                                            true);
+                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
+                    String val = me.getValue().toString();
+                    if (null != val)  {
+                        httpChunkStream = JavaUtils.isTrue(val);
+                    }
                 } else {
                     method.addRequestHeader(key, value);
                 }
@@ -727,10 +734,17 @@ public class CommonsHTTPSender extends BasicHandler {
         
         private HttpMethodBase method;
         private Message message;
+        boolean httpChunkStream = true; //Use HTTP chunking or not.
 
         public MessageRequestEntity(HttpMethodBase method, Message message) {
             this.message = message;
             this.method = method;
+        }
+
+        public MessageRequestEntity(HttpMethodBase method, Message message, boolean httpChunkStream) {
+            this.message = message;
+            this.method = method;
+            this.httpChunkStream = httpChunkStream;
         }
 
         public boolean isRepeatable() {
@@ -746,7 +760,7 @@ public class CommonsHTTPSender extends BasicHandler {
         }
 
         public long getContentLength() {
-            if (this.method.getParams().getVersion() == HttpVersion.HTTP_1_0) {
+            if (this.method.getParams().getVersion() == HttpVersion.HTTP_1_0 || !httpChunkStream) {
                 try {
                     return message.getContentLength();
                 } catch (Exception e) {
