@@ -79,10 +79,16 @@ Copyright:
         <include name="*Impl.java"/>
       </fileset>
     </copy>
+        <copy todir="${build.dir}/work/test/" overwrite="yes">
+            <fileset dir="${axis.home}/test/">
+                <include name="*.java"/>
+            </fileset>
+        </copy>
 
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
+      <include name="test/*.java" />
       <include name="test/wsdl/filegen/*.java" />
       <include name="test/wsdl/filegenAll/*.java" />
     </javac>

@@ -47,4 +47,5 @@ public abstract class AxisTestBase extends XMLTestCase {
     public static boolean isOnline() {
         return isPropertyTrue("test.functional.online");
     }
+
 }
