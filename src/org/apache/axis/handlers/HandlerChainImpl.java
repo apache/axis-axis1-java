@@ -45,7 +45,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     protected static Log log =
             LogFactory.getLog(HandlerChainImpl.class.getName());
 
-    private static final String JAXRPC_METHOD_INFO = "jaxrpc.method.info";
+    public static final String JAXRPC_METHOD_INFO = "jaxrpc.method.info";
 
     private String[] _roles;
 
