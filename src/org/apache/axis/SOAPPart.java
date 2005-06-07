@@ -256,7 +256,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Write the contents to the specified stream.
      *
      * @param os  the <code>java.io.OutputStream</code> to write to
-     * @param charEncoding  
      */
     public void writeTo(java.io.OutputStream os) throws IOException {
         if ( currentForm == FORM_BYTES ) {
@@ -837,6 +836,17 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if(source == null)
             throw new SOAPException(Messages.getMessage("illegalArgumentException00"));
 
+        // override the checks in HandlerChainImpl for JAXRPCHandler kludge
+        Object formOptimization = null;
+        MessageContext ctx = getMessage().getMessageContext();
+        if (ctx != null) {
+            formOptimization = ctx.getProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION);
+            if(formOptimization != null) {
+                ctx.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION,
+                        Boolean.TRUE);
+            }
+        }
+
         contentSource = source;
         InputSource in = org.apache.axis.utils.XMLUtils.sourceToInputSource(contentSource);
         InputStream is = in.getByteStream();
@@ -858,6 +868,12 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 throw new SOAPException(Messages.getMessage("couldNotReadFromCharStream"), e);
             }
             setCurrentMessage(sb.toString(), FORM_STRING);
+        }
+
+        // reset the original value
+        if(formOptimization != null) {
+            ctx.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION,
+                    formOptimization);
         }
     }
 

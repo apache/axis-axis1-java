@@ -190,24 +190,27 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     }
 
     private void postInvoke(SOAPMessageContext msgContext) {
-        msgContext.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION,
-                Boolean.TRUE);
-        SOAPMessage message = msgContext.getMessage();
-        ArrayList oldList =
-                (ArrayList)msgContext.getProperty(JAXRPC_METHOD_INFO);
-        if (oldList != null) {
-            if (!Arrays.equals(oldList.toArray(), getMessageInfo(message)
-                            .toArray())) {
-                throw new RuntimeException(Messages.getMessage("invocationArgumentsModified00"));
+        Boolean propFormOptimization = (Boolean)msgContext.getProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION);
+        if (propFormOptimization != null && !propFormOptimization.booleanValue()) {
+            msgContext.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION,
+                    Boolean.TRUE);
+            SOAPMessage message = msgContext.getMessage();
+            ArrayList oldList =
+                    (ArrayList)msgContext.getProperty(JAXRPC_METHOD_INFO);
+            if (oldList != null) {
+                if (!Arrays.equals(oldList.toArray(), getMessageInfo(message)
+                                .toArray())) {
+                    throw new RuntimeException(Messages.getMessage("invocationArgumentsModified00"));
+                }
             }
-        }
-        try {
-            if (message != null) {
-                message.saveChanges();
+            try {
+                if (message != null) {
+                    message.saveChanges();
+                }
+            } catch (SOAPException e) {
+                log.debug("Exception in postInvoke : ", e);
+                throw new RuntimeException("Exception in postInvoke : " + e.toString());
             }
-        } catch (SOAPException e) {
-            log.debug("Exception in postInvoke : ", e);
-            throw new RuntimeException("Exception in postInvoke : " + e.toString());
         }
     }
 
