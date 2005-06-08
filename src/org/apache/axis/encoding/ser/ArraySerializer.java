@@ -156,6 +156,9 @@ public class ArraySerializer implements Serializer
                 QName componentType = null;
                 if (asf.getComponentType() != null) {
                     componentType = asf.getComponentType();
+                    if(encoded) {
+                        componentTypeQName = componentType;
+                    }
                 }
                 // update factory with the new values
                 factory = (SerializerFactory) tm.getSerializer(componentClass,
