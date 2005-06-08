@@ -145,7 +145,7 @@ public class HTTPSender extends BasicHandler {
         } catch (Exception e) {
             log.debug(e);
             try {
-	            if (socketHolder.getSocket() != null && !socketHolder.getSocket().isClosed()) {
+	            if (socketHolder.getSocket() != null ) {
 	            	socketHolder.getSocket().close();
 	            }
             } catch (IOException ie) {
