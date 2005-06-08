@@ -2,5 +2,5 @@
 # The test harness ignores the test cases specified below.
 **/test/wsdl/soap12/additional/*.*
 **/test/wsdl/literal/*.*
-**/test/wsdl/query/QueryTestServiceTestCase.*
+#**/test/wsdl/query/QueryTestServiceTestCase.*
 

@@ -153,12 +153,13 @@ public class ArraySerializer implements Serializer
                     && factory instanceof ArraySerializerFactory) {
                 ArraySerializerFactory asf = (ArraySerializerFactory) factory;
                 componentClass = componentClass.getComponentType();
+                QName componentType = null;
                 if (asf.getComponentType() != null) {
-                    componentTypeQName = asf.getComponentType();
+                    componentType = asf.getComponentType();
                 }
                 // update factory with the new values
                 factory = (SerializerFactory) tm.getSerializer(componentClass,
-                        componentTypeQName);
+                        componentType);
                 if (soap == SOAPConstants.SOAP12_CONSTANTS)
                     dims += "* ";
                 else
