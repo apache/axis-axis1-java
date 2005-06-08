@@ -16,7 +16,6 @@
 
 package test.wsdl.query;
 
-import test.wsdl.filegen.FileGenTestCase;
 import test.AxisFileGenTestBase;
 
 import java.io.File;
