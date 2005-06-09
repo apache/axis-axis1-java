@@ -35,7 +35,6 @@ import org.w3c.dom.Element;
 import org.apache.axis.Message;
 import org.apache.axis.utils.XMLUtils;
 
-
 /**
  * @author john.gregg@techarch.com
  * @author $Author$
@@ -145,20 +144,17 @@ public class TestSOAPBody extends TestCase {
         ((Message) msg).setMessageContext(
                 new org.apache.axis.MessageContext(axisengine));
         SOAPPart sp = msg.getSOAPPart();
-        SOAPEnvelope se = (org.apache.axis.message.SOAPEnvelope) sp.getEnvelope();
-        SOAPHeader sh = (org.apache.axis.message.SOAPHeader)se.getHeader();
-        SOAPBody sb = (org.apache.axis.message.SOAPBody)se.getBody();
+        SOAPEnvelope se = sp.getEnvelope();
+        SOAPBody sb = se.getBody();
 
         Node myNode = (Element) sb.getElementsByTagName("City").item(0);
-
         myNode.replaceChild( myNode.getOwnerDocument().createTextNode("NY"), myNode.getFirstChild());
-        System.out.println(XMLUtils.ElementToString(sb));
 
         msg.saveChanges();
         
         sp = msg.getSOAPPart();
-        se = (org.apache.axis.message.SOAPEnvelope) sp.getEnvelope();
-        javax.xml.soap.SOAPBody sb2 = se.getBody();
+        se = sp.getEnvelope();
+        sb = se.getBody();
         myNode = (Element) sb.getElementsByTagName("City").item(0);
         Node city = myNode.getFirstChild();
         assertEquals("City name did not change to NY", city.toString(), "NY");
