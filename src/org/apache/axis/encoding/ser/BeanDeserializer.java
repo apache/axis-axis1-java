@@ -188,7 +188,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         if ((prevQName == null) || (!prevQName.equals(elemQName))) {
             collectionIndex = -1;
         }  
-        prevQName = elemQName;
 
         boolean isArray = false;
         QName itemQName = null;
@@ -214,9 +213,13 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // try and see if this is an xsd:any namespace="##any" element before
         // reporting a problem
-        if (propDesc == null) {
+        if (propDesc == null || 
+        		(((prevQName != null) && prevQName.equals(elemQName) &&
+        				!(propDesc.isIndexed()||isArray)
+						&& getAnyPropertyDesc() != null ))) {
             // try to put unknown elements into a SOAPElement property, if
             // appropriate
+        	prevQName = elemQName;
             propDesc = getAnyPropertyDesc();
             if (propDesc != null) {
                 try {
@@ -257,6 +260,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                          localName));
         }
 
+        prevQName = elemQName;
         // Get the child's xsi:type if available
         QName childXMLType = context.getTypeFromAttributes(namespace, 
                                                             localName,
