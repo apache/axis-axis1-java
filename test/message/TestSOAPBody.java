@@ -23,11 +23,18 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.apache.axis.Message;
+import org.apache.axis.utils.XMLUtils;
+
 
 /**
  * @author john.gregg@techarch.com
@@ -117,5 +124,43 @@ public class TestSOAPBody extends TestCase {
                     + name.getLocalName() + " " + name.getURI());
         }
         assertTrue(count == 1);
+    }
+    /**
+     * Method testSaveChanges
+     *
+     * @throws Exception
+     */
+    public void testSaveChanges() throws Exception {
+        MimeHeaders mimeheaders = new MimeHeaders();
+
+        mimeheaders.addHeader("Content-Type", "text/xml");
+        ByteArrayInputStream instream = new ByteArrayInputStream(xmlString.getBytes());
+        MessageFactory factory =
+                MessageFactory.newInstance();
+        SOAPMessage msg =
+                factory.createMessage(mimeheaders, instream);
+        org.apache.axis.client.AxisClient axisengine =
+                new org.apache.axis.client.AxisClient();
+
+        ((Message) msg).setMessageContext(
+                new org.apache.axis.MessageContext(axisengine));
+        SOAPPart sp = msg.getSOAPPart();
+        SOAPEnvelope se = (org.apache.axis.message.SOAPEnvelope) sp.getEnvelope();
+        SOAPHeader sh = (org.apache.axis.message.SOAPHeader)se.getHeader();
+        SOAPBody sb = (org.apache.axis.message.SOAPBody)se.getBody();
+
+        Node myNode = (Element) sb.getElementsByTagName("City").item(0);
+
+        myNode.replaceChild( myNode.getOwnerDocument().createTextNode("NY"), myNode.getFirstChild());
+        System.out.println(XMLUtils.ElementToString(sb));
+
+        msg.saveChanges();
+        
+        sp = msg.getSOAPPart();
+        se = (org.apache.axis.message.SOAPEnvelope) sp.getEnvelope();
+        javax.xml.soap.SOAPBody sb2 = se.getBody();
+        myNode = (Element) sb.getElementsByTagName("City").item(0);
+        Node city = myNode.getFirstChild();
+        assertEquals("City name did not change to NY", city.toString(), "NY");
     }
 }

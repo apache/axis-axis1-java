@@ -1107,6 +1107,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
         serializeContext = new SerializationContext(writer, msgContext);
         serializeContext.setSendDecl(false);
+        setDirty(false);
         output(serializeContext);
         writer.close();
 

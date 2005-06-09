@@ -493,6 +493,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         ((NodeImpl) newChild).detachNode();
         children.add(newChild);
         ((NodeImpl) newChild).parent = this;
+        setDirty(true);
         return newChild;
     }
 
@@ -560,6 +561,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
             position = 0;
         }
         children.add(position, newChild);
+        setDirty(true);
         return newChild;
     }
 
@@ -595,6 +597,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         }
         children.remove(position);
         children.add(position, newChild);
+        setDirty(true);
         return oldChild;
     }
 
