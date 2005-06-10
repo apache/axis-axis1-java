@@ -151,6 +151,7 @@ public class QSMethodHandler extends AbstractQueryStringHandler  {
 
             if (responseMsg == null) {
                 responseMsg = new Message (fault);
+                responseMsg.setMessageContext(msgContext);
             }
         }
 
