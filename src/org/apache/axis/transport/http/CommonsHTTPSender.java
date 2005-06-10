@@ -477,6 +477,13 @@ public class CommonsHTTPSender extends BasicHandler {
         if (mimeHeaders != null) {
             for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
                 MimeHeader mimeHeader = (MimeHeader) i.next();
+                //HEADER_CONTENT_TYPE and HEADER_SOAP_ACTION are already set.
+                //Let's not duplicate them.
+                String headerName = mimeHeader.getName();
+                if (headerName.equals(HTTPConstants.HEADER_CONTENT_TYPE)
+                        || headerName.equals(HTTPConstants.HEADER_SOAP_ACTION)) {
+                        continue;
+                }
                 method.addRequestHeader(mimeHeader.getName(), 
                                         mimeHeader.getValue());
             }
