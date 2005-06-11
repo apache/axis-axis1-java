@@ -83,6 +83,17 @@ public class BeanPropertyTarget implements Target {
                 // see it the value can be converted into
                 // the expected type.
                 Class type = pd.getType();
+
+
+                if (value.getClass().isArray() 
+                        && value.getClass().getComponentType().isPrimitive()
+                        && type.isArray() 
+                        && type.getComponentType().equals(Object.class))
+                {
+                    //we make our own array type here.
+                    type = Array.newInstance(JavaUtils.getWrapperClass(value.getClass().getComponentType()),0).getClass();
+                }
+
                 if (JavaUtils.isConvertable(value, type)) {
                     value = JavaUtils.convert(value, type);
                     if (index < 0)
