@@ -1388,6 +1388,10 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             Text text = getOwnerDocument().createTextNode(s);
             ((org.apache.axis.message.Text)text).setParentElement(this);
             return this;
+        } catch (java.lang.IncompatibleClassChangeError e) {
+            Text text = new org.apache.axis.message.Text(s);
+            this.appendChild(text);
+            return this;
         } catch (ClassCastException e) {
             throw new SOAPException(e);
         }
