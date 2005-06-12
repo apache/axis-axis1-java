@@ -406,14 +406,44 @@ public class JavaDeployWriter extends JavaWriter {
                 + service.getQName().getNamespaceURI() + "\"/>");
         pw.println("      <parameter name=\"wsdlServiceElement\" value=\""
                 + service.getQName().getLocalPart() + "\"/>");
-        pw.println("      <parameter name=\"wsdlServicePort\" value=\""
-                + serviceName + "\"/>");
-
         // MIME attachments don't work with multiref, so turn it off.
         if (hasMIME) {
             pw.println(
                     "      <parameter name=\"sendMultiRefs\" value=\"false\"/>");
         }
+        ArrayList qualified = new ArrayList();
+        ArrayList unqualified = new ArrayList();
+        Map elementFormDefaults = symbolTable.getElementFormDefaults();
+        for(Iterator it = elementFormDefaults.entrySet().iterator();it.hasNext();){
+            Map.Entry entry =  (Map.Entry) it.next();
+            if(entry.getValue().equals("qualified")){
+                qualified.add(entry.getKey());
+            } else {
+                unqualified.add(entry.getKey());
+            }
+        }
+        if(qualified.size()>0){
+            pw.print("      <parameter name=\"schemaQualified\" value=\"");
+            for(int i=0;i<qualified.size();i++){
+                pw.print(qualified.get(i));
+                if(i != qualified.size()-1){
+                    pw.print(',');
+                }
+            }
+            pw.println("\"/>");
+        }
+        if(unqualified.size()>0){
+            pw.print("      <parameter name=\"schemaUnqualified\" value=\"");
+            for(int i=0;i<unqualified.size();i++){
+                pw.print(unqualified.get(i));
+                if(i != unqualified.size()-1){
+                    pw.print(',');
+                }
+            }
+            pw.println("\"/>");
+        }
+        pw.println("      <parameter name=\"wsdlServicePort\" value=\""
+                + serviceName + "\"/>");
 
         writeDeployBinding(pw, bEntry);
         writeDeployTypes(pw, bEntry.getBinding(), hasLiteral, hasMIME, use);

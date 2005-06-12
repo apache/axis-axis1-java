@@ -175,6 +175,8 @@ public class SymbolTable {
 
     Set arrayTypeQNames = new HashSet();
 
+    /** Field elementFormDefaults */
+    private final Map elementFormDefaults = new HashMap();
     /**
      * Construct a symbol table with the given Namespaces.
      * 
@@ -1096,6 +1098,15 @@ public class SymbolTable {
             if ((localPart != null)
                 && localPart.equals("schema")) {
                 level = SCHEMA_LEVEL;
+                String targetNamespace = ((org.w3c.dom.Element) node).getAttribute("targetNamespace");
+                String elementFormDefault = ((org.w3c.dom.Element) node).getAttribute("elementFormDefault");
+                if (targetNamespace != null && targetNamespace.length() > 0) {
+                    elementFormDefault = (elementFormDefault == null || elementFormDefault.length() == 0) ?
+                            "unqualified" : elementFormDefault;
+                    if(elementFormDefaults.get(targetNamespace)==null) {
+                        elementFormDefaults.put(targetNamespace, elementFormDefault);
+                    }
+                }
             }
         } else {
             ++level;
@@ -3786,4 +3797,8 @@ public class SymbolTable {
     public void setWrapArrays(boolean wrapArrays) {
         this.wrapArrays = wrapArrays;
     }
-}    // class SymbolTable
+
+    public Map getElementFormDefaults() {
+        return elementFormDefaults;
+    }
+}

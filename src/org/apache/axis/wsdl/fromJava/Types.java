@@ -20,6 +20,7 @@ import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Style;
 import org.apache.axis.description.ServiceDesc;
@@ -33,6 +34,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.StringUtils;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -116,10 +118,10 @@ public class Types {
 
     /** Keep track of the element QNames we've written to avoid dups */
     private Set writtenElementQNames = new HashSet();
-    
+
     /** Which types have we already written? */
     Class [] mappedTypes = null;
-    
+
     /** The java to wsdl emitter */
     Emitter emitter = null;
 
@@ -169,7 +171,7 @@ public class Types {
         this.defaultTM = defaultTM;
 
         mappedTypes = tm.getAllClasses();
-        
+
         this.namespaces = namespaces;
         this.targetNamespace = targetNamespace;
         this.stopClasses = stopClasses;
@@ -190,10 +192,10 @@ public class Types {
      * @param stopClasses
      * @param serviceDesc
      * @param emitter         Java2Wsdl emitter
-     */    
+     */
     public Types(Definition def, TypeMapping tm, TypeMapping defaultTM,
-            Namespaces namespaces, String targetNamespace,
-            List stopClasses, ServiceDesc serviceDesc, Emitter emitter) {
+                 Namespaces namespaces, String targetNamespace,
+                 List stopClasses, ServiceDesc serviceDesc, Emitter emitter) {
         this(def, tm, defaultTM, namespaces, targetNamespace, stopClasses, serviceDesc);
         this.emitter = emitter;
     }
@@ -393,14 +395,14 @@ public class Types {
         // replicable test data to the Axis team via bugzilla
 
         /*
-         * if( type==null ) {
-         *   return null;
-         * }
-         */
+        * if( type==null ) {
+        *   return null;
+        * }
+        */
         if (type.getName().equals("void")) {
             return null;
         }
-        
+
         if (Holder.class.isAssignableFrom(type)) {
             type = JavaUtils.getHolderValueType(type);
         }
@@ -422,7 +424,7 @@ public class Types {
 
         return qname;
     }
-    
+
     /**
      * Write out a type (and its subtypes) referenced by a part type attribute.
      *
@@ -435,39 +437,39 @@ public class Types {
      */
     public QName writeTypeAndSubTypeForPart(Class type, QName qname)
             throws AxisFault {
-        
+
         // Write out type in parameter
         QName qNameRet = writeTypeForPart(type, qname);
-        
+
         // If mappedTypesexists 
         // Will write subTypes of the type in parameters
         if (mappedTypes != null) {
             for (int i = 0; i < mappedTypes.length; i++) {
                 Class tempMappedType = mappedTypes[i];
                 QName name;
-                
+
                 // If tempMappedType is subtype of the "type" parameter
                 // and type is not Object (Object superclass of all Java class...)  
                 // write the subtype
                 if (tempMappedType != null &&
-                        type != Object.class && 
+                        type != Object.class &&
                         tempMappedType != type &&
                         type.isAssignableFrom(tempMappedType)) {
                     name = tm.getTypeQName(tempMappedType);
                     if (!isAnonymousType(name)) {
                         writeTypeForPart(tempMappedType, name);
                     }
-                    
+
                     // Only do each one once.  This is OK to do because each
                     // Types instance is for generating a single WSDL.
                     mappedTypes[i] = null;
                 }
             }
         } //if (mappedTyped != null) {
-        
-        return qNameRet;    
+
+        return qNameRet;
     }
-    
+
     /**
      * Write out an element referenced by a part element attribute.
      *
@@ -484,10 +486,10 @@ public class Types {
         // replicable test data to the Axis team via bugzilla
 
         /*
-         * if( type==null ) {
-         *   return null;
-         * }
-         */
+        * if( type==null ) {
+        *   return null;
+        * }
+        */
         if (type.getName().equals("void")) {
             return null;
         }
@@ -733,7 +735,7 @@ public class Types {
         // If the javaType is an array and the qName is
         // SOAP_ARRAY, construct the QName using the
         // QName of the component type
-        if (isArray(javaType) && 
+        if (isArray(javaType) &&
                 Constants.equals(Constants.SOAP_ARRAY, qName)) {
             Class componentType = getComponentType(javaType);
 
@@ -746,7 +748,7 @@ public class Types {
             if (isWSICompliant) {
                 arrayTypePrefix = "MyArrayOf";
             }
-            
+
             // If component namespace uri == targetNamespace
             // Construct ArrayOf<componentLocalPart>
             // Else
@@ -944,7 +946,15 @@ public class Types {
                         Constants.URI_DEFAULT_SOAP_ENC);
             }
 
-            if ((serviceDesc.getStyle() == Style.DOCUMENT)
+            SOAPService service = null;
+            if(MessageContext.getCurrentContext() != null) {
+                service = MessageContext.getCurrentContext().getService();
+            }
+            if(service != null && isPresent((String) service.getOption("schemaQualified"), namespaceURI)){
+                schemaElem.setAttribute("elementFormDefault", "qualified");
+            } else if(service != null && isPresent((String) service.getOption("schemaUnqualified"), namespaceURI)){
+                // DO nothing..default is unqualified.
+            } else if ((serviceDesc.getStyle() == Style.DOCUMENT)
                     || (serviceDesc.getStyle() == Style.WRAPPED)) {
                 schemaElem.setAttribute("elementFormDefault", "qualified");
             }
@@ -953,6 +963,23 @@ public class Types {
         }
 
         schemaElem.appendChild(element);
+    }
+
+    /**
+     * check if the namespace is present in the list.
+     * @param list
+     * @param namespace
+     * @return
+     */
+    private boolean isPresent(String list, String namespace) {
+        if(list == null || list.length()==0)
+                return false;
+        String[] array = StringUtils.split(list,',');
+        for(int i=0;i<array.length;i++){
+            if(array[i].equals(namespace))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -1022,7 +1049,7 @@ public class Types {
         SOAPConstants constants;
         MessageContext mc = MessageContext.getCurrentContext();
         if(mc==null||mc.getSOAPConstants()==null){
-            constants = SOAPConstants.SOAP11_CONSTANTS;    
+            constants = SOAPConstants.SOAP11_CONSTANTS;
         } else {
             constants = mc.getSOAPConstants();
         }
@@ -1042,7 +1069,7 @@ public class Types {
         Element attribute = docHolder.createElement("attribute");
 
         restriction.appendChild(attribute);
-        
+
         attribute.setAttribute("ref",
                 prefix + ":arrayType");
 
@@ -1556,7 +1583,7 @@ public class Types {
 
         updateNamespaces();
 
-        if (wsdlTypesElem == null) 
+        if (wsdlTypesElem == null)
             return;
 
         // Make sure that definitions from each embedded schema are allowed
@@ -1597,7 +1624,7 @@ public class Types {
             }
             schemaElem = null;
             tns = null;
-        }  
+        }
 
         // Import the wsdlTypesElement into the doc.
         org.w3c.dom.Node node = doc.importNode(wsdlTypesElem, true);
@@ -1605,7 +1632,7 @@ public class Types {
         doc.getDocumentElement().
                 insertBefore(node,
                         doc.getDocumentElement().getFirstChild());
-    }  
+    }
 
     /**
      * Return the list of classes that we should not emit WSDL for.
@@ -1784,7 +1811,7 @@ public class Types {
         // because we've already written it), just add the type="" attribute
         // (if appropriate) and return.
         if (!addToTypesList(qName) && !anonymous) {
-        	if (containingElement != null) {
+            if (containingElement != null) {
                 containingElement.setAttribute("type", getQNameString(qName));
             }
 
@@ -1829,11 +1856,11 @@ public class Types {
         // containingElement to the right QName, and make sure the type is
         // correctly written into the appropriate <schema> element.
         if (anonymous) {
-        	if (typeEl == null) {
+            if (typeEl == null) {
                 containingElement.setAttribute("type", getQNameString(getTypeQName(type)));
-        	} else {
+            } else {
                 containingElement.appendChild(typeEl);
-        	}
+            }
         } else {
             if (typeEl != null) {
                 typeEl.setAttribute("name", qName.getLocalPart());
@@ -1858,7 +1885,7 @@ public class Types {
     /**
      * return the service description
      * @return
-     */ 
+     */
     public ServiceDesc getServiceDesc() {
         return serviceDesc;
     }
