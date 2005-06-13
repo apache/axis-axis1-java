@@ -1468,6 +1468,16 @@ public class Emitter {
             bodyParts.add(partName);
 
         } else {
+        	//Now we're either DOCUMENT or RPC. If we're doing doc/lit, and in the
+        	//case of mulitple input params, we would warn user saying request
+        	//message's type information is being written out as multiple parts
+        	//than one single complexType and to interop with other soap stacks
+        	//that do doc/lit by default, user might want to publish his service
+        	//as a WRAPPED-LITERAL service instead.
+        	//see http://issues.apache.org/jira/browse/AXIS-2017
+        	if(oper.getStyle() == Style.DOCUMENT && parameters.size()>1 ) {
+         		System.out.println(Messages.getMessage("warnDocLitInteropMultipleInputParts"));
+         	}
 
             // write a part for each non-header parameter
             for (int i = 0; i < parameters.size(); i++) {
