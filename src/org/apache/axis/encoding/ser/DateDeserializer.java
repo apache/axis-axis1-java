@@ -87,14 +87,17 @@ public class DateDeserializer extends SimpleDeserializer {
             if (bc) {
                 calendar.setTime((Date)result);
                 calendar.set(Calendar.ERA, GregorianCalendar.BC);
-                if(javaType == Date.class) {
-                    result = calendar.getTime();
-                } else {
-                    result = calendar;
-                }
+                result = calendar.getTime();
+            }
+            if (javaType == java.util.Date.class) {
+                return result;
+            } else if (javaType == java.sql.Date.class) {
+               	result = new java.sql.Date(((Date)result).getTime());
+            } else {
+                calendar.setTime((Date)result);
+                result = calendar;
             }
         }
-
         return result;
     }
 }
