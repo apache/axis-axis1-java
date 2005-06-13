@@ -96,7 +96,7 @@ public class WSDDTypeMapping
         attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE,
                            "CDATA", typeStr);
         
-        String qnameStr = context.qName2String(qname);
+        String qnameStr = context.attributeQName2String(qname);
         attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME, "CDATA", qnameStr);
         
         context.startElement(QNAME_TYPEMAPPING, attrs);
