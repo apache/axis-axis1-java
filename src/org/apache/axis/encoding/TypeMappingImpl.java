@@ -19,6 +19,8 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
@@ -567,7 +569,7 @@ public class TypeMappingImpl implements Serializable
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
 
-        if (TypeMappingImpl.dotnet_soapenc_bugfix && pair != null ) {
+        if (isDotNetSoapEncFixNeeded() && pair != null ) {
             // Hack alert!
             // If we are in .NET bug compensation mode, skip over any
             // SOAP Encoded types we my find and prefer XML Schema types
@@ -591,6 +593,25 @@ public class TypeMappingImpl implements Serializable
         return xmlType;
     }
 
+    /**
+     * isDotNetSoapEncFixNeeded - Do we need to compensate for the dotnet bug.
+     * check the service specific flag before using the global flag
+     * @return
+     */
+    private boolean isDotNetSoapEncFixNeeded() {
+        MessageContext msgContext = MessageContext.getCurrentContext();
+        if (msgContext != null) {
+            SOAPService service = msgContext.getService();
+            if (service != null) {
+                String dotNetSoapEncFix = (String) service.getOption(AxisEngine.PROP_DOTNET_SOAPENC_FIX);
+                if (dotNetSoapEncFix != null) {
+                    return JavaUtils.isTrue(dotNetSoapEncFix);
+                }
+            }
+        }
+        return TypeMappingImpl.dotnet_soapenc_bugfix;
+    }
+
     public QName getTypeQName(Class javaType, TypeMappingDelegate next) {
         QName xmlType = getTypeQNameExact(javaType, next);
 
@@ -599,7 +620,7 @@ public class TypeMappingImpl implements Serializable
          * register it's javaType and xmlType. List classes and derivitives
          * can't be used because they should be serialized as an anyType array.
          */
-        if ( shouldDoAutoTypes() && 
+        if ( shouldDoAutoTypes() &&
              javaType != List.class &&
              !List.class.isAssignableFrom(javaType) &&
              xmlType != null &&
@@ -608,13 +629,13 @@ public class TypeMappingImpl implements Serializable
             xmlType = new QName(
                 Namespaces.makeNamespace( javaType.getName() ),
                 Types.getLocalNameFromFullName( javaType.getName() ) );
-                
+
             internalRegister( javaType,
                               xmlType,
                               new ArraySerializerFactory(),
                               new ArrayDeserializerFactory() );
         }
-        
+
         // Can only detect arrays via code
         if (xmlType == null && isArray(javaType)) {
 
@@ -629,21 +650,21 @@ public class TypeMappingImpl implements Serializable
                 xmlType = Constants.SOAP_ARRAY;
             }
         }
-        
+
         /* If the class isn't an array or List and auto-typing is turned on,
-         * register the class and it's type as beans.
-         */
+        * register the class and it's type as beans.
+        */
         if (xmlType == null && shouldDoAutoTypes())
-        {   
+        {
             xmlType = new QName(
                 Namespaces.makeNamespace( javaType.getName() ),
                 Types.getLocalNameFromFullName( javaType.getName() ) );
-            
+
             /* If doAutoTypes is set, register a new type mapping for the
-             * java class with the above QName.  This way, when getSerializer()
-             * and getDeserializer() are called, this QName is returned and
-             * these methods do not need to worry about creating a serializer.
-             */
+            * java class with the above QName.  This way, when getSerializer()
+            * and getDeserializer() are called, this QName is returned and
+            * these methods do not need to worry about creating a serializer.
+            */
             internalRegister( javaType,
                               xmlType,
                               new BeanSerializerFactory(javaType, xmlType),
