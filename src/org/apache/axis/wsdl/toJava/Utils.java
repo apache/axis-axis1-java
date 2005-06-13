@@ -718,8 +718,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         String objType = (String) TYPES.get(typeName);
 
         if (objType != null) {
-            if (param.isOmittable()) {
-                typeName = objType;
+            // If minOccurs="0" and singular or array with nillable underlying
+            // type get the corresponding wrapper type.
+            if ((param.isOmittable() && param.getType().getDimensions().equals(""))
+                || param.getType().getUnderlTypeNillable()) {
+
+                typeName = getWrapperType(param.getType());
             } else {
                 return "((" + objType + ") " + var + ")." + typeName +
                         "Value();";
@@ -751,6 +755,33 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     public static String getWrapperType(String type) {
         String ret = (String)TYPES.get(type);
         return (ret == null) ? type : ret;
+    }
+
+    /**
+     * Returns a "wrapper" type for the given TypeEntry.
+     *
+     * @param type
+     * @return the name of a java wrapper class for the type, or the type's
+     *         name if it's not a primitive.
+     */
+    public static String getWrapperType(TypeEntry type) {
+        String    dims = type.getDimensions();
+        if (!dims.equals("")) {
+
+            TypeEntry te = type.getRefType();            
+            if (te != null 
+                && !te.getDimensions().equals("")) {
+
+                return getWrapperType(te) + dims;
+            }
+            if (te instanceof BaseType
+                ||  te instanceof DefinedElement
+                    &&  te.getRefType() instanceof BaseType) {
+
+                return getWrapperType(te) + dims;
+            } 
+        } 
+        return  getWrapperType(type.getName());
     }
 
     /**
@@ -948,10 +979,13 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
         if (parm.getMIMEInfo() == null) {
             ret = parm.getType().getName();
-            if (parm.isOmittable()) {
-                String wrapped = (String)TYPES.get(ret);
-                if (wrapped != null)
-                    ret = wrapped;
+
+            // If minOccurs="0" and singular or array with nillable underlying
+            // type get the corresponding wrapper type.
+            if ((parm.isOmittable() && parm.getType().getDimensions().equals(""))
+                || parm.getType().getUnderlTypeNillable()) {
+
+                ret = getWrapperType(parm.getType());
             }
         } else {
             String mime = parm.getMIMEInfo().getType();

@@ -83,6 +83,9 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
 
                                                        // the array dims (for example "[]").
 
+    protected boolean underlTypeNillable = false;      // if this is an array, underlTypeNillable indicates 
+                                                       // whether the underlying type of the array is nillable.
+
     protected QName componentType = null;              // If this is an array, the component type
 
     /** If this TypeEntry represents an array with elements inside a "wrapper"
@@ -380,6 +383,29 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     public String getDimensions() {
         return dims;
     }    // getDimensions
+
+    /**
+     * Return whether the underlying type is nillable if this is an array type.
+     * @return true if it is an array and nillable
+     */
+    public boolean getUnderlTypeNillable() {
+	    // refType could refer to array with underlying nillable
+	    // type - set the underlTypeNillable to true if this is 
+	    // the case.
+        if (!underlTypeNillable 
+            && !getDimensions().equals("")
+            && refType != null) {
+            underlTypeNillable = refType.getUnderlTypeNillable();
+	    }
+	    return underlTypeNillable;
+    }
+
+    /**
+     * Set the boolean indicating whether underlying type of array is nillable.
+     */
+    public void setUnderlTypeNillable(boolean underlTypeNillable) {
+        this.underlTypeNillable = underlTypeNillable;
+    }
 
     /**
      * Return the QName of the component if this is an array type

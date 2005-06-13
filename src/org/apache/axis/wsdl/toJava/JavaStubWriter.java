@@ -1315,9 +1315,14 @@ public class JavaStubWriter extends JavaClassWriter {
         TypeEntry type = param.getType();
         
         if ((type != null) && (type.getName() != null)) {
+
             String typeName = type.getName();
-            if (param.isOmittable()) {
-                typeName = Utils.getWrapperType(type.getName());
+	        // If minOccurs="0" and singular or array with nillable underlying
+            // type get the corresponding wrapper type.
+            if ((param.isOmittable() && param.getType().getDimensions().equals(""))
+                || param.getType().getUnderlTypeNillable()) {
+
+                typeName = Utils.getWrapperType(type);
             }
 
             // Try casting the output to the expected output.

@@ -1183,6 +1183,7 @@ public class SymbolTable {
                 // Flow to here indicates no type= or ref= attribute.
                 // See if this is an array or simple type definition.
                 IntHolder numDims = new IntHolder();
+                BooleanHolder underlTypeNillable = new BooleanHolder();
 
                 // If we're supposed to unwrap arrays, supply someplace to put the "inner" QName
                 // so we can propagate it into the appropriate metadata container.
@@ -1193,6 +1194,7 @@ public class SymbolTable {
                 QName arrayEQName = 
                         SchemaUtils.getArrayComponentQName(node,
                                                            numDims,
+                                                           underlTypeNillable,
                                                            itemQName,
                                                            this);
 
@@ -1242,6 +1244,7 @@ public class SymbolTable {
                         defType = new DefinedType(qName, refType, node, dims);
                         // Save component type for ArraySerializer
                         defType.setComponentType(arrayEQName);
+                        defType.setUnderlTypeNillable(underlTypeNillable.value);
                         if (itemQName != null)
                             defType.setItemQName(itemQName.value);
                     }
@@ -1356,7 +1359,6 @@ public class SymbolTable {
 
                         symbolTablePut(containedTE);
                     }
-
                     symbolTablePut(new CollectionType(qName, containedTE,
                             node, "[]"));
                 } else {

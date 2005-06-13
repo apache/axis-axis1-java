@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.QNameHolder;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -1295,15 +1296,17 @@ public class SchemaUtils {
      */
     public static QName getArrayComponentQName(Node node,
                                                IntHolder dims,
+                                               BooleanHolder underlTypeNillable,
                                                QNameHolder itemQName,
                                                SymbolTable symbolTable) {
 
         dims.value = 1;    // assume 1 dimension
+        underlTypeNillable.value = false; // assume underlying type is not nillable
 
         QName qName = getCollectionComponentQName(node, itemQName);
 
         if (qName == null) {
-            qName = getArrayComponentQName_JAXRPC(node, dims, symbolTable);
+            qName = getArrayComponentQName_JAXRPC(node, dims, underlTypeNillable, symbolTable);
         }
 
         return qName;
@@ -1439,11 +1442,12 @@ public class SchemaUtils {
      */
     private static QName getArrayComponentQName_JAXRPC(Node node,
                                                        IntHolder dims,
+                                                       BooleanHolder underlTypeNillable,
                                                        SymbolTable symbolTable)
     {
 
         dims.value = 0;    // Assume 0
-
+        underlTypeNillable.value = false;
         if (node == null) {
             return null;
         }
@@ -1634,6 +1638,16 @@ public class SchemaUtils {
                 // The element node should have maxOccurs="unbounded" and
                 // a type
                 if (elementNode != null) {
+
+                    String underlTypeNillableValue = Utils.getAttribute(elementNode,
+                        "nillable");
+
+                    if (underlTypeNillableValue != null
+                            && underlTypeNillableValue.equals("true")) {
+
+                        underlTypeNillable.value = true;
+                    }
+
                     String maxOccursValue = Utils.getAttribute(elementNode,
                             "maxOccurs");
 

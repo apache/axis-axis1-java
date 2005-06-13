@@ -270,7 +270,17 @@ public class JavaBeanWriter extends JavaClassWriter {
                     isAny = true;
                 } else {
                     variableName = elem.getName();
-
+                    if (elem.getType().getUnderlTypeNillable() 
+                        || (elem.getNillable() && elem.getMaxOccursIsUnbounded())) {
+                    /*
+		             * Soapenc arrays with nillable underlying type or 
+		             * nillable="true" maxOccurs="unbounded" elements 
+		             * should be mapped to a wrapper type.
+		             */
+                        typeName = Utils.getWrapperType(elem.getType());
+			
+                    } else if (elem.getMinOccursIs0() && elem.getMaxOccursIsExactlyOne()
+                            || elem.getNillable() || elem.getOptional()) {
                     /*
                      * Quote from JAX-RPC 1.1, Section 4.2.1:
                      * There are a number of cases in which a built-in simple
@@ -285,35 +295,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                      *     to optional or absent and carrying neither
                      *     the default nor the fixed attribute;
                      */
-                    if (elem.getMinOccursIs0() && elem.getMaxOccursIsExactlyOne()
-                            || elem.getNillable() || elem.getOptional()) {
-                        String   dims = null;
-                        /*
-                         * Handle situations where the nillable property is
-                         * combined with a non-singular 'maxOccurs' value
-                         * and the component type is a primitive, e.g.
-                         * <xsd:element name="code" type="xsd:int" nillable="true" maxOccurs="unbounded"/>
-                         * Under these circumstances we still have to promote
-                         * the underlying type to the corresponding wrapper
-                         * class.
-                         */
-                        if (elem.getType() instanceof CollectionTE) {
-                            TypeEntry   te = elem.getType().getRefType();
-                            if (te instanceof BaseType
-                                ||  te instanceof DefinedElement
-                                    &&  te.getRefType() instanceof BaseType) {
-                                /*
-                                 * Deliberately looking at the dimensions introduced
-                                 * by the 'maxOccurs' only, further dimensions
-                                 * (if any) must be disregarded.
-                                 */
-                                dims = elem.getType().getDimensions();
-                                typeName = te.getName();
-                            }
-                        }
                         typeName = Utils.getWrapperType(typeName);
-                        if (dims != null)  typeName += dims;
-                    }
+                    } 
                 }
 
                 // Make sure the property name is not reserved.
