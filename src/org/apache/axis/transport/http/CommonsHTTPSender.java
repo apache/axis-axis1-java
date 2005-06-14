@@ -256,24 +256,13 @@ public class CommonsHTTPSender extends BasicHandler {
             // handle cookies (if any)
             if (msgContext.getMaintainSession()) {
                 Header[] headers = method.getResponseHeaders();
-                ArrayList cookies = new ArrayList();
-                ArrayList cookies2 = new ArrayList();
+
                 for (int i = 0; i < headers.length; i++) {
                     if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE)) {
-                        cookies.add(cleanupCookie(headers[i].getValue()));
+                        handleCookie(HTTPConstants.HEADER_COOKIE, headers[i].getValue(), msgContext);
                     } else if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE2)) {
-                        cookies2.add(cleanupCookie(headers[i].getValue()));
+                        handleCookie(HTTPConstants.HEADER_COOKIE2, headers[i].getValue(), msgContext);
                     }
-                }
-                if(cookies.size()==1) {
-                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE, cookies.get(0));
-                } else if (cookies.size() > 1) {
-                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE, cookies.toArray(new String[cookies.size()]));
-                }
-                if(cookies2.size()==1) {
-                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE2, cookies2.get(0));
-                } else if (cookies2.size() > 1) {
-                    msgContext.setProperty(HTTPConstants.HEADER_COOKIE2, cookies2.toArray(new String[cookies2.size()]));
                 }
             }
 
@@ -294,6 +283,52 @@ public class CommonsHTTPSender extends BasicHandler {
         }
     }
 
+    /**
+     * little helper function for cookies. fills up the message context with
+     * a string or an array of strings (if there are more than one Set-Cookie)
+     *
+     * @param cookieName
+     * @param setCookieName
+     * @param cookie
+     * @param msgContext
+     */
+    public void handleCookie(String cookieName, String cookie,
+            MessageContext msgContext) {
+        
+        cookie = cleanupCookie(cookie);
+        int keyIndex = cookie.indexOf("=");
+        String key = cookie.substring(0, keyIndex);
+        
+        ArrayList cookies = new ArrayList();
+        Object oldCookies = msgContext.getProperty(cookieName);
+        boolean alreadyExist = false;
+        if(oldCookies != null) {
+            if(oldCookies instanceof String[]) {
+                String[] oldCookiesArray = (String[])oldCookies;
+                for(int i = 0; i < oldCookiesArray.length; i++) {
+                    String anOldCookie = oldCookiesArray[i];
+                    if (anOldCookie.indexOf(key) == 0) { // same cookie key
+                        anOldCookie = cookie;             // update to new one
+                        alreadyExist = true;
+                    }
+                    cookies.add(anOldCookie);
+                }
+            } else {
+                cookies.add((String)oldCookies);
+            }
+        }
+        
+        if (!alreadyExist) {
+            cookies.add(cookie);
+        }
+        
+        if(cookies.size()==1) {
+            msgContext.setProperty(cookieName, cookies.get(0));
+        } else if (cookies.size() > 1) {
+            msgContext.setProperty(cookieName, cookies.toArray(new String[cookies.size()]));
+        }
+    }
+    
     /**
      * Add cookies from message context
      *

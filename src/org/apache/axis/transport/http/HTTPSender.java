@@ -648,11 +648,9 @@ public class HTTPSender extends BasicHandler {
                     if (msgContext.getMaintainSession()) {
                         final String nameLowerCase = name.toLowerCase();
                         if (nameLowerCase.equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE)) {
-                            handleCookie(HTTPConstants.HEADER_COOKIE,
-                                    HTTPConstants.HEADER_SET_COOKIE, value, msgContext);
+                            handleCookie(HTTPConstants.HEADER_COOKIE, null, value, msgContext);
                         } else if (nameLowerCase.equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE2)) {
-                            handleCookie(HTTPConstants.HEADER_COOKIE2,
-                                    HTTPConstants.HEADER_SET_COOKIE2, value, msgContext);
+                            handleCookie(HTTPConstants.HEADER_COOKIE2, null, value, msgContext);
                         } else {
                             headers.put(name.toLowerCase(), value);
                         }
@@ -812,28 +810,56 @@ public class HTTPSender extends BasicHandler {
      */
     public void handleCookie(String cookieName, String setCookieName,
                              String cookie, MessageContext msgContext) {
+
+        cookie = cleanupCookie(cookie);
+        int keyIndex = cookie.indexOf("=");
+        String key = cookie.substring(0, keyIndex);
+        
         ArrayList cookies = new ArrayList();
         Object oldCookies = msgContext.getProperty(cookieName);
+        boolean alreadyExist = false;
         if(oldCookies != null) {
             if(oldCookies instanceof String[]) {
-                cookies.addAll(java.util.Arrays.asList((String[])oldCookies));
+                
+                String[] oldCookiesArray = (String[])oldCookies;
+                for(int i = 0; i < oldCookiesArray.length; i++) {
+                    String anOldCookie = oldCookiesArray[i];
+                    if (anOldCookie.indexOf(key) == 0) { // same cookie key
+                        anOldCookie = cookie;             // update to new one
+                        alreadyExist = true;
+                    }
+                    cookies.add(anOldCookie);
+                }
             } else {
                 cookies.add((String)oldCookies);
             }
         }
+        
+        if (!alreadyExist) {
+            cookies.add(cookie);
+        }
+        
+        if(cookies.size()==1) {
+            msgContext.setProperty(cookieName, cookies.get(0));
+        } else if (cookies.size() > 1) {
+            msgContext.setProperty(cookieName, cookies.toArray(new String[cookies.size()]));
+        }
+    }
+    
+    /**
+     * cleanup the cookie value.
+     *
+     * @param cookie initial cookie value
+     *
+     * @return a cleaned up cookie value.
+     */
+    private String cleanupCookie(String cookie) {
         cookie = cookie.trim();
         // chop after first ; a la Apache SOAP (see HTTPUtils.java there)
         int index = cookie.indexOf(';');
         if (index != -1) {
             cookie = cookie.substring(0, index);
         }
-        if(cookies.indexOf(cookie)==-1) {
-            cookies.add(cookie);
-        }
-        if(cookies.size()==1) {
-            msgContext.setProperty(cookieName, cookies.get(0));
-        } else if (cookies.size() > 1) {
-            msgContext.setProperty(cookieName, cookies.toArray(new String[cookies.size()]));
-        }
+        return cookie;
     }
 }
