@@ -314,7 +314,12 @@ public class CommonsHTTPSender extends BasicHandler {
                     cookies.add(anOldCookie);
                 }
             } else {
-                cookies.add((String)oldCookies);
+				String oldCookie = (String)oldCookies;
+                if (oldCookie.indexOf(key) == 0) { // same cookie key
+					oldCookie = cookie;             // update to new one
+                    alreadyExist = true;
+                }
+                cookies.add(oldCookie);
             }
         }
         
