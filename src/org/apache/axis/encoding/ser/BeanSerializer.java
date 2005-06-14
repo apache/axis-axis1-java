@@ -474,23 +474,18 @@ public class BeanSerializer implements Serializer, Serializable {
                                                    fieldType,
                                                    isOmittable,
                                                    where.getOwnerDocument());
-//        } else if (itemQName != null) {
-//            // This is a "wrapped" literal array, so write the element with
-//            // an anonymous complexType containing a sequence containing
-//            // an element of the right type with maxOccurs="unbounded"
-//            elem = types.createElement(fieldName, null, false, false, where.getOwnerDocument());
-//            String typeName = types.writeType(fieldType);
-//            Element complexType = types.createLiteralArrayElement(typeName,
-//                                                                  itemQName);
-//            elem.appendChild(complexType);
-//            where.appendChild(elem);
-//            return;
         } else {
             if (!SchemaUtils.isSimpleSchemaType(xmlType) &&
                     Types.isArray(fieldType)) {
                 xmlType = null;
             }
-            
+
+            if (itemQName != null &&
+                    SchemaUtils.isSimpleSchemaType(xmlType) &&
+                    Types.isArray(fieldType)) {
+                xmlType = null;
+            }
+
             QName typeQName = types.writeTypeAndSubTypeForPart(fieldType, xmlType);
             elementType = types.getQNameString(typeQName);
 
