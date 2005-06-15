@@ -488,8 +488,12 @@ Copyright:
       <fileset dir="xmls"/>
     </copy>
     <zip destfile="${build.dir}/${name}-bin-${axis.dirname}.zip">
-        <zipfileset prefix="${name}-${axis.dirname}" dir="${dist.dir}"/>
+      <zipfileset prefix="${name}-${axis.dirname}" dir="${dist.dir}"/>
     </zip>
+    <tar destfile="${build.dir}/${name}-bin-${axis.dirname}.tar.gz"
+         longfile="gnu" compression="gzip">
+      <tarfileset prefix="${name}-${axis.dirname}" dir="${dist.dir}"/>
+    </tar>
   </target>
 
   <!-- =================================================================== -->
@@ -518,6 +522,10 @@ Copyright:
     <zip destfile="${build.dir}/${name}-src-${axis.dirname}.zip">
         <zipfileset prefix="${name}-${axis.dirname}" dir="${dist.dir}"/>
     </zip>
+    <tar destfile="${build.dir}/${name}-src-${axis.dirname}.tar.gz"
+         longfile="gnu" compression="gzip">
+        <tarfileset prefix="${name}-${axis.dirname}" dir="${dist.dir}"/>
+    </tar>
   </target>
 
   <!-- =================================================================== -->
