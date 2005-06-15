@@ -813,7 +813,7 @@ public class HTTPSender extends BasicHandler {
 
         cookie = cleanupCookie(cookie);
         int keyIndex = cookie.indexOf("=");
-        String key = cookie.substring(0, keyIndex);
+        String key = (keyIndex != -1) ? cookie.substring(0, keyIndex) : null;
         
         ArrayList cookies = new ArrayList();
         Object oldCookies = msgContext.getProperty(cookieName);
@@ -824,7 +824,7 @@ public class HTTPSender extends BasicHandler {
                 String[] oldCookiesArray = (String[])oldCookies;
                 for(int i = 0; i < oldCookiesArray.length; i++) {
                     String anOldCookie = oldCookiesArray[i];
-                    if (anOldCookie.indexOf(key) == 0) { // same cookie key
+                    if (key != null && anOldCookie.indexOf(key) == 0) { // same cookie key
                         anOldCookie = cookie;             // update to new one
                         alreadyExist = true;
                     }
@@ -832,7 +832,7 @@ public class HTTPSender extends BasicHandler {
                 }
             } else {
 				String oldCookie = (String)oldCookies;
-                if (oldCookie.indexOf(key) == 0) { // same cookie key
+                if (key != null && oldCookie.indexOf(key) == 0) { // same cookie key
 					oldCookie = cookie;             // update to new one
                     alreadyExist = true;
                 }
