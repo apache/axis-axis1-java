@@ -813,14 +813,13 @@ public class HTTPSender extends BasicHandler {
 
         cookie = cleanupCookie(cookie);
         int keyIndex = cookie.indexOf("=");
-        String key = (keyIndex != -1) ? cookie.substring(0, keyIndex) : null;
+        String key = (keyIndex != -1) ? cookie.substring(0, keyIndex) : cookie;
         
         ArrayList cookies = new ArrayList();
         Object oldCookies = msgContext.getProperty(cookieName);
         boolean alreadyExist = false;
         if(oldCookies != null) {
             if(oldCookies instanceof String[]) {
-                
                 String[] oldCookiesArray = (String[])oldCookies;
                 for(int i = 0; i < oldCookiesArray.length; i++) {
                     String anOldCookie = oldCookiesArray[i];

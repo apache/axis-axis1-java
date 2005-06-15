@@ -297,7 +297,7 @@ public class CommonsHTTPSender extends BasicHandler {
         
         cookie = cleanupCookie(cookie);
         int keyIndex = cookie.indexOf("=");
-        String key = (keyIndex != -1) ? cookie.substring(0, keyIndex) : null;
+        String key = (keyIndex != -1) ? cookie.substring(0, keyIndex) : cookie;
         
         ArrayList cookies = new ArrayList();
         Object oldCookies = msgContext.getProperty(cookieName);
