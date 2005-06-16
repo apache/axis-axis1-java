@@ -21,9 +21,9 @@ public class QueryTestServiceTestCase extends junit.framework.TestCase {
 
 
     public void test2QueryTestEchoQuery() throws Exception {
-        test.wsdl.query.QueryTestBindingStub binding;
+        test.wsdl.query.QueryTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.query.QueryTestBindingStub)
+            binding = (test.wsdl.query.QueryTestSoapBindingStub)
                           new test.wsdl.query.QueryTestServiceLocator().getQueryTest();
         }
         catch (javax.xml.rpc.ServiceException jre) {
@@ -36,7 +36,7 @@ public class QueryTestServiceTestCase extends junit.framework.TestCase {
         // Time out after a minute
         binding.setTimeout(60000);
 
-        // Test operation
+        // Set up input data
         test.wsdl.query.QueryBean inQuery = new QueryBean();
         String[] columns = new String[] {"first", "last", "number"};
         Object[][] data = new Object[][] { {new String("Joe"), new String("Blow"), new Integer(3)},
@@ -44,15 +44,18 @@ public class QueryTestServiceTestCase extends junit.framework.TestCase {
         inQuery.setColumnList(columns);
         inQuery.setData(data);
 
+        // Do the operation
         QueryBean outQuery = binding.echoQuery(inQuery);
-        assertNotNull("return value is null", outQuery);
+
+        // Check the results
+        assertNotNull("return value from echoQuery is null", outQuery);
         String[] outCols = outQuery.getColumnList();
-        assertNotNull("column list is null", outCols);
+        assertNotNull("column list in the returned Query is null, should have string array in it", outCols);
         assertEquals("column value #1 doesn't match", columns[0], outCols[0]);
         assertEquals("column value #2 doesn't match", columns[1], outCols[1]);
         assertEquals("column value #3 doesn't match", columns[2], outCols[2]);
         Object[][] outData = outQuery.getData();
-        assertNotNull("data arrayt is null", outData);
+        assertNotNull("data array in the returned Query is null, should have Query data in it", outData);
         assertEquals("data value 0,0 doesn't match", data[0][0], outData[0][0]);
         assertEquals("data value 0,1 doesn't match", data[0][1], outData[0][1]);
         assertEquals("data value 0,2 doesn't match", data[0][2], outData[0][2]);
@@ -61,28 +64,5 @@ public class QueryTestServiceTestCase extends junit.framework.TestCase {
         assertEquals("data value 1,2 doesn't match", data[1][2], outData[1][2]);
     }
 
-/*
-    public void test3QueryTestEchoArray() throws Exception {
-        test.wsdl.query.QueryTestBindingStub binding;
-        try {
-            binding = (test.wsdl.query.QueryTestBindingStub)
-                          new test.wsdl.query.QueryTestServiceLocator().getQueryTest();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        java.lang.Object[] value = null;
-        value = binding.echoArray(new java.lang.Object[0]);
-        // TBD - validate results
-    }
-*/
 
 }

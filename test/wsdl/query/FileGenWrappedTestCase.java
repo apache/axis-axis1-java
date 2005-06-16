@@ -40,12 +40,13 @@ public class FileGenWrappedTestCase extends AxisFileGenTestBase {
         HashSet set = new HashSet();
         set.add("QueryBean.java");
         set.add("QueryTest.java");
-        set.add("QueryTestBindingImpl.java");
-        set.add("QueryTestBindingStub.java");
+        set.add("QueryTestSoapBindingImpl.java");
+        set.add("QueryTestSoapBindingStub.java");
         set.add("QueryTestService.java");
         set.add("QueryTestServiceLocator.java");
         set.add("QueryTestServiceTestCase.java");
         set.add("FileGenWrappedTestCase.java");
+        set.add("QueryTest.wsdl");
         set.add("deploy.wsdd");
         set.add("undeploy.wsdd");
         return set;
