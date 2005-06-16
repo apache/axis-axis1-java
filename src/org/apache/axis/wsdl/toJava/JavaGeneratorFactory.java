@@ -1044,7 +1044,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     QName eType = Utils.getTypeQName(e.getNode(),
                             forElement, false);
 
-                    if ((eType != null) && eType.equals(e.getQName())
+                    if ((eType != null) 
                             && !forElement.value) {
                         resolve = false;
                     }
