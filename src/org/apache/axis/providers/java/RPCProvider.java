@@ -74,75 +74,8 @@ public class RPCProvider extends JavaProvider {
 
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
-        OperationDesc operation = msgContext.getOperation();
+        RPCElement body = getBody(reqEnv, msgContext);
 
-        Vector bodies = reqEnv.getBodyElements();
-        if (log.isDebugEnabled()) {
-            log.debug(Messages.getMessage("bodyElems00", "" + bodies.size()));
-            if(bodies.size()>0){
-                log.debug(Messages.getMessage("bodyIs00", "" + bodies.get(0)));
-            }
-        }
-
-        RPCElement body = null;
-
-        // Find the first "root" body element, which is the RPC call.
-        for (int bNum = 0; body == null && bNum < bodies.size(); bNum++) {
-            // If this is a regular old SOAPBodyElement, and it's a root,
-            // we're probably a non-wrapped doc/lit service.  In this case,
-            // we deserialize the element, and create an RPCElement "wrapper"
-            // around it which points to the correct method.
-            // FIXME : There should be a cleaner way to do this...
-            if (!(bodies.get(bNum) instanceof RPCElement)) {
-                SOAPBodyElement bodyEl = (SOAPBodyElement) bodies.get(bNum);
-                // igors: better check if bodyEl.getID() != null
-                // to make sure this loop does not step on SOAP-ENC objects
-                // that follow the parameters! FIXME?
-                if (bodyEl.isRoot() && operation != null && bodyEl.getID() == null) {
-                    ParameterDesc param = operation.getParameter(bNum);
-                    // at least do not step on non-existent parameters!
-                    if (param != null) {
-                        Object val = bodyEl.getValueAsType(param.getTypeQName());
-                        body = new RPCElement("",
-                                              operation.getName(),
-                                              new Object[]{val});
-                    }
-                }
-            } else {
-                body = (RPCElement) bodies.get(bNum);
-            }
-        }
-
-        // special case code for a document style operation with no
-        // arguments (which is a strange thing to have, but whatever)
-        if (body == null) {
-            // throw an error if this isn't a document style service
-            if (!(serviceDesc.getStyle().equals(Style.DOCUMENT))) {
-                throw new Exception(Messages.getMessage("noBody00"));
-            }
-            
-            // look for a method in the service that has no arguments,
-            // use the first one we find.
-            ArrayList ops = serviceDesc.getOperations();
-            for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
-                OperationDesc desc = (OperationDesc) iterator.next();
-                if (desc.getNumInParams() == 0) {
-                    // found one with no parameters, use it
-                    msgContext.setOperation(desc);
-                    // create an empty element
-                    body = new RPCElement(desc.getName());
-                    // stop looking
-                    break;
-                }
-            }
-            
-            // If we still didn't find anything, report no body error.
-            if (body == null) {
-                throw new Exception(Messages.getMessage("noBody00"));
-            }
-        }
-
-        String methodName = body.getMethodName();
         Vector args = null;
         try {
             args = body.getParams();
@@ -152,45 +85,15 @@ public class RPCProvider extends JavaProvider {
             throw e;
         }
         int numArgs = args.size();
-        
-        // This may have changed, so get it again...
-        // FIXME (there should be a cleaner way to do this)
-        operation = msgContext.getOperation();
+        OperationDesc operation = getOperationDesc(msgContext, body);
 
-        if (operation == null) {
-            QName qname = new QName(body.getNamespaceURI(),
-                    body.getName());
-            operation = serviceDesc.getOperationByElementQName(qname);
-
-        if (operation == null) {
-            SOAPConstants soapConstants = msgContext == null ?
-                    SOAPConstants.SOAP11_CONSTANTS :
-                    msgContext.getSOAPConstants();
-            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
-                AxisFault fault = 
-                        new AxisFault(Constants.FAULT_SOAP12_SENDER,
-                                      Messages.getMessage("noSuchOperation",
-                                                          methodName),
-                                      null,
-                                      null);
-                fault.addFaultSubCode(Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
-                throw new SAXException(fault);
-            } else {
-                throw new AxisFault(Constants.FAULT_CLIENT, Messages.getMessage("noSuchOperation", methodName),
-                        null, null);                        
-            }
-            } else {
-                 msgContext.setOperation(operation);
-            }
-        }
-        
         // Create the array we'll use to hold the actual parameter
         // values.  We know how big to make it from the metadata.
         Object[] argValues = new Object[operation.getNumParams()];
 
         // A place to keep track of the out params (INOUTs and OUTs)
         ArrayList outs = new ArrayList();
-        
+
         // Put the values contained in the RPCParams into an array
         // suitable for passing to java.lang.reflect.Method.invoke()
         // Make sure we respect parameter ordering if we know about it
@@ -199,10 +102,10 @@ public class RPCProvider extends JavaProvider {
         for (int i = 0; i < numArgs; i++) {
             RPCParam rpcParam = (RPCParam) args.get(i);
             Object value = rpcParam.getObjectValue();
-            
+
             // first check the type on the paramter
             ParameterDesc paramDesc = rpcParam.getParamDesc();
-            
+
             // if we found some type info try to make sure the value type is
             // correct.  For instance, if we deserialized a xsd:dateTime in
             // to a Calendar and the service takes a Date, we need to convert
@@ -210,7 +113,7 @@ public class RPCProvider extends JavaProvider {
 
                 // Get the type in the signature (java type or its holder)
                 Class sigType = paramDesc.getJavaType();
-                
+
                 // Convert the value into the expected type in the signature
                 value = JavaUtils.convert(value, sigType);
 
@@ -219,7 +122,7 @@ public class RPCProvider extends JavaProvider {
                     outs.add(rpcParam);
                 }
             }
-            
+
             // Put the value (possibly converted) in the argument array
             // make sure to use the parameter order if we have it
             if (paramDesc == null || paramDesc.getOrder() == -1) {
@@ -233,7 +136,7 @@ public class RPCProvider extends JavaProvider {
                         "" + argValues[i]));
             }
         }
-        
+
         // See if any subclasses want a crack at faulting on a bad operation
         // FIXME : Does this make sense here???
         String allowedMethods = (String) service.getOption("allowedMethods");
@@ -242,7 +145,7 @@ public class RPCProvider extends JavaProvider {
         // Now create any out holders we need to pass in
         int count = numArgs;
         for (int i = 0; i < argValues.length; i++) {
-            
+
             // We are interested only in OUT/INOUT
             ParameterDesc param = operation.getParameter(i);
             if(param.getMode() == ParameterDesc.IN)
@@ -252,7 +155,7 @@ public class RPCProvider extends JavaProvider {
             if (holderClass != null &&
                     Holder.class.isAssignableFrom(holderClass)) {
                 int index = count;
-                // Use the parameter order if specified or just stick them to the end.  
+                // Use the parameter order if specified or just stick them to the end.
                 if (param.getOrder() != -1) {
                     index = param.getOrder();
                 } else {
@@ -276,7 +179,7 @@ public class RPCProvider extends JavaProvider {
                         operation.getName()));
             }
         }
-        
+
         // OK!  Now we can invoke the method
         Object objRes = null;
         try {
@@ -303,20 +206,127 @@ public class RPCProvider extends JavaProvider {
                     new String[]{methodSig, argClasses}),
                     e);
         }
-        
-        /** If this is a one-way operation, there is nothing more to do.
-         */ 
-        if (OperationType.ONE_WAY.equals(operation.getMep())) 
 
+        /** If this is a one-way operation, there is nothing more to do.
+         */
+        if (OperationType.ONE_WAY.equals(operation.getMep()))
             return;
-        
-        /* Now put the result in the result SOAPEnvelope */
-        /*************************************************/
+
+        RPCElement resBody = createResponseBody(body, msgContext, operation, serviceDesc, objRes, resEnv, outs);
+        resEnv.addBodyElement(resBody);
+    }
+
+    private RPCElement getBody(SOAPEnvelope reqEnv, MessageContext msgContext) throws Exception {
+        SOAPService service = msgContext.getService();
+        ServiceDesc serviceDesc = service.getServiceDescription();
+        OperationDesc operation = msgContext.getOperation();
+        Vector bodies = reqEnv.getBodyElements();
+        if (log.isDebugEnabled()) {
+            log.debug(Messages.getMessage("bodyElems00", "" + bodies.size()));
+            if(bodies.size()>0){
+                log.debug(Messages.getMessage("bodyIs00", "" + bodies.get(0)));
+            }
+        }
+        RPCElement body = null;        // Find the first "root" body element, which is the RPC call.
+        for (int bNum = 0; body == null && bNum < bodies.size(); bNum++) {
+            // If this is a regular old SOAPBodyElement, and it's a root,
+            // we're probably a non-wrapped doc/lit service.  In this case,
+            // we deserialize the element, and create an RPCElement "wrapper"
+            // around it which points to the correct method.
+            // FIXME : There should be a cleaner way to do this...
+            if (!(bodies.get(bNum) instanceof RPCElement)) {
+                SOAPBodyElement bodyEl = (SOAPBodyElement) bodies.get(bNum);
+                // igors: better check if bodyEl.getID() != null
+                // to make sure this loop does not step on SOAP-ENC objects
+                // that follow the parameters! FIXME?
+                if (bodyEl.isRoot() && operation != null && bodyEl.getID() == null) {
+                    ParameterDesc param = operation.getParameter(bNum);
+                    // at least do not step on non-existent parameters!
+                    if (param != null) {
+                        Object val = bodyEl.getValueAsType(param.getTypeQName());
+                        body = new RPCElement("",
+                                              operation.getName(),
+                                              new Object[]{val});
+                    }
+                }
+            } else {
+                body = (RPCElement) bodies.get(bNum);
+            }
+        }        // special case code for a document style operation with no
+        // arguments (which is a strange thing to have, but whatever)
+        if (body == null) {
+            // throw an error if this isn't a document style service
+            if (!(serviceDesc.getStyle().equals(Style.DOCUMENT))) {
+                throw new Exception(Messages.getMessage("noBody00"));
+            }
+
+            // look for a method in the service that has no arguments,
+            // use the first one we find.
+            ArrayList ops = serviceDesc.getOperations();
+            for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
+                OperationDesc desc = (OperationDesc) iterator.next();
+                if (desc.getNumInParams() == 0) {
+                    // found one with no parameters, use it
+                    msgContext.setOperation(desc);
+                    // create an empty element
+                    body = new RPCElement(desc.getName());
+                    // stop looking
+                    break;
+                }
+            }
+
+            // If we still didn't find anything, report no body error.
+            if (body == null) {
+                throw new Exception(Messages.getMessage("noBody00"));
+            }
+        }
+        return body;
+    }
+
+    private OperationDesc getOperationDesc(MessageContext msgContext, RPCElement body) throws SAXException, AxisFault {
+        SOAPService service = msgContext.getService();
+        ServiceDesc serviceDesc = service.getServiceDescription();
+        String methodName = body.getMethodName();
+
+        // FIXME (there should be a cleaner way to do this)
+        OperationDesc operation = msgContext.getOperation();
+        if (operation == null) {
+            QName qname = new QName(body.getNamespaceURI(),
+                    body.getName());
+            operation = serviceDesc.getOperationByElementQName(qname);
+
+        if (operation == null) {
+            SOAPConstants soapConstants = msgContext == null ?
+                    SOAPConstants.SOAP11_CONSTANTS :
+                    msgContext.getSOAPConstants();
+            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                AxisFault fault =
+                        new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                                      Messages.getMessage("noSuchOperation",
+                                                          methodName),
+                                      null,
+                                      null);
+                fault.addFaultSubCode(Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
+                throw new SAXException(fault);
+            } else {
+                throw new AxisFault(Constants.FAULT_CLIENT, Messages.getMessage("noSuchOperation", methodName),
+                        null, null);
+            }
+            } else {
+                 msgContext.setOperation(operation);
+            }
+        }
+        return operation;
+    }
+
+    protected RPCElement createResponseBody(RPCElement body, MessageContext msgContext, OperationDesc operation, ServiceDesc serviceDesc, Object objRes, SOAPEnvelope resEnv, ArrayList outs) throws Exception
+    {
+        String methodName = body.getMethodName();
+        /* Now put the result in the result SOAPEnvelope */     
         RPCElement resBody = new RPCElement(methodName + "Response");
         resBody.setPrefix(body.getPrefix());
         resBody.setNamespaceURI(body.getNamespaceURI());
         resBody.setEncodingStyle(msgContext.getEncodingStyle());
-
         try {
             // Return first
             if (operation.getMethod().getReturnType() != Void.TYPE) {
@@ -324,13 +334,13 @@ public class RPCProvider extends JavaProvider {
                 if (returnQName == null) {
                     String nsp = body.getNamespaceURI();
                     if(nsp == null || nsp.length()==0) {
-                        nsp = serviceDesc.getDefaultNamespace();    
+                        nsp = serviceDesc.getDefaultNamespace();
                     }
                     returnQName = new QName(msgContext.isEncoded() ? "" :
                                                 nsp,
                                             methodName + "Return");
                 }
-                
+
                 RPCParam param = new RPCParam(returnQName, objRes);
                 param.setParamDesc(operation.getReturnParamDesc());
 
@@ -348,7 +358,7 @@ public class RPCProvider extends JavaProvider {
                 }
 
             }
-            
+
             // Then any other out params
             if (!outs.isEmpty()) {
                 for (Iterator i = outs.iterator(); i.hasNext();) {
@@ -369,8 +379,7 @@ public class RPCProvider extends JavaProvider {
         } catch (Exception e) {
             throw e;
         }
-
-        resEnv.addBodyElement(resBody);
+        return resBody;
     }
 
     /**
