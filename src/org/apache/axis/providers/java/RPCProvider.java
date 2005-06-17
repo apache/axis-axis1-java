@@ -216,7 +216,7 @@ public class RPCProvider extends JavaProvider {
         resEnv.addBodyElement(resBody);
     }
 
-    private RPCElement getBody(SOAPEnvelope reqEnv, MessageContext msgContext) throws Exception {
+    protected RPCElement getBody(SOAPEnvelope reqEnv, MessageContext msgContext) throws Exception {
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
         OperationDesc operation = msgContext.getOperation();
@@ -283,7 +283,7 @@ public class RPCProvider extends JavaProvider {
         return body;
     }
 
-    private OperationDesc getOperationDesc(MessageContext msgContext, RPCElement body) throws SAXException, AxisFault {
+    protected OperationDesc getOperationDesc(MessageContext msgContext, RPCElement body) throws SAXException, AxisFault {
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
         String methodName = body.getMethodName();
@@ -322,7 +322,7 @@ public class RPCProvider extends JavaProvider {
     protected RPCElement createResponseBody(RPCElement body, MessageContext msgContext, OperationDesc operation, ServiceDesc serviceDesc, Object objRes, SOAPEnvelope resEnv, ArrayList outs) throws Exception
     {
         String methodName = body.getMethodName();
-        /* Now put the result in the result SOAPEnvelope */     
+        /* Now put the result in the result SOAPEnvelope */
         RPCElement resBody = new RPCElement(methodName + "Response");
         resBody.setPrefix(body.getPrefix());
         resBody.setNamespaceURI(body.getNamespaceURI());
