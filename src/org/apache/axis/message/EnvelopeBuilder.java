@@ -200,5 +200,6 @@ public class EnvelopeBuilder extends SOAPHandler
     {
         // Envelope isn't dirty yet by default...
         envelope.setDirty(false);
+        envelope.setRecorded(true);
     }
 }

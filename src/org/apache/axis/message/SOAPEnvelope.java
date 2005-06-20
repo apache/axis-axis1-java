@@ -67,6 +67,7 @@ public class SOAPEnvelope extends MessageElement
     // This gets passed back into the service description during
     // deserialization
     public String messageType;
+    private boolean recorded;
 
     public SOAPEnvelope()
     {
@@ -671,5 +672,21 @@ public class SOAPEnvelope extends MessageElement
             node.setOwnerDocument(sp);
             setOwnerDocumentForChildren(node.children, sp);  // recursively
     	}
+    }
+
+    public void setRecorded(boolean recorded) {
+        this.recorded = recorded;
+    }
+
+    public boolean isRecorded() {
+        return recorded;
+    }
+
+    public void setDirty(boolean dirty) {
+        if (recorder != null && !_isDirty && dirty && isRecorded()){
+            recorder.clear();
+            recorder = null;
+        }
+        super.setDirty(dirty);
     }
 }
