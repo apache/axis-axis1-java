@@ -656,6 +656,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * application references to it.
      */
     public void detachNode() {
+        setDirty(true);
         if (parent != null) {
             parent.removeChild(this);
             parent = null;
@@ -790,6 +791,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         if (parent != null) {
             parent.appendChild(this);
         }
+        this.setDirty(true);
         this.parent = parent;
     }
 
