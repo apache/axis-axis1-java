@@ -92,7 +92,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
         } catch (java.net.MalformedURLException mue){
             throw new SOAPException(mue);
         } catch (org.apache.axis.AxisFault af){
-            throw new SOAPException(af);
+            return new Message(af);
         }
     }
 
