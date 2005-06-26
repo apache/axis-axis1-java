@@ -1105,10 +1105,12 @@ public class JavaStubWriter extends JavaClassWriter {
             Map partsMap =
                     operation.getOperation().getInput().getMessage().getParts();
             Iterator i = partsMap.values().iterator();
-            if(i.hasNext()) {
-                Part p = (Part) partsMap.values().iterator().next();
-                QName q = p.getElementName();
-    
+            QName q = null;
+            while (q == null && i.hasNext()) {
+            	Part p = (Part) i.next();
+            	q = p.getElementName();
+            }
+            if(q != null) {
                 pw.println("        _call.setOperationName(" + Utils.getNewQName(q)
                         + ");");
             } else {
