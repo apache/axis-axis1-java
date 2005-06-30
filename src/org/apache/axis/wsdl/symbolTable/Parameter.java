@@ -67,6 +67,9 @@ public class Parameter {
     /** Is this an omittable param? */
     private boolean omittable = false;
 
+    /** Is this a nilliable param? */
+    private boolean nillable = false;
+
     /**
      * Method toString
      * 
@@ -237,5 +240,21 @@ public class Parameter {
 
     public void setOmittable(boolean omittable) {
         this.omittable = omittable;
+    }
+
+    /**
+     * Indicates whether this parameter is nillable or not.
+     * @return whether this parameter is nilliable
+     */
+    public boolean isNillable() {
+        return nillable;
+    }
+
+    /**
+     * Indicate whether this parameter is nillable or not.
+     * @param nillable whether this parameter is nilliable
+     */
+    public void setNillable(boolean nillable) {
+        this.nillable = nillable;
     }
 }    // class Parameter

@@ -644,6 +644,12 @@ public class JavaStubWriter extends JavaClassWriter {
                                Utils.getNewQName(itemQName) + ");");
                 }
 
+                if (p.isOmittable())
+                    pw.println("        param.setOmittable(true);");
+
+                if (p.isNillable())
+                    pw.println("        param.setNillable(true);");
+
                 pw.println("        oper.addParameter(param);");
             }
 

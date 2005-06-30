@@ -20,7 +20,7 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <xsd:element name="getAttractions">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element maxOccurs="unbounded" minOccurs="0" name="attname"
+            <xsd:element maxOccurs="unbounded" minOccurs="0" nillable="true" name="attname"
             type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
@@ -46,7 +46,7 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <xsd:element name="getAttractionsResponse">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element maxOccurs="unbounded" minOccurs="0" name="_return"
+            <xsd:element maxOccurs="unbounded" minOccurs="0" nillable="true" name="_return"
             type="tns:Attraction" />
           </xsd:sequence>
         </xsd:complexType>

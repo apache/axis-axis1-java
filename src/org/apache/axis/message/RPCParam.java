@@ -168,6 +168,9 @@ public class RPCParam extends MessageElement implements Serializable
         // serialize method to search for a compatible xmlType)
         Class javaType = value == null ? null: value.getClass();
         QName xmlType = null;
+        // we'll send a null unless our description tells us
+        // that we may be omitted
+        Boolean sendNull = Boolean.TRUE;
         if (paramDesc != null) {
             if (javaType == null) {
                 javaType = paramDesc.getJavaType() != null ?
@@ -177,7 +180,7 @@ public class RPCParam extends MessageElement implements Serializable
                 if(clazz == null || !clazz.equals(paramDesc.getJavaType())) {
                     if (!(javaType.equals(
                             JavaUtils.getHolderValueType(paramDesc.getJavaType())))) {
-                        
+
                         // This must (assumedly) be a polymorphic type - in ALL
                         // such cases, we must send an xsi:type attribute.
                         wantXSIType = Boolean.TRUE;
@@ -196,12 +199,17 @@ public class RPCParam extends MessageElement implements Serializable
 
             QName itemType = paramDesc.getItemType();
             context.setItemType(itemType);
+
+            // don't send anything if we're able to be omitted,
+            // although we'll prefer to send xsi:nill if possible
+            if (paramDesc.isOmittable() && !paramDesc.isNillable())
+                sendNull = Boolean.FALSE;
         }
         context.serialize(getQName(),  // element qname
                           null,   // no extra attrs
                           value,  // value
                           xmlType, // java/xml type
-                          Boolean.TRUE, wantXSIType); 
+                          sendNull, wantXSIType);
     }
 
     private void writeObject(ObjectOutputStream out)

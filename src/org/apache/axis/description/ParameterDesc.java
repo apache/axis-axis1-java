@@ -68,6 +68,12 @@ public class ParameterDesc implements Serializable {
     /** The documentation for the parameter */
 	private String documentation = null;
 
+    /** Indicates whether this parameter may be omitted or not (i.e., it has minOccurs="0") */
+    private boolean omittable = false;
+
+    /** Indicates whether this parameter is nillable */
+    private boolean nillable = false;
+
     public ParameterDesc() {
     }
 
@@ -350,5 +356,39 @@ public class ParameterDesc implements Serializable {
 
     public void setItemType(QName itemType) {
         this.itemType = itemType;
+    }
+
+    /**
+     * Indicates if this parameter is omittable or not (i.e., if it
+     * has a minimum occurrence of 0).
+     * @return true iff the parameter may be omitted in the request
+     */
+    public boolean isOmittable() {
+        return omittable;
+    }
+
+    /**
+     * Indicate if this parameter is omittable or not (i.e., if it
+     * has a minimum occurrence of 0).
+     * @param omittable whether the parameter may be omitted or not
+     */
+    public void setOmittable(boolean omittable) {
+        this.omittable = omittable;
+    }
+
+    /**
+     * Indicates whether this parameter is nillable or not.
+     * @return whether this parameter is nillable
+     */
+    public boolean isNillable() {
+        return nillable;
+    }
+
+    /**
+     * Indicate if this parameter is nillable.
+     * @param nillable true iff this parameter is nillable
+     */
+    public void setNillable(boolean nillable) {
+        this.nillable = nillable;
     }
 }

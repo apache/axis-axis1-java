@@ -2224,6 +2224,7 @@ public class SymbolTable {
                     p.setName(paramName);
                     p.setType(elem.getType());
                     p.setOmittable(elem.getMinOccursIs0());
+                    p.setNillable(elem.getNillable());
                     fillParamInfo(p, bindingEntry, opName, partName);
                     v.add(p);
                 }
