@@ -13,6 +13,7 @@
 body { 
     background-color:#FFFFFF; 
     font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 10pt;
     margin-left: 40px;
     color:#000000
 }
@@ -39,6 +40,10 @@ h1 {
     font-weight:bold; 
     font-size: 240%; 
     text-align: center; 
+}
+
+td {
+    font-size:10pt;
 }
 
 td.section { 

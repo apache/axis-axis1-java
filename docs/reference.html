@@ -518,30 +518,44 @@ namely "http://xml.apache.org/axis/wsdd/".
         <strong>&lt;role&gt;</strong> elements may appear.</li>
       <li><strong>&lt;requestFlow&gt;</strong> : This is used to configure global 
         request Handlers, which will be invoked before the actual service on every 
-        request. You may put any number of <strong>&lt;handler&gt;</strong> or 
-        <strong>&lt;chain&gt;</strong> elements (see below) inside the <strong>&lt;requestFlow&gt;</strong>, 
-        but there may only be one <strong>&lt;requestFlow&gt;</strong>.</li>
+        request.</li>
     </ul>
   </dd>
   <dd> 
     <ul>
       <li><strong>&lt;responseFlow&gt;</strong> : This is used to configure global 
         response Handlers, which will be invoked after the actual service on every 
-        request. You may put any number of <strong>&lt;handler&gt;</strong> or 
-        <strong>&lt;chain&gt;</strong> elements (see below) inside the <strong>&lt;responseFlow&gt;</strong>, 
-        but there may only be one <strong>&lt;responseFlow&gt;</strong>.</li>
+        request.</li>
     </ul>
   </dd>
   <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;requestFlow [name="</font></b><font
+ face="Courier New, Courier, mono"><i>name</i></font><b><font
+ face="Courier New, Courier, mono">"] [type="</font></b><font
+ face="Courier New, Courier, mono"><i>type</i></font><b><font
+ face="Courier New, Courier, mono">"] &gt;</font></b></dt>
+  <dd>This is used to configure handlers in request flow. You may put any number of <strong>&lt;handler&gt;</strong> or 
+        <strong>&lt;chain&gt;</strong> elements (see below) inside the <strong>&lt;requestFlow&gt;</strong>, 
+        but there may only be one <strong>&lt;requestFlow&gt;</strong>.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;responseFlow [name="</font></b><font
+ face="Courier New, Courier, mono"><i>name</i></font><b><font
+ face="Courier New, Courier, mono">"] [type="</font></b><font
+ face="Courier New, Courier, mono"><i>type</i></font><b><font
+ face="Courier New, Courier, mono">"] &gt;</font></b></dt>
+  <dd>This is used to configure handlers in response flow. You may put any number of <strong>&lt;handler&gt;</strong> or 
+        <strong>&lt;chain&gt;</strong> elements (see below) inside the <strong>&lt;responseFlow&gt;</strong>, 
+        but there may only be one <strong>&lt;responseFlow&gt;</strong>.</dd>
+  <dt>&nbsp;</dt>
   <dt><b><font face="Courier New, Courier, mono">&lt;undeployment&gt;</font></b></dt>
   <dd>The root element of the deployment document which tells Axis that this is 
-    an undeployment. Undeployments are only useful as </dd>
+    an undeployment.</dd>
   <dt>&nbsp;</dt>
   <dt><b><font face="Courier New, Courier, mono">&lt;handler [name="</font></b><font
  face="Courier New, Courier, mono"><i>name</i></font><b><font
  face="Courier New, Courier, mono">"] type="</font></b><font
  face="Courier New, Courier, mono"><i>type</i></font><b><font
- face="Courier New, Courier, mono">"/&gt;</font></b></dt>
+ face="Courier New, Courier, mono">"&gt;</font></b></dt>
   <dd>Belongs at the top level inside a <b>&lt;deployment&gt;</b> or <b>&lt;undeployment&gt;</b>, 
     or inside a <b>&lt;chain&gt;</b>, <b>&lt;requestFlow&gt;</b>, or <b>&lt;responseFlow&gt;</b>. 
     Defines a Handler, and indicates the type of the handler. "Type" is either 
