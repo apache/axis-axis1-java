@@ -107,7 +107,7 @@ public abstract class AbstractXMLEncoder implements XMLEncoder {
                     break;
                 default:
                     if (character < 0x20) {
-                        throw new IllegalArgumentException(Messages.getMessage("invalidXmlCharacter00", Integer.toHexString(character), xmlString));
+                        throw new IllegalArgumentException(Messages.getMessage("invalidXmlCharacter00", Integer.toHexString(character), xmlString.substring(0, i)));
                     } else {
                         if (out != null) {
                             out.append(character);

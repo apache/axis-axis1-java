@@ -81,7 +81,7 @@ class UTF8Encoder extends AbstractXMLEncoder {
                         throw new IllegalArgumentException(Messages.getMessage(
                                 "invalidXmlCharacter00",
                                 Integer.toHexString(character),
-                                xmlString));
+                                xmlString.substring(0, i)));
                     } else if (character > 0x7F) {
                         writer.write("&#x");
                         writer.write(Integer.toHexString(character).toUpperCase());

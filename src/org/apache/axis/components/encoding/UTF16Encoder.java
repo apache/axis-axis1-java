@@ -80,7 +80,7 @@ class UTF16Encoder extends AbstractXMLEncoder {
                         throw new IllegalArgumentException(Messages.getMessage(
                                 "invalidXmlCharacter00",
                                 Integer.toHexString(character),
-                                xmlString));
+                                xmlString.substring(0, i)));
                     } else if (character > 0xFFFF) {
                         writer.write((0xD7C0 + (character >> 10)));
                         writer.write((0xDC00 | character & 0x3FF));
