@@ -2732,6 +2732,7 @@ public class Emitter {
 
         // Allocate the new array
         Class[] ec;
+        int startOffset = 0;
 
         if (extraClasses != null) {
             ec = new Class[clsList.size() + extraClasses.length];
@@ -2742,6 +2743,7 @@ public class Emitter {
 
                 ec[i] = c;
             }
+            startOffset = extraClasses.length;
         } else {
             ec = new Class[clsList.size()];
         }
@@ -2750,7 +2752,7 @@ public class Emitter {
         for (int i = 0; i < clsList.size(); i++) {
             Class c = (Class) clsList.get(i);
 
-            ec[i] = c;
+            ec[startOffset + i] = c;
         }
 
         // set the member variable
