@@ -363,7 +363,11 @@ public class AxisFault extends java.rmi.RemoteException {
         }
         buf.append(JavaUtils.LS);
         buf.append(" faultString: ");
-        buf.append(XMLUtils.xmlEncodeString(faultString));
+        try {
+        	buf.append(XMLUtils.xmlEncodeString(faultString));
+        } catch (RuntimeException re) {
+        	buf.append(re.getMessage());
+        }
         buf.append(JavaUtils.LS);
         buf.append(" faultActor: ");
         buf.append(XMLUtils.xmlEncodeString(faultActor));
