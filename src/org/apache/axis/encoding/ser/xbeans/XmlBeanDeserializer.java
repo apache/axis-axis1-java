@@ -40,11 +40,9 @@ import javax.xml.namespace.QName;
 public class XmlBeanDeserializer extends DeserializerImpl {
 
     private Class mJavaType;
-    private QName mXmlType;
 
     public XmlBeanDeserializer(Class javaType, QName xmlType) {
         mJavaType = javaType;
-        mXmlType = xmlType;
     }
 
     public void onStartElement(String namespace, String localName,
@@ -56,7 +54,6 @@ public class XmlBeanDeserializer extends DeserializerImpl {
             XmlOptions opts = new XmlOptions()
                     .setLoadReplaceDocumentElement(null);
             XmlObject xObj = XmlObject.Factory.parse(me, opts);
-            SchemaType st = xObj.schemaType();
             SchemaType jt = (SchemaType) mJavaType.getField("type").get(null);
             XmlObject converted = xObj.changeType(jt);
             if (converted != null) {
@@ -64,7 +61,6 @@ public class XmlBeanDeserializer extends DeserializerImpl {
             } else {
                 XmlObject[] children = xObj.selectChildren(QNameSet.ALL);
                 for (int j = 0; j < children.length; j++) {
-                    st = children[j].schemaType();
                     converted = xObj.changeType(jt);
                     if (converted != null) {
                         setValue(converted);

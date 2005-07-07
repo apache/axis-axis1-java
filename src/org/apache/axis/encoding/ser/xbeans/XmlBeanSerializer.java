@@ -18,41 +18,48 @@
  * 
  * Original author: Jonathan Colwell
  */
-
 package org.apache.axis.encoding.ser.xbeans;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.xmlbeans.SchemaField;
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeLoader;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.w3.x2001.xmlSchema.SchemaDocument;
-import org.w3.x2001.xmlSchema.TopLevelComplexType;
-import org.w3.x2001.xmlSchema.TopLevelElement;
+import org.apache.xmlbeans.impl.xb.xsdschema.LocalElement;
+import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
+import org.apache.xmlbeans.impl.xb.xsdschema.TopLevelComplexType;
+import org.apache.xmlbeans.impl.xb.xsdschema.TopLevelElement;
+import org.apache.xmlbeans.impl.xb.xsdschema.TopLevelSimpleType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xmlsoap.schemas.wsdl.DefinitionsDocument;
-import org.xmlsoap.schemas.wsdl.TDefinitions;
 import org.xmlsoap.schemas.wsdl.TTypes;
 
 import javax.xml.namespace.QName;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Class XmlBeanSerializer
+ *
  * @author Jonathan Colwell
  */
 public class XmlBeanSerializer implements Serializer {
-
     /**
      * Serialize an element named name, with the indicated attributes
      * and value.
@@ -92,145 +99,213 @@ public class XmlBeanSerializer implements Serializer {
     }
 
     /**
-     * Return XML schema for the specified type, suitable for insertion into
-     * the &lt;types&gt; element of a WSDL document, or underneath an
+     * Return XML schema for the specified type, suitable for insertion into the
+     * &lt;types&gt; element of a WSDL document, or underneath an
      * &lt;element&gt; or &lt;attribute&gt; declaration.
      *
      * @param javaType the Java Class we're writing out schema for
-     * @param types    the Java2WSDL Types object which holds the context
-     *                 for the WSDL being generated.
+     * @param types    the Java2WSDL Types object which holds the context for the
+     *                 WSDL being generated.
      * @return a type element containing a schema simpleType/complexType
      * @see org.apache.axis.wsdl.fromJava.Types
      */
     public Element writeSchema(Class javaType, Types types) throws Exception {
-        if (XmlObject.class.isAssignableFrom(javaType)) {
+        try {
+            if (!XmlObject.class.isAssignableFrom(javaType)) {
+                throw new RuntimeException(
+                        "Invalid Object type is assigned to the XMLBeanSerialization Type: "
+                                + javaType);
+            }
             SchemaType docType = XmlBeans.typeForClass(javaType);
-
-            /*
-             * NOTE jcolwell@bea.com 2004-Oct-18 -- 
-             * This is a hack to handle node adoption.
-             * I don't like it but I need to avoid a 
-             * org.w3c.dom.DOMException: WRONG_DOCUMENT_ERR
-             * NOTE jcolwell@bea.com 2004-Oct-21 -- 
-             * since I already use the Document I'll use it to check 
-             * if a schema for the namspace is already in place.
-             */
-            
-            Document doc = types.createElement("deleteme")
-                    .getOwnerDocument();
-            XmlOptions opts = new XmlOptions()
-                    .setLoadReplaceDocumentElement(null);
-            Element root = doc.getDocumentElement();
-            String schemaSrc = docType.getSourceName();
-            InputStream stream = docType.getTypeSystem()
-                    .getSourceAsStream(schemaSrc);
-            SchemaDocument.Schema schema = null;
-            if (schemaSrc.endsWith(".wsdl") || schemaSrc.endsWith(".WSDL")) {
-                DefinitionsDocument defDoc =
-                        DefinitionsDocument.Factory.parse(stream);
-                TTypes tt = defDoc.getDefinitions().getTypesArray(0);
-                XmlObject[] kids = selectChildren
-                        (tt, SchemaDocument.Schema.class);
-                SchemaDocument.Schema[] schemas =
-                        new SchemaDocument.Schema[kids.length];
-
-                // NOTE jcolwell@bea.com 2005-Jan-10 -- this is the part that the
-                // fancy generics saves me from having to do after each call to 
-                // selectChildren(XmlObject, Class)                
-
-                for (int j = 0; j < kids.length; j++) {
-                    schemas[j] = (SchemaDocument.Schema) kids[j];
-                }
-                if (schemas.length == 1) {
-                    schema = schemas[0];
-                } else {
-                    String stNS = docType.getName().getNamespaceURI();
-                    for (int j = 0; j < schemas.length; j++) {
-                        if (stNS.equals(schemas[j].getTargetNamespace())) {
-                            schema = schemas[j];
-                            break;
-                        }
-                    }
-                }
-            } else {
-                SchemaDocument schemaDoc = SchemaDocument.Factory.parse(stream);
-                schema = schemaDoc.getSchema();
-            }
-
-            /*
-             FIXME jcolwell@bea.com 2004-Oct-21 -- it would be great if
-             the Types.loadInputSchema took an input source instead of a 
-             String so I could directly pass in the input stream instead of 
-             providing the schema elements individually.
-            */
-            DefinitionsDocument defDoc = DefinitionsDocument.Factory
-                    .newInstance();
-            TDefinitions definitions = defDoc.addNewDefinitions();
-            definitions.addNewService();
-            Node defEl = definitions.newDomNode(new XmlOptions()
-                    .setSaveOuter());
-            Document dDoc = defEl.getOwnerDocument();
-            if (null == dDoc.getDocumentElement()) {
-                dDoc.appendChild(defEl);
-            }
-            Set existingNameSpaces = new HashSet();
-            if (dDoc != null) {
-                types.insertTypesFragment(dDoc);
-                Element e = (Element) dDoc.getFirstChild().getFirstChild()
-                        .getFirstChild();
-                if (e != null) {
-                    String tn = e.getAttribute("targetNamespace");
-                    existingNameSpaces.add(tn);
-                    while (null != (e = (Element) e.getNextSibling())) {
-                        tn = e.getAttribute("targetNamespace");
-                        existingNameSpaces.add(tn);
-                    }
-                }
-            } else {
-                throw new Exception("null document");
-            }
-            if (schema != null) {
-                String targetNamespace = schema.getTargetNamespace();
-                if (targetNamespace != null) {
-                    if (!existingNameSpaces.contains(targetNamespace)) {
-                        TopLevelComplexType[] schemaTypes = schema
-                                .getComplexTypeArray();
-                        for (int j = 0; j < schemaTypes.length; j++) {
-                            types.writeSchemaElement(targetNamespace,
-                                    (Element) doc
-                                    .importNode(schemaTypes[j].newDomNode()
-                                    .getFirstChild(),
-                                            true));
-                        }
-                        TopLevelElement[] elements = schema
-                                .getElementArray();
-                        for (int j = 0; j < elements.length; j++) {
-                            types.writeSchemaElement(targetNamespace,
-                                    (Element) doc
-                                    .importNode(elements[j].newDomNode()
-                                    .getFirstChild(),
-                                            true));
-                        }
-                    }
-                    return null;
-                }
-            }
-            throw new Exception(javaType.getName()
-                    + "did not specify a target namespace");
-        } else {
-            throw new Exception(javaType.getName()
-                    + " must be a subclass of XmlObject");
+            writeSchemaForDocType(docType, types);
+            // assume that the writeSchemaForDocType wrote the schema
+            // for the type and all the dependent types.
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    // NOTE jcolwell@bea.com 2004-Nov-15 -- 
-    // once the WSDLProcessor is changed to an interface, remove this function
-    // and use the one in the upcoming XmlBeanWSDLProcessor.
-    private static XmlObject[] selectChildren(XmlObject parent,
-                                              Class childClass)
+    private void writeSchemaForDocType(SchemaType docType, Types types)
+            throws Exception {
+        SchemaDocument.Schema[] mySchemas = findtSchemaDocument(docType);
+        QName q = docType.getName();
+        XmlObject typeNodeInWSDL = getTypeNode(mySchemas, q);
+        if (null == typeNodeInWSDL)
+            throw new RuntimeException(
+                    "Type for object not found in the assigned WSDL file. "
+                            + docType.getName() + " schema in: "
+                            + docType.getSourceName());
+        //        insertDependentTypes(typeNodeInWSDL, types);
+        Node n = typeNodeInWSDL.getDomNode();
+        Document doc = types.createElement(
+                "element_to_get_document_useless_otherwise").getOwnerDocument();
+        Element e = (Element) doc.importNode(n, true);
+        try {
+            types.writeSchemaElementDecl(q, e);
+        } catch (AxisFault e1) {
+            // this means the types was already in... fine!
+            // TBD: make sure there are other types of exceptions are at least
+            // reported
+        }
+        Set dependentTypes = new HashSet();
+        getAllDependentTypes(typeNodeInWSDL, dependentTypes);
+        for (java.util.Iterator it = dependentTypes.iterator(); it.hasNext();) {
+            QName nxtType = (QName) it.next();
+            Class nxtJavaType;
+            // add the class if it is an xml bean
+            if (null != (nxtJavaType = q2UserClass(nxtType))
+                    && XmlObject.class.isAssignableFrom(nxtJavaType)) {
+                writeSchema(nxtJavaType, types);
+            }
+        }
+    }
+
+    private Class q2UserClass(QName qname) {
+        SchemaTypeLoader stl = XmlBeans.getContextTypeLoader();
+        SchemaType st = stl.findType(qname);
+        if (st == null) {
+            SchemaField sf = stl.findElement(qname);
+            if (sf != null)
+                st = sf.getType();
+        }
+        if (st != null && !st.isBuiltinType())
+            return st.getJavaClass();
+        // for classes that are not found, or are built in
+        return null;
+    }
+
+    /**
+     * @param nodeInWSDL
+     * @param dependentTypes Walk all the nodes under the nodeInWSDL if there is an 'element' type the
+     *                       add its types or references to the dependent type.
+     */
+    private void getAllDependentTypes(XmlObject nodeInWSDL,
+                                      Set dependentTypes) {
+        // scan for any node under the type that has "type" or "ref" attribute
+        XmlCursor cursor = nodeInWSDL.newCursor();
+        if (cursor.toFirstChild()) { // has child
+            while (true) {
+                getAllDependentTypes(cursor.getObject(), dependentTypes);
+                if (!cursor.toNextSibling())
+                    break;
+            }
+        }
+        if (nodeInWSDL.schemaType().getName().getLocalPart().equals(
+                "localElement")) {
+            LocalElement e = (LocalElement) nodeInWSDL;
+            if (e.isSetType())
+                dependentTypes.add(e.getType());
+            else if (e.isSetRef())
+                dependentTypes.add(e.getRef());
+        }
+    }
+
+    public static DefinitionsDocument parseWSDL(String wsdlLocation)
+            throws IOException, MalformedURLException, XmlException {
+        if (wsdlLocation.indexOf("://") > 2) {
+            return parseWSDL(new URL(wsdlLocation));
+        } else {
+            return parseWSDL(new File(wsdlLocation));
+        }
+    }
+
+    public static DefinitionsDocument parseWSDL(File wsdlFile)
+            throws IOException, XmlException {
+        return DefinitionsDocument.Factory.parse(wsdlFile);
+    }
+
+    public static DefinitionsDocument parseWSDL(URL wsdlURL)
+            throws IOException, XmlException {
+        return DefinitionsDocument.Factory.parse(wsdlURL);
+    }
+
+    public static DefinitionsDocument parseWSDL(InputStream wsdlStream)
+            throws IOException, XmlException {
+        return DefinitionsDocument.Factory.parse(wsdlStream);
+    }
+
+    public static SchemaDocument parseSchema(InputStream stream)
+            throws XmlException, IOException {
+        return SchemaDocument.Factory.parse(stream);
+    }
+
+    public static SchemaDocument.Schema[] selectChildren(XmlObject parent, Class childClass)
             throws IllegalAccessException, NoSuchFieldException {
         // retrieve the SchemaType from the static type field
         SchemaType st = (SchemaType) childClass.getField("type").get(null);
-        return parent.selectChildren(st.getDocumentElementName());
+        XmlObject[] kids = parent.selectChildren(st.getDocumentElementName());
+        SchemaDocument.Schema[] castKids = (SchemaDocument.Schema[]) Array.newInstance(childClass, kids.length);
+        for (int j = 0; j < castKids.length; j++) {
+            castKids[j] = (SchemaDocument.Schema) kids[j];
+        }
+        return castKids;
+    }
+
+    public static SchemaDocument.Schema[] findtSchemaDocument(SchemaType docType)
+            throws XmlException, IOException, IllegalAccessException, NoSuchFieldException {
+        SchemaDocument.Schema[] schemas = null;
+        String schemaSrc = docType.getSourceName();
+        InputStream stream = null;
+        try {
+            stream = docType.getTypeSystem().getSourceAsStream(schemaSrc);
+            if (null == stream) {
+                throw new RuntimeException("WSDL file not found: " + schemaSrc);
+            }
+            if (schemaSrc.toLowerCase().endsWith(".wsdl")) {
+                TTypes tt = parseWSDL(stream).getDefinitions().getTypesArray(0);
+                schemas = selectChildren(tt, SchemaDocument.Schema.class);
+            } else {
+                SchemaDocument schemaDoc = parseSchema(stream);
+                schemas = new SchemaDocument.Schema[1];
+                schemas[0] = schemaDoc.getSchema();
+            }
+        } finally {
+            if (null != stream)
+                stream.close();
+        }
+        return schemas;
+    }
+
+    public static XmlObject getTypeNode(SchemaDocument.Schema[] schemas, QName q) {
+        // first find the schema with matching namespace
+        SchemaDocument.Schema schema = null;
+        for (int i = 0; i < schemas.length; i++) {
+            SchemaDocument.Schema nxtSchema = schemas[i];
+            if (nxtSchema.getTargetNamespace() != null
+                    && nxtSchema.getTargetNamespace().equals(
+                    q.getNamespaceURI())) {
+                schema = nxtSchema;
+                break;
+            }
+        }
+        if (null == schema)
+            return null; // namespace is not found in this schema.
+        // look in complex types
+        TopLevelComplexType[] tlComplexTypes = schema.getComplexTypeArray();
+        for (int i = 0; i < tlComplexTypes.length; i++) {
+            TopLevelComplexType nxtComplexType = tlComplexTypes[i];
+            if (nxtComplexType.getName().equals(q.getLocalPart())) {
+                return nxtComplexType;
+            }
+        }
+        // look in simple types
+        TopLevelSimpleType[] tlSimpleTypes = schema.getSimpleTypeArray();
+        for (int i = 0; i < tlSimpleTypes.length; i++) {
+            TopLevelSimpleType nxtSimpleType = tlSimpleTypes[i];
+            if (nxtSimpleType.getName().equals(q.getLocalPart())) {
+                return nxtSimpleType;
+            }
+        }
+        // look in element types
+        TopLevelElement[] tlElementTypes = schema.getElementArray();
+        for (int i = 0; i < tlElementTypes.length; i++) {
+            TopLevelElement nxtElement = tlElementTypes[i];
+            if (nxtElement.getName().equals(q.getLocalPart())) {
+                return nxtElement;
+            }
+        }
+        return null;  // it is not in comlex or simple types!
     }
 }
