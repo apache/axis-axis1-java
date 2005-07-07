@@ -25,6 +25,7 @@ public class ServiceEntry extends SymTabEntry {
 
     /** Field service */
     private Service service;
+    private String originalServiceName;
 
     /**
      * Construct a ServiceEntry from a WSDL4J Service object.
@@ -37,6 +38,18 @@ public class ServiceEntry extends SymTabEntry {
 
         this.service = service;
     }    // ctor
+
+    /**
+     *
+     * @param originalServiceName
+     *
+     */
+    public String getOriginalServiceName(){
+	return this.originalServiceName;
+    }
+    public void setOriginalServiceName(String originalName){
+	this.originalServiceName = originalName;
+    }
 
     /**
      * Get this entry's Service object.

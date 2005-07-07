@@ -3051,26 +3051,31 @@ public class SymbolTable {
      * @param def 
      * @throws IOException 
      */
-    private void populateServices(Definition def) throws IOException {
 
+    private void populateServices(Definition def) throws IOException {
+    	String originalName = null; 
         Iterator i = def.getServices().values().iterator();
 
         while (i.hasNext()) {
             Service service = (Service) i.next();
-
+            originalName = service.getQName().getLocalPart();
             // do a bit of name validation
             if ((service.getQName() == null)
                     || (service.getQName().getLocalPart() == null)
                     || service.getQName().getLocalPart().equals("")) {
                 throw new IOException(Messages.getMessage("BadServiceName00"));
             }
-
+            
+            // behave as though backslashes were never there
+            service.setQName(BackslashUtil.getQNameWithBackslashlessLocal(service.getQName()));
             ServiceEntry sEntry = new ServiceEntry(service);
-
+            // we'll need this later when it is time print a backslash escaped service name
+            sEntry.setOriginalServiceName(originalName);
             symbolTablePut(sEntry);
             populatePorts(service.getPorts());
         }
     }    // populateServices
+
 
     /**
      * populates the symbol table with port elements defined within a &lt;service&gt;

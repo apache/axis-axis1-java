@@ -22,6 +22,7 @@ import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.BackslashUtil;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
@@ -547,13 +548,22 @@ public class JavaServiceImplWriter extends JavaClassWriter {
      * @param pw    
      * @param qname 
      */
-    protected void writeGetServiceName(PrintWriter pw, QName qname) {
 
+   protected void writeGetServiceName(PrintWriter pw, QName qname) {
+    	String originalServiceName = null;
+    	QName qNameWithDifferentLocal = null;
+    	QName qNameWithBackslashedLocal = null;
+    	
+    	originalServiceName = sEntry.getOriginalServiceName();
+    	qNameWithDifferentLocal = BackslashUtil.getQNameWithDifferentLocal(qname, originalServiceName);
+    	qNameWithBackslashedLocal = BackslashUtil.getQNameWithBackslashedLocal(qNameWithDifferentLocal);
+    	
         pw.println("    public javax.xml.namespace.QName getServiceName() {");
-        pw.println("        return " + Utils.getNewQName(qname) + ";");
+        
+        pw.println("        return " +  Utils.getNewQName(qNameWithBackslashedLocal) + ";");
         pw.println("    }");
         pw.println();
-    }    // writeGetServiceName
+    }    // writeGetServiceName    
 
     /**
      * Write the getPorts method.
