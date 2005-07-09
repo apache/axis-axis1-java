@@ -430,7 +430,20 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                                     context);
                 if (dSer == null) {
                     dSer = context.getDeserializerForClass(bpd.getType());
+
+                    // The java type is an array, but the context didn't
+                    // know that we are an attribute.  Better stick with
+                    // simple types..
+                    if (dSer instanceof ArrayDeserializer)
+                    {
+                        SimpleListDeserializerFactory factory =
+                            new SimpleListDeserializerFactory(bpd.getType(),
+                                    fieldDesc.getXmlType());
+                        dSer = (Deserializer)
+                            factory.getDeserializerAs(dSer.getMechanismType());
+                    }
                 }
+
                 if (dSer == null)
                     throw new SAXException(
                             Messages.getMessage("unregistered00",

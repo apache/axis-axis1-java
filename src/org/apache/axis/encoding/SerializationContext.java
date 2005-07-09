@@ -18,8 +18,6 @@ package org.apache.axis.encoding;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.IllegalAccessException;
-import java.lang.NoSuchMethodException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -33,30 +31,33 @@ import java.util.Stack;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.holders.QNameHolder;
+
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.encoding.XMLEncoder;
 import org.apache.axis.components.encoding.XMLEncoderFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.constants.Use;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.TypeDesc;
+import org.apache.axis.encoding.ser.ArraySerializer;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.constants.Use;
+import org.apache.axis.encoding.ser.SimpleListSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.types.HexBinary;
 import org.apache.axis.utils.IDKey;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.MethodCache;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -1562,6 +1563,16 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     public String getValueAsString(Object value, QName xmlType) throws IOException {
         Class cls = value.getClass();
         Serializer ser = getSerializer(cls, xmlType, null);
+        
+        // The java type is an array, but we need a simple type.
+        if (ser instanceof ArraySerializer)
+        {
+            SimpleListSerializerFactory factory =
+                new SimpleListSerializerFactory(cls, xmlType);
+            ser = (Serializer)
+                factory.getSerializerAs(getEncodingStyle());
+        }
+
         if (!(ser instanceof SimpleValueSerializer)) {
             throw new IOException(
                     Messages.getMessage("needSimpleValueSer",
