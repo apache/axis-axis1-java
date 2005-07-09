@@ -7,6 +7,7 @@
  <globalConfiguration>
    <parameter name="disablePrettyXML" value="true"/>
    <parameter name="dotNetSoapEncFix" value="true"/>
+   <parameter name="enableNamespacePrefixOptimization" value="false"/>
    <requestFlow>
      <handler type="java:org.apache.axis.handlers.JWSHandler">
         <parameter name="scope" value="session"/>
