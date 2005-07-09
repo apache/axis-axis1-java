@@ -148,6 +148,9 @@ public class JavaBeanWriter extends JavaClassWriter {
                 enableHashCode = false;
             }
         }
+
+        preprocess();
+
     }    // ctor
 
     /**
@@ -474,7 +477,8 @@ public class JavaBeanWriter extends JavaClassWriter {
         // See if this class extends another class
         String extendsText = "";
 
-        if ((extendType != null) && !type.isSimpleType()
+        if ((extendType != null) && !isUnion()
+                && (!type.isSimpleType() || !extendType.isBaseType())
                 && (extendType.getDimensions().length() == 0)) {
             extendsText = " extends " + extendType.getName() + " ";
         }
@@ -492,12 +496,11 @@ public class JavaBeanWriter extends JavaClassWriter {
         // See if this class extends another class
         String implementsText = " implements java.io.Serializable";
 
-        if (type.isSimpleType()) {
+        if (type.isSimpleType() &&
+            (isUnion() || extendType == null || extendType.isBaseType()))
+        {
             implementsText += ", org.apache.axis.encoding.SimpleType";
         }
-
-        // need to call this to find out whether the type contains any elements
-        preprocess();
 
         if (isAny) {
             implementsText += ", org.apache.axis.encoding.AnyContentType";
@@ -724,13 +727,39 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         // If this is a simple type,need to emit a string
         // constructor and a value construtor.
-        if (simpleValueTypes.size() == 0) {
+        if (!type.isSimpleType())
             return;
-        }
 
         pw.println("    // " + Messages.getMessage("needStringCtor"));
 
-        if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) {
+        // Simple types without simpleValueTypes are derived classes.
+        // Inherit the simple constructor.
+        if (simpleValueTypes.size() == 0)
+        {
+           if (extendType != null)
+           {
+               // Find the java type of the most base type.
+               TypeEntry baseType = type;
+               while (true)
+               {
+                   TypeEntry superType = SchemaUtils.getBaseType(
+                       baseType, emitter.getSymbolTable());
+                   if (superType == null)
+                       break;
+                   else
+                       baseType = superType;
+               }
+
+               String baseJavaType = baseType.getName();
+
+               pw.println("    public " + className + "("
+                       + baseJavaType + " _value) {");
+               pw.println("        super(_value);");
+               pw.println("    }");
+               pw.println();
+           }
+        }
+        else if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) { 
             pw.println("    public " + className
                     + "(java.lang.String _value) {");
             pw.println("        this._value = _value;");
@@ -1090,7 +1119,9 @@ public class JavaBeanWriter extends JavaClassWriter {
         // Before checking the elements, check equality of the super class
         String truth = "true";
 
-        if ((extendType != null) && !type.isSimpleType()) {
+        if ((extendType != null) &&
+            (!type.isSimpleType() || simpleValueTypes.size() == 0))
+        {
             truth = "super.equals(obj)";
         }
 

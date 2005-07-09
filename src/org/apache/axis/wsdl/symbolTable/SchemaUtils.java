@@ -301,17 +301,38 @@ public class SchemaUtils {
                         && Constants.isSchemaXSD(kid.getNamespaceURI())) {
 
                         // get the type of the extension/restriction from the "base" attribute
-                        QName extendsOrRestrictsType =
+                        QName extendsOrRestrictsTypeName =
                                 Utils.getTypeQName(children.item(j),
                                         new BooleanHolder(), false);
 
+                        TypeEntry extendsOrRestrictsType =
+                            symbolTable.getTypeEntry(extendsOrRestrictsTypeName,
+                                                    false);
+
+                        // If this type extends a simple type, then add the
+                        // special "value" ElementDecl, else this type is
+                        // extending another simpleContent type and will
+                        // already have a "value".
+
+                        if (extendsOrRestrictsType == null ||
+                            extendsOrRestrictsType.isBaseType())
+                        {
                         // Return an element declaration with a fixed name
                         // ("value") and the correct type.
                         Vector v = new Vector();
-                        ElementDecl elem = new ElementDecl(symbolTable.getTypeEntry(extendsOrRestrictsType, false), VALUE_QNAME);
+                            ElementDecl elem =
+                                new ElementDecl(extendsOrRestrictsType,
+                                    VALUE_QNAME);
                         v.add(elem);
 
                         return v;
+                    }
+                        else
+                        {
+                            // There can't be any other elements in a
+                            // simpleContent node.
+                            return null;
+                        }
                     }
                 }
             }
