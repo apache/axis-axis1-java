@@ -335,23 +335,25 @@ public class DimeBodyPart {
                 return;
     		}
     		
+            byte chunknext = 0; 
     		do {
     			bytesRead2 = in.read(buffer2);
     			
     			if(bytesRead2 < 0) {
     				//last record...do not set the chunk bit.
     				//buffer1 contains the last chunked record!
-    				sendChunk(os, position, buffer1, 0, bytesRead1, (byte)0);
+    				sendChunk(os, position, buffer1, 0, bytesRead1, chunknext);
     				break;
     			}
     			
-    			sendChunk(os, position, buffer1, 0, bytesRead1, CHUNK);
+    			sendChunk(os, position, buffer1, 0, bytesRead1, (byte)(CHUNK | chunknext));
+                chunknext = CHUNK_NEXT; 
 
     			//now that we have written out buffer1, copy buffer2 into to buffer1
     			System.arraycopy(buffer2,0,buffer1,0,myChunkSize);
     			bytesRead1 = bytesRead2;
     			
-    		}while(bytesRead2 > 0);
+    		} while(bytesRead2 > 0);
     }
 
     protected void sendChunk(java.io.OutputStream os,
