@@ -34,6 +34,11 @@ public class NetworkUtils {
      * localhost can map to different machines than "self".
      */
     public static final String LOCALHOST = "127.0.0.1";
+    
+    /**
+     * loopback address in IPV6
+     */
+    public static final String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
 
     /**
      * keep this uninstantiable.

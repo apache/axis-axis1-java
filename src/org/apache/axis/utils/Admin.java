@@ -30,6 +30,7 @@ import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.NetworkUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -177,7 +178,8 @@ public class Admin
 
             String remoteIP = msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
             if (remoteIP != null  &&
-                !remoteIP.equals("127.0.0.1")) {
+                !(remoteIP.equals(NetworkUtils.LOCALHOST) ||
+                  remoteIP.equals(NetworkUtils.LOCALHOST_IPV6))) {
 
                 try {
                     InetAddress myAddr = InetAddress.getLocalHost();
