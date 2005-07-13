@@ -545,9 +545,9 @@ public class JavaBeanWriter extends JavaClassWriter {
             // Declare the bean element
             if (comments != null && comments.trim().length() > 0)
             {
-                String flatComments = getJavadocDescriptionPart(comments, false).substring(3);
+                String flatComments = getJavadocDescriptionPart(comments, true).substring(7);
                 // it will be flat if it fits on one line
-                pw.println("    /** " + flatComments.trim() + " */");
+                pw.println("    /* " + flatComments.trim() + " */");
             }
             pw.print("    private " + typeName + " " + variable + ";");
 
@@ -557,9 +557,8 @@ public class JavaBeanWriter extends JavaClassWriter {
             } else {
                 pw.println();
             }
+            pw.println();
         }
-
-        pw.println();
     }
 
     
@@ -975,7 +974,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 get = "is";
             }
 
-            String comment = getJavadocDescriptionPart(documentation, false);
+            String comment = getJavadocDescriptionPart(documentation, true);
             if (comment.length() > 3) {
                 // remove the " *" at the front of the first line
                 comment = comment.substring(2);
