@@ -528,7 +528,7 @@ public class Utils {
 
             // All types are derived from anyType, except anonymous ones
             final Collection typeValues = symbolTable.getTypeIndex().values();
-            types.addAll(symbolTable.getTypeIndex().values());
+            types.addAll(typeValues);
             
             // Currently we are unable to mark anonymous types correctly.
             // So, this filtering has to wait until a fix is made.
