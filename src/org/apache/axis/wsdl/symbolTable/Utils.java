@@ -528,12 +528,16 @@ public class Utils {
 
             // All types are derived from anyType, except anonymous ones
             final Collection typeValues = symbolTable.getTypeIndex().values();
-            for (Iterator it = typeValues.iterator(); it.hasNext();) {
+            types.addAll(symbolTable.getTypeIndex().values());
+            
+            // Currently we are unable to mark anonymous types correctly.
+            // So, this filtering has to wait until a fix is made.
+/*            for (Iterator it = typeValues.iterator(); it.hasNext();) {
                 SymTabEntry e = (SymTabEntry) it.next();
                 if (! e.getQName().getLocalPart().startsWith(SymbolTable.ANON_TOKEN))
                     types.add(e);
             }
-        }
+*/        }
 
         return types;
     }    // getNestedTypes
