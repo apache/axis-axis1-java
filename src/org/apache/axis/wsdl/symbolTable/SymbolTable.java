@@ -2178,6 +2178,9 @@ public class SymbolTable {
               // If node is null, that means the element in question has no type declaration, 
               // therefore is not a wrapper element.
               wrapped = false;
+                if (verbose) {
+                    System.out.println(Messages.getMessage("cannotDoWrappedMode00", elementName.toString()));
+                }
             } else {
 
                 // check for attributes
