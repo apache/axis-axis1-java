@@ -150,7 +150,7 @@ public class ArrayUtil {
         BeanPropertyDescriptor bpd = null;
         int count = 0;
         Class cls = clazz;
-        while (!cls.getName().equals("java.lang.Object")) {                 
+        while (cls != null && cls.getName() != null && !cls.getName().equals("java.lang.Object")) {                 
             BeanPropertyDescriptor bpds[] = BeanUtils.getPd(clazz);
             for (int i = 0; i < bpds.length; i++) {             
                 BeanPropertyDescriptor pd = bpds[i];
