@@ -20,10 +20,17 @@ import javax.xml.namespace.QName;
 /**
  * @author dbyrne
  *
- * this method exists because backslashes cannot be removed unless
+ * Created in response to AXIS-2088.  This class exposes a handful of static utility
+ * methods that are used to manipulate backslash chars w/in the context of QName objects.
+ * 
  */
 public class BackslashUtil implements java.io.Serializable {
 
+   /** 
+     * @param QName[local] that may contain unescaped backslashes
+     * @return QName[local] w/ no backslashes
+     */
+	
 	public static QName getQNameWithBackslashlessLocal(QName suspectQName) {
 		String trustedString = null;
 
@@ -32,6 +39,11 @@ public class BackslashUtil implements java.io.Serializable {
 		return getQNameWithDifferentLocal(suspectQName, trustedString);
 	}
 
+   /** 
+     * @param QName[local] which may contain unescaped backslashes
+     * @return QName[local] w/ escaped backslashes
+     */
+	
 	public static QName getQNameWithBackslashedLocal(QName suspectQName) {
 		String trustedString = null;
 
@@ -40,23 +52,35 @@ public class BackslashUtil implements java.io.Serializable {
 		return getQNameWithDifferentLocal(suspectQName, trustedString);
 	}	
 	
+   /** 
+    * Creates a copy of the supplied QName w/ the supplied local name  
+    */	
 	public static QName getQNameWithDifferentLocal(QName qName, String localName) {
 		QName trustedQName = null;
 
 		// recreate the QName, only w/ a local name we can trust.
 		trustedQName = new QName(qName.getNamespaceURI(), localName, qName.getPrefix());
-
 		return trustedQName;
 	}
 	
+	/**
+	 * Slave method for getQNameWithBackslashedLocal()
+	 */
 	public static String applyBackslashes(String string) {
 		return transformBackslashes(string, false);
 	}
 	
+	/**
+	 * Slave method for getQNameWithBackslashlessLocal
+	 */
 	public static String stripBackslashes(String string) {
 		return transformBackslashes(string, true);
 	}
 	
+	/**
+	 * Slave method for applyBackslashes & stripBackslashes .
+	 * 
+	 */
 	public static String transformBackslashes(String string, boolean delete) {
 		byte[] suspectBytes = null;
 		StringBuffer stringBuffer = null;
