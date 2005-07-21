@@ -56,18 +56,18 @@ public class DateDeserializer extends SimpleDeserializer {
         
         // validate fixed portion of format
         if ( source != null ) {
+            if (source.length() < 10)
+                throw new NumberFormatException(
+                           Messages.getMessage("badDate00"));
+    
             if (source.charAt(0) == '+')
                 source = source.substring(1);
-            
+
             if (source.charAt(0) == '-') {
                 source = source.substring(1);
                 bc = true;
             }
-            
-            if (source.length() < 10) 
-                throw new NumberFormatException(
-                           Messages.getMessage("badDate00"));
-    
+
             if (source.charAt(4) != '-' || source.charAt(7) != '-')
                 throw new NumberFormatException(
                                                 Messages.getMessage("badDate00"));
