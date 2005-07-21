@@ -1324,10 +1324,15 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      */
     public Attributes setTypeAttribute(Attributes attributes, QName type)
     {
+        SchemaVersion schema = SchemaVersion.SCHEMA_2001;
+        if (msgContext != null) {
+            schema = msgContext.getSchemaVersion();
+        }
+
         if (type == null ||
              type.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) >= 0 ||
             ((attributes != null) &&
-             (attributes.getIndex(Constants.URI_DEFAULT_SCHEMA_XSI,
+             (attributes.getIndex(schema.getXsiURI(),
                                 "type") != -1)))
             return attributes;
 
@@ -1335,10 +1340,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         if (attributes != null && 0 < attributes.getLength() )
             attrs.setAttributes(attributes);
 
-        String prefix = getPrefixForURI(Constants.URI_DEFAULT_SCHEMA_XSI,
+        String prefix = getPrefixForURI(schema.getXsiURI(),
                                            "xsi");
 
-        attrs.addAttribute(Constants.URI_DEFAULT_SCHEMA_XSI,
+        attrs.addAttribute(schema.getXsiURI(),
                            "type",
                            prefix + ":type",
                            "CDATA", attributeQName2String(type));
