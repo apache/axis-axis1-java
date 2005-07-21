@@ -121,7 +121,7 @@ public class BeanSerializer implements Serializer, Serializable {
             context.startElement(name, beanAttrs);
 
         // check whether the array is converted to ArrayOfT shema type    
-        if (value.getClass().isArray()) {
+        if (value != null && value.getClass().isArray()) {
            Object newVal = JavaUtils.convert(value, javaType); 
            if (newVal != null && javaType.isAssignableFrom(newVal.getClass())) {
                value = newVal; 
