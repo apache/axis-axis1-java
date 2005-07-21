@@ -344,8 +344,8 @@ public class DimeBodyPart {
     				//last record...do not set the chunk bit.
     				//buffer1 contains the last chunked record!!
     			   
-    			    //If this is the first chunk we MUST send 
-    			    //the TYPE and ID
+    			    //Need to distinguish if this is the first 
+    			    //chunk to ensure the TYPE and ID are sent
     			    if ( chunkbyte == CHUNK ){
     			        chunkbyte = ONLY_CHUNK;
     			    } else {
@@ -389,9 +389,9 @@ public class DimeBodyPart {
         long length, byte chunk) throws java.io.IOException {
         byte[] fixedHeader = new byte[12];
         
-        //If first and/or only chunk then send TYPE and ID 
+        //If first chunk then send TYPE and ID 
         boolean isFirstChunk = ((chunk == CHUNK) || (chunk == ONLY_CHUNK));
-        //If chunk is CHUNK_NEXT then 
+        //If chunk is ONLY_NEXT then 
         //reset to CHUNK so CF is set.
         //If chunk is ONLY_CHUNK (first and last chunk)  
         //then do not set CF since this is the only chunk
@@ -410,10 +410,14 @@ public class DimeBodyPart {
                     ((chunk & CHUNK_NEXT) != 0 ? ~POSITION_FIRST : ~0));
         fixedHeader[0] |= (chunk & CHUNK);
         
+        boolean MB = 0 != (0x4 & fixedHeader[0]);
         //TYPE_T
-        if (  isFirstChunk ) //If this is a follow on chunk dont send id again.
+        if ( MB || isFirstChunk ){ //If this is a follow on chunk dont send id again.
             fixedHeader[1] = (byte) ((dtnf.toByte() << 4) & 0xf0);
-
+        } else {
+        	fixedHeader[1] = (byte) 0x00;
+        }
+        
         //OPT_T
         fixedHeader[1] |= (byte) (CURRENT_OPT_T & 0xf);
 
@@ -422,15 +426,21 @@ public class DimeBodyPart {
         fixedHeader[3] = (byte) 0;
 
         //ID_LENGTH
-        if ( isFirstChunk )  { //If this is a follow on chunk dont send id again.
+        if  ( (MB || isFirstChunk) && (id != null && id.length > 0))   { //If this is a follow on chunk dont send id again.
             fixedHeader[4] = (byte) ((id.length >>> 8) & 0xff);
             fixedHeader[5] = (byte) ((id.length) & 0xff);
+        } else {
+        	fixedHeader[4] = (byte) 0;
+            fixedHeader[5] = (byte) 0;
         }
 
         //TYPE_LENGTH
-        if (  isFirstChunk )  {
+        if (  MB || isFirstChunk )  {
             fixedHeader[6] = (byte) ((type.length >>> 8) & 0xff);
             fixedHeader[7] = (byte) ((type.length) & 0xff);
+        } else {
+        	fixedHeader[6] = (byte) 0;
+            fixedHeader[7] = (byte) 0;
         }
 
         //DATA_LENGTH
@@ -445,13 +455,13 @@ public class DimeBodyPart {
         // (NONE)
 
         //ID + PADDING
-        if ( isFirstChunk )  {
+        if ( (MB || isFirstChunk) && (id != null && id.length > 0))  {
             os.write(id);
             os.write(pad, 0, dimePadding(id.length));
         }
 
         //TYPE + PADDING
-        if ( isFirstChunk )  {
+        if ( MB || isFirstChunk )  {
             os.write(type);
             os.write(pad, 0, dimePadding(type.length));
         }
