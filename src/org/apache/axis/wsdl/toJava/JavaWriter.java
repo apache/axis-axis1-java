@@ -20,10 +20,7 @@ import org.apache.axis.wsdl.gen.Generator;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.StringTokenizer;
 
 /**
@@ -190,7 +187,9 @@ public abstract class JavaWriter implements Generator {
 
         parent.mkdirs();
 
-        return new PrintWriter(new FileWriter(file));
+        FileOutputStream out = new FileOutputStream(file);
+        OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
+        return new PrintWriter(writer);
     }                                // getPrintWriter
 
     /**
