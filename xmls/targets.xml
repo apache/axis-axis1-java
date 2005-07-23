@@ -70,7 +70,7 @@
   <!-- Determine what dependencies are present                             -->
   <!-- =================================================================== -->
 
-  <target name="setenv" unless="setenv.already.executed" depends="axis-clover-setup">
+  <target name="setenv" unless="setenv.already.executed" depends="axis-clover-setup, axis-xmlbeans-setup">
     <property name="setenv.already.executed" value="true"/>
 
     <condition property="ant.good">
@@ -237,7 +237,6 @@
     <condition property="xmlbeans.present" >
       <and>
         <available classname="org.apache.xmlbeans.XmlObject" classpathref="classpath" />
-        <available classname="org.xmlsoap.schemas.wsdl.DefinitionsDocument" classpathref="classpath" />
         <available classname="javax.xml.stream.XMLStreamReader" classpathref="classpath" />
       </and>
     </condition>
@@ -678,5 +677,30 @@
   <target name="axis-clover-setenv">
      <condition property="clover.present" >
        <available classname="com.cortexeb.tools.clover.tasks.CloverTask" classpathref="classpath" />
+     </condition>
+  </target>
+
+  <target name="axis-xmlbeans-setup" depends="axis-xmlbeans-setenv" if="generate.schema.jar">
+    <mkdir dir="${build.lib}"/>
+     <echo message="Registering xmlbeans tasks"/>
+     <taskdef name="xmlbeanbuild" 
+              classname="org.apache.xmlbeans.impl.tool.XMLBean" 
+              classpathref="classpath"/>
+	 <xmlbeanbuild
+              schema="${axis.home}/xsd"
+              classgendir="${build.dir}/schema/"
+              failonerror="true"
+              classpathref="classpath"/>
+	 <jar jarfile="${build.lib}/axis-schema.jar" basedir="${build.dir}/schema/"/>
+  </target>
+
+  <target name="axis-xmlbeans-setenv">
+     <condition property="generate.schema.jar">
+       <and>
+         <available classname="org.apache.xmlbeans.impl.tool.XMLBean" classpathref="classpath" />
+         <not>
+		    <available file="${build.lib}/axis-schema.jar"/>
+         </not>
+       </and>
      </condition>
   </target>
