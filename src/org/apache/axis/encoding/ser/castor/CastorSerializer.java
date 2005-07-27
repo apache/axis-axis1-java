@@ -106,8 +106,12 @@ public class CastorSerializer implements Serializer {
             //2 DOCTYPE defined in the document. The XML fragment is included in
             //an XML document containing already a DOCTYPE
             marshaller.setMarshalAsDocument(false);
-            marshaller.setRootElement(name.getLocalPart());
-            
+            String localPart = name.getLocalPart();
+            int arrayDims = localPart.indexOf('[');
+            if (arrayDims != -1) {
+                localPart = localPart.substring(0, arrayDims);
+            }
+            marshaller.setRootElement(localPart);
             // Marshall the Castor object into the stream (sink)
             marshaller.marshal(value);
         } catch (MarshalException me) {

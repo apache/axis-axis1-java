@@ -29,4 +29,7 @@ public class CastorEnumTypeSerializerFactory extends BaseSerializerFactory {
     public CastorEnumTypeSerializerFactory(Class javaType, QName xmlType) {
         super(CastorEnumTypeSerializer.class, xmlType, javaType);
     }
+    public static SerializerFactory create(Class javaType, QName xmlType) {
+        return new CastorEnumTypeSerializerFactory(javaType, xmlType);
+    }
 }

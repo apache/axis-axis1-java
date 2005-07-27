@@ -30,4 +30,7 @@ public class CastorDeserializerFactory extends BaseDeserializerFactory {
     public CastorDeserializerFactory(Class javaType, QName xmlType) {
         super(CastorDeserializer.class, xmlType, javaType);
     }
+    public static DeserializerFactory create(Class javaType, QName xmlType) {
+        return new CastorDeserializerFactory(javaType, xmlType);
+    }
 }
