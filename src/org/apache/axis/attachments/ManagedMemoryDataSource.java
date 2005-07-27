@@ -487,7 +487,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     private class Instream extends java.io.InputStream {
 
         /** bytes read. */
-        protected int bread = 0;
+        protected long bread = 0;
 
         /** The real stream. */
         java.io.FileInputStream fin = null;
@@ -540,8 +540,8 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                 throw new java.io.IOException(
                         Messages.getMessage("streamClosed"));
             }
-            // Will return neg. value when totalsz > 2Gb 
-            int ret = new Long(totalsz - bread).intValue();
+
+            int ret = new Long(Math.min(Integer.MAX_VALUE, totalsz - bread)).intValue();
 
             if (debugEnabled) {
                 is_log.debug("available() = " + ret + ".");
