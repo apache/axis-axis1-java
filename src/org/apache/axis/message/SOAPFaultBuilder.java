@@ -23,13 +23,14 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Constructor;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -253,7 +254,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                 SOAPConstants.SOAP11_CONSTANTS :
                 context.getMessageContext().getSOAPConstants();
         
-        QName qName = null;
+        QName qName;
         // If we found the type for this field, get the deserializer
         // otherwise, if this is the details element, use the special 
         // SOAPFaultDetailsBuilder handler to take care of custom fault data 
@@ -296,9 +297,13 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                 Element [] elements = new Element [children.size()];
                 for (int i = 0; i < elements.length; i++) {
                     try {
-                        elements[i] = ((MessageElement)children.get(i)).
-                                                                    getAsDOM();
-                        
+                        Node node = (Node) children.get(i);
+                        if (node instanceof MessageElement) {
+                            elements[i] = ((MessageElement) node).getAsDOM();
+                        } else if(node instanceof Text){
+                            elements[i] = XMLUtils.newDocument().createElement("text");
+                            elements[i].appendChild(node);
+                        }
                     } catch (Exception e) {
                         throw new SAXException(e);
                     }
