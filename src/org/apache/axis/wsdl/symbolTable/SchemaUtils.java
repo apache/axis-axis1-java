@@ -494,7 +494,8 @@ public class SchemaUtils {
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
                 if (child != null) {
-                    if (child.getNodeName() != null && name.equals(child.getNodeName())) {
+                    if ((child.getNodeName() != null && (name.equals(child.getNodeName()))) ||
+                        (child.getLocalName() != null && (name.equals(child.getLocalName())))) {
                         return child;
                     }
                 }
