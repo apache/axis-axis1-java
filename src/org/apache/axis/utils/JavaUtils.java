@@ -295,7 +295,7 @@ public class JavaUtils
                         // attachment, but if the image would be null
                         // (is.available == 0) then ImageIO component isn't needed
                         // and we can return null.
-                        InputStream is = (InputStream) handler.getContent();
+                        InputStream is = handler.getInputStream();
                         if (is.available() == 0) {
                             return null;
                         }
@@ -314,15 +314,14 @@ public class JavaUtils
                         // For a reason unknown to me, the handler's
                         // content is a String.  Convert it to a
                         // StreamSource.
-                        return new StreamSource(new StringReader(
-                                (String) handler.getContent()));
+                        return new StreamSource(handler.getInputStream());
                     }
                     else if (destClass == OctetStream.class || destClass == byte[].class) {
                         InputStream in = null;
                         if (arg instanceof InputStream) {
                             in = (InputStream) arg;
                         } else {
-                            in = (InputStream)handler.getContent();
+                            in = handler.getInputStream();
                         }
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         int byte1 = -1;

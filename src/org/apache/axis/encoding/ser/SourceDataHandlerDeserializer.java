@@ -45,8 +45,7 @@ public class SourceDataHandlerDeserializer extends JAFDataHandlerDeserializer {
         if (getValue() instanceof DataHandler) {
             try {
                 DataHandler dh = (DataHandler) getValue();
-                StreamSource ss = new StreamSource(new StringReader(
-                        (String) dh.getContent()));
+                StreamSource ss = new StreamSource(dh.getInputStream());
                 setValue(ss);
             }
             catch (IOException ioe) {
