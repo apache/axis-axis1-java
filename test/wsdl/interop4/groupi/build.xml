@@ -54,6 +54,7 @@ Copyright:
     <!-- generate skeletons -->
     <wsdl2java url="${axis.home}/test/wsdl/interop4/groupi/round4XSD.wsdl"
                output="${root.dir}/build/work" skeletonDeploy="no"
+               wrapArrays="true"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop4.groupi"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop4.groupi.xsd"/>
