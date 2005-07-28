@@ -58,6 +58,7 @@ Copyright:
                deployscope="session"
                serverSide="no"
                skeletonDeploy="no"
+               wrapArrays="true"
                testcase="no">
         <mapping namespace="urn:QueryTypes" package="test.wsdl.extensibility"/>
     </wsdl2java>
@@ -66,6 +67,7 @@ Copyright:
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="no"
+               wrapArrays="true"
                testcase="yes">
         <mapping namespace="urn:ExtensibilityQuery" package="test.wsdl.extensibility"/>
     </wsdl2java>
