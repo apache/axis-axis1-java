@@ -58,6 +58,7 @@ Copyright:
                output="${axis.home}/build/work"
                verbose="no"
                serverSide="no"
+               wrapArrays="true"
                testcase="no">
         <mapping namespace="http://terraservice-usa.com/" package="test.wsdl.terra"/>
         <mapping namespace="http://terraserver-usa.com/terraserver/" package="test.wsdl.terra"/>
