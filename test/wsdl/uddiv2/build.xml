@@ -58,6 +58,7 @@ Copyright:
                output="${axis.home}/build/work"
                verbose="no"
                serverSide="no"
+               wrapArrays="true"
                testcase="yes">
         <mapping namespace="urn:uddi-org" package="test.wsdl.uddiv2"/>
         <mapping namespace="urn:uddi-org:inquiry_v2" package="test.wsdl.uddiv2.inquiry_v2"/>
