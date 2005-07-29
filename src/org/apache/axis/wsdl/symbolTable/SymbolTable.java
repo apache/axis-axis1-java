@@ -1188,6 +1188,7 @@ public class SymbolTable {
                 // If we're supposed to unwrap arrays, supply someplace to put the "inner" QName
                 // so we can propagate it into the appropriate metadata container.
                 QNameHolder itemQName = wrapArrays ? null : new QNameHolder();
+                BooleanHolder forElement2 = new BooleanHolder();
 
                 numDims.value = 0;
 
@@ -1196,6 +1197,7 @@ public class SymbolTable {
                                                            numDims,
                                                            underlTypeNillable,
                                                            itemQName,
+                                                           forElement2,
                                                            this);
 
                 if (arrayEQName != null) {
@@ -1203,7 +1205,7 @@ public class SymbolTable {
                     // Get the TypeEntry for the array element type
                     refQName = arrayEQName;
 
-                    TypeEntry refType = getTypeEntry(refQName, false);
+                    TypeEntry refType = getTypeEntry(refQName, forElement2.value);
 
                     if (refType == null) {
 //                        arrayTypeQNames.add(refQName);
@@ -1213,6 +1215,8 @@ public class SymbolTable {
 
                         if (baseName != null) {
                             refType = new BaseType(refQName);
+                        } else if(forElement2.value) {
+                            refType = new UndefinedElement(refQName);
                         } else {
                             refType = new UndefinedType(refQName);
                         }
@@ -1304,11 +1308,11 @@ public class SymbolTable {
     /**
      * Node may contain a reference (via type=, ref=, or element= attributes) to
      * another type.  Create a Type object representing this referenced type.
-     * 
-     * @param node 
-     * @throws IOException 
+     *
+     * @param node
+     * @throws IOException
      */
-    private void createTypeFromRef(Node node) throws IOException {
+    protected void createTypeFromRef(Node node) throws IOException {
 
         // Get the QName of the node's type attribute value
         BooleanHolder forElement = new BooleanHolder();
@@ -1447,9 +1451,9 @@ public class SymbolTable {
 
     /**
      * Populate the symbol table with all of the MessageEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
+     *
+     * @param def
+     * @throws IOException
      */
     private void populateMessages(Definition def) throws IOException {
 
@@ -1477,7 +1481,7 @@ public class SymbolTable {
      * <p/>
      * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code> rather than
      * a <code>java.io.IOException</code>
-     * 
+     *
      * @param message the message object
      * @throws IOException thrown, if the message is not valid
      */
@@ -1486,7 +1490,7 @@ public class SymbolTable {
 
         // make sure the message is not null (i.e. there is an
         // attribute 'message ')
-        // 
+        //
         if (message == null) {
             throw new IOException(
                     "<input>,<output>, or <fault> in <operation ..> without attribute 'message' found. Attribute 'message' is required.");
@@ -1494,7 +1498,7 @@ public class SymbolTable {
 
         // make sure the value of the attribute refers to an
         // already defined message
-        // 
+        //
         if (message.isUndefined()) {
             throw new IOException(
                     "<input ..>, <output ..> or <fault ..> in <portType> with undefined message found. message name is '"
@@ -1509,7 +1513,7 @@ public class SymbolTable {
      * <p/>
      * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
      * rather than a <code>java.io.IOException</code>
-     * 
+     *
      * @param operation the operation element
      * @throws IOException              thrown, if the element is not valid.
      * @throws IllegalArgumentException thrown, if operation is null
@@ -1524,7 +1528,7 @@ public class SymbolTable {
 
         Input input = operation.getInput();
         Message message;
-        
+
         if (input != null) {
             message = input.getMessage();
             if (message == null) {
@@ -1557,7 +1561,7 @@ public class SymbolTable {
                 message = fault.getMessage();
                 if (message == null) {
                     throw new IOException(
-                            "No 'message' attribute in <fault> named '" + 
+                            "No 'message' attribute in <fault> named '" +
                             fault.getName() + "' for operation '" +
                             operation.getName() + "'");
                 }
@@ -1572,7 +1576,7 @@ public class SymbolTable {
      * <p/>
      * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
      * rather than a <code>java.io.IOException</code>
-     * 
+     *
      * @param portType the portType element
      * @throws IOException              thrown, if the element is not valid.
      * @throws IllegalArgumentException thrown, if operation is null
@@ -1588,13 +1592,13 @@ public class SymbolTable {
         List operations = portType.getOperations();
 
         // no operations defined ? -> valid according to the WSDL 1.1 schema
-        // 
+        //
         if ((operations == null) || (operations.size() == 0)) {
             return;
         }
 
         // check operations defined in this portType
-        // 
+        //
         Iterator it = operations.iterator();
 
         while (it.hasNext()) {
@@ -1606,9 +1610,9 @@ public class SymbolTable {
 
     /**
      * Populate the symbol table with all of the PortTypeEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
+     *
+     * @param def
+     * @throws IOException
      */
     private void populatePortTypes(Definition def) throws IOException {
 
@@ -1632,8 +1636,8 @@ public class SymbolTable {
 
     /**
      * Create the parameters and store them in the bindingEntry.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     private void populateParameters() throws IOException {
 
@@ -1690,12 +1694,12 @@ public class SymbolTable {
      * There is a bit of processing that is needed to write the interface, stub, and skeleton.
      * Rather than do that processing 3 times, it is done once, here, and stored in the
      * Parameters object.
-     * 
-     * @param operation    
-     * @param namespace    
-     * @param bindingEntry 
-     * @return 
-     * @throws IOException 
+     *
+     * @param operation
+     * @param namespace
+     * @param bindingEntry
+     * @return
+     * @throws IOException
      */
     public Parameters getOperationParameters(
             Operation operation, String namespace, BindingEntry bindingEntry)
@@ -1715,9 +1719,9 @@ public class SymbolTable {
 
         Input input = operation.getInput();
         Output output = operation.getOutput();
-        
+
         parameters.mep = operation.getStyle();
-        
+
         // All input parts MUST be in the parameterOrder list.  It is an error otherwise.
         if (parameterOrder != null && !wrapped) {
             if (input != null) {
@@ -1791,7 +1795,7 @@ public class SymbolTable {
         // instead of: void echo(StringHolder inout)
         // Do this:  string echo(string in)
         if (wrapped && (inputs.size() == 1) && (outputs.size() == 1)
-                && 
+                &&
                 Utils.getLastLocalPart(((Parameter) inputs.get(0)).getName()).equals(
                 Utils.getLastLocalPart(((Parameter) outputs.get(0)).getName()))
                 ) {
@@ -1859,10 +1863,10 @@ public class SymbolTable {
 
     /**
      * Return the index of the given name in the given Vector, -1 if it doesn't exist.
-     * 
-     * @param name 
-     * @param v    
-     * @return 
+     *
+     * @param name
+     * @param v
+     * @return
      */
     private int getPartIndex(String name, Vector v) {
         name = Utils.getLastLocalPart(name);
@@ -1879,13 +1883,13 @@ public class SymbolTable {
 
     /**
      * Add an in or inout parameter to the parameters object.
-     * 
-     * @param inputs     
-     * @param outputs    
-     * @param index      
-     * @param outdex     
-     * @param parameters 
-     * @param trimInput  
+     *
+     * @param inputs
+     * @param outputs
+     * @param index
+     * @param outdex
+     * @param parameters
+     * @param trimInput
      */
     private void addInishParm(Vector inputs, Vector outputs, int index,
                               int outdex, Parameters parameters,
@@ -1928,7 +1932,7 @@ public class SymbolTable {
                 p.setMode(Parameter.INOUT);
 
                 ++parameters.inouts;
-            } 
+            }
             /*
             else if (paramLastLocalPart.equals(outParamLastLocalPart)) {
                 outputs.remove(outdex);
@@ -1957,11 +1961,11 @@ public class SymbolTable {
             }
         */
             else {
-                
+
                 // If we're here, we have both an input and an output
                 // part with the same name but different types.... guess
                 // it's not really an inout....
-                // 
+                //
                 // throw new IOException(Messages.getMessage("differentTypes00",
                 // new String[] { p.getName(),
                 // p.getType().getQName().toString(),
@@ -1985,11 +1989,11 @@ public class SymbolTable {
 
     /**
      * Add an output parameter to the parameters object.
-     * 
-     * @param outputs    
-     * @param outdex     
-     * @param parameters 
-     * @param trim       
+     *
+     * @param outputs
+     * @param outdex
+     * @param parameters
+     * @param trim
      */
     private void addOutParm(Vector outputs, int outdex, Parameters parameters,
                             boolean trim) {
@@ -2077,7 +2081,7 @@ public class SymbolTable {
         // - That part is an element
         // - That element has the same name as the operation
         // - That element has no attributes (check done below)
-        
+
         if (!nowrap && literal && (numberOfElements == 1) && possiblyWrapped) {
             wrapped = true;
         }
@@ -2136,7 +2140,7 @@ public class SymbolTable {
                 // XML for literal parts that specify the type attribute,
                 // (unless they're MIME types) abort processing with an
                 // error if we encounter this case
-                // 
+                //
                 // node = getTypeEntry(typeName, false).getNode();
                 String bindingName = (bindingEntry == null)
                         ? "unknown"
@@ -2172,10 +2176,10 @@ public class SymbolTable {
             }
 
             Vector vTypes = null;
-            
+
             // If we have nothing at this point, we're in trouble.
             if (node == null) {
-              // If node is null, that means the element in question has no type declaration, 
+              // If node is null, that means the element in question has no type declaration,
               // therefore is not a wrapper element.
               wrapped = false;
                 if (verbose) {
@@ -2188,7 +2192,7 @@ public class SymbolTable {
                     // can't do wrapped mode
                     wrapped = false;
                 }
-                
+
                 if (!SchemaUtils.isWrappedType(node)) {
                     // mark the type entry as not just literal referenced
                     // This doesn't work, but it may help in the future.
@@ -2252,7 +2256,7 @@ public class SymbolTable {
 
     /**
      * Set the header information for this paramter
-     * 
+     *
      * @param param        Parameter to modify
      * @param bindingEntry Binding info for this operation/parameter
      * @param opName       the operation we are processing
@@ -2314,10 +2318,10 @@ public class SymbolTable {
 
     /**
      * Method getBindedParameterName
-     * 
-     * @param elements 
-     * @param p        
-     * @return 
+     *
+     * @param elements
+     * @param p
+     * @return
      */
     private QName getBindedParameterName(List elements, Parameter p) {
 
@@ -2327,7 +2331,7 @@ public class SymbolTable {
         // with its part name. The namespace used is the one of the soap:header.
         // When it is in the body, if there is a SOAPBody with its part name,
         // the namespace used is the one of this soap:body.
-        // 
+        //
         // If the parameter is in the body and there is a soap:body with no parts,
         // its namespace is used for the parameter.
         QName paramName = null;
@@ -2391,9 +2395,9 @@ public class SymbolTable {
      * Set the MIME type.  This can be determine in one of two ways:
      * 1.  From WSDL 1.1 MIME constructs on the binding (passed in);
      * 2.  From AXIS-specific xml MIME types.
-     * 
-     * @param p        
-     * @param mimeInfo 
+     *
+     * @param p
+     * @param mimeInfo
      */
     private void setMIMEInfo(Parameter p, MimeInfo mimeInfo) {
 
@@ -2422,9 +2426,9 @@ public class SymbolTable {
 
     /**
      * Populate the symbol table with all of the BindingEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
+     *
+     * @param def
+     * @throws IOException
      */
     private void populateBindings(Definition def) throws IOException {
 
@@ -2571,13 +2575,13 @@ public class SymbolTable {
 
     /**
      * Fill in some binding information:  bodyType, mimeType, header info.
-     * 
-     * @param bEntry    
-     * @param operation 
-     * @param it        
-     * @param faults    
-     * @param input     
-     * @throws IOException 
+     *
+     * @param bEntry
+     * @param operation
+     * @param it
+     * @param faults
+     * @param input
+     * @throws IOException
      */
     private void fillInBindingInfo(
             BindingEntry bEntry, Operation operation, Iterator it, ArrayList faults, boolean input)
@@ -2690,11 +2694,11 @@ public class SymbolTable {
 
     /**
      * Fill in DIME information
-     * 
-     * @param unkElement 
-     * @param input      
-     * @param operation  
-     * @param bEntry     
+     *
+     * @param unkElement
+     * @param input
+     * @param operation
+     * @param bEntry
      */
     private void fillInDIMEInformation(UnknownExtensibilityElement unkElement,
                                        boolean input, Operation operation,
@@ -2780,12 +2784,12 @@ public class SymbolTable {
 
     /**
      * Get the faults from the soap:fault clause.
-     * 
-     * @param binding   
-     * @param bindOp    
-     * @param operation 
-     * @param faults    
-     * @throws IOException 
+     *
+     * @param binding
+     * @param bindOp
+     * @param operation
+     * @param faults
+     * @throws IOException
      */
     private void faultsFromSOAPFault(
             Binding binding, BindingOperation bindOp, Operation operation, ArrayList faults)
@@ -2879,11 +2883,11 @@ public class SymbolTable {
 
     /**
      * Set the body type.
-     * 
-     * @param use       
-     * @param bEntry    
-     * @param operation 
-     * @param input     
+     *
+     * @param use
+     * @param bEntry
+     * @param operation
+     * @param input
      */
     private void setBodyType(String use,
                              BindingEntry bEntry,
@@ -2892,7 +2896,7 @@ public class SymbolTable {
     {
 
         if (use == null) {
-            // Deprecated 
+            // Deprecated
             // throw new IOException(Messages.getMessage("noUse",
             //        operation.getName()));
             // for WS-I BP 1.0 R2707.
@@ -2909,12 +2913,12 @@ public class SymbolTable {
      * Add the parts that are really MIME types as MIME types.
      * A side effect is to return the body Type of the given
      * MIMEMultipartRelated object.
-     * 
-     * @param bEntry 
-     * @param mpr    
-     * @param op     
-     * @return 
-     * @throws IOException 
+     *
+     * @param bEntry
+     * @param mpr
+     * @param op
+     * @return
+     * @throws IOException
      */
     private Use addMIMETypes(
             BindingEntry bEntry, MIMEMultipartRelated mpr, Operation op)
@@ -3000,10 +3004,10 @@ public class SymbolTable {
 
     /**
      * Method findPart
-     * 
-     * @param operation 
-     * @param partName  
-     * @return 
+     *
+     * @param operation
+     * @param partName
+     * @return
      */
     private TypeEntry findPart(Operation operation, String partName) {
 
@@ -3022,10 +3026,10 @@ public class SymbolTable {
 
     /**
      * Method findPart
-     * 
-     * @param iterator 
-     * @param partName 
-     * @return 
+     *
+     * @param iterator
+     * @param partName
+     * @return
      */
     private TypeEntry findPart(Iterator iterator, String partName) {
 
@@ -3050,13 +3054,13 @@ public class SymbolTable {
 
     /**
      * Populate the symbol table with all of the ServiceEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
+     *
+     * @param def
+     * @throws IOException
      */
 
     private void populateServices(Definition def) throws IOException {
-    	String originalName = null; 
+    	String originalName = null;
         Iterator i = def.getServices().values().iterator();
 
         while (i.hasNext()) {
@@ -3068,7 +3072,7 @@ public class SymbolTable {
                     || service.getQName().getLocalPart().equals("")) {
                 throw new IOException(Messages.getMessage("BadServiceName00"));
             }
-            
+
             // behave as though backslashes were never there
             service.setQName(BackslashUtil.getQNameWithBackslashlessLocal(service.getQName()));
             ServiceEntry sEntry = new ServiceEntry(service);
@@ -3083,7 +3087,7 @@ public class SymbolTable {
     /**
      * populates the symbol table with port elements defined within a &lt;service&gt;
      * element.
-     * 
+     *
      * @param ports a map of name->port pairs (i.e. what is returned by service.getPorts()
      * @throws IOException thrown, if an IO or WSDL error is detected
      * @see javax.wsdl.Service#getPorts()
@@ -3104,7 +3108,7 @@ public class SymbolTable {
 
             // make sure there is a port name. The 'name' attribute for WSDL ports is
             // mandatory
-            // 
+            //
             if (portName == null) {
 
                 // REMIND: should rather be a javax.wsdl.WSDLException ?
@@ -3114,7 +3118,7 @@ public class SymbolTable {
 
             // make sure there is a binding for the port. The 'binding' attribute for
             // WSDL ports is mandatory
-            // 
+            //
             if (portBinding == null) {
 
                 // REMIND: should rather be a javax.wsdl.WSDLException ?
@@ -3124,19 +3128,19 @@ public class SymbolTable {
 
             // make sure the port name is unique among all port names defined in this
             // WSDL document.
-            // 
+            //
             // NOTE: there's a flaw in com.ibm.wsdl.xml.WSDLReaderImpl#parsePort() and
             // com.ibm.wsdl.xml.WSDLReaderImpl#addPort(). These methods do not enforce
             // the port name exists and is unique. Actually, if two port definitions with
             // the same name exist within the same service element, only *one* port
             // element is present after parsing and the following exception is not thrown.
-            // 
+            //
             // If two ports with the same name exist in different service elements,
             // the exception below is thrown. This is conformant to the WSDL 1.1 spec (sec 2.6)
             // , which states: "The name attribute provides a unique name among all ports
             // defined within in the enclosing WSDL document."
-            // 
-            // 
+            //
+            //
             if (existsPortWithName(new QName(portName))) {
 
                 // REMIND: should rather be a javax.wsdl.WSDLException ?
@@ -3156,9 +3160,9 @@ public class SymbolTable {
      * (An exception to the rule is that derived types are set as referenced if
      * their base type is referenced.  This is necessary to support generation and
      * registration of derived types.)
-     * 
-     * @param def 
-     * @param doc 
+     *
+     * @param def
+     * @param doc
      */
     private void setReferences(Definition def, Document doc) {
 
@@ -3230,10 +3234,10 @@ public class SymbolTable {
     /**
      * Set the isReferenced flag to true on the given TypeEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry   
-     * @param doc     
-     * @param literal 
+     *
+     * @param entry
+     * @param doc
+     * @param literal
      */
     private void setTypeReferences(TypeEntry entry, Document doc,
                                    boolean literal) {
@@ -3333,11 +3337,11 @@ public class SymbolTable {
     /**
      * Set the isReferenced flag to true on the given MessageEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry   
-     * @param def     
-     * @param doc     
-     * @param literal 
+     *
+     * @param entry
+     * @param def
+     * @param doc
+     * @param literal
      */
     private void setMessageReferences(MessageEntry entry, Definition def,
                                       Document doc, boolean literal) {
@@ -3388,11 +3392,11 @@ public class SymbolTable {
     /**
      * Set the isReferenced flag to true on the given PortTypeEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry  
-     * @param bEntry 
-     * @param def    
-     * @param doc    
+     *
+     * @param entry
+     * @param bEntry
+     * @param def
+     * @param doc
      */
     private void setPortTypeReferences(PortTypeEntry entry,
                                        BindingEntry bEntry, Definition def,
@@ -3482,10 +3486,10 @@ public class SymbolTable {
     /**
      * Set the isReferenced flag to true on the given BindingEntry and all
      * SymTabEntries that it refers to ONLY if this binding is a SOAP binding.
-     * 
-     * @param entry 
-     * @param def   
-     * @param doc   
+     *
+     * @param entry
+     * @param def
+     * @param doc
      */
     private void setBindingReferences(BindingEntry entry, Definition def,
                                       Document doc) {
@@ -3523,10 +3527,10 @@ public class SymbolTable {
     /**
      * Set the isReferenced flag to true on the given ServiceEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry 
-     * @param def   
-     * @param doc   
+     *
+     * @param entry
+     * @param def
+     * @param doc
      */
     private void setServiceReferences(ServiceEntry entry, Definition def,
                                       Document doc) {
@@ -3568,9 +3572,9 @@ public class SymbolTable {
 
     /**
      * Put the given SymTabEntry into the symbol table, if appropriate.
-     * 
-     * @param entry 
-     * @throws IOException 
+     *
+     * @param entry
+     * @throws IOException
      */
     private SymTabEntry symbolTablePut(SymTabEntry entry) throws IOException {
 
@@ -3674,7 +3678,7 @@ public class SymbolTable {
     /**
      * checks whether there exists a WSDL port with a given name in the current
      * symbol table
-     * 
+     *
      * @param name the QName of the port. Note: only the local part of the qname is relevant,
      *             since port names are not qualified with a namespace. They are of type nmtoken in WSDL 1.1
      *             and of type ncname in WSDL 1.2
@@ -3703,17 +3707,17 @@ public class SymbolTable {
 
     /**
      * Method getInnerCollectionComponentQName
-     * 
-     * @param node 
-     * @return 
+     *
+     * @param node
+     * @return
      */
-    private static QName getInnerCollectionComponentQName(Node node) {
+    private QName getInnerCollectionComponentQName(Node node) {
 
         if (node == null) {
             return null;
         }
 
-        QName name = SchemaUtils.getCollectionComponentQName(node, new QNameHolder());
+        QName name = SchemaUtils.getCollectionComponentQName(node, new QNameHolder(), new BooleanHolder(), this);
 
         if (name != null) {
             return name;

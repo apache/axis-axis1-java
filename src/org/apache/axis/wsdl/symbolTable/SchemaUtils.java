@@ -17,6 +17,7 @@ package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
 import org.apache.axis.AxisProperties;
+import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -33,6 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.io.IOException;
 
 /**
  * This class contains static utility methods specifically for schema type queries.
@@ -366,7 +368,7 @@ public class SchemaUtils {
 
             return v;
         } else if (isXSDNode(node, "group")) {
-			/*
+            /*
 			* Does this else clause make any sense anymore if
 			* we're treating refs to xs:groups like a macro inclusion
 			* into the referencing type?
@@ -678,25 +680,25 @@ public class SchemaUtils {
             Type type = (Type) symbolTable.getTypeEntry(nodeType, false);
 
             if (type != null && type.getNode() != null) {
-				//v.add(new ElementDecl(type, nodeName));
-				Node node = type.getNode();
-				NodeList children = node.getChildNodes();
-				for (int j = 0; j < children.getLength(); j++) {
-					QName subNodeKind = Utils.getNodeQName(children.item(j));
-					if ((subNodeKind != null)
-						&& Constants.isSchemaXSD(
-							subNodeKind.getNamespaceURI())) {
-						if (subNodeKind.getLocalPart().equals("sequence")) {
-							v.addAll(processSequenceNode(children.item(j),
-								 symbolTable));
-						} else if (subNodeKind.getLocalPart().equals("all")) {
-							v.addAll(processAllNode(children.item(j), symbolTable));
-							} else if (subNodeKind.getLocalPart().equals("choice")) {
-								v.addAll(processChoiceNode(children.item(j),
-									symbolTable));
-						}
-					}
-				}
+                //v.add(new ElementDecl(type, nodeName));
+                Node node = type.getNode();
+                NodeList children = node.getChildNodes();
+                for (int j = 0; j < children.getLength(); j++) {
+                    QName subNodeKind = Utils.getNodeQName(children.item(j));
+                    if ((subNodeKind != null)
+                        && Constants.isSchemaXSD(
+                            subNodeKind.getNamespaceURI())) {
+                        if (subNodeKind.getLocalPart().equals("sequence")) {
+                            v.addAll(processSequenceNode(children.item(j),
+                                 symbolTable));
+                        } else if (subNodeKind.getLocalPart().equals("all")) {
+                            v.addAll(processAllNode(children.item(j), symbolTable));
+                            } else if (subNodeKind.getLocalPart().equals("choice")) {
+                                v.addAll(processChoiceNode(children.item(j),
+                                    symbolTable));
+                        }
+                    }
+                }
             }
         }
         return v;
@@ -806,8 +808,8 @@ public class SchemaUtils {
                 }
             }
             else {
-				elem.setMaxOccursIsExactlyOne(true);
-			}
+                elem.setMaxOccursIsExactlyOne(true);
+            }
             elem.setNillable(
                     JavaUtils.isTrueExplicitly(
                             Utils.getAttribute(elementNode, "nillable")));
@@ -1320,12 +1322,13 @@ public class SchemaUtils {
                                                IntHolder dims,
                                                BooleanHolder underlTypeNillable,
                                                QNameHolder itemQName,
+                                               BooleanHolder forElement,
                                                SymbolTable symbolTable) {
 
         dims.value = 1;    // assume 1 dimension
         underlTypeNillable.value = false; // assume underlying type is not nillable
 
-        QName qName = getCollectionComponentQName(node, itemQName);
+        QName qName = getCollectionComponentQName(node, itemQName, forElement, symbolTable);
 
         if (qName == null) {
             qName = getArrayComponentQName_JAXRPC(node, dims, underlTypeNillable, symbolTable);
@@ -1355,7 +1358,9 @@ public class SchemaUtils {
      * @return QName of the compoent of the collection
      */
     public static QName getCollectionComponentQName(Node node,
-                                                    QNameHolder itemQName) {
+                                                    QNameHolder itemQName,
+                                                    BooleanHolder forElement,
+                                                    SymbolTable symbolTable) {
         // If we're going to turn "wrapped" arrays into types such that
         // <complexType><sequence>
         //   <element name="foo" type="xs:string" maxOccurs="unbounded"/>
@@ -1397,6 +1402,11 @@ public class SchemaUtils {
             // continue the processing using that element ...
             node = element;
             storeComponentQName = true;
+            try {
+                symbolTable.createTypeFromRef(node);
+            } catch (IOException e) {
+                throw new RuntimeException(Messages.getMessage("exception01",e.toString()));
+            }
         }
 
         // If the node kind is an element, dive to get its type.
@@ -1404,7 +1414,6 @@ public class SchemaUtils {
 
             // Compare the componentQName with the name of the
             // full name.  If different, return componentQName
-            BooleanHolder forElement = new BooleanHolder();
             QName componentTypeQName = Utils.getTypeQName(node,
                                                           forElement,
                                                           true);
@@ -1755,13 +1764,13 @@ public class SchemaUtils {
         // XXX - this may need to be revisited.
         if ((type != null) && (attributeName != null)) {
             ContainedAttribute attr =
-	    	new ContainedAttribute(type, attributeName);
+            new ContainedAttribute(type, attributeName);
 
-	    String useValue = Utils.getAttribute(child, "use");
+        String useValue = Utils.getAttribute(child, "use");
 
-	    if (useValue != null) {
-		attr.setOptional(useValue.equalsIgnoreCase("optional"));
-	    }
+        if (useValue != null) {
+        attr.setOptional(useValue.equalsIgnoreCase("optional"));
+        }
 
             v.add(attr);
         }
