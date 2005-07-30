@@ -27,9 +27,9 @@ import org.apache.axis.components.net.TransportClientPropertiesFactory;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NetworkUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -53,16 +53,19 @@ import org.apache.commons.logging.Log;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
+import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * This class uses Jakarta Commons's HttpClient to call a SOAP server.
@@ -84,7 +87,7 @@ public class CommonsHTTPSender extends BasicHandler {
     protected HttpConnectionManager connectionManager;
     protected CommonsHTTPClientProperties clientProperties;
     boolean httpChunkStream = true; //Use HTTP chunking or not.
-    
+
     public CommonsHTTPSender() {
         initialize();
     }
@@ -155,8 +158,13 @@ public class CommonsHTTPSender extends BasicHandler {
                 
                 addContextInfo(method, httpClient, msgContext, targetURL);
 
-                ((PostMethod)method).setRequestEntity(
-                                               new MessageRequestEntity(method, reqMessage, httpChunkStream));
+                MessageRequestEntity requestEntity = null;
+                if (msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST)) {
+                	requestEntity = new GzipMessageRequestEntity(method, reqMessage, httpChunkStream);
+                } else {
+                	requestEntity = new MessageRequestEntity(method, reqMessage, httpChunkStream);
+                }
+                ((PostMethod)method).setRequestEntity(requestEntity);
             } else {
                 method = new GetMethod(targetURL.toString());
                 addContextInfo(method, httpClient, msgContext, targetURL);
@@ -230,6 +238,22 @@ public class CommonsHTTPSender extends BasicHandler {
             InputStream releaseConnectionOnCloseStream = 
                 createConnectionReleasingInputStream(method);
 
+            Header contentEncoding = 
+            	method.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
+            if (contentEncoding != null) {
+            	if (contentEncoding.getValue().
+            			equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
+            		releaseConnectionOnCloseStream = 
+            			new GZIPInputStream(releaseConnectionOnCloseStream);
+            	} else {
+                    AxisFault fault = new AxisFault("HTTP",
+                            "unsupported content-encoding of '" 
+                    		+ contentEncoding.getValue()
+                            + "' found", null, null);
+                    throw fault;
+            	}
+            		
+            }
             Message outMsg = new Message(releaseConnectionOnCloseStream,
                                          false, contentType, contentLocation);
             // Transfer HTTP headers of HTTP message to MIME headers of SOAP message
@@ -510,6 +534,16 @@ public class CommonsHTTPSender extends BasicHandler {
                 }
             }
             httpClient.getState().setCredentials(AuthScope.ANY, proxyCred);
+        }
+        
+        // add compression headers if needed
+        if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {
+        	method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING, 
+        			HTTPConstants.COMPRESSION_GZIP);
+        }
+        if (msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST)) {
+        	method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING, 
+        			HTTPConstants.COMPRESSION_GZIP);
         }
         
         // Transfer MIME headers of SOAPMessage to HTTP headers. 
@@ -806,22 +840,61 @@ public class CommonsHTTPSender extends BasicHandler {
             }
         }
 
+        protected boolean isContentLengthNeeded() {
+        	return this.method.getParams().getVersion() == HttpVersion.HTTP_1_0 || !httpChunkStream;
+        }
+        
         public long getContentLength() {
-            if (this.method.getParams().getVersion() == HttpVersion.HTTP_1_0 || !httpChunkStream) {
+            if (isContentLengthNeeded()) {
                 try {
                     return message.getContentLength();
                 } catch (Exception e) {
-                    return -1; /* -1 for chunked */
                 }
-            } else {
-                return -1; /* -1 for chunked */
-            }
+            } 
+            return -1; /* -1 for chunked */
         }
 
         public String getContentType() {
             return null; // a separate header is added
         }
         
+    }
+    
+    private static class GzipMessageRequestEntity extends MessageRequestEntity {
+
+    	public GzipMessageRequestEntity(HttpMethodBase method, Message message) {
+    		super(method, message);
+        }
+
+        public GzipMessageRequestEntity(HttpMethodBase method, Message message, boolean httpChunkStream) {
+        	super(method, message, httpChunkStream);
+        }
+        
+        public void writeRequest(OutputStream out) throws IOException {
+        	if (cachedStream != null) {
+        		cachedStream.writeTo(out);
+        	} else {
+        		GZIPOutputStream gzStream = new GZIPOutputStream(out);
+        		super.writeRequest(gzStream);
+        		gzStream.finish();
+        	}
+        }
+        
+        public long getContentLength() {
+        	if(isContentLengthNeeded()) {
+        		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        		try {
+        			writeRequest(baos);
+        			cachedStream = baos;
+        			return baos.size();
+        		} catch (IOException e) {
+        			// fall through to doing chunked.
+        		}
+        	}
+        	return -1; // do chunked 
+        }
+        
+        private ByteArrayOutputStream cachedStream;
     }
 }
 
