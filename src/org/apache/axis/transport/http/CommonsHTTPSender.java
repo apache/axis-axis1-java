@@ -500,7 +500,7 @@ public class CommonsHTTPSender extends BasicHandler {
         }
         method.setRequestHeader(new Header(HTTPConstants.HEADER_SOAP_ACTION, 
                                            "\"" + action + "\""));
-
+        method.setRequestHeader(new Header(HTTPConstants.HEADER_USER_AGENT, Messages.getMessage("axisUserAgent")));
         String userID = msgContext.getUsername();
         String passwd = msgContext.getPassword();
         
