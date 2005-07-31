@@ -103,9 +103,9 @@ public class AttachmentsImpl implements Attachments {
                         new java.util.StringTokenizer(contentType, " \t;");
 
                 if (st.hasMoreTokens()) {
-                    String mimetype = st.nextToken();
+                    String token = st.nextToken();
 
-                    if (mimetype.equalsIgnoreCase(
+                    if (token.equalsIgnoreCase(
                             org.apache.axis.Message.MIME_MULTIPART_RELATED)) {
                         sendtype=  SEND_TYPE_MIME;
                         mpartStream =
@@ -131,17 +131,20 @@ public class AttachmentsImpl implements Attachments {
                         soapPart = new org.apache.axis.SOAPPart(null,
                                 mpartStream,
                                 false);
-                     } else if (mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)) {
+                     } else if (token.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)) {
                          try{
                             mpartStream=
                              new MultiPartDimeInputStream( (java.io.InputStream) intialContents);
                              soapPart = new org.apache.axis.SOAPPart(null, mpartStream, false);
                          }catch(Exception e){ throw org.apache.axis.AxisFault.makeFault(e);}
                          sendtype=  SEND_TYPE_DIME;
+                    } else if (token.indexOf(org.apache.axis.Message.CONTENT_TYPE_MTOM)!=-1){
+                        sendtype = SEND_TYPE_MTOM;
                     }
                 }
             }
         }
+
     }
 
     /**
@@ -402,9 +405,9 @@ public class AttachmentsImpl implements Attachments {
         int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :   this.sendtype;
 
         try {
-              if(sendtype == SEND_TYPE_MIME)
+              if(sendtype == SEND_TYPE_MIME || sendtype == SEND_TYPE_MTOM)
                  return org.apache.axis.attachments.MimeUtils.getContentLength(
-                                multipart != null ? multipart : (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments)));
+                                multipart != null ? multipart : (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments, getSendType())));
               else if (sendtype == SEND_TYPE_DIME)return createDimeMessage().getTransmissionSize();
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
@@ -457,13 +460,13 @@ public class AttachmentsImpl implements Attachments {
         try{
 
         mergeinAttachments();
-        if(sendtype == SEND_TYPE_MIME){
+        if(sendtype == SEND_TYPE_MIME || sendtype == SEND_TYPE_MTOM){
         org.apache.axis.attachments.MimeUtils.writeToMultiPartStream(os,
                 (multipart != null)
                 ? multipart
                 : (multipart =
                    org.apache.axis.attachments.MimeUtils.createMP(
-                        soapPart.getAsString(), orderedAttachments)));
+                        soapPart.getAsString(), orderedAttachments, getSendType())));
 
         for (java.util.Iterator i = orderedAttachments.iterator();
              i.hasNext();) {
@@ -493,14 +496,14 @@ public class AttachmentsImpl implements Attachments {
 
         int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :
                this.sendtype;
-        if(sendtype == SEND_TYPE_MIME)
+        if(sendtype == SEND_TYPE_MIME || sendtype == SEND_TYPE_MTOM)
           return org.apache.axis.attachments.MimeUtils.getContentType((multipart
                   != null)
                   ? multipart
                   : (multipart =
                   org.apache.axis.attachments.MimeUtils.createMP(
                           soapPart.getAsString(),
-                          orderedAttachments)));
+                          orderedAttachments, getSendType())));
         else return org.apache.axis.Message.MIME_APPLICATION_DIME;
     }
 
@@ -646,6 +649,7 @@ public class AttachmentsImpl implements Attachments {
      * @return an <code>int</code> send type code
      */
     public static int getSendType(String value) {
+        if (value.equalsIgnoreCase("MTOM")) return SEND_TYPE_MTOM;
         if (value.equalsIgnoreCase("MIME")) return SEND_TYPE_MIME;
         if (value.equalsIgnoreCase("DIME")) return SEND_TYPE_DIME;
         if (value.equalsIgnoreCase("NONE")) return SEND_TYPE_NONE;
@@ -659,6 +663,9 @@ public class AttachmentsImpl implements Attachments {
      * @return a <code>String</code> representation of <code>value</code>
      */
     public static String getSendTypeString(int value) {
+        if (value == SEND_TYPE_MTOM) {
+            return "MTOM";
+        }
         if (value == SEND_TYPE_MIME) {
             return "MIME";
         }

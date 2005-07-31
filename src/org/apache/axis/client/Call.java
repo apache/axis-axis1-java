@@ -237,6 +237,7 @@ public class Call implements javax.xml.rpc.Call {
      * @see #setProperty
      * @see #ATTACHMENT_ENCAPSULATION_FORMAT_DIME
      * @see #ATTACHMENT_ENCAPSULATION_FORMAT_MIME
+     * @see #ATTACHMENT_ENCAPSULATION_FORMAT_MTOM
      */
     public static final String ATTACHMENT_ENCAPSULATION_FORMAT=
       "attachment_encapsulation_format";
@@ -250,6 +251,11 @@ public class Call implements javax.xml.rpc.Call {
      */
     public static final String ATTACHMENT_ENCAPSULATION_FORMAT_DIME=
       "axis.attachment.style.dime";
+    /**
+     * Property value for setting attachment format as DIME.
+     */
+    public static final String ATTACHMENT_ENCAPSULATION_FORMAT_MTOM=
+      "axis.attachment.style.mtom";
 
     /**
      * Timeout property: should be accompanies by an integer
@@ -441,10 +447,12 @@ public class Call implements javax.xml.rpc.Call {
         else if ( name.equals(ATTACHMENT_ENCAPSULATION_FORMAT) ) {
             verifyStringProperty(name, value);
             if(!value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MIME ) &&
+               !value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MTOM ) &&
                !value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_DIME ))
                 throw new JAXRPCException(
                         Messages.getMessage("badattachmenttypeerr", new String[] {
                         (String) value, ATTACHMENT_ENCAPSULATION_FORMAT_MIME + " "
+                        +ATTACHMENT_ENCAPSULATION_FORMAT_MTOM + " "
                         +ATTACHMENT_ENCAPSULATION_FORMAT_DIME  }));
         }
         else if (name.equals(CONNECTION_TIMEOUT_PROPERTY)) {
@@ -2144,6 +2152,8 @@ public class Call implements javax.xml.rpc.Call {
               if(null != attachments) {
                   if( ATTACHMENT_ENCAPSULATION_FORMAT_MIME.equals(attachformat)) {
                     attachments.setSendType(Attachments.SEND_TYPE_MIME);
+                  } else if ( ATTACHMENT_ENCAPSULATION_FORMAT_MTOM.equals(attachformat)) {
+                    attachments.setSendType(Attachments.SEND_TYPE_MTOM);
                   } else if ( ATTACHMENT_ENCAPSULATION_FORMAT_DIME.equals(attachformat)) {
                     attachments.setSendType(Attachments.SEND_TYPE_DIME);
                   }

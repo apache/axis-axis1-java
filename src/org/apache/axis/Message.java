@@ -74,6 +74,9 @@ public class Message extends javax.xml.soap.SOAPMessage
     /** DIME parts defined for messages. */
     public static final String MIME_APPLICATION_DIME = "application/dime";
 
+    /** Content Type for MTOM/XOP */
+    public static final String CONTENT_TYPE_MTOM = "application/xop+xml";
+
     /** Default Attachments Implementation class. */
     public static final String DEFAULT_ATTACHMNET_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
@@ -317,9 +320,11 @@ public class Message extends javax.xml.soap.SOAPMessage
                 String charsetPart = contentType.substring(delimiterIndex);
                 int charsetIndex = charsetPart.indexOf('=');
                 String charset = charsetPart.substring(charsetIndex + 1).trim();
-                if ((charset.startsWith("\"") && charset.endsWith("\""))
-                || (charset.startsWith("'") && charset.endsWith("'"))) {
-                    charset = charset.substring(1, charset.length() - 1);
+                if ((charset.startsWith("\"") || charset.startsWith("\'"))) {
+                    charset = charset.substring(1, charset.length());
+                }
+                if ((charset.endsWith("\"") || charset.endsWith("\'"))) {
+                    charset = charset.substring(0, charset.length()-1);
                 }
                 try {
                     setProperty(SOAPMessage.CHARACTER_SET_ENCODING, charset);

@@ -198,10 +198,13 @@ public interface Attachments extends java.io.Serializable {
     /** Use the DIME attatchment type. */
     public final int  SEND_TYPE_DIME= 3; //use dime;
 
-    /** Use the DIME attatchment type. */
-    public final int  SEND_TYPE_NONE= 4; //don't send as attachments
+    /** Use the MTOM attatchment type. */
+    public final int  SEND_TYPE_MTOM= 4; //use MTOM;
 
-    final int SEND_TYPE_MAX = 4;
+    /** Use the DIME attatchment type. */
+    public final int  SEND_TYPE_NONE= 5; //don't send as attachments
+
+    final int SEND_TYPE_MAX = 5;
 
     /** The default attatchment type. MIME */
     final int SEND_TYPE_DEFAULT = SEND_TYPE_MIME;

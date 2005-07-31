@@ -17,6 +17,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.attachments.AttachmentUtils;
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -24,6 +25,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -54,8 +56,10 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
                 context.pushNewElement(myElement);
             }
         }
-//        super.startElement(namespace, localName, qName, attributes, context);
+        populateDataHandler(context, namespace, localName, attributes);
+    }
 
+    private void populateDataHandler(DeserializationContext context, String namespace, String localName, Attributes attributes) {
         SOAPConstants soapConstants = context.getSOAPConstants();
 
         QName type = context.getTypeFromAttributes(namespace,
@@ -64,14 +68,14 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("gotType00", "Deser", "" + type));
         }
-        
+
         String href = attributes.getValue(soapConstants.getAttrHref());
         if (href != null) {
             Object ref = context.getObjectByRef(href);
             try{
-                ref = AttachmentUtils.getActivationDataHandler((org.apache.axis.Part)ref); 
-            }catch(org.apache.axis.AxisFault e){;}
-            
+                ref = AttachmentUtils.getActivationDataHandler((org.apache.axis.Part)ref);
+            }catch(AxisFault e){;}
+
             setValue(ref);
         }
     }
@@ -86,7 +90,13 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
                                     Attributes attributes,
                                     DeserializationContext context)
         throws SAXException {
-        throw new SAXException(Messages.getMessage(
-                "noSubElements", namespace + ":" + localName));
+        if(namespace.equals(Constants.URI_XOP_INCLUDE) &&
+                localName.equals(Constants.ELEM_XOP_INCLUDE)) {
+            populateDataHandler(context, namespace, localName, attributes);
+            return null;
+        } else {
+            throw new SAXException(Messages.getMessage(
+                    "noSubElements", namespace + ":" + localName));
+        }
     }
 }

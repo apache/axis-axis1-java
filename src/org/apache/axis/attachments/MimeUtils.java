@@ -237,7 +237,9 @@ public class MimeUtils {
      * @throws org.apache.axis.AxisFault
      */
     public static javax.mail.internet.MimeMultipart createMP(
-            String env, java.util.Collection parts)
+            String env,
+            java.util.Collection parts,
+            int sendType)
             throws org.apache.axis.AxisFault {
 
         javax.mail.internet.MimeMultipart multipart = null;
@@ -245,15 +247,25 @@ public class MimeUtils {
         try {
             String rootCID = SessionUtils.generateSessionId();
 
-            multipart = new javax.mail.internet.MimeMultipart(
-                    "related; type=\"text/xml\"; start=\"<" + rootCID + ">\"");
+            if(sendType == Attachments.SEND_TYPE_MTOM) {
+                multipart = new javax.mail.internet.MimeMultipart(
+                        "related;type=\"application/xop+xml\"; start=\"<" + rootCID + ">\"; start-info=\"text/xml; charset=utf-8\"");
+            } else {
+                multipart = new javax.mail.internet.MimeMultipart(
+                        "related; type=\"text/xml\"; start=\"<" + rootCID + ">\"");
+            }
 
             javax.mail.internet.MimeBodyPart messageBodyPart =
                     new javax.mail.internet.MimeBodyPart();
 
             messageBodyPart.setText(env, "UTF-8");
-            messageBodyPart.setHeader("Content-Type",
-                    "text/xml; charset=UTF-8");
+            if(sendType == Attachments.SEND_TYPE_MTOM){
+                messageBodyPart.setHeader("Content-Type",
+                    "application/xop+xml; charset=utf-8; type=\"text/xml; charset=utf-8\"");
+            } else {
+                messageBodyPart.setHeader("Content-Type",
+                        "text/xml; charset=UTF-8");
+            }
             messageBodyPart.setHeader("Content-Id", "<" + rootCID + ">");
             messageBodyPart.setHeader(
                     HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING, "binary");

@@ -77,15 +77,26 @@ public class JAFDataHandlerSerializer implements Serializer {
             attrs.removeAttribute(typeIndex);
         }
 
-        boolean doTheDIME = false;
-        if(attachments.getSendType() == Attachments.SEND_TYPE_DIME)
-            doTheDIME = true;
-        
-        attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
-                               "CDATA", doTheDIME ? attachmentPart.getContentId() : attachmentPart.getContentIdRef() );
+        if(attachments.getSendType() == Attachments.SEND_TYPE_MTOM) {
+            context.setWriteXMLType(null);
+            context.startElement(name, attrs);
+            AttributesImpl attrs2 = new AttributesImpl();
+            attrs2.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
+                    "CDATA", attachmentPart.getContentIdRef());
+            context.startElement(new QName(Constants.URI_XOP_INCLUDE, Constants.ELEM_XOP_INCLUDE), attrs2);
+            context.endElement();
+            context.endElement();
+        } else {
+            boolean doTheDIME = false;
+            if(attachments.getSendType() == Attachments.SEND_TYPE_DIME)
+                doTheDIME = true;
 
-        context.startElement(name, attrs);
-        context.endElement(); //There is no data to so end the element.
+            attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
+                                   "CDATA", doTheDIME ? attachmentPart.getContentId() : attachmentPart.getContentIdRef() );
+
+            context.startElement(name, attrs);
+            context.endElement(); //There is no data to so end the element.
+        }
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

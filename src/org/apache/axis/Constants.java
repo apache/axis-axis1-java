@@ -41,6 +41,7 @@ public class Constants {
     public static final String NS_PREFIX_WSDL_SOAP  = "wsdlsoap";
     public static final String NS_PREFIX_XMLSOAP    = "apachesoap";
     public static final String NS_PREFIX_XML        = "xml";
+    public static final String NS_PREFIX_XOP        = "xop";
 
     // Axis Namespaces
     public static final String NS_URI_AXIS = "http://xml.apache.org/axis/";
@@ -395,6 +396,12 @@ public class Constants {
 
     public static final String URI_DIME_OPEN_LAYOUT=
                                  "http://schemas.xmlsoap.org/ws/2002/04/dime/open-layout";
+
+    // XOP/MTOM
+    public static final String URI_XOP_INCLUDE =
+                                 "http://www.w3.org/2004/08/xop/include";
+    public static final String ELEM_XOP_INCLUDE = "Include" ;
+
 
     //
     // WSDL SOAP Namespace
