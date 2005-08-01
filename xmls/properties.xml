@@ -58,6 +58,7 @@
 <!-- <property name="httpunit.jar" location="${lib.dir}/commons-httpunit.jar"/> -->
 
 <!-- these jars are in the test lib dir -->
+<property name="xalan.jar" location="${test.dir}/lib/xalan-2.6.0.jar"/>
 <property name="regexp.jar" location="${test.dir}/lib/jakarta-oro-2.0.5.jar"/>
 <property name="xmlunit.jar" location="${test.dir}/lib/xmlunit1.0.jar"/>
 

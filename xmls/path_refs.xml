@@ -1,7 +1,7 @@
   <path id="classpath">
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
-    <pathelement location="${xalan-unbundled.jar}"/>
+    <pathelement location="${xalan.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${regexp.jar}"/>
