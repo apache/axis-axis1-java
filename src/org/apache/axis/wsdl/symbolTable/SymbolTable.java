@@ -1363,8 +1363,9 @@ public class SymbolTable {
 
                         symbolTablePut(containedTE);
                     }
+                    boolean wrapped = qName.getLocalPart().endsWith("wrapped");
                     symbolTablePut(new CollectionType(qName, containedTE,
-                            node, "[]"));
+                            node, "[]", wrapped));
                 } else {
 
                     // Case of ref and maxOccurs

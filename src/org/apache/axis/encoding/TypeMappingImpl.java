@@ -30,6 +30,7 @@ import org.apache.axis.utils.ArrayUtil;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.wsdl.fromJava.Namespaces;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
@@ -457,15 +458,17 @@ public class TypeMappingImpl implements Serializable
             Class componentType = javaType.getComponentType();
 
             // HACK ALERT - Don't return the ArrayDeserializer IF
-            // the xmlType matches the component type of the array,
-            // because that means we're using maxOccurs and we'll
-            // want the higher layers to get the component type
-            // deserializer... (sigh)
+            // the xmlType matches the component type of the array
+	    // or if the componentType is the wrappertype of the
+	    // xmlType, because that means we're using maxOccurs 
+	    // and/or nillable and we'll want the higher layers to 
+	    // get the component type deserializer... (sigh)
             if (xmlType != null) {
                 Class actualClass = start.getClassForQName(xmlType);
-                if (actualClass == componentType ||
-                    (actualClass != null && componentType.isAssignableFrom(actualClass))) {
-                    return null;
+                if (actualClass == componentType
+                    || (actualClass != null && (componentType.isAssignableFrom(actualClass)
+                        || Utils.getWrapperType(actualClass.getName()).equals(componentType.getName())))) {
+			return null;
                 }
             }
             Pair pair = (Pair) qName2Pair.get(Constants.SOAP_ARRAY);

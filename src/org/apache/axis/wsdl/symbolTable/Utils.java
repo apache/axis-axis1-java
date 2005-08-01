@@ -319,6 +319,7 @@ public class Utils {
             if (qName != null) {
                 String maxOccursValue = getAttribute(node, "maxOccurs");
                 String minOccursValue = getAttribute(node, "minOccurs");
+                String nillableValue = getAttribute(node, "nillable");
 
                 if (maxOccursValue == null) {
                     maxOccursValue = "1";
@@ -336,6 +337,9 @@ public class Utils {
                 } else if (!maxOccursValue.equals("1")
                         || !minOccursValue.equals("1")) {
                     String localPart = qName.getLocalPart();
+                    String wrapped = (nillableValue != null && nillableValue.equals("true") 
+                        ? " wrapped" : "");
+
                     String range = "[";
                     if (!minOccursValue.equals("1")) {
                         range += minOccursValue;
@@ -345,7 +349,7 @@ public class Utils {
                         range += maxOccursValue;
                     }
                     range += "]";
-                    localPart += range;
+                    localPart += range + wrapped;
                     qName = findQName(qName.getNamespaceURI(), localPart);
                 }
             }

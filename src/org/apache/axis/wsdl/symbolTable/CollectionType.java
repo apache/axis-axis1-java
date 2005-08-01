@@ -29,6 +29,9 @@ import javax.xml.namespace.QName;
  */
 public class CollectionType extends DefinedType implements CollectionTE {
 
+    /** Field wrapped */
+    private boolean wrapped;
+
     /**
      * Constructor CollectionType
      * 
@@ -38,7 +41,12 @@ public class CollectionType extends DefinedType implements CollectionTE {
      * @param dims    
      */
     public CollectionType(QName pqName, TypeEntry refType, Node pNode,
-                          String dims) {
+                          String dims, boolean wrapped) {
         super(pqName, refType, pNode, dims);
+        this.wrapped = wrapped;
+    }
+
+    public boolean isWrapped() {
+        return wrapped;
     }
 }

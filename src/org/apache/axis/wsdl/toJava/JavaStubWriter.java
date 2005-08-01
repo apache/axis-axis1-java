@@ -23,6 +23,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.StringUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -1325,9 +1326,11 @@ public class JavaStubWriter extends JavaClassWriter {
         if ((type != null) && (type.getName() != null)) {
 
             String typeName = type.getName();
-	        // If minOccurs="0" and singular or array with nillable underlying
+            // If minOccurs="0" and singular or array with nillable underlying
             // type get the corresponding wrapper type.
             if ((param.isOmittable() && param.getType().getDimensions().equals(""))
+                || (param.getType() instanceof CollectionType
+                    && ((CollectionType) param.getType()).isWrapped())
                 || param.getType().getUnderlTypeNillable()) {
 
                 typeName = Utils.getWrapperType(type);

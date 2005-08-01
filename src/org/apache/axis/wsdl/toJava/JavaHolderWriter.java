@@ -15,7 +15,9 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.wsdl.symbolTable.CollectionType;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -68,7 +70,16 @@ public class JavaHolderWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
 
         String holderType = type.getName();
-
+        if ((type instanceof CollectionType 
+                && ((CollectionType) type).isWrapped())
+             || type.getUnderlTypeNillable()) {
+            /*
+             * For soapenc arrays or elements with maxOccurs="unbounded"
+             * having a primitive type and nillable="true" the holderType 
+             * should be the corresponding wrapped type.
+             */
+            holderType = Utils.getWrapperType(type);
+        }
         pw.println("    public " + holderType + " value;");
         pw.println();
         pw.println("    public " + className + "() {");

@@ -69,6 +69,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         arg.setType(type);
         return holder(arg, emitter);
     }
+
     /**
      * Given a type, return the Java mapping of that type's holder.
      *
@@ -109,19 +110,20 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
         TypeEntry type = p.getType();
         String typeValue = type.getName();
+
         // For base types that are nillable and are mapped to primitives,
         // need to switch to the corresponding wrapper types.
-        if (p.isOmittable()
-            &&  (type instanceof BaseType
-                 ||  type instanceof DefinedElement
-                     &&  type.getRefType() instanceof BaseType)) {
-            String wrapperTypeValue = (String) TYPES.get(typeValue);
-            typeValue = wrapperTypeValue == null  ?  typeValue
-                                                  :  wrapperTypeValue;
+        if ((p.isOmittable() && p.getType().getDimensions().equals(""))
+            || (p.getType() instanceof CollectionType && ((CollectionType) p.getType()).isWrapped()) 
+            || p.getType().getUnderlTypeNillable()) {
+
+            typeValue = getWrapperType(type);
         }
 
-        // byte[] has a reserved holders
-        if (typeValue.equals("byte[]") && type.isBaseType()) {
+
+        // byte[] has a reserved holders.
+        if (typeValue.equals("byte[]") &&  type.isBaseType()) { 
+
             return "javax.xml.rpc.holders.ByteArrayHolder";
         }
 
@@ -136,6 +138,17 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                     && (type.getRefType() instanceof BaseType)) {
                 String uri = type.getRefType().getQName().getNamespaceURI();
 
+		// Capitalize the first character for primitive type
+		// array holder classes
+		if (TYPES.get(JavaUtils.replace(name,"[]","")) != null) {
+                    name = capitalizeFirstChar(name);
+		}
+
+		// For wrapped primitive array holder classes append 'Wrapper' to name
+		if (((CollectionType) type).isWrapped() && !typeValue.equals(type.getName())) {
+                        name = name + "Wrapper";
+	        }
+
                 packagePrefix = emitter.getNamespaces().getCreate(uri, false);
 
                 if (packagePrefix == null) {
@@ -144,9 +157,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                     packagePrefix += '.';
                 }
             }
-
             name = JavaUtils.replace(name, "java.lang.", "");
-
+	    
             // This could be a special QName for a indexed property.
             // If so, change the [] to Array.
             name = JavaUtils.replace(name, "[]", "Array");
@@ -715,19 +727,20 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             }
         }
 
+        // If minOccurs="0" and singular or array with nillable underlying
+        // type get the corresponding wrapper type.
+        if ((param.isOmittable() && param.getType().getDimensions().equals(""))
+            || (param.getType() instanceof CollectionType
+                && ((CollectionType) param.getType()).isWrapped())
+            || param.getType().getUnderlTypeNillable()) { 
+            
+            typeName = getWrapperType(param.getType());
+        }
+
         String objType = (String) TYPES.get(typeName);
 
         if (objType != null) {
-            // If minOccurs="0" and singular or array with nillable underlying
-            // type get the corresponding wrapper type.
-            if ((param.isOmittable() && param.getType().getDimensions().equals(""))
-                || param.getType().getUnderlTypeNillable()) {
-
-                typeName = getWrapperType(param.getType());
-            } else {
-                return "((" + objType + ") " + var + ")." + typeName +
-                        "Value();";
-            }
+            return "((" + objType + ") " + var + ")." + typeName + "Value();";
         }
 
         return "(" + typeName + ") " + var + ";";
@@ -983,6 +996,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             // If minOccurs="0" and singular or array with nillable underlying
             // type get the corresponding wrapper type.
             if ((parm.isOmittable() && parm.getType().getDimensions().equals(""))
+                || (parm.getType() instanceof CollectionType 
+                    && ((CollectionType) parm.getType()).isWrapped())
                 || parm.getType().getUnderlTypeNillable()) {
 
                 ret = getWrapperType(parm.getType());
@@ -1227,9 +1242,17 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                                                 BooleanHolder bThrow) {
 
         String paramType = param.getType().getName();
-        if (param.isOmittable()) {
-            paramType = Utils.getWrapperType(paramType);
+
+        // For base types that are nillable and are mapped to primitives,
+        // need to switch to the corresponding wrapper types.
+        if ((param.isOmittable() && param.getType().getDimensions().equals(""))
+            || (param.getType() instanceof CollectionType
+                && ((CollectionType) param.getType()).isWrapped())
+            || param.getType().getUnderlTypeNillable()) {
+
+            paramType = getWrapperType(param.getType());
         }
+
         String mimeType = (param.getMIMEInfo() == null)
                 ? null
                 : param.getMIMEInfo().getType();
