@@ -993,8 +993,10 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("            cachedSerFactories.add(enumsf);");
             pw.println("            cachedDeserFactories.add(enumdf);");
         } else if (type.isSimpleType()) {
-            pw.println("            cachedSerFactories.add(simplesf);");
-            pw.println("            cachedDeserFactories.add(simpledf);");
+            pw.println("            cachedSerFactories.add(org.apache.axis.encoding.ser.BaseSerializerFactory.createFactory(" +
+                    "org.apache.axis.encoding.ser.SimpleSerializerFactory.class, cls, qName));");
+            pw.println("            cachedDeserFactories.add(org.apache.axis.encoding.ser.BaseDeserializerFactory.createFactory(" +
+                    "org.apache.axis.encoding.ser.SimpleDeserializerFactory.class, cls, qName));");
         } else if (type.getBaseType() != null) {
 
             // serializers are not required for types derived from base types

@@ -415,7 +415,7 @@ public class ArraySerializer implements Serializer
                             (serializeAttr == null ?
                             serializeAttr : new AttributesImpl(serializeAttr)),
                             aValue,
-                            componentTypeQName); // prefered type QName
+                            componentTypeQName, componentClass); // prefered type QName
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -426,7 +426,7 @@ public class ArraySerializer implements Serializer
                             (serializeAttr == null ?
                             serializeAttr : new AttributesImpl(serializeAttr)),
                             aValue,
-                            componentTypeQName); // prefered type QName
+                            componentTypeQName, componentClass); // prefered type QName
                 }
             }
         } else {
@@ -434,7 +434,7 @@ public class ArraySerializer implements Serializer
             for (int index = 0; index < len; index++) {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
-                    context.serialize(elementName, null, aValue, componentTypeQName);
+                    context.serialize(elementName, null, aValue, componentTypeQName, componentClass);
                 }
             }
         }

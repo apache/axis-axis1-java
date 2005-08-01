@@ -675,7 +675,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                           Attributes attributes,
                           Object value)
         throws IOException {
-        serialize(elemQName, attributes, value, null, null, null);
+        serialize(elemQName, attributes, value, null, null, null, null);
     }
 
     /**
@@ -694,13 +694,42 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
+     * @param xmlType is the qname of the type or null.
+     * @deprecated use serialize(QName, Attributes, Object, QName, Class) instead
      */
     public void serialize(QName elemQName,
                           Attributes attributes,
                           Object value,
                           QName xmlType)
         throws IOException {
-        serialize(elemQName, attributes, value, xmlType, null, null);
+        serialize(elemQName, attributes, value, xmlType, null, null, null);
+    }
+    
+    /**
+     * Serialize the indicated value as an element with the name
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive, the
+     * javaType is the actual unwrapped object type.
+     * The xmlType is the QName of the type that is used to set
+     * xsi:type.  If not specified, xsi:type is set by using the javaType to
+     * find an appopriate xmlType from the TypeMappingRegistry.
+     * Null values and the xsi:type flag will be sent or not depending 
+     * on previous configuration of this SerializationContext.
+     * @param elemQName is the QName of the element
+     * @param attributes are additional attributes
+     * @param value is the object to serialize
+     * @param xmlType is the qname of the type or null.
+     * @param javaType is the java type of the value
+     */
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          QName xmlType, Class javaType)
+        throws IOException {
+        serialize(elemQName, attributes, value, xmlType, javaType, null, null);
     }
 
     /**
@@ -734,7 +763,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                           Boolean sendType)
         throws IOException
     {
-        serialize( elemQName, attributes, value, xmlType, 
+        serialize( elemQName, attributes, value, xmlType, null, 
                    (sendNull) ? Boolean.TRUE : Boolean.FALSE, 
                    sendType);
     }
@@ -763,6 +792,40 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                           Attributes attributes,
                           Object value,
                           QName xmlType,
+                          Boolean sendNull,
+                          Boolean sendType)
+        throws IOException 
+    {
+        serialize(elemQName, attributes, value, xmlType, null, sendNull, sendType);
+        
+    }
+    
+    /**
+     * Serialize the indicated value as an element with the name
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive.
+     * The xmlType (if specified) is the QName of the type that is used to set
+     * xsi:type.
+     * The sendNull flag indicates whether to end an element with an xsi:nil="true" attribute for null
+     * variables (if Boolean.TRUE), or nothing (if Boolean.FALSE).
+     * The sendType flag indicates whether the xsi:type flag should be sent
+     * (default is true).
+     * @param elemQName is the QName of the element
+     * @param attributes are additional attributes
+     * @param value is the object to serialize
+     * @param xmlType is the qname of the type or null.
+     * @param javaType is the java type of the value
+     * @param sendNull determines whether to send null values.
+     * @param sendType determines whether to set xsi:type attribute.
+     */
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          QName xmlType,
+                          Class javaClass,
                           Boolean sendNull,
                           Boolean sendType)
         throws IOException
@@ -810,7 +873,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
                     //Allow an the attachment to do its own serialization.
                     serializeActual(elemQName, attributes, value,
-                                    xmlType, sendType);
+                                    xmlType, javaClass, sendType);
 
                     //No need to add to mulitRefs. Attachment data stream handled by
                     // the message;
@@ -861,7 +924,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                             attrs.setAttributes(attributes);
                         attrs.addAttribute("", Constants.ATTR_ID, "id", "CDATA",
                                            id);
-                        serializeActual(elemQName, attrs, value, xmlType, sendType);
+                        serializeActual(elemQName, attrs, value, xmlType, javaClass, sendType);
                         this.sendNull = sendNullCache;
                         return;
                     }
@@ -912,7 +975,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 forceSer = null;
 
             // Actually serialize the value.  (i.e. not an href like above)
-            serializeActual(elemQName, attributes, value, xmlType, sendType);
+            serializeActual(elemQName, attributes, value, xmlType, javaClass, sendType);
         } finally {
             sendXSIType = sendXSITypeCache;
         }
@@ -989,6 +1052,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 // ascertain the type in these circumstances (though Axis does).
                 serialize(multirefQName, attrs2, mri.value,
                           mri.xmlType,
+                          null,
                           this.sendNull,
                           Boolean.TRUE);   // mri.sendType
             }
@@ -1363,6 +1427,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                                 Attributes attributes,
                                 Object value,
                                 QName xmlType,
+                                Class javaClass,
                                 Boolean sendType)
         throws IOException
     {
@@ -1370,7 +1435,6 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
             sendType.booleanValue();
 
         if (value != null) {
-            Class javaType = value.getClass();
             TypeMapping tm = getTypeMapping();
 
             if (tm == null) {
@@ -1393,6 +1457,9 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
             // Try getting a serializer for the prefered xmlType
             QNameHolder actualXMLType = new QNameHolder();
+                        
+            Class javaType = getActualJavaClass(xmlType, javaClass, value);
+                        
             Serializer ser = getSerializer(javaType, xmlType,
                                            actualXMLType);
 
@@ -1407,7 +1474,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                     if(!isEncoded()) {
                         if (Constants.isSOAP_ENC(actualXMLType.value.getNamespaceURI())) {
                             // Don't write SOAP_ENC types (i.e. Array) if we're not using encoding
-                        } else {
+                        } else if (javaType.isPrimitive() && javaClass != null && JavaUtils.getWrapperClass(javaType) == javaClass) {
+                            // Don't write xsi:type when serializing primitive wrapper value as primitive type.
+                        }
+                        else {
                             if(!(javaType.isArray() && xmlType != null && Constants.isSchemaXSD(xmlType.getNamespaceURI())) ) {
                                 writeXMLType = actualXMLType.value;
                             }
@@ -1436,6 +1506,36 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                     value.getClass().getName(), "" + tm));
         }
         // !!! Write out a generic null, or get type info from somewhere else?
+    }
+    
+    /**
+     * Returns the java class for serialization. 
+     * If the xmlType is xsd:anyType or javaType is array or javaType is java.lang.Object
+     * the java class for serialization is the class of obj.
+     * If the obj is not array and the obj's class does not match with the javaType,
+     * the java class for serialization is the javaType.
+     * Otherwise, the java class for serialization is the obj's class.
+     * 
+     * @param xmlType    the qname of xml type
+     * @param javaType   the java class from serializer 
+     * @param obj        the object to serialize
+     * @return the java class for serialization
+     */
+    private Class getActualJavaClass(QName xmlType, Class javaType, Object obj) {
+        Class cls = obj.getClass();
+        
+        if ((xmlType != null 
+                    && Constants.isSchemaXSD(xmlType.getNamespaceURI()) && "anyType".equals(xmlType.getLocalPart()))
+                || (javaType != null 
+                        && (javaType.isArray() || javaType == Object.class))) {
+            return cls;
+        }
+        
+        if (javaType != null && cls != javaType && !cls.isArray()) {
+            return javaType;
+        }
+        
+        return cls;
     }
 
     private Serializer getSerializerFromClass(Class javaType, QName qname) {
@@ -1565,8 +1665,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         return ser;
     }
 
-    public String getValueAsString(Object value, QName xmlType) throws IOException {
+    public String getValueAsString(Object value, QName xmlType, Class javaClass) throws IOException {
         Class cls = value.getClass();
+        cls = getActualJavaClass(xmlType, javaClass, value);
+        
         Serializer ser = getSerializer(cls, xmlType, null);
         
         // The java type is an array, but we need a simple type.

@@ -230,7 +230,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         context.serialize(qname,
                                           null,
                                           propValue,
-                                          xmlType);
+                                          xmlType, javaType);
                     } else {
                         // Collection of properties: serialize each one
                         int j=0;
@@ -245,7 +245,7 @@ public class BeanSerializer implements Serializer, Serializable {
                             }
                             if (j >= 0) {
                                 context.serialize(qname, null,
-                                                  propValue, xmlType);
+                                                  propValue, xmlType, propertyDescriptor[i].getType());
                             }
                         }
                     }
@@ -608,6 +608,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         setAttributeProperty(propValue,
                                              qname,
                                              field.getXmlType(), 
+                                             field.getJavaType(),
                                              attrs,
                                              context);
                     }
@@ -623,7 +624,9 @@ public class BeanSerializer implements Serializer, Serializable {
 
     private void setAttributeProperty(Object propValue,
                                       QName qname,
-                                      QName xmlType, AttributesImpl attrs,
+                                      QName xmlType,
+                                      Class javaType,
+                                      AttributesImpl attrs,
                                       SerializationContext context) throws Exception {
 
         String namespace = qname.getNamespaceURI();
@@ -638,7 +641,7 @@ public class BeanSerializer implements Serializer, Serializable {
             return;
         }
 
-        String propString = context.getValueAsString(propValue, xmlType);
+        String propString = context.getValueAsString(propValue, xmlType, javaType);
 
         attrs.addAttribute(namespace,
                            localName,

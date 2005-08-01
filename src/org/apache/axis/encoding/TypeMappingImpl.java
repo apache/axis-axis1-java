@@ -340,6 +340,20 @@ public class TypeMappingImpl implements Serializable
             }
         }
         
+        // find serializer with xmlType
+        if (sf == null && !javaType.isArray() 
+                && !Constants.isSchemaXSD(xmlType.getNamespaceURI()) 
+                && !Constants.isSOAP_ENC(xmlType.getNamespaceURI())) {
+            Pair pair2 = (Pair) qName2Pair.get(xmlType);
+            if (pair2 != null && pair2.javaType != null 
+                    && !pair2.javaType.isArray()                         // for array
+                    && (javaType.isAssignableFrom(pair2.javaType) || 
+                       (pair2.javaType.isPrimitive() && javaType == JavaUtils.getWrapperClass(pair2.javaType))))       // for derived type (xsd:restriction) 
+            {
+                sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair2);
+            }
+        }
+        
         return sf;
     }
     

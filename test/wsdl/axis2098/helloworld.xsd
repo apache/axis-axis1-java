@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+    targetNamespace="http://helloworld.ch/schema/types"
+    xmlns:tns="http://helloworld.ch/schema/types"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    version="0.1">
+
+    <xs:element name="MyRequest" type="tns:MyRequestType"/>
+
+    <xs:element name="MyResponse" type="tns:MyResponseType"/>
+
+    <xs:complexType name="MyRequestType">
+        <xs:sequence>
+            <xs:element name="Helloworld" type="tns:XsiTestType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MyResponseType">
+        <xs:sequence>
+            <xs:element name="Helloworld" type="tns:XsiTestType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="XsiTestType">
+        <xs:sequence>
+            <!-- simple -->
+            <xs:element name="Logic" type="tns:LogicType"/>
+            <xs:element name="String" type="tns:StringType"/>
+            <!-- complex -->
+            <xs:element name="Restriction" type="tns:RestrictionType"/>
+            <xs:element ref="tns:StringElem"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="LogicType">
+        <xs:restriction base="xs:boolean">
+            <xs:pattern value="true"/>
+            <xs:pattern value="false"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="StringType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="BaseType" abstract="true" >
+        <xs:sequence>
+            <xs:element name="FirstName" type="xs:string" minOccurs="0" nillable="false"/>
+            <xs:element name="LastName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RestrictionType">
+        <xs:complexContent>
+            <xs:restriction base="tns:BaseType">
+                <xs:sequence>
+                    <xs:element name="LastName" type="xs:string"/>
+                </xs:sequence>
+            </xs:restriction>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:element name="StringElem">
+    	<xs:simpleType>
+    		<xs:restriction base="xs:string">
+    			<xs:minLength value="3"/>
+    			<xs:maxLength value="4"/>
+    		</xs:restriction>
+    	</xs:simpleType>
+    </xs:element>
+</xs:schema>

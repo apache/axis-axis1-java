@@ -18,6 +18,7 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
@@ -335,7 +336,15 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         // be a SOAP array derived type.  In this case, use
                         // the refType's QName for the metadata.
                         elemType = elemType.getRefType();
-                    } else {
+                    } else if (elemType.getClass() == DefinedElement.class
+                            && elemType.getRefType() != null) {
+                        // If we have a DefinedElement which references other element
+                        //  (eg. <element ref="aRefEleme"/>)
+                        // use the refType's QName for the metadata (which can be anonymous type.)
+                        // see the schema of test/wsdl/axis2098
+                        elemType = elemType.getRefType();
+                    }                    
+                    else {
                         // Otherwise, use the first non-Collection type we
                         // encounter up the ref chain.
                         while (elemType instanceof CollectionTE) {

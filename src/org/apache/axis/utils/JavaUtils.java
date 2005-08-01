@@ -139,6 +139,27 @@ public class JavaUtils
         
         return null;
     }
+    
+    public static Class getPrimitiveClassFromName(String primitive) {
+        if (primitive.equals("int"))
+            return int.class;
+        else if (primitive.equals("short"))
+            return short.class;
+        else if (primitive.equals("boolean"))
+            return boolean.class;
+        else if (primitive.equals("byte"))
+            return byte.class;
+        else if (primitive.equals("long"))
+            return long.class;
+        else if (primitive.equals("double"))
+            return double.class;
+        else if (primitive.equals("float"))
+            return float.class;
+        else if (primitive.equals("char"))
+            return char.class;
+        
+        return null;
+    }
 
     /*
          * Any builtin type that has a constructor that takes a String is a basic

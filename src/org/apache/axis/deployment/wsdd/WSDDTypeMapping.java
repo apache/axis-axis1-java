@@ -177,8 +177,8 @@ public class WSDDTypeMapping
             }
             String loadName = JavaUtils.getLoadableClassName(typeQName.getLocalPart());
             if (JavaUtils.getWrapper(loadName) != null) {
-                // in case of a primitive type by use its corresponding wrapper class. 
-                loadName = "java.lang." + JavaUtils.getWrapper(loadName);
+                Class cls = JavaUtils.getPrimitiveClassFromName(loadName);
+                return cls;
             }
             return ClassUtils.forName(loadName);
         }
