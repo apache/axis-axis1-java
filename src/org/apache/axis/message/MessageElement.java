@@ -2091,9 +2091,10 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
 
         for (Iterator i = getChildElements(); i.hasNext(); ) {
-            NodeImpl n = (NodeImpl) i.next();
-            if (n instanceof Text) {
-                return ((Text)n).getNodeValue();
+            org.apache.axis.message.NodeImpl n = (org.apache.axis.message.NodeImpl) i.next();
+            if (n instanceof org.apache.axis.message.Text) {
+                org.apache.axis.message.Text textNode = (org.apache.axis.message.Text) n;
+                return textNode.getNodeValue();
             }
         }
 
