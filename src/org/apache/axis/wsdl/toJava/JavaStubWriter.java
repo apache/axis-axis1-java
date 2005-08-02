@@ -1033,6 +1033,10 @@ public class JavaStubWriter extends JavaClassWriter {
                                 String opStyle, boolean oneway, int opIndex) {
 
         writeComment(pw, operation.getDocumentationElement(), true);
+        
+        if (parms.signature == null) {
+        	return;
+        }
         pw.println(parms.signature + " {");
         pw.println("        if (super.cachedEndpoint == null) {");
         pw.println(
@@ -1289,31 +1293,29 @@ public class JavaStubWriter extends JavaClassWriter {
         // Get faults of signature
         List exceptionsThrowsList = new ArrayList();
         
-        if (parms.signature != null) {
-	        int index = parms.signature.indexOf("throws");
-	        if (index != -1) {
-	            String[] thrExcep = StringUtils.split(parms.signature.substring(index+6),',');
-	            for (int i = 0; i < thrExcep.length; i++) {
-	                exceptionsThrowsList.add(thrExcep[i].trim());
-	            }
-	        }
-	        pw.println("  } catch (org.apache.axis.AxisFault axisFaultException) {");
-	        if (faults != null && faults.size() > 0) {
-	            pw.println("    if (axisFaultException.detail != null) {");
-	            for (Iterator faultIt = exceptionsThrowsList.iterator(); faultIt
-	                    .hasNext();) {
-	                String exceptionFullName = (String) faultIt.next();
-	                pw.println("        if (axisFaultException.detail instanceof "
-	                        + exceptionFullName + ") {");
-	                pw.println("              throw (" + exceptionFullName
-	                        + ") axisFaultException.detail;");
-	                pw.println("         }");
-	            }
-	            pw.println("   }");
-	        }
-	        pw.println("  throw axisFaultException;");
-	        pw.println("}");
+        int index = parms.signature.indexOf("throws");
+        if (index != -1) {
+            String[] thrExcep = StringUtils.split(parms.signature.substring(index+6),',');
+            for (int i = 0; i < thrExcep.length; i++) {
+                exceptionsThrowsList.add(thrExcep[i].trim());
+            }
         }
+        pw.println("  } catch (org.apache.axis.AxisFault axisFaultException) {");
+        if (faults != null && faults.size() > 0) {
+            pw.println("    if (axisFaultException.detail != null) {");
+            for (Iterator faultIt = exceptionsThrowsList.iterator(); faultIt
+                    .hasNext();) {
+                String exceptionFullName = (String) faultIt.next();
+                pw.println("        if (axisFaultException.detail instanceof "
+                        + exceptionFullName + ") {");
+                pw.println("              throw (" + exceptionFullName
+                        + ") axisFaultException.detail;");
+                pw.println("         }");
+            }
+            pw.println("   }");
+        }
+        pw.println("  throw axisFaultException;");
+        pw.println("}");
     }    // writeResponseHandling
 
     /**
