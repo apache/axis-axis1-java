@@ -283,6 +283,8 @@ public class Message extends javax.xml.soap.SOAPMessage
                 // no support for it, leave mAttachments null.
             } catch (java.lang.NoClassDefFoundError ex) {
                 // no support for it, leave mAttachments null.
+            } catch (java.lang.SecurityException ex) {
+                // no support for it, leave mAttachments null.
             }
             log.debug(Messages.getMessage("attachEnabled") + "  " +
                     attachmentSupportEnabled);

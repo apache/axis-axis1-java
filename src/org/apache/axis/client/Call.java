@@ -2014,7 +2014,16 @@ public class Call implements javax.xml.rpc.Call {
             currentPackages.append('|');
         }
 
-        System.setProperty(TRANSPORT_PROPERTY, currentPackages.toString());
+        final String transportProperty = currentPackages.toString();
+        java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
+            public Object run() {
+                try {
+                    System.setProperty(TRANSPORT_PROPERTY, transportProperty);
+                } catch (SecurityException se){
+                }
+                return null;
+            }
+        });
     }
 
     /**

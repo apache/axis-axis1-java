@@ -167,6 +167,7 @@ public final class ClassUtils {
                                 ClassLoader classLoader = getClassLoader(className);
                                 return Class.forName(className, true, classLoader);
                             } catch (ClassNotFoundException cnfe) {
+                            } catch (SecurityException cnfe) {
                             }
                             
                             try {
