@@ -839,4 +839,13 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
             ((NodeImpl) parent).setDirty(true);
         }
     }
+    /* clear dirty flag recursively */
+    public void reset() {
+        if (children != null) {
+        	for (int i=0; i<children.size(); i++) {
+                ((NodeImpl) children.get(i)).reset();
+            }
+        }	
+        this._isDirty = false;
+    }
 }

@@ -242,6 +242,7 @@ public class DeserializationContext extends DefaultHandler
             }
             inputSource = null;
         }
+        envelope.reset();
     }
 
     /**
