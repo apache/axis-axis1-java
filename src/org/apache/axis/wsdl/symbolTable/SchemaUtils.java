@@ -1008,7 +1008,7 @@ public class SchemaUtils {
                  j++) {
                 Node kid = children.item(j);
 
-                if (isXSDNode(kid, "complexContent")) {
+                if (isXSDNode(kid, "complexContent") || isXSDNode(kid, "simpleContent")) {
                     content = kid;
                 }
             }
