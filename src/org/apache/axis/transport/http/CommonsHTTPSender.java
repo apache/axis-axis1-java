@@ -423,7 +423,11 @@ public class CommonsHTTPSender extends BasicHandler {
         HostConfiguration config = new HostConfiguration();
         
         if (port == -1) {
-        	port = targetURL.getDefaultPort();   // 80 for http, 443 for https
+        	if(targetURL.getProtocol().equalsIgnoreCase("https")) {
+        		port = 443;		// default port for https being 443
+        	} else { // it must be http
+        		port = 80;		// default port for http being 80
+        	}
         }
         
         if(hostInNonProxyList){
