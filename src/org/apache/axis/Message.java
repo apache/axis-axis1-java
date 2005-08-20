@@ -258,16 +258,16 @@ public class Message extends javax.xml.soap.SOAPMessage
             //aviod testing and possibly failing everytime.
             checkForAttachmentSupport = false;
             try {
-                String attachImpName= AxisEngine.DEFAULT_ATTACHMENT_IMPL;
-                if(null != mc){
-                    AxisEngine ae= mc.getAxisEngine();
-                    if(null != ae){
-                      attachImpName= (String)ae.getOption(
-                        AxisEngine.PROP_ATTACHMENT_IMPLEMENTATION);
+                // Get the default setting from AxisProperties
+                String attachImpName = AxisProperties.getProperty(AxisEngine.PROP_ATTACHMENT_IMPLEMENTATION,
+                        AxisEngine.DEFAULT_ATTACHMENT_IMPL);
+                // override the default with any changes specified in the engine configuration
+                if (null != mc) {
+                    AxisEngine ae = mc.getAxisEngine();
+                    if (null != ae) {
+                        attachImpName = (String) ae.getOption(
+                                AxisEngine.PROP_ATTACHMENT_IMPLEMENTATION);
                     }
-                }
-                if(null == attachImpName){
-                    attachImpName=AxisEngine.DEFAULT_ATTACHMENT_IMPL;
                 }
 
                 /**
