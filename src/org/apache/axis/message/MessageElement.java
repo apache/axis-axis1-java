@@ -667,7 +667,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             }
             // empty the collection
             children.clear();
-            setDirty(true);
+            setDirty();
         }
     }
 
@@ -1031,7 +1031,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      */
     public void setEnvelope(SOAPEnvelope env)
     {
-        env.setDirty(true);
+        env.setDirty();
         message = env;
     }
 
@@ -1371,7 +1371,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         throws SOAPException {
         try {
             addChild((MessageElement)element);
-            setDirty(true);
+            setDirty();
             return element;
         } catch (ClassCastException e) {
             throw new SOAPException(e);

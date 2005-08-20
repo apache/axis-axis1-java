@@ -493,7 +493,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         ((NodeImpl) newChild).detachNode();
         children.add(newChild);
         ((NodeImpl) newChild).parent = this;
-        setDirty(true);
+        setDirty();
         return newChild;
     }
 
@@ -509,7 +509,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      */
     public Node removeChild(Node oldChild) throws DOMException {
         if (removeNodeFromChildList((NodeImpl) oldChild)) {
-            setDirty(true);
+            setDirty();
             return oldChild;
         }
         throw new DOMException(DOMException.NOT_FOUND_ERR,
@@ -561,7 +561,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
             position = 0;
         }
         children.add(position, newChild);
-        setDirty(true);
+        setDirty();
         return newChild;
     }
 
@@ -597,7 +597,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         }
         children.remove(position);
         children.add(position, newChild);
-        setDirty(true);
+        setDirty();
         return oldChild;
     }
 
@@ -656,7 +656,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * application references to it.
      */
     public void detachNode() {
-        setDirty(true);
+        setDirty();
         if (parent != null) {
             parent.removeChild(this);
             parent = null;
@@ -791,7 +791,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         if (parent != null) {
             parent.appendChild(this);
         }
-        this.setDirty(true);
+        this.setDirty();
         this.parent = parent;
     }
 
@@ -836,9 +836,18 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     {
         _isDirty = dirty;
         if (_isDirty && parent != null) {
-            ((NodeImpl) parent).setDirty(true);
+            ((NodeImpl) parent).setDirty();
         }
     }
+
+    public void setDirty()
+    {
+        _isDirty = true;
+        if (parent != null) {
+            ((NodeImpl) parent).setDirty();
+        }
+    }
+
     /* clear dirty flag recursively */
     public void reset() {
         if (children != null) {

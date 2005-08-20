@@ -4,13 +4,21 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.message.SOAPBody;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.XMLUtils;
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.Diff;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
 
@@ -127,12 +135,47 @@ public class TestDOM extends XMLTestCase {
         assertXMLEqual("<tmp/>",body.toString());
     }
 
-    public void testNodeWithAttribute() throws Exception 
+    public void testNodeWithAttribute() throws Exception
     {
         org.w3c.dom.Element element = XMLUtils.newDocument().createElementNS(null,"tmp");
         element.setAttributeNS(null,"attrib", "foo");
         SOAPBodyElement body = new SOAPBodyElement(element);
         assertXMLEqual("<tmp attrib=\"foo\"/>",body.toString());
+    }
+
+    public void testDOM2() throws Exception
+    {
+        // Simulate receiving a signed message.
+        //
+        String xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+            "  <soapenv:Body>\n";
+        String xml2 = "    <SASLResponse xmlns=\"urn:liberty:sa:2004-04\">\n" +
+            "      <Status code=\"OK\" comment=\"Authenticated\"/>\n" +
+            "    </SASLResponse>\n";
+        String xml3 =
+            "  </soapenv:Body>\n" +
+            "</soapenv:Envelope>";
+
+        DeserializationContext ctx = new DeserializationContext(new InputSource(new StringReader(xml1 + xml2 + xml3)), null, "response");
+        ctx.parse();
+
+        SOAPEnvelope env = ctx.getEnvelope();
+        SOAPBody body = (SOAPBody) env.getBody();
+
+        // I am using the body child as my "token".  The basic idea is that
+        // this element must be serialized _exactly_ as it was received.
+        MessageElement elt = (MessageElement) body.getFirstChild();
+        assertTrue(!elt.isDirty());
+
+        StringWriter writer = new StringWriter();
+        SerializationContext serializeContext = new SerializationContext(writer, null);
+        serializeContext.setSendDecl(false);
+        elt.output(serializeContext);
+        writer.close();
+
+        assertXMLIdentical("Deserialization invalidated XML",
+                new Diff(xml2, writer.getBuffer().toString()), true);
     }
 
     public static void main(String [] args) throws Exception

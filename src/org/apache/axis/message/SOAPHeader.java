@@ -350,7 +350,7 @@ public class SOAPHeader extends MessageElement
             throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
         }
         SOAPElement child = super.addChildElement(element);
-        setDirty(true);
+        setDirty();
         return child;
     }
 

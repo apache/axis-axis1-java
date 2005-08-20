@@ -266,7 +266,7 @@ public class SOAPBody extends MessageElement
 //        throw new SOAPException(Messages.getMessage("badSOAPBodyElement00"));
 //      }
         SOAPElement child = super.addChildElement(element);
-        setDirty(true);
+        setDirty();
         return child;
     }
 

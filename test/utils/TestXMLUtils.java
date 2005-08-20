@@ -12,6 +12,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.soap.SOAPEnvelope;
@@ -288,7 +289,7 @@ public class TestXMLUtils extends AxisTestBase
         String output = org.apache.axis.utils.DOM2Writer.nodeToString(doc,false);
         assertTrue(output.indexOf("http://www.w3.org/XML/1998/namespace")==-1);
     }
-    
+
     public void testDOMXXE() throws Exception
     {
         StringBuffer sb = new StringBuffer();
@@ -327,7 +328,7 @@ public class TestXMLUtils extends AxisTestBase
         "<symbol>IBM</symbol>\n" +
         "</echo:Echo>\n" +
         "</SOAP-ENV:Body></SOAP-ENV:Envelope>\n";
-    
+
     public void testSAXXXE1() throws Exception
     {
         StringReader strReader = new StringReader(msg);
@@ -343,7 +344,7 @@ public class TestXMLUtils extends AxisTestBase
         SAXParser parser2 = XMLUtils.getSAXParser();
         parser2.getXMLReader().parse(inputsrc2);
     }
-        
+
     // If we are using DeserializationContext, we do not allow
     // a DOCTYPE to be specified to prevent denial of service attacks
     // via the ENTITY processing intstruction.
@@ -356,13 +357,13 @@ public class TestXMLUtils extends AxisTestBase
         "<symbol xml:lang=\"en\">IBM</symbol>\n" +
         "</echo:Echo>\n" +
         "</SOAP-ENV:Body></SOAP-ENV:Envelope>\n";
-    
+
     /**
      * Confirm we can parse a SOAP Envelope, and make sure that the
      * xml:lang attribute is handled OK while we're at it.
-     * 
+     *
      * @throws Exception
-     */ 
+     */
     public void testSAXXXE3() throws Exception
     {
         StringReader strReader3 = new StringReader(msg2);
@@ -400,11 +401,11 @@ public class TestXMLUtils extends AxisTestBase
             "         <EchoString>asdadsf</EchoString>" +
             "   </soapenv:Body>" +
             "</soapenv:Envelope>";
-    
+
     /**
      * Test for Bug 22980
      * @throws Exception
-     */ 
+     */
     public void testNSStack() throws Exception
     {
         StringReader strReader3 = new StringReader(msg3);
@@ -413,7 +414,13 @@ public class TestXMLUtils extends AxisTestBase
         dser.parse();
         org.apache.axis.message.SOAPEnvelope env = dser.getEnvelope();
         String xml = env.toString();
-        assertXMLEqual(xml,msg3);
+        boolean oldIgnore = XMLUnit.getIgnoreWhitespace();
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            assertXMLEqual(xml,msg3);
+        } finally {
+            XMLUnit.setIgnoreWhitespace(oldIgnore);
+        }
     }
     
     public static void main(String[] args) throws Exception

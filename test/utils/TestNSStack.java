@@ -6,6 +6,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.AxisEngine;
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.xml.sax.InputSource;
 import test.AxisTestBase;
 
@@ -24,7 +25,7 @@ public class TestNSStack extends AxisTestBase
     protected void setUp() throws Exception {
         AxisProperties.setProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,"false");
     }
-    
+
     protected void tearDown() throws Exception {
         AxisProperties.setProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,"true");
     }
@@ -52,8 +53,14 @@ public class TestNSStack extends AxisTestBase
         dser.parse();
         org.apache.axis.message.SOAPEnvelope env = dser.getEnvelope();
         String xml = env.toString();
-        assertXMLIdentical("NSStack invalidated XML canonicalization",
-                new Diff(msg, xml), true);
+        boolean oldIgnore = XMLUnit.getIgnoreWhitespace();
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            assertXMLIdentical("NSStack invalidated XML canonicalization",
+                    new Diff(msg, xml), true);
+        } finally {
+            XMLUnit.setIgnoreWhitespace(oldIgnore);
+        }
     }
 
     public void testNSStack2() throws Exception
@@ -66,8 +73,14 @@ public class TestNSStack extends AxisTestBase
         dser.parse();
         org.apache.axis.message.SOAPEnvelope env = dser.getEnvelope();
         String xml = env.toString();
-        assertXMLIdentical("NSStack invalidated XML canonicalization",
-                new Diff(msg, xml), true);
+        boolean oldIgnore = XMLUnit.getIgnoreWhitespace();
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            assertXMLIdentical("NSStack invalidated XML canonicalization",
+                    new Diff(msg, xml), true);
+        } finally {
+            XMLUnit.setIgnoreWhitespace(oldIgnore);
+        }
     }
 
     public static void main(String[] args) throws Exception

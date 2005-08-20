@@ -120,7 +120,7 @@ public class SOAPEnvelope extends MessageElement
                                        Constants.NS_PREFIX_SCHEMA_XSI));
         }
 
-        setDirty(true);
+        setDirty();
     }
     
     public SOAPEnvelope(InputStream input) throws SAXException {
@@ -687,6 +687,6 @@ public class SOAPEnvelope extends MessageElement
             recorder.clear();
             recorder = null;
         }
-        super.setDirty(dirty);
+        setDirty();
     }
 }
