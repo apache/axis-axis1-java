@@ -343,8 +343,11 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         // use the refType's QName for the metadata (which can be anonymous type.)
                         // see the schema of test/wsdl/axis2098
                         elemType = elemType.getRefType();
-                    }                    
-                    else {
+                    } else if (elemType.isSimpleType()
+                            && elemType.getRefType() != null) {
+                        // see wsdl in AXIS-2138
+                        elemType = elemType.getRefType();
+                    } else {
                         // Otherwise, use the first non-Collection type we
                         // encounter up the ref chain.
                         while (elemType instanceof CollectionTE) {
