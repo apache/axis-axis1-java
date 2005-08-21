@@ -22,9 +22,6 @@ import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionTE;
-import org.apache.axis.wsdl.symbolTable.BaseType;
-import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
@@ -378,6 +375,11 @@ public class JavaBeanWriter extends JavaClassWriter {
             names.add(variableName);
         }
 
+        if((extendType != null) && (Utils.getEnumerationBaseAndValues(
+                        extendType.getNode(), emitter.getSymbolTable()) != null)){
+            enableDefaultConstructor = false;
+        }
+
         // Check for duplicate names and make them unique
         // Start at index 2 and go by twos
         for (int i = 1; i < names.size(); i +=2)
@@ -566,7 +568,6 @@ public class JavaBeanWriter extends JavaClassWriter {
      * Writes the default constructor.
      */
     protected void writeDefaultConstructor() {
-
         // Define the default constructor
         pw.println("    public " + className + "() {");
         pw.println("    }");
