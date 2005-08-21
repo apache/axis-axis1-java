@@ -216,11 +216,13 @@ public class ClasspathUtils {
                                 }
                             }
                         } catch (IOException ioe) {
-                            if (fis != null)
+                        } finally {
+                            if (fis != null) {
                                 try {
                                     fis.close();
                                 } catch (IOException ioe2) {
                                 }
+                            }
                         }
                     }
                 }
