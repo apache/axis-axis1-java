@@ -110,7 +110,7 @@ public class XMLUtils {
         initSAXFactory(null, true, false);
 
         String value = AxisProperties.getProperty(AxisEngine.PROP_XML_REUSE_SAX_PARSERS,
-                "" + false);
+                "" + true);
         if (value.equalsIgnoreCase("true") ||
                 value.equals("1") ||
                 value.equalsIgnoreCase("yes")) {
