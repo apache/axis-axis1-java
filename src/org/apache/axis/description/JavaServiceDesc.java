@@ -784,8 +784,19 @@ public class JavaServiceDesc implements ServiceDesc {
 
     private Method[] getMethods(Class implClass) {
         if (implClass.isInterface()){
-            // Returns all methods incl inherited
-            return implClass.getMethods();
+            // only return methods that are not part of start classes
+            List methodsList = new ArrayList();
+            Method[] methods = implClass.getMethods();
+            if (methods != null) {
+                for (int i = 0; i < methods.length; i++) {
+                    String declaringClass = methods[i].getDeclaringClass().getName();
+                    if (!declaringClass.startsWith("java.") &&
+                        !declaringClass.startsWith("javax.")) {
+                        methodsList.add(methods[i]);
+                    }
+                }
+            }
+            return (Method[])methodsList.toArray(new Method[]{}); 
         } else {
             return implClass.getDeclaredMethods();
         }
