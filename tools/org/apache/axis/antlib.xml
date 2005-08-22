@@ -13,6 +13,6 @@
     <typedef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask"/>
     <typedef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask"/>
     <typedef name="admin" classname="org.apache.axis.tools.ant.axis.AdminClientTask"/>
-    <typedef name="foreach" classname="org.apache.axis.tools.ant.foreach.ForeachTask.java"/>
-    <typedef name="runaxisfunctionaltests" classname="org.apache.axis.tools.ant.axis.RunAxisFunctionalTests"/>
+    <typedef name="foreach" classname="org.apache.axis.tools.ant.foreach.ForeachTask"/>
+    <typedef name="runaxisfunctionaltests" classname="org.apache.axis.tools.ant.axis.RunAxisFunctionalTestsTask"/>
 </antlib>
