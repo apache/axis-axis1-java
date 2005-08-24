@@ -1370,9 +1370,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 if (entry instanceof BindingEntry) {
                     BindingEntry bEntry = (BindingEntry) entry;
                     Binding binding = bEntry.getBinding();
-                    PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
-                            binding.getPortType().getQName());
-                    PortType portType = ptEntry.getPortType();
+                    PortType portType = binding.getPortType();
                     Iterator operations =
                             portType.getOperations().iterator();
 
