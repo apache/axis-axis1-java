@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:tns="http://helloworld.ch/schema/service"
+    xmlns:types="http://helloworld.ch/schema/types"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://helloworld.ch/schema/service"
+    name="SalaryDeclarationService">
+
+    <wsdl:types>
+        <xs:schema
+            targetNamespace="http://helloworld.ch/schema/types"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:include schemaLocation="./helloworld.xsd"/>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="HelloWorldRequest">
+        <wsdl:part name="body" element="types:MyRequest"/>
+    </wsdl:message>
+    <wsdl:message name="HelloWorldResponse">
+        <wsdl:part name="body" element="types:MyResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="MyPort">
+        <wsdl:operation name="HelloWorld">
+            <wsdl:input message="tns:HelloWorldRequest"/>
+            <wsdl:output message="tns:HelloWorldResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="MySOAPBinding" type="tns:MyPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="HelloWorld">
+            <soap:operation style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="MyService">
+        <wsdl:port name="HelloWorld" binding="tns:MySOAPBinding">
+            <soap:address location="http://localhost:8080/axis/services/HelloWorld"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

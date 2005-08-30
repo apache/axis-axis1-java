@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<schema 
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/tbl1/aritem" 
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/tbl1/aritem" 
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:axs="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals">
+   
+ <!--  cannot use import, bug in AXIS - does not allow to import already
+       imported document when used with include. It was imported in CompoGlobals.xsd	
+       
+       Workaround: to comment out this import statement
+   
+  -->  
+  <import
+    namespace="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals"
+    schemaLocation="../AxsGlobals.xsd"/>
+
+  
+  <complexType name="AritemAllFieldsType"> 
+    <all> 
+      <element name="CUSTID" type="string" minOccurs="0"/> 
+      <element name="COMPNUM" type="string" minOccurs="0"/> 
+      <element name="ARIGLBNM" type="decimal" minOccurs="0"/> 
+      <element name="ARNOTYPE" type="string" minOccurs="0"/> 
+      <element name="ITMNUM" type="string" minOccurs="0"/> 
+      <element name="COMPNUM2" type="string" minOccurs="0"/> 
+      <element name="ARICNKEY" type="string" minOccurs="0"/> 
+      <element name="ARICNKY2" type="string" minOccurs="0"/> 
+      <element name="DUECCDT" type="date" minOccurs="0"/>  
+      </all> 
+  </complexType> 
+ 
+  <complexType name="CUSTOMER_HKEYFieldsType"> 
+    <complexContent> 
+      <restriction base="tns:AritemAllFieldsType"> 
+        <all> 
+          <element name="CUSTID" type="string" minOccurs="0"/> 
+          <element name="COMPNUM" type="string" minOccurs="0"/> 
+          <element name="ARIGLBNM" type="decimal" minOccurs="0"/> 
+        </all> 
+      </restriction> 
+    </complexContent> 
+  </complexType> 
+  
+  <complexType name="NUMBER_HKEYFieldsType"> 
+    <complexContent> 
+      <restriction base="tns:AritemAllFieldsType"> 
+        <all> 
+          <element name="ARNOTYPE" type="string" minOccurs="0"/> 
+          <element name="ITMNUM" type="string" minOccurs="0"/> 
+          <element name="COMPNUM2" type="string" minOccurs="0"/> 
+        </all> 
+      </restriction> 
+    </complexContent> 
+  </complexType> 
+  
+  <complexType name="AritemForType"> 
+    <choice> 
+      <element name="Key0_CUSTOMER_HKEY"> 
+        <complexType> 
+          <all> 
+            <element name="from" type="tns:CUSTOMER_HKEYFieldsType" minOccurs="0"/> 
+            <element name="to" type="tns:CUSTOMER_HKEYFieldsType" minOccurs="0"/> 
+          </all> 
+        </complexType> 
+      </element> 
+      <element name="Key1_NUMBER_HKEY"> 
+        <complexType> 
+          <all> 
+            <element name="from" type="tns:NUMBER_HKEYFieldsType" minOccurs="0"/> 
+            <element name="to" type="tns:NUMBER_HKEYFieldsType" minOccurs="0"/> 
+          </all> 
+        </complexType> 
+      </element> 
+    </choice> 
+  </complexType> 
+ 
+  <complexType name="AritemForOneType"> 
+    <choice> 
+      <element name="Key0_CUSTOMER_HKEY" type="tns:CUSTOMER_HKEYFieldsType"/> 
+      <element name="Key1_NUMBER_HKEY" type="tns:NUMBER_HKEYFieldsType"/> 
+    </choice> 
+  </complexType> 
+ 
+  <complexType name="AritemWhereType"> 
+    <all> 
+      <element name="from" type="tns:AritemAllFieldsType" minOccurs="0"/> 
+      <element name="to" type="tns:AritemAllFieldsType" minOccurs="0"/> 
+      <element name="criteria" type="string" minOccurs="0"/> 
+    </all> 
+  </complexType> 
+  
+  <complexType name="AritemSortbyType"> 
+    <complexContent> 
+      <extension base="tns:AritemAllFieldsType"> 
+        <all> 
+        </all> 
+       <attribute name="direction" type="axs:SortDirectionType"/> 
+      </extension> 
+    </complexContent> 
+  </complexType> 
+</schema> 

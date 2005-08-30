@@ -1,0 +1,47 @@
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+ <service name="Employee" provider="java:RPC">
+  <namespace>http://faults.samples</namespace>
+  <parameter name="className" value="samples.faults.EmployeeInfo"/>
+  <parameter name="allowedMethods" value="addEmployee getEmployees getEmployee"/>
+  <parameter name="scope" value="Session"/>
+     <operation name="addEmployee" qname="operNS:addEmployee" xmlns:operNS="http://faults.samples" >
+       <parameter name="in" type="tns:Employee" xmlns:tns="http://faults.samples"/>
+     </operation>
+     
+     <operation name="getEmployee" qname="operNS:getEmployee" xmlns:operNS="http://faults.samples" returnQName="getEmployeeReturn" returnType="rtns:Employee" xmlns:rtns="http://faults.samples" >
+       <parameter name="id" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+       <fault name="NoSuchEmployeeFault" qname="fns:fault" xmlns:fns="http://localhost:8080/ch09/services/Employee" class="samples.faults.NoSuchEmployeeFault" type="tns:NoSuchEmployeeFault" xmlns:tns="http://faults.samples"/>
+     </operation>
+     
+     <operation name="getEmployees" qname="operNS:getEmployees" xmlns:operNS="http://faults.samples" returnQName="getEmployeesReturn" returnType="rtns:ArrayOf_tns1_Employee" xmlns:rtns="http://localhost:8080/ch09/services/Employee" >
+     </operation>
+
+     <typeMapping
+       xmlns:ns="http://faults.samples"
+       qname="ns:NoSuchEmployeeFault"
+       type="java:samples.faults.NoSuchEmployeeFault"
+       serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+       deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+       encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+     />
+     <typeMapping
+       xmlns:ns="http://localhost:8080/ch09/services/Employee"
+       qname="ns:ArrayOf_tns1_Employee"
+       type="java:samples.faults.Employee[]"
+       serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+       deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+       encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+     />
+     <typeMapping
+       xmlns:ns="http://faults.samples"
+       qname="ns:Employee"
+       type="java:samples.faults.Employee"
+       serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+       deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+       encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+     />
+
+ </service>
+</deployment>

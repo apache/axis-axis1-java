@@ -1,0 +1,29 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <service name="UserAccount" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://customerinfo"/>
+      <parameter name="wsdlServiceElement" value="UserAccountService"/>
+      <parameter name="wsdlServicePort" value="UserAccount"/>
+      <parameter name="className" value="test.wsdl.jaxrpchandlereval.UserAccountSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="UserAccount"/>
+      <operation name="updateInfo" qname="operNS:updateInfo" xmlns:operNS="http://customerinfo" returnQName="updateInfoReturn" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="in0" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="updateInfo"/>
+      <handlerInfoChain>
+            <handlerInfo classname="test.wsdl.jaxrpchandlereval.ServiceHandler1"/>
+            <handlerInfo classname="test.wsdl.jaxrpchandlereval.ServiceHandler2"/>
+	  </handlerInfoChain>
+  </service>
+
+</deployment>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<schema 
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/cmp/comp" 
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/cmp/comp" 
+  xmlns:glb="http://www.axsone.com/webdemo/exec/schemas/CompoGlobals" 
+  xmlns:tbl01="http://www.axsone.com/webdemo/exec/schemas/tbl1/aritem" 
+  xmlns:tbl02="http://www.axsone.com/webdemo/exec/schemas/tbl2/coarignx" 
+  xmlns="http://www.w3.org/2001/XMLSchema"> 
+ 
+  <import 
+    namespace="http://www.axsone.com/webdemo/exec/schemas/CompoGlobals" 
+    schemaLocation="../CompoGlobals.xsd"/> 
+
+ 
+  <include schemaLocation="../includes/include.xsd"/>  
+ 
+  <complexType name="letType"> 
+    <all> 
+      <element name="customer_id" type="string" minOccurs="0"/> 
+      <element name="trans_type_id" type="string" minOccurs="0"/> 
+      <element name="num_items_created" type="decimal" minOccurs="0"/> 
+    </all> 
+  </complexType> 
+ 
+  <attribute name="rowType" type="glb:DocRowType"/> 
+ 
+  <element name="DataRequest"> 
+    <complexType> 
+      <complexContent> 
+        <extension base="glb:DataRequestType"> 
+          <sequence> 
+            <element name="transaction"> 
+              <complexType> 
+                <choice> 
+                  <element ref="tns:ViewCOARIGNX_Transaction"/> 
+                </choice> 
+              </complexType> 
+            </element> 
+          </sequence> 
+        </extension> 
+      </complexContent> 
+    </complexType> 
+  </element> 
+ 
+  <element name="DataRequestResponse"> 
+    <complexType> 
+      <complexContent> 
+        <extension base="glb:DataResponseType"> 
+          <sequence> 
+            <element name="rows"> 
+              <complexType> 
+                <choice> 
+                  <element ref="tns:ViewCOARIGNX_VIEW_FOR_ITEM_UPDATE_COMPONENTRows"/> 
+                </choice> 
+              </complexType> 
+            </element> 
+          </sequence> 
+        </extension> 
+      </complexContent> 
+    </complexType> 
+  </element> 
+</schema> 

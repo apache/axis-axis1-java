@@ -1,0 +1,94 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from MyService WSDL service -->
+
+  <service name="HelloWorld" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://helloworld.ch/schema/service"/>
+      <parameter name="wsdlServiceElement" value="MyService"/>
+      <parameter name="schemaQualified" value="http://helloworld.ch/schema/types"/>
+      <parameter name="wsdlServicePort" value="HelloWorld"/>
+      <parameter name="className" value="test.wsdl.axis2098.MySOAPBindingImpl"/>
+      <parameter name="wsdlPortType" value="MyPort"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="helloWorld" qname="HelloWorld" returnQName="retNS:MyResponse" xmlns:retNS="http://helloworld.ch/schema/types" returnType="rtns:MyResponseType" xmlns:rtns="http://helloworld.ch/schema/types" >
+        <parameter qname="pns:MyRequest" xmlns:pns="http://helloworld.ch/schema/types" type="tns:MyRequestType" xmlns:tns="http://helloworld.ch/schema/types"/>
+      </operation>
+      <parameter name="allowedMethods" value="helloWorld"/>
+      <parameter name="scope" value="Session"/>
+
+      <requestFlow>
+          <handler type="java:test.wsdl.axis2098.TestHandler"/>
+      </requestFlow>
+
+      <responseFlow>
+          <handler type="java:test.wsdl.axis2098.TestHandler"/>
+      </responseFlow>
+
+      <typeMapping
+        xmlns:ns="http://helloworld.ch/schema/types"
+        qname="ns:StringType"
+        type="java:java.lang.String"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://helloworld.ch/schema/types"
+        qname="ns:LogicType"
+        type="java:boolean"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://helloworld.ch/schema/types"
+        qname="ns:>StringElem"
+        type="java:java.lang.String"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://helloworld.ch/schema/types"
+        qname="ns:MyRequestType"
+        type="java:test.wsdl.axis2098.MyRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://helloworld.ch/schema/types"
+        qname="ns:RestrictionType"
+        type="java:test.wsdl.axis2098.RestrictionType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://helloworld.ch/schema/types"
+        qname="ns:XsiTestType"
+        type="java:test.wsdl.axis2098.XsiTestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://helloworld.ch/schema/types"
+        qname="ns:MyResponseType"
+        type="java:test.wsdl.axis2098.MyResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

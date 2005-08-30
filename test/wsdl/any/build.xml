@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Ashutosh Shahi ashutosh@apache.org
+
+Copyright:
+  Copyright (c) 2004,2005 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+
+
+	<property name="axis.home" location="../../.." />
+	<property name="componentName" value="test/wsdl/any" />
+	        &properties;
+	        &paths;
+	        &taskdefs;
+	        &taskdefs_post_compile;
+	        &targets;
+	<target name="clean">
+	    <echo message="componentName is ${componentName}"/>
+	    <echo message="Removing ${build.dir}/**/test/wsdl/any" />
+	    <delete dir="${build.dir}/classes/test/wsdl/any"/>
+	    <delete dir="${build.dir}/work/test/wsdl/any"/>
+	</target>
+	
+	<target name="compile" depends="setenv, clean">
+	  <echo message="Compiling test.wsdl.any"/>
+	
+    	<!-- Verify files generated based on everything in WSDL -->
+    	<wsdl2java url="any.wsdl"
+               	output="${axis.home}/build/work"
+              	 all="yes"
+              	 verbose="no"
+				serverside="yes"
+				testcase="no">
+			<mapping namespace="urn:partner.soap.sforce.com" package="test.wsdl.any"/>
+			<mapping namespace="urn:sobject.partner.soap.sforce.com" package="test.wsdl.any"/>
+    	</wsdl2java>
+	
+    <!-- Copy the test case -->
+    <copy file="AnyTestCase.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/any"/>
+	
+    <copy file="SoapBindingImpl.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/any"/>
+	
+	<!-- Clean up old classes -->
+    <delete dir="${build.dir}/classes/test/wsdl/any" />
+	
+    <!-- Compile the test case -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+	  <include name="test/wsdl/any/*.java" />
+    </javac>
+	</target>
+	
+	<target name="run" >
+	  <antcall target="execute-Component" />
+	</target>
+	
+	</project>

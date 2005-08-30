@@ -1,0 +1,26 @@
+<!-- Use this file to undeploy some handlers/chains and services -->
+<!-- Two ways to do this:                                        -->
+<!--   java org.apache.axis.utils.Admin undeploy.wsdd            -->
+<!--      from the same directory that the Axis engine runs      -->
+<!-- or                                                          -->
+<!--   java org.apache.axis.client.AdminClient undeploy.wsdd     -->
+<!--      after the axis server is running                       -->
+
+<undeployment
+    xmlns="http://xml.apache.org/axis/wsdd/">
+
+  <!-- Services from InteropTestDocLitService WSDL service -->
+
+  <service name="InteropTestDocLit">
+  </service>
+
+  <!-- Services from InteropTestRpcEncService WSDL service -->
+
+  <service name="InteropTestRpcEnc">
+  </service>
+
+  <!-- Services from InteropTestListService WSDL service -->
+
+  <service name="InteropTestList">
+  </service>
+</undeployment>

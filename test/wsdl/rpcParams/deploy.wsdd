@@ -1,0 +1,37 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from rpcParamsService WSDL service -->
+
+  <service name="RpcParams" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:rpcParams.wsdl.test"/>
+      <parameter name="wsdlServiceElement" value="rpcParamsService"/>
+      <parameter name="wsdlServicePort" value="RpcParams"/>
+      <parameter name="className" value="test.wsdl.rpcParams.RpcParamsBindingImpl"/>
+      <parameter name="allowedMethods" value="echo"/>
+
+      <!--
+        NOTE: it is important to *not* include metadata about the service's operation
+        here in order to reproduce bug the bug in ServiceDesc mentioned in
+        http://nagoya.apache.org/bugzilla/show_bug.cgi?id=20930.
+      -->
+
+      <typeMapping
+        xmlns:ns="urn:rpcParams.wsdl.test"
+        qname="ns:EchoStruct"
+        type="java:test.wsdl.rpcParams.EchoStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

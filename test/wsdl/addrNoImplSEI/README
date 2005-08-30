@@ -1,0 +1,42 @@
+Test addrNoImpSEI
+
+Summary:
+This test is a variant of the AddressBook test.  Unlike
+the regular AddressBook test, the server side implementation
+(AddressBookNoImplSEISoapBindingImpl) does not
+implement the Service Endpoint Interface (SEI).  The 
+server side implementation does contain methods that 
+correspond to the methods defined in the SEI.
+The purpose of this test is to simulate a server side EJB
+which will not implement the SEI, but will have methods that
+match the SEI.
+
+Step 1:
+An AddressBook.wsdl and AddressBookNoImplSEISoapBindingImpl.java
+files are provided.
+
+WSDL2Java is run on AddressBook.wsdl to create the client side
+artifacts and deployment data.
+
+Step 2:
+The generated AddressBookNoImplSEISoapBindingImpl.java is
+replaced with the provided one that does not implement the SEI.
+
+Step 3:
+These files are compiled to ensure that the generated artifacts
+and provided file are correct.  In a normal scenario, we would
+run the test at this point.
+
+Step 4:
+We now have a setup that simulates the setup for an EJB scenario.
+Java2WSDL is run on the server implementation to make sure it 
+is possible to generate a wsdl file describing this service.
+
+Step 5:
+Prior classes and java files are deleted.
+The only way to test the validity of the wsdl file produced in
+step 4 is to run WSDL2Java on it.
+
+Step 6:
+Replace the generated server side implementation with the provided
+one.  Now we are ready to compile all the files and run the test.

@@ -1,0 +1,33 @@
+To run the address book sample, you must do the following:
+1.  Set up your CLASSPATH.
+2.  Generate the Java bindings from the AddressBook.wsdl file.
+3.  Compile the code.
+4.  Start a server.
+5.  Run the sample.
+
+1.  Set up your CLASSPATH.
+    The CLASSPATH must contain:  an XML parser (ie., Xerces), JUnit
+    (www.junit.org), all the jars in the lib directory, and the directory
+    containing the samples subdirectory.
+
+2.  Generate the Java bindings from the AddressBook.wsdl file.
+    a.  Change directory to the directory that contains the samples
+        subdirectory.
+    b.  Run the command: java org.apache.axis.wsdl.WSDL2Java -s -d Session
+        -Nurn:AddressFetcher2=samples.addr samples\addr\AddressBook.wsdl
+
+    This will generate all the bindings, both client-side and server-side,
+    into the samples/addr subdirectory.
+
+3.  Compile the code.
+    a.  Now you can change directory to samples/addr
+    b.  And compile the sample:  javac *.java
+
+4.  Start a  server.
+    To run the sample, you will first need to run a server.  To run a very
+    simple server you could run, in a separate window:
+        java org.apache.axis.transport.http.SimpleAxisServer -p 8080
+
+5.  Run the sample.
+    Finally, to run the client, run testit.sh or testit.cmd, depending on
+    your platform.

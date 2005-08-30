@@ -1,0 +1,21 @@
+FileGenTestCase verifies that the proper set of files is generated for FileGen.wsdl.  This is a test that would be useful for many WSDL files, so FileGenTestCase is also extensible.
+
+Here is the interface for FileGenTestCase:
+
+FileGenTestCase {
+    public FileGenTestCase(java.lang.String);
+    protected java.util.Set shouldExist();
+    protected java.lang.String rootDir();
+    public void testFileGen() throws java.io.IOException;
+}
+
+All extensions should have a constructor that takes a String and calls super(string).  This is a requirement of the junit framework.
+
+All extensions should override shouldExist.  This method returns a set containing the String local names of the files that should exist in a given directory.
+
+All extensions should override rootDir.  This method returns the name of the directory which will be checked for file existence.
+
+testFileGen is the test that does all the work and extensions do not need to override it.
+
+For a concrete example of an extension to FileGenTestCase, see xml-axis/java/test/wsdl/clash/VerifyFilesTestCase.java.
+

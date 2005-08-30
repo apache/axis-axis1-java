@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+
+<definitions name="urn:AddressFetcher"
+             targetNamespace="urn:wrapperHolder"
+             xmlns:tns="urn:wrapperHolder"
+             xmlns:typens="urn:wrapperHolder"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+<types>
+<schema attributeFormDefault="qualified" elementFormDefault="qualified"
+  targetNamespace="urn:wrapperHolder"
+   xmlns="http://www.w3.org/1999/XMLSchema">
+
+  <element name="out" type="xsd:long"/>
+  <element name="DoExample">
+    <complexType>
+      <sequence>
+        <element name="value1" nillable="true" maxOccurs="unbounded" type="xsd:base64Binary"/>
+        <element name="value2" minOccurs="0" maxOccurs="1"  ref="typens:out"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="DoExampleResponse">
+    <complexType>
+      <sequence>
+        <element name="ret" nillable="true" type="xsd:base64Binary"/>
+        <element name="out" minOccurs="0" maxOccurs="1" ref="typens:out"/>
+      </sequence>
+    </complexType>
+  </element>
+
+</schema>
+</types>
+
+<message name="DoExample">
+  <part name="body" element="typens:DoExample"/>
+</message>
+<message name="DoExampleResponse">
+  <part name="result" element="typens:DoExampleResponse"/>
+</message>
+
+<portType name="ExampleSoap">
+  <operation name="DoExample" parameterOrder="body result">
+    <input message="tns:DoExample"/>
+    <output message="tns:DoExampleResponse"/>
+  </operation>
+</portType>
+
+<binding name="ExampleSoap" type="tns:ExampleSoap">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="DoExample">
+    <soap:operation soapAction="" style="document"/>
+    <input>
+      <soap:body use="literal" parts="body" />
+    </input>
+    <output >
+      <soap:body use="literal" parts="result" />
+    </output>
+  </operation>
+</binding>
+
+<service name="DoExample">
+  <port name="WrapperHolder" binding="tns:ExampleSoap">
+    <soap:address location="http://localhost:8080/axis/services/WrapperHolder"/>
+  </port>
+</service>
+
+</definitions>

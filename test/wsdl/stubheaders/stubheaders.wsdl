@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<wsdl:definitions targetNamespace="http://echo.services"
+    xmlns:intf="http://echo.services"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:message name="echoRequest">
+        <wsdl:part type="xsd:string" name="in" />
+    </wsdl:message>
+    <wsdl:message name="echoResponse">
+        <wsdl:part type="xsd:string" name="out" />
+    </wsdl:message>
+    <wsdl:portType name="StubHeaderInterface">
+        <wsdl:operation name="echo" parameterOrder="in">
+            <wsdl:input message="intf:echoRequest" name="echoRequest" />
+            <wsdl:output message="intf:echoResponse" name="echoResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="StubHeader" type="intf:StubHeaderInterface">
+        <wsdlsoap:binding style="rpc"
+            transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="echo">
+            <wsdlsoap:operation soapAction="" />
+            <wsdl:input name="echoRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                    namespace="http://types.echo.services" use="encoded" />
+            </wsdl:input>
+            <wsdl:output name="echoResponse">
+                <wsdlsoap:body namespace="http://types.echo.services" use="encoded" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="StubHeaderService">
+        <wsdl:port binding="intf:StubHeader" name="StubHeaderService">
+            <wsdlsoap:address
+                location="http://localhost:8080/axis/services/StubHeaderService" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

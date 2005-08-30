@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ImportTestDefinition"
+  targetNamespace="http://test.globus.org/importtest"
+  xmlns:tns="http://test.globus.org/importtest"
+  xmlns:interface="http://test.globus.org/interface"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+<import namespace="http://test.globus.org/interface"
+        location="../../interface1/interface2/importinterface.wsdl"/>
+
+<service name="ImportTestService">
+  <port binding="interface:ImportTestSOAPBinding"
+        name="ImportTestPort">
+    <soap:address location="http://localhost:8080/axis/services"/>
+  </port>
+</service>
+
+</definitions>
+
+   
+ 
+

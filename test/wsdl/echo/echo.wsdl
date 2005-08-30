@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:impl="http://echo.services-impl" xmlns:intf="http://echo.services" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="http://types.echo.services" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://echo.services">
+    <wsdl:types>
+        <schema targetNamespace="http://types.echo.services" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="MyComplexType">
+                <sequence>
+                    <element name="simpleItem" nillable="true" type="xsd:string"/>
+                </sequence>
+            </complexType>
+            <element name="MyElement" nillable="true" type="tns1:MyComplexType"/>
+            <complexType name="NamedValue">
+                <sequence>
+                    <element name="name" nillable="true" type="xsd:string"/>
+                    <element name="value" nillable="true" type="xsd:anyType"/>
+                </sequence>
+            </complexType>
+            <complexType name="ArrayOfNamedValue">
+                <sequence>
+                    <element name="item" type="tns1:NamedValue" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="NamedValueSet">
+                <sequence>
+                    <element name="namedValues" nillable="true" type="tns1:ArrayOfNamedValue"/>
+                </sequence>
+            </complexType>
+            <complexType name="AttributeRequest">
+                <sequence>
+                    <element name="attributeName" nillable="true" type="xsd:string"/>
+                    <element name="requestedAttributes" nillable="true" type="tns1:ArrayOfAttributeRequest"/>
+                </sequence>
+            </complexType>
+            <complexType name="ArrayOfAttributeRequest">
+                <sequence>
+                    <element name="item" type="tns1:AttributeRequest" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="MyComplexType2">
+                <sequence>
+                    <element name="username" type="xsd:string"/>
+                    <element name="password" type="xsd:string"/>
+                    <element name="options" type="tns1:NamedValue" maxOccurs="unbounded"/>
+                    <element name="userAttributes" type="tns1:AttributeRequest" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <element name="MyElement2" nillable="true" type="tns1:MyComplexType2"/>
+            <element name="MyElement2Response">
+                <complexType>
+                    <sequence>
+                        <element name="loginReturn" type="tns1:NamedValue" maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="echoRequest">
+        <wsdl:part name="MyElement" element="tns1:MyElement"/>
+    </wsdl:message>
+    <wsdl:message name="echoResponse">
+        <wsdl:part name="MyElement" element="tns1:MyElement"/>
+    </wsdl:message>
+    <wsdl:message name="echo2Request">
+        <wsdl:part name="options" element="tns1:MyElement2"/>
+    </wsdl:message>
+    <wsdl:message name="echo2Response">
+        <wsdl:part name="options" element="tns1:MyElement2Response"/>
+    </wsdl:message>
+    <wsdl:portType name="Echo">
+        <wsdl:operation name="echo">
+            <wsdl:input name="echoRequest" message="intf:echoRequest"/>
+            <wsdl:output name="echoResponse" message="intf:echoResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echo2">
+            <wsdl:input name="echo2Request" message="intf:echo2Request"/>
+            <wsdl:output name="echo2Response" message="intf:echo2Response"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ComplexEchoServiceSoapBinding" type="intf:Echo">
+        <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="echo">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal" namespace="http://types.echo.services"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal" namespace="http://types.echo.services"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo2">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal" namespace="http://types.echo.services"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal" namespace="http://types.echo.services"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ComplexEchoService">
+        <wsdl:port name="ComplexEchoService" binding="intf:ComplexEchoServiceSoapBinding">
+            <wsdlsoap:address location="http://localhost:8080/axis/services/ComplexEchoService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

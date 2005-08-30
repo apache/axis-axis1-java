@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions name="Adaptive" targetNamespace="http://com.test/wsdl/Adaptive" xmlns:tns="http://com.test/wsdl/Adaptive" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://com.test/types/Adaptive" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <schema targetNamespace="http://com.test/types/Adaptive" xmlns:tns="http://com.test/types/Adaptive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="http://java.sun.com/jax-rpc-ri/internal" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://www.w3.org/2001/XMLSchema">
+      <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+      <import namespace="http://java.sun.com/jax-rpc-ri/internal"/>
+      <complexType name="ArrayOfResourceInfo">
+        <complexContent>
+          <restriction base="soap-enc:Array">
+            <attribute ref="soap-enc:arrayType" wsdl:arrayType="tns:ResourceInfo[]"/></restriction></complexContent></complexType>
+      <complexType name="ResourceInfo">
+        <sequence>
+          <element name="properties" type="ns2:vector"/>
+          <element name="id" type="string"/></sequence></complexType>
+      <complexType name="ApplicationInfo">
+        <sequence>
+          <element name="dummy" type="tns:KeyValue"/>
+          <element name="properties" type="ns2:vector"/>
+          <element name="id" type="string"/></sequence></complexType>
+      <complexType name="KeyValue">
+        <sequence>
+          <element name="key" type="string"/>
+          <element name="value" type="string"/></sequence></complexType>
+      <complexType name="ArrayOfint">
+        <complexContent>
+          <restriction base="soap-enc:Array">
+            <attribute ref="soap-enc:arrayType" wsdl:arrayType="int[]"/></restriction></complexContent></complexType>
+      <complexType name="ArrayOfstring">
+        <complexContent>
+          <restriction base="soap-enc:Array">
+            <attribute ref="soap-enc:arrayType" wsdl:arrayType="string[]"/></restriction></complexContent></complexType>
+      <complexType name="ArrayOfArrayOfstring">
+        <complexContent>
+          <restriction base="soap-enc:Array">
+            <attribute ref="soap-enc:arrayType" wsdl:arrayType="tns:ArrayOfstring[]"/></restriction></complexContent></complexType></schema>
+    <schema targetNamespace="http://java.sun.com/jax-rpc-ri/internal" xmlns:tns="http://java.sun.com/jax-rpc-ri/internal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://www.w3.org/2001/XMLSchema">
+      <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+      <import namespace="http://com.test/types/Adaptive"/>
+      <complexType name="vector">
+        <complexContent>
+          <extension base="tns:list">
+            <sequence/></extension></complexContent></complexType>
+      <complexType name="list">
+        <complexContent>
+          <extension base="tns:collection">
+            <sequence/></extension></complexContent></complexType>
+      <complexType name="collection">
+        <complexContent>
+          <restriction base="soap-enc:Array">
+            <attribute ref="soap-enc:arrayType" wsdl:arrayType="anyType[]"/></restriction></complexContent></complexType></schema></types>
+  <message name="AdaptiveInterface_getServiceDescription"/>
+  <message name="AdaptiveInterface_getServiceDescriptionResponse">
+    <part name="result" type="xsd:string"/></message>
+  <message name="AdaptiveInterface_rankResources">
+    <part name="arrayOfResourceInfo_1" type="ns2:ArrayOfResourceInfo"/>
+    <part name="ApplicationInfo_2" type="ns2:ApplicationInfo"/></message>
+  <message name="AdaptiveInterface_rankResourcesResponse">
+    <part name="result" type="ns2:ArrayOfResourceInfo"/></message>
+  <message name="AdaptiveInterface_estimateTransferTime">
+    <part name="boolean_1" type="xsd:boolean"/>
+    <part name="ResourceInfo_2" type="ns2:ResourceInfo"/>
+    <part name="arrayOfResourceInfo_3" type="ns2:ArrayOfResourceInfo"/>
+    <part name="long_4" type="xsd:long"/>
+    <part name="Calendar_5" type="xsd:dateTime"/></message>
+  <message name="AdaptiveInterface_estimateTransferTimeResponse">
+    <part name="result" type="ns2:ArrayOfint"/></message>
+  <message name="AdaptiveInterface_logDataTransfer">
+    <part name="ResourceInfo_1" type="ns2:ResourceInfo"/>
+    <part name="ResourceInfo_2" type="ns2:ResourceInfo"/>
+    <part name="long_3" type="xsd:long"/>
+    <part name="Calendar_4" type="xsd:dateTime"/>
+    <part name="Calendar_5" type="xsd:dateTime"/></message>
+  <message name="AdaptiveInterface_logDataTransferResponse"/>
+  <message name="AdaptiveInterface_estimateUsage">
+    <part name="boolean_1" type="xsd:boolean"/>
+    <part name="ResourceInfo_2" type="ns2:ResourceInfo"/>
+    <part name="String_3" type="xsd:string"/>
+    <part name="int_4" type="xsd:int"/>
+    <part name="Calendar_5" type="xsd:dateTime"/>
+    <part name="Calendar_6" type="xsd:dateTime"/></message>
+  <message name="AdaptiveInterface_estimateUsageResponse">
+    <part name="result" type="xsd:string"/></message>
+  <message name="AdaptiveInterface_estimateMultipleUsage">
+    <part name="boolean_1" type="xsd:boolean"/>
+    <part name="arrayOfResourceInfo_2" type="ns2:ArrayOfResourceInfo"/>
+    <part name="arrayOfString_3" type="ns2:ArrayOfstring"/>
+    <part name="int_4" type="xsd:int"/>
+    <part name="Calendar_5" type="xsd:dateTime"/>
+    <part name="Calendar_6" type="xsd:dateTime"/></message>
+  <message name="AdaptiveInterface_estimateMultipleUsageResponse">
+    <part name="result" type="ns2:ArrayOfArrayOfstring"/></message>
+  <message name="AdaptiveInterface_estimateNetworkGraph">
+    <part name="boolean_1" type="xsd:boolean"/>
+    <part name="arrayOfResourceInfo_2" type="ns2:ArrayOfResourceInfo"/>
+    <part name="int_3" type="xsd:int"/>
+    <part name="Calendar_4" type="xsd:dateTime"/>
+    <part name="Calendar_5" type="xsd:dateTime"/></message>
+  <message name="AdaptiveInterface_estimateNetworkGraphResponse">
+    <part name="result" type="ns2:ArrayOfArrayOfstring"/></message>
+  <portType name="AdaptiveInterface">
+    <operation name="getServiceDescription" parameterOrder="">
+      <input message="tns:AdaptiveInterface_getServiceDescription"/>
+      <output message="tns:AdaptiveInterface_getServiceDescriptionResponse"/></operation>
+    <operation name="rankResources" parameterOrder="arrayOfResourceInfo_1 ApplicationInfo_2">
+      <input message="tns:AdaptiveInterface_rankResources"/>
+      <output message="tns:AdaptiveInterface_rankResourcesResponse"/></operation>
+    <operation name="estimateTransferTime" parameterOrder="boolean_1 ResourceInfo_2 arrayOfResourceInfo_3 long_4 Calendar_5">
+      <input message="tns:AdaptiveInterface_estimateTransferTime"/>
+      <output message="tns:AdaptiveInterface_estimateTransferTimeResponse"/></operation>
+    <operation name="logDataTransfer" parameterOrder="ResourceInfo_1 ResourceInfo_2 long_3 Calendar_4 Calendar_5">
+      <input message="tns:AdaptiveInterface_logDataTransfer"/>
+      <output message="tns:AdaptiveInterface_logDataTransferResponse"/></operation>
+    <operation name="estimateUsage" parameterOrder="boolean_1 ResourceInfo_2 String_3 int_4 Calendar_5 Calendar_6">
+      <input message="tns:AdaptiveInterface_estimateUsage"/>
+      <output message="tns:AdaptiveInterface_estimateUsageResponse"/></operation>
+    <operation name="estimateMultipleUsage" parameterOrder="boolean_1 arrayOfResourceInfo_2 arrayOfString_3 int_4 Calendar_5 Calendar_6">
+      <input message="tns:AdaptiveInterface_estimateMultipleUsage"/>
+      <output message="tns:AdaptiveInterface_estimateMultipleUsageResponse"/></operation>
+    <operation name="estimateNetworkGraph" parameterOrder="boolean_1 arrayOfResourceInfo_2 int_3 Calendar_4 Calendar_5">
+      <input message="tns:AdaptiveInterface_estimateNetworkGraph"/>
+      <output message="tns:AdaptiveInterface_estimateNetworkGraphResponse"/></operation></portType>
+  <binding name="AdaptiveInterfaceBinding" type="tns:AdaptiveInterface">
+    <operation name="getServiceDescription">
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></output>
+      <soap:operation soapAction=""/></operation>
+    <operation name="rankResources">
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></output>
+      <soap:operation soapAction=""/></operation>
+    <operation name="estimateTransferTime">
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></output>
+      <soap:operation soapAction=""/></operation>
+    <operation name="logDataTransfer">
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></output>
+      <soap:operation soapAction=""/></operation>
+    <operation name="estimateUsage">
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></output>
+      <soap:operation soapAction=""/></operation>
+    <operation name="estimateMultipleUsage">
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></output>
+      <soap:operation soapAction=""/></operation>
+    <operation name="estimateNetworkGraph">
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://com.test/wsdl/Adaptive"/></output>
+      <soap:operation soapAction=""/></operation>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/></binding>
+  <service name="AdaptiveService">
+    <port name="Adaptive" binding="tns:AdaptiveInterfaceBinding">
+      <soap:address location="http://localhost:8080/axis/services/Adaptive"/></port></service></definitions>

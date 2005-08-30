@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Test two element with the same name except for the first letter capitolization.
+-->
+
+<definitions targetNamespace="urn:clash.wsdl.test"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="urn:clash.wsdl.test">
+    <types>
+
+        <schema elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:clash.wsdl.test">
+
+            <element name="describeLayout">
+                <complexType>
+                    <sequence>
+                        <element name="sObjectType" type="xsd:string"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <complexType name="DescribeLayout">
+                <sequence>
+                    <element name="detailLayoutSections" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+
+	</schema>
+    </types>
+    
+</definitions>
+
+    
+
+

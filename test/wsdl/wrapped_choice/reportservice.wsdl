@@ -1,0 +1,4287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices">
+      <s:element name="ListSecureMethods">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListSecureMethodsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ListSecureMethodsResult" type="s0:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ServerInfoHeader" type="s0:ServerInfoHeader" />
+      <s:complexType name="ServerInfoHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ReportServerVersionNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReportServerEdition" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CreateBatch">
+        <s:complexType />
+      </s:element>
+      <s:element name="CreateBatchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BatchID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelBatch">
+        <s:complexType />
+      </s:element>
+      <s:element name="CancelBatchResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="BatchHeader" type="s0:BatchHeader" />
+      <s:complexType name="BatchHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="BatchID" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ExecuteBatch">
+        <s:complexType />
+      </s:element>
+      <s:element name="ExecuteBatchResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSystemProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfProperty">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Property" nillable="true" type="s0:Property" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Property">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetSystemPropertiesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Values" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSystemProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSystemPropertiesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="DeleteItem">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteItemResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="MoveItem">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Target" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MoveItemResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListChildren">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Recursive" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListChildrenResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CatalogItems" type="s0:ArrayOfCatalogItem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfCatalogItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CatalogItem" nillable="true" type="s0:CatalogItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CatalogItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Path" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VirtualPath" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Type" type="s0:ItemTypeEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="Size" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Hidden" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="CreationDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="ModifiedDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ModifiedBy" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MimeType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExecutionDate" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ItemTypeEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="Folder" />
+          <s:enumeration value="Report" />
+          <s:enumeration value="Resource" />
+          <s:enumeration value="LinkedReport" />
+          <s:enumeration value="DataSource" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPropertiesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Values" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ItemNamespaceHeader" type="s0:ItemNamespaceHeader" />
+      <s:complexType name="ItemNamespaceHeader">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ItemNamespace" type="s0:ItemNamespaceEnum" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ItemNamespaceEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="PathBased" />
+          <s:enumeration value="GUIDBased" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SetProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetPropertiesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetItemType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="Type" type="s0:ItemTypeEnum" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateFolder">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Folder" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parent" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateFolderResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="CreateReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parent" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Overwrite" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Warnings" type="s0:ArrayOfWarning" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfWarning">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Warning" nillable="true" type="s0:Warning" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Warning">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Severity" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ObjectName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ObjectType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetReportDefinition">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportDefinitionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportDefinition">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportDefinitionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Warnings" type="s0:ArrayOfWarning" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateResource">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Resource" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parent" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Overwrite" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="Contents" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="MimeType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateResourceResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SetResourceContents">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Resource" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Contents" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="MimeType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetResourceContentsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetResourceContents">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Resource" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetResourceContentsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Contents" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="MimeType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportParameters">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="HistoryID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ForRendering" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="Values" type="s0:ArrayOfParameterValue" />
+            <s:element minOccurs="0" maxOccurs="1" name="Credentials" type="s0:ArrayOfDataSourceCredentials" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfParameterValue">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ParameterValue" nillable="true" type="s0:ParameterValue" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ParameterValue">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:ParameterValueOrFieldReference">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Label" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ParameterValueOrFieldReference" />
+      <s:complexType name="ArrayOfDataSourceCredentials">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DataSourceCredentials" nillable="true" type="s0:DataSourceCredentials" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DataSourceCredentials">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DataSourceName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetReportParametersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfReportParameter" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfReportParameter">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ReportParameter" nillable="true" type="s0:ReportParameter" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ReportParameter">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Type" type="s0:ParameterTypeEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="Nullable" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="AllowBlank" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="MultiValue" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="QueryParameter" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Prompt" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PromptUser" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Dependencies" type="s0:ArrayOfString1" />
+          <s:element minOccurs="0" maxOccurs="1" name="ValidValuesQueryBased" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ValidValues" type="s0:ArrayOfValidValue" />
+          <s:element minOccurs="0" maxOccurs="1" name="DefaultValuesQueryBased" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="DefaultValues" type="s0:ArrayOfString2" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s0:ParameterStateEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorMessage" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ParameterTypeEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Boolean" />
+          <s:enumeration value="DateTime" />
+          <s:enumeration value="Integer" />
+          <s:enumeration value="Float" />
+          <s:enumeration value="String" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfString1">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Dependency" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfValidValue">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ValidValue" nillable="true" type="s0:ValidValue" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ValidValue">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Label" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString2">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Value" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ParameterStateEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="HasValidValue" />
+          <s:enumeration value="MissingValidValue" />
+          <s:enumeration value="HasOutstandingDependencies" />
+          <s:enumeration value="DynamicValuesUnavailable" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SetReportParameters">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfReportParameter" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportParametersResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="CreateLinkedReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parent" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Link" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateLinkedReportResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetReportLink">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportLinkResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Link" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportLink">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Link" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportLinkResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListLinkedReports">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListLinkedReportsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Reports" type="s0:ArrayOfCatalogItem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Render">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Format" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="HistoryID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DeviceInfo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValue" />
+            <s:element minOccurs="0" maxOccurs="1" name="Credentials" type="s0:ArrayOfDataSourceCredentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="ShowHideToggle" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RenderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Result" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="Encoding" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MimeType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ParametersUsed" type="s0:ArrayOfParameterValue" />
+            <s:element minOccurs="0" maxOccurs="1" name="Warnings" type="s0:ArrayOfWarning" />
+            <s:element minOccurs="0" maxOccurs="1" name="StreamIds" type="s0:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SessionHeader" type="s0:SessionHeader" />
+      <s:complexType name="SessionHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SessionId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsNewExecution" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExecutionDateTime" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExpirationDateTime" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RenderStream">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Format" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="StreamID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="HistoryID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DeviceInfo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValue" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RenderStreamResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Result" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="Encoding" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MimeType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRenderResource">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Format" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DeviceInfo" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRenderResourceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Result" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="MimeType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetExecutionOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ExecutionSetting" type="s0:ExecutionSettingEnum" />
+            <s:choice minOccurs="1" maxOccurs="1">
+              <s:element minOccurs="0" maxOccurs="1" name="NoSchedule" type="s0:NoSchedule" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleDefinition" type="s0:ScheduleDefinition" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleReference" type="s0:ScheduleReference" />
+            </s:choice>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="ExecutionSettingEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Live" />
+          <s:enumeration value="Snapshot" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="NoSchedule">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:ScheduleDefinitionOrReference" />
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ScheduleDefinitionOrReference" />
+      <s:complexType name="ScheduleReference">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:ScheduleDefinitionOrReference">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s0:ScheduleDefinition" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ScheduleDefinition">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:ScheduleDefinitionOrReference">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="StartDateTime" type="s:dateTime" nillable="true" />
+              <s:element minOccurs="0" maxOccurs="1" name="EndDate" type="s:dateTime" />
+              <s:choice minOccurs="1" maxOccurs="1">
+                <s:element minOccurs="0" maxOccurs="1" name="MonthlyDOWRecurrence" type="s0:MonthlyDOWRecurrence" />
+                <s:element minOccurs="0" maxOccurs="1" name="MonthlyRecurrence" type="s0:MonthlyRecurrence" />
+                <s:element minOccurs="0" maxOccurs="1" name="WeeklyRecurrence" type="s0:WeeklyRecurrence" />
+                <s:element minOccurs="0" maxOccurs="1" name="MinuteRecurrence" type="s0:MinuteRecurrence" />
+                <s:element minOccurs="0" maxOccurs="1" name="DailyRecurrence" type="s0:DailyRecurrence" />
+              </s:choice>
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="MonthlyDOWRecurrence">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:RecurrencePattern">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="WhichWeek" type="s0:WeekNumberEnum" />
+              <s:element minOccurs="0" maxOccurs="1" name="DaysOfWeek" type="s0:DaysOfWeekSelector" />
+              <s:element minOccurs="0" maxOccurs="1" name="MonthsOfYear" type="s0:MonthsOfYearSelector" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="RecurrencePattern" />
+      <s:complexType name="MonthlyRecurrence">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:RecurrencePattern">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Days" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="MonthsOfYear" type="s0:MonthsOfYearSelector" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="MonthsOfYearSelector">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="January" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="February" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="March" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="April" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="May" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="June" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="July" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="August" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="September" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="October" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="November" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="December" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DailyRecurrence">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:RecurrencePattern">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="DaysInterval" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="MinuteRecurrence">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:RecurrencePattern">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="MinutesInterval" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="WeeklyRecurrence">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:RecurrencePattern">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="WeeksInterval" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="DaysOfWeek" type="s0:DaysOfWeekSelector" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="DaysOfWeekSelector">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Sunday" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Monday" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Tuesday" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Wednesday" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Thursday" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Friday" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Saturday" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="WeekNumberEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="FirstWeek" />
+          <s:enumeration value="SecondWeek" />
+          <s:enumeration value="ThirdWeek" />
+          <s:enumeration value="FourthWeek" />
+          <s:enumeration value="LastWeek" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SetExecutionOptionsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetExecutionOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetExecutionOptionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ExecutionSetting" type="s0:ExecutionSettingEnum" />
+            <s:choice minOccurs="1" maxOccurs="1">
+              <s:element minOccurs="0" maxOccurs="1" name="NoSchedule" type="s0:NoSchedule" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleDefinition" type="s0:ScheduleDefinition" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleReference" type="s0:ScheduleReference" />
+            </s:choice>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetCacheOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="CacheReport" type="s:boolean" />
+            <s:choice minOccurs="1" maxOccurs="1">
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleExpiration" type="s0:ScheduleExpiration" />
+              <s:element minOccurs="0" maxOccurs="1" name="TimeExpiration" type="s0:TimeExpiration" />
+            </s:choice>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ScheduleExpiration">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:ExpirationDefinition">
+            <s:sequence>
+              <s:choice minOccurs="1" maxOccurs="1">
+                <s:element minOccurs="0" maxOccurs="1" name="ScheduleReference" type="s0:ScheduleReference" />
+                <s:element minOccurs="0" maxOccurs="1" name="ScheduleDefinition" type="s0:ScheduleDefinition" />
+              </s:choice>
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ExpirationDefinition" />
+      <s:complexType name="TimeExpiration">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:ExpirationDefinition">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="Minutes" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SetCacheOptionsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetCacheOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCacheOptionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CacheReport" type="s:boolean" />
+            <s:choice minOccurs="1" maxOccurs="1">
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleExpiration" type="s0:ScheduleExpiration" />
+              <s:element minOccurs="0" maxOccurs="1" name="TimeExpiration" type="s0:TimeExpiration" />
+            </s:choice>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateReportExecutionSnapshot">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateReportExecutionSnapshotResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="FlushCache">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FlushCacheResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListJobs">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListJobsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Jobs" type="s0:ArrayOfJob" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfJob">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Job" nillable="true" type="s0:Job" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Job">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="JobID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Path" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Machine" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="User" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="StartDateTime" type="s:dateTime" nillable="true"/>
+          <s:element minOccurs="1" maxOccurs="1" name="Action" type="s0:JobActionEnum" />
+          <s:element minOccurs="1" maxOccurs="1" name="Type" type="s0:JobTypeEnum" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="s0:JobStatusEnum" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="JobActionEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Render" />
+          <s:enumeration value="SnapshotCreation" />
+          <s:enumeration value="ReportHistoryCreation" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="JobTypeEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="User" />
+          <s:enumeration value="System" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="JobStatusEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="New" />
+          <s:enumeration value="Running" />
+          <s:enumeration value="CancelRequested" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="CancelJob">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JobID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelJobResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CancelJobResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateDataSource">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parent" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Overwrite" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s0:DataSourceDefinition" />
+            <s:element minOccurs="0" maxOccurs="1" name="Properties" type="s0:ArrayOfProperty" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="DataSourceDefinition">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:DataSourceDefinitionOrReference">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Extension" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ConnectString" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="CredentialRetrieval" type="s0:CredentialRetrievalEnum" nillable="true"/>
+              <s:element minOccurs="1" maxOccurs="1" name="WindowsCredentials" type="s:boolean" />
+              <s:element minOccurs="0" maxOccurs="1" name="ImpersonateUser" type="s:boolean" />
+              <s:element minOccurs="0" maxOccurs="1" name="Prompt" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Enabled" type="s:boolean" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="DataSourceDefinitionOrReference" />
+      <s:simpleType name="CredentialRetrievalEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Prompt" />
+          <s:enumeration value="Store" />
+          <s:enumeration value="Integrated" />
+          <s:enumeration value="None" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="CreateDataSourceResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetDataSourceContents">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataSourceContentsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s0:DataSourceDefinition" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetDataSourceContents">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s0:DataSourceDefinition" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetDataSourceContentsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="EnableDataSource">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnableDataSourceResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="DisableDataSource">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DisableDataSourceResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListReportsUsingDataSource">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListReportsUsingDataSourceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Reports" type="s0:ArrayOfCatalogItem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportDataSources">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataSources" type="s0:ArrayOfDataSource" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDataSource">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DataSource" nillable="true" type="s0:DataSource" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DataSource">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:choice minOccurs="1" maxOccurs="1">
+            <s:element minOccurs="0" maxOccurs="1" name="InvalidDataSourceReference" type="s0:InvalidDataSourceReference" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataSourceReference" type="s0:DataSourceReference" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataSourceDefinition" type="s0:DataSourceDefinition" />
+          </s:choice>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="InvalidDataSourceReference">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:DataSourceDefinitionOrReference" />
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="DataSourceReference">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:DataSourceDefinitionOrReference">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Reference" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SetReportDataSourcesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetReportDataSources">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportDataSourcesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSources" type="s0:ArrayOfDataSource" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportDataSourcePrompts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportDataSourcePromptsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSourcePrompts" type="s0:ArrayOfDataSourcePrompt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDataSourcePrompt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DataSourcePrompt" nillable="true" type="s0:DataSourcePrompt" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DataSourcePrompt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DataSourceID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Prompt" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CreateReportHistorySnapshot">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateReportHistorySnapshotResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HistoryID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Warnings" type="s0:ArrayOfWarning" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportHistoryOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="EnableManualSnapshotCreation" type="s:boolean" />
+            <s:element minOccurs="1" maxOccurs="1" name="KeepExecutionSnapshots" type="s:boolean" />
+            <s:choice minOccurs="1" maxOccurs="1">
+              <s:element minOccurs="0" maxOccurs="1" name="NoSchedule" type="s0:NoSchedule" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleDefinition" type="s0:ScheduleDefinition" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleReference" type="s0:ScheduleReference" />
+            </s:choice>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportHistoryOptionsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetReportHistoryOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportHistoryOptionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="EnableManualSnapshotCreation" type="s:boolean" />
+            <s:element minOccurs="1" maxOccurs="1" name="KeepExecutionSnapshots" type="s:boolean" />
+            <s:choice minOccurs="1" maxOccurs="1">
+              <s:element minOccurs="0" maxOccurs="1" name="NoSchedule" type="s0:NoSchedule" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleDefinition" type="s0:ScheduleDefinition" />
+              <s:element minOccurs="0" maxOccurs="1" name="ScheduleReference" type="s0:ScheduleReference" />
+            </s:choice>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportHistoryLimit">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="UseSystem" type="s:boolean" />
+            <s:element minOccurs="1" maxOccurs="1" name="HistoryLimit" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetReportHistoryLimitResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetReportHistoryLimit">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportHistoryLimitResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="HistoryLimit" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="IsSystem" type="s:boolean" />
+            <s:element minOccurs="1" maxOccurs="1" name="SystemLimit" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListReportHistory">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListReportHistoryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ReportHistory" type="s0:ArrayOfReportHistorySnapshot" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfReportHistorySnapshot">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ReportHistorySnapshot" nillable="true" type="s0:ReportHistorySnapshot" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ReportHistorySnapshot">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="HistoryID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CreationDate" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Size" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="DeleteReportHistorySnapshot">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="HistoryID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteReportHistorySnapshotResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="FindItems">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Folder" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="BooleanOperator" type="s0:BooleanOperatorEnum" />
+            <s:element minOccurs="0" maxOccurs="1" name="Conditions" type="s0:ArrayOfSearchCondition" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="BooleanOperatorEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="And" />
+          <s:enumeration value="Or" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfSearchCondition">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SearchCondition" nillable="true" type="s0:SearchCondition" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchCondition">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:Property">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Condition" type="s0:ConditionEnum" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:simpleType name="ConditionEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Contains" />
+          <s:enumeration value="Equals" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="FindItemsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Items" type="s0:ArrayOfCatalogItem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateSchedule">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleDefinition" type="s0:ScheduleDefinition" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateScheduleResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSchedule">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteScheduleResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SetScheduleProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleDefinition" type="s0:ScheduleDefinition" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSchedulePropertiesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetScheduleProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSchedulePropertiesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Schedule" type="s0:Schedule" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Schedule">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Definition" type="s0:ScheduleDefinition" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Creator" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NextRunTime" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastRunTime" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReferencesPresent" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="State" type="s0:ScheduleStateEnum" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ScheduleStateEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Ready" />
+          <s:enumeration value="Running" />
+          <s:enumeration value="Paused" />
+          <s:enumeration value="Expired" />
+          <s:enumeration value="Failing" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="ListScheduledReports">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListScheduledReportsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Reports" type="s0:ArrayOfCatalogItem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListSchedules">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListSchedulesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Schedules" type="s0:ArrayOfSchedule" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfSchedule">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Schedule" nillable="true" type="s0:Schedule" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PauseSchedule">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PauseScheduleResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="ResumeSchedule">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ScheduleID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ResumeScheduleResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="CreateSubscription">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ExtensionSettings" type="s0:ExtensionSettings" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MatchData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValue" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ExtensionSettings">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Extension" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ParameterValues" type="s0:ArrayOfChoice1" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfChoice1">
+        <s:choice minOccurs="0" maxOccurs="unbounded">
+          <s:element minOccurs="1" maxOccurs="1" name="ParameterValue" nillable="true" type="s0:ParameterValue" />
+          <s:element minOccurs="1" maxOccurs="1" name="ParameterFieldReference" nillable="true" type="s0:ParameterFieldReference" />
+        </s:choice>
+      </s:complexType>
+      <s:complexType name="ParameterFieldReference">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:ParameterValueOrFieldReference">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="ParameterName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FieldAlias" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="CreateSubscriptionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriptionID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateDataDrivenSubscription">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ExtensionSettings" type="s0:ExtensionSettings" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataRetrievalPlan" type="s0:DataRetrievalPlan" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MatchData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValueOrFieldReference" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="DataRetrievalPlan">
+        <s:sequence>
+          <s:choice minOccurs="1" maxOccurs="1">
+            <s:element minOccurs="0" maxOccurs="1" name="InvalidDataSourceReference" type="s0:InvalidDataSourceReference" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataSourceReference" type="s0:DataSourceReference" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataSourceDefinition" type="s0:DataSourceDefinition" />
+          </s:choice>
+          <s:element minOccurs="0" maxOccurs="1" name="DataSet" type="s0:DataSetDefinition" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DataSetDefinition">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Fields" type="s0:ArrayOfField" />
+          <s:element minOccurs="0" maxOccurs="1" name="Query" type="s0:QueryDefinition" />
+          <s:element minOccurs="0" maxOccurs="1" name="CaseSensitivity" type="s0:SensitivityEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="Collation" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AccentSensitivity" type="s0:SensitivityEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="KanatypeSensitivity" type="s0:SensitivityEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="WidthSensitivity" type="s0:SensitivityEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfField">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Field" nillable="true" type="s0:Field" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Field">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Alias" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="QueryDefinition">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CommandType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CommandText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Timeout" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="SensitivityEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="True" />
+          <s:enumeration value="False" />
+          <s:enumeration value="Auto" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfParameterValueOrFieldReference">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ParameterValueOrFieldReference" nillable="true" type="s0:ParameterValueOrFieldReference" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CreateDataDrivenSubscriptionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriptionID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSubscriptionProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriptionID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ExtensionSettings" type="s0:ExtensionSettings" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MatchData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValue" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSubscriptionPropertiesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SetDataDrivenSubscriptionProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataDrivenSubscriptionID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ExtensionSettings" type="s0:ExtensionSettings" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataRetrievalPlan" type="s0:DataRetrievalPlan" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MatchData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValueOrFieldReference" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetDataDrivenSubscriptionPropertiesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSubscriptionProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriptionID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSubscriptionPropertiesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Owner" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ExtensionSettings" type="s0:ExtensionSettings" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Active" type="s0:ActiveState" />
+            <s:element minOccurs="0" maxOccurs="1" name="Status" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MatchData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValue" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ActiveState">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DeliveryExtensionRemoved" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="SharedDataSourceRemoved" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="MissingParameterValue" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="InvalidParameterValue" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="UnknownReportParameter" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetDataDrivenSubscriptionProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataDrivenSubscriptionID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataDrivenSubscriptionPropertiesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Owner" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ExtensionSettings" type="s0:ExtensionSettings" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataRetrievalPlan" type="s0:DataRetrievalPlan" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Active" type="s0:ActiveState" />
+            <s:element minOccurs="0" maxOccurs="1" name="Status" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MatchData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="s0:ArrayOfParameterValueOrFieldReference" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSubscription">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriptionID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSubscriptionResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="PrepareQuery">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s0:DataSource" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataSet" type="s0:DataSetDefinition" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PrepareQueryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSettings" type="s0:DataSetDefinition" />
+            <s:element minOccurs="1" maxOccurs="1" name="Changed" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetExtensionSettings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Extension" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetExtensionSettingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ExtensionParameters" type="s0:ArrayOfExtensionParameter" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfExtensionParameter">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ExtensionParameter" nillable="true" type="s0:ExtensionParameter" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ExtensionParameter">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Required" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReadOnly" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Error" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Encrypted" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsPassword" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ValidValues" type="s0:ArrayOfValidValue1" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfValidValue1">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Value" nillable="true" type="s0:ValidValue" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ValidateExtensionSettings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Extension" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ParameterValues" type="s0:ArrayOfParameterValueOrFieldReference" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateExtensionSettingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ParameterErrors" type="s0:ArrayOfExtensionParameter" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListSubscriptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Owner" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListSubscriptionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriptionItems" type="s0:ArrayOfSubscription" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfSubscription">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Subscription" nillable="true" type="s0:Subscription" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Subscription">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SubscriptionID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Owner" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Path" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VirtualPath" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Report" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DeliverySettings" type="s0:ExtensionSettings" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Active" type="s0:ActiveState" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastExecuted" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="ModifiedBy" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ModifiedDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsDataDriven" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ListSubscriptionsUsingDataSource">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataSource" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListSubscriptionsUsingDataSourceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriptionItems" type="s0:ArrayOfSubscription" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListExtensions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ExtensionType" type="s0:ExtensionTypeEnum" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="ExtensionTypeEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Delivery" />
+          <s:enumeration value="Render" />
+          <s:enumeration value="Data" />
+          <s:enumeration value="All" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="ListExtensionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Extensions" type="s0:ArrayOfExtension" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfExtension">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Extension" nillable="true" type="s0:Extension" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Extension">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ExtensionType" type="s0:ExtensionTypeEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LocalizedName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Visible" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ListEvents">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListEventsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Events" type="s0:ArrayOfEvent" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfEvent">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Event" nillable="true" type="s0:Event" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Event">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Type" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="FireEvent">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EventType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EventData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FireEventResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListSystemTasks">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListSystemTasksResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Tasks" type="s0:ArrayOfTask" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfTask">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Task" nillable="true" type="s0:Task" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Task">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="TaskID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ListTasks">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListTasksResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Tasks" type="s0:ArrayOfTask" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListSystemRoles">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListSystemRolesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Roles" type="s0:ArrayOfRole" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfRole">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Role" nillable="true" type="s0:Role" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Role">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ListRoles">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListRolesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Roles" type="s0:ArrayOfRole" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateRole">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Tasks" type="s0:ArrayOfTask" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateRoleResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="DeleteRole">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteRoleResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetRoleProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRolePropertiesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Tasks" type="s0:ArrayOfTask" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetRoleProperties">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Tasks" type="s0:ArrayOfTask" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetRolePropertiesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSystemPolicies">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSystemPoliciesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Policies" type="s0:ArrayOfPolicy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfPolicy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Policy" nillable="true" type="s0:Policy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Policy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="GroupUserName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Roles" type="s0:ArrayOfRole" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SetSystemPolicies">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Policies" type="s0:ArrayOfPolicy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSystemPoliciesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetPolicies">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPoliciesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Policies" type="s0:ArrayOfPolicy" />
+            <s:element minOccurs="1" maxOccurs="1" name="InheritParent" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetPolicies">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Policies" type="s0:ArrayOfPolicy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetPoliciesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="InheritParentSecurity">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InheritParentSecurityResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSystemPermissions">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSystemPermissionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Permissions" type="s0:ArrayOfString3" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString3">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Operation" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPermissions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Item" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPermissionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Permissions" type="s0:ArrayOfString3" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LogonUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="userName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="authority" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LogonUserResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="Logoff">
+        <s:complexType />
+      </s:element>
+      <s:element name="LogoffResponse">
+        <s:complexType />
+      </s:element>
+    </s:schema>
+  </types>
+  <message name="ListSecureMethodsSoapIn">
+    <part name="parameters" element="s0:ListSecureMethods" />
+  </message>
+  <message name="ListSecureMethodsSoapOut">
+    <part name="parameters" element="s0:ListSecureMethodsResponse" />
+  </message>
+  <message name="ListSecureMethodsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateBatchSoapIn">
+    <part name="parameters" element="s0:CreateBatch" />
+  </message>
+  <message name="CreateBatchSoapOut">
+    <part name="parameters" element="s0:CreateBatchResponse" />
+  </message>
+  <message name="CreateBatchServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CancelBatchSoapIn">
+    <part name="parameters" element="s0:CancelBatch" />
+  </message>
+  <message name="CancelBatchSoapOut">
+    <part name="parameters" element="s0:CancelBatchResponse" />
+  </message>
+  <message name="CancelBatchBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CancelBatchServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ExecuteBatchSoapIn">
+    <part name="parameters" element="s0:ExecuteBatch" />
+  </message>
+  <message name="ExecuteBatchSoapOut">
+    <part name="parameters" element="s0:ExecuteBatchResponse" />
+  </message>
+  <message name="ExecuteBatchBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="ExecuteBatchServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetSystemPropertiesSoapIn">
+    <part name="parameters" element="s0:GetSystemProperties" />
+  </message>
+  <message name="GetSystemPropertiesSoapOut">
+    <part name="parameters" element="s0:GetSystemPropertiesResponse" />
+  </message>
+  <message name="GetSystemPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetSystemPropertiesSoapIn">
+    <part name="parameters" element="s0:SetSystemProperties" />
+  </message>
+  <message name="SetSystemPropertiesSoapOut">
+    <part name="parameters" element="s0:SetSystemPropertiesResponse" />
+  </message>
+  <message name="SetSystemPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="DeleteItemSoapIn">
+    <part name="parameters" element="s0:DeleteItem" />
+  </message>
+  <message name="DeleteItemSoapOut">
+    <part name="parameters" element="s0:DeleteItemResponse" />
+  </message>
+  <message name="DeleteItemBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="DeleteItemServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="MoveItemSoapIn">
+    <part name="parameters" element="s0:MoveItem" />
+  </message>
+  <message name="MoveItemSoapOut">
+    <part name="parameters" element="s0:MoveItemResponse" />
+  </message>
+  <message name="MoveItemBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="MoveItemServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListChildrenSoapIn">
+    <part name="parameters" element="s0:ListChildren" />
+  </message>
+  <message name="ListChildrenSoapOut">
+    <part name="parameters" element="s0:ListChildrenResponse" />
+  </message>
+  <message name="ListChildrenServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetPropertiesSoapIn">
+    <part name="parameters" element="s0:GetProperties" />
+  </message>
+  <message name="GetPropertiesSoapOut">
+    <part name="parameters" element="s0:GetPropertiesResponse" />
+  </message>
+  <message name="GetPropertiesItemNamespaceHeader">
+    <part name="ItemNamespaceHeader" element="s0:ItemNamespaceHeader" />
+  </message>
+  <message name="GetPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetPropertiesSoapIn">
+    <part name="parameters" element="s0:SetProperties" />
+  </message>
+  <message name="SetPropertiesSoapOut">
+    <part name="parameters" element="s0:SetPropertiesResponse" />
+  </message>
+  <message name="SetPropertiesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetItemTypeSoapIn">
+    <part name="parameters" element="s0:GetItemType" />
+  </message>
+  <message name="GetItemTypeSoapOut">
+    <part name="parameters" element="s0:GetItemTypeResponse" />
+  </message>
+  <message name="GetItemTypeServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateFolderSoapIn">
+    <part name="parameters" element="s0:CreateFolder" />
+  </message>
+  <message name="CreateFolderSoapOut">
+    <part name="parameters" element="s0:CreateFolderResponse" />
+  </message>
+  <message name="CreateFolderBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateFolderServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateReportSoapIn">
+    <part name="parameters" element="s0:CreateReport" />
+  </message>
+  <message name="CreateReportSoapOut">
+    <part name="parameters" element="s0:CreateReportResponse" />
+  </message>
+  <message name="CreateReportBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateReportServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetReportDefinitionSoapIn">
+    <part name="parameters" element="s0:GetReportDefinition" />
+  </message>
+  <message name="GetReportDefinitionSoapOut">
+    <part name="parameters" element="s0:GetReportDefinitionResponse" />
+  </message>
+  <message name="GetReportDefinitionServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetReportDefinitionSoapIn">
+    <part name="parameters" element="s0:SetReportDefinition" />
+  </message>
+  <message name="SetReportDefinitionSoapOut">
+    <part name="parameters" element="s0:SetReportDefinitionResponse" />
+  </message>
+  <message name="SetReportDefinitionBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetReportDefinitionServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateResourceSoapIn">
+    <part name="parameters" element="s0:CreateResource" />
+  </message>
+  <message name="CreateResourceSoapOut">
+    <part name="parameters" element="s0:CreateResourceResponse" />
+  </message>
+  <message name="CreateResourceBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateResourceServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetResourceContentsSoapIn">
+    <part name="parameters" element="s0:SetResourceContents" />
+  </message>
+  <message name="SetResourceContentsSoapOut">
+    <part name="parameters" element="s0:SetResourceContentsResponse" />
+  </message>
+  <message name="SetResourceContentsBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetResourceContentsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetResourceContentsSoapIn">
+    <part name="parameters" element="s0:GetResourceContents" />
+  </message>
+  <message name="GetResourceContentsSoapOut">
+    <part name="parameters" element="s0:GetResourceContentsResponse" />
+  </message>
+  <message name="GetResourceContentsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetReportParametersSoapIn">
+    <part name="parameters" element="s0:GetReportParameters" />
+  </message>
+  <message name="GetReportParametersSoapOut">
+    <part name="parameters" element="s0:GetReportParametersResponse" />
+  </message>
+  <message name="GetReportParametersServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetReportParametersSoapIn">
+    <part name="parameters" element="s0:SetReportParameters" />
+  </message>
+  <message name="SetReportParametersSoapOut">
+    <part name="parameters" element="s0:SetReportParametersResponse" />
+  </message>
+  <message name="SetReportParametersBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetReportParametersServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateLinkedReportSoapIn">
+    <part name="parameters" element="s0:CreateLinkedReport" />
+  </message>
+  <message name="CreateLinkedReportSoapOut">
+    <part name="parameters" element="s0:CreateLinkedReportResponse" />
+  </message>
+  <message name="CreateLinkedReportBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateLinkedReportServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetReportLinkSoapIn">
+    <part name="parameters" element="s0:GetReportLink" />
+  </message>
+  <message name="GetReportLinkSoapOut">
+    <part name="parameters" element="s0:GetReportLinkResponse" />
+  </message>
+  <message name="GetReportLinkServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetReportLinkSoapIn">
+    <part name="parameters" element="s0:SetReportLink" />
+  </message>
+  <message name="SetReportLinkSoapOut">
+    <part name="parameters" element="s0:SetReportLinkResponse" />
+  </message>
+  <message name="SetReportLinkBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetReportLinkServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListLinkedReportsSoapIn">
+    <part name="parameters" element="s0:ListLinkedReports" />
+  </message>
+  <message name="ListLinkedReportsSoapOut">
+    <part name="parameters" element="s0:ListLinkedReportsResponse" />
+  </message>
+  <message name="ListLinkedReportsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="RenderSoapIn">
+    <part name="parameters" element="s0:Render" />
+  </message>
+  <message name="RenderSoapOut">
+    <part name="parameters" element="s0:RenderResponse" />
+  </message>
+  <message name="RenderServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="RenderSessionHeader">
+    <part name="SessionHeader" element="s0:SessionHeader" />
+  </message>
+  <message name="RenderStreamSoapIn">
+    <part name="parameters" element="s0:RenderStream" />
+  </message>
+  <message name="RenderStreamSoapOut">
+    <part name="parameters" element="s0:RenderStreamResponse" />
+  </message>
+  <message name="RenderStreamServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="RenderStreamSessionHeader">
+    <part name="SessionHeader" element="s0:SessionHeader" />
+  </message>
+  <message name="GetRenderResourceSoapIn">
+    <part name="parameters" element="s0:GetRenderResource" />
+  </message>
+  <message name="GetRenderResourceSoapOut">
+    <part name="parameters" element="s0:GetRenderResourceResponse" />
+  </message>
+  <message name="GetRenderResourceServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetExecutionOptionsSoapIn">
+    <part name="parameters" element="s0:SetExecutionOptions" />
+  </message>
+  <message name="SetExecutionOptionsSoapOut">
+    <part name="parameters" element="s0:SetExecutionOptionsResponse" />
+  </message>
+  <message name="SetExecutionOptionsBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetExecutionOptionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetExecutionOptionsSoapIn">
+    <part name="parameters" element="s0:GetExecutionOptions" />
+  </message>
+  <message name="GetExecutionOptionsSoapOut">
+    <part name="parameters" element="s0:GetExecutionOptionsResponse" />
+  </message>
+  <message name="GetExecutionOptionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetCacheOptionsSoapIn">
+    <part name="parameters" element="s0:SetCacheOptions" />
+  </message>
+  <message name="SetCacheOptionsSoapOut">
+    <part name="parameters" element="s0:SetCacheOptionsResponse" />
+  </message>
+  <message name="SetCacheOptionsBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetCacheOptionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetCacheOptionsSoapIn">
+    <part name="parameters" element="s0:GetCacheOptions" />
+  </message>
+  <message name="GetCacheOptionsSoapOut">
+    <part name="parameters" element="s0:GetCacheOptionsResponse" />
+  </message>
+  <message name="GetCacheOptionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="UpdateReportExecutionSnapshotSoapIn">
+    <part name="parameters" element="s0:UpdateReportExecutionSnapshot" />
+  </message>
+  <message name="UpdateReportExecutionSnapshotSoapOut">
+    <part name="parameters" element="s0:UpdateReportExecutionSnapshotResponse" />
+  </message>
+  <message name="UpdateReportExecutionSnapshotBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="UpdateReportExecutionSnapshotServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="FlushCacheSoapIn">
+    <part name="parameters" element="s0:FlushCache" />
+  </message>
+  <message name="FlushCacheSoapOut">
+    <part name="parameters" element="s0:FlushCacheResponse" />
+  </message>
+  <message name="FlushCacheBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="FlushCacheServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListJobsSoapIn">
+    <part name="parameters" element="s0:ListJobs" />
+  </message>
+  <message name="ListJobsSoapOut">
+    <part name="parameters" element="s0:ListJobsResponse" />
+  </message>
+  <message name="ListJobsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CancelJobSoapIn">
+    <part name="parameters" element="s0:CancelJob" />
+  </message>
+  <message name="CancelJobSoapOut">
+    <part name="parameters" element="s0:CancelJobResponse" />
+  </message>
+  <message name="CancelJobServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateDataSourceSoapIn">
+    <part name="parameters" element="s0:CreateDataSource" />
+  </message>
+  <message name="CreateDataSourceSoapOut">
+    <part name="parameters" element="s0:CreateDataSourceResponse" />
+  </message>
+  <message name="CreateDataSourceBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateDataSourceServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetDataSourceContentsSoapIn">
+    <part name="parameters" element="s0:GetDataSourceContents" />
+  </message>
+  <message name="GetDataSourceContentsSoapOut">
+    <part name="parameters" element="s0:GetDataSourceContentsResponse" />
+  </message>
+  <message name="GetDataSourceContentsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetDataSourceContentsSoapIn">
+    <part name="parameters" element="s0:SetDataSourceContents" />
+  </message>
+  <message name="SetDataSourceContentsSoapOut">
+    <part name="parameters" element="s0:SetDataSourceContentsResponse" />
+  </message>
+  <message name="SetDataSourceContentsBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetDataSourceContentsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="EnableDataSourceSoapIn">
+    <part name="parameters" element="s0:EnableDataSource" />
+  </message>
+  <message name="EnableDataSourceSoapOut">
+    <part name="parameters" element="s0:EnableDataSourceResponse" />
+  </message>
+  <message name="EnableDataSourceBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="EnableDataSourceServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="DisableDataSourceSoapIn">
+    <part name="parameters" element="s0:DisableDataSource" />
+  </message>
+  <message name="DisableDataSourceSoapOut">
+    <part name="parameters" element="s0:DisableDataSourceResponse" />
+  </message>
+  <message name="DisableDataSourceBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="DisableDataSourceServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListReportsUsingDataSourceSoapIn">
+    <part name="parameters" element="s0:ListReportsUsingDataSource" />
+  </message>
+  <message name="ListReportsUsingDataSourceSoapOut">
+    <part name="parameters" element="s0:ListReportsUsingDataSourceResponse" />
+  </message>
+  <message name="ListReportsUsingDataSourceServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetReportDataSourcesSoapIn">
+    <part name="parameters" element="s0:SetReportDataSources" />
+  </message>
+  <message name="SetReportDataSourcesSoapOut">
+    <part name="parameters" element="s0:SetReportDataSourcesResponse" />
+  </message>
+  <message name="SetReportDataSourcesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetReportDataSourcesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetReportDataSourcesSoapIn">
+    <part name="parameters" element="s0:GetReportDataSources" />
+  </message>
+  <message name="GetReportDataSourcesSoapOut">
+    <part name="parameters" element="s0:GetReportDataSourcesResponse" />
+  </message>
+  <message name="GetReportDataSourcesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetReportDataSourcePromptsSoapIn">
+    <part name="parameters" element="s0:GetReportDataSourcePrompts" />
+  </message>
+  <message name="GetReportDataSourcePromptsSoapOut">
+    <part name="parameters" element="s0:GetReportDataSourcePromptsResponse" />
+  </message>
+  <message name="GetReportDataSourcePromptsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateReportHistorySnapshotSoapIn">
+    <part name="parameters" element="s0:CreateReportHistorySnapshot" />
+  </message>
+  <message name="CreateReportHistorySnapshotSoapOut">
+    <part name="parameters" element="s0:CreateReportHistorySnapshotResponse" />
+  </message>
+  <message name="CreateReportHistorySnapshotBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateReportHistorySnapshotServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetReportHistoryOptionsSoapIn">
+    <part name="parameters" element="s0:SetReportHistoryOptions" />
+  </message>
+  <message name="SetReportHistoryOptionsSoapOut">
+    <part name="parameters" element="s0:SetReportHistoryOptionsResponse" />
+  </message>
+  <message name="SetReportHistoryOptionsBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetReportHistoryOptionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetReportHistoryOptionsSoapIn">
+    <part name="parameters" element="s0:GetReportHistoryOptions" />
+  </message>
+  <message name="GetReportHistoryOptionsSoapOut">
+    <part name="parameters" element="s0:GetReportHistoryOptionsResponse" />
+  </message>
+  <message name="GetReportHistoryOptionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetReportHistoryLimitSoapIn">
+    <part name="parameters" element="s0:SetReportHistoryLimit" />
+  </message>
+  <message name="SetReportHistoryLimitSoapOut">
+    <part name="parameters" element="s0:SetReportHistoryLimitResponse" />
+  </message>
+  <message name="SetReportHistoryLimitBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetReportHistoryLimitServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetReportHistoryLimitSoapIn">
+    <part name="parameters" element="s0:GetReportHistoryLimit" />
+  </message>
+  <message name="GetReportHistoryLimitSoapOut">
+    <part name="parameters" element="s0:GetReportHistoryLimitResponse" />
+  </message>
+  <message name="GetReportHistoryLimitServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListReportHistorySoapIn">
+    <part name="parameters" element="s0:ListReportHistory" />
+  </message>
+  <message name="ListReportHistorySoapOut">
+    <part name="parameters" element="s0:ListReportHistoryResponse" />
+  </message>
+  <message name="ListReportHistoryServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="DeleteReportHistorySnapshotSoapIn">
+    <part name="parameters" element="s0:DeleteReportHistorySnapshot" />
+  </message>
+  <message name="DeleteReportHistorySnapshotSoapOut">
+    <part name="parameters" element="s0:DeleteReportHistorySnapshotResponse" />
+  </message>
+  <message name="DeleteReportHistorySnapshotBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="DeleteReportHistorySnapshotServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="FindItemsSoapIn">
+    <part name="parameters" element="s0:FindItems" />
+  </message>
+  <message name="FindItemsSoapOut">
+    <part name="parameters" element="s0:FindItemsResponse" />
+  </message>
+  <message name="FindItemsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateScheduleSoapIn">
+    <part name="parameters" element="s0:CreateSchedule" />
+  </message>
+  <message name="CreateScheduleSoapOut">
+    <part name="parameters" element="s0:CreateScheduleResponse" />
+  </message>
+  <message name="CreateScheduleBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateScheduleServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="DeleteScheduleSoapIn">
+    <part name="parameters" element="s0:DeleteSchedule" />
+  </message>
+  <message name="DeleteScheduleSoapOut">
+    <part name="parameters" element="s0:DeleteScheduleResponse" />
+  </message>
+  <message name="DeleteScheduleBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="DeleteScheduleServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetSchedulePropertiesSoapIn">
+    <part name="parameters" element="s0:SetScheduleProperties" />
+  </message>
+  <message name="SetSchedulePropertiesSoapOut">
+    <part name="parameters" element="s0:SetSchedulePropertiesResponse" />
+  </message>
+  <message name="SetSchedulePropertiesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetSchedulePropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetSchedulePropertiesSoapIn">
+    <part name="parameters" element="s0:GetScheduleProperties" />
+  </message>
+  <message name="GetSchedulePropertiesSoapOut">
+    <part name="parameters" element="s0:GetSchedulePropertiesResponse" />
+  </message>
+  <message name="GetSchedulePropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListScheduledReportsSoapIn">
+    <part name="parameters" element="s0:ListScheduledReports" />
+  </message>
+  <message name="ListScheduledReportsSoapOut">
+    <part name="parameters" element="s0:ListScheduledReportsResponse" />
+  </message>
+  <message name="ListScheduledReportsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListSchedulesSoapIn">
+    <part name="parameters" element="s0:ListSchedules" />
+  </message>
+  <message name="ListSchedulesSoapOut">
+    <part name="parameters" element="s0:ListSchedulesResponse" />
+  </message>
+  <message name="ListSchedulesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="PauseScheduleSoapIn">
+    <part name="parameters" element="s0:PauseSchedule" />
+  </message>
+  <message name="PauseScheduleSoapOut">
+    <part name="parameters" element="s0:PauseScheduleResponse" />
+  </message>
+  <message name="PauseScheduleBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="PauseScheduleServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ResumeScheduleSoapIn">
+    <part name="parameters" element="s0:ResumeSchedule" />
+  </message>
+  <message name="ResumeScheduleSoapOut">
+    <part name="parameters" element="s0:ResumeScheduleResponse" />
+  </message>
+  <message name="ResumeScheduleBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="ResumeScheduleServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateSubscriptionSoapIn">
+    <part name="parameters" element="s0:CreateSubscription" />
+  </message>
+  <message name="CreateSubscriptionSoapOut">
+    <part name="parameters" element="s0:CreateSubscriptionResponse" />
+  </message>
+  <message name="CreateSubscriptionBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateSubscriptionServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateDataDrivenSubscriptionSoapIn">
+    <part name="parameters" element="s0:CreateDataDrivenSubscription" />
+  </message>
+  <message name="CreateDataDrivenSubscriptionSoapOut">
+    <part name="parameters" element="s0:CreateDataDrivenSubscriptionResponse" />
+  </message>
+  <message name="CreateDataDrivenSubscriptionBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateDataDrivenSubscriptionServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetSubscriptionPropertiesSoapIn">
+    <part name="parameters" element="s0:SetSubscriptionProperties" />
+  </message>
+  <message name="SetSubscriptionPropertiesSoapOut">
+    <part name="parameters" element="s0:SetSubscriptionPropertiesResponse" />
+  </message>
+  <message name="SetSubscriptionPropertiesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetSubscriptionPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetDataDrivenSubscriptionPropertiesSoapIn">
+    <part name="parameters" element="s0:SetDataDrivenSubscriptionProperties" />
+  </message>
+  <message name="SetDataDrivenSubscriptionPropertiesSoapOut">
+    <part name="parameters" element="s0:SetDataDrivenSubscriptionPropertiesResponse" />
+  </message>
+  <message name="SetDataDrivenSubscriptionPropertiesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetDataDrivenSubscriptionPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetSubscriptionPropertiesSoapIn">
+    <part name="parameters" element="s0:GetSubscriptionProperties" />
+  </message>
+  <message name="GetSubscriptionPropertiesSoapOut">
+    <part name="parameters" element="s0:GetSubscriptionPropertiesResponse" />
+  </message>
+  <message name="GetSubscriptionPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetDataDrivenSubscriptionPropertiesSoapIn">
+    <part name="parameters" element="s0:GetDataDrivenSubscriptionProperties" />
+  </message>
+  <message name="GetDataDrivenSubscriptionPropertiesSoapOut">
+    <part name="parameters" element="s0:GetDataDrivenSubscriptionPropertiesResponse" />
+  </message>
+  <message name="GetDataDrivenSubscriptionPropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="DeleteSubscriptionSoapIn">
+    <part name="parameters" element="s0:DeleteSubscription" />
+  </message>
+  <message name="DeleteSubscriptionSoapOut">
+    <part name="parameters" element="s0:DeleteSubscriptionResponse" />
+  </message>
+  <message name="DeleteSubscriptionBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="DeleteSubscriptionServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="PrepareQuerySoapIn">
+    <part name="parameters" element="s0:PrepareQuery" />
+  </message>
+  <message name="PrepareQuerySoapOut">
+    <part name="parameters" element="s0:PrepareQueryResponse" />
+  </message>
+  <message name="PrepareQueryBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="PrepareQueryServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetExtensionSettingsSoapIn">
+    <part name="parameters" element="s0:GetExtensionSettings" />
+  </message>
+  <message name="GetExtensionSettingsSoapOut">
+    <part name="parameters" element="s0:GetExtensionSettingsResponse" />
+  </message>
+  <message name="GetExtensionSettingsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ValidateExtensionSettingsSoapIn">
+    <part name="parameters" element="s0:ValidateExtensionSettings" />
+  </message>
+  <message name="ValidateExtensionSettingsSoapOut">
+    <part name="parameters" element="s0:ValidateExtensionSettingsResponse" />
+  </message>
+  <message name="ValidateExtensionSettingsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListSubscriptionsSoapIn">
+    <part name="parameters" element="s0:ListSubscriptions" />
+  </message>
+  <message name="ListSubscriptionsSoapOut">
+    <part name="parameters" element="s0:ListSubscriptionsResponse" />
+  </message>
+  <message name="ListSubscriptionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListSubscriptionsUsingDataSourceSoapIn">
+    <part name="parameters" element="s0:ListSubscriptionsUsingDataSource" />
+  </message>
+  <message name="ListSubscriptionsUsingDataSourceSoapOut">
+    <part name="parameters" element="s0:ListSubscriptionsUsingDataSourceResponse" />
+  </message>
+  <message name="ListSubscriptionsUsingDataSourceServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListExtensionsSoapIn">
+    <part name="parameters" element="s0:ListExtensions" />
+  </message>
+  <message name="ListExtensionsSoapOut">
+    <part name="parameters" element="s0:ListExtensionsResponse" />
+  </message>
+  <message name="ListExtensionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListEventsSoapIn">
+    <part name="parameters" element="s0:ListEvents" />
+  </message>
+  <message name="ListEventsSoapOut">
+    <part name="parameters" element="s0:ListEventsResponse" />
+  </message>
+  <message name="ListEventsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="FireEventSoapIn">
+    <part name="parameters" element="s0:FireEvent" />
+  </message>
+  <message name="FireEventSoapOut">
+    <part name="parameters" element="s0:FireEventResponse" />
+  </message>
+  <message name="FireEventBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="FireEventServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListSystemTasksSoapIn">
+    <part name="parameters" element="s0:ListSystemTasks" />
+  </message>
+  <message name="ListSystemTasksSoapOut">
+    <part name="parameters" element="s0:ListSystemTasksResponse" />
+  </message>
+  <message name="ListSystemTasksServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListTasksSoapIn">
+    <part name="parameters" element="s0:ListTasks" />
+  </message>
+  <message name="ListTasksSoapOut">
+    <part name="parameters" element="s0:ListTasksResponse" />
+  </message>
+  <message name="ListTasksServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListSystemRolesSoapIn">
+    <part name="parameters" element="s0:ListSystemRoles" />
+  </message>
+  <message name="ListSystemRolesSoapOut">
+    <part name="parameters" element="s0:ListSystemRolesResponse" />
+  </message>
+  <message name="ListSystemRolesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="ListRolesSoapIn">
+    <part name="parameters" element="s0:ListRoles" />
+  </message>
+  <message name="ListRolesSoapOut">
+    <part name="parameters" element="s0:ListRolesResponse" />
+  </message>
+  <message name="ListRolesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="CreateRoleSoapIn">
+    <part name="parameters" element="s0:CreateRole" />
+  </message>
+  <message name="CreateRoleSoapOut">
+    <part name="parameters" element="s0:CreateRoleResponse" />
+  </message>
+  <message name="CreateRoleBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="CreateRoleServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="DeleteRoleSoapIn">
+    <part name="parameters" element="s0:DeleteRole" />
+  </message>
+  <message name="DeleteRoleSoapOut">
+    <part name="parameters" element="s0:DeleteRoleResponse" />
+  </message>
+  <message name="DeleteRoleBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="DeleteRoleServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetRolePropertiesSoapIn">
+    <part name="parameters" element="s0:GetRoleProperties" />
+  </message>
+  <message name="GetRolePropertiesSoapOut">
+    <part name="parameters" element="s0:GetRolePropertiesResponse" />
+  </message>
+  <message name="GetRolePropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetRolePropertiesSoapIn">
+    <part name="parameters" element="s0:SetRoleProperties" />
+  </message>
+  <message name="SetRolePropertiesSoapOut">
+    <part name="parameters" element="s0:SetRolePropertiesResponse" />
+  </message>
+  <message name="SetRolePropertiesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetRolePropertiesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetSystemPoliciesSoapIn">
+    <part name="parameters" element="s0:GetSystemPolicies" />
+  </message>
+  <message name="GetSystemPoliciesSoapOut">
+    <part name="parameters" element="s0:GetSystemPoliciesResponse" />
+  </message>
+  <message name="GetSystemPoliciesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetSystemPoliciesSoapIn">
+    <part name="parameters" element="s0:SetSystemPolicies" />
+  </message>
+  <message name="SetSystemPoliciesSoapOut">
+    <part name="parameters" element="s0:SetSystemPoliciesResponse" />
+  </message>
+  <message name="SetSystemPoliciesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetSystemPoliciesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetPoliciesSoapIn">
+    <part name="parameters" element="s0:GetPolicies" />
+  </message>
+  <message name="GetPoliciesSoapOut">
+    <part name="parameters" element="s0:GetPoliciesResponse" />
+  </message>
+  <message name="GetPoliciesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="SetPoliciesSoapIn">
+    <part name="parameters" element="s0:SetPolicies" />
+  </message>
+  <message name="SetPoliciesSoapOut">
+    <part name="parameters" element="s0:SetPoliciesResponse" />
+  </message>
+  <message name="SetPoliciesBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="SetPoliciesServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="InheritParentSecuritySoapIn">
+    <part name="parameters" element="s0:InheritParentSecurity" />
+  </message>
+  <message name="InheritParentSecuritySoapOut">
+    <part name="parameters" element="s0:InheritParentSecurityResponse" />
+  </message>
+  <message name="InheritParentSecurityBatchHeader">
+    <part name="BatchHeader" element="s0:BatchHeader" />
+  </message>
+  <message name="InheritParentSecurityServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetSystemPermissionsSoapIn">
+    <part name="parameters" element="s0:GetSystemPermissions" />
+  </message>
+  <message name="GetSystemPermissionsSoapOut">
+    <part name="parameters" element="s0:GetSystemPermissionsResponse" />
+  </message>
+  <message name="GetSystemPermissionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="GetPermissionsSoapIn">
+    <part name="parameters" element="s0:GetPermissions" />
+  </message>
+  <message name="GetPermissionsSoapOut">
+    <part name="parameters" element="s0:GetPermissionsResponse" />
+  </message>
+  <message name="GetPermissionsServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="LogonUserSoapIn">
+    <part name="parameters" element="s0:LogonUser" />
+  </message>
+  <message name="LogonUserSoapOut">
+    <part name="parameters" element="s0:LogonUserResponse" />
+  </message>
+  <message name="LogonUserServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <message name="LogoffSoapIn">
+    <part name="parameters" element="s0:Logoff" />
+  </message>
+  <message name="LogoffSoapOut">
+    <part name="parameters" element="s0:LogoffResponse" />
+  </message>
+  <message name="LogoffServerInfoHeader">
+    <part name="ServerInfoHeader" element="s0:ServerInfoHeader" />
+  </message>
+  <portType name="ReportingServiceSoap">
+    <operation name="ListSecureMethods">
+      <input message="s0:ListSecureMethodsSoapIn" />
+      <output message="s0:ListSecureMethodsSoapOut" />
+    </operation>
+    <operation name="CreateBatch">
+      <input message="s0:CreateBatchSoapIn" />
+      <output message="s0:CreateBatchSoapOut" />
+    </operation>
+    <operation name="CancelBatch">
+      <input message="s0:CancelBatchSoapIn" />
+      <output message="s0:CancelBatchSoapOut" />
+    </operation>
+    <operation name="ExecuteBatch">
+      <input message="s0:ExecuteBatchSoapIn" />
+      <output message="s0:ExecuteBatchSoapOut" />
+    </operation>
+    <operation name="GetSystemProperties">
+      <input message="s0:GetSystemPropertiesSoapIn" />
+      <output message="s0:GetSystemPropertiesSoapOut" />
+    </operation>
+    <operation name="SetSystemProperties">
+      <input message="s0:SetSystemPropertiesSoapIn" />
+      <output message="s0:SetSystemPropertiesSoapOut" />
+    </operation>
+    <operation name="DeleteItem">
+      <input message="s0:DeleteItemSoapIn" />
+      <output message="s0:DeleteItemSoapOut" />
+    </operation>
+    <operation name="MoveItem">
+      <input message="s0:MoveItemSoapIn" />
+      <output message="s0:MoveItemSoapOut" />
+    </operation>
+    <operation name="ListChildren">
+      <input message="s0:ListChildrenSoapIn" />
+      <output message="s0:ListChildrenSoapOut" />
+    </operation>
+    <operation name="GetProperties">
+      <input message="s0:GetPropertiesSoapIn" />
+      <output message="s0:GetPropertiesSoapOut" />
+    </operation>
+    <operation name="SetProperties">
+      <input message="s0:SetPropertiesSoapIn" />
+      <output message="s0:SetPropertiesSoapOut" />
+    </operation>
+    <operation name="GetItemType">
+      <input message="s0:GetItemTypeSoapIn" />
+      <output message="s0:GetItemTypeSoapOut" />
+    </operation>
+    <operation name="CreateFolder">
+      <input message="s0:CreateFolderSoapIn" />
+      <output message="s0:CreateFolderSoapOut" />
+    </operation>
+    <operation name="CreateReport">
+      <input message="s0:CreateReportSoapIn" />
+      <output message="s0:CreateReportSoapOut" />
+    </operation>
+    <operation name="GetReportDefinition">
+      <input message="s0:GetReportDefinitionSoapIn" />
+      <output message="s0:GetReportDefinitionSoapOut" />
+    </operation>
+    <operation name="SetReportDefinition">
+      <input message="s0:SetReportDefinitionSoapIn" />
+      <output message="s0:SetReportDefinitionSoapOut" />
+    </operation>
+    <operation name="CreateResource">
+      <input message="s0:CreateResourceSoapIn" />
+      <output message="s0:CreateResourceSoapOut" />
+    </operation>
+    <operation name="SetResourceContents">
+      <input message="s0:SetResourceContentsSoapIn" />
+      <output message="s0:SetResourceContentsSoapOut" />
+    </operation>
+    <operation name="GetResourceContents">
+      <input message="s0:GetResourceContentsSoapIn" />
+      <output message="s0:GetResourceContentsSoapOut" />
+    </operation>
+    <operation name="GetReportParameters">
+      <input message="s0:GetReportParametersSoapIn" />
+      <output message="s0:GetReportParametersSoapOut" />
+    </operation>
+    <operation name="SetReportParameters">
+      <input message="s0:SetReportParametersSoapIn" />
+      <output message="s0:SetReportParametersSoapOut" />
+    </operation>
+    <operation name="CreateLinkedReport">
+      <input message="s0:CreateLinkedReportSoapIn" />
+      <output message="s0:CreateLinkedReportSoapOut" />
+    </operation>
+    <operation name="GetReportLink">
+      <input message="s0:GetReportLinkSoapIn" />
+      <output message="s0:GetReportLinkSoapOut" />
+    </operation>
+    <operation name="SetReportLink">
+      <input message="s0:SetReportLinkSoapIn" />
+      <output message="s0:SetReportLinkSoapOut" />
+    </operation>
+    <operation name="ListLinkedReports">
+      <input message="s0:ListLinkedReportsSoapIn" />
+      <output message="s0:ListLinkedReportsSoapOut" />
+    </operation>
+    <operation name="Render">
+      <input message="s0:RenderSoapIn" />
+      <output message="s0:RenderSoapOut" />
+    </operation>
+    <operation name="RenderStream">
+      <input message="s0:RenderStreamSoapIn" />
+      <output message="s0:RenderStreamSoapOut" />
+    </operation>
+    <operation name="GetRenderResource">
+      <input message="s0:GetRenderResourceSoapIn" />
+      <output message="s0:GetRenderResourceSoapOut" />
+    </operation>
+    <operation name="SetExecutionOptions">
+      <input message="s0:SetExecutionOptionsSoapIn" />
+      <output message="s0:SetExecutionOptionsSoapOut" />
+    </operation>
+    <operation name="GetExecutionOptions">
+      <input message="s0:GetExecutionOptionsSoapIn" />
+      <output message="s0:GetExecutionOptionsSoapOut" />
+    </operation>
+    <operation name="SetCacheOptions">
+      <input message="s0:SetCacheOptionsSoapIn" />
+      <output message="s0:SetCacheOptionsSoapOut" />
+    </operation>
+    <operation name="GetCacheOptions">
+      <input message="s0:GetCacheOptionsSoapIn" />
+      <output message="s0:GetCacheOptionsSoapOut" />
+    </operation>
+    <operation name="UpdateReportExecutionSnapshot">
+      <input message="s0:UpdateReportExecutionSnapshotSoapIn" />
+      <output message="s0:UpdateReportExecutionSnapshotSoapOut" />
+    </operation>
+    <operation name="FlushCache">
+      <input message="s0:FlushCacheSoapIn" />
+      <output message="s0:FlushCacheSoapOut" />
+    </operation>
+    <operation name="ListJobs">
+      <input message="s0:ListJobsSoapIn" />
+      <output message="s0:ListJobsSoapOut" />
+    </operation>
+    <operation name="CancelJob">
+      <input message="s0:CancelJobSoapIn" />
+      <output message="s0:CancelJobSoapOut" />
+    </operation>
+    <operation name="CreateDataSource">
+      <input message="s0:CreateDataSourceSoapIn" />
+      <output message="s0:CreateDataSourceSoapOut" />
+    </operation>
+    <operation name="GetDataSourceContents">
+      <input message="s0:GetDataSourceContentsSoapIn" />
+      <output message="s0:GetDataSourceContentsSoapOut" />
+    </operation>
+    <operation name="SetDataSourceContents">
+      <input message="s0:SetDataSourceContentsSoapIn" />
+      <output message="s0:SetDataSourceContentsSoapOut" />
+    </operation>
+    <operation name="EnableDataSource">
+      <input message="s0:EnableDataSourceSoapIn" />
+      <output message="s0:EnableDataSourceSoapOut" />
+    </operation>
+    <operation name="DisableDataSource">
+      <input message="s0:DisableDataSourceSoapIn" />
+      <output message="s0:DisableDataSourceSoapOut" />
+    </operation>
+    <operation name="ListReportsUsingDataSource">
+      <input message="s0:ListReportsUsingDataSourceSoapIn" />
+      <output message="s0:ListReportsUsingDataSourceSoapOut" />
+    </operation>
+    <operation name="SetReportDataSources">
+      <input message="s0:SetReportDataSourcesSoapIn" />
+      <output message="s0:SetReportDataSourcesSoapOut" />
+    </operation>
+    <operation name="GetReportDataSources">
+      <input message="s0:GetReportDataSourcesSoapIn" />
+      <output message="s0:GetReportDataSourcesSoapOut" />
+    </operation>
+    <operation name="GetReportDataSourcePrompts">
+      <input message="s0:GetReportDataSourcePromptsSoapIn" />
+      <output message="s0:GetReportDataSourcePromptsSoapOut" />
+    </operation>
+    <operation name="CreateReportHistorySnapshot">
+      <input message="s0:CreateReportHistorySnapshotSoapIn" />
+      <output message="s0:CreateReportHistorySnapshotSoapOut" />
+    </operation>
+    <operation name="SetReportHistoryOptions">
+      <input message="s0:SetReportHistoryOptionsSoapIn" />
+      <output message="s0:SetReportHistoryOptionsSoapOut" />
+    </operation>
+    <operation name="GetReportHistoryOptions">
+      <input message="s0:GetReportHistoryOptionsSoapIn" />
+      <output message="s0:GetReportHistoryOptionsSoapOut" />
+    </operation>
+    <operation name="SetReportHistoryLimit">
+      <input message="s0:SetReportHistoryLimitSoapIn" />
+      <output message="s0:SetReportHistoryLimitSoapOut" />
+    </operation>
+    <operation name="GetReportHistoryLimit">
+      <input message="s0:GetReportHistoryLimitSoapIn" />
+      <output message="s0:GetReportHistoryLimitSoapOut" />
+    </operation>
+    <operation name="ListReportHistory">
+      <input message="s0:ListReportHistorySoapIn" />
+      <output message="s0:ListReportHistorySoapOut" />
+    </operation>
+    <operation name="DeleteReportHistorySnapshot">
+      <input message="s0:DeleteReportHistorySnapshotSoapIn" />
+      <output message="s0:DeleteReportHistorySnapshotSoapOut" />
+    </operation>
+    <operation name="FindItems">
+      <input message="s0:FindItemsSoapIn" />
+      <output message="s0:FindItemsSoapOut" />
+    </operation>
+    <operation name="CreateSchedule">
+      <input message="s0:CreateScheduleSoapIn" />
+      <output message="s0:CreateScheduleSoapOut" />
+    </operation>
+    <operation name="DeleteSchedule">
+      <input message="s0:DeleteScheduleSoapIn" />
+      <output message="s0:DeleteScheduleSoapOut" />
+    </operation>
+    <operation name="SetScheduleProperties">
+      <input message="s0:SetSchedulePropertiesSoapIn" />
+      <output message="s0:SetSchedulePropertiesSoapOut" />
+    </operation>
+    <operation name="GetScheduleProperties">
+      <input message="s0:GetSchedulePropertiesSoapIn" />
+      <output message="s0:GetSchedulePropertiesSoapOut" />
+    </operation>
+    <operation name="ListScheduledReports">
+      <input message="s0:ListScheduledReportsSoapIn" />
+      <output message="s0:ListScheduledReportsSoapOut" />
+    </operation>
+    <operation name="ListSchedules">
+      <input message="s0:ListSchedulesSoapIn" />
+      <output message="s0:ListSchedulesSoapOut" />
+    </operation>
+    <operation name="PauseSchedule">
+      <input message="s0:PauseScheduleSoapIn" />
+      <output message="s0:PauseScheduleSoapOut" />
+    </operation>
+    <operation name="ResumeSchedule">
+      <input message="s0:ResumeScheduleSoapIn" />
+      <output message="s0:ResumeScheduleSoapOut" />
+    </operation>
+    <operation name="CreateSubscription">
+      <input message="s0:CreateSubscriptionSoapIn" />
+      <output message="s0:CreateSubscriptionSoapOut" />
+    </operation>
+    <operation name="CreateDataDrivenSubscription">
+      <input message="s0:CreateDataDrivenSubscriptionSoapIn" />
+      <output message="s0:CreateDataDrivenSubscriptionSoapOut" />
+    </operation>
+    <operation name="SetSubscriptionProperties">
+      <input message="s0:SetSubscriptionPropertiesSoapIn" />
+      <output message="s0:SetSubscriptionPropertiesSoapOut" />
+    </operation>
+    <operation name="SetDataDrivenSubscriptionProperties">
+      <input message="s0:SetDataDrivenSubscriptionPropertiesSoapIn" />
+      <output message="s0:SetDataDrivenSubscriptionPropertiesSoapOut" />
+    </operation>
+    <operation name="GetSubscriptionProperties">
+      <input message="s0:GetSubscriptionPropertiesSoapIn" />
+      <output message="s0:GetSubscriptionPropertiesSoapOut" />
+    </operation>
+    <operation name="GetDataDrivenSubscriptionProperties">
+      <input message="s0:GetDataDrivenSubscriptionPropertiesSoapIn" />
+      <output message="s0:GetDataDrivenSubscriptionPropertiesSoapOut" />
+    </operation>
+    <operation name="DeleteSubscription">
+      <input message="s0:DeleteSubscriptionSoapIn" />
+      <output message="s0:DeleteSubscriptionSoapOut" />
+    </operation>
+    <operation name="PrepareQuery">
+      <input message="s0:PrepareQuerySoapIn" />
+      <output message="s0:PrepareQuerySoapOut" />
+    </operation>
+    <operation name="GetExtensionSettings">
+      <input message="s0:GetExtensionSettingsSoapIn" />
+      <output message="s0:GetExtensionSettingsSoapOut" />
+    </operation>
+    <operation name="ValidateExtensionSettings">
+      <input message="s0:ValidateExtensionSettingsSoapIn" />
+      <output message="s0:ValidateExtensionSettingsSoapOut" />
+    </operation>
+    <operation name="ListSubscriptions">
+      <input message="s0:ListSubscriptionsSoapIn" />
+      <output message="s0:ListSubscriptionsSoapOut" />
+    </operation>
+    <operation name="ListSubscriptionsUsingDataSource">
+      <input message="s0:ListSubscriptionsUsingDataSourceSoapIn" />
+      <output message="s0:ListSubscriptionsUsingDataSourceSoapOut" />
+    </operation>
+    <operation name="ListExtensions">
+      <input message="s0:ListExtensionsSoapIn" />
+      <output message="s0:ListExtensionsSoapOut" />
+    </operation>
+    <operation name="ListEvents">
+      <input message="s0:ListEventsSoapIn" />
+      <output message="s0:ListEventsSoapOut" />
+    </operation>
+    <operation name="FireEvent">
+      <input message="s0:FireEventSoapIn" />
+      <output message="s0:FireEventSoapOut" />
+    </operation>
+    <operation name="ListSystemTasks">
+      <input message="s0:ListSystemTasksSoapIn" />
+      <output message="s0:ListSystemTasksSoapOut" />
+    </operation>
+    <operation name="ListTasks">
+      <input message="s0:ListTasksSoapIn" />
+      <output message="s0:ListTasksSoapOut" />
+    </operation>
+    <operation name="ListSystemRoles">
+      <input message="s0:ListSystemRolesSoapIn" />
+      <output message="s0:ListSystemRolesSoapOut" />
+    </operation>
+    <operation name="ListRoles">
+      <input message="s0:ListRolesSoapIn" />
+      <output message="s0:ListRolesSoapOut" />
+    </operation>
+    <operation name="CreateRole">
+      <input message="s0:CreateRoleSoapIn" />
+      <output message="s0:CreateRoleSoapOut" />
+    </operation>
+    <operation name="DeleteRole">
+      <input message="s0:DeleteRoleSoapIn" />
+      <output message="s0:DeleteRoleSoapOut" />
+    </operation>
+    <operation name="GetRoleProperties">
+      <input message="s0:GetRolePropertiesSoapIn" />
+      <output message="s0:GetRolePropertiesSoapOut" />
+    </operation>
+    <operation name="SetRoleProperties">
+      <input message="s0:SetRolePropertiesSoapIn" />
+      <output message="s0:SetRolePropertiesSoapOut" />
+    </operation>
+    <operation name="GetSystemPolicies">
+      <input message="s0:GetSystemPoliciesSoapIn" />
+      <output message="s0:GetSystemPoliciesSoapOut" />
+    </operation>
+    <operation name="SetSystemPolicies">
+      <input message="s0:SetSystemPoliciesSoapIn" />
+      <output message="s0:SetSystemPoliciesSoapOut" />
+    </operation>
+    <operation name="GetPolicies">
+      <input message="s0:GetPoliciesSoapIn" />
+      <output message="s0:GetPoliciesSoapOut" />
+    </operation>
+    <operation name="SetPolicies">
+      <input message="s0:SetPoliciesSoapIn" />
+      <output message="s0:SetPoliciesSoapOut" />
+    </operation>
+    <operation name="InheritParentSecurity">
+      <input message="s0:InheritParentSecuritySoapIn" />
+      <output message="s0:InheritParentSecuritySoapOut" />
+    </operation>
+    <operation name="GetSystemPermissions">
+      <input message="s0:GetSystemPermissionsSoapIn" />
+      <output message="s0:GetSystemPermissionsSoapOut" />
+    </operation>
+    <operation name="GetPermissions">
+      <input message="s0:GetPermissionsSoapIn" />
+      <output message="s0:GetPermissionsSoapOut" />
+    </operation>
+    <operation name="LogonUser">
+      <input message="s0:LogonUserSoapIn" />
+      <output message="s0:LogonUserSoapOut" />
+    </operation>
+    <operation name="Logoff">
+      <input message="s0:LogoffSoapIn" />
+      <output message="s0:LogoffSoapOut" />
+    </operation>
+  </portType>
+  <binding name="ReportingServiceSoap" type="s0:ReportingServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="ListSecureMethods">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListSecureMethods" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListSecureMethodsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateBatch">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateBatch" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateBatchServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CancelBatch">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CancelBatch" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CancelBatchBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CancelBatchServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ExecuteBatch">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ExecuteBatch" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:ExecuteBatchBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ExecuteBatchServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetSystemProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetSystemProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetSystemPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetSystemProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetSystemProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetSystemPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="DeleteItem">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/DeleteItem" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteItemBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteItemServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="MoveItem">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/MoveItem" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:MoveItemBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:MoveItemServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListChildren">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListChildren" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListChildrenServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetPropertiesItemNamespaceHeader" part="ItemNamespaceHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetPropertiesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetItemType">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetItemType" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetItemTypeServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateFolder">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateFolder" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateFolderBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateFolderServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateReport">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateReport" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateReportBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateReportServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetReportDefinition">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetReportDefinition" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetReportDefinitionServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetReportDefinition">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetReportDefinition" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportDefinitionBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportDefinitionServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateResource">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateResource" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateResourceBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateResourceServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetResourceContents">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetResourceContents" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetResourceContentsBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetResourceContentsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetResourceContents">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetResourceContents" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetResourceContentsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetReportParameters">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetReportParameters" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetReportParametersServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetReportParameters">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetReportParameters" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportParametersBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportParametersServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateLinkedReport">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateLinkedReport" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateLinkedReportBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateLinkedReportServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetReportLink">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetReportLink" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetReportLinkServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetReportLink">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetReportLink" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportLinkBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportLinkServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListLinkedReports">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListLinkedReports" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListLinkedReportsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="Render">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/Render" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:RenderSessionHeader" part="SessionHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:RenderServerInfoHeader" part="ServerInfoHeader" use="literal" />
+        <soap:header message="s0:RenderSessionHeader" part="SessionHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="RenderStream">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/RenderStream" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:RenderStreamSessionHeader" part="SessionHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:RenderStreamServerInfoHeader" part="ServerInfoHeader" use="literal" />
+        <soap:header message="s0:RenderStreamSessionHeader" part="SessionHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetRenderResource">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetRenderResource" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetRenderResourceServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetExecutionOptions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetExecutionOptions" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetExecutionOptionsBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetExecutionOptionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetExecutionOptions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetExecutionOptions" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetExecutionOptionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetCacheOptions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetCacheOptions" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetCacheOptionsBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetCacheOptionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetCacheOptions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetCacheOptions" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetCacheOptionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="UpdateReportExecutionSnapshot">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/UpdateReportExecutionSnapshot" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:UpdateReportExecutionSnapshotBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:UpdateReportExecutionSnapshotServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="FlushCache">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/FlushCache" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:FlushCacheBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:FlushCacheServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListJobs">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListJobs" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListJobsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CancelJob">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CancelJob" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CancelJobServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateDataSource">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateDataSource" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateDataSourceBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateDataSourceServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetDataSourceContents">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetDataSourceContents" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetDataSourceContentsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetDataSourceContents">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetDataSourceContents" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetDataSourceContentsBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetDataSourceContentsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="EnableDataSource">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/EnableDataSource" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:EnableDataSourceBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:EnableDataSourceServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="DisableDataSource">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/DisableDataSource" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:DisableDataSourceBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:DisableDataSourceServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListReportsUsingDataSource">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListReportsUsingDataSource" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListReportsUsingDataSourceServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetReportDataSources">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetReportDataSources" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportDataSourcesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportDataSourcesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetReportDataSources">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetReportDataSources" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetReportDataSourcesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetReportDataSourcePrompts">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetReportDataSourcePrompts" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetReportDataSourcePromptsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateReportHistorySnapshot">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateReportHistorySnapshot" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateReportHistorySnapshotBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateReportHistorySnapshotServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetReportHistoryOptions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetReportHistoryOptions" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportHistoryOptionsBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportHistoryOptionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetReportHistoryOptions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetReportHistoryOptions" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetReportHistoryOptionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetReportHistoryLimit">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetReportHistoryLimit" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportHistoryLimitBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetReportHistoryLimitServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetReportHistoryLimit">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetReportHistoryLimit" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetReportHistoryLimitServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListReportHistory">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListReportHistory" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListReportHistoryServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="DeleteReportHistorySnapshot">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/DeleteReportHistorySnapshot" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteReportHistorySnapshotBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteReportHistorySnapshotServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="FindItems">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/FindItems" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:FindItemsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateSchedule">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateSchedule" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateScheduleBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateScheduleServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="DeleteSchedule">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/DeleteSchedule" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteScheduleBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteScheduleServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetScheduleProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetScheduleProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetSchedulePropertiesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetSchedulePropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetScheduleProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetScheduleProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetSchedulePropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListScheduledReports">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListScheduledReports" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListScheduledReportsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListSchedules">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListSchedules" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListSchedulesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="PauseSchedule">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/PauseSchedule" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:PauseScheduleBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:PauseScheduleServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ResumeSchedule">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ResumeSchedule" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:ResumeScheduleBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ResumeScheduleServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateSubscription">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateSubscription" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateSubscriptionBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateSubscriptionServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateDataDrivenSubscription">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateDataDrivenSubscription" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateDataDrivenSubscriptionBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateDataDrivenSubscriptionServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetSubscriptionProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetSubscriptionProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetSubscriptionPropertiesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetSubscriptionPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetDataDrivenSubscriptionProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetDataDrivenSubscriptionProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetDataDrivenSubscriptionPropertiesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetDataDrivenSubscriptionPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetSubscriptionProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetSubscriptionProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetSubscriptionPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetDataDrivenSubscriptionProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetDataDrivenSubscriptionProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetDataDrivenSubscriptionPropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="DeleteSubscription">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/DeleteSubscription" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteSubscriptionBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteSubscriptionServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="PrepareQuery">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/PrepareQuery" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:PrepareQueryBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:PrepareQueryServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetExtensionSettings">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetExtensionSettings" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetExtensionSettingsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ValidateExtensionSettings">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ValidateExtensionSettings" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ValidateExtensionSettingsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListSubscriptions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListSubscriptions" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListSubscriptionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListSubscriptionsUsingDataSource">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListSubscriptionsUsingDataSource" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListSubscriptionsUsingDataSourceServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListExtensions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListExtensions" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListExtensionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListEvents">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListEvents" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListEventsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="FireEvent">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/FireEvent" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:FireEventBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:FireEventServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListSystemTasks">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListSystemTasks" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListSystemTasksServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListTasks">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListTasks" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListTasksServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListSystemRoles">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListSystemRoles" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListSystemRolesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="ListRoles">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/ListRoles" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:ListRolesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="CreateRole">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/CreateRole" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateRoleBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:CreateRoleServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="DeleteRole">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/DeleteRole" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteRoleBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:DeleteRoleServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetRoleProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetRoleProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetRolePropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetRoleProperties">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetRoleProperties" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetRolePropertiesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetRolePropertiesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetSystemPolicies">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetSystemPolicies" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetSystemPoliciesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetSystemPolicies">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetSystemPolicies" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetSystemPoliciesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetSystemPoliciesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetPolicies">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetPolicies" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetPoliciesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="SetPolicies">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/SetPolicies" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetPoliciesBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:SetPoliciesServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="InheritParentSecurity">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/InheritParentSecurity" style="document" />
+      <input>
+        <soap:body use="literal" />
+        <soap:header message="s0:InheritParentSecurityBatchHeader" part="BatchHeader" use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:InheritParentSecurityServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetSystemPermissions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetSystemPermissions" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetSystemPermissionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="GetPermissions">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/GetPermissions" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:GetPermissionsServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="LogonUser">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/LogonUser" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:LogonUserServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+    <operation name="Logoff">
+      <soap:operation soapAction="http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices/Logoff" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+        <soap:header message="s0:LogoffServerInfoHeader" part="ServerInfoHeader" use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="ReportingService">
+    <documentation>The Reporting Services Web Service enables you to manage a report server and its contents including server settings, security, reports, subscriptions, and data sources.</documentation>
+    <port name="ReportingServiceSoap" binding="s0:ReportingServiceSoap">
+      <soap:address location="http://localhost:8080/axis/services/ReportingServiceSoap" />
+    </port>
+  </service>
+</definitions>

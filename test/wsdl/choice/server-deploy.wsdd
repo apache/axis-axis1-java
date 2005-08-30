@@ -1,0 +1,82 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from ChoiceService WSDL service -->
+
+  <service name="ChoiceServiceSoap" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://tempuri.org/"/>
+      <parameter name="wsdlServiceElement" value="ChoiceService"/>
+      <parameter name="wsdlServicePort" value="ChoiceServiceSoap"/>
+      <parameter name="className" value="test.wsdl.choice.ChoiceServiceSoapImpl"/>
+      <parameter name="wsdlPortType" value="ChoiceServiceSoap"/>
+      <operation name="get" qname="get" returnQName="retNS:Record2" xmlns:retNS="http://tempuri.org/" returnType="rtns:>Record2" xmlns:rtns="http://tempuri.org/" soapAction="http://tempuri.org/get" >
+        <parameter qname="pns:Record1" xmlns:pns="http://tempuri.org/" type="tns:>Record1" xmlns:tns="http://tempuri.org/"/>
+      </operation>
+      <parameter name="allowedMethods" value="get"/>
+      <typeMapping
+        xmlns:ns="http://tempuri.org/"
+        qname="ns:BaseFaultType"
+        type="java:test.wsdl.choice.BaseFaultType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://tempuri.org/"
+        qname="ns:>Record1"
+        type="java:test.wsdl.choice.Record1"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://tempuri.org/"
+        qname="ns:StagingFaultType"
+        type="java:test.wsdl.choice.StagingFaultType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://tempuri.org/"
+        qname="ns:>Record2"
+        type="java:test.wsdl.choice.Record2"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://tempuri.org/"
+        qname="ns:FaultType"
+        type="java:test.wsdl.choice.FaultType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://tempuri.org/"
+        qname="ns:FaultPropertyType"
+        type="java:test.wsdl.choice.FaultPropertyType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://tempuri.org/"
+        qname="ns:>SetResourceProperties"
+        type="java:test.wsdl.choice.SetResourceProperties"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

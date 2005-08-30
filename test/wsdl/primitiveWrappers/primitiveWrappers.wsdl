@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:s="http://www.w3.org/2001/XMLSchema"
+    xmlns:s0="http://primitiveWrappers.wsdl.test/"
+    targetNamespace="http://primitiveWrappers.wsdl.test/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema targetNamespace="http://primitiveWrappers.wsdl.test/">
+      <s:complexType name="bean">
+        <s:sequence>
+          <!-- This should remain a java int -->
+          <s:element name="primitive" type="s:int"/>
+          <!-- This one, since it's minOccurs="0", should turn into an Integer -->
+          <s:element name="wrapped" type="s:int" minOccurs="0" maxOccurs="1"/>
+        </s:sequence>
+      </s:complexType>
+      <s:element name="testWrapping">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inputInteger" type="s:int" />
+            <s:element name="inputBean" type="s0:bean"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="testWrappingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="return" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </types>
+  <message name="testWrappingSoapIn">
+    <part name="parameters" element="s0:testWrapping" />
+  </message>
+  <message name="testWrappingSoapOut">
+    <part name="parameters" element="s0:testWrappingResponse" />
+  </message>
+  <portType name="TypeWrapper">
+    <operation name="testWrapping">
+      <input message="s0:testWrappingSoapIn" />
+      <output message="s0:testWrappingSoapOut" />
+    </operation>
+  </portType>
+  <binding name="TypeWrapper" type="s0:TypeWrapper">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="testWrapping">
+      <soap:operation style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="TypeWrapper">
+    <port name="TypeWrapper" binding="s0:TypeWrapper">
+      <soap:address location="http://localhost:8080/axis/services/TypeWrapper" />
+    </port>
+  </service>
+</definitions>

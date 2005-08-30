@@ -1,0 +1,405 @@
+<wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap"
+                  xmlns:impl="http://marshall.wsdl.test"
+                  xmlns:intf="http://marshall.wsdl.test"
+                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:tns1="http://marshall.wsdl.test/types"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  targetNamespace="http://marshall.wsdl.test">
+    <wsdl:types>
+        <schema targetNamespace="http://marshall.wsdl.test/types" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="MyBean">
+                <sequence>
+                    <element name="myBigDecimal" type="xsd:decimal"/>
+                    <element name="myBigDecimalArray" type="xsd:decimal"/>
+                    <element name="myBigInteger" type="xsd:integer"/>
+                    <element name="myBigIntegerArray" type="xsd:integer"/>
+                </sequence>
+            </complexType>
+            <complexType name="ArrayOfMyBean">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:MyBean[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOfArrayOfMyBean">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:MyBean[][]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOfSoapEncString">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="soapenc:string[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOfXsdString">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <!-- Multi Array -->
+            <complexType name="ArrayOfArrayOfSoapEncString">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:ArrayOfSoapEncString[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+            <complexType name="ArrayOfinteger">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:integer[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOfArrayOfinteger">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:ArrayOfinteger[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+
+			<complexType name="ArrayOfbase64Binary">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:base64Binary[]"/>
+					</restriction>
+				</complexContent>
+			</complexType>
+			<complexType name="ArrayOfhexBinary">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:hexBinary[]"/>
+					</restriction>
+				</complexContent>
+			</complexType>
+			<complexType name="ArrayOfsoapencbase64">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<attribute ref="soapenc:arrayType" wsdl:arrayType="soapenc:base64[]"/>
+					</restriction>
+				</complexContent>
+			</complexType>
+
+			<complexType name="ArrayOfbase64BinaryUnbounded">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<sequence>
+							<element name="base64Binary1" type="xsd:base64Binary" minOccurs="0" maxOccurs="unbounded"/>
+						</sequence>
+					</restriction>
+				</complexContent>
+			</complexType>
+			<complexType name="ArrayOfhexBinaryUnbounded">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<sequence>
+							<element name="hexBinary1" type="xsd:hexBinary" minOccurs="0" maxOccurs="unbounded"/>
+						</sequence>
+					</restriction>
+				</complexContent>
+			</complexType>
+			<complexType name="ArrayOfsoapencbase64Unbounded">
+				<complexContent>
+					<restriction base="soapenc:Array">
+						<sequence>
+							<element name="soapencbase641" type="soapenc:base64" minOccurs="0" maxOccurs="unbounded"/>
+						</sequence>
+					</restriction>
+				</complexContent>
+			</complexType>
+
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="MyBeanMultiArrayRequest">
+        <wsdl:part name="arrayOfarrayOfMyBean_1" type="tns1:ArrayOfArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanMultiArrayResponse">
+        <wsdl:part name="result" type="tns1:ArrayOfArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanResponse">
+        <wsdl:part name="result" type="tns1:MyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanArrayResponse">
+        <wsdl:part name="result" type="tns1:ArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanRequest">
+        <wsdl:part name="MyBean_1" type="tns1:MyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanArrayRequest">
+        <wsdl:part name="arrayOfMyBean_1" type="tns1:ArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfSoapEncStringRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfSoapEncString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfSoapEncStringResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfSoapEncString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfXsdStringRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfXsdString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfXsdStringResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfXsdString"/>
+    </wsdl:message>
+
+    <wsdl:message name="ArrayOfArrayOfSoapEncStringRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfArrayOfSoapEncString"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfArrayOfSoapEncStringResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfArrayOfSoapEncString"/>
+    </wsdl:message>
+
+    <wsdl:message name="ArrayOfArrayOfintegerRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfArrayOfinteger"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfArrayOfintegerResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfArrayOfinteger"/>
+    </wsdl:message>
+
+
+
+    <wsdl:message name="ArrayOfbase64BinaryRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfbase64Binary"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfbase64BinaryResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfbase64Binary"/>
+    </wsdl:message>
+
+    <wsdl:message name="ArrayOfhexBinaryRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfhexBinary"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfhexBinaryResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfhexBinary"/>
+    </wsdl:message>
+
+    <wsdl:message name="ArrayOfsoapencbase64Request">
+        <wsdl:part name="parameter" type="tns1:ArrayOfsoapencbase64"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfsoapencbase64Response">
+        <wsdl:part name="return" type="tns1:ArrayOfsoapencbase64"/>
+    </wsdl:message>
+
+
+
+    <wsdl:message name="ArrayOfbase64BinaryUnboundedRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfbase64BinaryUnbounded"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfbase64BinaryUnboundedResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfbase64BinaryUnbounded"/>
+    </wsdl:message>
+
+    <wsdl:message name="ArrayOfhexBinaryUnboundedRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfhexBinaryUnbounded"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfhexBinaryUnboundedResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfhexBinaryUnbounded"/>
+    </wsdl:message>
+
+    <wsdl:message name="ArrayOfsoapencbase64UnboundedRequest">
+        <wsdl:part name="parameter" type="tns1:ArrayOfsoapencbase64Unbounded"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayOfsoapencbase64UnboundedResponse">
+        <wsdl:part name="return" type="tns1:ArrayOfsoapencbase64Unbounded"/>
+    </wsdl:message>
+
+
+    <wsdl:portType name="MarshallPortType">
+        <wsdl:operation name="MyBeanArray" parameterOrder="arrayOfMyBean_1">
+            <wsdl:input name="MyBeanArrayRequest" message="impl:MyBeanArrayRequest"/>
+            <wsdl:output name="MyBeanArrayResponse" message="impl:MyBeanArrayResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="MyBeanMultiArray" parameterOrder="arrayOfarrayOfMyBean_1">
+            <wsdl:input name="MyBeanMultiArrayRequest" message="impl:MyBeanMultiArrayRequest"/>
+            <wsdl:output name="MyBeanMultiArrayResponse" message="impl:MyBeanMultiArrayResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="MyBean" parameterOrder="MyBean_1">
+            <wsdl:input name="MyBeanRequest" message="impl:MyBeanRequest"/>
+            <wsdl:output name="MyBeanResponse" message="impl:MyBeanResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfSoapEncString" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfSoapEncStringRequest" message="impl:ArrayOfSoapEncStringRequest"/>
+            <wsdl:output name="ArrayOfSoapEncStringResponse" message="impl:ArrayOfSoapEncStringResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfXsdString" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfXsdStringRequest" message="impl:ArrayOfXsdStringRequest"/>
+            <wsdl:output name="ArrayOfXsdStringResponse" message="impl:ArrayOfXsdStringResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfArrayOfSoapEncString" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfArrayOfSoapEncStringRequest" message="impl:ArrayOfArrayOfSoapEncStringRequest"/>
+            <wsdl:output name="ArrayOfArrayOfSoapEncStringResponse" message="impl:ArrayOfArrayOfSoapEncStringResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfArrayOfinteger" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfArrayOfintegerRequest" message="impl:ArrayOfArrayOfintegerRequest"/>
+            <wsdl:output name="ArrayOfArrayOfintegerResponse" message="impl:ArrayOfArrayOfintegerResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfbase64Binary" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfbase64BinaryRequest" message="impl:ArrayOfbase64BinaryRequest"/>
+            <wsdl:output name="ArrayOfbase64BinaryResponse" message="impl:ArrayOfbase64BinaryResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfhexBinary" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfhexBinaryRequest" message="impl:ArrayOfhexBinaryRequest"/>
+            <wsdl:output name="ArrayOfhexBinaryResponse" message="impl:ArrayOfhexBinaryResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfsoapencbase64" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfsoapencbase64Request" message="impl:ArrayOfsoapencbase64Request"/>
+            <wsdl:output name="ArrayOfsoapencbase64Response" message="impl:ArrayOfsoapencbase64Response"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfbase64BinaryUnbounded" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfbase64BinaryUnboundedRequest" message="impl:ArrayOfbase64BinaryUnboundedRequest"/>
+            <wsdl:output name="ArrayOfbase64BinaryUnboundedResponse" message="impl:ArrayOfbase64BinaryUnboundedResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfhexBinaryUnbounded" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfhexBinaryUnboundedRequest" message="impl:ArrayOfhexBinaryUnboundedRequest"/>
+            <wsdl:output name="ArrayOfhexBinaryUnboundedResponse" message="impl:ArrayOfhexBinaryUnboundedResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfsoapencbase64Unbounded" parameterOrder="parameter">
+            <wsdl:input name="ArrayOfsoapencbase64UnboundedRequest" message="impl:ArrayOfsoapencbase64UnboundedRequest"/>
+            <wsdl:output name="ArrayOfsoapencbase64UnboundedResponse" message="impl:ArrayOfsoapencbase64UnboundedResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MarshallBinding" type="impl:MarshallPortType">
+        <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="MyBeanArray">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="MyBeanMultiArray">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="MyBean">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfSoapEncString">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfXsdString">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfArrayOfSoapEncString">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfArrayOfinteger">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfbase64Binary">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfhexBinary">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfsoapencbase64">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="ArrayOfbase64BinaryUnbounded">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfhexBinaryUnbounded">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayOfsoapencbase64Unbounded">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Marshall">
+        <wsdl:port name="MarshallPort" binding="impl:MarshallBinding">
+            <wsdlsoap:address location="http://localhost:8080/axis/services/MarshallPort"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

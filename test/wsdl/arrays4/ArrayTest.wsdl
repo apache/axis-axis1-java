@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<wsdl:definitions xmlns:tns="urn:ArrayTest4" xmlns:typens="urn:ArrayTest4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soapy="http://xml.apache.org/xml-soap" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:ArrayTest4" name="urn:ArrayTest">
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:ArrayTest4" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:complexType name="intArray">
+                <xsd:complexContent>
+                    <xsd:restriction base="soapenc:Array">
+                        <xsd:sequence>
+                            <xsd:element name="alias" type="xsd:int" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:restriction>
+                </xsd:complexContent>
+            </xsd:complexType>
+            <xsd:complexType name="StructureType">
+                <xsd:sequence>
+                    <xsd:element name="fld1" type="xsd:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="fld2" type="tns:intarr" minOccurs="0"/>
+                    <xsd:element name="fld3" type="tns:intarr2" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="intarr">
+                <xsd:complexContent>
+                    <xsd:restriction base="soapenc:Array">
+                        <xsd:sequence>
+                            <xsd:element name="element" type="xsd:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:restriction>
+                </xsd:complexContent>
+            </xsd:complexType>
+            <xsd:complexType name="intarr2">
+                <xsd:complexContent>
+                    <xsd:restriction base="soapenc:Array">
+                        <xsd:sequence>
+                            <xsd:element name="element2" type="typens:intarr" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:restriction>
+                </xsd:complexContent>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    <message name="EchoStructRequest">
+        <part name="name" type="tns:StructureType"/>
+    </message>
+    <message name="EchoStructResponse">
+        <part name="id" type="tns:StructureType"/>
+    </message>
+    <portType name="ArrayTest4">
+        <operation name="echoStruct">
+            <input message="tns:EchoStructRequest"/>
+            <output message="tns:EchoStructResponse"/>
+        </operation>
+    </portType>
+    <binding name="ArrayTest4SOAPBinding" type="tns:ArrayTest4">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoStruct">
+            <soap:operation/>
+            <input>
+                <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:ArrayTest"/>
+            </input>
+            <output>
+                <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:ArrayTest"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ArrayTest4Service">
+        <port name="ArrayTest4" binding="tns:ArrayTest4SOAPBinding">
+            <soap:address location="http://localhost:8080/axis/services/ArrayTest4"/>
+        </port>
+    </service>
+</wsdl:definitions>

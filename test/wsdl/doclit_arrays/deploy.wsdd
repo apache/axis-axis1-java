@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+    <service name="DocArrays" style="document"
+        xmlns:ns="http://doclit_arrays.wsdl.test/">
+        <namespace>http://doclit_arrays.wsdl.test/</namespace>
+        <parameter name="allowedMethods" value="*"/>
+        <parameter name="className" value="test.wsdl.doclit_arrays.ArrayService"/>
+        <beanMapping type="java:test.wsdl.doclit_arrays.ArrayService$Bean"
+            qname="ns:Bean"/>
+    </service>
+</deployment>

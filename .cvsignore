@@ -1,0 +1,17 @@
+axis-1_0
+axis-1_2*
+axis-1_3*
+build
+client-config.wsdd
+server-config.wsdd
+test-reports
+junit*.properties
+bin
+.project
+.classpath
+buildit.bat
+testit.bat
+GetQuote.wsdl
+axis_coverage*
+build.properties
+axis-1_2*

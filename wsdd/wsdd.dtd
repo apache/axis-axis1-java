@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--The chain Element is a DeployableItem that describes a collection of handlers invoked sequentially 
+as a single unit.
+-->
+<!ELEMENT chain ((documentation?, parameter*), (handler*, *))>
+<!ATTLIST chain
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--This is the root element for WSDD.-->
+<!ELEMENT deployment (documentation?, globalConfiguration?, (typeMapping* | chain* | handler* | transport* | service*)*, *)>
+<!ATTLIST deployment
+	name CDATA #IMPLIED
+>
+<!--Documentation is whitespace as far as the handler generator at WSDD deploy time 
+is concerned. The generator may save documentation elements as properties of the generated 
+handlers/chains as debug/administration aids.
+-->
+<!ELEMENT documentation (*)*>
+<!--The faultFlow Element is a DeployableItem that describes a fault-processing flow.-->
+<!ELEMENT faultFlow ((documentation?, parameter*), ((chain | handler)*, *))>
+<!ATTLIST faultFlow
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--The globalConfiguration Element is a DeployableItem that describes the global configuration
+of the Axis Engine.  
+
+The globalConfiguration may define global request, response, fault and transport flows that apply to all services.
+
+The provider element describes the deployment of the Axis Engine implementation.
+-->
+<!ELEMENT globalConfiguration ((documentation?, parameter*), (transport*, requestFlow?, provider, responseFlow?, faultFlow*, *))>
+<!ATTLIST globalConfiguration
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--The handler Element is a DeployableItem that describes the deployment of an individual
+handler component.
+-->
+<!ELEMENT handler ((documentation?, parameter*), (*))>
+<!ATTLIST handler
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--Defines an operation exposed by the Service Provider
+
+The optional qName attribute specifies the public qualified name (QName) of this operation.  The local part of the
+QName may or may not be the same as the required name attribute. 
+-->
+<!ELEMENT operation EMPTY>
+<!ATTLIST operation
+	name NMTOKEN #REQUIRED
+	qName CDATA #IMPLIED
+>
+<!--Parameters are name/value pairs that are used as configuration data for the handler or other 
+WSDD element during deployment and initialization.
+
+the "locked" attribute indicates whether or not the value of the parameter may be modified after configuration.  
+If locked=true, the value cannot be changed after deployment.  If locked=false, the value may be changed at 
+any time.
+-->
+<!ELEMENT parameter (*)>
+<!ATTLIST parameter
+	name CDATA #REQUIRED
+	locked CDATA #IMPLIED
+	value CDATA #IMPLIED
+>
+<!--The provider Element is a DeployableItem that describes the Axis Service Provider-->
+<!ELEMENT provider ((documentation?, parameter*), (operation*, *))>
+<!ATTLIST provider
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--The requestFlow Element is a DeployableItem that describes the inbound flow of a Message
+to the Service Provider.-->
+<!ELEMENT requestFlow ((documentation?, parameter*), ((chain | handler)*, *))>
+<!ATTLIST requestFlow
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--The responseFlow Element is a DeployableItem that describes the outward flow of a Message
+from the Service Provider-->
+<!ELEMENT responseFlow ((documentation?, parameter*), ((chain | handler)*, *))>
+<!ATTLIST responseFlow
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--The service Element is a DeployableItem that describes the deployment of a Web Service.
+
+A service is structured as a Targeted Chain represented with a Request Flow, a Provider and a Response Flow.
+
+A service may define an optional collection of Fault Flow's and typeMappings.
+
+The optional description attribute provides a means to directly relate the deployed Service with an external 
+Service Description mechanism (such as WSDL).
+-->
+<!ELEMENT service ((documentation?, parameter*), (typeMapping*, requestFlow?, provider, responseFlow?, faultFlow*, *))>
+<!ATTLIST service
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+	description CDATA #IMPLIED
+>
+<!--The transport Element is a DeployableItem that describes the request, response, and
+fault Flows for a given transport mechanism. 
+-->
+<!ELEMENT transport ((documentation?, parameter*), (requestFlow?, responseFlow?, faultFlow*, *))>
+<!ATTLIST transport
+	name CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+<!--This describes the mapping between XML and a programming language specific object.
+
+LanguageSpecificType refers to the type name in the programming language that is being coverted to/from XML.
+
+Serializer and deserializer refer to type names in the programming language.
+-->
+<!ELEMENT typeMapping (documentation?, *)>
+<!ATTLIST typeMapping
+	name CDATA #IMPLIED
+	ref CDATA #IMPLIED
+	encodingStyle CDATA #IMPLIED
+	qName CDATA #IMPLIED
+	languageSpecificType CDATA #IMPLIED
+	serializer CDATA #IMPLIED
+	deserializer CDATA #IMPLIED
+>

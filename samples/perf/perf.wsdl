@@ -1,0 +1,49 @@
+<wsdl:definitions targetNamespace="http://perf.samples" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://perf.samples" xmlns:intf="http://perf.samples" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.2beta
+Built on Apr 25, 2004 (11:19:16 EDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://perf.samples" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_xsd_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+     </restriction>
+
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+ <wsdl:message name="handleStringArrayResponse">
+  <wsdl:part name="handleStringArrayReturn" type="soapenc:string"/>
+ </wsdl:message>
+ <wsdl:message name="handleStringArrayRequest">
+  <wsdl:part name="s" type="impl:ArrayOf_xsd_string"/>
+
+ </wsdl:message>
+ <wsdl:portType name="PerfService">
+  <wsdl:operation name="handleStringArray" parameterOrder="s">
+   <wsdl:input message="impl:handleStringArrayRequest" name="handleStringArrayRequest"/>
+   <wsdl:output message="impl:handleStringArrayResponse" name="handleStringArrayResponse"/>
+  </wsdl:operation>
+ </wsdl:portType>
+ <wsdl:binding name="PerfPortSoapBinding" type="impl:PerfService">
+  <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+  <wsdl:operation name="handleStringArray">
+   <wsdlsoap:operation soapAction=""/>
+   <wsdl:input name="handleStringArrayRequest">
+    <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://perf.samples" use="encoded"/>
+   </wsdl:input>
+   <wsdl:output name="handleStringArrayResponse">
+    <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://perf.samples" use="encoded"/>
+   </wsdl:output>
+  </wsdl:operation>
+
+ </wsdl:binding>
+ <wsdl:service name="PerfService">
+  <wsdl:port binding="impl:PerfPortSoapBinding" name="PerfPort">
+   <wsdlsoap:address location="http://localhost:8080/axis/services/PerfPort"/>
+  </wsdl:port>
+ </wsdl:service>
+</wsdl:definitions>

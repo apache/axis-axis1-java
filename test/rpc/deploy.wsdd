@@ -1,0 +1,9 @@
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+	<service name="IF3SOAP" provider="Handler">
+		<parameter name="allowedMethods" value="getBeanById,getAllBeans,getAllCategories,getBeansByCategory,getBeansByDate,getBeansByExpression,getXMLForBean"/>
+                <parameter name="className" value="test.rpc.IF3SOAPImpl"/>
+		<parameter name="handlerClass" value="org.apache.axis.providers.java.RPCProvider"/>
+                <beanMapping qname="myNS:Bean" xmlns:myNS="urn:IF3SOAP"
+                        languageSpecificType="java:test.rpc.Bean"/>
+	</service>
+</deployment>

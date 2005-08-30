@@ -1,0 +1,6 @@
+<!-- static file is part of the test -->
+
+<undeployment xmlns="http://xml.apache.org/axis/wsdd/">
+  <!-- Undeploy the service -->
+  <service name="QueryTest"/>
+</undeployment>

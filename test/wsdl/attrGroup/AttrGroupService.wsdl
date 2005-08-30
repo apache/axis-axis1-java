@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions
+   xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:s="http://www.w3.org/2001/XMLSchema"
+   xmlns:s0="http://tempuri.org/"
+   xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding"
+   targetNamespace="http://tempuri.org/"
+   xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:import namespace="http://www.w3.org/2001/XMLSchema" />
+      <s:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <s:attributeGroup name="MyCommonAttrs1">
+        <s:attribute name="attr1" type="s:int"/>
+      </s:attributeGroup>
+      <s:attributeGroup name="MyCommonAttrs2">
+        <s:attributeGroup ref="s0:MyCommonAttrs1"/>
+        <s:attribute name="attr2" type="s:double"/>
+      </s:attributeGroup>
+      <s:element name="Record1">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="elem1" type="s:int"/>
+          </s:sequence>
+          <s:attributeGroup ref="s0:MyCommonAttrs1"/>
+          <s:attributeGroup ref="soapenc11:commonAttributes"/>
+          <s:attribute name="attr3" type="s:string"/>
+        </s:complexType>
+      </s:element>
+      <s:element name="Record2">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="elem2" type="s:string"/>
+          </s:sequence>
+          <s:attributeGroup ref="s0:MyCommonAttrs2"/>
+          <s:attributeGroup ref="soapenc12:commonAttributes"/>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </types>
+  <message name="Record1SoapIn">
+    <part name="parameters" element="s0:Record1" />
+  </message>
+  <message name="Record2SoapOut">
+    <part name="parameters" element="s0:Record2" />
+  </message>
+  <portType name="AttrGroupServiceSoap">
+    <operation name="a1AndA2">
+      <input message="s0:Record1SoapIn" />
+      <output message="s0:Record2SoapOut" />
+    </operation>
+  </portType>
+  <binding name="AttrGroupServiceSoap" type="s0:AttrGroupServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="a1AndA2">
+      <soap:operation soapAction="http://tempuri.org/a1AndA2" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="AttrGroupService">
+    <port name="AttrGroupServiceSoap" binding="s0:AttrGroupServiceSoap">
+      <soap:address location="http://www.irrelevant.com/services/AttrGroupService/AttrGroupService.asmx" />
+    </port>
+  </service>
+</definitions>

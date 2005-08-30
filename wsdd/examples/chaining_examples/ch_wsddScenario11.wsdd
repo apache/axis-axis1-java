@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario11" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<service name="scenario11_requestor_side_deployment">
+		<documentation>This is a test of a requestor side deployment.	</documentation>
+		<provider/>
+	</service>
+</deployment>

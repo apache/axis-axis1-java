@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://soapinterop.org/round5/type-ext" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://soapinterop.org/round5/type-ext/types" targetNamespace="http://soapinterop.org/round5/type-ext">
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://soapinterop.org/round5/type-ext/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://soapinterop.org/round5/type-ext/types">
+
+			<complexType name="BaseType">
+				<sequence>
+					<element name="baseTypeMember1" type="xsd:string"/>
+					<element name="baseTypeMember2" type="xsd:int"/>
+				</sequence>
+			</complexType>
+
+			<complexType name="L1DerivedType">
+				<complexContent>
+					<extension base="tns:BaseType">
+						<sequence>
+							<element name="l1DerivedTypeMember" type="xsd:string"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+			<complexType name="L2DerivedType1">
+				<complexContent>
+					<extension base="tns:L1DerivedType">
+						<sequence>
+							<element name="l2DerivedType1Member" type="xsd:int"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+			<!-- the following 2 data types below are not referenced elsewhere within the WSDL -->
+
+			<complexType name="L2DerivedType2">
+				<complexContent>
+					<extension base="tns:L1DerivedType">
+						<sequence>
+							<element name="l2DerivedType2Member" type="xsd:decimal"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+			<complexType name="L3DerivedType">
+				<complexContent>
+					<extension base="tns:L2DerivedType2">
+						<sequence>
+							<element name="l3DerivedTypeMember" type="xsd:short"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+		</schema>
+	</types>
+
+	<message name="echoBaseTypeRequest">
+		<part name="param" type="ns0:BaseType"/>
+	</message>
+
+	<message name="echoBaseTypeResponse">
+		<part name="param" type="ns0:BaseType"/>
+	</message>
+
+	<message name="echoL1DerivedTypeRequest">
+		<part name="param" type="ns0:L1DerivedType"/>
+	</message>
+
+	<message name="echoL1DerivedTypeResponse">
+		<part name="param" type="ns0:L1DerivedType"/>
+	</message>
+
+	<message name="echoL2DerivedType1Request">
+		<part name="param" type="ns0:L2DerivedType1"/>
+	</message>
+
+	<message name="echoL2DerivedType1Response">
+		<part name="param" type="ns0:L2DerivedType1"/>
+	</message>
+	<message name="echoL1DerivedTypeAsBaseTypeRequest">
+		<part name="param" type="ns0:L1DerivedType"/>
+	</message>
+
+	<message name="echoL1DerivedTypeAsBaseTypeResponse">
+		<part name="param" type="ns0:BaseType"/>
+	</message>
+
+	<message name="echoL2DerivedType1AsBaseTypeRequest">
+		<part name="param" type="ns0:L2DerivedType1"/>
+	</message>
+
+	<message name="echoL2DerivedType1AsBaseTypeResponse">
+		<part name="param" type="ns0:BaseType"/>
+	</message>
+
+	<message name="echoBaseTypeAsL1DerivedTypeRequest">
+		<part name="param" type="ns0:BaseType"/>
+	</message>
+
+	<message name="echoBaseTypeAsL1DerivedTypeResponse">
+		<part name="param" type="ns0:L1DerivedType"/>
+	</message>
+
+	<message name="echoBaseTypeAsL2DerivedType1Request">
+		<part name="param" type="ns0:BaseType"/>
+	</message>
+
+	<message name="echoBaseTypeAsL2DerivedType1Response">
+		<part name="param" type="ns0:L2DerivedType1"/>
+	</message>
+
+	<portType name="ComplexTypeExtensionsPortType">
+		<!--
+			Pass an instance of the BaseType at run-time
+		-->
+		<operation name="echoBaseType_1">
+			<input message="tns:echoBaseTypeRequest"/>
+			<output message="tns:echoBaseTypeResponse"/>
+		</operation>
+
+		<!--
+			Pass an instance of the L1DerivedType at run-time
+		-->
+		<operation name="echoBaseType_2">
+			<input message="tns:echoBaseTypeRequest"/>
+			<output message="tns:echoBaseTypeResponse"/>
+		</operation>
+
+		<!--
+			Pass an instance of the L2DerivedType1 at run-time
+		-->
+		<operation name="echoBaseType_3">
+			<input message="tns:echoBaseTypeRequest"/>
+			<output message="tns:echoBaseTypeResponse"/>
+		</operation>
+
+		<!--
+			Pass an instance of the L2DerivedType2 at run-time
+		-->
+		<operation name="echoBaseType_4">
+			<input message="tns:echoBaseTypeRequest"/>
+			<output message="tns:echoBaseTypeResponse"/>
+		</operation>
+
+		<!--
+			Pass an instance of the L3DerivedType at run-time
+		-->
+		<operation name="echoBaseType_5">
+			<input message="tns:echoBaseTypeRequest"/>
+			<output message="tns:echoBaseTypeResponse"/>
+		</operation>
+
+		<!--
+			Pass an instance of the L1DerivedType at run-time
+		-->
+		<operation name="echoL1DerivedType_1">
+			<input message="tns:echoL1DerivedTypeRequest"/>
+			<output message="tns:echoL1DerivedTypeResponse"/>
+		</operation>
+
+		<!--
+			Pass an instance of the L2DerivedType1 at run-time
+		-->
+		<operation name="echoL1DerivedType_2">
+			<input message="tns:echoL1DerivedTypeRequest"/>
+			<output message="tns:echoL1DerivedTypeResponse"/>
+		</operation>
+
+		<!--
+			Pass an instance of the L2DerivedType1 at run-time
+		-->
+		<operation name="echoL2DerivedType1_1">
+			<input message="tns:echoL2DerivedType1Request"/>
+			<output message="tns:echoL2DerivedType1Response"/>
+		</operation>
+
+		<!--
+			The server implementation should "reconstruct" the BaseType from 
+			the L1DerivedType 
+		-->
+		<operation name="echoL1DerivedTypeAsBaseType">
+			<input message="tns:echoL1DerivedTypeAsBaseTypeRequest"/>
+			<output message="tns:echoL1DerivedTypeAsBaseTypeResponse"/>
+		</operation>
+
+		<!--
+			The server implementation should "reconstruct" the BaseType from 
+			the L2DerivedType 
+		-->
+		<operation name="echoL2DerivedType1AsBaseType">
+			<input message="tns:echoL2DerivedType1AsBaseTypeRequest"/>
+			<output message="tns:echoL2DerivedType1AsBaseTypeResponse"/>
+		</operation>
+
+		<!-- 
+			Pass an instance of L1DerivedType - 
+							Casting is going to be involved on the server-side.
+		-->
+
+		<operation name="echoBaseTypeAsL1DerivedType">
+			<input message="tns:echoBaseTypeAsL1DerivedTypeRequest"/>
+			<output message="tns:echoBaseTypeAsL1DerivedTypeResponse"/>
+		</operation>
+
+		<!-- 
+			Pass an instance of L2DerivedType1 - 
+							Casting is going to be involved on the server-side.
+		-->
+
+		<operation name="echoBaseTypeAsL2DerivedType1">
+			<input message="tns:echoBaseTypeAsL2DerivedType1Request"/>
+			<output message="tns:echoBaseTypeAsL2DerivedType1Response"/>
+		</operation>
+
+	</portType>
+
+	<binding name="ComplexTypeExtensionsBinding" type="tns:ComplexTypeExtensionsPortType">
+
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+
+		<operation name="echoBaseType_1">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoBaseType_2">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoBaseType_3">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoBaseType_4">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoBaseType_5">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoL1DerivedType_1">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoL1DerivedType_2">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoL2DerivedType1_1">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoL1DerivedTypeAsBaseType">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoL2DerivedType1AsBaseType">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoBaseTypeAsL1DerivedType">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+		<operation name="echoBaseTypeAsL2DerivedType1">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</input>
+			<output>
+				<soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="encoded" namespace="http://soapinterop.org/wsdl"/>
+			</output>
+		</operation>
+
+	</binding>
+
+	<service name="ComplexTypeExtensionsService">
+		<port name="ComplexTypeExtensionsPort" binding="tns:ComplexTypeExtensionsBinding">
+            <soap:address xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" location="http://localhost:8080/axis/services/ComplexTypeExtensionsPort" />
+            <!--
+			<soap:address xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" location="http://soapinterop.java.sun.com:80/round5/group5_5"/>
+            -->
+		</port>
+	</service>
+</definitions>

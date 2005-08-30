@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SampleServiceDefinition"
+             targetNamespace="http://www.test.org/sample_interface"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://www.test.org/sample_interface"
+             xmlns:sample-types="http://www.test.org/sample_types"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<import location="sample_types.xsd"
+        namespace="http://www.test.org/sample_types"/>
+
+<message name="sampleOpRequest">
+  <part name="sampleOpParameters" type="sample-types:SampleType"/>
+</message>
+<message name="sampleOpResponse"/>
+
+<portType name="SamplePortType">
+  <operation name="sampleOp">
+    <input message="tns:sampleOpRequest"/>
+    <output message="tns:sampleOpResponse"/>
+  </operation>
+</portType>
+
+<binding name="SampleSOAPBinding" type="tns:SamplePortType">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="sampleOp">
+    <soap:operation soapAction="http://www.test.org/sample#sampleOp"/>
+    <input>
+      <soap:body use="literal"/>
+    </input>
+    <output>
+      <soap:body use="literal"/>
+    </output>
+  </operation>
+</binding>
+
+</definitions>

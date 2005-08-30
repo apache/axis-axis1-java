@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://tempuri.org/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://tempuri.org/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:import namespace="http://www.w3.org/2001/XMLSchema" />
+      <s:element name="GetTitleAuthors">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetTitleAuthorsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTitleAuthorsResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PutTitleAuthors">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DS">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PutTitleAuthorsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="PutTitleAuthorsResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DataSet" nillable="true">
+        <s:complexType>
+          <s:sequence>
+            <s:element ref="s:schema" />
+            <s:any />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </types>
+  <message name="GetTitleAuthorsSoapIn">
+    <part name="parameters" element="s0:GetTitleAuthors" />
+  </message>
+  <message name="GetTitleAuthorsSoapOut">
+    <part name="parameters" element="s0:GetTitleAuthorsResponse" />
+  </message>
+  <message name="PutTitleAuthorsSoapIn">
+    <part name="parameters" element="s0:PutTitleAuthors" />
+  </message>
+  <message name="PutTitleAuthorsSoapOut">
+    <part name="parameters" element="s0:PutTitleAuthorsResponse" />
+  </message>
+  <message name="GetTitleAuthorsHttpGetIn" />
+  <message name="GetTitleAuthorsHttpGetOut">
+    <part name="Body" element="s0:DataSet" />
+  </message>
+  <message name="GetTitleAuthorsHttpPostIn" />
+  <message name="GetTitleAuthorsHttpPostOut">
+    <part name="Body" element="s0:DataSet" />
+  </message>
+  <portType name="DataServiceSoap">
+    <operation name="GetTitleAuthors">
+      <input message="s0:GetTitleAuthorsSoapIn" />
+      <output message="s0:GetTitleAuthorsSoapOut" />
+    </operation>
+    <operation name="PutTitleAuthors">
+      <input message="s0:PutTitleAuthorsSoapIn" />
+      <output message="s0:PutTitleAuthorsSoapOut" />
+    </operation>
+  </portType>
+  <portType name="DataServiceHttpGet">
+    <operation name="GetTitleAuthors">
+      <input message="s0:GetTitleAuthorsHttpGetIn" />
+      <output message="s0:GetTitleAuthorsHttpGetOut" />
+    </operation>
+  </portType>
+  <portType name="DataServiceHttpPost">
+    <operation name="GetTitleAuthors">
+      <input message="s0:GetTitleAuthorsHttpPostIn" />
+      <output message="s0:GetTitleAuthorsHttpPostOut" />
+    </operation>
+  </portType>
+  <binding name="DataServiceSoap" type="s0:DataServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="GetTitleAuthors">
+      <soap:operation soapAction="http://tempuri.org/GetTitleAuthors" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="PutTitleAuthors">
+      <soap:operation soapAction="http://tempuri.org/PutTitleAuthors" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="DataServiceHttpGet" type="s0:DataServiceHttpGet">
+    <http:binding verb="GET" />
+    <operation name="GetTitleAuthors">
+      <http:operation location="/GetTitleAuthors" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="DataServiceHttpPost" type="s0:DataServiceHttpPost">
+    <http:binding verb="POST" />
+    <operation name="GetTitleAuthors">
+      <http:operation location="/GetTitleAuthors" />
+      <input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <service name="DataService">
+    <port name="DataServiceSoap" binding="s0:DataServiceSoap">
+      <soap:address location="http://samples.gotdotnet.com/quickstart/aspplus/samples/services/DataService/VB/DataService.asmx" />
+    </port>
+    <port name="DataServiceHttpGet" binding="s0:DataServiceHttpGet">
+      <http:address location="http://samples.gotdotnet.com/quickstart/aspplus/samples/services/DataService/VB/DataService.asmx" />
+    </port>
+    <port name="DataServiceHttpPost" binding="s0:DataServiceHttpPost">
+      <http:address location="http://samples.gotdotnet.com/quickstart/aspplus/samples/services/DataService/VB/DataService.asmx" />
+    </port>
+  </service>
+</definitions>

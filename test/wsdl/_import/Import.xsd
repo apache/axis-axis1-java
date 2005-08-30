@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <schema
+    targetNamespace="urn:types.import.test"
+    xmlns:tns="urn:types.import.test"
+    xmlns="http://www.w3.org/2001/XMLSchema">
+
+    <import
+      schemaLocation="Phone.xsd"
+      namespace="urn:types.import.test">
+    </import>
+
+    <complexType name="Address">
+      <all>
+        <element name="streetNum" type="int"/>
+        <element name="streetName" nillable="true" type="string"/>
+        <element name="city" nillable="true" type="string"/>
+        <element name="state" nillable="true" type="string"/>
+        <element name="zip" type="int"/>
+        <element name="phoneNumber" nillable="true" type="tns:PhoneNumber"/>
+      </all>
+    </complexType>
+
+  </schema>

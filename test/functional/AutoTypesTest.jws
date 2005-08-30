@@ -1,0 +1,88 @@
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Date;
+
+import test.functional.SimpleBean;
+import test.functional.NestedBean;
+
+/* based upon GlobalTypesTest.jws */
+public class AutoTypesTest {
+
+    public String ping() {
+        return "Pong";
+    }
+
+    public SimpleBean getBean() throws RemoteException {       
+        return new SimpleBean();
+    }
+
+    public void setBean(SimpleBean bean) throws RemoteException {
+        // deliberately blank
+    }
+
+    public SimpleBean echoBean(SimpleBean bean) throws RemoteException {
+        return bean;
+    }
+
+    public SimpleBean[] getBeanArray(int count) throws RemoteException {
+        SimpleBean[] result = new SimpleBean[count];
+        for (int i = 0; i < count; i++) {
+            result[i] = new SimpleBean();
+            result[i].setIntValue(i);
+        }
+        return result;
+    }
+
+    public void setBeanArray(SimpleBean[] beans) throws RemoteException {
+        // deliberately blank
+    }
+
+    public SimpleBean[] echoBeanArray(SimpleBean[] beans) throws RemoteException {
+        return beans;
+    }
+
+    public ArrayList getBeanArrayList(int count) throws RemoteException {
+        ArrayList result = new ArrayList();
+
+        for (int i = 0; i < count; i++) {
+            SimpleBean bean = new SimpleBean();
+            bean.setIntValue(i);
+            result.add(bean);
+        }
+
+        return result;
+    }
+
+    public int setBeanArrayList(ArrayList beansArr) throws RemoteException {
+        return beansArr.size();
+    }
+
+    public NestedBean getNestedBean() throws RemoteException {
+        NestedBean result = new NestedBean();
+        result.setStartDate(new Date());
+        result.setTestString("some test string " + result.getStartDate()); //$NON-NLS-1$
+        SimpleBean[] sba = new SimpleBean[3];
+
+        sba[0] = new SimpleBean();
+        sba[1] = new SimpleBean();
+        sba[2] = new SimpleBean();
+
+        sba[0].setIntValue(1);
+        sba[1].setIntValue(2);
+        sba[2].setIntValue(3);
+
+        result.setSimpleBeanList(sba);
+
+        return result;
+    }
+
+    public void setNestedBean(NestedBean value) throws RemoteException {
+        // deliberately left blank
+        
+    }
+
+    public NestedBean echoNestedBean(NestedBean value) throws RemoteException {
+        return value;
+    }
+
+}

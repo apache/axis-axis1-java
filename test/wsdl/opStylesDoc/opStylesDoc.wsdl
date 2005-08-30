@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="operation styles test"
+    targetNamespace="urn:opStylesDoc.wsdl.test"
+    xmlns:tns="urn:opStylesDoc.wsdl.test"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="urn:opStylesDoc.wsdl.test"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+       <xsd:element name="emptyElementIn">
+        <xsd:complexType/>
+       </xsd:element>
+
+      <xsd:element name="emptyElementOut">
+        <xsd:complexType/>
+       </xsd:element>
+        
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="empty"/>
+
+  <message name="emptyElementIn">
+    <part name="input" element="tns:emptyElementIn"/>
+  </message>
+
+  <message name="emptyElementOut">
+    <part name="output" element="tns:emptyElementOut"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="opStyles">
+    <operation name="requestResponse">
+      <input message="tns:empty"/>
+      <output message="tns:emptyElementOut"/>
+    </operation>
+    <operation name="requestResponse2">
+      <input message="tns:empty"/>
+      <output message="tns:empty"/>
+    </operation>
+   <operation name="requestResponse3">
+      <input message="tns:emptyElementIn"/>
+      <output message="tns:emptyElementOut"/>
+    </operation>
+    <operation name="notifyMessage">
+      <input message="tns:empty"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="opStyleBinding" type="tns:opStyles">
+    <soap:binding
+        style="document"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="requestResponse">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="literal"
+            namespace=""
+            encodingStyle=""/>
+      </input>
+      <output>
+        <soap:body
+            use="literal"
+            namespace=""
+            encodingStyle=""/>
+      </output>
+    </operation>
+
+    <operation name="requestResponse2">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="literal"
+            namespace=""
+            encodingStyle=""/>
+      </input>
+      <output>
+        <soap:body
+            use="literal"
+            namespace=""
+            encodingStyle=""/>
+      </output>
+    </operation>
+
+    <operation name="requestResponse3">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="literal"
+            namespace=""
+            encodingStyle=""/>
+      </input>
+      <output>
+        <soap:body
+            use="literal"
+            namespace=""
+            encodingStyle=""/>
+      </output>
+    </operation>
+
+    <operation name="notifyMessage">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="literal"
+            namespace=""
+            encodingStyle=""/>
+      </input>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="opStyleDocService">
+    <port name="OpStylesDoc" binding="tns:opStyleBinding">
+      <soap:address location="http://localhost:8080/axis/services/OpStylesDoc"/>
+    </port>
+  </service>
+
+</definitions>
+

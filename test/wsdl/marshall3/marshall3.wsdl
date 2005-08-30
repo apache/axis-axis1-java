@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:impl="http://marshalltestservice.org/"
+                  xmlns:intf="http://marshalltestservice.org/"
+                  xmlns:tns1="http://marshalltestservice.org/types"
+                  xmlns:tns2="http://marshalltestservice.org/types2"
+                  xmlns="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  targetNamespace="http://marshalltestservice.org/">
+    <wsdl:types>
+        <schema targetNamespace="http://marshalltestservice.org/types" xmlns="http://www.w3.org/2001/XMLSchema">
+            <complexType name="ShortArrayTest">
+                <sequence>
+                    <element name="shortArray" type="short" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="ShortArrayTestResponse">
+                <sequence>
+                    <element name="shortArray" type="short" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="StringArrayTest">
+                <sequence>
+                    <element name="StringArray" type="string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            <complexType name="StringArrayTestResponse">
+                <sequence>
+                    <element name="StringArray" type="string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+						<complexType name="QNameArrayTest">
+				<sequence>
+					<element name="qnameArray_1" type="QName"
+						nillable="true" minOccurs="0" maxOccurs="unbounded" />
+				</sequence>
+			</complexType>
+			<complexType name="QNameArrayTestResponse">
+				<sequence>
+					<element name="result" type="QName" nillable="true"
+						minOccurs="0" maxOccurs="unbounded" />
+				</sequence>
+			</complexType>
+
+			<element name="QNameArrayTest" type="tns1:QNameArrayTest"/>
+			<element name="QNameArrayTestResponse" type="tns1:QNameArrayTestResponse"/>
+            <element name="ShortArrayTest" type="tns1:ShortArrayTest"/>
+            <element name="ShortArrayTestResponse" type="tns1:ShortArrayTestResponse"/>
+            <element name="StringArrayTest" type="tns1:StringArrayTest"/>
+            <element name="StringArrayTestResponse" type="tns1:StringArrayTestResponse"/>
+        </schema>
+        <schema targetNamespace="http://marshalltestservice.org/types2" xmlns="http://www.w3.org/2001/XMLSchema">
+            <simpleType name="FooShortListType">
+                <list itemType="short"/>
+            </simpleType>
+            <element name="FooShortListType" type="tns2:FooShortListType"/>
+        </schema>
+    </wsdl:types>
+    <message name="MarshallTest_shortArrayTest">
+        <part name="parameters" element="tns1:ShortArrayTest"/>
+    </message>
+    <message name="MarshallTest_shortArrayTestResponse">
+        <part name="result" element="tns1:ShortArrayTestResponse"/>
+    </message>
+    <message name="MarshallTest_stringArrayTest">
+        <part name="parameters" element="tns1:StringArrayTest"/>
+    </message>
+    <message name="MarshallTest_stringArrayTestResponse">
+        <part name="result" element="tns1:StringArrayTestResponse"/>
+    </message>
+    <message name="FooShortListTypeRequest">
+        <part name="fooShortListTypeRequest" element="tns2:FooShortListType"/>
+    </message>
+    <message name="FooShortListTypeResponse">
+        <part name="fooShortListTypeResponse" element="tns2:FooShortListType"/>
+    </message>
+	<message name="MarshallTest_qnameArrayTest">
+		<part name="parameters" element="tns1:QNameArrayTest" />
+	</message>
+	<message name="MarshallTest_qnameArrayTestResponse">
+		<part name="result" element="tns1:QNameArrayTestResponse" />
+	</message>
+
+    <portType name="MarshallTest">
+        <operation name="shortArrayTest">
+            <input message="impl:MarshallTest_shortArrayTest"/>
+            <output message="impl:MarshallTest_shortArrayTestResponse"/>
+        </operation>
+        <operation name="stringArrayTest">
+            <input message="impl:MarshallTest_stringArrayTest"/>
+            <output message="impl:MarshallTest_stringArrayTestResponse"/>
+        </operation>
+        <operation name="echoShortListTypeTest">
+            <input message="impl:FooShortListTypeRequest"/>
+            <output message="impl:FooShortListTypeResponse"/>
+        </operation>
+		<operation name="qnameArrayTest">
+			<input message="impl:MarshallTest_qnameArrayTest" />
+			<output message="impl:MarshallTest_qnameArrayTestResponse" />
+		</operation>
+
+    </portType>
+    <binding name="Marshall3TestPort1SoapBinding" type="impl:MarshallTest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="shortArrayTest">
+            <soap:operation/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="stringArrayTest">
+            <soap:operation/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="echoShortListTypeTest">
+            <soap:operation/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+		<operation name="qnameArrayTest">
+			<soap:operation/>
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+
+    </binding>
+    <service name="MarshallTestService">
+        <port name="Marshall3TestPort1" binding="impl:Marshall3TestPort1SoapBinding">
+            <soap:address location="http://localhost:8080/axis/services/Marshall3TestPort1"/>
+        </port>
+    </service>
+</wsdl:definitions>

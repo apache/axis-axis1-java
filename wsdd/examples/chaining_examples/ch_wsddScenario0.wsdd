@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario0" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<documentation>
+    		This is a trivial service deployment.  It defines no chains, no handlers.  Just the service.
+   
+    		Minimal deployment with no serviceDescription is required as the deployment identifies the type to use.
+    		The serviceHandler is not specified, the default serviceHandler for javaProvider is used in this case.
+  	</documentation>
+	<service name="wsddScenario0-service-1">
+		<provider>
+			<java:provider className="samples.wsdd.wsddScenario0"/>
+		</provider>
+	</service>
+</deployment>
