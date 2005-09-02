@@ -134,15 +134,20 @@ public class JavaBeanWriter extends JavaClassWriter {
             // by restriction?  if so, do not emit instance variables
             // or accessor/mutator pairs as those are inherited from
             // the super type, which must be non-null.
-            if ((null != extendType)
-                    && (null
-                    != SchemaUtils.getComplexElementRestrictionBase(
-                            type.getNode(), emitter.getSymbolTable()))) {
-                enableMemberFields = false;
-                enableGetters = false;
-                enableSetters = false;
-                enableEquals = false;
-                enableHashCode = false;
+            if (null != extendType) {
+            	if (null != SchemaUtils.getComplexElementRestrictionBase(
+                        type.getNode(), emitter.getSymbolTable())) {
+	                enableMemberFields = false;
+	                enableGetters = false;
+	                enableSetters = false;
+	                enableEquals = false;
+	                enableHashCode = false;
+            	} else { 
+            		// derived by extension. 
+            		// Write full constructor, so that instance variables 
+            		// in super class are intialized.
+        			enableFullConstructor = true;
+            	}
             }
         }
 
