@@ -158,7 +158,7 @@ public class DeserializationContext extends DefaultHandler
                                   String messageType)
     {
         msgContext = ctx;
-        EnvelopeBuilder builder = new EnvelopeBuilder(messageType, null);
+        EnvelopeBuilder builder = new EnvelopeBuilder(messageType, ctx != null ? ctx.getSOAPConstants() : null);
         // If high fidelity is required, record the whole damn thing.
         if (ctx == null || ctx.isHighFidelity())
             recorder = new SAX2EventRecorder();
