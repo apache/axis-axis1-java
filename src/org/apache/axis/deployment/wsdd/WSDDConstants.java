@@ -163,6 +163,7 @@ public class WSDDConstants
     public static final String ATTR_CLASSNAME = "classname";
     public static final String ATTR_CLASS = "class";
     public static final String ATTR_SOAPACTION = "soapAction";
+    public static final String ATTR_SOAP12ACTION = "action";
     public static final String ATTR_MEP = "mep";
     public static final String ATTR_INNER_TYPE = "innerType";
     public static final String ATTR_INNER_NAME = "innerName";

@@ -320,6 +320,10 @@ public class Message extends javax.xml.soap.SOAPMessage
             int delimiterIndex = contentType.lastIndexOf("charset");
             if (delimiterIndex > 0) {
                 String charsetPart = contentType.substring(delimiterIndex);
+                int delimiterIndex2 = charsetPart.indexOf(';');
+                if(delimiterIndex2 != -1){
+                    charsetPart = charsetPart.substring(0, delimiterIndex2);
+                }
                 int charsetIndex = charsetPart.indexOf('=');
                 String charset = charsetPart.substring(charsetIndex + 1).trim();
                 if ((charset.startsWith("\"") || charset.startsWith("\'"))) {
