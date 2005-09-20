@@ -69,6 +69,14 @@ public class AttachmentsImpl implements Attachments {
      */
 	private HashMap stackDataHandler = new HashMap();
 
+	 /**
+     * Used to distribute attachment streams without caching them.
+     */
+	 private IncomingAttachmentStreams _streams = null;
+
+	 private boolean _askedForAttachments = false;
+	 private boolean _askedForStreams = false;
+
     /**
      * Construct one of these on a parent Message.
      * Should only ever be called by Message constructor!
@@ -131,6 +139,8 @@ public class AttachmentsImpl implements Attachments {
                         soapPart = new org.apache.axis.SOAPPart(null,
                                 mpartStream,
                                 false);
+                        MultiPartRelatedInputStream specificType = (MultiPartRelatedInputStream) mpartStream;
+                        _streams = new MultipartAttachmentStreams(specificType.boundaryDelimitedStream, specificType.orderedParts);
                      } else if (token.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)) {
                          try{
                             mpartStream=
@@ -138,6 +148,8 @@ public class AttachmentsImpl implements Attachments {
                              soapPart = new org.apache.axis.SOAPPart(null, mpartStream, false);
                          }catch(Exception e){ throw org.apache.axis.AxisFault.makeFault(e);}
                          sendtype=  SEND_TYPE_DIME;
+                         MultiPartDimeInputStream specificType = (MultiPartDimeInputStream) mpartStream;
+                         _streams = new DimeAttachmentStreams(specificType.dimeDelimitedStream);
                     } else if (token.indexOf(org.apache.axis.Message.CONTENT_TYPE_MTOM)!=-1){
                         sendtype = SEND_TYPE_MTOM;
                     }
@@ -179,6 +191,9 @@ public class AttachmentsImpl implements Attachments {
      */
     public Part removeAttachmentPart(String reference)
             throws org.apache.axis.AxisFault {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
 
         multipart = null;
 
@@ -207,7 +222,9 @@ public class AttachmentsImpl implements Attachments {
      */
     public Part addAttachmentPart(Part newPart)
             throws org.apache.axis.AxisFault {
-
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
 
         multipart = null;
         dimemultipart = null;
@@ -272,6 +289,9 @@ public class AttachmentsImpl implements Attachments {
      */
     public void setAttachmentParts(java.util.Collection parts)
             throws org.apache.axis.AxisFault {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
 
         removeAllAttachments();
 
@@ -304,6 +324,9 @@ public class AttachmentsImpl implements Attachments {
      */
     public Part getAttachmentByReference(String reference)
             throws org.apache.axis.AxisFault {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
 
         if (null == reference) {
             return null;
@@ -360,6 +383,9 @@ public class AttachmentsImpl implements Attachments {
      */
     public java.util.Collection getAttachments()
             throws org.apache.axis.AxisFault {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
 
         mergeinAttachments();
 
@@ -399,6 +425,9 @@ public class AttachmentsImpl implements Attachments {
      * @throws org.apache.axis.AxisFault
      */
     public long getContentLength() throws org.apache.axis.AxisFault {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
 
         mergeinAttachments();
 
@@ -513,6 +542,9 @@ public class AttachmentsImpl implements Attachments {
      * @return the number of attachments
      */
     public int getAttachmentCount() {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
 
         try {
             mergeinAttachments();
@@ -548,6 +580,9 @@ public class AttachmentsImpl implements Attachments {
      *   <P>This method does not touch the SOAP part.</P>
      */
     public void removeAllAttachments() {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
         try {
             multipart = null;
             dimemultipart = null;
@@ -573,6 +608,9 @@ public class AttachmentsImpl implements Attachments {
      */
     public java.util.Iterator getAttachments(
             javax.xml.soap.MimeHeaders headers) {
+        if (_askedForStreams) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
         java.util.Vector vecParts = new java.util.Vector();
         java.util.Iterator iterator = GetAttachmentsIterator();
         while(iterator.hasNext()){
@@ -676,5 +714,21 @@ public class AttachmentsImpl implements Attachments {
             return "NONE";
         }
         return null;
+    }
+
+    /**
+     * Once this method is called, attachments can only be accessed via the InputStreams.
+     * Any other access to the attachments collection (e.g. via getAttachments()) is
+     * prohibited and will cause a IllegalStateException to be thrown.
+     *
+     * @return All of the attachment streams.
+     */
+    public IncomingAttachmentStreams getIncomingAttachmentStreams() {
+        if (_askedForAttachments) {
+            throw new IllegalStateException(Messages.getMessage("concurrentModificationOfStream"));
+        }
+        _askedForStreams = true;
+        mpartStream = null; // todo: comment
+        return _streams;
     }
 }

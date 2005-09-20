@@ -237,4 +237,14 @@ public interface Attachments extends java.io.Serializable {
      */
 
     public void dispose();
+
+
+
+    /**
+     * Once this method is called, attachments can only be accessed via the InputStreams.
+     * Any other access to the attachments collection (e.g. via getAttachments()) is
+     * prohibited and will cause a ConcurrentModificationException to be thrown.
+     * @return All of the attachment streams.
+     */
+    public IncomingAttachmentStreams getIncomingAttachmentStreams();
 }
