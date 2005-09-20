@@ -617,6 +617,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      *     was a problem saving changes to this message.
      */
     public void saveChanges() throws SOAPException {
+        headers.removeHeader("Content-Length");
         if (mAttachments != null && 0 < mAttachments.getAttachmentCount()) {
             try {
                 headers.setHeader("Content-Type",mAttachments.getContentType());
