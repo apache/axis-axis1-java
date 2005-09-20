@@ -179,8 +179,23 @@ public class BeanPropertyDescriptor
                                               new Object[] {
                                                   new Integer(i), newValue});
         } else {
-            growArrayToSize(obj, myPD.getPropertyType().getComponentType(), i);
-            Array.set(get(obj), i, newValue);
+            // Not calling 'growArrayToSize' to avoid an extra call to the
+            // property's setter. The setter will be called at the end anyway.
+            // growArrayToSize(obj, myPD.getPropertyType().getComponentType(), i);
+            Object array = get(obj);
+            if (array == null || Array.getLength(array) <= i) {
+                Class componentType = getType().getComponentType();
+                Object newArray = Array.newInstance(componentType, i + 1);
+                // Copy over the old elements
+                if (array != null) {
+                    System.arraycopy(array, 0, newArray, 0, Array.getLength(array));
+                }
+                array = newArray;
+            }
+            Array.set(array, i, newValue);
+            // Fix for non-indempondent array-type propertirs.
+            // Make sure we call the property's setter.
+            set(obj, array);
         }
     }
 
