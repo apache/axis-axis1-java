@@ -142,9 +142,9 @@ public class JavaBeanWriter extends JavaClassWriter {
 	                enableSetters = false;
 	                enableEquals = false;
 	                enableHashCode = false;
-            	} else { 
-            		// derived by extension. 
-            		// Write full constructor, so that instance variables 
+            	} else {
+            		// derived by extension.
+            		// Write full constructor, so that instance variables
             		// in super class are intialized.
         			enableFullConstructor = true;
             	}
@@ -675,6 +675,14 @@ public class JavaBeanWriter extends JavaClassWriter {
                     paramTypes.add(elem.getType().getName());
                     paramNames.add(JavaUtils.getUniqueValue(
                             helper.reservedPropNames, elem.getName()));
+                }
+            }
+
+            if (enableMemberFields && SchemaUtils.isMixed(te.getNode())) {
+                isMixed = true;
+                if (!isAny) {
+                    paramTypes.add("org.apache.axis.message.MessageElement []");
+                    paramNames.add(Constants.ANYCONTENT);
                 }
             }
         }
