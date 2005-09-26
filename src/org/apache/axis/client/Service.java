@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.WeakHashMap;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -79,7 +80,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private HandlerRegistryImpl registry = new HandlerRegistryImpl();
     private Parser wsdlParser = null;
 
-    private static HashMap cachedWSDL = new HashMap();
+    private static Map cachedWSDL = new WeakHashMap();
     private static boolean cachingWSDL = true;
 
     // The last call object
