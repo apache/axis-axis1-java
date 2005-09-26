@@ -314,13 +314,13 @@ public class JavaBeanWriter extends JavaClassWriter {
             for (int i = 0; i < attributes.size(); i++) {
                 ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
                 String typeName = attr.getType().getName();
-                String variableName = attr.getName();
+                String variableName = getAttributeName(attr);
 
-		// TODO - What about MinOccurs and Nillable?
-		// Do they make sense here?
-		if (attr.getOptional()) {
-		    typeName = Utils.getWrapperType(typeName);
-		}
+                // TODO - What about MinOccurs and Nillable?
+                // Do they make sense here?
+                if (attr.getOptional()) {
+                    typeName = Utils.getWrapperType(typeName);
+                }
 
                 // Make sure the property name is not reserved.
                 variableName = JavaUtils.getUniqueValue(
@@ -384,14 +384,29 @@ public class JavaBeanWriter extends JavaClassWriter {
     }
 
     /**
-     * Check if we need to use the wrapper type
+     * generate a name for the attribute
+     * @param attr
+     * @return name
+     */
+    private String getAttributeName(ContainedAttribute attr) {
+        String variableName = attr.getName();
+        if (variableName == null) {
+            variableName = Utils.getLastLocalPart(attr.getQName().getLocalPart());
+        }
+        return variableName;
+    }
+
+    /**
+     * Check if we need to use the wrapper type or MessageElement
      *
      * @param elem
      * @param typeName
      * @return type name
      */
     private String processTypeName(ElementDecl elem, String typeName) {
-        if (elem.getType().getUnderlTypeNillable()
+        if (elem.getAnyElement()) {
+            typeName = "org.apache.axis.message.MessageElement []";
+        } else if (elem.getType().getUnderlTypeNillable()
                 || (elem.getNillable() && elem.getMaxOccursIsUnbounded())) {
                     /*
 		             * Soapenc arrays with nillable underlying type or
@@ -399,7 +414,6 @@ public class JavaBeanWriter extends JavaClassWriter {
 		             * should be mapped to a wrapper type.
 		             */
             typeName = Utils.getWrapperType(elem.getType());
-
         } else if (elem.getMinOccursIs0() && elem.getMaxOccursIsExactlyOne()
                 || elem.getNillable() || elem.getOptional()) {
                     /*
@@ -667,17 +681,6 @@ public class JavaBeanWriter extends JavaClassWriter {
                         + "_";
             }
 
-            // Process the attributes
-            Vector attributes = te.getContainedAttributes();
-            if (attributes != null) {
-                for (int j = 0; j < attributes.size(); j += 1) {
-                    ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
-                    paramTypes.add(attr.getType().getName());
-                    paramNames.add(JavaUtils.getUniqueValue(
-                            helper.reservedPropNames, attr.getName()));
-                }
-            }
-
             // Process the elements
             Vector elements = te.getContainedElements();
 
@@ -685,8 +688,30 @@ public class JavaBeanWriter extends JavaClassWriter {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
                     paramTypes.add(processTypeName(elem,elem.getType().getName()));
+                    String name = elem.getName() == null ? ("param" + i) : elem.getName();
                     paramNames.add(JavaUtils.getUniqueValue(
-                            helper.reservedPropNames, elem.getName()));
+                            helper.reservedPropNames, name));
+                }
+            }
+
+            // Process the attributes
+            Vector attributes = te.getContainedAttributes();
+            if (attributes != null) {
+                for (int j = 0; j < attributes.size(); j += 1) {
+                    ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
+
+                    String name = getAttributeName(attr);
+                    String typeName = attr.getType().getName();
+
+                    // TODO - What about MinOccurs and Nillable?
+                    // Do they make sense here?
+                    if (attr.getOptional()) {
+                        typeName = Utils.getWrapperType(typeName);
+                    }
+
+                    paramTypes.add(typeName);
+                    paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, name));
                 }
             }
 
