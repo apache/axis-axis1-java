@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * A TypeDesc represents a Java<->XML data binding.  It is essentially
@@ -39,8 +40,8 @@ public class TypeDesc implements Serializable {
     public static final Class [] noClasses = new Class [] {};
     public static final Object[] noObjects = new Object[] {};
     
-    /** A map of class -> TypeDesc */
-    private static Map classMap = new Hashtable();
+    /** A map of {classloader-> map of {class -> TypeDesc}} */
+    private static Map classMaps = new WeakHashMap();
 
     /** Have we already introspected for the special "any" property desc? */
     private boolean lookedForAny = false;
@@ -87,7 +88,21 @@ public class TypeDesc implements Serializable {
      */ 
     public static void registerTypeDescForClass(Class cls, TypeDesc td)
     {
+        Map classMap = getTypeDescMap(cls.getClassLoader());
         classMap.put(cls, td);
+    }
+
+    private static Map getTypeDescMap(ClassLoader classLoader)
+    {
+        Map classMap;
+        synchronized (classMaps) {
+            classMap = (Map) classMaps.get(classLoader);
+            if (classMap == null){
+                classMap = new Hashtable();
+                classMaps.put(classLoader, classMap);
+            }
+        }
+        return classMap;
     }
 
     /**
@@ -102,6 +117,8 @@ public class TypeDesc implements Serializable {
      */
     public static TypeDesc getTypeDescForClass(Class cls)
     {
+        Map classMap = getTypeDescMap(cls.getClassLoader());
+
         // First see if we have one explicitly registered
         // or cached from previous lookup
         TypeDesc result = (TypeDesc)classMap.get(cls);
