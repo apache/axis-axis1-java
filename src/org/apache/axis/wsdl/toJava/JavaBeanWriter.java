@@ -275,33 +275,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                     isAny = true;
                 } else {
                     variableName = elem.getName();
-                    if (elem.getType().getUnderlTypeNillable() 
-                        || (elem.getNillable() && elem.getMaxOccursIsUnbounded())) {
-                    /*
-		             * Soapenc arrays with nillable underlying type or 
-		             * nillable="true" maxOccurs="unbounded" elements 
-		             * should be mapped to a wrapper type.
-		             */
-                        typeName = Utils.getWrapperType(elem.getType());
-			
-                    } else if (elem.getMinOccursIs0() && elem.getMaxOccursIsExactlyOne()
-                            || elem.getNillable() || elem.getOptional()) {
-                    /*
-                     * Quote from JAX-RPC 1.1, Section 4.2.1:
-                     * There are a number of cases in which a built-in simple
-                     * XML data type must be mapped to the corresponding Java
-                     * wrapper class for the Java primitive type:
-                     *   * an element declaration with the nillable attribute
-                     *     set to true;
-                     *   * an element declaration with the minOccurs attribute
-                     *     set to 0 (zero) and the maxOccurs attribute set
-                     *     to 1 (one) or absent;
-                     *   * an attribute declaration with the use attribute set
-                     *     to optional or absent and carrying neither
-                     *     the default nor the fixed attribute;
-                     */
-                        typeName = Utils.getWrapperType(typeName);
-                    } 
+                    typeName = processTypeName(elem, typeName);
                 }
 
                 // Make sure the property name is not reserved.
@@ -410,26 +384,64 @@ public class JavaBeanWriter extends JavaClassWriter {
     }
 
     /**
+     * Check if we need to use the wrapper type
+     *
+     * @param elem
+     * @param typeName
+     * @return type name
+     */
+    private String processTypeName(ElementDecl elem, String typeName) {
+        if (elem.getType().getUnderlTypeNillable()
+                || (elem.getNillable() && elem.getMaxOccursIsUnbounded())) {
+                    /*
+		             * Soapenc arrays with nillable underlying type or
+		             * nillable="true" maxOccurs="unbounded" elements
+		             * should be mapped to a wrapper type.
+		             */
+            typeName = Utils.getWrapperType(elem.getType());
+
+        } else if (elem.getMinOccursIs0() && elem.getMaxOccursIsExactlyOne()
+                || elem.getNillable() || elem.getOptional()) {
+                    /*
+                     * Quote from JAX-RPC 1.1, Section 4.2.1:
+                     * There are a number of cases in which a built-in simple
+                     * XML data type must be mapped to the corresponding Java
+                     * wrapper class for the Java primitive type:
+                     *   * an element declaration with the nillable attribute
+                     *     set to true;
+                     *   * an element declaration with the minOccurs attribute
+                     *     set to 0 (zero) and the maxOccurs attribute set
+                     *     to 1 (one) or absent;
+                     *   * an attribute declaration with the use attribute set
+                     *     to optional or absent and carrying neither
+                     *     the default nor the fixed attribute;
+                     */
+            typeName = Utils.getWrapperType(typeName);
+        }
+        return typeName;
+    }
+
+    /**
      * Returns the class name that should be used to serialize and
      * deserialize this binary element
      */
     protected String getBinaryTypeEncoderName(String elementName)
     {
         TypeEntry type = getElementDecl(elementName);
-	if (type != null)
-	{
-	    String typeName = type.getQName().getLocalPart();
+    if (type != null)
+    {
+        String typeName = type.getQName().getLocalPart();
 
-	    if (typeName.equals("base64Binary"))
-	    	return "org.apache.axis.encoding.Base64";
-	    if (typeName.equals("hexBinary"))
-	    	return "org.apache.axis.types.HexBinary";
+        if (typeName.equals("base64Binary"))
+            return "org.apache.axis.encoding.Base64";
+        if (typeName.equals("hexBinary"))
+            return "org.apache.axis.types.HexBinary";
 
-	    throw new java.lang.RuntimeException("Unknown binary type " +
-		typeName + " for element " + elementName);
-	}
+        throw new java.lang.RuntimeException("Unknown binary type " +
+        typeName + " for element " + elementName);
+    }
 
-	throw new java.lang.RuntimeException("Unknown element " + elementName);
+    throw new java.lang.RuntimeException("Unknown element " + elementName);
     }
 
     /**
@@ -672,7 +684,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
-                    paramTypes.add(elem.getType().getName());
+                    paramTypes.add(processTypeName(elem,elem.getType().getName()));
                     paramNames.add(JavaUtils.getUniqueValue(
                             helper.reservedPropNames, elem.getName()));
                 }
