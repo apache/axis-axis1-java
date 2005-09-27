@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    version="2.0-01">
+
+    <xs:include schemaLocation="liberty-utility-v2.0.xsd"/>
+
+    <xs:annotation>
+        <xs:documentation>
+    Liberty Alliance Project utility schema.  A collection of common
+    IDentity Web Services Framework (ID-WSF) elements and types.
+    This schema is intended for use in ID-WSF schemas.
+
+    This file intended for inclusion, rather than importation, into other schemas.
+    This version: 2004-12
+
+            Copyright (c) 2004 Liberty Alliance participants, see
+            http://www.projectliberty.org/specs/idwsf_2_0_copyrights.php
+
+        </xs:documentation>
+    </xs:annotation>
+</xs:schema>
+

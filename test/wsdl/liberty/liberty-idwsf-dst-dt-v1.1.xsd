@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:md="urn:liberty:metadata:2003-08" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:import namespace="urn:liberty:metadata:2003-08" 
+      schemaLocation="liberty-metadata-v1.1.xsd"/>
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" 
+      schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+    <xs:include schemaLocation="liberty-idwsf-utility-v1.1.xsd"/>
+    <xs:annotation>
+        <xs:documentation>Liberty Alliance Project ID-WSF Data Services Template Data Types Schema</xs:documentation>
+        <xs:documentation>
+The source code in this XSD file was excerpted verbatim from:
+
+Liberty ID-WSF Data Services Template Specification
+Version 1.1
+14 December 2004
+
+Copyright (c) 2004 Liberty Alliance participants, see
+http://www.projectliberty.org/specs/idwsf_1_1_copyrights.php
+
+        </xs:documentation>
+    </xs:annotation>
+    <!-- Common attributes to be used by different services when found useful/needed-->
+    <xs:attribute name="id" type="IDType"/>
+    <xs:attribute name="modificationTime" type="xs:dateTime"/>
+    <xs:attributeGroup name="commonAttributes">
+        <xs:attribute ref="id"/>
+        <xs:attribute ref="modificationTime"/>
+    </xs:attributeGroup>
+    <xs:attribute name="ACC" type="xs:anyURI"/>
+    <xs:attribute name="ACCTime" type="xs:dateTime"/>
+    <xs:attribute name="modifier" type="md:entityIDType"/>
+    <xs:attributeGroup name="leafAttributes">
+        <xs:attributeGroup ref="commonAttributes"/>
+        <xs:attribute ref="ACC"/>
+        <xs:attribute ref="ACCTime"/>
+        <xs:attribute ref="modifier"/>
+    </xs:attributeGroup>
+    <xs:attribute name="script" type="xs:anyURI"/>
+    <xs:attributeGroup name="localizedLeafAttributes">
+        <xs:attributeGroup ref="leafAttributes"/>
+        <xs:attribute ref="xml:lang" use="required"/>
+        <xs:attribute ref="script"/>
+    </xs:attributeGroup>
+    <!-- Common data types to be used by different services when found useful/needed-->
+    <xs:complexType name="DSTLocalizedString">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attributeGroup ref="localizedLeafAttributes"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="DSTString">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attributeGroup ref="leafAttributes"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="DSTInteger">
+        <xs:simpleContent>
+            <xs:extension base="xs:integer">
+                <xs:attributeGroup ref="leafAttributes"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="DSTURI">
+        <xs:simpleContent>
+            <xs:extension base="xs:anyURI">
+                <xs:attributeGroup ref="leafAttributes"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="DSTDate">
+        <xs:simpleContent>
+            <xs:extension base="xs:date">
+                <xs:attributeGroup ref="leafAttributes"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="DSTMonthDay">
+        <xs:simpleContent>
+            <xs:extension base="xs:gMonthDay">
+                <xs:attributeGroup ref="leafAttributes"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>
+

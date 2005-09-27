@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:disco="urn:liberty:disco:2003-08" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified">
+
+    <xs:include schemaLocation="liberty-idwsf-utility-v1.1.xsd"/>
+    <xs:import namespace="urn:liberty:disco:2003-08" 
+     schemaLocation="liberty-idwsf-disco-svc-v1.2.xsd"/>
+    <xs:annotation>
+        <xs:documentation>
+The source code in this XSD file was excerpted verbatim from:
+
+Liberty ID-WSF Data Services Template Specification
+Version 1.1
+14th December 2004
+
+Copyright (c) 2004 Liberty Alliance participants, see
+http://www.projectliberty.org/specs/idwsf_1_1_copyrights.php
+
+        </xs:documentation>
+    </xs:annotation>
+    <xs:element name="ResourceID" type="disco:ResourceIDType"/>
+    <xs:element name="EncryptedResourceID" type="disco:EncryptedResourceIDType"/>
+    <xs:group name="ResourceIDGroup">
+        <xs:choice>
+            <xs:element ref="ResourceID"/>
+            <xs:element ref="EncryptedResourceID"/>
+        </xs:choice>
+    </xs:group>
+    <!-- Querying Data -->
+    <xs:element name="Query" type="QueryType"/>
+    <xs:complexType name="QueryType">
+        <xs:sequence>
+            <xs:group ref="ResourceIDGroup" minOccurs="0"/>
+            <xs:element name="QueryItem" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Select" type="SelectType"/>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:ID"/>
+                    <xs:attribute name="includeCommonAttributes" type="xs:boolean" default="0"/>
+                    <xs:attribute name="itemID" type="IDType"/>
+                    <xs:attribute name="changedSince" type="xs:dateTime"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemID" type="IDType"/>
+    </xs:complexType>
+    <xs:element name="QueryResponse" type="QueryResponseType"/>
+    <xs:complexType name="QueryResponseType">
+        <xs:sequence>
+            <xs:element ref="Status"/>
+            <xs:element name="Data" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:any minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:ID"/>
+                    <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+        <xs:attribute name="timeStamp" type="xs:dateTime"/>
+    </xs:complexType>
+    <!-- Modifying Data -->
+    <xs:element name="Modify" type="ModifyType"/>
+    <xs:complexType name="ModifyType">
+        <xs:sequence>
+            <xs:group ref="ResourceIDGroup" minOccurs="0"/>
+            <xs:element name="Modification" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Select" type="SelectType"/>
+                        <xs:element name="NewData" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:any minOccurs="0" maxOccurs="unbounded"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:ID"/>
+                    <xs:attribute name="notChangedSince" type="xs:dateTime"/>
+                    <xs:attribute name="overrideAllowed" type="xs:boolean" default="0"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemID" type="IDType"/>
+    </xs:complexType>
+    <xs:element name="ModifyResponse" type="ResponseType"/>
+    <xs:complexType name="ResponseType">
+        <xs:sequence>
+            <xs:element ref="Status"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+        <xs:attribute name="timeStamp" type="xs:dateTime"/>
+    </xs:complexType>
+</xs:schema>
+

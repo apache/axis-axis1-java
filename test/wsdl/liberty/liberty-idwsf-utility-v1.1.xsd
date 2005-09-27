@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- filename: liberty-idwsf-utility-v1.1.xsd -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:annotation>
+        <xs:documentation>
+            Liberty Alliance Project utility schema.  A collection of common 
+            IDentity Web Services Framework (ID-WSF) elements and types. 
+            This schema is intended for use in ID-WSF schemas.
+
+            Copyright 2003,2004 Liberty Alliance Project, see
+            http://www.projectliberty.org/specs/idwsf_1_1_copyrights.php
+
+            This file intended for inclusion, rather than importation, 
+            into other schemas. 
+
+            This version: 2004-12-14
+
+        </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType name="IDType">
+        <xs:annotation>
+            <xs:documentation>This type should be used to provided IDs to components that have IDs that may not  be scoped within the local xml instance document. </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="IDReferenceType">
+        <xs:annotation>
+            <xs:documentation> This type can be used when referring to elements that are
+       identified using an IDType </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:element name="Status" type="StatusType">
+        <xs:annotation>
+            <xs:documentation> A standard Status type</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="StatusType">
+        <xs:annotation>
+            <xs:documentation> A type that may be used for status codes. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="Status" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:QName" use="required"/>
+        <xs:attribute name="ref" type="IDReferenceType" use="optional"/>
+        <xs:attribute name="comment" type="xs:string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="EmptyType">
+        <xs:annotation>
+            <xs:documentation> This type may be used to create an empty element </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:restriction base="xs:anyType"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="Extension" type="extensionType">
+        <xs:annotation>
+            <xs:documentation>An element that contains arbitrary content extensions from other namespaces</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="extensionType">
+        <xs:annotation>
+            <xs:documentation>A type for arbitrary content extensions from other namespaces</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:any namespace="##other" processContents="lax" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+

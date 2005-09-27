@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema 
+  targetNamespace="urn:liberty:sa:2004-04" 
+  xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" 
+  xmlns:sa="urn:liberty:sa:2004-04" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:lib="urn:liberty:iff:2003-08"
+  xmlns:disco="urn:liberty:disco:2003-08"
+  xmlns="urn:liberty:sa:2004-04" 
+  elementFormDefault="qualified" 
+  attributeFormDefault="unqualified" 
+  version="07"
+>
+
+<!-- Filename: lib-arch-authn-svc.xsd  -->
+<!-- $Id: liberty-idwsf-authn-svc-v1.1.xsd,v 1.1 2005/02/04 21:38:21 steveg Exp $ -->
+<!-- Author: Jeff Hodges -->
+<!-- Last editor: $Author: steveg $ -->
+<!-- $Date: 2005/02/04 21:38:21 $ -->
+<!-- $Revision: 1.1 $ -->
+
+
+  <xs:import
+      namespace="urn:liberty:iff:2003-08"
+      schemaLocation="liberty-idff-protocols-schema-1.2-errata-v3.0.xsd"/>
+
+  <xs:import
+      namespace="urn:liberty:disco:2003-08"
+      schemaLocation="liberty-idwsf-disco-svc-v1.2.xsd"/>
+
+  <xs:include schemaLocation="liberty-idwsf-utility-v1.1.xsd"/>
+
+  <xs:annotation>
+      <xs:documentation>
+          Liberty ID-WSF Authentication Service XSD
+      </xs:documentation>
+      <xs:documentation> 
+          The source code in this XSD file was excerpted verbatim from:
+
+          Liberty ID-WSF Authentication Service Specification
+          Version 1.1
+          14 Dec 2004
+
+          Copyright (c) 2003, 2004 Liberty Alliance participants, 
+          see http://www.projectliberty.org/specs/idwsf_1_1_copyrights.php
+
+      </xs:documentation>
+  </xs:annotation>
+
+
+  <!-- SASLRequest and SASLResponse ID-* messages  --> 
+
+  <xs:element name="SASLRequest">
+      <xs:complexType>
+          <xs:sequence>
+
+              <xs:element name="Data" minOccurs="0">
+                  <xs:complexType>
+                      <xs:simpleContent>
+                          <xs:extension base="xs:base64Binary"/>
+                      </xs:simpleContent>
+                  </xs:complexType>
+              </xs:element>
+
+              <xs:element ref="lib:RequestAuthnContext" 
+                          minOccurs="0"/> 
+
+          </xs:sequence>
+
+          <xs:attribute name="mechanism" 
+                        type="xs:string" 
+                        use="required"/>
+
+          <xs:attribute name="authzID" 
+                        type="xs:string" 
+                        use="optional"/>
+
+          <xs:attribute name="advisoryAuthnID" 
+                        type="xs:string" 
+                        use="optional"/>
+
+          <xs:attribute name="id" 
+                        type="xs:ID"
+                        use="optional"/>
+
+      </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="SASLResponse">
+      <xs:complexType>
+          <xs:sequence>
+
+              <xs:element ref="Status"/>
+
+              <xs:element ref="PasswordTransforms" minOccurs="0"/>
+
+              <xs:element name="Data" minOccurs="0">
+                  <xs:complexType>
+                      <xs:simpleContent>
+                          <xs:extension base="xs:base64Binary"/>
+                      </xs:simpleContent>
+                  </xs:complexType>
+              </xs:element>
+
+              <xs:element ref="disco:ResourceOffering" 
+                          minOccurs="0" 
+                          maxOccurs="unbounded"/>
+
+              <xs:element name="Credentials" minOccurs="0">
+                  <xs:complexType>
+                      <xs:sequence>
+                          <xs:any namespace="##any" 
+                                  processContents="lax" 
+                                  minOccurs="0" 
+                                  maxOccurs="unbounded"/>
+                      </xs:sequence>
+                   </xs:complexType>
+               </xs:element>
+
+           </xs:sequence> 
+
+           <xs:attribute name="serverMechanism" 
+                         type="xs:string" 
+                         use="optional"/>
+
+           <xs:attribute name="id" 
+                         type="xs:ID"
+                         use="optional"/>
+
+      </xs:complexType>
+  </xs:element>
+
+
+  <!-- Password Transformations  -->
+
+  <xs:element name="PasswordTransforms">
+
+      <xs:annotation>
+          <xs:documentation>
+              Contains ordered list of sequential password transformations
+          </xs:documentation>
+      </xs:annotation>
+
+      <xs:complexType>
+          <xs:sequence>
+
+              <xs:element name="Transform" maxOccurs="unbounded">
+                  <xs:complexType>
+                      <xs:sequence>
+
+                          <xs:element name="Parameter" 
+                                      minOccurs="0" 
+                                      maxOccurs="unbounded">
+                              <xs:complexType>
+                            	  <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                          <xs:attribute name="name" 
+                                                        type="xs:string" 
+                                                        use="required"/>
+                                      </xs:extension>
+                            	  </xs:simpleContent>
+                              </xs:complexType>
+                          </xs:element>
+
+                      </xs:sequence>
+
+                      <xs:attribute name="name" 
+                                    type="xs:anyURI" 
+                                    use="required"/>
+
+                      <xs:attribute name="id" 
+                                    type="xs:ID"
+                                    use="optional"/>
+
+                  </xs:complexType>
+              </xs:element>
+          </xs:sequence>
+      </xs:complexType>
+  </xs:element>
+
+
+
+</xs:schema>
+
+

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:disco="urn:liberty:disco:2004-12" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified" 
+    xmlns:sb20="urn:liberty:sb:2004-12">
+
+    <xs:include schemaLocation="liberty-idwsf-utility-v2.0.xsd"/>
+    <xs:import namespace="urn:liberty:disco:2004-12" schemaLocation="liberty-idwsf-disco-svc-v2.0.xsd"/>
+    <xs:import namespace="urn:liberty:sb:2004-12" schemaLocation="liberty-idwsf-soap-binding-v2.0.xsd"/>
+
+    <xs:annotation>
+        <xs:documentation>
+The source code in this XSD file was excerpted verbatim from:
+
+Liberty ID-WSF Data Services Template Specification
+Version 2.1-01 Draft
+23 March 2005
+
+NOTE: This schema must be used within the context of another schema -
+It is not intended to validate by itself.
+
+The scheme which includes this must provide definitions for:
+TypeType
+SelectType
+TriggerType
+
+            Copyright (c) 2004 Liberty Alliance participants, see
+            http://www.projectliberty.org/specs/idwsf_2_0_copyrights.php
+
+      </xs:documentation>
+   </xs:annotation>
+
+    <xs:element name="ResourceID" type="disco:ResourceIDType"/>
+    <xs:element name="EncryptedResourceID" type="disco:EncryptedResourceIDType"/>
+    <xs:group name="ResourceIDGroup">
+        <xs:choice>
+            <xs:element ref="ResourceID"/>
+            <xs:element ref="EncryptedResourceID"/>
+        </xs:choice>
+    </xs:group>
+
+    <xs:element name="ChangeFormat">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="ChangedElements"/>
+                <xs:enumeration value="CurrentElements"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:attribute name="changeFormat">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="ChangedElements"/>
+                <xs:enumeration value="CurrentElements"/>
+                <xs:enumeration value="All"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+
+    <!-- Querying Data -->
+    <xs:element name="Query" type="QueryType"/>
+    <xs:complexType name="QueryType">
+        <xs:sequence>
+            <xs:group ref="ResourceIDGroup" minOccurs="0"/>
+            <xs:element name="QueryItem" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:annotation>
+                            <xs:documentation>
+                                NOTE: The below two types (SelectType and SortType) must 
+                                be defined by the schema that includes this one.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:element name="Select" type="SelectType" minOccurs="0"/>
+                        <xs:element name="Sort" type="SortType" minOccurs="0"/>
+                        <xs:element ref="ChangeFormat" minOccurs="0" maxOccurs="2"/>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:ID"/>
+                    <xs:attribute name="includeCommonAttributes" type="xs:boolean" default="0"/>
+                    <xs:attribute name="itemID" type="IDType"/>
+                    <xs:attribute name="changedSince" type="xs:dateTime"/>
+                    <xs:attribute name="count" type="xs:nonNegativeInteger"/>
+                    <xs:attribute name="offset" type="xs:nonNegativeInteger" default="0"/>
+                    <xs:attribute name="setID" type="IDType"/>
+                    <xs:attribute name="setReq">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Static"/>
+                                <xs:enumeration value="DeleteSet"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemID" type="IDType"/>
+    </xs:complexType>
+
+    <xs:element name="QueryResponse" type="QueryResponseType"/>
+    <xs:complexType name="QueryResponseType">
+        <xs:sequence>
+            <xs:element ref="Status"/>
+            <xs:element name="Data" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:any minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:ID"/>
+                    <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+                    <xs:attribute name="notSorted">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Now"/>
+                                <xs:enumeration value="Never"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute ref="changeFormat"/>
+                    <xs:attribute name="remaining" type="xs:integer"/>
+                    <xs:attribute name="nextOffset" type="xs:nonNegativeInteger" default="0"/>
+                    <xs:attribute name="setID" type="IDType"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+        <xs:attribute name="timeStamp" type="xs:dateTime"/>
+    </xs:complexType>
+
+    <!-- Modifying Data -->
+    <xs:element name="Modify" type="ModifyType"/>
+    <xs:complexType name="ModifyType">
+        <xs:sequence>
+            <xs:group ref="ResourceIDGroup" minOccurs="0"/>
+            <xs:element name="Modification" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:annotation>
+                            <xs:documentation>
+                                NOTE: The below SelectType must be defined by 
+                                the schema that includes this one.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:element name="Select" type="SelectType" minOccurs="0"/>
+                        <xs:element name="NewData" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:any minOccurs="0" maxOccurs="unbounded"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:ID"/>
+                    <xs:attribute name="itemID" type="IDType"/>
+                    <xs:attribute name="notChangedSince" type="xs:dateTime"/>
+                    <xs:attribute name="overrideAllowed" type="xs:boolean" default="0"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemID" type="IDType"/>
+    </xs:complexType>
+
+    <xs:element name="ModifyResponse" type="ResponseType"/>
+    <xs:complexType name="ResponseType">
+        <xs:sequence>
+            <xs:element ref="Status"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+        <xs:attribute name="timeStamp" type="xs:dateTime"/>
+    </xs:complexType>
+
+    <!-- Subscribing notifications and modifying, renewing and deleting existing notifications -->
+    <xs:element name="Subscribe" type="SubscribeType"/>
+    <xs:complexType name="SubscribeType">
+        <xs:sequence>
+            <xs:group ref="ResourceIDGroup" minOccurs="0"/>
+            <xs:element ref="Subscription" maxOccurs="unbounded"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemID" type="IDType"/>
+        <xs:attribute name="returnCurrentValues" type="xs:boolean" default="1"/>
+    </xs:complexType>
+
+    <xs:element name="SubscribeResponse" type="SubscribeResponseType"/>
+    <xs:complexType name="SubscribeResponseType">
+        <xs:sequence>
+            <xs:element ref="Status"/>
+            <xs:element ref="Notification" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+        <xs:attribute name="timeStamp" type="xs:dateTime"/>
+    </xs:complexType>
+
+    <!-- Query subscriptions -->
+    <xs:element name="QuerySubscriptions" type="QuerySubscriptionsType"/>
+    <xs:complexType name="QuerySubscriptionsType">
+        <xs:sequence>
+            <xs:group ref="ResourceIDGroup" minOccurs="0"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemID" type="IDType"/>
+    </xs:complexType>
+
+    <xs:element name="Subscriptions" type="SubscriptionsType"/>
+    <xs:complexType name="SubscriptionsType">
+        <xs:sequence>
+            <xs:element ref="Status"/>
+            <xs:element ref="Subscription" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+    </xs:complexType>
+
+    <!-- Subscription Element -->
+    <xs:element name="Subscription">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:annotation>
+                    <xs:documentation>
+                        NOTE: The SelectType, TypeType, and TriggerType below 
+                        must be defined by the schema that includes this one.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:element name="Select" type="SelectType" minOccurs="0"/>
+                <xs:element ref="ChangeFormat" minOccurs="0" maxOccurs="2"/>
+                <xs:element name="NotifyTo" type="sb20:ServiceInstanceUpdateType" minOccurs="0"/>
+                <xs:element name="NotifyEndedTo" type="sb20:ServiceInstanceUpdateType" minOccurs="0"/>
+                <xs:element name="Type" type="TypeType" minOccurs="0"/>
+                <xs:element name="Trigger" type="TriggerType" minOccurs="0"/>
+                <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="starts" type="xs:dateTime"/>
+            <xs:attribute name="expires" type="xs:dateTime"/>
+            <xs:attribute name="duration" type="xs:duration"/>
+            <xs:attribute name="id" type="xs:ID"/>
+            <xs:attribute name="invokeID" type="IDType"/>
+            <xs:attribute name="subscriptionID" type="IDType"/>
+            <xs:attribute name="includeData" default="Yes">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="Yes"/>
+                        <xs:enumeration value="No"/>
+                        <xs:enumeration value="YesWithCommonAttributes"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Sending Notifications and Notifying about subscriptions which have ended-->
+
+    <xs:element name="Notify" type="NotifyEndedType"/>
+
+    <xs:complexType name="NotifyEndedType">
+        <xs:sequence>
+            <xs:element ref="Notification" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemID" type="IDType"/>
+        <xs:attribute name="timeStamp" type="xs:dateTime"/>
+    </xs:complexType>
+
+    <xs:element name="NotifyResponse" type="NotifyEndedResponseType"/>
+
+    <xs:complexType name="NotifyEndedResponseType">
+        <xs:sequence>
+            <xs:element ref="Status"/>
+            <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID"/>
+        <xs:attribute name="itemIDRef" type="IDReferenceType"/>
+    </xs:complexType>
+
+    <xs:element name="Ended" type="NotifyEndedType"/>
+
+    <xs:element name="EndedResponse" type="NotifyEndedResponseType"/>
+
+    <!-- Notification Element -->
+    <xs:element name="Notification">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Data" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:any minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:ID"/>
+            <xs:attribute name="invokeID" type="IDType"/>
+            <xs:attribute name="subscriptionID" type="IDType" use="required"/>
+            <xs:attribute ref="changeFormat"/>
+            <xs:attribute name="expires" type="xs:dateTime"/>
+            <xs:attribute name="duration" type="xs:duration"/>
+            <xs:attribute name="endReason" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+
