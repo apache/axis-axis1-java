@@ -696,11 +696,12 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
+                    String name = elem.getName() == null ? ("param" + i) : elem.getName();
                     if(elem.getAnyElement()){
                         isAny2 = true;
+                        name = Constants.ANYCONTENT;
                     }
                     paramTypes.add(processTypeName(elem,elem.getType().getName()));
-                    String name = elem.getName() == null ? ("param" + i) : elem.getName();
                     paramNames.add(JavaUtils.getUniqueValue(
                             helper.reservedPropNames, name));
                 }
