@@ -648,6 +648,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             return;
         }
 
+        boolean isSimpleType = false;
         // The constructor needs to consider all extended types
         Vector extendList = new Vector();
 
@@ -656,11 +657,18 @@ public class JavaBeanWriter extends JavaClassWriter {
         TypeEntry parent = extendType;
 
         while (parent != null) {
+            if(parent.isSimpleType()) {
+                isSimpleType = true;
+            }
             extendList.add(parent);
 
             parent =
                     SchemaUtils.getComplexElementExtensionBase(parent.getNode(),
                             emitter.getSymbolTable());
+        }
+
+        if (isSimpleType) {
+            return;
         }
 
         // Now generate a list of names and types starting with
@@ -669,6 +677,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         Vector paramNames = new Vector();
 
         for (int i = extendList.size() - 1; i >= 0; i--) {
+            boolean isAny2 = false;
             TypeEntry te = (TypeEntry) extendList.elementAt(i);
 
             // The names of the inherited parms are mangled
@@ -687,6 +696,9 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
+                    if(elem.getAnyElement()){
+                        isAny2 = true;
+                    }
                     paramTypes.add(processTypeName(elem,elem.getType().getName()));
                     String name = elem.getName() == null ? ("param" + i) : elem.getName();
                     paramNames.add(JavaUtils.getUniqueValue(
@@ -717,7 +729,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
             if (enableMemberFields && SchemaUtils.isMixed(te.getNode())) {
                 isMixed = true;
-                if (!isAny) {
+                if (!isAny2) {
                     paramTypes.add("org.apache.axis.message.MessageElement []");
                     paramNames.add(Constants.ANYCONTENT);
                 }
