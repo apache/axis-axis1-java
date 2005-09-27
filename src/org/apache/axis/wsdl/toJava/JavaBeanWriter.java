@@ -742,6 +742,18 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         // Now write the constructor signature
         if (paramTypes.size() > 0) {
+
+            // Prevent name clash between local parameters and the
+            // parameters for the super class
+            if(localParams > 0) {
+                for (int j = 0; j < localParams; j++) {
+                    String name = (String) paramNames.elementAt(j);
+                    if(paramNames.indexOf(name, localParams)!=-1){
+                        paramNames.set(j, "_" + name);
+                    }
+                }
+            }
+
             pw.println("    public " + className + "(");
 
             for (int i = 0; i < paramTypes.size(); i++) {
