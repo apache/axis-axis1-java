@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:tns="http://foo.bar.com" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://foo.bar.com">
+  <types>
+    <xs:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://foo.bar.com">
+
+    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
+	schemaLocation="saml-schema-metadata-2.0.xsd"/>
+
+    </xs:schema>
+  </types>
+</definitions>
+

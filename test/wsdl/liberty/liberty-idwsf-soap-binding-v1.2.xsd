@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:liberty:sb:2003-08" 
+    xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" 
+    xmlns:sb="urn:liberty:sb:2003-08" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns="urn:liberty:sb:2003-08" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified" 
+    version="1.0-02">
+
+    <!-- Filename: lib-arch-soap-binding.xsd  -->
+    <!-- $Id: liberty-idwsf-soap-binding-v1.2.xsd,v 1.1 2005/02/04 21:38:21 steveg Exp $ -->
+    <!-- Author: Jeff Hodges -->
+    <!-- Last editor: $Author: steveg $ -->
+    <!-- $Date: 2005/02/04 21:38:21 $ -->
+    <!-- $Revision: 1.1 $ -->
+
+    <xs:import 
+        namespace="http://schemas.xmlsoap.org/soap/envelope/" 
+        schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
+
+    <xs:include schemaLocation="liberty-idwsf-utility-v1.1.xsd"/>
+
+    <xs:annotation>
+        <xs:documentation>
+          Liberty ID-WSF SOAP Binding Specification XSD
+        </xs:documentation>
+        <xs:documentation> 
+
+The source code in this XSD file was excerpted verbatim from:
+
+Liberty ID-WSF SOAP Binding Specification
+Version 1.0
+12th November 2003
+
+Copyright (c) 2003,2004 Liberty Alliance participants, see
+http://www.projectliberty.org/specs/idwsf_copyrights.html
+
+        </xs:documentation>
+    </xs:annotation>
+
+    <!-- message correlation header block -->
+
+    <xs:complexType name="CorrelationType">
+        <xs:attribute name="messageID" type="IDType" use="required"/>
+        <xs:attribute name="refToMessageID" type="IDType" use="optional"/>
+        <xs:attribute name="timestamp" type="xs:dateTime" use="required"/>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+        <xs:attribute ref="S:mustUnderstand" use="optional"/>
+        <xs:attribute ref="S:actor" use="optional"/>
+    </xs:complexType>
+
+    <xs:element name="Correlation" type="CorrelationType"/>
+
+    <!-- provider= header block  -->
+
+    <xs:complexType name="ProviderType">
+        <xs:attribute name="providerID" type="xs:anyURI" use="required"/>
+        <xs:attribute name="affiliationID" type="xs:anyURI" use="optional"/>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+        <xs:attribute ref="S:mustUnderstand" use="optional"/>
+        <xs:attribute ref="S:actor" use="optional"/>
+    </xs:complexType>
+
+    <xs:element name="Provider" type="ProviderType"/>
+
+    <!-- processing context header block -->
+
+    <xs:complexType name="ProcessingContextType">
+        <xs:simpleContent>
+            <xs:extension base="xs:anyURI">
+                <xs:attribute name="id" type="xs:ID" use="optional"/>
+                <xs:attribute ref="S:mustUnderstand" use="optional"/>
+                <xs:attribute ref="S:actor" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:element name="ProcessingContext" type="ProcessingContextType"/>
+
+    <!-- consent claim header block -->
+
+    <xs:complexType name="ConsentType">
+        <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+        <xs:attribute name="timestamp" type="xs:dateTime" use="optional"/>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+        <xs:attribute ref="S:mustUnderstand" use="optional"/>
+        <xs:attribute ref="S:actor" use="optional"/>
+    </xs:complexType>
+
+    <xs:element name="Consent" type="ConsentType"/>
+
+    <!-- usage directive header block -->
+
+    <xs:complexType name="UsageDirectiveType">
+        <xs:sequence>
+            <xs:any namespace="##other" processContents="lax" 
+		maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+        <xs:attribute name="ref" type="xs:IDREF" use="required"/>
+        <xs:attribute ref="S:mustUnderstand" use="optional"/>
+        <xs:attribute ref="S:actor" use="optional"/>
+    </xs:complexType>
+
+    <xs:element name="UsageDirective" type="UsageDirectiveType"/>
+
+</xs:schema>
+
+

@@ -102,6 +102,12 @@ public class JavaBeanWriter extends JavaClassWriter {
     /** Field isMixed */
     protected boolean isMixed = false;
     
+    /** Field parentIsAny */
+    protected boolean parentIsAny = false;
+
+    /** Field parentIsMixed */
+    protected boolean parentIsMixed = false;
+    
 
     /**
      * Constructor.
@@ -264,18 +270,44 @@ public class JavaBeanWriter extends JavaClassWriter {
         
         // Add element names
         if (elements != null) {
+
+            // Check the inheritance chain for xs:any and xs:mixed
+            TypeEntry parent = extendType;
+            while ((!parentIsAny || !parentIsMixed) && parent != null) {
+                if (SchemaUtils.isMixed(parent.getNode())) {
+                    parentIsMixed = true;
+                }
+                Vector hisElements = parent.getContainedElements();
+                for (int i = 0; hisElements != null && i < hisElements.size(); i++) {
+                    ElementDecl elem = (ElementDecl) hisElements.get(i);
+                    if (elem.getAnyElement()) {
+                        parentIsAny = true;
+                    }
+                }
+
+                parent =
+                    SchemaUtils.getComplexElementExtensionBase(parent.getNode(),
+                            emitter.getSymbolTable());
+            }
+
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl) elements.get(i);
                 String typeName = elem.getType().getName();
-                String variableName;
+                String variableName = null;
 
                 if (elem.getAnyElement()) {
-                    typeName = "org.apache.axis.message.MessageElement []";
-                    variableName = Constants.ANYCONTENT;
+                    if (!parentIsAny && !parentIsMixed) {
+                        typeName = "org.apache.axis.message.MessageElement []";
+                        variableName = Constants.ANYCONTENT;
+                    }
                     isAny = true;
                 } else {
                     variableName = elem.getName();
                     typeName = processTypeName(elem, typeName);
+                }
+
+                if (variableName == null) {
+                    continue;
                 }
 
                 // Make sure the property name is not reserved.
@@ -302,7 +334,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         if (enableMemberFields && SchemaUtils.isMixed(type.getNode())) {
             isMixed = true;
-            if (!isAny) {
+            if (!isAny && !parentIsAny && !parentIsMixed) {
                 names.add("org.apache.axis.message.MessageElement []");
                 names.add(Constants.ANYCONTENT);
             }
@@ -314,13 +346,13 @@ public class JavaBeanWriter extends JavaClassWriter {
             for (int i = 0; i < attributes.size(); i++) {
                 ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
                 String typeName = attr.getType().getName();
-                String variableName = attr.getName();
+                String variableName = getAttributeName(attr);
 
-		// TODO - What about MinOccurs and Nillable?
-		// Do they make sense here?
-		if (attr.getOptional()) {
-		    typeName = Utils.getWrapperType(typeName);
-		}
+                // TODO - What about MinOccurs and Nillable?
+                // Do they make sense here?
+                if (attr.getOptional()) {
+                    typeName = Utils.getWrapperType(typeName);
+                }
 
                 // Make sure the property name is not reserved.
                 variableName = JavaUtils.getUniqueValue(
@@ -384,14 +416,29 @@ public class JavaBeanWriter extends JavaClassWriter {
     }
 
     /**
-     * Check if we need to use the wrapper type
+     * generate a name for the attribute
+     * @param attr
+     * @return name
+     */
+    private String getAttributeName(ContainedAttribute attr) {
+        String variableName = attr.getName();
+        if (variableName == null) {
+            variableName = Utils.getLastLocalPart(attr.getQName().getLocalPart());
+        }
+        return variableName;
+    }
+
+    /**
+     * Check if we need to use the wrapper type or MessageElement
      *
      * @param elem
      * @param typeName
      * @return type name
      */
     private String processTypeName(ElementDecl elem, String typeName) {
-        if (elem.getType().getUnderlTypeNillable()
+        if (elem.getAnyElement()) {
+            typeName = "org.apache.axis.message.MessageElement []";
+        } else if (elem.getType().getUnderlTypeNillable()
                 || (elem.getNillable() && elem.getMaxOccursIsUnbounded())) {
                     /*
 		             * Soapenc arrays with nillable underlying type or
@@ -399,7 +446,6 @@ public class JavaBeanWriter extends JavaClassWriter {
 		             * should be mapped to a wrapper type.
 		             */
             typeName = Utils.getWrapperType(elem.getType());
-
         } else if (elem.getMinOccursIs0() && elem.getMaxOccursIsExactlyOne()
                 || elem.getNillable() || elem.getOptional()) {
                     /*
@@ -642,6 +688,9 @@ public class JavaBeanWriter extends JavaClassWriter {
         TypeEntry parent = extendType;
 
         while (parent != null) {
+            if (parent.isSimpleType())
+                return;
+
             extendList.add(parent);
 
             parent =
@@ -653,6 +702,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         // the oldest parent.  (Attrs are considered before elements).
         Vector paramTypes = new Vector();
         Vector paramNames = new Vector();
+        boolean gotAny = false;
 
         for (int i = extendList.size() - 1; i >= 0; i--) {
             TypeEntry te = (TypeEntry) extendList.elementAt(i);
@@ -667,36 +717,54 @@ public class JavaBeanWriter extends JavaClassWriter {
                         + "_";
             }
 
-            // Process the attributes
-            Vector attributes = te.getContainedAttributes();
-            if (attributes != null) {
-                for (int j = 0; j < attributes.size(); j += 1) {
-                    ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
-                    paramTypes.add(attr.getType().getName());
-                    paramNames.add(JavaUtils.getUniqueValue(
-                            helper.reservedPropNames, attr.getName()));
-                }
-            }
-
             // Process the elements
             Vector elements = te.getContainedElements();
 
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
-                    paramTypes.add(processTypeName(elem,elem.getType().getName()));
-                    paramNames.add(JavaUtils.getUniqueValue(
-                            helper.reservedPropNames, elem.getName()));
+
+                    if (elem.getAnyElement()) {
+                        if (!gotAny) {
+                            gotAny = true;
+                            paramTypes.add("org.apache.axis.message.MessageElement []");
+                            paramNames.add(Constants.ANYCONTENT);
+                        }
+                    } else {
+                        paramTypes.add(processTypeName(elem,elem.getType().getName()));
+                        String name = elem.getName() == null ? ("param" + i) : elem.getName();
+                        paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, name));
+                    }
                 }
             }
 
-            if (enableMemberFields && SchemaUtils.isMixed(te.getNode())) {
-                isMixed = true;
-                if (!isAny) {
-                    paramTypes.add("org.apache.axis.message.MessageElement []");
-                    paramNames.add(Constants.ANYCONTENT);
+            // Process the attributes
+            Vector attributes = te.getContainedAttributes();
+            if (attributes != null) {
+                for (int j = 0; j < attributes.size(); j += 1) {
+                    ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
+
+                    String name = getAttributeName(attr);
+                    String typeName = attr.getType().getName();
+
+                    // TODO - What about MinOccurs and Nillable?
+                    // Do they make sense here?
+                    if (attr.getOptional()) {
+                        typeName = Utils.getWrapperType(typeName);
+                    }
+
+                    paramTypes.add(typeName);
+                    paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, name));
                 }
             }
+
+        }
+
+        if (isMixed && !isAny && !parentIsAny && !parentIsMixed) {
+            paramTypes.add("org.apache.axis.message.MessageElement []");
+            paramNames.add(Constants.ANYCONTENT);
         }
 
         // Set the index where the local params start
@@ -704,6 +772,18 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         // Now write the constructor signature
         if (paramTypes.size() > 0) {
+
+            // Prevent name clash between local parameters and the
+            // parameters for the super class
+            if(localParams > 0) {
+                for (int j = 0; j < localParams; j++) {
+                    String name = (String) paramNames.elementAt(j);
+                    if(paramNames.indexOf(name, localParams)!=-1){
+                        paramNames.set(j, "_" + name);
+                    }
+                }
+            }
+
             pw.println("    public " + className + "(");
 
             for (int i = 0; i < paramTypes.size(); i++) {

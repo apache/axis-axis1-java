@@ -1,0 +1,7 @@
+<wsdl:definitions xmlns:typens="urn:test:wsdl:liberty" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:pp="urn:liberty:id-sis-pp:2003-08" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:liberty:id-sis-pp:wsdl:2003-08" name="pp">
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:import namespace="urn:liberty:id-sis-pp:2003-08" schemaLocation="liberty-idsis-pp-v1.1.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+</wsdl:definitions>

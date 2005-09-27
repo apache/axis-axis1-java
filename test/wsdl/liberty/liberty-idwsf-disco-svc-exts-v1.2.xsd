@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:liberty:disco:2004-04" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:md="urn:liberty:metadata:2003-08" 
+    xmlns:ds11="urn:liberty:disco:2004-04" 
+    xmlns:disco="urn:liberty:disco:2003-08" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified">
+
+   <xs:include schemaLocation="liberty-idwsf-utility-v1.1.xsd"/>
+   <xs:import namespace="urn:liberty:metadata:2003-08" 
+    schemaLocation="liberty-metadata-v1.1.xsd"/>
+   <xs:import namespace="urn:liberty:disco:2003-08" 
+    schemaLocation="liberty-idwsf-disco-svc-v1.2.xsd"/>
+   <xs:annotation>
+      <xs:documentation>
+
+        XML Schema from Liberty Discovery Service Specification.
+
+        ### NOTICE ###
+
+        Copyright (c) 2004 Liberty Alliance participants, see
+        http://www.projectliberty.org/specs/idwsf_1_1_copyrights.php
+
+      </xs:documentation>
+   </xs:annotation>
+    <!-- For use in ModifyResponse Extension field -->
+    <xs:element name="Keys" type="ds11:KeysType"/>
+    <xs:complexType name="KeysType">
+       <xs:sequence>
+         <xs:element ref="md:KeyDescriptor" minOccurs="1" maxOccurs="unbounded"/>
+       </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SendSingleLogOut" type="disco:DirectiveType"/>
+    <xs:element name="GenerateBearerToken" type="disco:DirectiveType"/>
+</xs:schema>
+
