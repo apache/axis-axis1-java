@@ -95,6 +95,7 @@ Copyright:
     <javac srcdir="${src.dir}" destdir="${build.dest}"  nowarn="${nowarn}" debug="${debug}"
       deprecation="${deprecation}" 
       source="${source}"
+      target="${target}"
       classpathref="classpath">
       <exclude name="**/old/**/*" />
       <exclude name="**/bak/**"/>

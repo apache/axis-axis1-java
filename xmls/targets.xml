@@ -374,6 +374,7 @@
     <echo message="debug=${debug}" />
     <echo message="nowarn=${nowarn}" />
     <echo message="source=${source}" />
+    <echo message="target=${target}" />
     <echo message="deprecation=${deprecation}" />
     <echo message="build.compiler=${build.compiler}" />
     <echo message="javac.fork=${javac.fork}" />
