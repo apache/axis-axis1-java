@@ -18,6 +18,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
+import org.custommonkey.xmlunit.XMLUnit;
+
 public class TestSOAPFaults extends AxisTestBase {
     public TestSOAPFaults(String name) {
         super(name);
@@ -45,7 +47,7 @@ public class TestSOAPFaults extends AxisTestBase {
         String xml = new String(baos.toByteArray());
         assertTrue(xml.indexOf("Hello")!=-1);
     }
-    
+
     public void testSOAPFaultSaveChanges() throws Exception {
         MessageFactory msgFactory =
                 MessageFactory.newInstance();
@@ -101,7 +103,7 @@ public class TestSOAPFaults extends AxisTestBase {
                 }
             }
         }
-        
+
     }
 
     public void testAxis1432() throws Exception {
@@ -122,7 +124,7 @@ public class TestSOAPFaults extends AxisTestBase {
                 "  </soapenv:Fault>\n" +
                 " </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
-        
+
         MessageFactory fac = MessageFactory.newInstance();
         SOAPMessage faultMessage = fac.createMessage();
 
@@ -161,7 +163,13 @@ public class TestSOAPFaults extends AxisTestBase {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         faultMessage.writeTo(baos);
         String xml2 = new String(baos.toByteArray());
-        assertXMLEqual(xml,xml2);
+        boolean ws = XMLUnit.getIgnoreWhitespace();
+        try {
+            XMLUnit.setIgnoreWhitespace(true);
+            assertXMLEqual(xml,xml2);
+        } finally {
+            XMLUnit.setIgnoreWhitespace(ws);
+        }
     }
 
     public static void main(String[] args) throws Exception {

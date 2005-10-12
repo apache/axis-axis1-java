@@ -315,6 +315,8 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         } else {
             enableNamespacePrefixOptimization = JavaUtils.isTrue(AxisProperties.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,
                             "true"));
+            disablePrettyXML = JavaUtils.isTrue(AxisProperties.getProperty(AxisEngine.PROP_DISABLE_PRETTY_XML,
+                            "true"));
         }
 
         // Set up preferred prefixes based on current schema, soap ver, etc.
