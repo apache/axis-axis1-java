@@ -99,7 +99,7 @@ public class WSDDDocument extends WSDDConstants
      */
     public Document getDOMDocument() throws ConfigurationException {
         StringWriter writer = new StringWriter();
-        SerializationContext context = new SerializationContext(writer, null);
+        SerializationContext context = new SerializationContext(writer);
         context.setPretty(true);
         try {
             deployment.writeToContext(context);
