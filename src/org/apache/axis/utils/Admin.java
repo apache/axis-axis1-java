@@ -219,7 +219,7 @@ public class Admin
         throws AxisFault
     {
         StringWriter writer = new StringWriter();
-        SerializationContext context = new SerializationContext(writer, null);
+        SerializationContext context = new SerializationContext(writer);
         context.setPretty(true);
         try {
             EngineConfiguration config = engine.getConfig();
