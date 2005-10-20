@@ -2559,7 +2559,7 @@ public class Call implements javax.xml.rpc.Call {
                 // does not match one of the operation parameters.
                 if (findReturnParam) {
                     Iterator it = outParams.keySet().iterator();
-                    while (it.hasNext() && findReturnParam) {
+                    while (findReturnParam && it.hasNext()) {
                         QName qname = (QName) it.next();
                         ParameterDesc paramDesc =
                             operation.getOutputParamByQName(qname);
