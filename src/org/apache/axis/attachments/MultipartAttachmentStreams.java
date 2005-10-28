@@ -64,7 +64,7 @@ public final class MultipartAttachmentStreams extends IncomingAttachmentStreams 
      * @see org.apache.axis.attachments.IncomingAttachmentStreams#getNextStream()
      */
     public IncomingAttachmentInputStream getNextStream() throws AxisFault {
-        IncomingAttachmentInputStream stream = null;
+        IncomingAttachmentInputStream stream;
         if (!isReadyToGetNextStream()) {
             throw new IllegalStateException(Messages
                     .getMessage("nextStreamNotReady"));
@@ -89,7 +89,7 @@ public final class MultipartAttachmentStreams extends IncomingAttachmentStreams 
             stream.addHeader(HTTPConstants.HEADER_CONTENT_TYPE, part
                     .getContentType());
         } else {
-            InternetHeaders headers = null;
+            InternetHeaders headers;
 
             try {
                 _delimitedStream = _delimitedStream.getNextStream();
@@ -118,12 +118,12 @@ public final class MultipartAttachmentStreams extends IncomingAttachmentStreams 
                 throw new AxisFault(Messages
                         .getMessage("failedToGetDelimitedAttachmentStream"), e);
             }
-            Header header = null;
-            Enumeration enum = headers.getAllHeaders();
-            String name = null;
-            String value = null;
-            while (enum != null && enum.hasMoreElements()) {
-                header = (Header) enum.nextElement();
+            Header header;
+            String name;
+            String value;
+            Enumeration e = headers.getAllHeaders();
+            while (e != null && e.hasMoreElements()) {
+                header = (Header) e.nextElement();
                 name = header.getName();
                 value = header.getValue();
                 if (HTTPConstants.HEADER_CONTENT_ID.equals(name)
