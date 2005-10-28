@@ -16,18 +16,17 @@
 
 package org.apache.axis.transport.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Messages;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 
 /**
  * The QSMethodHandler class is a handler which executes a given method from an
@@ -67,10 +66,10 @@ public class QSMethodHandler extends AbstractQueryStringHandler  {
 
         String method = null;
         String args = "";
-        Enumeration enum = request.getParameterNames();
+        Enumeration e = request.getParameterNames();
 
-        while (enum.hasMoreElements()) {
-            String param = (String) enum.nextElement();
+        while (e.hasMoreElements()) {
+            String param = (String) e.nextElement();
             if (param.equalsIgnoreCase ("method")) {
                 method = request.getParameter (param);
             }

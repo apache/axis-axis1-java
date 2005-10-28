@@ -189,10 +189,10 @@ public class ByteArrayOutputStream extends OutputStream {
     /**
      * @see java.io.ByteArrayOutputStream#toByteArray()
      */
-    public synchronized byte toByteArray()[] {
+    public synchronized byte[] toByteArray() {
         int remaining = count;
         int pos = 0;
-        byte newbuf[] = new byte[count];
+        byte[] newbuf = new byte[count];
         for (int i = 0; i < buffers.size(); i++) {
             byte[] buf = getBuffer(i);
             int c = Math.min(buf.length, remaining);
