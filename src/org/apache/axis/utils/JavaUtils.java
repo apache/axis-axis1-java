@@ -1047,7 +1047,7 @@ public class JavaUtils
      * Used to cache a result from IsEnumClassSub(). 
      * Class->Boolean mapping.
      */
-    private static HashMap enumMap = new HashMap();
+    private static WeakHashMap enumMap = new WeakHashMap();
     
     /**
      * Determine if the class is a JAX-RPC enum class.
