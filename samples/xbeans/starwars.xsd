@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flaco="http://superflaco.com/xbeans" targetNamespace="http://superflaco.com/xbeans" elementFormDefault="qualified">
+	<element name="character" type="flaco:character"/>
+	<element name="system" type="flaco:system"/>
+	<complexType name="character">
+		<sequence>
+			<element name="name" type="string"/>
+			<element name="home" type="flaco:system"/>
+			<element name="faction" type="string"/>
+			<element name="evil" type="boolean"/>
+			<element name="jedi" type="boolean"/>
+		</sequence>
+	</complexType>
+	<complexType name="system">
+		<sequence>
+			<element name="name" type="string"/>
+			<element name="planet" type="string" maxOccurs="unbounded"/>
+			<element name="star" type="string" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+</schema>
