@@ -100,24 +100,24 @@ public class MustUnderstandChecker extends BasicHandler {
                             null);
             StringBuffer whatWasMissUnderstood = new StringBuffer(256);
 
-            // !!! If SOAP 1.2, insert misunderstood fault headers here
-            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
-                enumeration = misunderstoodHeaders.elements();
-                while (enumeration.hasMoreElements()) {
-                    SOAPHeaderElement badHeader = (SOAPHeaderElement) enumeration.
-                            nextElement();
-                    QName badQName = new QName(badHeader.getNamespaceURI(),
-                            badHeader.getName());
-                    if (whatWasMissUnderstood.length() != 0)
-                        whatWasMissUnderstood.append(", ");
-                    whatWasMissUnderstood.append(badQName.toString());
-                    SOAPHeaderElement newHeader = new
-                            SOAPHeaderElement(Constants.URI_SOAP12_ENV,
-                                    Constants.ELEM_NOTUNDERSTOOD);
-                    newHeader.addAttribute(null,
-                            Constants.ATTR_QNAME,
-                            badQName);
-                    fault.addHeader(newHeader);
+            enumeration = misunderstoodHeaders.elements();
+            while (enumeration.hasMoreElements()) {
+                SOAPHeaderElement badHeader = (SOAPHeaderElement) enumeration.
+                        nextElement();
+                QName badQName = new QName(badHeader.getNamespaceURI(),
+                        badHeader.getName());
+                if (whatWasMissUnderstood.length() != 0)
+                    whatWasMissUnderstood.append(", ");
+                whatWasMissUnderstood.append(badQName.toString());
+                // !!! If SOAP 1.2, insert misunderstood fault headers here
+                if ( soapConstants == SOAPConstants.SOAP12_CONSTANTS ) {
+                  SOAPHeaderElement newHeader = new
+                          SOAPHeaderElement(Constants.URI_SOAP12_ENV,
+                                  Constants.ELEM_NOTUNDERSTOOD);
+                  newHeader.addAttribute(null,
+                          Constants.ATTR_QNAME,
+                          badQName);
+                  fault.addHeader(newHeader);
                 }
             }
             fault.setFaultString(Messages.getMessage("noUnderstand00",
