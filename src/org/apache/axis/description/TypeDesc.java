@@ -16,14 +16,19 @@
 
 package org.apache.axis.description;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.MethodCache;
 
+import org.apache.commons.logging.Log;
+
 import javax.xml.namespace.QName;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -40,8 +45,8 @@ public class TypeDesc implements Serializable {
     public static final Class [] noClasses = new Class [] {};
     public static final Object[] noObjects = new Object[] {};
     
-    /** A map of {classloader-> map of {class -> TypeDesc}} */
-    private static Map classMaps = new WeakHashMap();
+    /** A map of {class -> TypeDesc}} */
+    private static Map classMap = Collections.synchronizedMap(new WeakHashMap());
 
     /** Have we already introspected for the special "any" property desc? */
     private boolean lookedForAny = false;
@@ -52,6 +57,9 @@ public class TypeDesc implements Serializable {
     
     /** My superclass TypeDesc */
     private TypeDesc parentDesc = null;
+
+    protected static Log log =
+        LogFactory.getLog(TypeDesc.class.getName());
 
     /**
      * Creates a new <code>TypeDesc</code> instance.  The type desc can search
@@ -71,7 +79,7 @@ public class TypeDesc implements Serializable {
      * its type's parent classes.
      */
     public TypeDesc(Class javaClass, boolean canSearchParents) {
-        this.javaClass = javaClass;
+        this.javaClassRef = new WeakReference(javaClass);
         this.canSearchParents = canSearchParents;
         Class cls = javaClass.getSuperclass();
         if (cls != null && !cls.getName().startsWith("java.")) {
@@ -88,21 +96,7 @@ public class TypeDesc implements Serializable {
      */ 
     public static void registerTypeDescForClass(Class cls, TypeDesc td)
     {
-        Map classMap = getTypeDescMap(cls.getClassLoader());
         classMap.put(cls, td);
-    }
-
-    private static Map getTypeDescMap(ClassLoader classLoader)
-    {
-        Map classMap;
-        synchronized (classMaps) {
-            classMap = (Map) classMaps.get(classLoader);
-            if (classMap == null){
-                classMap = new Hashtable();
-                classMaps.put(classLoader, classMap);
-            }
-        }
-        return classMap;
     }
 
     /**
@@ -117,8 +111,6 @@ public class TypeDesc implements Serializable {
      */
     public static TypeDesc getTypeDescForClass(Class cls)
     {
-        Map classMap = getTypeDescMap(cls.getClassLoader());
-
         // First see if we have one explicitly registered
         // or cached from previous lookup
         TypeDesc result = (TypeDesc)classMap.get(cls);
@@ -142,8 +134,8 @@ public class TypeDesc implements Serializable {
         return result;
     }
 
-    /** The Java class for this type */
-    private Class javaClass = null;
+    /** WeakReference to the Java class for this type */
+    private WeakReference javaClassRef = null;
 
     /** The XML type QName for this type */
     private QName xmlType = null;
@@ -453,6 +445,18 @@ public class TypeDesc implements Serializable {
         if (propertyDescriptors != null)
             return;
 
+        // javaClassRef is a WeakReference. So, our javaClass may have been GC'ed.
+        // Protect against this case...
+        Class javaClass = (Class)javaClassRef.get();
+        if (javaClass == null) {
+            // could throw a RuntimeException, but instead log error and dummy up descriptors
+            log.error(Messages.getMessage("classGCed"));
+            propertyDescriptors = new BeanPropertyDescriptor[0];
+            anyDesc = null;
+            lookedForAny = true;
+            return;
+        }
+
         propertyDescriptors = BeanUtils.getPd(javaClass, this);
         if (!lookedForAny) {
             anyDesc = BeanUtils.getAnyContentPD(javaClass);
@@ -462,7 +466,17 @@ public class TypeDesc implements Serializable {
 
     public BeanPropertyDescriptor getAnyContentDescriptor() {
         if (!lookedForAny) {
-            anyDesc = BeanUtils.getAnyContentPD(javaClass);
+            // javaClassRef is a WeakReference. So, our javaClass may have been GC'ed.
+            // Protect against this case...
+            Class javaClass = (Class)javaClassRef.get();
+            if (javaClass != null) {
+                anyDesc = BeanUtils.getAnyContentPD(javaClass);
+            }
+            else {
+                log.error(Messages.getMessage("classGCed"));
+                anyDesc = null;
+            }
+
             lookedForAny = true;
         }
         return anyDesc;
