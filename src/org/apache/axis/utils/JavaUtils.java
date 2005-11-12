@@ -1061,7 +1061,9 @@ public class JavaUtils
         Boolean b = (Boolean)enumMap.get(cls);
         if (b == null) {
             b = (isEnumClassSub(cls)) ? Boolean.TRUE : Boolean.FALSE;
-            enumMap.put(cls, b);
+			synchronized (enumMap) {
+				enumMap.put(cls, b);
+			}
         }
         return b.booleanValue();
     }
