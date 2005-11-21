@@ -1533,7 +1533,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
             return cls;
         }
         
-        if (javaType != null && cls != javaType && !cls.isArray()) {
+        if (javaType != null && !javaType.isAssignableFrom(cls) && !cls.isArray()) {
             return javaType;
         }
         
