@@ -56,6 +56,7 @@ import java.util.Vector;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -116,21 +117,21 @@ public class SOAPService extends SimpleTargetedChain
      * Add this passed in Session to this Service's list of sessions
      */
     public void addSession(Session session) {
-      Vector v = (Vector) sessions.get( this.getName() );
-      if ( v == null )  {
-        v = new Vector();
-        sessions.put( this.getName(), v);
+      WeakHashMap map = (WeakHashMap) sessions.get( this.getName() );
+      if ( map == null )  {
+        map = new WeakHashMap();
+        sessions.put( this.getName(), map);
       }
-      if ( !v.contains(session) ) v.add(session);
+      if ( !map.containsKey(session) ) map.put(session, null);
     }
 
     /** 
      * Remove all of this Service's serviceObjects from it known sessions
      */
     public void clearSessions() {
-      Vector v = (Vector) sessions.get( this.getName() );
-      if ( v == null ) return ;
-      Iterator iter = v.iterator();
+      WeakHashMap map = (WeakHashMap) sessions.get( this.getName() );
+      if ( map == null ) return ;
+      Iterator iter = map.keySet().iterator();
       while ( iter.hasNext() ) {
         Session session = (Session) iter.next();
         session.remove( this.getName() );
