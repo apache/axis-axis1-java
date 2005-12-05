@@ -627,7 +627,8 @@ public class MessageContext implements SOAPMessageContext {
      */
     public void setCurrentMessage(Message curMsg)
     {
-        curMsg.setMessageContext(this);
+        if ( curMsg != null )
+            curMsg.setMessageContext(this);
 
         if (havePassedPivot) {
             responseMessage = curMsg;
