@@ -717,28 +717,6 @@ public class JavaBeanWriter extends JavaClassWriter {
                         + "_";
             }
 
-            // Process the elements
-            Vector elements = te.getContainedElements();
-
-            if (elements != null) {
-                for (int j = 0; j < elements.size(); j++) {
-                    ElementDecl elem = (ElementDecl) elements.get(j);
-
-                    if (elem.getAnyElement()) {
-                        if (!gotAny) {
-                            gotAny = true;
-                            paramTypes.add("org.apache.axis.message.MessageElement []");
-                            paramNames.add(Constants.ANYCONTENT);
-                        }
-                    } else {
-                        paramTypes.add(processTypeName(elem,elem.getType().getName()));
-                        String name = elem.getName() == null ? ("param" + i) : elem.getName();
-                        paramNames.add(JavaUtils.getUniqueValue(
-                            helper.reservedPropNames, name));
-                    }
-                }
-            }
-
             // Process the attributes
             Vector attributes = te.getContainedAttributes();
             if (attributes != null) {
@@ -760,6 +738,27 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }
             }
 
+            // Process the elements
+            Vector elements = te.getContainedElements();
+
+            if (elements != null) {
+                for (int j = 0; j < elements.size(); j++) {
+                    ElementDecl elem = (ElementDecl) elements.get(j);
+
+                    if (elem.getAnyElement()) {
+                        if (!gotAny) {
+                            gotAny = true;
+                            paramTypes.add("org.apache.axis.message.MessageElement []");
+                            paramNames.add(Constants.ANYCONTENT);
+                        }
+                    } else {
+                        paramTypes.add(processTypeName(elem,elem.getType().getName()));
+                        String name = elem.getName() == null ? ("param" + i) : elem.getName();
+                        paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, name));
+                    }
+                }
+            }
         }
 
         if (isMixed && !isAny && !parentIsAny && !parentIsMixed) {
