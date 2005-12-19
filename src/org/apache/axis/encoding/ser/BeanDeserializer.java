@@ -32,6 +32,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -209,6 +210,12 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         if (propDesc == null) {
             // look for a field by this name.
             propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
+            if (propDesc == null) {
+                String malformedLocalName = StringUtils.makeQNameToMatchLocalName(localName);
+                if (malformedLocalName != null) {
+                    propDesc = (BeanPropertyDescriptor) propertyMap.get(malformedLocalName);
+                }
+            }
         }
 
         // try and see if this is an xsd:any namespace="##any" element before
