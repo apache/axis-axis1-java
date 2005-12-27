@@ -509,6 +509,7 @@ public class XMLUtils {
     public static void PrettyDocumentToWriter(Document doc, Writer writer) {
         privateElementToWriter(doc.getDocumentElement(), writer, false, true);
     }
+
     /**
      * Convert a simple string to an element with a text node
      *
@@ -528,6 +529,22 @@ public class XMLUtils {
         catch (ParserConfigurationException e) {
             // This should not occur
             throw new InternalException(e);
+        }
+    }
+
+    /**
+     * Convert an XML string to a DOM element
+     *
+     * @param xml - XML string to convert
+     * @return element - an XML Element, null if no element was created
+     */
+    public static Element StringToElement(String xml) {
+        try {
+          return newDocument(new ByteArrayInputStream(xml.getBytes()))
+                   .getDocumentElement();
+        }
+        catch(Exception exp) {
+          throw new RuntimeException(exp);
         }
     }
 
