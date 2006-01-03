@@ -576,7 +576,6 @@ public class AxisFault extends java.rmi.RemoteException {
      *
      * This is new in SOAP 1.2
      * @since axis1.1
-     * @return
      */
     public String getFaultNode() {
         return( faultNode );
@@ -737,11 +736,28 @@ public class AxisFault extends java.rmi.RemoteException {
      * @throws Exception
      */
     public void output(SerializationContext context) throws Exception {
-
         SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
         if (context.getMessageContext() != null) {
             soapConstants = context.getMessageContext().getSOAPConstants();
         }
+
+        SOAPEnvelope envelope = getAsEnvelope(soapConstants);
+        envelope.output(context);
+    }
+
+    /**
+     * Get this fault as a SOAPEnvelope
+     */
+    public SOAPEnvelope getAsEnvelope()
+            throws Exception {
+        return getAsEnvelope(Constants.DEFAULT_SOAP_VERSION);
+    }
+
+    /**
+     * Get this fault as a SOAPEnvelope with a particular version
+     */
+    public SOAPEnvelope getAsEnvelope(SOAPConstants soapConstants)
+            throws Exception {
 
         SOAPEnvelope envelope = new SOAPEnvelope(soapConstants);
 
@@ -756,7 +772,7 @@ public class AxisFault extends java.rmi.RemoteException {
             }
         }
 
-        envelope.output(context);
+        return envelope;
     }
 
     /**
