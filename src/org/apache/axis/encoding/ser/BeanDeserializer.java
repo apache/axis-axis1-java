@@ -207,17 +207,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
            }
         }
 
-        if (propDesc == null) {
-            // look for a field by this name.
-            propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
-            if (propDesc == null) {
-                String malformedLocalName = StringUtils.makeQNameToMatchLocalName(localName);
-                if (malformedLocalName != null) {
-                    propDesc = (BeanPropertyDescriptor) propertyMap.get(malformedLocalName);
-                }
-            }
-        }
-
         // try and see if this is an xsd:any namespace="##any" element before
         // reporting a problem
         if (propDesc == null || 
@@ -259,6 +248,16 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             }
         }
 
+        if (propDesc == null) {
+            // look for a field by this name.
+            propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
+            if (propDesc == null) {
+                String malformedLocalName = StringUtils.makeQNameToMatchLocalName(localName);
+                if (malformedLocalName != null) {
+                    propDesc = (BeanPropertyDescriptor) propertyMap.get(malformedLocalName);
+                }
+            }
+        }
 
         if (propDesc == null) {
             // No such field
