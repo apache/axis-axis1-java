@@ -93,8 +93,11 @@ public class SOAPHeaderElement extends MessageElement
         }
 
         QName roleQName = soapConstants.getRoleAttributeQName();
-        actor = elem.getAttributeNS(roleQName.getNamespaceURI(),
+        String tmp = elem.getAttributeNS(roleQName.getNamespaceURI(),
                                     roleQName.getLocalPart());
+        // Only pick-up the role value if it there - otherwise let it be null
+        if ( tmp != null && !tmp.equals("") ) actor = tmp ;
+
 //        if (actor == null) {
 //            actor = "";
 //        }
