@@ -49,9 +49,10 @@ public class AxisHTTPSessionListener implements HttpSessionListener {
         
         Enumeration e = session.getAttributeNames();
         while (e.hasMoreElements()) {
-            Object next = e.nextElement();
-            if (next instanceof ServiceLifecycle) {
-                ((ServiceLifecycle)next).destroy();
+            String attributeName = (String) e.nextElement();
+            Object attributeValue = session.getAttribute(attributeName);
+            if (attributeValue instanceof ServiceLifecycle) {
+                ((ServiceLifecycle) attributeValue).destroy();
             }
         }
     }        
