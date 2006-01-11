@@ -134,10 +134,10 @@ implements org.w3c.dom.Document, java.io.Serializable {
                 if (tagName.equalsIgnoreCase(Constants.ELEM_FAULT_DETAIL))
                     return new SOAPFault(new AxisFault(tagName));
                 else {
-                    return new MessageElement("", prefix, localname);
+                    return new MessageElement(localname, prefix, "");
                 }
             } else {
-                return new MessageElement("", prefix, localname);
+                return new MessageElement(localname, prefix, "");
             }
 
         } catch (SOAPException se) {
