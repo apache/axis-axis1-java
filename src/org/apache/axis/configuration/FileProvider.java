@@ -229,10 +229,12 @@ public class FileProvider implements WSDDEngineConfiguration {
      */
     public SOAPService getService(QName qname) throws ConfigurationException {
         SOAPService service = deployment.getService(qname);
+        /* Why????? Dug
         if (service == null) {
             throw new ConfigurationException(Messages.getMessage("noService10",
                                                            qname.toString()));
         }
+        */
         return service;
     }
 
