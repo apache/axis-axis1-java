@@ -19,6 +19,7 @@ package org.apache.axis.client;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
+import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
@@ -42,6 +43,8 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.handler.HandlerRegistry;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -803,6 +806,20 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public void setEngineConfiguration(EngineConfiguration config) {
         this.config = config;
+    }
+
+    public void setClientConfig(String filename) throws Exception {
+      InputStream input = null ;
+      if ( (new File(filename)).exists() )
+        input = new FileInputStream( filename );
+      else {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        input = cl.getResourceAsStream( filename );
+      }
+      if ( input == null ) throw new Exception("Can't locate: " + filename );
+      FileProvider config = new FileProvider( input );
+      setEngineConfiguration( config );
+      setEngine( getAxisClient() );
     }
 
     /**
