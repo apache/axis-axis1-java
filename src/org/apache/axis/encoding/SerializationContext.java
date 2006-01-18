@@ -126,7 +126,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     /**
      * Should I disable the pretty xml completely.
      */ 
-    private boolean disablePrettyXML = false;
+    private boolean disablePrettyXML = true;
 
 
     /**
