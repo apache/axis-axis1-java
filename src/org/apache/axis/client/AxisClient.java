@@ -173,9 +173,8 @@ public class AxisClient extends AxisEngine {
                 }
                 
                 msgContext.setPastPivot(true);
-                if (!msgContext.isPropertyTrue(Call.ONE_WAY)) {
-                    if ((handlerImpl != null) &&
-                            !msgContext.isPropertyTrue(Call.ONE_WAY)) {
+                if ( !msgContext.getIsOneWay() ) {
+                    if (handlerImpl != null) {
                         try {
                             handlerImpl.handleResponse(msgContext);                            
                         } catch (RuntimeException ex) {

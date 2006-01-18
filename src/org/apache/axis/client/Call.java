@@ -157,8 +157,6 @@ public class Call implements javax.xml.rpc.Call {
     /** This will be true if an OperationDesc is handed to us whole */
     private boolean operationSetManually       = false;
 
-    // Is this a one-way call?
-    private boolean invokeOneWay               = false;
     private boolean isMsg                      = false;
 
     // Our Transport, if any
@@ -271,14 +269,14 @@ public class Call implements javax.xml.rpc.Call {
      */
     public static final String STREAMING_PROPERTY =
             "axis.streaming";
-    
-    /**
-     * Internal property to indicate a one way call.
-     * That will disable processing of response handlers.
-     */
-    protected static final String ONE_WAY =
-        "axis.one.way";
 
+    /**
+     * Property that allows for a client to get back a SOAP Fault as
+     * a normal soap message instead of having the engine throw an
+     * AxisFault
+     */
+    public static final String DONT_THROW_FAULT = "axis.dontThrowFault" ;
+    
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
@@ -844,6 +842,7 @@ public class Call implements javax.xml.rpc.Call {
                     String  oldProto = tmpURL.getProtocol();
                     if ( protocol.equals(oldProto) ) {
                         this.transport.setUrl( address.toString() );
+                        setProperty(MessageContext.TRANS_URL, address.toString());
                         return ;
                     }
                 }
@@ -862,6 +861,7 @@ public class Call implements javax.xml.rpc.Call {
                                  Messages.getMessage("noTransport01",
                                  protocol), null, null);
                 transport.setUrl(address.toString());
+                setProperty(MessageContext.TRANS_URL, address.toString());
                 setTransport(transport);
                 service.registerTransportForURL(address, transport);
             }
@@ -1842,13 +1842,28 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void invokeOneWay(Object[] params) {
         try {
-            invokeOneWay = true;
+            msgContext.setIsOneWay(true);
             invoke( params );
         } catch( Exception exp ) {
             throw new JAXRPCException( exp.toString() );
         } finally {
-            invokeOneWay = false;
+            msgContext.setIsOneWay(false);
         }
+    }
+
+    public void invokeOneWay() {
+      try {
+        msgContext.setIsOneWay( true );
+        invoke();
+      } catch( Exception exp ) {
+        throw new JAXRPCException( exp.toString() );
+      } finally {
+        msgContext.setIsOneWay( false );
+      }
+    }
+
+    public boolean isInvokeOneWay() {
+      return msgContext.getIsOneWay();
     }
 
     /************************************************************************/
@@ -2410,7 +2425,7 @@ public class Call implements javax.xml.rpc.Call {
          * parameter types, check for this case right now and toss a fault
          * if things don't look right.
          */
-        if (!invokeOneWay && operation != null &&
+        if (!msgContext.getIsOneWay() && operation != null &&
                 operation.getNumParams() > 0 && getReturnType() == null) {
             // TCK:
             // Issue an error if the return type was not set, but continue processing.
@@ -2763,7 +2778,7 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        if(!invokeOneWay) {
+        if ( !msgContext.getIsOneWay() ) {
             invokeEngine(msgContext);
         } else {
             invokeEngineOneWay(msgContext);
@@ -2813,7 +2828,8 @@ public class Call implements javax.xml.rpc.Call {
                 //unless we don't care about the return value or we want
                 //a raw message back
                 //get the fault from the body and throw it
-                throw ((SOAPFault)respBody).getFault();
+                if ( msgContext.isPropertyTrue(Call.DONT_THROW_FAULT,false) )
+                  throw ((SOAPFault)respBody).getFault();
             }
         }
     }
@@ -2827,14 +2843,14 @@ public class Call implements javax.xml.rpc.Call {
         //create a new class
         Runnable runnable = new Runnable(){
             public void run() {
-                msgContext.setProperty(Call.ONE_WAY, Boolean.TRUE);
+                msgContext.setIsOneWay(true);
                 try {
                     service.getEngine().invoke( msgContext );
                 } catch (AxisFault af){
                     //TODO: handle errors properly
                     log.debug(Messages.getMessage("exceptionPrinting"), af);
                 }
-                msgContext.removeProperty(Call.ONE_WAY);
+                msgContext.setIsOneWay(false);
             }
         };
         //create a thread to run it

@@ -173,6 +173,7 @@ public class MessageContext implements SOAPMessageContext {
     private String  encodingStyle  = Use.ENCODED.getEncoding();
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
+    private boolean isOneWay       = false;
 
     /**
      * SOAP Actor roles.
@@ -227,6 +228,7 @@ public class MessageContext implements SOAPMessageContext {
 
         OperationDesc [] possibleOperations = null;
 
+        /* DUG - how can you possibly just guess like this???
         if (serviceHandler == null) {
             try {
                 if (log.isDebugEnabled()) {
@@ -240,8 +242,8 @@ public class MessageContext implements SOAPMessageContext {
             } catch (ConfigurationException e) {
                 // Didn't find one...
             }
-
         }
+        */
 
         if (serviceHandler != null) {
             ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
@@ -1506,5 +1508,13 @@ public class MessageContext implements SOAPMessageContext {
             responseMessage.dispose();
             responseMessage=null;
         }
+    }
+
+    public void setIsOneWay(boolean value) {
+      isOneWay = value ;
+    }
+
+    public boolean getIsOneWay() {
+      return isOneWay ;
     }
 }
