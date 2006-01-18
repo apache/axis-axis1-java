@@ -776,6 +776,13 @@ public class HTTPSender extends BasicHandler {
             }
         }
 
+        /* Some soap processors will return a 200 instead of a 202 */
+        /* even when there isn't a soap envelope (ie. length=0),   */
+        /* let's be forgiving and allow those through.             */
+        if ( contentLength != null && "0".equals(contentLength) )
+          return inp ;
+
+
         outMsg = new Message( new SocketInputStream(inp, socketHolder.getSocket()), false,
                               contentType, contentLocation);
         // Transfer HTTP headers of HTTP message to MIME headers of SOAP message
