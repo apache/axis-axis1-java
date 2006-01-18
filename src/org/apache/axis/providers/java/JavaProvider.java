@@ -295,16 +295,20 @@ public abstract class JavaProvider extends BasicProvider
             // be nice if in the future there was a way to detect an error
             // when trying to install a response message in a MessageContext
             // associated with a one-way operation....
-            OperationDesc operation = msgContext.getOperation();
+            OperationDesc operation  = msgContext.getOperation();
+            boolean       createdEnv = false ;
+            Message       resMsg     = null ;
+
             if (operation != null &&
                     OperationType.ONE_WAY.equals(operation.getMep())) {
                 msgContext.setResponseMessage(null);
             } else {
-                Message        resMsg  = msgContext.getResponseMessage();
+                resMsg = msgContext.getResponseMessage();
 
                 // If we didn't have a response message, make sure we set one up
                 // with the appropriate versions of SOAP and Schema
                 if (resMsg == null) {
+                    createdEnv = true ;
                     resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants(),
                                                msgContext.getSchemaVersion());
                     
@@ -321,6 +325,22 @@ public abstract class JavaProvider extends BasicProvider
             SOAPEnvelope   reqEnv  = reqMsg.getSOAPEnvelope();
 
             processMessage(msgContext, reqEnv, resEnv, serviceObject);
+
+            // If the service sets this "IsOneWay" flag then they don't want
+            // a response sent back at all.  However, we can only erase
+            // any env that might be there if we created it just before we
+            // called the service.  If someone else in the processing 
+            // created the env then we can't just blindly erase it - the 
+            // best we can do is erase the Body element.
+            // Ideally, I'd like the service to return back the desired
+            // env instead but I think that would break too many people's
+            // current impls.
+            if ( msgContext.getIsOneWay() ) {
+              if ( createdEnv )
+                msgContext.setResponseMessage( null );
+              else
+                resMsg.getSOAPEnvelope().clearBody();
+            }
         } catch( SAXException exp ) {
             entLog.debug( Messages.getMessage("toAxisFault00"), exp);
             Exception real = exp.getException();
