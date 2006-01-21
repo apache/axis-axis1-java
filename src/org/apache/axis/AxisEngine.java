@@ -132,7 +132,7 @@ public abstract class AxisEngine extends BasicHandler
      *
      * @param mc - the new active message context.
      */
-    protected static void setCurrentMessageContext(MessageContext mc) {
+    public static void setCurrentMessageContext(MessageContext mc) {
         currentMessageContext.set(mc);
     }
 
