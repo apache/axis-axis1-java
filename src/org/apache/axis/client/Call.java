@@ -2828,7 +2828,7 @@ public class Call implements javax.xml.rpc.Call {
                 //unless we don't care about the return value or we want
                 //a raw message back
                 //get the fault from the body and throw it
-                if ( msgContext.isPropertyTrue(Call.DONT_THROW_FAULT,false) )
+                if ( !msgContext.isPropertyTrue(Call.DONT_THROW_FAULT,false) )
                   throw ((SOAPFault)respBody).getFault();
             }
         }
