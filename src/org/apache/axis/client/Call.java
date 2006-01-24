@@ -93,6 +93,10 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.rmi.RemoteException;
 
+import org.apache.axis.wsa.WSAConstants ;
+import org.apache.axis.wsa.MIHeader ;
+import org.apache.axis.wsa.EndpointReference ;
+
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
  * interface.  This class should be used to actually invoke the Web Service.
@@ -1842,24 +1846,24 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void invokeOneWay(Object[] params) {
         try {
-            msgContext.setIsOneWay(true);
+            msgContext.setIsOneWay( true );
             invoke( params );
         } catch( Exception exp ) {
             throw new JAXRPCException( exp.toString() );
         } finally {
-            msgContext.setIsOneWay(false);
+            msgContext.setIsOneWay( false );
         }
     }
 
     public void invokeOneWay() {
-      try {
-        msgContext.setIsOneWay( true );
-        invoke();
-      } catch( Exception exp ) {
-        throw new JAXRPCException( exp.toString() );
-      } finally {
-        msgContext.setIsOneWay( false );
-      }
+        try {
+            msgContext.setIsOneWay( true );
+            invoke();
+        } catch( Exception exp ) {
+            throw new JAXRPCException( exp.toString() );
+        } finally {
+            msgContext.setIsOneWay( false );
+        }
     }
 
     public boolean isInvokeOneWay() {
@@ -2778,11 +2782,13 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        if ( !msgContext.getIsOneWay() ) {
+        // if(!msgContext.getIsOneWay()) {
             invokeEngine(msgContext);
+        /*
         } else {
             invokeEngineOneWay(msgContext);
         }
+        */
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: Call::invoke()");
@@ -2843,14 +2849,14 @@ public class Call implements javax.xml.rpc.Call {
         //create a new class
         Runnable runnable = new Runnable(){
             public void run() {
-                msgContext.setIsOneWay(true);
+                msgContext.setIsOneWay( true );
                 try {
                     service.getEngine().invoke( msgContext );
                 } catch (AxisFault af){
                     //TODO: handle errors properly
                     log.debug(Messages.getMessage("exceptionPrinting"), af);
                 }
-                msgContext.setIsOneWay(false);
+                msgContext.setIsOneWay( false );
             }
         };
         //create a thread to run it
@@ -3003,5 +3009,78 @@ public class Call implements javax.xml.rpc.Call {
     public void clearOperation() {
         operation = null;
         operationSetManually = false;
+    }
+
+    public String getMessageID() {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      return mih == null ? null : mih.getMessageID();
+    }
+
+    public void setTo(EndpointReference epr) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setTo( epr );
+    }
+
+    public void setTo(String url) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setTo( EndpointReference.fromLocation( url ) );
+    }
+
+    public EndpointReference getTo() {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      return mih == null ? null : mih.getTo();
+    }
+
+    public void setFrom(EndpointReference epr) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setFrom( epr );
+    }
+
+    public void setFrom(String url) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setFrom( EndpointReference.fromLocation( url ) );
+    }
+
+    public EndpointReference getFrom() {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      return mih == null ? null : mih.getFrom();
+    }
+
+    public void setReplyTo(EndpointReference epr) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setReplyTo( epr );
+    }
+
+    public void setReplyTo(String url) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setReplyTo( EndpointReference.fromLocation( url ) );
+    }
+
+    public EndpointReference getReplyTo() {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      return mih == null ? null : mih.getReplyTo();
+    }
+
+    public void setFaultTo(EndpointReference epr) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setFaultTo( epr );
+    }
+
+    public void setFaultTo(String url) throws Exception {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setFaultTo( EndpointReference.fromLocation( url ) );
+    }
+
+    public EndpointReference getFaultTo() {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      return mih == null ? null : mih.getFaultTo();
     }
 }

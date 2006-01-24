@@ -228,7 +228,7 @@ public class MessageContext implements SOAPMessageContext {
 
         OperationDesc [] possibleOperations = null;
 
-        /* DUG - how can you possibly just guess like this???
+        /* DUG - how can you possibly just guess like this??? */
         if (serviceHandler == null) {
             try {
                 if (log.isDebugEnabled()) {
@@ -243,7 +243,7 @@ public class MessageContext implements SOAPMessageContext {
                 // Didn't find one...
             }
         }
-        */
+        /* */
 
         if (serviceHandler != null) {
             ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
@@ -459,16 +459,16 @@ public class MessageContext implements SOAPMessageContext {
       try {
         out.writeObject( table );
       } catch(Exception exp) {
-        System.err.println("Can't serialize MessageContext("+exp+")\n" +
-                           "Current list of entries that were attempted:\n" );
+        String tmp = "\nCan't serialize MessageContext("+exp+")\n" +
+                           "Current list of entries that were attempted:\n" ;
 
         Iterator ii = table.keySet().iterator();
         while ( ii.hasNext() ) {
           String key = (String) ii.next();
           Object val = table.get(key);
-          System.err.println("  " + key + " : " + val.getClass() );
+          tmp += "  " + key + " : " + val.getClass() + "\n" ;
         }
-        throw exp ;
+        throw new Exception( exp.toString() + tmp );
       }
     }
 
