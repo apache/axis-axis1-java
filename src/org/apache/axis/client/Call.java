@@ -1866,6 +1866,17 @@ public class Call implements javax.xml.rpc.Call {
         }
     }
 
+    public void invokeOneWay( String method, Object [] args ) {
+        try {
+            msgContext.setIsOneWay( true );
+            invoke( method, args );
+        } catch( Exception exp ) {
+            throw new JAXRPCException( exp.toString() );
+        } finally {
+            msgContext.setIsOneWay( false );
+        }
+    }
+
     public boolean isInvokeOneWay() {
       return msgContext.getIsOneWay();
     }
