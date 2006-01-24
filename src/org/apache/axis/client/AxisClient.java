@@ -33,7 +33,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.axis.message.* ;
 import org.apache.axis.wsa.* ;
-import org.apache.axis.security.WSSecurity;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerChain;
