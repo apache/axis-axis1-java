@@ -6,11 +6,11 @@ import org.apache.axis.client.Service;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.message.*;
 import java.util.Vector;
 import java.net.URL;
 import javax.xml.namespace.QName;
 import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.SOAPEnvelope;
 
 public class WSAHandler { // extends BasicHandler {
 

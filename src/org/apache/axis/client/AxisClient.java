@@ -30,16 +30,15 @@ import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.MustUnderstandChecker;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.wsa.AsyncService;
+import org.apache.axis.wsa.MIHeader;
+import org.apache.axis.wsa.WSAHandler;
 import org.apache.commons.logging.Log;
-import org.apache.axis.message.* ;
-import org.apache.axis.wsa.* ;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerChain;
 import java.util.Iterator;
 import java.lang.reflect.Method ;
-import java.io.* ;
-import java.util.* ;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.

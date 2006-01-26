@@ -14,9 +14,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import org.apache.axis.AxisFault;
-import org.apache.axis.message.*;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.XMLUtils;
 
 import java.util.Stack;
