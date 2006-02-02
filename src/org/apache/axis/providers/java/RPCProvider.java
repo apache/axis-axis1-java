@@ -76,7 +76,7 @@ public class RPCProvider extends JavaProvider {
         ServiceDesc serviceDesc = service.getServiceDescription();
         RPCElement body = getBody(reqEnv, msgContext);
 
-        Vector args = null;
+        Vector args;
         try {
             args = body.getParams();
         } catch (SAXException e) {
@@ -181,7 +181,7 @@ public class RPCProvider extends JavaProvider {
         }
 
         // OK!  Now we can invoke the method
-        Object objRes = null;
+        Object objRes;
         try {
             objRes = invokeMethod(msgContext,
                                   operation.getMethod(),
@@ -212,7 +212,9 @@ public class RPCProvider extends JavaProvider {
         if (OperationType.ONE_WAY.equals(operation.getMep()))
             return;
 
-        RPCElement resBody = createResponseBody(body, msgContext, operation, serviceDesc, objRes, resEnv, outs);
+        RPCElement resBody = createResponseBody(body, msgContext, operation,
+                                                serviceDesc, objRes, resEnv,
+                                                outs);
         resEnv.addBodyElement(resBody);
     }
 
@@ -283,7 +285,9 @@ public class RPCProvider extends JavaProvider {
         return body;
     }
 
-    protected OperationDesc getOperationDesc(MessageContext msgContext, RPCElement body) throws SAXException, AxisFault {
+    protected OperationDesc getOperationDesc(MessageContext msgContext,
+                                             RPCElement body)
+            throws SAXException, AxisFault {
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
         String methodName = body.getMethodName();
@@ -292,34 +296,43 @@ public class RPCProvider extends JavaProvider {
         OperationDesc operation = msgContext.getOperation();
         if (operation == null) {
             QName qname = new QName(body.getNamespaceURI(),
-                    body.getName());
+                                    body.getName());
             operation = serviceDesc.getOperationByElementQName(qname);
 
-        if (operation == null) {
-            SOAPConstants soapConstants = msgContext == null ?
-                    SOAPConstants.SOAP11_CONSTANTS :
-                    msgContext.getSOAPConstants();
-            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
-                AxisFault fault =
-                        new AxisFault(Constants.FAULT_SOAP12_SENDER,
-                                      Messages.getMessage("noSuchOperation",
-                                                          methodName),
-                                      null,
-                                      null);
-                fault.addFaultSubCode(Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
-                throw new SAXException(fault);
+            if (operation == null) {
+                SOAPConstants soapConstants = msgContext == null ?
+                        SOAPConstants.SOAP11_CONSTANTS :
+                        msgContext.getSOAPConstants();
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    AxisFault fault =
+                            new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                                          Messages.getMessage("noSuchOperation",
+                                                              methodName),
+                                          null,
+                                          null);
+                    fault.addFaultSubCode(
+                            Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
+                    throw new SAXException(fault);
+                } else {
+                    throw new AxisFault(Constants.FAULT_CLIENT,
+                                        Messages.getMessage(
+                                                "noSuchOperation", methodName),
+                                        null, null);
+                }
             } else {
-                throw new AxisFault(Constants.FAULT_CLIENT, Messages.getMessage("noSuchOperation", methodName),
-                        null, null);
-            }
-            } else {
-                 msgContext.setOperation(operation);
+                msgContext.setOperation(operation);
             }
         }
         return operation;
     }
 
-    protected RPCElement createResponseBody(RPCElement body, MessageContext msgContext, OperationDesc operation, ServiceDesc serviceDesc, Object objRes, SOAPEnvelope resEnv, ArrayList outs) throws Exception
+    protected RPCElement createResponseBody(RPCElement body,
+                                            MessageContext msgContext,
+                                            OperationDesc operation,
+                                            ServiceDesc serviceDesc,
+                                            Object objRes,
+                                            SOAPEnvelope resEnv,
+                                            ArrayList outs) throws Exception
     {
         String methodName = body.getMethodName();
         /* Now put the result in the result SOAPEnvelope */

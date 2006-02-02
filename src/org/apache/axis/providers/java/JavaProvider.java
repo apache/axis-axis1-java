@@ -167,7 +167,7 @@ public abstract class JavaProvider extends BasicProvider
                                            String serviceName,
                                            MessageContext msgContext,
                                            String clsName) throws Exception {
-        Object obj = null;
+        Object obj;
         boolean makeNewObject = false;
 
         // This is a little tricky.
@@ -276,7 +276,9 @@ public abstract class JavaProvider extends BasicProvider
 
         if ((clsName == null) || clsName.equals("")) {
             throw new AxisFault("Server.NoClassForService",
-                Messages.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
+                Messages.getMessage("noOption00",
+                                    getServiceClassNameOptionName(),
+                                    serviceName),
                 null, null);
         }
 
@@ -284,7 +286,10 @@ public abstract class JavaProvider extends BasicProvider
         Object serviceObject = null;
 
         try {
-            serviceObject = getServiceObject(msgContext, service, clsName, scope);
+            serviceObject = getServiceObject(msgContext,
+                                             service,
+                                             clsName,
+                                             scope);
 
             SOAPEnvelope   resEnv = null;
 
@@ -429,8 +434,8 @@ public abstract class JavaProvider extends BasicProvider
                                     SOAPService service,
                                     MessageContext msgContext)
             throws AxisFault {
-        ClassLoader cl = null;
-        Class serviceClass = null;
+        ClassLoader cl;
+        Class serviceClass;
         AxisEngine engine = service.getEngine();
 
         // If we have a message context, use that to get classloader

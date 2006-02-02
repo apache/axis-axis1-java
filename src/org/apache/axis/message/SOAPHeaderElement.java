@@ -43,7 +43,7 @@ public class SOAPHeaderElement extends MessageElement
 
     protected boolean   processed = false;
 
-    protected String    actor = "http://schemas.xmlsoap.org/soap/actor/next";
+    protected String    actor;
     protected boolean   mustUnderstand = false;
     protected boolean   relay = false;
 
@@ -240,10 +240,12 @@ public class SOAPHeaderElement extends MessageElement
             else
                 val = mustUnderstand ? "1" : "0";
 
-            setAttribute(soapVer.getEnvelopeURI(),
+            if (mustUnderstand) {
+                setAttribute(soapVer.getEnvelopeURI(),
                          Constants.ATTR_MUST_UNDERSTAND,
                          val);
-            
+            }
+
             if (soapVer == SOAPConstants.SOAP12_CONSTANTS && relay) {
                 setAttribute(soapVer.getEnvelopeURI(), Constants.ATTR_RELAY,
                              "true");

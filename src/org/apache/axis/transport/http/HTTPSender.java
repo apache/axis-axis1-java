@@ -701,9 +701,20 @@ public class HTTPSender extends BasicHandler {
         location = (null == location)
                 ? null
                 : location.trim();
-                
+
+        String contentLength =
+            (String) headers.get(HEADER_CONTENT_LENGTH_LC);
+
+        contentLength = (null == contentLength)
+                ? null
+                : contentLength.trim();
+        int length = -1;
+        if (contentLength != null) {
+            length = Integer.parseInt(contentLength);
+        }
+
         if ((returnCode > 199) && (returnCode < 300)) {
-            if (returnCode == 202) {
+            if (returnCode == 202 || length == 0) {
                 return inp;
             }
             // SOAP return is OK - so fall through
@@ -757,13 +768,6 @@ public class HTTPSender extends BasicHandler {
         contentLocation = (null == contentLocation)
                 ? null
                 : contentLocation.trim();
-
-        String contentLength = 
-            (String) headers.get(HEADER_CONTENT_LENGTH_LC);
-
-        contentLength = (null == contentLength)
-                ? null
-                : contentLength.trim();
 
         String transferEncoding =
             (String) headers.get(HEADER_TRANSFER_ENCODING_LC);
