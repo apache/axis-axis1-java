@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+   targetNamespace="urn:arrayExtensionTest"
+   xmlns="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:apachesoap="http://xml.apache.org/xml-soap"
+   xmlns:target="urn:arrayExtensionTest"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+   <wsdl:types>
+      <schema
+	targetNamespace="urn:arrayExtensionTest"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:target="urn:arrayExtensionTest"
+      >
+	 <complexType name="Data">
+	    <sequence>
+	       <element name="name" type="xsd:string"/>
+	    </sequence>
+	 </complexType>
+
+	 <complexType name="MoreData">
+	   <complexContent>
+	      <extension base="target:Data">
+		     <sequence>
+		     <element name="size" type="xsd:int"/>
+		   </sequence>
+	     </extension>
+	   </complexContent>
+     </complexType>
+
+     <complexType name="ManagedObject">
+       <simpleContent>
+         <extension base="xsd:string">
+           <attribute name="type" type="xsd:string"/>
+         </extension>
+       </simpleContent>
+     </complexType>
+
+	 <element name="EchoData">
+	    <complexType>
+	       <sequence>
+		  <element name="_this" type="target:ManagedObject"/>
+		  <element name="data" type="target:Data" maxOccurs="unbounded" />
+	       </sequence>
+	    </complexType>
+	 </element>
+
+	 <element name="EchoDataResponse">
+	    <complexType>
+	       <sequence>
+		  <element name="returnval" type="target:Data" maxOccurs="unbounded" />
+	       </sequence>
+	    </complexType>
+	 </element>
+      </schema>
+   </wsdl:types>
+
+   <wsdl:message name="EchoDataRequestMsg">
+      <wsdl:part name="parameters" element="target:EchoData"/>
+   </wsdl:message>
+   <wsdl:message name="EchoDataResponseMsg">
+      <wsdl:part name="parameters" element="target:EchoDataResponse"/>
+   </wsdl:message>
+
+   <wsdl:portType name="ArrayExtensionTestPortType">
+      <wsdl:operation name="EchoData">
+         <input message="target:EchoDataRequestMsg"/>
+         <output message="target:EchoDataResponseMsg"/>
+      </wsdl:operation>
+   </wsdl:portType>
+
+   <wsdl:binding name="ArrayExtensionTestBinding" type="target:ArrayExtensionTestPortType">
+      <wsdlsoap:binding
+         style="document"
+         transport="http://schemas.xmlsoap.org/soap/http"
+      />
+      <wsdl:operation name="EchoData">
+         <wsdlsoap:operation soapAction="" style="document"/>
+         <wsdl:input>
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="ArrayExtensionTestService">
+      <wsdl:port binding="target:ArrayExtensionTestBinding" name="ArrayExtensionTestPort">
+		  <wsdlsoap:address location="http://localhost:8080/axis/services/ArrayExtensionTestPort"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>
