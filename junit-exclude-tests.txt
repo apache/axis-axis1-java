@@ -4,3 +4,4 @@
 **/test/wsdl/literal/*.*
 #**/test/wsdl/query/QueryTestServiceTestCase.*
 **/test/wsdl/query/FileGenWrappedTestCase.*
+**/test/wsdl/uddiv2/InquiryServiceTestCase.*
