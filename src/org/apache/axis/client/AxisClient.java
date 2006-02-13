@@ -29,12 +29,10 @@ import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.MustUnderstandChecker;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.security.WSSecInterface;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsa.AsyncService;
 import org.apache.axis.wsa.MIHeader;
 import org.apache.axis.wsa.WSAHandler;
-import org.apache.axis.wsrm.RMInterface ;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -57,8 +55,6 @@ public class AxisClient extends AxisEngine {
 
     MustUnderstandChecker checker     = new MustUnderstandChecker(null);
     HandlerChain          handlerImpl = null ;
-    RMInterface           rmImpl      = null ;
-    WSSecInterface        secImpl     = null ;
 
     public AxisClient(EngineConfiguration config) {
         super(config);
@@ -120,8 +116,11 @@ public class AxisClient extends AxisEngine {
         }
 
         // Run the security code - Init security sessions if needed
-        if ( secImpl != null )
-          secImpl.init( msgContext );
+        String secCls = msgContext.getStrProp( "WSSecurity" );
+        if ( secCls == null ) 
+          secCls = (String) msgContext.getAxisEngine().getOption("WSSecurity");
+        // Add code here... Dug
+        // securityCode.init();
     }
 
     public void invokeTransport(MessageContext msgContext) throws Exception {
@@ -139,12 +138,12 @@ public class AxisClient extends AxisEngine {
 
         if ( hName != null && (h = getTransport( hName )) != null )  {
           // Piggy-back any RM headers (like ACKs)
-          if ( rmImpl != null ) 
-            rmImpl.addRMHeaders(msgContext);
+          // add code here... Dug
+          // rmcode.addRMHeaders();
 
           // Run security - Protect
-          if ( secImpl != null )
-            secImpl.protect( msgContext );
+          // add code here... Dug
+          // securityCode.protect();
 
           // Invoke the actual transport chain
           h.invoke(msgContext);
@@ -154,8 +153,8 @@ public class AxisClient extends AxisEngine {
           WSAHandler.invoke( msgContext );
 
           // Run security - Verify
-          if ( secImpl != null ) 
-            secImpl.verify( msgContext );
+          // add code here... Dug
+          // securityCode.verify();
         }
         else 
             throw new AxisFault(Messages.getMessage("noTransport00", hName));
@@ -240,21 +239,6 @@ public class AxisClient extends AxisEngine {
             // set active context
             setCurrentMessageContext(msgContext);
 
-            // Look for WSSecurity impl
-            String cls = msgContext.getStrProp( "WSSecurityImpl" );
-            if ( cls == null ) 
-              cls = (String) msgContext.getAxisEngine()
-                                       .getOption("WSSecurityImpl");
-            if ( cls != null )
-              secImpl = (WSSecInterface) Class.forName(cls).newInstance();
-
-            // Look for WSRM impl
-            cls = msgContext.getStrProp( "WSRMImpl" );
-            if ( cls == null ) 
-              cls = (String) msgContext.getAxisEngine().getOption("WSRMImpl");
-            if ( cls != null )
-              rmImpl = (RMInterface) Class.forName(cls).newInstance();
-
             // Do WSA processing first
             WSAHandler.invoke( msgContext );
 
@@ -293,19 +277,12 @@ public class AxisClient extends AxisEngine {
                 msgContext.setPastPivot(false);
                 invokeOutbound(msgContext);
 
-                // Check to see if the RM code wants to deal with it
-                boolean skipTransport = false ;
-
-                if ( rmImpl != null )
-                  skipTransport = rmImpl.sendMessage( msgContext );
-
-                if ( !skipTransport ) {
-                  // Normal transport flow
-                  if ( msgContext.getIsOneWay() )
-                    invokeTransportOneWay( msgContext );
-                  else
-                    invokeTransport( msgContext );
-                }
+                // Add check for RM here - for now just do normal stuff... Dug
+                // Normal transport flow
+                if ( msgContext.getIsOneWay() )
+                  invokeTransportOneWay( msgContext );
+                else
+                  invokeTransport( msgContext );
 
                 // If there was no response message and we didn't call
                 // invokeOneWay() then wait for an async response

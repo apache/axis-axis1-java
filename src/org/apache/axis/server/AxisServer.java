@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,27 +25,19 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.security.WSSecInterface ;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.wsrm.RMInterface ;
-import org.apache.axis.wsa.MIHeader;
-import org.apache.axis.wsa.WSAHandler;
 
 import java.util.Map;
-import java.lang.reflect.Method ;
-
 /**
  *
+ * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class AxisServer extends AxisEngine
@@ -56,11 +48,7 @@ public class AxisServer extends AxisEngine
         LogFactory.getLog("org.apache.axis.TIME");
 
     private static AxisServerFactory factory = null;
-    private long   t0=0, t1=0, t2=0, t3=0, t4=0, t5=0;
-
-    private RMInterface           rmImpl      = null ;
-    private WSSecInterface        secImpl     = null ;
-
+    
     public static AxisServer getServer(Map environment) throws AxisFault
     {
         if (factory == null) {
@@ -136,160 +124,13 @@ public class AxisServer extends AxisEngine
         return clientEngine;
     }
 
-    public void invokeInboundTransport(MessageContext msgContext) 
-      throws Exception
-    {
-      /* Process the Transport Specific Request Chain */
-      /**********************************************/
-      String              hName          = msgContext.getTransportName();
-      Handler             h              = null ;
-      SimpleTargetedChain transportChain = null ;
-
-      if (log.isDebugEnabled()) {
-        log.debug(Messages.getMessage("transport01","AxisServer.invoke",hName));
-        t1=System.currentTimeMillis();
-      }
-      
-      if ( hName != null && (h = getTransport( hName )) != null ) {
-        if (h instanceof SimpleTargetedChain) {
-          transportChain = (SimpleTargetedChain)h;
-          h = transportChain.getRequestHandler();
-          if (h != null)
-            h.invoke(msgContext);
-        }
-      }
-      // Run security
-      if ( secImpl != null )
-        secImpl.verify( msgContext );
-    }
-
-    public void invokeOutboundTransport(MessageContext msgContext)
-      throws Exception
-    {
-      String              hName          = msgContext.getTransportName();
-      Handler             h              = null ;
-      SimpleTargetedChain transportChain = null ;
-
-      // Run security
-      if ( secImpl != null )
-        secImpl.protect( msgContext );
-
-      /* Process the Transport Specific Response Chain */
-      /***********************************************/
-      if ( hName != null && (h = getTransport( hName )) != null ) {
-        if (h instanceof SimpleTargetedChain) {
-          transportChain = (SimpleTargetedChain)h;
-          h = transportChain.getResponseHandler();
-          if (h != null) {
-            // add call to RM code to add piggy-backed headers
-            if ( rmImpl != null )
-              rmImpl.addRMHeaders( msgContext );
-            h.invoke(msgContext);
-          }
-        }
-      }
-    }
-
-    public void invokeService(MessageContext msgContext) throws Exception {
-      Handler h = null ;
-
-      if ( tlog.isDebugEnabled() ) 
-        t2=System.currentTimeMillis();
-
-      try {
-        // Run WSA logic
-        WSAHandler.invoke( msgContext );
-
-        MIHeader mih = MIHeader.fromCurrentMessage();
-
-        if ( mih != null ) {
-          // See if it needs to be rerouted
-          // Dug - not yet // (new WSXHandler()).invoke( msgContext );
-        }
-
-        /* Process the Global Request Chain */
-        /************************************/
-        if ((h = getGlobalRequest()) != null ) {
-          h.invoke(msgContext);
-        }
-  
-        /**
-         * At this point, the service should have been set by someone
-         * (either the originator of the MessageContext, or one of the
-         * transport or global Handlers).  If it hasn't been set, we
-         * fault.
-         */
-        h = msgContext.getService();
-        if (h == null) {
-          // It's possible that we haven't yet parsed the
-          // message at this point.  This is a kludge to
-          // make sure we have.  There probably wants to be
-          // some kind of declarative "parse point" on the handler
-          // chain instead....
-          Message rm = msgContext.getRequestMessage();
-          rm.getSOAPEnvelope().getFirstBody();
-                      
-          h = msgContext.getService();
-          if (h == null)
-            throw new AxisFault("Server.NoService",
-                                Messages.getMessage("noService05",
-                                "" + msgContext.getTargetService()),
-                                null, null );
-        }
-        if ( tlog.isDebugEnabled() ) 
-          t3=System.currentTimeMillis();
-  
-        SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
-  
-        // Only invoke the service is there's a body - sort of a hack
-        if ( env.getFirstBody() != null ) {
-          initSOAPConstants(msgContext);
-          try {
-            h.invoke(msgContext);
-          }
-          catch(AxisFault af) {
-            if ( (h= getGlobalRequest()) != null )
-              h.onFault(msgContext);
-            throw af ;
-          }
-          finally {
-            msgContext.setPastPivot( true );
-          }
-        }
-
-        if ( tlog.isDebugEnabled() ) 
-          t4=System.currentTimeMillis();
-      }
-      catch(Exception exp) {
-        // If WSA isn't turned on then just rethrow it
-        // Dug - fix this, it should not do this we need to make this
-        // work even when WSA is turned on
-        if ( MIHeader.fromRequest() == null ) throw exp ;
-
-        if ( !(exp instanceof AxisFault) )
-          exp = AxisFault.makeFault( exp );
-
-        msgContext.setPastPivot( true );
-        msgContext.setResponseMessage( new Message(exp) );
-
-        // WSA stuff
-        WSAHandler.fixAction( msgContext );
-      }
-      // WSA logic is run first
-      WSAHandler.invoke( msgContext );
-
-      /* Process the Global Response Chain */
-      /***********************************/
-      if ((h = getGlobalResponse()) != null)
-        h.invoke(msgContext);
-    }
-
     /**
      * Main routine of the AXIS server.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if ( tlog.isDebugEnabled() ) {
+        long t0=0, t1=0, t2=0, t3=0, t4=0, t5=0;
+        if( tlog.isDebugEnabled() ) {
             t0=System.currentTimeMillis();
         }
         
@@ -313,21 +154,6 @@ public class AxisServer extends AxisEngine
             // set active context
             setCurrentMessageContext(msgContext);
 
-            // Look for WSSecurity impl
-            String tmp = msgContext.getStrProp( "WSSecurityImpl" );
-            if ( tmp == null )
-              tmp = (String) msgContext.getAxisEngine()
-                                       .getOption("WSSecurityImpl");
-            if ( tmp != null )
-              secImpl = (WSSecInterface) Class.forName(tmp).newInstance();
-
-            // Look for WSRM impl
-            tmp = msgContext.getStrProp( "WSRMImpl" );
-            if ( tmp == null )
-              tmp = (String) msgContext.getAxisEngine().getOption("WSRMImpl");
-            if ( tmp != null )
-              rmImpl = (RMInterface) Class.forName(tmp).newInstance();
-
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if ( hName != null ) {
                 if ( (h = getHandler(hName)) == null ) {
@@ -341,23 +167,16 @@ public class AxisServer extends AxisEngine
                         h = null ;
                     }
                 }
-                if ( tlog.isDebugEnabled() ) {
+                if( tlog.isDebugEnabled() ) {
                     t1=System.currentTimeMillis();
                 }
-                if ( h != null ) {
-                  try {
+                if ( h != null )
                     h.invoke(msgContext);
-                  }
-                  catch(Exception exp ) {
-                    exp.printStackTrace();
-                    throw exp ;
-                  }
-                }
                 else
                     throw new AxisFault( "Server.error",
                                          Messages.getMessage("noHandler00", hName),
                                          null, null );
-                if ( tlog.isDebugEnabled() ) {
+                if( tlog.isDebugEnabled() ) {
                     t2=System.currentTimeMillis();
                     tlog.debug( "AxisServer.invoke " + hName + " invoke=" +
                                 ( t2-t1 ) + " pre=" + (t1-t0 ));
@@ -401,62 +220,90 @@ public class AxisServer extends AxisEngine
 
                 */
 
-                invokeInboundTransport(msgContext);
-                
-                boolean skipService = false ;
-                if ( rmImpl != null ) {
-                  try {
-                    skipService = rmImpl.processRMHeaders( msgContext );
-                  }
-                  catch(Exception exp) {
-                    skipService = true ;
-                    if ( !(exp instanceof AxisFault) )
-                      exp = AxisFault.makeFault( exp );
-                    msgContext.setPastPivot( true );
-                    msgContext.setResponseMessage( new Message(exp) );
-  
-                    // Kind of a hack but Axis doesn't have any way for a
-                    // handler to throw an exception AND include a fault
-                    // header in the response message - so for now just
-                    // have the RM code pass it back this way - hopefully
-                    // we'll have a nicer solution in the WAS version
-                    SOAPHeaderElement hdr ;
-                    hdr = (SOAPHeaderElement) msgContext
-                                                .getProperty("HeaderFault");
-                    if ( hdr != null ) {
-                      SOAPEnvelope env = msgContext.getResponseMessage()
-                                                   .getSOAPEnvelope();
-                      env.addHeader( hdr );
+                /* Process the Transport Specific Request Chain */
+                /**********************************************/
+                hName = msgContext.getTransportName();
+                SimpleTargetedChain transportChain = null;
+
+                if (log.isDebugEnabled())
+                    log.debug(Messages.getMessage("transport01", "AxisServer.invoke", hName));
+
+                if( tlog.isDebugEnabled() ) {
+                    t1=System.currentTimeMillis();
+                }
+                if ( hName != null && (h = getTransport( hName )) != null ) {
+                    if (h instanceof SimpleTargetedChain) {
+                        transportChain = (SimpleTargetedChain)h;
+                        h = transportChain.getRequestHandler();
+                        if (h != null)
+                            h.invoke(msgContext);
                     }
-                    // End of hack
-  
-                    /* Process the Global Response Chain */
-                    /***********************************/
-                    // Process global/hard-coded handlers
-                    WSAHandler.fixAction( msgContext );
-                    WSAHandler.invoke( msgContext );
-  
-                    if ((h = getGlobalResponse()) != null)
-                      h.invoke(msgContext);
-                  }
                 }
 
-                if ( !skipService )
-                  invokeService(msgContext);
+                if( tlog.isDebugEnabled() ) {
+                    t2=System.currentTimeMillis();
+                }
+                /* Process the Global Request Chain */
+                /**********************************/
+                if ((h = getGlobalRequest()) != null ) {
+                    h.invoke(msgContext);
+                }
 
-                msgContext.setPastPivot( true );
+                /**
+                 * At this point, the service should have been set by someone
+                 * (either the originator of the MessageContext, or one of the
+                 * transport or global Handlers).  If it hasn't been set, we
+                 * fault.
+                 */
+                h = msgContext.getService();
+                if (h == null) {
+                    // It's possible that we haven't yet parsed the
+                    // message at this point.  This is a kludge to
+                    // make sure we have.  There probably wants to be
+                    // some kind of declarative "parse point" on the handler
+                    // chain instead....
+                    Message rm = msgContext.getRequestMessage();
+                    rm.getSOAPEnvelope().getFirstBody();
+                    
+                    h = msgContext.getService();
+                    if (h == null)
+                        throw new AxisFault("Server.NoService",
+                                            Messages.getMessage("noService05",
+                                                                 "" + msgContext.getTargetService()),
+                                            null, null );
+                }
+                if( tlog.isDebugEnabled() ) {
+                    t3=System.currentTimeMillis();
+                }
                 
-                /*
-                if ( msgContext.getIsOneWay() )
-                  msgContext.setResponseMessage( null );
-                */
+                initSOAPConstants(msgContext);
+                try {
+                    h.invoke(msgContext);
+                } catch (AxisFault ae) {
+                    if ((h = getGlobalRequest()) != null ) {
+                        h.onFault(msgContext);
+                    }
+                    throw ae;
+                }
 
-                // Send async response if needed
-                WSAHandler.sendResponse( msgContext );
+                if( tlog.isDebugEnabled() ) {
+                    t4=System.currentTimeMillis();
+                }
 
-                invokeOutboundTransport(msgContext);
+                /* Process the Global Response Chain */
+                /***********************************/
+                if ((h = getGlobalResponse()) != null)
+                    h.invoke(msgContext);
 
-                if ( tlog.isDebugEnabled() ) {
+                /* Process the Transport Specific Response Chain */
+                /***********************************************/
+                if (transportChain != null) {
+                    h = transportChain.getResponseHandler();
+                    if (h != null)
+                        h.invoke(msgContext);
+                }
+                
+                if( tlog.isDebugEnabled() ) {
                     t5=System.currentTimeMillis();
                     tlog.debug( "AxisServer.invoke2 " +
                                 " preTr=" +
@@ -490,7 +337,7 @@ public class AxisServer extends AxisEngine
      * Extract ans store soap constants info from the envelope
      * @param msgContext
      * @throws AxisFault
-     */
+     */ 
     private void initSOAPConstants(MessageContext msgContext) throws AxisFault {
         Message msg = msgContext.getRequestMessage();
         if (msg == null)
@@ -619,9 +466,9 @@ public class AxisServer extends AxisEngine
                     // make sure we have.  There probably wants to be
                     // some kind of declarative "parse point" on the handler
                     // chain instead....
-                    Message msg = msgContext.getRequestMessage();
-                    if (msg != null) {
-                        msg.getSOAPEnvelope().getFirstBody();
+                    Message rm = msgContext.getRequestMessage();
+                    if (rm != null) {
+                        rm.getSOAPEnvelope().getFirstBody();
                         h = msgContext.getService();
                     }
                     if (h == null) {
