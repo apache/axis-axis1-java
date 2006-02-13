@@ -80,6 +80,8 @@ public class FunctionalTests extends TestCase
         //suite.addTestSuite(TestMimeHeaders.class);
 
         suite.addTestSuite(TestAutoTypes.class);
+
+        suite.addTestSuite(TestWSA.class);
         
         return suite;
     }

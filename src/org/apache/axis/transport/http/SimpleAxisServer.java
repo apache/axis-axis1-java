@@ -337,6 +337,12 @@ public class SimpleAxisServer implements Runnable {
         pool.shutdown();
     }
 
+    public void startListening(int port) throws Exception {
+      ServerSocket ss = new ServerSocket(port);
+      setServerSocket(ss);
+      start( true );
+    }
+
     /**
      * Server process.
      */
