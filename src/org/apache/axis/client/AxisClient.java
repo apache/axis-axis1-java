@@ -21,11 +21,9 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
-import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
-import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.MustUnderstandChecker;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -37,8 +35,6 @@ import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerChain;
-import java.util.Iterator;
-import java.lang.reflect.Method ;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
