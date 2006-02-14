@@ -26,8 +26,6 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.session.Session;
 import org.apache.axis.soap.SOAPConstants;
@@ -47,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Vector;
 
 // fixme: fields are declared throughout this class, some at the top, and some
 //  near to where they are used. We should move all field declarations into a
@@ -474,7 +471,7 @@ public class MessageContext implements SOAPMessageContext {
 
     public void fromStream(ObjectInputStream in) throws Exception {
       Hashtable   table = (Hashtable) in.readObject();
-      Enumeration enum  = table.keys();
+      Enumeration e  = table.keys();
       Object      obj   = null ;
 
       if ( (obj = table.get("msg.req")) != null )
@@ -493,8 +490,8 @@ public class MessageContext implements SOAPMessageContext {
       useSOAPAction = "true".equals((String)table.get("msg.usa"));
       SOAPActionURI = (String) table.get("msg.act");
 
-      while ( enum.hasMoreElements() ) {
-        String name = (String) enum.nextElement();
+      while ( e.hasMoreElements() ) {
+        String name = (String) e.nextElement();
         if ( name.startsWith("__") )
           bag.put( name.substring(2), table.get(name) );
       }
