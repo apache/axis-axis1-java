@@ -14,7 +14,7 @@ import org.apache.axis.message.SOAPEnvelope;
 
 public class WSAHandler { // extends BasicHandler {
 
-   public static void invoke(MessageContext msgContext) throws AxisFault {
+   public static void invoke(MessageContext msgContext) throws Exception {
       boolean onClient = true;
       boolean request  = true;
 
@@ -33,25 +33,19 @@ public class WSAHandler { // extends BasicHandler {
          onClient = false;
       }
 
-      try {
-         if (onClient && request ) {
-            // Process client request
-            processClientRequest(msgContext);
-         } else if (onClient && !request) {
-            // Process client response
-            processClientResponse(msgContext);
-         } else if (!onClient && request) {
-            // Process server request
-            processServerRequest(msgContext);
-         } else if (!onClient && !request) {
-            // Process server response
-            processServerResponse(msgContext);
-         }
-      } catch (Exception e) {
-         e.printStackTrace();
-         throw new AxisFault(e.getMessage());
+      if (onClient && request ) {
+        // Process client request
+        processClientRequest(msgContext);
+      } else if (onClient && !request) {
+        // Process client response
+        processClientResponse(msgContext);
+      } else if (!onClient && request) {
+        // Process server request
+        processServerRequest(msgContext);
+      } else if (!onClient && !request) {
+        // Process server response
+        processServerResponse(msgContext);
       }
-
    }
 
    static void processClientRequest(MessageContext msgContext) throws Exception {

@@ -119,7 +119,7 @@ public class MIHeader {
        if ( msg == null ) return null ;
        mih = new MIHeader();
        mih.removeOnGet = false ;
-       mih.fromEnvelope( (SOAPEnvelope) msg.getSOAPPart().getEnvelope() );
+       mih.fromEnvelope( (SOAPEnvelope) msg.getSOAPEnvelope() );
        if ( mih.getTo() == null && mih.getFrom() == null) return null ;
        msgContext.setProperty( WSAConstants.REQ_MIH, mih );
      }
@@ -140,7 +140,7 @@ public class MIHeader {
        if ( msg == null ) return null ;
        mih = new MIHeader();
        mih.removeOnGet = false ;
-       mih.fromEnvelope( (SOAPEnvelope) msg.getSOAPPart().getEnvelope() );
+       mih.fromEnvelope( (SOAPEnvelope) msg.getSOAPEnvelope() );
        if ( mih.getTo() == null && mih.getFrom() == null ) return null ;
        msgContext.setProperty(WSAConstants.RES_MIH, mih );
      }
