@@ -3022,74 +3022,143 @@ public class Call implements javax.xml.rpc.Call {
         operationSetManually = false;
     }
 
+    /**
+     * Gets the WS-Addressing MessageID for the outgoing message.
+     *
+     * @param name the name of the property
+     */
     public String getMessageID() {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       return mih == null ? null : mih.getMessageID();
     }
 
+    /**
+     * Sets the WS-Addressing wsa:To value
+     *
+     * @param epr The EPR.
+     *
+     * Note: this does not set the transport URL.  As of now they are
+     * treated as two independent entities.
+     */
     public void setTo(EndpointReference epr) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setTo( epr );
     }
 
+    /**
+     * Sets the WS-Addressing wsa:To value based on the url passed in.
+     *
+     * @param epr The url to use for the wsa:To's Address element.
+     *
+     * Note: this does not set the transport URL.  As of now they are
+     * treated as two independent entities.
+     */
     public void setTo(String url) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setTo( EndpointReference.fromLocation( url ) );
     }
 
+    /**
+     * Gets the WS-Addressing wsa:To EPR.
+     */
     public EndpointReference getTo() {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       return mih == null ? null : mih.getTo();
     }
 
+    /**
+     * Sets the WS-Addressing wsa:From value 
+     *
+     * @param epr The epr to use for the wsa:From
+     */
     public void setFrom(EndpointReference epr) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFrom( epr );
     }
 
+    /**
+     * Sets the WS-Addressing wsa:From value from a url
+     *
+     * @param epr The url to use for the wsa:From
+     */
     public void setFrom(String url) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFrom( EndpointReference.fromLocation( url ) );
     }
 
+    /**
+     * Get the wsa:From EPR
+     *
+     * @return The wsa:From EPR
+     */
     public EndpointReference getFrom() {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       return mih == null ? null : mih.getFrom();
     }
 
+    /**
+     * Sets the wsa:ReplyTo EPR
+     * 
+     * @param epr The epr to use for the wsa:ReplyTo
+     */
     public void setReplyTo(EndpointReference epr) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setReplyTo( epr );
     }
 
+    /**
+     * Sets the wsa:ReplyTo EPR from a url
+     *
+     * @param url The url to use for the wsa:ReplyTo Address field
+     */
     public void setReplyTo(String url) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setReplyTo( EndpointReference.fromLocation( url ) );
     }
 
+    /**
+     * Gets the wsa:ReplyTo EPR
+     *
+     * @return the wsa:ReplyTo EPR
+     */
     public EndpointReference getReplyTo() {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       return mih == null ? null : mih.getReplyTo();
     }
 
+    /**
+     * Sets the wsa:FaultTo EPR
+     *
+     * @param epr he epr to use for the wsa:FaultTo
+     */
     public void setFaultTo(EndpointReference epr) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFaultTo( epr );
     }
 
+    /**
+     * Sets the wsa:FaultTo EPR from a url
+     * 
+     * @param url The url to use  for the wsa:FaultTo Address field
+     */
     public void setFaultTo(String url) throws Exception {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFaultTo( EndpointReference.fromLocation( url ) );
     }
 
+    /**
+     * Gets the wsa:FaultTo EPR
+     *
+     * @param The wsa:FaultTo EPR
+     */
     public EndpointReference getFaultTo() {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       return mih == null ? null : mih.getFaultTo();
