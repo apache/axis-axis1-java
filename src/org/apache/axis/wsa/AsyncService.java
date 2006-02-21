@@ -30,7 +30,7 @@ public class AsyncService {
     }
 
     String msgID = null ;
-    Vector rv = MIHeader.fromRequest().getRelatesTo();
+    Vector rv = MIHeader.fromCurrentMessage().getRelatesTo();
     if ( rv == null ) return null ;
     for ( int i = 0 ; i < rv.size(); i ++ ) {
       RelatesToProperty rtp = (RelatesToProperty) rv.get(i);
