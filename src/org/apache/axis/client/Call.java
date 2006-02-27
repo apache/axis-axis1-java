@@ -2219,6 +2219,15 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Get the current request message in the MessageContext
+     *
+     * @return Message the request message
+     */
+    public Message getRequestMessage() { 
+      return msgContext.getRequestMessage();
+    }
+
+    /**
      * Directly get the response message in our MessageContext.
      *
      * Shortcut for having to go thru the msgContext
