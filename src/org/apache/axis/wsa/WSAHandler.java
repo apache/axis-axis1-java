@@ -167,7 +167,7 @@ public class WSAHandler { // extends BasicHandler {
 
      msg = msgContext.getResponseMessage();
 
-     if ( msg==null || to==null || to.equals(WSAConstants.Anonymous_Address) )
+     if ( msg==null || to==null || resMIH.getTo().isAnonymous() )
        return ;
 
      Vector   relates    = (Vector) resMIH.getRelatesTo();
@@ -203,8 +203,11 @@ public class WSAHandler { // extends BasicHandler {
 
    static public void fixAction(MessageContext msgContext) throws Exception {
      MIHeader resMI = MIHeader.fromResponse();
-     if ( resMI != null )
-       resMI.setAction( WSAConstants.Fault_URI );
-     msgContext.setSOAPActionURI( WSAConstants.Fault_URI );
+     if ( resMI != null ) {
+       resMI.setAction( resMI.getWSAVersion() + "/fault" );
+       msgContext.setSOAPActionURI( resMI.getAction() );
+     }
+     else
+       msgContext.setSOAPActionURI( EndpointReference.staticNS + "/fault" );
    }
 }

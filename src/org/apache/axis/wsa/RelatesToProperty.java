@@ -15,9 +15,9 @@ import org.w3c.dom.Element;
         this.type = type;
      }
 
-     static RelatesToProperty newInstance(Element el) {
+     static RelatesToProperty newInstance(Element el, String namespace) {
         String uri = Util.getText(el);
-        String type = el.getAttributeNS(WSAConstants.NS_WSA, "RelationshipType");
+        String type = el.getAttributeNS(namespace, "RelationshipType");
         RelatesToProperty rp = new RelatesToProperty(uri, type);
         return rp;
      }

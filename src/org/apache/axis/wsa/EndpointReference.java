@@ -21,16 +21,15 @@ import org.xml.sax.Attributes;
 
 
 abstract public class EndpointReference implements Serializable {
+  protected static String staticNS = WSAConstants.NS_WSA ;
 
+  protected String  namespace = staticNS ;
   protected String  address = null;
   protected String  portType = null; // QName
   protected String  serviceName = null; // QName
   protected String  portName = null;
   protected List    referenceProperties = new java.util.LinkedList();
   protected List    referenceParameters = new java.util.LinkedList();
-
-  private static EndpointReference AnonymousEPR = 
-    EndpointReference.fromLocation( WSAConstants.Anonymous_Address );
 
   EndpointReference( final EndpointReference epr){
     this.address = epr.address;
@@ -42,6 +41,22 @@ abstract public class EndpointReference implements Serializable {
   }
 
   protected EndpointReference() {}
+
+  public void setWSAVersion( String ns) {
+    namespace = ns ;
+  }
+
+  public String getWSAVersion() {
+    return namespace ;
+  }
+
+  public static void setGlobalWSAVersion(String ns) {
+    staticNS = ns ;
+  }
+
+  public static String getGlobalWSAVersion() {
+    return staticNS ;
+  }
 
   public EndpointReference dup() throws Exception {
     EndpointReference newObj = (EndpointReference)this.getClass().newInstance();
@@ -77,12 +92,32 @@ abstract public class EndpointReference implements Serializable {
      return new AxisEndpointReference();
   }
 
+  public static EndpointReference newInstance(String ns) {
+     EndpointReference epr = new AxisEndpointReference();
+     epr.setWSAVersion( ns );
+     return epr ;
+  }
+
   public static EndpointReference Anonymous() throws Exception { 
-    return AnonymousEPR.dup() ; 
+    if ( staticNS.equals(WSAConstants.NS_WSA1) )
+      return EndpointReference.fromLocation( staticNS + "/role/anonymous" );
+    return EndpointReference.fromLocation( staticNS + "/anonymous" );
+  }
+
+  public static EndpointReference Anonymous(String ns) throws Exception { 
+    if ( ns.equals(WSAConstants.NS_WSA1) )
+      return EndpointReference.fromLocation( ns + "/role/anonymous" );
+    return EndpointReference.fromLocation( ns + "/anonymous" );
   }
 
   public boolean isAnonymous() {
-    return WSAConstants.Anonymous_Address.equals( this.address );
+    if ( namespace.equals(WSAConstants.NS_WSA1) )
+      return this.address.equals( namespace + "/role/anonymous" );
+    return this.address.equals( namespace + "/anonymous" );
+  }
+
+  public boolean isNone() {
+    return this.address.equals( namespace + "/none" );
   }
 
   /**
@@ -95,45 +130,55 @@ abstract public class EndpointReference implements Serializable {
    */
   public static EndpointReference fromDOM(Element el) throws Exception {
      EndpointReference er = new AxisEndpointReference();
-     NodeList nl = el.getElementsByTagNameNS(WSAConstants.NS_WSA, "Address");
-     if ( nl.getLength() == 0 ) {
+     String NSs[] = new String[] { WSAConstants.NS_WSA1, WSAConstants.NS_WSA2 };
+
+     for ( int j = 0 ; j < NSs.length ; j++ ) {
+       String ns = NSs[j] ;
+
+       NodeList nl = el.getElementsByTagNameNS(ns, "Address");
+       if ( nl.item(0)!=null ) {
+         er.setAddress(Util.getText((Element)nl.item(0)));
+         er.setWSAVersion( ns );
+       }
+
+       nl = el.getElementsByTagNameNS(ns, "PortType");
+       if (nl.item(0)!=null)
+         er.setPortType(Util.getText((Element)nl.item(0)));
+
+       nl = el.getElementsByTagNameNS(ns, "ServiceName");
+       if (nl.item(0)!=null) {
+         Element child = (Element)nl.item(0);
+         er.setServiceName(Util.getText(child));
+         er.setPortName(child.getAttributeNS(ns, "PortName"));
+       }
+
+       nl = el.getElementsByTagNameNS(ns, "ReferenceProperties");
+       if (nl.item(0)!=null) {
+         nl = nl.item(0).getChildNodes();
+    
+         for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
+           Node n = nl.item(i);
+           if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+           n = n.cloneNode(true);
+           er.addReferenceProperty( XMLUtils.ElementToString((Element) n) );
+         }
+       }
+
+       nl = el.getElementsByTagNameNS(ns, "ReferenceParameters");
+       if (nl.item(0)!=null) {
+         nl = nl.item(0).getChildNodes();
+    
+         for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
+           Node n = nl.item(i);
+           if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+           n = n.cloneNode(true);
+           er.addReferenceParameter( XMLUtils.ElementToString((Element) n) );
+         }
+       }
+     }
+     if ( er.getAddress() == null ) {
        String tmp = "Missing Address in EPR: " + XMLUtils.ElementToString(el);
        throw new Exception( tmp );
-     }
-     if (nl.item(0)!=null) {
-       er.setAddress(Util.getText((Element)nl.item(0)));
-     }
-     nl = el.getElementsByTagNameNS(WSAConstants.NS_WSA, "PortType");
-     if (nl.item(0)!=null) {
-       er.setPortType(Util.getText((Element)nl.item(0)));
-     }
-     nl = el.getElementsByTagNameNS(WSAConstants.NS_WSA, "ServiceName");
-     if (nl.item(0)!=null) {
-       Element child = (Element)nl.item(0);
-       er.setServiceName(Util.getText(child));
-       er.setPortName(child.getAttributeNS(WSAConstants.NS_WSA, "PortName"));
-     }
-     nl = el.getElementsByTagNameNS(WSAConstants.NS_WSA, "ReferenceProperties");
-     if (nl.item(0)!=null) {
-       nl = nl.item(0).getChildNodes();
-  
-       for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
-         Node n = nl.item(i);
-         if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
-         n = n.cloneNode(true);
-         er.addReferenceProperty( XMLUtils.ElementToString((Element) n) );
-       }
-     }
-     nl = el.getElementsByTagNameNS(WSAConstants.NS_WSA, "ReferenceParameters");
-     if (nl.item(0)!=null) {
-       nl = nl.item(0).getChildNodes();
-  
-       for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
-         Node n = nl.item(i);
-         if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
-         n = n.cloneNode(true);
-         er.addReferenceParameter( XMLUtils.ElementToString((Element) n) );
-       }
      }
      return er ;
   }
@@ -146,6 +191,12 @@ abstract public class EndpointReference implements Serializable {
  */
   public static EndpointReference fromLocation( final String location){
     return new AxisEndpointReference(location);
+  }
+
+  public static EndpointReference fromLocation(final String location,String ns){
+    EndpointReference epr = new AxisEndpointReference(location);
+    epr.setWSAVersion( ns );
+    return epr ;
   }
 
 /**
@@ -196,40 +247,6 @@ abstract public class EndpointReference implements Serializable {
      portType = pt;
   }
 
-  protected java.util.List headers = null; 
-
-  protected synchronized List createWsaHeaderElements() throws javax.xml.parsers.ParserConfigurationException {
-    if (headers != null) return headers;
-    headers = new java.util.LinkedList();
-    DocumentBuilderFactory  dbf = DocumentBuilderFactory.newInstance();
-
-    dbf.setNamespaceAware(true);
-    dbf.setValidating(false);
-
-    DocumentBuilder db = dbf.newDocumentBuilder();
-
-    Document ehrDoc = db.newDocument();
-    Element child = ehrDoc.createElementNS(WSAConstants.NS_WSA, "To"); 
-
-    child.appendChild(ehrDoc.createTextNode(address));
-    headers.add(child);
-    if (null != referenceProperties && !referenceProperties.isEmpty()) {
-      for (Iterator i = referenceProperties.iterator(); i.hasNext();) {
-        Node refNode = (Node) i.next(); 
-
-        headers.add(ehrDoc.importNode(refNode, true));
-      }
-    }  
-    if (null != referenceParameters && !referenceParameters.isEmpty()) {
-      for (Iterator i = referenceParameters.iterator(); i.hasNext();) {
-        Node refNode = (Node) i.next(); 
-
-        headers.add(ehrDoc.importNode(refNode, true));
-      }
-    }  
-    return headers;
-  }
-
   public Element toDOM() throws javax.xml.parsers.ParserConfigurationException {
      return toDOM(null, null);
   }
@@ -243,7 +260,6 @@ abstract public class EndpointReference implements Serializable {
    }
 
    public Element toDOM(String prefix, String ns, String name) throws javax.xml.parsers.ParserConfigurationException {
-    headers = new java.util.LinkedList();
     DocumentBuilderFactory  dbf = DocumentBuilderFactory.newInstance();
 
     dbf.setNamespaceAware(true);
@@ -254,7 +270,7 @@ abstract public class EndpointReference implements Serializable {
     Document ehrDoc = db.newDocument();
     Element rootChild = null;
     if (ns == null) {
-       rootChild = ehrDoc.createElementNS(WSAConstants.NS_WSA, "EndpointReference"); 
+       rootChild = ehrDoc.createElementNS(namespace, "EndpointReference"); 
        rootChild.setPrefix("wsa");
     } else {
        rootChild = ehrDoc.createElementNS(ns, name); 
@@ -263,14 +279,14 @@ abstract public class EndpointReference implements Serializable {
     ehrDoc.appendChild( rootChild);
 
     // Address
-    Element child = ehrDoc.createElementNS(WSAConstants.NS_WSA, "Address"); 
+    Element child = ehrDoc.createElementNS(namespace, "Address"); 
     child.setPrefix("wsa");
     child.appendChild(ehrDoc.createTextNode(address));
     rootChild.appendChild(child);
 
     // PortType
     if (portType!=null) {
-       Element pt = ehrDoc.createElementNS(WSAConstants.NS_WSA, "PortType"); 
+       Element pt = ehrDoc.createElementNS(namespace, "PortType"); 
        pt.setPrefix("wsa");
        pt.appendChild(ehrDoc.createTextNode(portType));
        rootChild.appendChild(pt);
@@ -278,10 +294,10 @@ abstract public class EndpointReference implements Serializable {
     
     // ServiceName
     if (serviceName!=null) {
-       Element sn = ehrDoc.createElementNS(WSAConstants.NS_WSA, "ServiceName"); 
+       Element sn = ehrDoc.createElementNS(namespace, "ServiceName"); 
        sn.setPrefix("wsa");
        if (portName!=null) {
-	  Attr attr = ehrDoc.createAttributeNS(WSAConstants.NS_WSA, "PortName");
+	  Attr attr = ehrDoc.createAttributeNS(namespace, "PortName");
 	  attr.setValue(this.portName);
           sn.setAttributeNodeNS(attr); 
        }
@@ -290,21 +306,23 @@ abstract public class EndpointReference implements Serializable {
     }
 
     // Reference properties
-    if (null != referenceProperties && !referenceProperties.isEmpty()) {
-      Element refProp= ehrDoc.createElementNS(WSAConstants.NS_WSA, WSAConstants.EN_ReferenceProperties); 
-      refProp.setPrefix("wsa");
-      for (Iterator i = referenceProperties.iterator(); i.hasNext();) {
-        String  refStr  = (String) i.next();
-        Element refNode = XMLUtils.StringToElement( refStr );
-
-        refProp.appendChild(ehrDoc.importNode(refNode, true));
-      }
-      rootChild.appendChild(refProp);
-    }  
+    if (namespace.equals(WSAConstants.NS_WSA1)) {
+      if (null != referenceProperties && !referenceProperties.isEmpty()) {
+        Element refProp= ehrDoc.createElementNS(namespace, WSAConstants.EN_ReferenceProperties); 
+        refProp.setPrefix("wsa");
+        for (Iterator i = referenceProperties.iterator(); i.hasNext();) {
+          String  refStr  = (String) i.next();
+          Element refNode = XMLUtils.StringToElement( refStr );
+  
+          refProp.appendChild(ehrDoc.importNode(refNode, true));
+        }
+        rootChild.appendChild(refProp);
+      }  
+    }
 
     // Reference parameters
     if (null != referenceParameters && !referenceParameters.isEmpty()) {
-      Element refProp= ehrDoc.createElementNS(WSAConstants.NS_WSA, WSAConstants.EN_ReferenceParameters); 
+      Element refProp= ehrDoc.createElementNS(namespace, WSAConstants.EN_ReferenceParameters); 
       refProp.setPrefix("wsa");
       for (Iterator i = referenceParameters.iterator(); i.hasNext();) {
         String refStr  = (String) i.next();

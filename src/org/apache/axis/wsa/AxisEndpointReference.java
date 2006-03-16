@@ -27,22 +27,4 @@ public class AxisEndpointReference extends EndpointReference {
     super(epr);
   }
 
-/*
-  public javax.xml.rpc.Call createCall() throws  java.net.MalformedURLException, javax.xml.parsers.ParserConfigurationException {
-    org.apache.axis.client.Call ret = new org.apache.axis.client.Call(address); 
-
-    addSOAPHeaders(ret);
-    return ret;
-  }
-
-  public void addSOAPHeaders(org.apache.axis.client.Call c) throws javax.xml.parsers.ParserConfigurationException { 
-    
-    for (Iterator i = createWsaHeaderElements().iterator(); i.hasNext();) {
-      Element refNode = (Element) i.next(); 
-
-      c.addHeader(new SOAPHeaderElement(refNode));
-    }
-  }
-  */
-
 }

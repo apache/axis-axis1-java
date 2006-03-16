@@ -49,7 +49,7 @@ public class TestWSA extends TestCase {
       rc = call.invoke( "echo", new Object[] { "hi2" } );
       System.out.println( "rc: " + rc );
       assertEquals( rc, "hi2" );
-      assertEquals( null, call.getProperty("ASYNCRESPONSE") );
+      assertEquals( null, call.getMessageContext().getProperty("ASYNCRESPONSE") );
 
       System.out.println( "Setting wsa:ReplyTo to async" );
       call.setReplyTo( "http://localhost:88/axis/services/asyncService" );

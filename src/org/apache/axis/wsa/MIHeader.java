@@ -33,6 +33,7 @@ import javax.xml.rpc.Call;
  * create and read these headers to/from a message.
  */
 public class MIHeader {
+  String            namespace      = EndpointReference.staticNS ;
   boolean           requestMessage = false;
 
   String            messageID           = null ;
@@ -60,7 +61,8 @@ public class MIHeader {
   // but it works.
 
   public String toString() {
-    return "{id:" + getMessageID()+ " to:" + getTo() + " from:" + getFrom() +
+    return "{ns: " + getWSAVersion() + " id:" + getMessageID()+ 
+           " to:" + getTo() + " from:" + getFrom() +
            " replyTo:" + getReplyTo() + " faultTo:" + getFaultTo() +
            " action:" + getAction() + " toFault:" + getToFault() + "}" ;
   }
@@ -94,6 +96,14 @@ public class MIHeader {
     removeOnGet = false ;
     call.setProperty( WSAConstants.REQ_MIH, this );
     setMessageID( "uuid:" + UUIDGenerator.getInstance().getUUID());
+  }
+
+  public void setWSAVersion(String ns) {
+    namespace = ns ;
+  }
+
+  public String getWSAVersion() {
+    return namespace ;
   }
 
   public static MIHeader fromCurrentMessage() throws Exception {
@@ -151,6 +161,7 @@ public class MIHeader {
     MIHeader newMIH = new MIHeader();
 
     EndpointReference toEPR = getEffectiveReplyTo();
+    newMIH.setWSAVersion( namespace );
     newMIH.setFrom( to );
     newMIH.setTo( toEPR );
     newMIH.setToFault( faultTo );
@@ -162,78 +173,78 @@ public class MIHeader {
 
   public void fromEnvelope(SOAPEnvelope env) throws Exception {
     SOAPHeaderElement header = null ;
+    String NSs[] = { WSAConstants.NS_WSA1, WSAConstants.NS_WSA2 };
 
-    header = env.getHeaderByName(WSAConstants.NS_WSA, "MessageID");
-    if ( header != null ) {
-      messageID = Util.getText( header.getAsDOM() );
-      if ( processedOnGet ) header.setProcessed(true);
-      if ( removeOnGet ) env.removeHeader( header );
-    }
-    else messageID = null ;
+    for ( int i = 0 ; i < NSs.length ; i++ ) {
+      String ns = NSs[i];
 
-    header = env.getHeaderByName(WSAConstants.NS_WSA, "To");
-    if ( header != null ) {
-      to = EndpointReference.fromLocation( Util.getText( header.getAsDOM() ) );
-      if ( processedOnGet ) header.setProcessed(true);
-      if ( removeOnGet ) env.removeHeader( header );
-    }
-    else to = null ;
+      header = env.getHeaderByName(ns, "MessageID");
+      if ( header != null ) {
+        messageID = Util.getText( header.getAsDOM() );
+        if ( processedOnGet ) header.setProcessed(true);
+        if ( removeOnGet ) env.removeHeader( header );
+      }
+  
+      header = env.getHeaderByName(ns, "To");
+      if ( header != null ) {
+        to = EndpointReference.fromLocation( Util.getText( header.getAsDOM() ),
+                                             ns);
+        if ( processedOnGet ) header.setProcessed(true);
+        if ( removeOnGet ) env.removeHeader( header );
+        namespace = ns ;
+      }
+  
+      header = env.getHeaderByName(ns, "Action");
+      if ( header != null ) {
+        action = Util.getText( header.getAsDOM() );
+        if ( processedOnGet ) header.setProcessed(true);
+        if ( removeOnGet ) env.removeHeader( header );
+      }
+  
+      header = env.getHeaderByName(ns, "From");
+      if ( header != null ) {
+        from = EndpointReference.fromDOM( header.getAsDOM() );
+        if ( processedOnGet ) header.setProcessed(true);
+        if ( removeOnGet ) env.removeHeader( header );
+      }
 
-    header = env.getHeaderByName(WSAConstants.NS_WSA, "Action");
-    if ( header != null ) {
-      action = Util.getText( header.getAsDOM() );
-      if ( processedOnGet ) header.setProcessed(true);
-      if ( removeOnGet ) env.removeHeader( header );
-    }
-    else action = null ;
+      header = env.getHeaderByName(ns, "ReplyTo");
+      if ( header != null ) {
+        replyTo = EndpointReference.fromDOM( header.getAsDOM() );
+        if ( processedOnGet ) header.setProcessed(true);
+        if ( removeOnGet ) env.removeHeader( header );
+      }
+  
+      Enumeration enum = env.getHeadersByName(ns, "RelatesTo");
+      if ( enum.hasMoreElements() ) {
+        relatesTo = new Vector();
+        while ( enum.hasMoreElements() ) {
+          header = (SOAPHeaderElement) enum.nextElement();
+          String type = header.getAttributeValue(new org.apache.axis.message.PrefixedQName("","RelationshipType", ""));
+          String uri  = header.getValue();
+          relatesTo.add(new RelatesToProperty(uri, type));
+          if ( processedOnGet ) header.setProcessed(true);
+          if ( removeOnGet ) env.removeHeader( header );
+        }
+      }
 
-    header = env.getHeaderByName(WSAConstants.NS_WSA, "From");
-    if ( header != null ) {
-      from = EndpointReference.fromDOM( header.getAsDOM() );
-      if ( processedOnGet ) header.setProcessed(true);
-      if ( removeOnGet ) env.removeHeader( header );
-    }
-    else from = null ;
-
-    header = env.getHeaderByName(WSAConstants.NS_WSA, "ReplyTo");
-    if ( header != null ) {
-      replyTo = EndpointReference.fromDOM( header.getAsDOM() );
-      if ( processedOnGet ) header.setProcessed(true);
-      if ( removeOnGet ) env.removeHeader( header );
-    }
-    else replyTo = null ;
-
-    Enumeration enum = env.getHeadersByName(WSAConstants.NS_WSA, "RelatesTo");
-    if ( enum.hasMoreElements() ) {
-      relatesTo = new Vector();
-      while ( enum.hasMoreElements() ) {
-        header = (SOAPHeaderElement) enum.nextElement();
-        String type = header.getAttributeValue(new org.apache.axis.message.PrefixedQName("","RelationshipType", ""));
-        String uri  = header.getValue();
-        relatesTo.add(new RelatesToProperty(uri, type));
+      header = env.getHeaderByName(ns, "FaultTo");
+      if ( header != null ) {
+        faultTo = EndpointReference.fromDOM( header.getAsDOM() );
         if ( processedOnGet ) header.setProcessed(true);
         if ( removeOnGet ) env.removeHeader( header );
       }
     }
-    else relatesTo = null ;
-
-    header = env.getHeaderByName(WSAConstants.NS_WSA, "FaultTo");
-    if ( header != null ) {
-      faultTo = EndpointReference.fromDOM( header.getAsDOM() );
-      if ( processedOnGet ) header.setProcessed(true);
-      if ( removeOnGet ) env.removeHeader( header );
-    }
-    else faultTo = null ;
   }
 
   public void toEnvelope(SOAPEnvelope env) throws Exception {
     SOAPHeaderElement header = null ;
 
     if ( env.getNamespaceURI("wsa") == null )
-      env.addNamespaceDeclaration("wsa", WSAConstants.NS_WSA );
+      env.addNamespaceDeclaration("wsa", namespace );
 
     if ( messageID != null ) {
-      header = new SOAPHeaderElement( WSAConstants.NS_WSA, "MessageID" );
+      header = new SOAPHeaderElement( namespace, "MessageID" );
       header.setActor( null );
       header.addTextNode(messageID);
       header.setMustUnderstand(mustUnderstand);
@@ -241,28 +252,34 @@ public class MIHeader {
     }
 
     if ( to != null ) {
-      header = new SOAPHeaderElement( WSAConstants.NS_WSA, "To" );
+      header = new SOAPHeaderElement( namespace, "To" );
       header.setActor( null );
       header.addTextNode( to.getAddress() );
       header.setMustUnderstand(mustUnderstand);
       env.addHeader(header);
-      List refProps = to.getReferenceProperties();
-      if ( refProps != null ) {
-        for ( int i = 0 ; i < refProps.size() ; i++ ) {
-          String elem = (String) refProps.get(i);
-          SOAPHeaderElement h1 = 
-            new SOAPHeaderElement(XMLUtils.StringToElement(elem));
-          h1.setActor( null );
-          h1.setMustUnderstand(mustUnderstand);
-          env.addHeader( h1 );
+
+      if ( namespace.equals(WSAConstants.NS_WSA1) ) {
+        List refProps = to.getReferenceProperties();
+        if ( refProps != null ) {
+          for ( int i = 0 ; i < refProps.size() ; i++ ) {
+            String elem = (String) refProps.get(i);
+            SOAPHeaderElement h1 = 
+              new SOAPHeaderElement(XMLUtils.StringToElement(elem));
+            h1.setActor( null );
+            h1.setMustUnderstand(mustUnderstand);
+            env.addHeader( h1 );
+          }
         }
       }
+
       List refParams = to.getReferenceParameters();
       if ( refParams != null ) {
         for ( int i = 0 ; i < refParams.size() ; i++ ) {
           String elem = (String) refParams.get(i);
           SOAPHeaderElement h1 = 
             new SOAPHeaderElement(XMLUtils.StringToElement(elem));
+          if ( namespace.equals(WSAConstants.NS_WSA2) )
+            h1.addAttribute(namespace, "IsReferenceParameter", "true");
           h1.setActor( null );
           h1.setMustUnderstand(mustUnderstand);
           env.addHeader( h1 );
@@ -271,7 +288,7 @@ public class MIHeader {
     }
 
     if ( action != null ) {
-      header = new SOAPHeaderElement( WSAConstants.NS_WSA, "Action" );
+      header = new SOAPHeaderElement( namespace, "Action" );
       header.setActor( null );
       header.addTextNode( action );
       header.setMustUnderstand(mustUnderstand);
@@ -279,14 +296,14 @@ public class MIHeader {
     }
 
     if ( from != null ) {
-      header = new SOAPHeaderElement(from.toDOM("wsa",WSAConstants.NS_WSA, "From"));
+      header = new SOAPHeaderElement(from.toDOM("wsa",namespace, "From"));
       header.setActor( null );
       header.setMustUnderstand(mustUnderstand);
       env.addHeader(header);
     }
 
     if ( replyTo != null ) {
-      header = new SOAPHeaderElement(replyTo.toDOM("wsa", WSAConstants.NS_WSA,
+      header = new SOAPHeaderElement(replyTo.toDOM("wsa", namespace,
                                                    "ReplyTo"));
       header.setActor( null );
       header.setMustUnderstand(mustUnderstand);
@@ -296,7 +313,7 @@ public class MIHeader {
     if ( relatesTo != null ) {
       for ( int i = 0 ; i < relatesTo.size() ; i++ ) {
         RelatesToProperty rtp = (RelatesToProperty) relatesTo.get(i);
-        header = new SOAPHeaderElement( WSAConstants.NS_WSA, "RelatesTo" );
+        header = new SOAPHeaderElement( namespace, "RelatesTo" );
         header.setActor( null );
         if ( rtp.getType() != null && !"wsa:Reply".equals(rtp.getType()) ) {
           header.setAttribute("", "RelationshipType", rtp.getType() );
@@ -308,7 +325,7 @@ public class MIHeader {
     }
 
     if ( faultTo != null ) {
-      header = new SOAPHeaderElement(faultTo.toDOM("wsa", WSAConstants.NS_WSA, 
+      header = new SOAPHeaderElement(faultTo.toDOM("wsa", namespace, 
                                                    "FaultTo"));
       header.setActor( null );
       header.setMustUnderstand(mustUnderstand);
@@ -353,12 +370,10 @@ public class MIHeader {
     relatesTo.add( new RelatesToProperty(uri, type) );
   }
 
-  /*public void addRelatesToProperty(RelatesToProperty rtp) {
-     relatesTo.add(rtp);
-  } */
-
   public EndpointReference getTo() { return to ; }
-  public void   setTo(String _to) { to = EndpointReference.fromLocation(_to) ; }
+  public void   setTo(String _to) { 
+    to = EndpointReference.fromLocation(_to,namespace) ;
+  }
   public void   setTo(EndpointReference epr) { to = epr ; }
 
   public String getAction() { return action ; }
@@ -376,10 +391,10 @@ public class MIHeader {
   public EndpointReference getToFault(){ return toFault ; }
   public void              setToFault(EndpointReference epr) {this.toFault=epr;}
 
-  public EndpointReference getEffectiveReplyTo() {
+  public EndpointReference getEffectiveReplyTo() throws Exception {
     if ( replyTo != null ) return getReplyTo();
     if ( from    != null ) return getFrom();
-    return EndpointReference.fromLocation(WSAConstants.Anonymous_Address);
+    return EndpointReference.Anonymous( namespace );
   }
 
 }
