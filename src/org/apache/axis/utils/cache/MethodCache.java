@@ -75,6 +75,16 @@ public class MethodCache {
     }
 
     /**
+     * Clears the method cache.
+     */
+    public void clearCache() {
+        Map map = (Map) cache.get();
+        if (map != null) {
+            map.clear();
+        }
+    }
+
+    /**
      * Class used as the key for the method cache table.
      *
      */

@@ -48,6 +48,13 @@ public class JavaClass implements Serializable {
     }
 
     /**
+     * Clears the class cache.
+     */
+    public static synchronized void clearCache() {
+        classes.clear();
+    }
+
+    /**
      * Create a cache entry for this java.lang.Class
      */
     public JavaClass(Class jc) {

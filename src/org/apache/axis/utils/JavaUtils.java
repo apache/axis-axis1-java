@@ -1067,7 +1067,16 @@ public class JavaUtils
         }
         return b.booleanValue();
     }
-
+    
+    /**
+     * Explicitely clear enum lookup cache.
+     */
+    public static void clearEnumCache() {
+        synchronized (enumMap) {
+            enumMap.clear();
+        }
+    }
+    
     private static boolean isEnumClassSub(Class cls) {
         try {
             java.lang.reflect.Method[] methods = cls.getMethods();
