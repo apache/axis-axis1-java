@@ -73,7 +73,7 @@ abstract public class EndpointReference implements Serializable {
     if ( this.referenceParameters != null ) {
       for ( int i = 0 ; i < this.referenceParameters.size() ; i++ ) {
         String prop = (String) this.referenceParameters.get(i);
-        newObj.addReferenceProperty( new String(prop) );
+        newObj.addReferenceParameter( new String(prop) );
       }
     }
     return newObj ;
@@ -392,6 +392,12 @@ abstract public class EndpointReference implements Serializable {
   public void addReferenceParameter(Element element) {
     addReferenceParameter( XMLUtils.ElementToString(element) );
   }
+
+  public void addReferenceParameter(String ns, String elemName, String value) 
+    throws Exception {
+    newReferenceParameter(ns, elemName, value);
+  }
+
 
   // Util
   public Element newReferenceParameter(String ns, String name) throws Exception {

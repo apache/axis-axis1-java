@@ -33,7 +33,7 @@ import javax.xml.rpc.Call;
  * create and read these headers to/from a message.
  */
 public class MIHeader {
-  String            namespace      = EndpointReference.staticNS ;
+  String            namespace      = EndpointReference.getGlobalWSAVersion();
   boolean           requestMessage = false;
 
   String            messageID           = null ;
