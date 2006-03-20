@@ -185,6 +185,7 @@ public class WSAHandler { // extends BasicHandler {
            call.setProperty( copyProps[j], obj );
          }
 
+         call.setSOAPVersion( msgContext.getSOAPConstants() );
          call.setTargetEndpointAddress(resMIH.getTo().getAddress() );
          call.setRequestMessage(msg);
          call.setSOAPActionURI( msgContext.getSOAPActionURI() );
