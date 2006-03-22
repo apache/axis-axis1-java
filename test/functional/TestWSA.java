@@ -24,7 +24,7 @@ public class TestWSA extends TestCase {
      * Sets up the WSA Async listener
      */
     protected void setUp() throws Exception {
-        (new SimpleAxisServer()).startListening(88);
+        (new SimpleAxisServer()).startListening(8888);
         AdminClient.main( new String[] { "samples/wsa/deploy.wsdd" } );
     }
 
@@ -52,7 +52,7 @@ public class TestWSA extends TestCase {
       assertEquals( null, call.getMessageContext().getProperty("ASYNCRESPONSE") );
 
       System.out.println( "Setting wsa:ReplyTo to async" );
-      call.setReplyTo( "http://localhost:88/axis/services/asyncService" );
+      call.setReplyTo( "http://localhost:8888/axis/services/asyncService" );
       rc = call.invoke( "echo", new Object[] { "hi3" } );
       System.out.println( "rc: " + rc );
       assertEquals( rc, "hi3" );
