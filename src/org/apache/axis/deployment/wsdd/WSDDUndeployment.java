@@ -118,21 +118,17 @@ public class WSDDUndeployment
             addService(getQName(elements[i]));
         }
 
-        /*
-        // How to deal with undeploying mappings?
-
         elements = getChildElements(e, ELEM_WSDD_TYPEMAPPING);
         for (i = 0; i < elements.length; i++) {
             WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
-            addTypeMapping(mapping);
+            deployTypeMapping(mapping);
         }
 
         elements = getChildElements(e, ELEM_WSDD_BEANMAPPING);
         for (i = 0; i < elements.length; i++) {
             WSDDBeanMapping mapping = new WSDDBeanMapping(elements[i]);
-            addTypeMapping(mapping);
+            deployTypeMapping(mapping);
         }
-        */
     }
 
     protected QName getElementName()
@@ -174,6 +170,11 @@ public class WSDDUndeployment
                 throw new ConfigurationException(exp);
             }
             registry.undeployService(qname);
+        }
+
+        for (int n = 0; n < typeMappings.size(); n++) {
+            WSDDTypeMapping mapping  = (WSDDTypeMapping)typeMappings.get(n);
+            registry.undeployTypeMapping(mapping);
         }
     }
 
