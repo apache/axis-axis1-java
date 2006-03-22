@@ -717,27 +717,6 @@ public class JavaBeanWriter extends JavaClassWriter {
                         + "_";
             }
 
-            // Process the attributes
-            Vector attributes = te.getContainedAttributes();
-            if (attributes != null) {
-                for (int j = 0; j < attributes.size(); j += 1) {
-                    ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
-
-                    String name = getAttributeName(attr);
-                    String typeName = attr.getType().getName();
-
-                    // TODO - What about MinOccurs and Nillable?
-                    // Do they make sense here?
-                    if (attr.getOptional()) {
-                        typeName = Utils.getWrapperType(typeName);
-                    }
-
-                    paramTypes.add(typeName);
-                    paramNames.add(JavaUtils.getUniqueValue(
-                            helper.reservedPropNames, name));
-                }
-            }
-
             // Process the elements
             Vector elements = te.getContainedElements();
 
@@ -759,6 +738,28 @@ public class JavaBeanWriter extends JavaClassWriter {
                     }
                 }
             }
+
+            // Process the attributes
+            Vector attributes = te.getContainedAttributes();
+            if (attributes != null) {
+                for (int j = 0; j < attributes.size(); j += 1) {
+                    ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
+
+                    String name = getAttributeName(attr);
+                    String typeName = attr.getType().getName();
+
+                    // TODO - What about MinOccurs and Nillable?
+                    // Do they make sense here?
+                    if (attr.getOptional()) {
+                        typeName = Utils.getWrapperType(typeName);
+                    }
+
+                    paramTypes.add(typeName);
+                    paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, name));
+                }
+            }
+
         }
 
         if (isMixed && !isAny && !parentIsAny && !parentIsMixed) {
