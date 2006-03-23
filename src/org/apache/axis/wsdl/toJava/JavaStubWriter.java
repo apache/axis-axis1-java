@@ -549,7 +549,8 @@ public class JavaStubWriter extends JavaClassWriter {
             if ((i % OPERDESC_PER_BLOCK) == 0) {
                 k++;
 
-                pw.println("    }\n");
+                pw.println("    }");
+                pw.println();
                 pw.println("    private static void _initOperationDesc" + k
                         + "(){");
                 pw.println(
