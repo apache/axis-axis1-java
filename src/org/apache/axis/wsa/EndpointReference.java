@@ -406,7 +406,7 @@ abstract public class EndpointReference implements Serializable {
 
   public Element newReferenceParameter(String ns, String name, String value) 
       throws Exception {
-    return newReferenceParameter(null, ns, name, null );
+    return newReferenceParameter(null, ns, name, value );
   }
 
   public Element newReferenceParameter(String prefix, String ns, String name, 
