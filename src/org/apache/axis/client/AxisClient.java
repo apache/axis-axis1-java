@@ -23,6 +23,8 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.threadpool.TaskManager;
+import org.apache.axis.components.threadpool.TaskManagerFactory;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.MustUnderstandChecker;
@@ -48,6 +50,9 @@ import javax.xml.rpc.handler.HandlerChain;
 public class AxisClient extends AxisEngine {
     protected static Log log =
         LogFactory.getLog(AxisClient.class.getName());
+
+    protected static TaskManager taskManager = 
+        TaskManagerFactory.getTaskManager();
 
     MustUnderstandChecker checker     = new MustUnderstandChecker(null);
     HandlerChain          handlerImpl = null ;
@@ -166,12 +171,15 @@ public class AxisClient extends AxisEngine {
             invokeTransport( msgContext );
           }
           catch( Exception exp ) {
-            exp.printStackTrace();
             log.debug( Messages.getMessage( "exceptionPrinting" ) , exp );
           }
         }
       };
-      (new Thread(runnable)).start();
+      if (taskManager == null) {
+          (new Thread(runnable)).start();
+      } else {
+          taskManager.execute(runnable);
+      }
     }
 
     public void invokeInbound(MessageContext msgContext) throws Exception {
