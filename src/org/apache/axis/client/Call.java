@@ -2802,13 +2802,7 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        // if(!msgContext.getIsOneWay()) {
-            invokeEngine(msgContext);
-        /*
-        } else {
-            invokeEngineOneWay(msgContext);
-        }
-        */
+        invokeEngine(msgContext);
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: Call::invoke()");
@@ -2858,31 +2852,6 @@ public class Call implements javax.xml.rpc.Call {
                   throw ((SOAPFault)respBody).getFault();
             }
         }
-    }
-
-    /**
-     * Implement async invocation by running the request in a new thread
-     * @param msgContext
-     */
-    private void invokeEngineOneWay(final MessageContext msgContext) {
-        //TODO: this is not a good way to do stuff, as it has no error reporting facility
-        //create a new class
-        Runnable runnable = new Runnable(){
-            public void run() {
-                msgContext.setIsOneWay( true );
-                try {
-                    service.getEngine().invoke( msgContext );
-                } catch (AxisFault af){
-                    //TODO: handle errors properly
-                    log.debug(Messages.getMessage("exceptionPrinting"), af);
-                }
-                msgContext.setIsOneWay( false );
-            }
-        };
-        //create a thread to run it
-        Thread thread = new Thread(runnable);
-        //run it
-        thread.start();
     }
 
     /**
