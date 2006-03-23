@@ -194,6 +194,12 @@ public class CommonsHTTPSender extends BasicHandler {
             }
 
             int returnCode = httpClient.executeMethod(hostConfiguration, method, null);
+            String statusMessage = method.getStatusText();
+
+            msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
+                                   new Integer(returnCode));
+            msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE,
+                                   statusMessage);
 
             String contentType = 
                 getHeader(method, HTTPConstants.HEADER_CONTENT_TYPE);
@@ -214,7 +220,6 @@ public class CommonsHTTPSender extends BasicHandler {
                 
                 // SOAP Fault should be in here - so fall through
             } else {
-                String statusMessage = method.getStatusText();
                 AxisFault fault = new AxisFault("HTTP",
                                                 "(" + returnCode + ")"
                                                 + statusMessage, null,
@@ -233,6 +238,15 @@ public class CommonsHTTPSender extends BasicHandler {
                 }
             }
             
+            if (contentLength != null) {
+                long length = Long.parseLong(contentLength);
+                
+                if (length == 0) {
+                    method.releaseConnection();
+                    return;
+                }
+            }
+
             // wrap the response body stream so that close() also releases 
             // the connection back to the pool.
             InputStream releaseConnectionOnCloseStream = 
@@ -288,12 +302,6 @@ public class CommonsHTTPSender extends BasicHandler {
                         handleCookie(HTTPConstants.HEADER_COOKIE2, headers[i].getValue(), msgContext);
                     }
                 }
-            }
-
-            // always release the connection back to the pool if 
-            // it was one way invocation
-            if (msgContext.isPropertyTrue("axis.one.way")) {
-                method.releaseConnection();
             }
             
         } catch (Exception e) {
