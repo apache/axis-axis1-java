@@ -202,7 +202,7 @@ public class FileProvider implements WSDDEngineConfiguration {
                 Writer osWriter = new OutputStreamWriter(
                         new FileOutputStream(configFile),XMLUtils.getEncoding());
                 PrintWriter writer = new PrintWriter(new BufferedWriter(osWriter));
-                XMLUtils.PrettyDocumentToWriter(doc, writer);
+                XMLUtils.DocumentToWriter(doc, writer);
                 writer.println();
                 writer.close();
             } catch (Exception e) {
