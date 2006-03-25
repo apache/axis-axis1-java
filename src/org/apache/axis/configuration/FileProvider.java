@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -198,11 +199,13 @@ public class FileProvider implements WSDDEngineConfiguration {
         throws ConfigurationException {
         if (!readOnly) {
             try {
-                Document doc = Admin.listConfig(engine);
+                StringWriter strWriter = new StringWriter();
+                Admin.listConfig(engine, strWriter);
+
                 Writer osWriter = new OutputStreamWriter(
                         new FileOutputStream(configFile),XMLUtils.getEncoding());
                 PrintWriter writer = new PrintWriter(new BufferedWriter(osWriter));
-                XMLUtils.DocumentToWriter(doc, writer);
+                writer.print(strWriter.getBuffer().toString());
                 writer.println();
                 writer.close();
             } catch (Exception e) {
