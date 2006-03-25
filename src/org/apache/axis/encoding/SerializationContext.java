@@ -324,6 +324,20 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     }
 
     /**
+     * Sets the pretty xml serialization support.
+     */
+    public void setDisablePrettyXML(boolean disablePrettyXML) {
+        this.disablePrettyXML = disablePrettyXML;
+    }
+    
+    /**
+     * Gets whether the pretty xml serialization support is enabled.
+     */
+    public boolean getDisablePrettyXML() {
+        return this.disablePrettyXML;
+    }
+
+    /**
      * Get whether the serialization should be pretty printed.
      * @return true/false
      */
