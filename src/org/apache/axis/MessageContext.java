@@ -33,6 +33,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeaderElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 
 // fixme: fields are declared throughout this class, some at the top, and some
 //  near to where they are used. We should move all field declarations into a
@@ -386,7 +389,6 @@ public class MessageContext implements SOAPMessageContext {
       Hashtable table = new Hashtable();
 
       if ( requestMessage != null )  {
-        /* skip this for now
         SOAPEnvelope env = requestMessage.getSOAPEnvelope();
         if ( env != null ) {
           Vector headers = env.getHeaders();
@@ -403,11 +405,9 @@ public class MessageContext implements SOAPMessageContext {
           if ( muHdrs.size() > 0 )
             table.put( "msg.reqMU", muHdrs );
         }
-        */
         table.put("msg.req", requestMessage.getSOAPPartAsString() );
       }
       if ( responseMessage != null )  {
-        /* Skip this for now 
         SOAPEnvelope env = responseMessage.getSOAPEnvelope();
         if ( env != null ) {
           Vector headers = env.getHeaders();
@@ -424,7 +424,6 @@ public class MessageContext implements SOAPMessageContext {
           if ( muHdrs.size() > 0 )
             table.put( "msg.resMU", muHdrs );
         }
-        */
         table.put("msg.res", responseMessage.getSOAPPartAsString() );
       }
       if ( targetService != null ) table.put("msg.svc", targetService );
@@ -486,7 +485,7 @@ public class MessageContext implements SOAPMessageContext {
       highFidelity = "true".equals((String)table.get("msg.hig"));
       username = (String) table.get("msg.usr");
       password = (String) table.get("msg.pwd");
-      encodingStyle = (String) table.get("msg.enc");
+      // encodingStyle = (String) table.get("msg.enc");
       useSOAPAction = "true".equals((String)table.get("msg.usa"));
       SOAPActionURI = (String) table.get("msg.act");
 
@@ -496,16 +495,19 @@ public class MessageContext implements SOAPMessageContext {
           bag.put( name.substring(2), table.get(name) );
       }
 
-      /*
+      // Special because it will look up the service object
+      setTargetService( (String) table.get("msg.svc") );
+
       // Mark all processed headers as processed
+      Enumeration ee ;
       if ( (obj = table.get("msg.reqMU")) != null ) {
         Vector MUs = (Vector) obj ;
         SOAPEnvelope env = requestMessage.getSOAPEnvelope();
         for ( int i = 0 ; i < MUs.size() ; i++ ) {
           QName qn = (QName) MUs.get(i);
-          enum = env.getHeadersByName(qn.getNamespaceURI(), qn.getLocalPart());
-          while (enum.hasMoreElements()) 
-            ((SOAPHeaderElement) enum.nextElement()).setProcessed(true);
+          ee = env.getHeadersByName(qn.getNamespaceURI(), qn.getLocalPart());
+          while (ee.hasMoreElements()) 
+            ((SOAPHeaderElement) ee.nextElement()).setProcessed(true);
         }
       }
 
@@ -514,15 +516,11 @@ public class MessageContext implements SOAPMessageContext {
         SOAPEnvelope env = responseMessage.getSOAPEnvelope();
         for ( int i = 0 ; i < MUs.size() ; i++ ) {
           QName qn = (QName) MUs.get(i);
-          enum = env.getHeadersByName(qn.getNamespaceURI(), qn.getLocalPart());
-          while (enum.hasMoreElements()) 
-            ((SOAPHeaderElement) enum.nextElement()).setProcessed(true);
+          ee = env.getHeadersByName(qn.getNamespaceURI(), qn.getLocalPart());
+          while (ee.hasMoreElements()) 
+            ((SOAPHeaderElement) ee.nextElement()).setProcessed(true);
         }
       }
-      */
-
-      // Special because it will look up the service object
-      setTargetService( (String) table.get("msg.svc") );
     }
 
     /**
