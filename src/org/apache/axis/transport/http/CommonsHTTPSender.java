@@ -215,7 +215,7 @@ public class CommonsHTTPSender extends BasicHandler {
                        SOAPConstants.SOAP12_CONSTANTS) {
                 // For now, if we're SOAP 1.2, fall through, since the range of
                 // valid result codes is much greater
-            } else if ((contentType != null) && !contentType.equals("text/html")
+            } else if ((contentType != null) && !contentType.startsWith("text/html")
                        && ((returnCode > 499) && (returnCode < 600))) {
                 
                 // SOAP Fault should be in here - so fall through
