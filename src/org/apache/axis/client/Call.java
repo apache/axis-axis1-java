@@ -74,6 +74,7 @@ import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
@@ -1650,6 +1651,24 @@ public class Call implements javax.xml.rpc.Call {
                     throw new JAXRPCException(
                             Messages.getMessage("cantSetURI00", "" + exp) );
                 }
+            }
+            else if ( obj instanceof UnknownExtensibilityElement ) {
+              UnknownExtensibilityElement ee =
+                (UnknownExtensibilityElement) obj ;
+              QName QN1 = new QName( WSAConstants.NS_WSA1, "EndpointReference");
+              QName QN2 = new QName( WSAConstants.NS_WSA2, "EndpointReference");
+              if ( QN1.equals(ee.getElementType()) ||
+                   QN2.equals(ee.getElementType()) ) {
+                try {
+                  EndpointReference epr =
+                    EndpointReference.fromDOM( ee.getElement() );
+                  this.setTo( epr );
+                }
+                catch(Exception exp) {
+                  throw new JAXRPCException(
+                          Messages.getMessage("cantSetURI00", "" + exp));
+                }
+              }
             }
         }
 

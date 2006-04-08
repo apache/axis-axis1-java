@@ -25,6 +25,8 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsa.EndpointReference;
+import org.apache.axis.wsa.WSAConstants;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
@@ -39,6 +41,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
@@ -506,6 +509,24 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                     throw new ServiceException(
                             Messages.getMessage("cantSetURI00", "" + exp));
                 }
+            }
+            else if ( obj instanceof UnknownExtensibilityElement ) {
+              UnknownExtensibilityElement ee = 
+                (UnknownExtensibilityElement) obj ;
+              QName QN1 = new QName( WSAConstants.NS_WSA1, "EndpointReference");
+              QName QN2 = new QName( WSAConstants.NS_WSA2, "EndpointReference");
+              if ( QN1.equals(ee.getElementType()) ||
+                   QN2.equals(ee.getElementType()) ) {
+                try {
+                  EndpointReference epr = 
+                    EndpointReference.fromDOM( ee.getElement() );
+                  call.setTo( epr );
+                }
+                catch(Exception exp) {
+                  throw new ServiceException(
+                          Messages.getMessage("cantSetURI00", "" + exp));
+                }
+              }
             }
         }
 

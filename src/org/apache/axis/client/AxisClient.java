@@ -51,7 +51,7 @@ public class AxisClient extends AxisEngine {
     protected static Log log =
         LogFactory.getLog(AxisClient.class.getName());
 
-    protected static TaskManager taskManager = 
+    protected static TaskManager taskManager =
         TaskManagerFactory.getTaskManager();
 
     MustUnderstandChecker checker     = new MustUnderstandChecker(null);

@@ -215,11 +215,11 @@ public class MIHeader {
         if ( removeOnGet ) env.removeHeader( header );
       }
   
-      Enumeration enum = env.getHeadersByName(ns, "RelatesTo");
-      if ( enum.hasMoreElements() ) {
+      Enumeration ee = env.getHeadersByName(ns, "RelatesTo");
+      if ( ee.hasMoreElements() ) {
         relatesTo = new Vector();
-        while ( enum.hasMoreElements() ) {
-          header = (SOAPHeaderElement) enum.nextElement();
+        while ( ee.hasMoreElements() ) {
+          header = (SOAPHeaderElement) ee.nextElement();
           String type = header.getAttributeValue(new org.apache.axis.message.PrefixedQName("","RelationshipType", ""));
           String uri  = header.getValue();
           relatesTo.add(new RelatesToProperty(uri, type));
