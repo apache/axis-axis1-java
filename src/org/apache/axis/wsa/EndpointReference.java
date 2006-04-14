@@ -153,34 +153,50 @@ abstract public class EndpointReference implements Serializable {
        }
 
        nl = el.getElementsByTagNameNS(ns, "ReferenceProperties");
-       if (nl.item(0)!=null) {
-         nl = nl.item(0).getChildNodes();
-    
-         for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
-           Node n = nl.item(i);
-           if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
-           n = n.cloneNode(true);
-           er.addReferenceProperty( XMLUtils.ElementToString((Element) n) );
-         }
-       }
+       if (nl.item(0)!=null) 
+         er.addReferenceProperties( (Element) nl.item(0) );
 
        nl = el.getElementsByTagNameNS(ns, "ReferenceParameters");
-       if (nl.item(0)!=null) {
-         nl = nl.item(0).getChildNodes();
-    
-         for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
-           Node n = nl.item(i);
-           if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
-           n = n.cloneNode(true);
-           er.addReferenceParameter( XMLUtils.ElementToString((Element) n) );
-         }
-       }
+       if (nl.item(0)!=null) 
+         er.addReferenceParameters( (Element) nl.item(0) );
      }
      if ( er.getAddress() == null ) {
        String tmp = "Missing Address in EPR: " + XMLUtils.ElementToString(el);
        throw new Exception( tmp );
      }
      return er ;
+  }
+
+  /**
+   * Passing in a wsa:ReferenceParameter element this will add all children
+   * add references parameters to the EPR
+   * @param refp The DOM element of the wsa:ReferenceParameter
+   */
+  public void addReferenceParameters(Element refp) {
+    NodeList nl = refp.getChildNodes();
+
+    for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
+      Node n = nl.item(i);
+      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+      n = n.cloneNode(true);
+      this.addReferenceParameter( XMLUtils.ElementToString((Element) n ));
+    }
+  }
+
+  /**
+   * Passing in a wsa:ReferenceProperties element this will add all children
+   * add references properties to the EPR
+   * @param refp The DOM element of the wsa:ReferenceProperties
+   */
+  public void addReferenceProperties(Element refp) {
+    NodeList nl = refp.getChildNodes();
+
+    for ( int i = 0 ; nl != null && i < nl.getLength() ; i++ ) {
+      Node n = nl.item(i);
+      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+      n = n.cloneNode(true);
+      this.addReferenceProperty( XMLUtils.ElementToString((Element) n ));
+    }
   }
 
 /**

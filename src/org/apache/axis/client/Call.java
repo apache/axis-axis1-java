@@ -1655,14 +1655,14 @@ public class Call implements javax.xml.rpc.Call {
             else if ( obj instanceof UnknownExtensibilityElement ) {
               UnknownExtensibilityElement ee =
                 (UnknownExtensibilityElement) obj ;
-              QName QN1 = new QName( WSAConstants.NS_WSA1, "EndpointReference");
-              QName QN2 = new QName( WSAConstants.NS_WSA2, "EndpointReference");
-              if ( QN1.equals(ee.getElementType()) ||
-                   QN2.equals(ee.getElementType()) ) {
+              QName QN1 = new QName(WSAConstants.NS_WSA1,"ReferenceParameters");
+              QName QN2 = new QName(WSAConstants.NS_WSA2,"ReferenceParameters");
+              QName eeQ = ee.getElementType();
+              if ( QN1.equals(eeQ) || QN2.equals(eeQ) ) {
                 try {
-                  EndpointReference epr =
-                    EndpointReference.fromDOM( ee.getElement() );
-                  this.setTo( epr );
+                  this.setTo( this.getTargetEndpointAddress() );
+                  this.getTo().addReferenceParameters( ee.getElement() );
+                  this.getTo().setWSAVersion( eeQ.getNamespaceURI() );
                 }
                 catch(Exception exp) {
                   throw new JAXRPCException(
