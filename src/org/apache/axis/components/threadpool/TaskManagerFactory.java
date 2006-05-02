@@ -35,6 +35,10 @@ public abstract class TaskManagerFactory {
                 "org.apache.axis.components.threadpool.SimpleTaskManager");
     }
 
+    public static void setDefault(String taskManagerClass) {
+        AxisProperties.setClassDefault(TaskManager.class, taskManagerClass);
+    }
+
     /**
      * Returns an instance of TaskManager.
      */
