@@ -18,6 +18,7 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
@@ -62,11 +63,22 @@ public class BeanSerializer implements Serializer, Serializable {
     private static final Object[] ZERO_ARGS =
         new Object [] { "0" };
 
+    public static final String PROP_ERROR_ON_NULL_VALUE = 
+        "BeanSerializer.errorOnNullWithNonNillableElement";
+
     QName xmlType;
     Class javaType;
 
+    protected static boolean errorOnNullWithNonNillableElement = true;
+
     protected BeanPropertyDescriptor[] propertyDescriptor = null;
     protected TypeDesc typeDesc = null;
+    
+    static {
+        errorOnNullWithNonNillableElement = 
+            JavaUtils.isTrue(
+                AxisProperties.getProperty(PROP_ERROR_ON_NULL_VALUE, "true"));
+    }
 
     // Construct BeanSerializer for the indicated class/qname
     public BeanSerializer(Class javaType, QName xmlType) {
@@ -211,7 +223,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                     }
                                 }
 
-                                if (propValue == null) {
+                                if (propValue == null && errorOnNullWithNonNillableElement) {
                                     throw new IOException(
                                             Messages.getMessage(
                                                     "nullNonNillableElement",
