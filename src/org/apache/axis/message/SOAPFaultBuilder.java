@@ -24,6 +24,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
@@ -301,8 +302,9 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                         if (node instanceof MessageElement) {
                             elements[i] = ((MessageElement) node).getAsDOM();
                         } else if(node instanceof Text){
-                            elements[i] = XMLUtils.newDocument().createElement("text");
-                            elements[i].appendChild(node);
+                            Document tempDoc = XMLUtils.newDocument(); 
+                            elements[i] = tempDoc.createElement("text"); 
+                            elements[i].appendChild(tempDoc.importNode(node,true)); 
                         }
                     } catch (Exception e) {
                         throw new SAXException(e);
