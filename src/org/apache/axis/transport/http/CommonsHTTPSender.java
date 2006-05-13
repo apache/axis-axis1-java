@@ -83,29 +83,54 @@ public class CommonsHTTPSender extends BasicHandler {
     /** Field log           */
     protected static Log log =
         LogFactory.getLog(CommonsHTTPSender.class.getName());
+
+    private static final String CHUNKED_PROP = "axis.chunked";
+
+    protected static HttpConnectionManager defaultConnectionManager;
+    protected static CommonsHTTPClientProperties defaultClientProperties;
     
     protected HttpConnectionManager connectionManager;
     protected CommonsHTTPClientProperties clientProperties;
-    boolean httpChunkStream = true; //Use HTTP chunking or not.
 
     public CommonsHTTPSender() {
         initialize();
     }
 
     protected void initialize() {
-        MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
-        this.clientProperties = CommonsHTTPClientPropertiesFactory.create();
-        cm.getParams().setDefaultMaxConnectionsPerHost(clientProperties.getMaximumConnectionsPerHost());
-        cm.getParams().setMaxTotalConnections(clientProperties.getMaximumTotalConnections());
+        initializeDefaultConnectionManager();
+        
+        this.clientProperties = defaultClientProperties;
+        this.connectionManager = defaultConnectionManager;
+    }
+
+    protected static synchronized void initializeDefaultConnectionManager() {
+        if (defaultConnectionManager != null) {
+            // defults already initialized
+            return;
+        }
+
+        MultiThreadedHttpConnectionManager cm = 
+            new MultiThreadedHttpConnectionManager();
+
+        defaultClientProperties = CommonsHTTPClientPropertiesFactory.create();
+
+        cm.getParams().setDefaultMaxConnectionsPerHost(
+                     defaultClientProperties.getMaximumConnectionsPerHost());
+        cm.getParams().setMaxTotalConnections(
+                     defaultClientProperties.getMaximumTotalConnections());
+
         // If defined, set the default timeouts
         // Can be overridden by the MessageContext
-        if(this.clientProperties.getDefaultConnectionTimeout()>0) {
-           cm.getParams().setConnectionTimeout(this.clientProperties.getDefaultConnectionTimeout());
+        if(defaultClientProperties.getDefaultConnectionTimeout()>0) {
+            cm.getParams().setConnectionTimeout(
+                     defaultClientProperties.getDefaultConnectionTimeout());
         }
-        if(this.clientProperties.getDefaultSoTimeout()>0) {
-           cm.getParams().setSoTimeout(this.clientProperties.getDefaultSoTimeout());
+        if(defaultClientProperties.getDefaultSoTimeout()>0) {
+            cm.getParams().setSoTimeout(
+                     defaultClientProperties.getDefaultSoTimeout());
         }
-        this.connectionManager = cm;
+        
+        defaultConnectionManager = cm;
     }
     
     /**
@@ -155,9 +180,12 @@ public class CommonsHTTPSender extends BasicHandler {
                 // set false as default, addContetInfo can overwrite
                 method.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE,
                                                        false);
-                
-                addContextInfo(method, httpClient, msgContext, targetURL);
 
+                addContextInfo(method, httpClient, msgContext, targetURL);
+                
+                boolean httpChunkStream = 
+                    method.getParams().getBooleanParameter(CHUNKED_PROP, true);
+                
                 MessageRequestEntity requestEntity = null;
                 if (msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST)) {
                 	requestEntity = new GzipMessageRequestEntity(method, reqMessage, httpChunkStream);
@@ -598,7 +626,8 @@ public class CommonsHTTPSender extends BasicHandler {
                 } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
                     String val = me.getValue().toString();
                     if (null != val)  {
-                        httpChunkStream = JavaUtils.isTrue(val);
+                        method.getParams().setBooleanParameter(CHUNKED_PROP, 
+                                                               JavaUtils.isTrue(val));
                     }
                 } else {
                     method.addRequestHeader(key, value);
