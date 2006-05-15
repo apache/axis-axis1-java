@@ -613,16 +613,6 @@ public class AxisServlet extends AxisServletBase {
              */
             msgContext = createMessageContext(engine, req, res);
 
-            // ? OK to move this to 'getMessageContext',
-            // ? where it would also be picked up for 'doGet()' ?
-            if (securityProvider != null) {
-                if (isDebug) {
-                    log.debug("securityProvider:" + securityProvider);
-                }
-                msgContext.setProperty(MessageContext.SECURITY_PROVIDER,
-                                       securityProvider);
-            }
-
             /* Get request message
              */
             Message requestMsg =
@@ -977,6 +967,15 @@ public class AxisServlet extends AxisServletBase {
         }
 
         msgContext.setProperty(Constants.MC_CONFIGPATH, getWebInfPath());
+
+        // Set the security provider
+        if (securityProvider != null) {
+            if (isDebug) {
+                log.debug("securityProvider:" + securityProvider);
+            }
+            msgContext.setProperty(MessageContext.SECURITY_PROVIDER,
+                                   securityProvider);
+        }
 
         return msgContext;
     }
