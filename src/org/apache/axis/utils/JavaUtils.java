@@ -201,7 +201,7 @@ public class JavaUtils
                 javaType == org.apache.axis.types.UnsignedInt.class ||
                 javaType == org.apache.axis.types.UnsignedLong.class ||
                 javaType == org.apache.axis.types.UnsignedShort.class ||
-                javaType == org.apache.axis.types.URI.class ||
+                org.apache.axis.types.URI.class.isAssignableFrom(javaType) ||
                 javaType == org.apache.axis.types.Year.class ||
                 javaType == org.apache.axis.types.YearMonth.class);
     }
