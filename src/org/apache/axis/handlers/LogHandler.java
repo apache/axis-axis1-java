@@ -91,8 +91,10 @@ public class LogHandler extends BasicHandler {
             writer.println( "=======================================================" );
 
             //START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
-            if (!writeToConsole) {
-              writer.close();
+            if (writeToConsole) {
+                writer.flush();
+            } else {
+                writer.close();
             }
             //END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
 
