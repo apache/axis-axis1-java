@@ -265,9 +265,8 @@ public class MessageContext implements SOAPMessageContext {
                         }
                     }
                     if (foundOperations.size() > 0) {
-                        possibleOperations = (OperationDesc[])
-                            JavaUtils.convert(foundOperations,
-                                              OperationDesc[].class);
+                        possibleOperations = new OperationDesc[foundOperations.size()];
+                        foundOperations.toArray(possibleOperations);
                     }
                 }
             }
