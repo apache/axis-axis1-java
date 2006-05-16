@@ -77,7 +77,8 @@ public class BeanSerializer implements Serializer, Serializable {
     static {
         errorOnNullWithNonNillableElement = 
             JavaUtils.isTrue(
-                AxisProperties.getProperty(PROP_ERROR_ON_NULL_VALUE, "true"));
+                       AxisProperties.getProperty(PROP_ERROR_ON_NULL_VALUE),
+                       true);
     }
 
     // Construct BeanSerializer for the indicated class/qname
