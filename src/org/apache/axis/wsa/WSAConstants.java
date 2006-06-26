@@ -5,7 +5,7 @@ import javax.xml.namespace.QName;
 public interface WSAConstants {
   public final String NS_WSA1 = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
   public final String NS_WSA2 = "http://www.w3.org/2005/08/addressing";
-  public final String NS_WSA = NS_WSA1 ;
+  public final String NS_WSA = NS_WSA2 ;
 
   public final String EN_EndpointReference = "EndpointReference";
   public final String EN_Address = "Address";
