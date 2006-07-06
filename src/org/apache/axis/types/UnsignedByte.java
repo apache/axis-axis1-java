@@ -69,4 +69,8 @@ public class UnsignedByte extends UnsignedShort {
         return true;
     }
 
+    public int compareTo(Object obj) {
+        return compareTo((UnsignedByte)obj);
+    }
+
 }

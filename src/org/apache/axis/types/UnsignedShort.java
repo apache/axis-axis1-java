@@ -67,4 +67,8 @@ public class UnsignedShort extends UnsignedInt {
         return true;
     }
 
+    public int compareTo(Object obj) {
+        return compareTo((UnsignedShort)obj);
+    }
+
 }
