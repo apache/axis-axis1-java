@@ -92,7 +92,7 @@ public class AxisFault extends java.rmi.RemoteException {
     {
         if (e instanceof InvocationTargetException) {
             Throwable t = ((InvocationTargetException)e).getTargetException();
-            if (t instanceof Throwable) {
+            if (t instanceof Exception) {
                 e = (Exception)t;
             }
         }
