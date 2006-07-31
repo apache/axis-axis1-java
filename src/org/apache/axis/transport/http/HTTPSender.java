@@ -246,7 +246,7 @@ public class HTTPSender extends BasicHandler {
                     : passwd);
             otherHeaders.append(HTTPConstants.HEADER_AUTHORIZATION)
                     .append(": Basic ")
-                    .append(Base64.encode(tmpBuf.toString().getBytes()))
+                    .append(Base64.encode(tmpBuf.toString().getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING)))
                     .append("\r\n");
         }
 
