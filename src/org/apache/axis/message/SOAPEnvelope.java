@@ -687,6 +687,8 @@ public class SOAPEnvelope extends MessageElement
             recorder.clear();
             recorder = null;
         }
-        setDirty();
+        if (dirty) {
+            setDirty();
+        }
     }
 }
