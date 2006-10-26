@@ -130,7 +130,7 @@ public class MIHeader {
        mih = new MIHeader();
        mih.removeOnGet = false ;
        mih.fromEnvelope( (SOAPEnvelope) msg.getSOAPEnvelope() );
-       if ( mih.getTo() == null && mih.getFrom() == null) return null ;
+       if ( mih.getAction() == null) return null ;
        msgContext.setProperty( WSAConstants.REQ_MIH, mih );
      }
      return mih;
@@ -151,7 +151,7 @@ public class MIHeader {
        mih = new MIHeader();
        mih.removeOnGet = false ;
        mih.fromEnvelope( (SOAPEnvelope) msg.getSOAPEnvelope() );
-       if ( mih.getTo() == null && mih.getFrom() == null ) return null ;
+       if ( mih.getAction() == null ) return null ;
        msgContext.setProperty(WSAConstants.RES_MIH, mih );
      }
      return mih;
@@ -370,7 +370,11 @@ public class MIHeader {
     relatesTo.add( new RelatesToProperty(uri, type) );
   }
 
-  public EndpointReference getTo() { return to ; }
+  public EndpointReference getTo() {
+    if ( to == null )
+      to = EndpointReference.Anonymous( namespace );
+    return to ; 
+  }
   public void   setTo(String _to) { 
     to = EndpointReference.fromLocation(_to,namespace) ;
   }

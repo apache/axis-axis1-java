@@ -98,13 +98,13 @@ abstract public class EndpointReference implements Serializable {
      return epr ;
   }
 
-  public static EndpointReference Anonymous() throws Exception { 
+  public static EndpointReference Anonymous() { 
     if ( staticNS.equals(WSAConstants.NS_WSA1) )
       return EndpointReference.fromLocation( staticNS + "/role/anonymous" );
     return EndpointReference.fromLocation( staticNS + "/anonymous" );
   }
 
-  public static EndpointReference Anonymous(String ns) throws Exception { 
+  public static EndpointReference Anonymous(String ns) { 
     if ( ns.equals(WSAConstants.NS_WSA1) )
       return EndpointReference.fromLocation( ns + "/role/anonymous" );
     return EndpointReference.fromLocation( ns + "/anonymous" );
@@ -116,13 +116,13 @@ abstract public class EndpointReference implements Serializable {
     return this.address.equals( namespace + "/anonymous" );
   }
 
-  public static EndpointReference None() throws Exception { 
+  public static EndpointReference None() { 
     if ( staticNS.equals(WSAConstants.NS_WSA1) )  // should fault or something
       return EndpointReference.fromLocation( staticNS + "/role/none" );
     return EndpointReference.fromLocation( staticNS + "/none" );
   }
 
-  public static EndpointReference None(String ns) throws Exception { 
+  public static EndpointReference None(String ns) { 
     if ( ns.equals(WSAConstants.NS_WSA1) )  // should fault or something
       return EndpointReference.fromLocation( ns + "/role/none" );
     return EndpointReference.fromLocation( ns + "/none" );
