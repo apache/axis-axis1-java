@@ -116,7 +116,9 @@ public class DirProvider implements WSDDEngineConfiguration {
             WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(in));
             doc.deploy(this.deployment);
         } catch (Exception e) {
-            throw new ConfigurationException(e);
+            String err = "Error processing configuration file: " 
+                + file.getAbsolutePath();
+            throw new ConfigurationException(err, e, false);
         } finally {
             if (in != null) {
                 try {
