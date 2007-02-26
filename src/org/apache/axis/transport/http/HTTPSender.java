@@ -552,17 +552,6 @@ public class HTTPSender extends BasicHandler {
         }
     }
 
-    /**
-     * add cookie to headers
-     * @param otherHeaders
-     * @param header
-     * @param cookie
-     */
-    private void addCookie(StringBuffer otherHeaders, String header, String cookie) {
-        otherHeaders.append(header).append(": ")
-                .append(cookie).append("\r\n");
-    }
-
     private InputStream readHeadersFromSocket(SocketHolder sockHolder,
                                               MessageContext msgContext,
                                               InputStream inp,
