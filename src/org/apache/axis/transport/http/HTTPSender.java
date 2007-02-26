@@ -531,13 +531,23 @@ public class HTTPSender extends BasicHandler {
     private void fillHeaders(MessageContext msgContext, String header, StringBuffer otherHeaders) {
         Object ck1 = msgContext.getProperty(header);
         if (ck1 != null) {
+            // Do we have multiple values to set?
             if (ck1 instanceof String[]) {
                 String [] cookies = (String[]) ck1;
+                otherHeaders.append(header).append(": ");
                 for (int i = 0; i < cookies.length; i++) {
-                    addCookie(otherHeaders, header, cookies[i]);
+                    // See bug AXIS-2064: https://issues.apache.org/jira/browse/AXIS-2064
+                    // Append the cookie
+                    otherHeaders.append(cookies[i]);
+                    // Append a ';' if not the last cookie
+                    if (i < cookies.length -1)
+                        otherHeaders.append(";");
                 }
+                otherHeaders.append("\r\n");
             } else {
-                addCookie(otherHeaders, header, (String) ck1);
+                // Simple string value
+                otherHeaders.append(header).append(": ")
+                        .append((String) ck1).append("\r\n");
             }
         }
     }
