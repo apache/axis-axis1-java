@@ -25,12 +25,14 @@ public class wsaClient {
       call.addParameter( "text", XMLType.XSD_STRING, ParameterMode.IN );
       call.setReturnType( XMLType.XSD_STRING );
       call.setEncodingStyle("");
+      call.setSOAPActionURI("ping");
 
       System.out.println( "Calling ping (one way)" );
       call.invokeOneWay( "ping", new Object[] { "hi" } );
 
       Thread.sleep(1000);
 
+      call.setSOAPActionURI("echo");
       call.setReplyTo( "http://localhost:81/axis/services/asyncService" );
       System.out.println( call.invoke( "echo", new Object[] { "hi" } ) );
 

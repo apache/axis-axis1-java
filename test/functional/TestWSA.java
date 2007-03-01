@@ -38,6 +38,7 @@ public class TestWSA extends TestCase {
       call.addParameter( "text", XMLType.XSD_STRING, ParameterMode.IN );
       call.setReturnType( XMLType.XSD_STRING );
       call.setEncodingStyle("");
+      call.setSOAPActionURI("echo");
 
       System.out.println( "Running non-WSA echo" );
       rc = call.invoke( "echo", new Object[] { "hi1" } );
