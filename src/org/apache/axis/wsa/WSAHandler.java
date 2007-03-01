@@ -53,11 +53,18 @@ public class WSAHandler { // extends BasicHandler {
      Message  msg = msgContext.getRequestMessage();
 
      if ( mih == null ) {
-       if ( msgContext.getAxisEngine().getOption("useWSA") == null &&
-            msgContext.getProperty("useWSA") == null )
-         return ;
+       String wsaVersion = (String) msgContext.getProperty( "useWSA" );
+       if ( wsaVersion == null ) 
+         wsaVersion = (String) msgContext.getAxisEngine().getOption("useWSA");
+       if ( wsaVersion == null ) return ;
+       if ( wsaVersion.equals("false") ) return ;
 
+       if ( !WSAConstants.NS_WSA1.equals(wsaVersion) &&
+            !WSAConstants.NS_WSA2.equals(wsaVersion) )
+         wsaVersion = WSAConstants.NS_WSA ;
+       
        msgContext.setProperty(WSAConstants.REQ_MIH, mih = new MIHeader());
+       mih.setWSAVersion( wsaVersion );
        mih.setRemoveOnGet(true);
        mih.fromEnvelope( msg.getSOAPEnvelope() );
      }
@@ -157,17 +164,16 @@ public class WSAHandler { // extends BasicHandler {
 
      MIHeader resMIH = null ;
      Message  msg    = null ;
-     String   to     = null ;
+     EndpointReference to = null ;
      
      resMIH = MIHeader.fromResponse();
      if ( resMIH == null ) return ;
 
-     if ( resMIH.getTo() != null )
-       to = resMIH.getTo().getAddress();
+     to = resMIH.getTo();
 
      msg = msgContext.getResponseMessage();
 
-     if ( msg==null || to==null || resMIH.getTo().isAnonymous() )
+     if ( msg==null || to==null || to.isAnonymous() )
        return ;
 
      Vector   relates    = (Vector) resMIH.getRelatesTo();
@@ -186,7 +192,7 @@ public class WSAHandler { // extends BasicHandler {
          }
 
          call.setSOAPVersion( msgContext.getSOAPConstants() );
-         call.setTargetEndpointAddress(resMIH.getTo().getAddress() );
+         call.setTargetEndpointAddress(to.getAddress() );
          call.setRequestMessage(msg);
          call.setSOAPActionURI( msgContext.getSOAPActionURI() );
 

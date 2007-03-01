@@ -61,14 +61,21 @@ public class MIHeader {
   // but it works.
 
   public String toString() {
-    return "{ns: " + getWSAVersion() + " id:" + getMessageID()+ 
-           " to:" + getTo() + " from:" + getFrom() +
-           " replyTo:" + getReplyTo() + " faultTo:" + getFaultTo() +
-           " action:" + getAction() + " toFault:" + getToFault() + "}" ;
+    return "{ns: " + namespace + " id:" + messageID + 
+           " to:" + to + " from:" + from +
+           " replyTo:" + replyTo + " faultTo:" + faultTo +
+           " action:" + action + " toFault:" + toFault + "}" ;
   }
 
   // Potentially problem causing. Would rather remove this constructor
   public MIHeader() {
+    processedOnGet = true ;
+    removeOnGet = false ;
+    setMessageID( "uuid:" + UUIDGenerator.getInstance().getUUID());
+  }
+
+  public MIHeader(String ns) {
+    namespace = ns ;
     processedOnGet = true ;
     removeOnGet = false ;
     setMessageID( "uuid:" + UUIDGenerator.getInstance().getUUID());
@@ -158,7 +165,7 @@ public class MIHeader {
   }
 
   public MIHeader generateReplyMI() throws Exception {
-    MIHeader newMIH = new MIHeader();
+    MIHeader newMIH = new MIHeader( this.getWSAVersion() );
 
     EndpointReference toEPR = getEffectiveReplyTo();
     newMIH.setWSAVersion( namespace );
@@ -371,6 +378,13 @@ public class MIHeader {
   }
 
   public EndpointReference getTo() {
+    /*
+    if ( to == null )
+      to = EndpointReference.Anonymous( namespace );
+    */
+    return to ; 
+  }
+  public EndpointReference getEffectiveTo() {
     if ( to == null )
       to = EndpointReference.Anonymous( namespace );
     return to ; 

@@ -80,7 +80,8 @@ abstract public class EndpointReference implements Serializable {
   }
 
   public String toString() {
-    return "" + getClass() +"@"+ hashCode() + " address: '" +address + 
+    return "" + getClass() +"@"+ hashCode() + "ns: " + namespace + 
+           " address: '" +address + 
            "' refProps: '" + referenceProperties + "' refParams: '" + 
            referenceParameters + "'"; 
   }
@@ -99,15 +100,17 @@ abstract public class EndpointReference implements Serializable {
   }
 
   public static EndpointReference Anonymous() { 
-    if ( staticNS.equals(WSAConstants.NS_WSA1) )
-      return EndpointReference.fromLocation( staticNS + "/role/anonymous" );
-    return EndpointReference.fromLocation( staticNS + "/anonymous" );
+    return Anonymous( staticNS );
   }
 
   public static EndpointReference Anonymous(String ns) { 
+    EndpointReference newEPR = newInstance( ns );
+
     if ( ns.equals(WSAConstants.NS_WSA1) )
-      return EndpointReference.fromLocation( ns + "/role/anonymous" );
-    return EndpointReference.fromLocation( ns + "/anonymous" );
+      newEPR.setAddress( ns + "/role/anonymous" );
+    else
+      newEPR.setAddress( ns + "/anonymous" );
+    return newEPR ;
   }
 
   public boolean isAnonymous() {
@@ -117,15 +120,17 @@ abstract public class EndpointReference implements Serializable {
   }
 
   public static EndpointReference None() { 
-    if ( staticNS.equals(WSAConstants.NS_WSA1) )  // should fault or something
-      return EndpointReference.fromLocation( staticNS + "/role/none" );
-    return EndpointReference.fromLocation( staticNS + "/none" );
+    return None( staticNS );
   }
 
   public static EndpointReference None(String ns) { 
+    EndpointReference newEPR = newInstance( ns );
+
     if ( ns.equals(WSAConstants.NS_WSA1) )  // should fault or something
-      return EndpointReference.fromLocation( ns + "/role/none" );
-    return EndpointReference.fromLocation( ns + "/none" );
+      newEPR.setAddress( ns + "/role/none" );
+    else
+      newEPR.setAddress( ns + "/none" );
+    return newEPR ;
   }
 
   public boolean isNone() {
