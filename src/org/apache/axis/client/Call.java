@@ -1852,6 +1852,21 @@ public class Call implements javax.xml.rpc.Call {
         }
     }
 
+    public void invoke( AxisFault af ) throws java.rmi.RemoteException {
+      try {
+        SOAPFault      sf   = new SOAPFault( af );
+        // make sure we pick-up the right namespaces
+        MessageContext mc   = MessageContext.getCurrentContext();
+        AxisEngine.setCurrentMessageContext( msgContext );
+        org.w3c.dom.Element elem = sf.getAsDOM();
+        AxisEngine.setCurrentMessageContext( mc );
+        invoke( new Object[] { new SOAPBodyElement( elem ) } );
+      }
+      catch( Exception exp ) {
+        throw new JAXRPCException( exp );
+      }
+    }
+
     /**
      * Invokes the operation associated with this Call object using the passed
      * in parameters as the arguments to the method.  This will return
@@ -1889,6 +1904,17 @@ public class Call implements javax.xml.rpc.Call {
         try {
             msgContext.setIsOneWay( true );
             invoke( method, args );
+        } catch( Exception exp ) {
+            throw new JAXRPCException( exp.toString() );
+        } finally {
+            msgContext.setIsOneWay( false );
+        }
+    }
+
+    public void invokeOneWay( AxisFault af ) {
+        try {
+            msgContext.setIsOneWay( true );
+            invoke( af );
         } catch( Exception exp ) {
             throw new JAXRPCException( exp.toString() );
         } finally {
