@@ -439,8 +439,7 @@ public abstract class AxisEngine extends BasicHandler
      */
     private static final String [] BOOLEAN_OPTIONS = new String [] {
                         PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL,
-                        PROP_DISABLE_PRETTY_XML,
-                        PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION
+                        PROP_DISABLE_PRETTY_XML
     };
 
     /**

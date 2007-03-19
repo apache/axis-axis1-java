@@ -270,13 +270,13 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
             if (shouldDisablePrettyXML != null)
                 disablePrettyXML = shouldDisablePrettyXML.booleanValue();
             
-            Boolean shouldDisableNamespacePrefixOptimization =
-                  (Boolean)msgContext.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION);
-            if (shouldDisableNamespacePrefixOptimization != null) {
-                enableNamespacePrefixOptimization = shouldDisableNamespacePrefixOptimization.booleanValue();
+            String shouldEnableNamespacePrefixOptimization =
+                (String) msgContext.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION);
+            if (shouldEnableNamespacePrefixOptimization != null) {
+                enableNamespacePrefixOptimization = JavaUtils.isTrue(shouldEnableNamespacePrefixOptimization, false);
             } else {
                 enableNamespacePrefixOptimization = JavaUtils.isTrue(AxisProperties.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,
-                                "true"));
+                                "false"));
             }
             boolean sendTypesDefault = sendXSIType;
 
@@ -314,7 +314,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 //            }
         } else {
             enableNamespacePrefixOptimization = JavaUtils.isTrue(AxisProperties.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,
-                            "true"));
+                            "false"));
             disablePrettyXML = JavaUtils.isTrue(AxisProperties.getProperty(AxisEngine.PROP_DISABLE_PRETTY_XML,
                             "true"));
         }
@@ -976,7 +976,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
                                    "CDATA", '#' + id);
 
-                startElement(elemQName, attrs);
+                startElement( elemQName, attrs);
                 endElement();
                 this.sendNull = sendNullCache;
                 return;
@@ -1104,7 +1104,19 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * @param qName is the name of the element
      * @param attributes are the attributes to write
      */
-    public void startElement(QName qName, Attributes attributes)
+    public void startElement(QName qName, Attributes attributes) 
+        throws IOException {
+      startElement( null, qName, attributes );
+    }
+
+    /**
+     * Writes (using the Writer) the start tag for element QName along with the
+     * indicated attributes and namespace mappings.
+     * @param oldPrefix is the prefix on the original Element
+     * @param qName is the name of the element
+     * @param attributes are the attributes to write
+     */
+    public void startElement(String oldPrefix, QName qName, Attributes attributes)
         throws IOException
     {
         java.util.ArrayList vecQNames = null;
@@ -1125,6 +1137,19 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
         if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
         String elementQName = qName2String(qName, true);
+
+        /* If we don't have a prefix, but the original version of the XML  */
+        /* did have one (meaning 'oldPrefix' is not null) then use that    */
+        /* one.We don't want to change the XML too much due to security.   */
+        /* However, let enableNamespacePrefixOptimization override.        */
+        /*******************************************************************/
+        if ( !enableNamespacePrefixOptimization &&
+             oldPrefix != null && !"".equals(oldPrefix) &&
+             elementQName.indexOf(":") < 0 )
+        {
+          elementQName = oldPrefix + ":" + elementQName ;
+        }
+
         writer.write('<');
 
         writer.write(elementQName);
@@ -1353,7 +1378,23 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
             localPart = el.getNodeName();
         QName qName = new QName(namespaceURI, localPart);
 
-        startElement(qName, attributes);
+        startElement(el.getPrefix(), qName, attributes);
+
+        /* At some point figure out why we don't just use the following
+        /* code which is much easier.  
+        /****************************************************************/
+        /*
+        String prefix = el.getPrefix();
+        String name   = el.getNodeName();
+
+        writer.write( "<" + (prefix!=null?(prefix+":"):"") + name );
+        NamedNodeMap map = el.getAttributes();
+        for ( int i = 0 ; i < map.getLength() ; i++ ) {
+          Attr attr = (Attr) map.item( i );
+          writer.write( " " + attr.getName() + "=\"" + attr.getValue() + "\"");
+        }
+        writer.write( ">" );
+        */
 
         NodeList children = el.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -1372,6 +1413,9 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 writeSafeString(((Text)child).getData());
             }
         }
+        /*
+        writer.write( "</" + (prefix!=null?(prefix+":"):"") + name + ">" );
+        */
 
         endElement();
     }
