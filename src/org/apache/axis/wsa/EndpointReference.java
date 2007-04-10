@@ -401,9 +401,10 @@ abstract public class EndpointReference implements Serializable {
     DocumentBuilder db  = dbf.newDocumentBuilder();
     Document        doc = db.newDocument();
     Element         elem = doc.createElementNS( ns, name );
-    if ( prefix == null ) prefix = "t" ;
-    // if ( prefix != null ) 
-    elem.setPrefix( prefix );
+    if ( prefix != null ) 
+      elem.setPrefix( prefix );
+    else
+      elem.setPrefix( "t" );
 
     if ( value != null )
       elem.appendChild( doc.createTextNode( value ) );
@@ -454,6 +455,8 @@ abstract public class EndpointReference implements Serializable {
     Element         elem = doc.createElementNS( ns, name );
     if ( prefix != null ) 
       elem.setPrefix( prefix );
+    else 
+      elem.setPrefix( "t" );
 
     if ( value != null )
       elem.appendChild( doc.createTextNode( value ) );
