@@ -358,6 +358,16 @@ public class Call implements javax.xml.rpc.Call {
         setTargetEndpointAddress(url);
     }
 
+    /**
+     * Build a call from an EPR.
+     *
+     * @param epr the target endpoint EPR
+     */
+    public Call(EndpointReference epr) {
+        this(new Service());
+        setTo(epr);
+    }
+
     ////////////////////////////
     //
     // Properties and the shortcuts for common ones.
@@ -766,6 +776,8 @@ public class Call implements javax.xml.rpc.Call {
     public void setSOAPActionURI(String SOAPActionURI) {
         useSOAPAction = true;
         this.SOAPActionURI = SOAPActionURI;
+        if (this.getAction() != null && !SOAPActionURI.equals(this.getAction()))
+            this.setAction( SOAPActionURI );
     } // setSOAPActionURI
 
     /**
@@ -1798,14 +1810,14 @@ public class Call implements javax.xml.rpc.Call {
         for ( i = 0 ; params != null && i < params.length ; i++ )
             if ( !(params[i] instanceof SOAPBodyElement) ) break ;
 
-        if ( params != null && params.length > 0 && i == params.length ) {
+        if ( params == null || (params.length > 0 && i == params.length) ) {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
             isMsg = true ;
             env = new SOAPEnvelope(msgContext.getSOAPConstants(),
                                    msgContext.getSchemaVersion());
 
-            for (i = 0; i < params.length; i++) {
+            for (i = 0; params != null && i < params.length; i++) {
                 env.addBodyElement((SOAPBodyElement) params[i]);
             }
 
@@ -1824,7 +1836,27 @@ public class Call implements javax.xml.rpc.Call {
             }
 
             env = msg.getSOAPEnvelope();
-            return( env.getBodyElements() );
+
+            Vector res = env.getBodyElements();
+            if ( res == null || res.size() == 0 || 
+                 (res.get(0) instanceof RPCElement)) return res ;
+
+            // Copy the elements into a new Vector so that we resolve all
+            // of the prefixes
+            // For SOAPBodyElements, reserialize them so that they are
+            // stand-alone Elements.
+            Vector res1 = new Vector();
+            for (i = 0 ; i < res.size() ; i++ ) {
+              SOAPBodyElement sbe = (SOAPBodyElement) res.get(i);
+              java.io.PrintStream err = System.err ;
+              try {
+                sbe = new SOAPBodyElement( sbe.getAsDOM() );
+              }catch(Exception exp) {
+                throw new java.rmi.RemoteException( exp.toString());
+              }
+              res1.add( sbe );
+            }
+            return res1 ;
         }
 
 
@@ -3063,10 +3095,11 @@ public class Call implements javax.xml.rpc.Call {
      * Note: this does not set the transport URL.  As of now they are
      * treated as two independent entities.
      */
-    public void setTo(EndpointReference epr) throws Exception {
+    public void setTo(EndpointReference epr) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setTo( epr );
+      setTargetEndpointAddress( epr.getAddress() );
     }
 
     /**
@@ -3077,10 +3110,11 @@ public class Call implements javax.xml.rpc.Call {
      * Note: this does not set the transport URL.  As of now they are
      * treated as two independent entities.
      */
-    public void setTo(String url) throws Exception {
+    public void setTo(String url) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setTo( EndpointReference.fromLocation( url ) );
+      setTargetEndpointAddress( url );
     }
 
     /**
@@ -3092,11 +3126,30 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Sets the WS-Addressing wsa:Action
+     */
+    public void setAction(String action) {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      if ( mih == null ) mih = new MIHeader( this );
+      mih.setAction( action );
+      if ( !action.equals(getSOAPActionURI()) )
+        setSOAPActionURI( action );
+    }
+
+    /**
+     * Gets the WS-Addressing wsa:Action
+     */
+    public String getAction() {
+      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
+      return mih == null ? null : mih.getAction();
+    }
+
+    /**
      * Sets the WS-Addressing wsa:From value 
      *
      * @param epr The epr to use for the wsa:From
      */
-    public void setFrom(EndpointReference epr) throws Exception {
+    public void setFrom(EndpointReference epr) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFrom( epr );
@@ -3107,7 +3160,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param epr The url to use for the wsa:From
      */
-    public void setFrom(String url) throws Exception {
+    public void setFrom(String url) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFrom( EndpointReference.fromLocation( url ) );
@@ -3128,7 +3181,7 @@ public class Call implements javax.xml.rpc.Call {
      * 
      * @param epr The epr to use for the wsa:ReplyTo
      */
-    public void setReplyTo(EndpointReference epr) throws Exception {
+    public void setReplyTo(EndpointReference epr) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setReplyTo( epr );
@@ -3139,7 +3192,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param url The url to use for the wsa:ReplyTo Address field
      */
-    public void setReplyTo(String url) throws Exception {
+    public void setReplyTo(String url) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setReplyTo( EndpointReference.fromLocation( url ) );
@@ -3160,7 +3213,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param epr he epr to use for the wsa:FaultTo
      */
-    public void setFaultTo(EndpointReference epr) throws Exception {
+    public void setFaultTo(EndpointReference epr) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFaultTo( epr );
@@ -3171,7 +3224,7 @@ public class Call implements javax.xml.rpc.Call {
      * 
      * @param url The url to use  for the wsa:FaultTo Address field
      */
-    public void setFaultTo(String url) throws Exception {
+    public void setFaultTo(String url) {
       MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
       if ( mih == null ) mih = new MIHeader( this );
       mih.setFaultTo( EndpointReference.fromLocation( url ) );
