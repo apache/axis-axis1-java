@@ -5,6 +5,7 @@ import javax.xml.namespace.QName;
 import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Vector;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -30,6 +31,8 @@ abstract public class EndpointReference implements Serializable {
   protected String  portName = null;
   protected List    referenceProperties = new java.util.LinkedList();
   protected List    referenceParameters = new java.util.LinkedList();
+  protected Vector  metadata = null ;
+  protected Vector  extras = null ;
 
   EndpointReference( final EndpointReference epr){
     this.address = epr.address;
@@ -38,6 +41,13 @@ abstract public class EndpointReference implements Serializable {
     this.portName = epr.portName;
     this.referenceProperties = new java.util.LinkedList(epr.referenceProperties);
     this.referenceParameters = new java.util.LinkedList(epr.referenceParameters);
+    this.metadata = new Vector();
+    for ( int i = 0 ; epr.extras != null && i < epr.metadata.size() ; i++ ) 
+      metadata.add(  ((Element)epr.metadata.get(i)).cloneNode( true ) );
+
+    this.extras = new Vector();
+    for ( int i = 0 ; epr.extras != null && i < epr.extras.size() ; i++ ) 
+      extras.add(  ((Element)epr.extras.get(i)).cloneNode( true ) );
   }
 
   protected EndpointReference() {}
@@ -74,6 +84,20 @@ abstract public class EndpointReference implements Serializable {
       for ( int i = 0 ; i < this.referenceParameters.size() ; i++ ) {
         String prop = (String) this.referenceParameters.get(i);
         newObj.addReferenceParameter( new String(prop) );
+      }
+    }
+    if ( this.metadata != null ) {
+      for ( int i = 0 ; i < this.metadata.size() ; i++ ) {
+        Element e = (Element) this.metadata.get(i);
+        e = (Element) e.cloneNode( true );
+        newObj.addExtraElement( e );
+      }
+    }
+    if ( this.extras != null ) {
+      for ( int i = 0 ; i < this.extras.size() ; i++ )  {
+        Element e = (Element) this.extras.get(i);
+        e = (Element) e.cloneNode( true );
+        newObj.addExtraElement( e );
       }
     }
     return newObj ;
@@ -147,41 +171,77 @@ abstract public class EndpointReference implements Serializable {
    */
   public static EndpointReference fromDOM(Element el) throws Exception {
      EndpointReference er = new AxisEndpointReference();
+     String NS1 = WSAConstants.NS_WSA1 ;
+     String NS2 = WSAConstants.NS_WSA2 ;
+
      String NSs[] = new String[] { WSAConstants.NS_WSA1, WSAConstants.NS_WSA2 };
 
-     for ( int j = 0 ; j < NSs.length ; j++ ) {
-       String ns = NSs[j] ;
+     NodeList list = el.getChildNodes();
+     for ( int j = 0 ; list != null && j < list.getLength() ; j++ ) {
+       Node node = list.item( j );
+       if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
+       Element e = (Element) node ;
+       String  ns = e.getNamespaceURI();
+       String  ln = e.getLocalName();
 
-       NodeList nl = el.getElementsByTagNameNS(ns, "Address");
-       if ( nl.item(0)!=null ) {
-         er.setAddress(Util.getText((Element)nl.item(0)));
+       if ( "Address".equals(ln) && (NS1.equals(ns) || NS2.equals(ns)) ) {
+         er.setAddress( Util.getText( e ) );
          er.setWSAVersion( ns );
        }
-
-       nl = el.getElementsByTagNameNS(ns, "PortType");
-       if (nl.item(0)!=null)
-         er.setPortType(Util.getText((Element)nl.item(0)));
-
-       nl = el.getElementsByTagNameNS(ns, "ServiceName");
-       if (nl.item(0)!=null) {
-         Element child = (Element)nl.item(0);
-         er.setServiceName(Util.getText(child));
-         er.setPortName(child.getAttributeNS(ns, "PortName"));
+       else if ( "PortType".equals(ln) && (NS1.equals(ns) || NS2.equals(ns)) ) {
+         er.setPortType( Util.getText( e ) );
        }
-
-       nl = el.getElementsByTagNameNS(ns, "ReferenceProperties");
-       if (nl.item(0)!=null) 
-         er.addReferenceProperties( (Element) nl.item(0) );
-
-       nl = el.getElementsByTagNameNS(ns, "ReferenceParameters");
-       if (nl.item(0)!=null) 
-         er.addReferenceParameters( (Element) nl.item(0) );
+       else if ("ServiceName".equals(ln) && (NS1.equals(ns) || NS2.equals(ns))){
+         er.setServiceName( Util.getText( e ) );
+         er.setPortName(e.getAttributeNS(ns, "PortName"));
+       }
+       else if ( "ReferenceProperties".equals(ln) &&
+                 (NS1.equals(ns) || NS2.equals(ns)) ) {
+         NodeList l1 = e.getChildNodes();
+         for ( int k = 0 ; k < l1.getLength() ; k++ ) {
+           Node n1 = l1.item( k );
+           if ( n1.getNodeType() != Node.ELEMENT_NODE ) continue ;
+           er.addReferenceProperty( (Element) n1 );
+         }
+       }
+       else if ( "ReferenceParameters".equals(ln) &&
+                 (NS1.equals(ns) || NS2.equals(ns)) ) {
+         NodeList l1 = e.getChildNodes();
+         for ( int k = 0 ; k < l1.getLength() ; k++ ) {
+           Node n1 = l1.item( k );
+           if ( n1.getNodeType() != Node.ELEMENT_NODE ) continue ;
+           er.addReferenceParameter( (Element) n1 );
+         }
+       }
+       else if ( "Metadata".equals(ln) && NS2.equals(ns) ) {
+         NodeList l = e.getChildNodes();
+         for ( int i = 0 ; i < l.getLength() ; i++ ) {
+           Node n = l.item( i );
+           if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+           if ( er.metadata == null ) er.metadata = new Vector();
+           er.metadata.add( n.cloneNode(true) );
+         }
+       }
+       else {
+         if ( er.extras == null ) er.extras = new Vector();
+         er.extras.add( e.cloneNode(true) );
+       }
      }
      if ( er.getAddress() == null ) {
        String tmp = "Missing Address in EPR: " + XMLUtils.ElementToString(el);
        throw new Exception( tmp );
      }
      return er ;
+  }
+
+  public void addExtraElement(Element e) {
+    if ( this.extras == null ) this.extras = new Vector();
+    this.extras.add( e.cloneNode(true) );
+  }
+
+  public void addMetadataElement(Element e) {
+    if ( this.metadata == null ) this.metadata = new Vector();
+    this.metadata.add( e.cloneNode(true) );
   }
 
   /**
@@ -280,6 +340,14 @@ abstract public class EndpointReference implements Serializable {
      portType = pt;
   }
 
+  public Vector getExtra() {
+    return extras ;
+  }
+
+  public Vector getMetadata() {
+    return metadata ;
+  }
+
   public Element toDOM() throws javax.xml.parsers.ParserConfigurationException {
      return toDOM(null, null);
   }
@@ -365,6 +433,31 @@ abstract public class EndpointReference implements Serializable {
       }
       rootChild.appendChild(refProp);
     }  
+
+    if (metadata != null) {
+      Element md = null ;
+
+      if (namespace.equals(WSAConstants.NS_WSA2)) {
+        md = ehrDoc.createElementNS(namespace, "Metadata");
+        md.setPrefix("wsa");
+        rootChild.appendChild( md );
+      }
+      else
+        md = rootChild ;
+
+      for ( int i = 0 ; i < metadata.size() ; i++ ) {
+        Element e = (Element) metadata.get(i);
+        md.appendChild( ehrDoc.importNode( e, true ) );
+      }
+    }
+
+    if ( extras != null ) {
+      for ( int i = 0 ; i < extras.size() ; i++ ) {
+        Element e = (Element) extras.get(i);
+        rootChild.appendChild( ehrDoc.importNode( e, true ) );
+      }
+    }
+
     return rootChild;
   }
 

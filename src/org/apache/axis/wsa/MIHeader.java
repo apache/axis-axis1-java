@@ -90,7 +90,7 @@ public class MIHeader {
    * 
    * @exception AxisFault
    */
-  public MIHeader(javax.xml.rpc.Call call) throws AxisFault {
+  public MIHeader(javax.xml.rpc.Call call) {
     processedOnGet = true ;
     removeOnGet = false ;
     call.setProperty( WSAConstants.REQ_MIH, this );
@@ -111,6 +111,18 @@ public class MIHeader {
 
   public String getWSAVersion() {
     return namespace ;
+  }
+
+  public static String getCurrentWSAVersion() throws Exception {
+    MIHeader mih = null ;
+    MessageContext msgContext = MessageContext.getCurrentContext();
+    if ( msgContext == null ) return EndpointReference.getGlobalWSAVersion() ;
+    if ( msgContext.getPastPivot() ) 
+       mih = fromResponse();
+    else
+       mih = fromRequest();
+    if ( mih == null ) return EndpointReference.getGlobalWSAVersion() ;
+    return mih.getWSAVersion();
   }
 
   public static MIHeader fromCurrentMessage() throws Exception {
