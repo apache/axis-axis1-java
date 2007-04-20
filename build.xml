@@ -430,7 +430,7 @@ Copyright:
       </fileset>
     </copy>
     <delete>
-      <fileset dir="${build.webapp}" includes="**/CVS"/>
+      <fileset dir="${build.webapp}" includes="**/.svn"/>
     </delete>
     <jar jarfile="${build.dir}/${name}.war" basedir="${build.webapp}"/>
   </target>
@@ -485,6 +485,7 @@ Copyright:
     </copy>
     <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
     <copy file="README" tofile="${dist.dir}/README"/>
+    <copy file="NOTICE" tofile="${dist.dir}/NOTICE"/>
     <copy file="release-notes.html" tofile="${dist.dir}/release-notes.html"/>
     <copy todir="${dist.dir}/xmls">
       <fileset dir="xmls"/>
@@ -507,7 +508,9 @@ Copyright:
       <fileset dir=".">
         <include name="*.xml"/>
         <include name="*.html"/>
+        <include name="LICENSE"/>
         <include name="README"/>
+        <include name="NOTICE"/>
         <include name="docs/**"/>
         <include name="lib/**"/>
         <include name="samples/**"/>
@@ -517,7 +520,7 @@ Copyright:
         <include name="webapps/**"/>
         <include name="xmls/**"/>
 
-        <exclude name="**/CVS/**"/>
+        <exclude name="**/.svn/**"/>
       </fileset>
     </copy>
     <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
@@ -580,23 +583,6 @@ Copyright:
         location="${axis.home}/src" />
     </ant>
     </target>
-
-
-  <target name="changelog" 
-    description="Generate the changelog for Axis"
-    depends="setenv" >
-    <cvschangelog dir="."
-                destfile="${build.dir}/changelog.xml"
-                start="4 May 2005"
-    />        
-    <style in="${build.dir}/changelog.xml" 
-           out="${axis.home}/docs/cvslog.html" 
-           style="${axis.home}/tools/changelog.xsl">
-      <param name="title" expression="Apache Axis 1.2.1 Final ChangeLog (Changes after 1.2 Final)"/>
-      <param name="module" expression="ws-axis/java"/>
-      <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
-    </style>
-  </target>
 
   <target name="happyclient" depends="compile">
       <java classname="org.apache.axis.client.HappyClient"

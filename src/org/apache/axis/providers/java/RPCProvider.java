@@ -336,9 +336,19 @@ public class RPCProvider extends JavaProvider {
     {
         String methodName = body.getMethodName();
         /* Now put the result in the result SOAPEnvelope */
-        RPCElement resBody = new RPCElement(methodName + "Response");
+        QName respQName = operation.getResponseQName();
+        String localPart;
+        String namespaceURI;
+        if (respQName != null) {
+            localPart = respQName.getLocalPart();
+            namespaceURI = respQName.getNamespaceURI();
+        } else {
+            localPart = methodName + "Response";
+            namespaceURI = body.getNamespaceURI();
+        }
+        RPCElement resBody = new RPCElement(localPart);
         resBody.setPrefix(body.getPrefix());
-        resBody.setNamespaceURI(body.getNamespaceURI());
+        resBody.setNamespaceURI(namespaceURI);
         resBody.setEncodingStyle(msgContext.getEncodingStyle());
         try {
             // Return first

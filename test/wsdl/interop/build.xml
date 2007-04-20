@@ -178,7 +178,7 @@ Copyright:
     </wsdl2java>
     <!-- SOAPBuilders Interoperability Lab "Round 2" -->
     <!--     http://www.whitemesa.com/interop.htm    -->
-    <wsdl2java url="http://soapinterop.java.sun.com/round2/base?WSDL"
+    <wsdl2java url="http://www.cs.fsu.edu/~engelen/interop2.wsdl"
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
@@ -189,7 +189,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/" package="interop.test"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.test"/>
     </wsdl2java>
-    <wsdl2java url="http://soapinterop.java.sun.com/round2/groupb?WSDL"
+    <wsdl2java url="http://www.cs.fsu.edu/~engelen/interop2B.wsdl"
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
@@ -263,7 +263,7 @@ Copyright:
     <!-- Step 8.  Test second generated client against  -->
     <!--          pre-built server                      -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://soapinterop.java.sun.com/round3/groupd/import1?WSDL"
+    <wsdl2java url="http://www.whitemesa.com/r3/import1.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
@@ -303,7 +303,7 @@ Copyright:
     <!-- SOAP Builder's round III web services -->
     <!-- interoperability testing:  import2    -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://soapinterop.java.sun.com/round3/groupd/import2?WSDL"
+    <wsdl2java url="http://www.whitemesa.com/r3/import2.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2"/>
@@ -342,6 +342,7 @@ Copyright:
     <!-- SOAP Builder's round III web services       -->
     <!-- interoperability testing:  absolute import2 -->
     <!-- Steps 1, 2 and 4: -->
+<!--
     <wsdl2java url="http://www.dolphinharbor.org/services/R3Import2/service.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
@@ -353,6 +354,7 @@ Copyright:
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/absimport2/*.java" />
     </javac>
+-->
     <!-- Step 3:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 5:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 6:  -->
@@ -378,7 +380,7 @@ Copyright:
     <!-- SOAP Builder's round III web services -->
     <!-- interoperability testing:  import3    -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://soapinterop.java.sun.com/round3/groupd/import3?WSDL"
+    <wsdl2java url="http://www.whitemesa.com/r3/import3.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main2/" package="test.wsdl.interop3.import3"/>

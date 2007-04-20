@@ -1,1071 +1,191 @@
 ------------------------------------------------------------------------
-r261539 | tomj | 2005-06-16 10:55:54 -0400 (Thu, 16 Jun 2005) | 7 lines
+r314867 | dims | 2005-10-12 08:47:25 -0400 (Wed, 12 Oct 2005) | 3 lines
 Changed paths:
-   M /webservices/axis1/trunk/java/test/wsdl/query/FileGenWrappedTestCase.java
-   A /webservices/axis1/trunk/java/test/wsdl/query/QueryBean.java
-   A /webservices/axis1/trunk/java/test/wsdl/query/QueryTest.java
-   D /webservices/axis1/trunk/java/test/wsdl/query/QueryTest.wsdl
-   D /webservices/axis1/trunk/java/test/wsdl/query/QueryTestBindingImpl.java
-   M /webservices/axis1/trunk/java/test/wsdl/query/QueryTestServiceTestCase.java
-   A /webservices/axis1/trunk/java/test/wsdl/query/QueryTestSoapBindingImpl.java
-   M /webservices/axis1/trunk/java/test/wsdl/query/build.xml
-   A /webservices/axis1/trunk/java/test/wsdl/query/deploy.wsdd
-   A /webservices/axis1/trunk/java/test/wsdl/query/undeploy.wsdd
-
-Update the Query test to more closely match the problems we are checking for:
-- Generate the WSDL from Java code, including the QueryBean
-- Do not include array mappings in deploy.wsdd (use a static one).
-- Use my QueryBean, not the generated one on the client.
-
-This still passes, so life is good.
+   M /webservices/axis/trunk/java/src/org/apache/axis/encoding/SerializationContext.java
+   M /webservices/axis/trunk/java/test/saaj/TestSOAPFaults.java
 
-------------------------------------------------------------------------
-r261541 | jayachandra | 2005-06-16 11:48:52 -0400 (Thu, 16 Jun 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java
-
-This is with reference to jira issue 2059. Please once see http://issues.apache.org/jira/browse/AXIS-2059.
-Looks like in the resolveNameClashes method of JavaGeneratorFactory, there is a mention of this particular common special case. By and large, things are taken care of but... when two names are clashing (note v.size() == 2 in line#1031 of JavaGeneratorFactory.java) and they correspond to the names of a type and an element, before deciding if resolution is not needed currently a check is performed if both the *qnames* of colliding element and type are equal or not. This QName exact match forces that, if same names are being used, an element can reference a type present only in its namespace. However as long as there is overall uniqueness amongst all the existing wsdl types, a type with the same name as that of element but from a different schema namespace can also be used as a reference for the element (as is the case described in the sample.wsdl provided here). Hence, I believe, this qname check should not be present.
-ant all-tests is verified before committing the patch.
-
-------------------------------------------------------------------------
-r261548 | dims | 2005-06-17 13:28:15 -0400 (Fri, 17 Jun 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/xmls/properties.xml
-
-upping the ante
-
-------------------------------------------------------------------------
-r261549 | dims | 2005-06-17 14:34:50 -0400 (Fri, 17 Jun 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/providers/java/RPCProvider.java
-
-Fix for AXIS-2061 - Refactored RPCProvider
-
-------------------------------------------------------------------------
-r261550 | dims | 2005-06-17 17:42:32 -0400 (Fri, 17 Jun 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/providers/java/RPCProvider.java
-
-private -> protected
-
-------------------------------------------------------------------------
-r261555 | dims | 2005-06-20 18:49:44 -0400 (Mon, 20 Jun 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/EnvelopeBuilder.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/SOAPEnvelope.java
-
-Fix for AXIS-2069 - SAX2EventRecorder.replay called even after message is validly marked dirty
-
-from David Blevins
-
-------------------------------------------------------------------------
-r261556 | dims | 2005-06-20 18:50:52 -0400 (Mon, 20 Jun 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/NodeImpl.java
-
-Fix for AXIS-2068 - Missing setDirty flags in SAAJ tree modification (detachNode and setParent)
-from  David Blevins
-
-------------------------------------------------------------------------
-r261579 | dims | 2005-06-24 23:20:04 -0400 (Fri, 24 Jun 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/soap/SOAPConnectionImpl.java
-
-Fix for AXIS-2087 - SOAPConnection throws SOAPExceptions instead of returning faults as SOAPMessages
-
-------------------------------------------------------------------------
-r261580 | venkat | 2005-06-26 07:17:24 -0400 (Sun, 26 Jun 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java
-
-Patch for AXIS-1992, as suggested by Ryan. Passes ant all-tests.
-
-------------------------------------------------------------------------
-r261593 | venkat | 2005-06-30 06:39:01 -0400 (Thu, 30 Jun 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/docs/axis.css
-   M /webservices/axis1/trunk/java/docs/reference.html
-
-Reference.html: minor cleanup for pulling requestFlow and responseFlow into seperate paragraphs.
-
-axis.css: specified the font-size as 10 pt to make the web pages look normal, and bit lesser text size.
-
-------------------------------------------------------------------------
-r261598 | dims | 2005-06-30 16:07:08 -0400 (Thu, 30 Jun 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/test/wsdl/interop/build.xml
-
-switch to sun interop server. whitemesa is down.
-
-------------------------------------------------------------------------
-r261599 | dims | 2005-06-30 16:09:17 -0400 (Thu, 30 Jun 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/description/ParameterDesc.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/RPCParam.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/Parameter.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java
-   M /webservices/axis1/trunk/java/test/wsdl/wrapped/CityBBB.wsdl
-
-Fix for AXIS-2054 - Axis sends xsi:nil for non-nillable, minOccurs=0 parameters
-
-from Dave Marquard
-
-------------------------------------------------------------------------
-r261625 | venkat | 2005-07-06 02:10:07 -0400 (Wed, 06 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/components/encoding/AbstractXMLEncoder.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/components/encoding/UTF16Encoder.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/components/encoding/UTF8Encoder.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/i18n/resource.properties
-
-Partial fix for AXIS-2025 for avoiding runtime exception during construction of AxisFault object - don't put the un-encoded invalid character again into the fault string.
-
-------------------------------------------------------------------------
-r261626 | venkat | 2005-07-06 02:21:58 -0400 (Wed, 06 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/AxisFault.java
-
-Partial fix for AXIS-2025 for avoiding runtime exception during construction of AxisFault object - don't put the un-encoded invalid character again into the fault string.
-
-------------------------------------------------------------------------
-r261636 | dims | 2005-07-06 10:17:50 -0400 (Wed, 06 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/fromJava/Emitter.java
-
-Fix for NPE in Emitter when extraClasses args are given
-from Sudheer Tumuluru <stumuluru@real.com>
-
-------------------------------------------------------------------------
-r261645 | dims | 2005-07-06 23:10:46 -0400 (Wed, 06 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/xbeans/XmlBeanDeserializer.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/xbeans/XmlBeanSerializer.java
-
-Fix for AXIS-1812 - XMLBeanSerialization doesn't generate correct WSDL
-
-------------------------------------------------------------------------
-r261648 | dims | 2005-07-07 09:15:29 -0400 (Thu, 07 Jul 2005) | 3 lines
-Changed paths:
-   A /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/BackslashUtil.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/ServiceEntry.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaServiceImplWriter.java
-
-Fix for AXIS-2088 - backslash in wsdl:service[@name] generates bad java
-from Dennis Byrne
-
-------------------------------------------------------------------------
-r261661 | dims | 2005-07-09 10:11:19 -0400 (Sat, 09 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/client/client-config.wsdd
-   M /webservices/axis1/trunk/java/src/org/apache/axis/server/server-config.wsdd
-
-make enableNamespacePrefixOptimization=false the default.
-
-------------------------------------------------------------------------
-r261662 | dims | 2005-07-09 13:05:44 -0400 (Sat, 09 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SchemaUtils.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanWriter.java
-
-Fix for AXIS-1797 - Base attributes not serialized when simpleContent extends another simpleContent
-
-------------------------------------------------------------------------
-r261663 | dims | 2005-07-09 13:07:26 -0400 (Sat, 09 Jul 2005) | 5 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/SerializationContext.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/BeanDeserializer.java
-
-Fix for AXIS-1752 - xs:list attributes do not serialize
-Fix for AXIS-1762 - xs:list attributes do not deserialize
-
-from Steve Green
-
-------------------------------------------------------------------------
-r261688 | dims | 2005-07-12 09:50:36 -0400 (Tue, 12 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/Admin.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/NetworkUtils.java
-
-Fix for AXIS-2085 - Support for IPv6 at org.apache.axis.utils.Admin:verifyHostAllowed()
-
-------------------------------------------------------------------------
-r261690 | dims | 2005-07-12 10:04:40 -0400 (Tue, 12 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/attachments/DimeBodyPart.java
-
-Fix for AXIS-2084 - Dime attachements: Type_Length of the final record chunk must be zero
-
-------------------------------------------------------------------------
-r261694 | venkat | 2005-07-13 02:05:11 -0400 (Wed, 13 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanWriter.java
-
-Fix for AXIS-1667 - Minor changes for making the multi-line comments for member fields and accessor methods pretty and aligned.
-
-------------------------------------------------------------------------
-r261717 | dims | 2005-07-17 22:12:34 -0400 (Sun, 17 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/attachments/DimeBodyPart.java
-
-Fix for  AXIS-2084 -  Dime attachements: Type_Length of the final record chunk must be zero
-from  Brian Husted
-
-------------------------------------------------------------------------
-r261718 | venkat | 2005-07-18 07:15:55 -0400 (Mon, 18 Jul 2005) | 6 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/junit-exclude-tests.txt
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/Utils.java
-
-Fix for AXIS-2107 (Amazon wsdl):
-
-- Remove the exclusion of anonymous types while generating sources in case of Wrapped services. Need this until a fix is made for correct identification of anonymous types.
-
-- Exclude the testcase that checks against generation of classes for anonymous types in case of Wrapped services.
-
-------------------------------------------------------------------------
-r261719 | venkat | 2005-07-18 07:35:47 -0400 (Mon, 18 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/Utils.java
-
-minor cleanup.
-
-------------------------------------------------------------------------
-r261722 | dims | 2005-07-20 07:52:16 -0400 (Wed, 20 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/BackslashUtil.java
-
-javadoc fixes for AXIS-2088 from Dennis Byrne
-
-------------------------------------------------------------------------
-r261723 | dims | 2005-07-20 10:13:29 -0400 (Wed, 20 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/ArrayUtil.java
-
-Fix for AXIS-2129 - NullPointerException sending array of org.w3c.dom.Elements
-
-------------------------------------------------------------------------
-r261724 | dims | 2005-07-20 13:00:00 -0400 (Wed, 20 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/i18n/resource.properties
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java
-
-Added warning for AXIS-2130 - Axis does not generate wrapped wsdl properly
-
-------------------------------------------------------------------------
-r261725 | dims | 2005-07-20 22:08:00 -0400 (Wed, 20 Jul 2005) | 5 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/SerializationContext.java
-
-Fix for AXIS-2100 - duplicate xsi:type="soapenc:Array"
-Fix for AXIS-2127 - Schema version mismatch
-
-from Thorsten Jungblut
-
-------------------------------------------------------------------------
-r261726 | dims | 2005-07-20 23:08:40 -0400 (Wed, 20 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/BeanSerializer.java
-
-Fix for AXIS-2123 - NULLPointException thrown in BeanSerializer.java (org.apache.axis.encoding.ser)
-
-------------------------------------------------------------------------
-r261727 | dims | 2005-07-20 23:25:23 -0400 (Wed, 20 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/DateDeserializer.java
-
-Better NumberFormatException if the size is less than expected. (prevents a mis-leading java.lang.StringIndexOutOfBoundsException as mentioned in AXIS-2078)
-
-------------------------------------------------------------------------
-r261733 | dims | 2005-07-21 11:48:04 -0400 (Thu, 21 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaWriter.java
-
-Fix for AXIS-2122 - WSDL2Java - i18n - JavaWriter.java
-
-------------------------------------------------------------------------
-r261734 | dims | 2005-07-21 17:29:05 -0400 (Thu, 21 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/attachments/DimeBodyPart.java
-
-Latest patch for AXIS-2084 - Dime attachements: Type_Length of the final record chunk must be zero
-from Brian Husted
-
-------------------------------------------------------------------------
-r261738 | dims | 2005-07-23 13:50:29 -0400 (Sat, 23 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/xmls/path_refs.xml
-   M /webservices/axis1/trunk/java/xmls/targets.xml
-   A /webservices/axis1/trunk/java/xsd
-   A /webservices/axis1/trunk/java/xsd/soap.xsd
-   A /webservices/axis1/trunk/java/xsd/wsdl.xsd
-
-- Codegen schemas for soap and wsdl if xmlbeans is present
-- Generates an additional axis-schema-jar for use in xmlbeans serializer/de-serializer.
-
-------------------------------------------------------------------------
-r261745 | dims | 2005-07-26 22:46:47 -0400 (Tue, 26 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/SourceDataHandlerDeserializer.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/JavaUtils.java
-
-Fix for  AXIS-2142 -  ClassCastException in JavaUtils.convert
-from  Archit Shah
-
-------------------------------------------------------------------------
-r261746 | dims | 2005-07-26 23:16:09 -0400 (Tue, 26 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorDeserializerFactory.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorEnumTypeDeserializerFactory.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorEnumTypeSerializerFactory.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorSerializer.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorSerializerFactory.java
-
-Fix for  AXIS-2135 - CastorSerializer 1.2/1.2.1 does not handle arrays correctly
-from Dmitry Vasilenko
-
-------------------------------------------------------------------------
-r261747 | dims | 2005-07-26 23:22:57 -0400 (Tue, 26 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/attachments/ManagedMemoryDataSource.java
-
-Fix for AXIS-2134 - ManagedMemoryDataSource does not correctly handle large attachments
-from Rodrigo Ruiz
-
-------------------------------------------------------------------------
-r261748 | dims | 2005-07-26 23:44:02 -0400 (Tue, 26 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/SOAPFaultBuilder.java
-
-Fix for AXIS-2121 - CLONE -IncompatibleClassChangeError when deploying Axis 1.2-RC3 on WebSphere 5.1 with PARENT_FIRST classloading
-
-------------------------------------------------------------------------
-r261749 | dims | 2005-07-27 00:01:46 -0400 (Wed, 27 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorDeserializerFactory.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorEnumTypeDeserializerFactory.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorEnumTypeSerializerFactory.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/castor/CastorSerializerFactory.java
-
-oops! fix imports.
-
-------------------------------------------------------------------------
-r261756 | dims | 2005-07-27 16:39:35 -0400 (Wed, 27 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SchemaUtils.java
-
-Fix for AXIS-1989 - WSDL2Java new array wrapping fails if schema has namspace prefix
-from Clive Brettingham-Moore
-
-------------------------------------------------------------------------
-r261764 | dims | 2005-07-28 13:18:05 -0400 (Thu, 28 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/test/wsdl/datatypes/build.xml
-
-Fix for AXIS-1989 brings out problem in our test suite.
-
-------------------------------------------------------------------------
-r261765 | dims | 2005-07-28 13:25:38 -0400 (Thu, 28 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/test/wsdl/extensibility/build.xml
-
-Fix for AXIS-1989 brings out problem in our test suite.
-
-------------------------------------------------------------------------
-r261766 | dims | 2005-07-28 13:37:20 -0400 (Thu, 28 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/test/wsdl/interop4/groupi/build.xml
-
-Fix for AXIS-1989 brings out problem in our test suite.
-
-------------------------------------------------------------------------
-r261767 | dims | 2005-07-28 13:43:49 -0400 (Thu, 28 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/test/wsdl/terra/build.xml
-
-Fix for AXIS-1989 brings out problem in our test suite.
-
-------------------------------------------------------------------------
-r261768 | dims | 2005-07-28 14:03:09 -0400 (Thu, 28 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/test/wsdl/uddiv2/build.xml
-
-Fix for AXIS-1989 brings out problem in our test suite.
-
-------------------------------------------------------------------------
-r261769 | dims | 2005-07-28 23:28:43 -0400 (Thu, 28 Jul 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SchemaUtils.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java
-
-Fix for AXIS-2113 - WSDL Generation Does Not Work With Paypal
-Fix for AXIS-1993 - WSDL2Java 1.2 fails where 1.2RC3 worked (XML Signature XSD)
-
-------------------------------------------------------------------------
-r261774 | dims | 2005-07-29 21:48:09 -0400 (Fri, 29 Jul 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/transport/http/CommonsHTTPSender.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/transport/http/HTTPConstants.java
-
-Fix for AXIS-2136 - support request & response gzip compression on HTTP transport
-
-from Simon Fell
-
-------------------------------------------------------------------------
-r261775 | dims | 2005-07-31 17:41:23 -0400 (Sun, 31 Jul 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/transport/http/CommonsHTTPSender.java
-
-Set the user agent in CommonsHTTPSender.
-
-------------------------------------------------------------------------
-r261776 | dims | 2005-07-31 17:59:37 -0400 (Sun, 31 Jul 2005) | 280 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/Constants.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/Message.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/attachments/Attachments.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/attachments/AttachmentsImpl.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/attachments/MimeUtils.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/client/Call.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/JAFDataHandlerDeserializer.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/JAFDataHandlerSerializer.java
-
-Preliminary MTOM support.
-
-- Tested with the WSE 3.0 July CTP service (http://www.mail-archive.com/axis-dev@ws.apache.org/msg08296.html)
-- Sample client code below (modified version of the samples/attachments client code)
-
-===============================================================
-/*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-import org.apache.axis.AxisFault;
-import org.apache.axis.constants.Style;
-import org.apache.axis.constants.Use;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
-import org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory;
-import org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory;
-import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.utils.Options;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.xml.namespace.QName;
-import javax.xml.rpc.ParameterMode;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import java.io.File;
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Vector;
-
-import samples.attachments.EchoAttachment;
-
-/**
- * An example of sending an attachment via RPC.
- * This class has a main method that beside the standard arguments
- * allows you to specify an attachment that will be sent to a
- * service which will then send it back.
- *
- */
-public class EchoStockAttachment {
-
-    Options opts = null;
-
-
-    public EchoStockAttachment(Options opts) {
-        this.opts = opts;
-    }
-
-    /**
-     * This method sends a file as an attachment then
-     *  receives it as a return.  The returned file is
-     *  compared to the source.
-     *  @param doMTOM The filename that is the source to send.
-     *  @return True if sent and compared.
-     */
-    public boolean echo(final boolean doMTOM, String filename) throws Exception {
-        //Create the data for the attached file.
-        DataHandler dhSource = new DataHandler(new FileDataSource(filename));
-
-        Service service = new Service();
-
-        Call call = (Call) service.createCall();
-
-
-        call.setTargetEndpointAddress(new URL(opts.getURL())); //Set the target service host and service location,
-        call.setSOAPActionURI("http://stockservice.contoso.com/wse/samples/echoAttachment");
-        call.setOperationName(new QName("http://stockservice.contoso.com/wse/samples", "echoAttachment")); //This is the target services method to invoke.
-        call.setEncodingStyle("");
-        call.setOperationStyle(Style.WRAPPED);
-        call.setOperationUse(Use.LITERAL);
-
-        QName qnameAttachment = new QName("http://stockservice.contoso.com/wse/samples", "DataHandler");
-
-        call.registerTypeMapping(dhSource.getClass(), //Add serializer for attachment.
-                                 qnameAttachment,
-                                 JAFDataHandlerSerializerFactory.class,
-                                 JAFDataHandlerDeserializerFactory.class);
-
-
-        call.addParameter(new QName("http://stockservice.contoso.com/wse/samples", "bytes"), qnameAttachment,
-                          ParameterMode.IN); //Add the file.
-
-        call.setReturnType(qnameAttachment);
-
-        call.setUsername(opts.getUser());
-
-        call.setPassword(opts.getPassword());
-
-        if (doMTOM)
-            call.setProperty(call.ATTACHMENT_ENCAPSULATION_FORMAT,
-                             call.ATTACHMENT_ENCAPSULATION_FORMAT_MTOM);
-
-
-        Object ret = call.invoke(new Object[]{
-            dhSource
-        }
-        ); //Add the attachment.
-
-        if (null == ret) {
-            System.out.println("Received null ");
-            throw new AxisFault("", "Received null", null, null);
-        }
-
-        if (ret instanceof String) {
-            System.out.println("Received problem response from server: " + ret);
-            throw new AxisFault("", (String) ret, null, null);
-        }
-
-        if (!(ret instanceof DataHandler)) {
-            //The wrong type of object that what was expected.
-            System.out.println("Received problem response from server:" +
-                               ret.getClass().getName());
-            throw new AxisFault("", "Received problem response from server:" +
-                                    ret.getClass().getName(), null, null);
-
-        }
-        //Still here, so far so good.
-        //Now lets brute force compare the source attachment
-        // to the one we received.
-        DataHandler rdh = (DataHandler) ret;
-
-        //From here we'll just treat the data resource as file.
-        String receivedfileName = rdh.getName();//Get the filename.
-
-        if (receivedfileName == null) {
-            System.err.println("Could not get the file name.");
-            throw new AxisFault("", "Could not get the file name.", null, null);
-        }
-
-
-        System.out.println("Going to compare the files..");
-        boolean retv = compareFiles(filename, receivedfileName);
-
-        File receivedFile = new File(receivedfileName);
-
-        receivedFile.delete();
-
-        return retv;
-    }
-
-    /**
-     * Give a single file to send or name a directory
-     * to send an array of attachments of the files in
-     * that directory.
-     */
-    public static void main(String args[]) {
-        try {
-
-            Options opts = new Options(args);
-            EchoStockAttachment echoattachment = new EchoStockAttachment(opts);
-
-            args = opts.getRemainingArgs();
-            int argpos = 0;
-
-            if (args == null || args.length == 0) {
-                System.err.println("Need a file.");
-                System.exit(8);
-            }
-
-            boolean doMTOM = false;
-            if (args[0].trim().equalsIgnoreCase("+FDR")) {
-                doMTOM = true;
-                ++argpos;
-            }
-
-            if (argpos >= args.length) {
-                System.err.println("Need a file argument.");
-                System.exit(8);
-            }
-
-            String argFile = args[argpos];
-
-            File source = new File(argFile);
-
-            if (!source.exists()) {
-                System.err.println("Error \"" + argFile + "\" does not exist!");
-                System.exit(8);
-            }
-
-            if (echoattachment.echo(doMTOM, argFile)) {
-                System.out.println("Attachment sent and received ok!");
-                System.exit(0);
-            } else {
-                System.err.println("Problem in matching attachments");
-                System.exit(8);
-            }
-        } catch (Exception e) {
-            System.err.println(e);
-            e.printStackTrace();
-        }
-        System.exit(18);
-    }
-
-    /**
-     * Quick and unsophisticated method to compare two file's
-     * byte stream.
-     * @return True if the bytestreams do compare, false for
-     *    any other reason.
-     */
-    protected boolean compareFiles(String one, String other)
-            throws java.io.FileNotFoundException, java.io.IOException {
-
-        java.io.BufferedInputStream oneStream = null;
-        java.io.BufferedInputStream otherStream = null;
-
-        // First compare file length.
-        File f1 = new File(one);
-        File f2 = new File(other);
-        if (f1.length() != f2.length())
-            return false;
-
-        try {
-            oneStream = new java.io.BufferedInputStream(
-                    new java.io.FileInputStream(one), 1024 * 64);
-            otherStream = new java.io.BufferedInputStream(
-                    new java.io.FileInputStream(other), 1024 * 64);
-
-            byte[] bufOne = new byte[1024 * 64];
-            byte[] bufOther = new byte[1024 * 64];
-            int breadOne = -1;
-            int breadOther = -1;
-            int available = 0;
-
-            do {
-                available = oneStream.available();
-                available = Math.min(available, otherStream.available());
-                available = Math.min(available, bufOther.length);
-
-                if (0 != available) {
-                    java.util.Arrays.fill(bufOne, (byte) 0);
-                    java.util.Arrays.fill(bufOther, (byte) 0);
-
-                    breadOne = oneStream.read(bufOne, 0, available);
-                    breadOther = otherStream.read(bufOther, 0, available);
-                    if (breadOne != breadOther)
-                        throw new RuntimeException(
-                                "Sorry couldn't really read whats available!");
-                    if (!java.util.Arrays.equals(bufOne, bufOther)) {
-                        return false;
-                    }
-                }
-
-            } while (available != 0 && breadOne != -1 && breadOther != -1);
-            if (available != 0 && (breadOne != -1 || breadOther != -1)) {
-                return false;
-            }
-            return true;
-        } finally {
-            if (null != oneStream) oneStream.close();
-            if (null != otherStream) otherStream.close();
-        }
-    }
-
-}
-=====================================================================================
-
-------------------------------------------------------------------------
-r261777 | dims | 2005-07-31 23:16:45 -0400 (Sun, 31 Jul 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/TypeMappingImpl.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/CollectionType.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/Utils.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaHolderWriter.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/Utils.java
-   A /webservices/axis1/trunk/java/test/wsdl/wrapperHolder2
-   A /webservices/axis1/trunk/java/test/wsdl/wrapperHolder2/ExampleSoapImpl.java
-   A /webservices/axis1/trunk/java/test/wsdl/wrapperHolder2/ExampleSoapTestCase.java
-   A /webservices/axis1/trunk/java/test/wsdl/wrapperHolder2/bug2102.wsdl
-   A /webservices/axis1/trunk/java/test/wsdl/wrapperHolder2/build.xml
-
-Fix and test case for AXIS-2102 - wsdl2java does not generate wrappers for nillable parameters
-
-from Hans (hplanting@mail.com)
-
-------------------------------------------------------------------------
-r261781 | dims | 2005-08-01 09:33:23 -0400 (Mon, 01 Aug 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/MessageElement.java
-
-Fix for AXIS-2153 - Method org.apache.axis.message.MessageElement.getValue() always returns null in a SAP WAS environment
-
-from Thomas Mayr
-
-------------------------------------------------------------------------
-r261782 | dims | 2005-08-01 14:22:43 -0400 (Mon, 01 Aug 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java
-   M /webservices/axis1/trunk/java/.cvsignore
-
-update .cvsignore
-
-------------------------------------------------------------------------
-r261783 | dims | 2005-08-01 14:23:29 -0400 (Mon, 01 Aug 2005) | 9 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/deployment/wsdd/WSDDTypeMapping.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/SerializationContext.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/TypeMappingImpl.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/ArraySerializer.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/ser/BeanSerializer.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/JavaUtils.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanHelperWriter.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/MySOAPBindingImpl.java
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/MyServiceTestCase.java
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/TestHandler.java
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/build.xml
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/deploy.wsdd
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/helloworld.wsdl
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/helloworld.xsd
-   A /webservices/axis1/trunk/java/test/wsdl/axis2098/undeploy.wsdd
-
-Fix and test case for AXIS-2098, AXIS-2103
-- WSDDTypeMapping : Register exact type mapping for primtive type at the server-side. (primitive type instead of primitive wrapper)
-- JavaStubWriter : Register exact type mapping for schema derived types in the client side.
-- Serialization : Pass the java class to the SerializationContext to determine actual java type for serialization
-- TypeMappingImpl : find serializer using xml type. (for schema derived types)
-- JavaBeanHelperWriter : write exact type qname for schema ref'ed element. (AXIS-2103)
-
-from Jongjin Choi
-
-------------------------------------------------------------------------
-r261784 | dims | 2005-08-01 15:28:54 -0400 (Mon, 01 Aug 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/build.xml
-   A /webservices/axis1/trunk/java/lib/endorsed
-   A /webservices/axis1/trunk/java/lib/endorsed/xercesImpl-2.6.2.LICENSE
-   A /webservices/axis1/trunk/java/lib/endorsed/xercesImpl-2.6.2.jar
-   A /webservices/axis1/trunk/java/lib/endorsed/xml-apis-2.6.2.LICENSE
-   A /webservices/axis1/trunk/java/lib/endorsed/xml-apis-2.6.2.jar
-   M /webservices/axis1/trunk/java/xmls/path_refs.xml
-
-With the new releases of xerces (2.7.0/2.7.1) It's getting harder to find the xerces version that does not have dom3 support.
-
-------------------------------------------------------------------------
-r261785 | dims | 2005-08-01 16:09:13 -0400 (Mon, 01 Aug 2005) | 2 lines
-Changed paths:
-   A /webservices/axis1/trunk/java/test/lib/xalan-2.6.0.LICENSE
-   A /webservices/axis1/trunk/java/test/lib/xalan-2.6.0.jar
-   M /webservices/axis1/trunk/java/xmls/path_refs.xml
-   M /webservices/axis1/trunk/java/xmls/properties.xml
-
-trying to get all-tests to work out-of-the-box under JDK1.5
-
-------------------------------------------------------------------------
-r261793 | venkat | 2005-08-02 09:07:16 -0400 (Tue, 02 Aug 2005) | 3 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java
-
-Patch for a regression issue introduced by revision 1.43, resulting NPE.
-Basically adding two lines for null check, but the diff might show lot of lines with white space modifications due to adjusting indentation after adding the check.
-
-------------------------------------------------------------------------
-r261794 | venkat | 2005-08-02 09:31:05 -0400 (Tue, 02 Aug 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java
-
-Optimization for my previous commit for avoiding NPE while writing operation. This was working fine with Axis RC2.
-
-------------------------------------------------------------------------
-r261795 | dims | 2005-08-02 13:02:04 -0400 (Tue, 02 Aug 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/Message.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/client/Call.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/ClassUtils.java
-
-Fix for AXIS-2145 - Axis Client crashes the applet unless new permissions are added to the policy file (or a custom security manager is used)
-
-------------------------------------------------------------------------
-r261800 | venkat | 2005-08-03 06:26:28 -0400 (Wed, 03 Aug 2005) | 2 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/DeserializationContext.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/NodeImpl.java
-
-Fix for AXIS-2139. Reset the envelop to clean state immediately after it is parsed.
-
-------------------------------------------------------------------------
-r261807 | dims | 2005-08-04 08:37:17 -0400 (Thu, 04 Aug 2005) | 10 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/symbolTable/SchemaUtils.java
-
-Handler simpleContent inside a complexType
-
-            <s:complexType name="BinaryType">
-                <s:simpleContent>
-                    <s:restriction base="xmime:base64Binary">
-                        <s:attribute ref="xmime:contentType" use="required"/>
-                    </s:restriction>
-                </s:simpleContent>
-            </s:complexType>
-
-------------------------------------------------------------------------
-r261812 | dims | 2005-08-04 13:08:44 -0400 (Thu, 04 Aug 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/encoding/DeserializationContext.java
-
-Reverting fix for Fix for AXIS-2139. Reset the envelop to clean state immediately after it is parsed.
-
-breaks all-tests.
-
-------------------------------------------------------------------------
-r261826 | jayachandra | 2005-08-08 06:28:34 -0400 (Mon, 08 Aug 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/transport/http/CommonsHTTPSender.java
-
-Removing the hardcoding on port number. Even for https 80 is being chosen
-which isn't correct.
-This is a fix in reference to jira issue AXIS-2044
-
-------------------------------------------------------------------------
-r261829 | jayachandra | 2005-08-08 10:14:33 -0400 (Mon, 08 Aug 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/transport/http/CommonsHTTPSender.java
-
-Keeping in view backward compatibility with JDK1.3, am modifying the patch
-for AXIS-2044 slightly. getDefaultPort() isn't available with 1.3, hence this
-change
-
-------------------------------------------------------------------------
-r261868 | dims | 2005-08-19 22:21:20 -0400 (Fri, 19 Aug 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/test/encoding/PackageTests.java
-   A /webservices/axis1/trunk/java/test/encoding/TestString3.java
-
-Ensure that line feed normalization and character reference processing works as expected
-
-See http://groups.yahoo.com/group/soapbuilders/message/10349 for more information.
-
-------------------------------------------------------------------------
-r261869 | dims | 2005-08-19 22:49:32 -0400 (Fri, 19 Aug 2005) | 4 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/Message.java
-
-Fix for AXIS-2180 - attachments.implementation override property not picked up in client.wsdd
+Another location to check and disable Pretty XML. Creates problems with WSS4J in Signature Verification.
 
-Notes: you can now set the "attachments.implementation" using AxisProperties.
 
 ------------------------------------------------------------------------
-r261873 | dims | 2005-08-20 08:05:25 -0400 (Sat, 20 Aug 2005) | 2 lines
+r314974 | dims | 2005-10-12 13:26:15 -0400 (Wed, 12 Oct 2005) | 3 lines
 Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanHelperWriter.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/deployment/wsdd/WSDDDocument.java
 
-Fix for AXIS-2138 - Regression with base64Binary and simpleType elements
+previous commit disabled pretty printing on for wsdd's.
 
-------------------------------------------------------------------------
-r261874 | dims | 2005-08-20 16:49:29 -0400 (Sat, 20 Aug 2005) | 7 lines
-Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/EnvelopeBuilder.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/MessageElement.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/NodeImpl.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/SOAPBody.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/SOAPEnvelope.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/SOAPHeader.java
-   M /webservices/axis1/trunk/java/src/org/apache/axis/message/Text.java
-   M /webservices/axis1/trunk/java/test/encoding/TestDOM.java
-   M /webservices/axis1/trunk/java/test/utils/TestNSStack.java
-   M /webservices/axis1/trunk/java/test/utils/TestXMLUtils.java
-
-Fix for AXIS-2139 - SAX recorder is dirty after deserialization
-
-- we now call envelope's reset() in EnvelopeBuilder
-- adding a setDirty(). setDirty(true) as behaves weirdly (JIT problem?)
-- use setIgnoreWhitespace for some unit tests
-- adding a test case for this problem
 
 ------------------------------------------------------------------------
-r261875 | dims | 2005-08-20 22:45:11 -0400 (Sat, 20 Aug 2005) | 5 lines
+r314976 | dims | 2005-10-12 13:34:32 -0400 (Wed, 12 Oct 2005) | 1 line
 Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanWriter.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/Admin.java
 
-Fix for AXIS-2164 - classes generated by wsdl2java don't compile
-
-Notes:
-fix for the original problem reported by Yves.
-
+re-enable pretty print for wsdd - missed a spot in prev commit
 ------------------------------------------------------------------------
-r261876 | dims | 2005-08-21 17:15:29 -0400 (Sun, 21 Aug 2005) | 2 lines
+r327003 | dims | 2005-10-20 17:06:18 -0400 (Thu, 20 Oct 2005) | 2 lines
 Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/ClasspathUtils.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/client/Call.java
 
-Fix for  AXIS-2185 - Resource/memory leak in ClasspathUtils.getDefaultClasspath(MessageContext)
+Fix for AXIS-2264 - org.apache.axis.client.Call implementation Bug => CurrentModificationException if an other VM is used (e.g. http://www.cacaojvm.org)
 
 ------------------------------------------------------------------------
-r261877 | dims | 2005-08-21 18:32:59 -0400 (Sun, 21 Aug 2005) | 4 lines
+r328945 | dims | 2005-10-27 16:28:25 -0400 (Thu, 27 Oct 2005) | 3 lines
 Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/utils/XMLUtils.java
+   M /webservices/axis/trunk/java/changelog.html
+   M /webservices/axis/trunk/java/release-notes.html
 
-Fix for AXIS-2179 - Configuration property axis.xml.reuseParsers not documented - significant performance boost
+sync back from the AXIS_1_3_FINAL branch.
 
-switch reuse to true...one can always switch it off if they run into problems.
 
 ------------------------------------------------------------------------
-r261880 | dims | 2005-08-22 02:40:08 -0400 (Mon, 22 Aug 2005) | 4 lines
+r329280 | tomj | 2005-10-28 16:06:27 -0400 (Fri, 28 Oct 2005) | 2 lines
 Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/description/JavaServiceDesc.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/attachments/MultipartAttachmentStreams.java
 
-Fix for AXIS-2172 - Java2WSDL, stopClasses and Interfaces
-
-from  Ravi Kumar
-
+Remove use of variable name 'enum' to avoid Java 5 problems.
+Clean up uneeded null initializations.
 ------------------------------------------------------------------------
-r261881 | dims | 2005-08-22 03:04:09 -0400 (Mon, 22 Aug 2005) | 2 lines
+r329286 | tomj | 2005-10-28 16:32:49 -0400 (Fri, 28 Oct 2005) | 2 lines
 Changed paths:
-   M /webservices/axis1/trunk/java/tools/org/apache/axis/antlib.xml
-
-Fix for AXIS-2167 - Antlib for Axis Task Broken
+   M /webservices/axis/trunk/java/src/org/apache/axis/transport/http/QSMethodHandler.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/ByteArrayOutputStream.java
 
+Remove use of variable name 'enum' to avoid Java 5 problems.
+Fix "C style" array notation noted by jikes.
 ------------------------------------------------------------------------
-r261893 | jayachandra | 2005-08-24 06:04:49 -0400 (Wed, 24 Aug 2005) | 6 lines
+r330300 | dims | 2005-11-02 13:18:58 -0500 (Wed, 02 Nov 2005) | 3 lines
 Changed paths:
-   M /webservices/axis1/trunk/java/src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/JavaUtils.java
 
+Fix for AXIS-2278 - Memory leak cause by JavaUtils.enumMap
 
 
-This comes as a fix for jira issue AXIS-2193
-Detailed explanation leading to this modification can be viewed at the url
-http://issues.apache.org/jira/browse/AXIS-2193?page=all
-
 ------------------------------------------------------------------------
-r264831 | dims | 2005-08-30 15:13:52 -0400 (Tue, 30 Aug 2005) | 3 lines
+r330301 | dims | 2005-11-02 13:20:05 -0500 (Wed, 02 Nov 2005) | 3 lines
 Changed paths:
-   A /webservices/axis (from /webservices/axis1:264830)
-   D /webservices/axis1
-
-Move Axis 1.X
+   M /webservices/axis/trunk/java/docs/index.html
 
+Fix for (AXIS-2281) axis-1_3/docs/index.html says "This is the documentation for Apache Axis 1.2"
 
-------------------------------------------------------------------------
-r267187 | venkat | 2005-09-02 07:24:21 -0400 (Fri, 02 Sep 2005) | 1 line
-Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanWriter.java
 
-Fix for the AXIS-2165. Need to write full constructor when a type dervies from other by extension.
 ------------------------------------------------------------------------
-r267524 | dims | 2005-09-03 20:23:08 -0400 (Sat, 03 Sep 2005) | 3 lines
+r330310 | dims | 2005-11-02 13:36:39 -0500 (Wed, 02 Nov 2005) | 3 lines
 Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/encoding/DeserializationContext.java
+   A /webservices/axis/trunk/java/test/wsdl/faults2
+   A /webservices/axis/trunk/java/test/wsdl/faults2/FaultService.wsdl
+   A /webservices/axis/trunk/java/test/wsdl/faults2/FaultServiceSoapBindingImpl.java
+   A /webservices/axis/trunk/java/test/wsdl/faults2/FaultServiceTestCase.java
+   A /webservices/axis/trunk/java/test/wsdl/faults2/build.xml
 
-Propagate the soap version correctly
+Test case for AXIS-2013 from Hans ("Deserialization of Exception fails")
 
 
 ------------------------------------------------------------------------
-r278677 | dims | 2005-09-05 02:03:07 -0400 (Mon, 05 Sep 2005) | 3 lines
+r330320 | dims | 2005-11-02 14:27:35 -0500 (Wed, 02 Nov 2005) | 3 lines
 Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/Message.java
-   M /webservices/axis/trunk/java/src/org/apache/axis/deployment/wsdd/WSDDConstants.java
-   M /webservices/axis/trunk/java/src/org/apache/axis/transport/http/AxisServlet.java
+   M /webservices/axis/trunk/java/xmls/properties.xml
 
-Extract action from content-Type (SOAP1.2)
+update version #
 
 
 ------------------------------------------------------------------------
-r290332 | dims | 2005-09-19 22:19:52 -0400 (Mon, 19 Sep 2005) | 3 lines
+r330440 | dims | 2005-11-02 23:23:06 -0500 (Wed, 02 Nov 2005) | 3 lines
 Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/Message.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/JavaUtils.java
 
-Remove the existing content-length header if any.
+oops!
 
 
 ------------------------------------------------------------------------
-r290454 | dims | 2005-09-20 10:05:35 -0400 (Tue, 20 Sep 2005) | 4 lines
+r330452 | dims | 2005-11-03 00:00:57 -0500 (Thu, 03 Nov 2005) | 3 lines
 Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/utils/BeanPropertyDescriptor.java
+   A /webservices/axis/trunk/java/samples/xbeans
+   A /webservices/axis/trunk/java/samples/xbeans/StarWarsBindingImpl.java
+   A /webservices/axis/trunk/java/samples/xbeans/StarWarsTestCase.java
+   A /webservices/axis/trunk/java/samples/xbeans/build.xml
+   A /webservices/axis/trunk/java/samples/xbeans/starwars.wsdl
+   A /webservices/axis/trunk/java/samples/xbeans/starwars.xsd
 
-Fix for AXIS-2202 - Axis doesn't propertly support JavaBeans with array-type properties.
+Sample using Xmlbeans serializer/deserializer
 
-from Andrei Iltchenko 
 
 ------------------------------------------------------------------------
-r290456 | dims | 2005-09-20 10:07:35 -0400 (Tue, 20 Sep 2005) | 5 lines
+r332063 | dug | 2005-11-09 10:08:47 -0500 (Wed, 09 Nov 2005) | 2 lines
 Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/attachments/Attachments.java
-   M /webservices/axis/trunk/java/src/org/apache/axis/attachments/AttachmentsImpl.java
-   A /webservices/axis/trunk/java/src/org/apache/axis/attachments/DimeAttachmentStreams.java
-   A /webservices/axis/trunk/java/src/org/apache/axis/attachments/IncomingAttachmentStreams.java
-   A /webservices/axis/trunk/java/src/org/apache/axis/attachments/MultipartAttachmentStreams.java
-   M /webservices/axis/trunk/java/src/org/apache/axis/i18n/resource.properties
+   M /webservices/axis/trunk/java/src/org/apache/axis/handlers/soap/MustUnderstandChecker.java
 
-Fix for AXIS-2221 - Attachment Streaming directly from HTTP Request
+Show MU headers for non-soap 1.2 clients too
 
-from Brian Husted
-
-
 ------------------------------------------------------------------------
-r291512 | dims | 2005-09-25 22:08:33 -0400 (Sun, 25 Sep 2005) | 4 lines
+r332067 | dug | 2005-11-09 10:21:26 -0500 (Wed, 09 Nov 2005) | 2 lines
 Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanWriter.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/handlers/soap/MustUnderstandChecker.java
 
-Fix for build breakage reported by tom (http://marc.theaimsgroup.com/?l=axis-dev&m=112619495701799&w=2)
-caused by fix for AXIS-2165 (http://issues.apache.org/jira/browse/AXIS-2165)
-
-Basically had to account for mixed content additional parameter.
-------------------------------------------------------------------------
-r291513 | dims | 2005-09-25 22:12:13 -0400 (Sun, 25 Sep 2005) | 1 line
-Changed paths:
-   M /webservices/axis/trunk/java/src/org/apache/axis/client/Service.java
+testing
 
-Fix for AXIS-2233 - Allow cached WSDL files to be GC'ed from David Blevins
 ------------------------------------------------------------------------
-r291514 | dims | 2005-09-25 22:13:00 -0400 (Sun, 25 Sep 2005) | 1 line
+r332680 | dims | 2005-11-11 18:54:59 -0500 (Fri, 11 Nov 2005) | 4 lines
 Changed paths:
    M /webservices/axis/trunk/java/src/org/apache/axis/description/TypeDesc.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/i18n/resource.properties
 
-Fix for AXIS-2232 - Mappings in TypeDesc can't be GC'ed from David Blevins
+Fix for AXIS-2232 - Mappings in TypeDesc can't be GC'ed
+from Kevan Miller
+
+
 ------------------------------------------------------------------------
-r291609 | dims | 2005-09-26 08:21:55 -0400 (Mon, 26 Sep 2005) | 1 line
+r332717 | dims | 2005-11-11 21:43:42 -0500 (Fri, 11 Nov 2005) | 4 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/JavaUtils.java
+
+synchronized put's for enumMap. Possible fix for AXIS-2284 - thread hangs on org.apache.axis.utils.JavaUtils.isEnumClass
+
+
+
+------------------------------------------------------------------------
+r345938 | dims | 2005-11-21 12:53:18 -0500 (Mon, 21 Nov 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/encoding/SerializationContext.java
+
+Fix for AXIS-2267 - Extended types in array incorrectly serialised as base type
+
+
+------------------------------------------------------------------------
+r348194 | dims | 2005-11-22 11:41:22 -0500 (Tue, 22 Nov 2005) | 4 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/handlers/soap/SOAPService.java
+
+Fix for AXIS-2314 - Axis leaking Session objects
+from Ben Gunter
+
+
+------------------------------------------------------------------------
+r354084 | dug | 2005-12-05 10:28:35 -0500 (Mon, 05 Dec 2005) | 2 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/MessageContext.java
+
+Prevent a NPE when curMsg is null
+
+------------------------------------------------------------------------
+r355938 | dims | 2005-12-11 02:44:27 -0500 (Sun, 11 Dec 2005) | 1 line
 Changed paths:
    M /webservices/axis/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanWriter.java
 
-fix wrapped_choice breakage - consider the min/max etc to check if a wrapped type is to be used
+attributes first, then elements
+------------------------------------------------------------------------
+r356167 | dims | 2005-12-12 00:59:01 -0500 (Mon, 12 Dec 2005) | 3 lines
+Changed paths:
+   A /webservices/axis/branches/AXIS_1_4_FINAL (from /webservices/axis/trunk/java:356165)
+
+Branch for Axis 1.4 Final 
+
+
+------------------------------------------------------------------------
+r375961 | dug | 2006-02-08 08:49:24 -0500 (Wed, 08 Feb 2006) | 2 lines
+Changed paths:
+   M /webservices/axis/branches/AXIS_1_4_FINAL/junit-exclude-tests.txt
+   D /webservices/axis/branches/AXIS_1_4_FINAL/test/wsdl/faults2
+
+Remove a bad test - it causes the all-tests to fail
+
 ------------------------------------------------------------------------

@@ -1465,6 +1465,13 @@ public class SchemaUtils {
                                  namespace = Utils.getScopedAttribute(node, "targetNamespace");
 
                             itemQName.value = new QName(namespace, name);
+                        } else {
+                            String ref = Utils.getAttribute(node, "ref");
+                            if (ref != null) {
+                                itemQName.value =
+                                        Utils.getQNameFromPrefixedName(node,
+                                                                       ref);
+                            }
                         }
                     }
                     return componentTypeQName;

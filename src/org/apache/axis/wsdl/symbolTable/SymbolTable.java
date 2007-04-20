@@ -1790,17 +1790,21 @@ public class SymbolTable {
             }
         }
 
+        if (wrapped) {
+            // Remember the appropriate response QName...
+            List outParts = output.getMessage().getOrderedParts(null);
+            QName respQName = ((Part)(outParts.get(0))).getElementName();
+            parameters.responseQName = respQName;
+        }
+
         // Some special case logic for JAX-RPC, but also to make things
         // nicer for the user.
         // If we have a single input and output with the same name
         // instead of: void echo(StringHolder inout)
         // Do this:  string echo(string in)
-        if (wrapped && (inputs.size() == 1) && (outputs.size() == 1)
-                &&
+        if (wrapped && (inputs.size() == 1) && (outputs.size() == 1) &&
                 Utils.getLastLocalPart(((Parameter) inputs.get(0)).getName()).equals(
-                Utils.getLastLocalPart(((Parameter) outputs.get(0)).getName()))
-                ) {
-
+                        Utils.getLastLocalPart(((Parameter) outputs.get(0)).getName()))) {
             // add the input and make sure its a IN not an INOUT
             addInishParm(inputs, null, 0, -1, parameters, false);
         } else {
@@ -2113,6 +2117,7 @@ public class SymbolTable {
                     // if (!literal)
                     // error...
                     param.setType(getElement(elementName));
+                    param.setQName(elementName);
                 } else {
 
                     // no type or element

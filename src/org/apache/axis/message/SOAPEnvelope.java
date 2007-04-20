@@ -306,6 +306,7 @@ public class SOAPEnvelope extends MessageElement
         }
         this.body = body;
         try {
+//            addChild(body);
             body.setParentElement(this);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
