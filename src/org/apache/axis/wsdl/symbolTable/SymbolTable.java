@@ -1793,8 +1793,10 @@ public class SymbolTable {
         if (wrapped) {
             // Remember the appropriate response QName...
             List outParts = output.getMessage().getOrderedParts(null);
-            QName respQName = ((Part)(outParts.get(0))).getElementName();
-            parameters.responseQName = respQName;
+            if ( outParts.size() > 0 ) {
+              QName respQName = ((Part)(outParts.get(0))).getElementName();
+              parameters.responseQName = respQName;
+            }
         }
 
         // Some special case logic for JAX-RPC, but also to make things
