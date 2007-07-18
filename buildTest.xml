@@ -85,12 +85,13 @@ Copyright:
         <param name="file">
              <fileset dir="${axis.home}" >
                <patternset>
-                 <include name="test/wsdl/**/build.xml" />
-                 <include name="test/rpc/**/build.xml" />
-                 <include name="test/functional/build.xml"/>
-                 <exclude name="test/wsdl/attachments/**/build.xml" unless="attachments.present"/>
-                 <exclude name="test/wsdl/interop3/**/build.xml" />
-		 <exclude name="test/wsdl/adaptive/**/build.xml" />
+                   <include name="test/wsdl/**/build.xml" />
+                   <include name="test/rpc/**/build.xml" />
+                   <include name="test/functional/build.xml"/>
+                   <exclude name="test/wsdl/attachments/**/build.xml" unless="attachments.present"/>
+                   <exclude name="test/wsdl/interop3/**/build.xml" />
+                   <exclude name="test/wsdl/adaptive/**/build.xml" />
+                   <exclude name="test/wsdl/liberty/**/build.xml" />
                </patternset>
              </fileset>
         </param>

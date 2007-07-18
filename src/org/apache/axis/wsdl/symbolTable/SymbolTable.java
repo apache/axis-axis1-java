@@ -1241,16 +1241,22 @@ public class SymbolTable {
                                new DefinedElement(qName, refType, node, dims);
                             // Save component type for ArraySerializer
                             defType.setComponentType(arrayEQName);
-                            if (itemQName != null)
+                            if (itemQName != null) {
                                 defType.setItemQName(itemQName.value);
+                            } else {
+                                defType.setItemQName(new QName("item"));                                
+                            }
                         }
                     } else {
                         defType = new DefinedType(qName, refType, node, dims);
                         // Save component type for ArraySerializer
                         defType.setComponentType(arrayEQName);
                         defType.setUnderlTypeNillable(underlTypeNillable.value);
-                        if (itemQName != null)
+                        if (itemQName != null) {
                             defType.setItemQName(itemQName.value);
+                        } else {
+                            defType.setItemQName(new QName("item"));
+                        }
                     }
 
                     if (defType != null) {

@@ -1356,8 +1356,10 @@ public class SchemaUtils {
 
         QName qName = getCollectionComponentQName(node, itemQName, forElement, symbolTable);
 
-        if (qName == null) 
+        if (qName == null) {
             qName = getArrayComponentQName_JAXRPC(node, dims, underlTypeNillable, symbolTable);
+            if (qName != null && itemQName != null) itemQName.value = new QName("item");
+        }
 
         return qName;
     }
