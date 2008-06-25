@@ -483,8 +483,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         // We can't prefill information if WSDL is not specified,
         // So just return the call that we just created.
-        if (wsdlParser == null)
+        if (wsdlParser == null) {
+            _call = call ;
             return call;
+        }
 
         Port port = wsdlService.getPort(portName.getLocalPart());
         if (port == null)
@@ -529,6 +531,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
               }
             }
         }
+        _call = call ;
 
         return (call);
     }
@@ -549,6 +552,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         Call call = (org.apache.axis.client.Call) createCall();
         call.setOperation(portName, operationName);
+        _call = call ;
         return (call);
     }
 
@@ -568,6 +572,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         Call call = (org.apache.axis.client.Call) createCall();
         call.setOperation(portName, operationName);
+        _call = call ;
         return (call);
     }
 
@@ -580,8 +585,9 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall() throws ServiceException {
-        _call = new org.apache.axis.client.Call(this);
-        return _call;
+        Call call = new org.apache.axis.client.Call(this);
+        _call = call ;
+        return call;
     }
 
     /**
