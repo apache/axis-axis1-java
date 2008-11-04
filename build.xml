@@ -519,6 +519,7 @@ Copyright:
         <include name="tools/**"/>
         <include name="webapps/**"/>
         <include name="xmls/**"/>
+      	<include name="xsd/**"/>
 
         <exclude name="**/.svn/**"/>
       </fileset>
