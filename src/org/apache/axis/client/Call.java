@@ -62,6 +62,7 @@ import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.commons.logging.Log;
 
+import javax.activation.DataHandler;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
@@ -78,6 +79,7 @@ import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -85,6 +87,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -2663,6 +2666,7 @@ public class Call implements javax.xml.rpc.Call {
                     } else {
                         outParams.put(param.getQName(), value);
                         outParamsList.add(value);
+                        cacheIfAttachment(value);
                     }
                 }
 
@@ -2714,8 +2718,34 @@ public class Call implements javax.xml.rpc.Call {
         if (operation != null && operation.getReturnClass() != null) {
             result = JavaUtils.convert(result, operation.getReturnClass());
         }
+        cacheIfAttachment(result);
 
         return( result );
+    }
+
+    /**
+     * Prevents Call instances from being garbage collected until all outputs
+     * (parameters and return value) of type "attachment" are finalised.
+     * <p>
+     * See JIRA report AXIS-2574.
+     */
+    private static Map callCache = Collections.synchronizedMap(new WeakHashMap());
+
+    /**
+     * Puts a reference to this Call instance in a cache if the passed
+     * object is an attachment AND depends on a file.
+     * <p>
+     * See JIRA report AXIS 2574.
+     *
+     * @param obj The object to test
+     */
+    private void cacheIfAttachment(Object obj) {
+        if (obj == null) return;
+        if (obj instanceof DataHandler
+                || obj instanceof AttachmentPart
+                || obj instanceof javax.xml.transform.Source) {
+            callCache.put(obj, this);
+        }
     }
 
     /**
