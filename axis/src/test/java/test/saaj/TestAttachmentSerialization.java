@@ -21,7 +21,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -33,7 +32,6 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -93,12 +91,9 @@ public class TestAttachmentSerialization extends TestCase {
         ap.setContent("some attachment text...", "text/plain");
         msg.addAttachmentPart(ap);
 
-        String jpgfilename = "docs/images/axis.jpg";
-        File myfile = new File(jpgfilename);
-        FileDataSource fds = new FileDataSource(myfile);
-        DataHandler dh = new DataHandler(fds);
+        DataHandler dh = new DataHandler("test content", "text/plain");
         AttachmentPart ap2 = msg.createAttachmentPart(dh);
-        ap2.setContentType("image/jpg");
+        ap2.setContentType("text/plain");
         msg.addAttachmentPart(ap2);
 
         // Test for Bug #17664

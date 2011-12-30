@@ -54,8 +54,8 @@ public class TestSrcContent extends TestCase {
      * tree (xml-axis/java/src), calling checkFile for each file.
      */
     public void testSourceFiles() {
-        String baseDir = System.getProperty("user.dir");
-        File   srcDir = new File(baseDir, "src");
+        String baseDir = System.getProperty("basedir");
+        File   srcDir = new File(baseDir, "src/main/java");
 
         if (srcDir.exists()) {
             walkTree(srcDir);

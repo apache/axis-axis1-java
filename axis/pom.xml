@@ -97,6 +97,19 @@
             <groupId>bsf</groupId>
             <artifactId>bsf</artifactId>
             <version>2.3.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>oro</groupId>
+            <artifactId>oro</artifactId>
+            <version>2.0.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -175,9 +188,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <excludes>
+                        <!-- Quote: "comment out for now - this class is a mess" -->
+                        <exclude>test/utils/TestOptions.java</exclude>
                         <!-- This is actually not a unit test -->
                         <exclude>test/concurrency/TestService.java</exclude>
                     </excludes>
+                    <!-- TODO: this is bad; it could mean that Axis is not working properly on modern JREs -->
+                    <argLine>-Xbootclasspath/p:${project.build.directory}/endorsed/xmlParserAPIs.jar</argLine>
                 </configuration>
             </plugin>
             <plugin>
