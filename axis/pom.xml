@@ -100,7 +100,34 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>generate-timestamp</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                import java.util.Date
+                                import java.text.MessageFormat
+                                project.properties['today'] = MessageFormat.format("{0,date,MMM dd, yyyy (hh:mm:ss z)}", new Date())
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -142,6 +169,15 @@
                         <!-- Necessary because we only support DOM 2 -->
                         -Xbootclasspath/p:${project.build.directory}/endorsed/xmlParserAPIs.jar
                     </compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- This is actually not a unit test -->
+                        <exclude>test/concurrency/TestService.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
