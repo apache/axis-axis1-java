@@ -93,6 +93,8 @@ Copyright:
                  <exclude name="test/wsdl/attachments/**/build.xml" unless="attachments.present"/>
                  <exclude name="test/wsdl/interop3/**/build.xml" />
 		 <exclude name="test/wsdl/adaptive/**/build.xml" />
+                 <!-- TODO: AXIS-2865 -->
+                 <exclude name="test/wsdl/liberty/build.xml"/>
                </patternset>
              </fileset>
         </param>
