@@ -24,7 +24,7 @@ import org.apache.axis.utils.Messages;
  * SwA format. Another difference between the two is that the
  * MultipartAttachmentStreams class must also provide a way to hold attachment
  * parts parsed prior to where the SOAP part appears in the HTTP stream (i.e.
- * the root part of the multipart-related message). Our DIME counterpart didn’t
+ * the root part of the multipart-related message). Our DIME counterpart didn't
  * have to worry about this since the SOAP part is guaranteed to be the first in
  * the stream. But since SwA has no such guarantee, we must fall back to caching
  * these first parts. Afterwards, we can stream the rest of the attachments that

@@ -49,6 +49,12 @@
                         </archive>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <source>1.4</source>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

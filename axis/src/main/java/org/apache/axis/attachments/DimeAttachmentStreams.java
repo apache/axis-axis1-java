@@ -11,7 +11,7 @@ import org.apache.axis.utils.Messages;
  * 
  * This is the concrete implementation of the IncomingAttachmentStreams class
  * and is used to parse data that is in the DIME format. This class will make
- * use of Axis’ DimeDelimitedInputStream to parse the data in the HTTP stream
+ * use of Axis' DimeDelimitedInputStream to parse the data in the HTTP stream
  * which will give this class the capability of creating
  * IncomingAttachmentInputStream objects at each marker within the HTTP stream.
  * 
