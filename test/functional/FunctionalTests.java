@@ -42,7 +42,8 @@ public class FunctionalTests extends TestCase
         suite.addTestSuite(TestTCPTransportSample.class);
         
         // file transport sample test
-        suite.addTestSuite(TestTransportSample.class);
+        // TODO: this test no longer works because it depends on a 3rd party service that is no longer available
+//        suite.addTestSuite(TestTransportSample.class);
 
         // bid-buy test
         suite.addTestSuite(TestBidBuySample.class);

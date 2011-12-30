@@ -566,7 +566,8 @@ Copyright:
 	  </fileset>
     </copy>
 
-    <delete dir="${build.dir}/classes/samples/userguide/example6"/>
+    <!-- TODO: for some reason this causes a build failure -->
+    <!-- delete dir="${build.dir}/classes/samples/userguide/example6"/ -->
 
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}"
            debug="${debug}">
