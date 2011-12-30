@@ -60,8 +60,7 @@ Copyright:
                serverSide="no"
                wrapArrays="true"
                testcase="no">
-        <mapping namespace="http://terraservice-usa.com/" package="test.wsdl.terra"/>
-        <mapping namespace="http://terraserver-usa.com/terraserver/" package="test.wsdl.terra"/>
+        <mapping namespace="http://msrmaps.com/" package="test.wsdl.terra"/>
     </wsdl2java>
 
     <!-- online version of the WSDL 

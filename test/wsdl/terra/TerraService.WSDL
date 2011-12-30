@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://terraservice-usa.com/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://terraservice-usa.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://msrmaps.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://msrmaps.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">MSR Maps Web Service</wsdl:documentation>
   <wsdl:types>
-    <s:schema elementFormDefault="qualified" targetNamespace="http://terraservice-usa.com/">
+    <s:schema elementFormDefault="qualified" targetNamespace="http://msrmaps.com/">
       <s:element name="ConvertLonLatPtToNearestPlace">
         <s:complexType>
           <s:sequence>
@@ -599,9 +600,9 @@
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="TerraServiceSoap" type="tns:TerraServiceSoap">
-    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="ConvertLonLatPtToNearestPlace">
-      <soap:operation soapAction="http://terraservice-usa.com/ConvertLonLatPtToNearestPlace" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/ConvertLonLatPtToNearestPlace" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -610,7 +611,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="ConvertLonLatPtToUtmPt">
-      <soap:operation soapAction="http://terraservice-usa.com/ConvertLonLatPtToUtmPt" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/ConvertLonLatPtToUtmPt" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -619,7 +620,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="ConvertUtmPtToLonLatPt">
-      <soap:operation soapAction="http://terraservice-usa.com/ConvertUtmPtToLonLatPt" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/ConvertUtmPtToLonLatPt" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -628,7 +629,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="ConvertPlaceToLonLatPt">
-      <soap:operation soapAction="http://terraservice-usa.com/ConvertPlaceToLonLatPt" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/ConvertPlaceToLonLatPt" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -637,7 +638,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="CountPlacesInRect">
-      <soap:operation soapAction="http://terraservice-usa.com/CountPlacesInRect" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/CountPlacesInRect" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -646,7 +647,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetAreaFromPt">
-      <soap:operation soapAction="http://terraservice-usa.com/GetAreaFromPt" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetAreaFromPt" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -655,7 +656,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetAreaFromRect">
-      <soap:operation soapAction="http://terraservice-usa.com/GetAreaFromRect" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetAreaFromRect" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -664,7 +665,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetAreaFromTileId">
-      <soap:operation soapAction="http://terraservice-usa.com/GetAreaFromTileId" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetAreaFromTileId" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -673,7 +674,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetLatLonMetrics">
-      <soap:operation soapAction="http://terraservice-usa.com/GetLatLonMetrics" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetLatLonMetrics" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -682,7 +683,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetPlaceFacts">
-      <soap:operation soapAction="http://terraservice-usa.com/GetPlaceFacts" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetPlaceFacts" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -691,7 +692,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetPlaceList">
-      <soap:operation soapAction="http://terraservice-usa.com/GetPlaceList" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetPlaceList" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -700,7 +701,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetPlaceListInRect">
-      <soap:operation soapAction="http://terraservice-usa.com/GetPlaceListInRect" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetPlaceListInRect" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -709,7 +710,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetTheme">
-      <soap:operation soapAction="http://terraservice-usa.com/GetTheme" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetTheme" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -718,7 +719,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetTileMetaFromLonLatPt">
-      <soap:operation soapAction="http://terraservice-usa.com/GetTileMetaFromLonLatPt" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetTileMetaFromLonLatPt" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -727,7 +728,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetTileMetaFromTileId">
-      <soap:operation soapAction="http://terraservice-usa.com/GetTileMetaFromTileId" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetTileMetaFromTileId" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -736,7 +737,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="GetTile">
-      <soap:operation soapAction="http://terraservice-usa.com/GetTile" style="document" />
+      <soap:operation soapAction="http://msrmaps.com/GetTile" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -745,10 +746,160 @@
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
+  <wsdl:binding name="TerraServiceSoap12" type="tns:TerraServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ConvertLonLatPtToNearestPlace">
+      <soap12:operation soapAction="http://msrmaps.com/ConvertLonLatPtToNearestPlace" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConvertLonLatPtToUtmPt">
+      <soap12:operation soapAction="http://msrmaps.com/ConvertLonLatPtToUtmPt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConvertUtmPtToLonLatPt">
+      <soap12:operation soapAction="http://msrmaps.com/ConvertUtmPtToLonLatPt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConvertPlaceToLonLatPt">
+      <soap12:operation soapAction="http://msrmaps.com/ConvertPlaceToLonLatPt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CountPlacesInRect">
+      <soap12:operation soapAction="http://msrmaps.com/CountPlacesInRect" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAreaFromPt">
+      <soap12:operation soapAction="http://msrmaps.com/GetAreaFromPt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAreaFromRect">
+      <soap12:operation soapAction="http://msrmaps.com/GetAreaFromRect" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAreaFromTileId">
+      <soap12:operation soapAction="http://msrmaps.com/GetAreaFromTileId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLatLonMetrics">
+      <soap12:operation soapAction="http://msrmaps.com/GetLatLonMetrics" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlaceFacts">
+      <soap12:operation soapAction="http://msrmaps.com/GetPlaceFacts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlaceList">
+      <soap12:operation soapAction="http://msrmaps.com/GetPlaceList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlaceListInRect">
+      <soap12:operation soapAction="http://msrmaps.com/GetPlaceListInRect" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTheme">
+      <soap12:operation soapAction="http://msrmaps.com/GetTheme" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTileMetaFromLonLatPt">
+      <soap12:operation soapAction="http://msrmaps.com/GetTileMetaFromLonLatPt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTileMetaFromTileId">
+      <soap12:operation soapAction="http://msrmaps.com/GetTileMetaFromTileId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTile">
+      <soap12:operation soapAction="http://msrmaps.com/GetTile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
   <wsdl:service name="TerraService">
-    <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">TerraServer Web Service</documentation>
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">MSR Maps Web Service</wsdl:documentation>
     <wsdl:port name="TerraServiceSoap" binding="tns:TerraServiceSoap">
       <soap:address location="http://terraservice.net/TerraService2.asmx" />
+    </wsdl:port>
+    <wsdl:port name="TerraServiceSoap12" binding="tns:TerraServiceSoap12">
+      <soap12:address location="http://terraservice.net/TerraService2.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
