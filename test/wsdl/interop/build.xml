@@ -454,18 +454,6 @@ Copyright:
                verbose="no"
                noimports="no">
     </wsdl2java>
-    <!-- This tests .NET document/literal WSDL.
-         We get this WSDL file from the internet on purpose,
-         file is only for reference.
-    <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
-     -->
-    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
-               output="${axis.home}/build/work"
-               verbose="no"
-               serverSide="no"
-               testcase="no">
-        <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
-    </wsdl2java>
 
     <!-- jaxrpc sample -->
     <wsdl2java url="${axis.home}/samples/jaxrpc/hello/HelloWorld.wsdl"
@@ -546,6 +534,18 @@ Copyright:
                verbose="yes"
                noimports="no">
     </wsdl2java>
+    
+    //     This tests .NET document/literal WSDL.
+    //     NOTE: PerfectXML.net is not longer up (tomj 4/7/06)
+    //     See test/wsdl/literal for local version
+    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
+               output="${axis.home}/build/work"
+               verbose="no"
+               serverSide="no"
+               testcase="no">
+        <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
+    </wsdl2java>
+
     -->
 
     <copy todir="${build.dir}/work/test/wsdl/interop" overwrite="yes">
@@ -557,9 +557,12 @@ Copyright:
 
     <copy todir="${build.dir}/work/samples" overwrite="yes">
       <fileset dir="${samples.dir}">
-        <include name="**/*BindingImpl.java"/>
-        <include name="**/*TestCase.java"/>
-        <exclude name="ws-i/scm/**/*.java" />
+        <include name="addr/*BindingImpl.java"/>
+        <include name="echo/*BindingImpl.java"/>
+        <include name="jaxrpc/*BindingImpl.java"/>
+        <include name="addr/*TestCase.java"/>
+        <include name="echo/*TestCase.java"/>
+        <include name="jaxrpc/*TestCase.java"/>
 	  </fileset>
     </copy>
 
@@ -573,7 +576,9 @@ Copyright:
       <include name="net/**/*.java" />
       <include name="org/**/*.java" />
       <include name="interop/**/*.java" />
-      <include name="samples/**/*.java" />
+      <include name="samples/addr/*.java" />
+      <include name="samples/echo/*.java" />
+      <include name="samples/jaxrpc/*.java" />
       <include name="test/**/*.java" />
       <exclude name="test/wsdl/interop3/**/*.java" />
       <exclude name="test/wsdl/interop3/**/*.java" />
