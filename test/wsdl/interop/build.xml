@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!DOCTYPE project [
-        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
-        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
-        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
-        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
-        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+        <!ENTITY properties SYSTEM "../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "../../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
