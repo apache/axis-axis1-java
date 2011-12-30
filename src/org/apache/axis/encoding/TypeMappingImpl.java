@@ -40,9 +40,7 @@ import javax.xml.rpc.JAXRPCException;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.Collections;
 import java.util.List;
 import java.io.Serializable;
 
@@ -117,10 +115,10 @@ public class TypeMappingImpl implements Serializable
         }
     }
 
-    private Map qName2Pair;     // QName to Pair Mapping
-    private Map class2Pair;     // Class Name to Pair Mapping
-    private Map pair2SF;        // Pair to Serialization Factory
-    private Map pair2DF;        // Pair to Deserialization Factory
+    private HashMap qName2Pair;     // QName to Pair Mapping
+    private HashMap class2Pair;     // Class Name to Pair Mapping
+    private HashMap pair2SF;        // Pair to Serialization Factory
+    private HashMap pair2DF;        // Pair to Deserialization Factory
     private ArrayList namespaces;   // Supported namespaces
 
     protected Boolean doAutoTypes = null;
@@ -129,10 +127,10 @@ public class TypeMappingImpl implements Serializable
      * Construct TypeMapping
      */
     public TypeMappingImpl() {
-        qName2Pair  = Collections.synchronizedMap(new HashMap());
-        class2Pair  = Collections.synchronizedMap(new HashMap());
-        pair2SF     = Collections.synchronizedMap(new HashMap());
-        pair2DF     = Collections.synchronizedMap(new HashMap());
+        qName2Pair  = new HashMap();
+        class2Pair  = new HashMap();
+        pair2SF     = new HashMap();
+        pair2DF     = new HashMap();
         namespaces  = new ArrayList();
     }
 

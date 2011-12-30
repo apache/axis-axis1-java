@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -35,7 +33,6 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.i18n.Messages;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.server.AxisServer;
@@ -200,7 +197,7 @@ public class AxisServletBase extends HttpServlet {
 
     /**
      * put the engine back in to the context.
-     * @param servlet the servlet to use
+     * @param context servlet context to use
      * @param engine reference to the engine. If null, the engine is removed
      */
     private static void storeEngine(HttpServlet servlet, AxisServer engine) {
@@ -344,20 +341,7 @@ public class AxisServletBase extends HttpServlet {
         StringBuffer baseURL=new StringBuffer(128);
         baseURL.append(request.getScheme());
         baseURL.append("://");
-
-        // Sanitize the passed server name to protect against XSS attacks.
-        StringBuffer sb = new StringBuffer();
-        Pattern pat = Pattern.compile("((\\%3C)|<)[^\\n]+((\\%3E)|>)");
-        String origServerName = request.getServerName();
-        Matcher m = pat.matcher(origServerName);
-        if (m.find()) {
-            // Cross site scripting attack found!  Get rid of it and log.
-            m.appendReplacement(sb, "");
-            log.error(Messages.getMessage("xssAttack", origServerName, request.getRemoteAddr()));
-        }
-        m.appendTail(sb);
-        baseURL.append(sb);
-
+        baseURL.append(request.getServerName());
         if(request.getServerPort()!=80) {
             baseURL.append(":");
             baseURL.append(request.getServerPort());

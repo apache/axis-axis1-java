@@ -134,14 +134,6 @@ public class TypeDesc implements Serializable {
         return result;
     }
 
-    /**
-     * Clears the TypeDesc cache.
-     */
-    public static void clearCache() 
-    {
-        classMap.clear();
-    }
-
     /** WeakReference to the Java class for this type */
     private WeakReference javaClassRef = null;
 

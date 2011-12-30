@@ -71,19 +71,19 @@ public class RunAxisFunctionalTestsTask extends Task
         // Execute the ant target
         new Thread(new TaskRunnable(startTarget)).start();
 
+        if (! startTarget.equals(tcpServerTarget))
+            return;
+        
+        // try a ping for the TCP server
         while (true) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ex) {
             }
             try {
-                if (startTarget.equals(tcpServerTarget)) {
-                    sendOnSocket("ping\r\n");
-                    System.out.println("RunAxisFunctionalTestsTask.callStart successfully pinged tcp server.");
-                } else {
-                    checkHTTPServer();
-                    System.out.println("RunAxisFunctionalTestsTask.callStart successfully pinged http server.");
-                }
+                sendOnSocket("ping\r\n");
+                // if no exception, return
+                System.out.println("RunAxisFunctionalTestsTask.callStart successfully pinged server.");
                 return;
             } catch (Exception ex) {
                 // loop & try again
@@ -116,8 +116,12 @@ public class RunAxisFunctionalTestsTask extends Task
             // second, and more involvedly, stop the http server
             // Try connecting in case the server is already stopped.
             if (httpServerTarget != null) {
+                URL url = new URL("http://localhost:8080/");
                 try {
-                    checkHTTPServer();
+                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                    connection.connect();
+                    readFully(connection);
+                    connection.disconnect();
                 } catch (IOException e) {
                     // Server is not running. Make this task a no-op.
                     System.out.println("Error from HTTP read: " + e);
@@ -182,14 +186,6 @@ System.out.println("Trying localhost:8080...");
         callee.init();
         callee.setTarget(taskName);
         callee.execute();
-    }
-
-    private void checkHTTPServer() throws IOException {
-        URL url = new URL("http://localhost:8080/");
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        connection.connect();
-        readFully(connection);
-        connection.disconnect();
     }
 
     /**

@@ -83,54 +83,29 @@ public class CommonsHTTPSender extends BasicHandler {
     /** Field log           */
     protected static Log log =
         LogFactory.getLog(CommonsHTTPSender.class.getName());
-
-    private static final String CHUNKED_PROP = "axis.chunked";
-
-    protected static HttpConnectionManager defaultConnectionManager;
-    protected static CommonsHTTPClientProperties defaultClientProperties;
     
     protected HttpConnectionManager connectionManager;
     protected CommonsHTTPClientProperties clientProperties;
+    boolean httpChunkStream = true; //Use HTTP chunking or not.
 
     public CommonsHTTPSender() {
         initialize();
     }
 
     protected void initialize() {
-        initializeDefaultConnectionManager();
-        
-        this.clientProperties = defaultClientProperties;
-        this.connectionManager = defaultConnectionManager;
-    }
-
-    protected static synchronized void initializeDefaultConnectionManager() {
-        if (defaultConnectionManager != null) {
-            // defults already initialized
-            return;
-        }
-
-        MultiThreadedHttpConnectionManager cm = 
-            new MultiThreadedHttpConnectionManager();
-
-        defaultClientProperties = CommonsHTTPClientPropertiesFactory.create();
-
-        cm.getParams().setDefaultMaxConnectionsPerHost(
-                     defaultClientProperties.getMaximumConnectionsPerHost());
-        cm.getParams().setMaxTotalConnections(
-                     defaultClientProperties.getMaximumTotalConnections());
-
+        MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
+        this.clientProperties = CommonsHTTPClientPropertiesFactory.create();
+        cm.getParams().setDefaultMaxConnectionsPerHost(clientProperties.getMaximumConnectionsPerHost());
+        cm.getParams().setMaxTotalConnections(clientProperties.getMaximumTotalConnections());
         // If defined, set the default timeouts
         // Can be overridden by the MessageContext
-        if(defaultClientProperties.getDefaultConnectionTimeout()>0) {
-            cm.getParams().setConnectionTimeout(
-                     defaultClientProperties.getDefaultConnectionTimeout());
+        if(this.clientProperties.getDefaultConnectionTimeout()>0) {
+           cm.getParams().setConnectionTimeout(this.clientProperties.getDefaultConnectionTimeout());
         }
-        if(defaultClientProperties.getDefaultSoTimeout()>0) {
-            cm.getParams().setSoTimeout(
-                     defaultClientProperties.getDefaultSoTimeout());
+        if(this.clientProperties.getDefaultSoTimeout()>0) {
+           cm.getParams().setSoTimeout(this.clientProperties.getDefaultSoTimeout());
         }
-        
-        defaultConnectionManager = cm;
+        this.connectionManager = cm;
     }
     
     /**
@@ -180,12 +155,9 @@ public class CommonsHTTPSender extends BasicHandler {
                 // set false as default, addContetInfo can overwrite
                 method.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE,
                                                        false);
-
+                
                 addContextInfo(method, httpClient, msgContext, targetURL);
-                
-                boolean httpChunkStream = 
-                    method.getParams().getBooleanParameter(CHUNKED_PROP, true);
-                
+
                 MessageRequestEntity requestEntity = null;
                 if (msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST)) {
                 	requestEntity = new GzipMessageRequestEntity(method, reqMessage, httpChunkStream);
@@ -222,12 +194,6 @@ public class CommonsHTTPSender extends BasicHandler {
             }
 
             int returnCode = httpClient.executeMethod(hostConfiguration, method, null);
-            String statusMessage = method.getStatusText();
-
-            msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
-                                   new Integer(returnCode));
-            msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE,
-                                   statusMessage);
 
             String contentType = 
                 getHeader(method, HTTPConstants.HEADER_CONTENT_TYPE);
@@ -243,11 +209,12 @@ public class CommonsHTTPSender extends BasicHandler {
                        SOAPConstants.SOAP12_CONSTANTS) {
                 // For now, if we're SOAP 1.2, fall through, since the range of
                 // valid result codes is much greater
-            } else if ((contentType != null) && !contentType.startsWith("text/html")
+            } else if ((contentType != null) && !contentType.equals("text/html")
                        && ((returnCode > 499) && (returnCode < 600))) {
                 
                 // SOAP Fault should be in here - so fall through
             } else {
+                String statusMessage = method.getStatusText();
                 AxisFault fault = new AxisFault("HTTP",
                                                 "(" + returnCode + ")"
                                                 + statusMessage, null,
@@ -266,15 +233,6 @@ public class CommonsHTTPSender extends BasicHandler {
                 }
             }
             
-            if (contentLength != null) {
-                long length = Long.parseLong(contentLength);
-                
-                if (length == 0) {
-                    method.releaseConnection();
-                    return;
-                }
-            }
-
             // wrap the response body stream so that close() also releases 
             // the connection back to the pool.
             InputStream releaseConnectionOnCloseStream = 
@@ -330,6 +288,12 @@ public class CommonsHTTPSender extends BasicHandler {
                         handleCookie(HTTPConstants.HEADER_COOKIE2, headers[i].getValue(), msgContext);
                     }
                 }
+            }
+
+            // always release the connection back to the pool if 
+            // it was one way invocation
+            if (msgContext.isPropertyTrue("axis.one.way")) {
+                method.releaseConnection();
             }
             
         } catch (Exception e) {
@@ -626,8 +590,7 @@ public class CommonsHTTPSender extends BasicHandler {
                 } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
                     String val = me.getValue().toString();
                     if (null != val)  {
-                        method.getParams().setBooleanParameter(CHUNKED_PROP, 
-                                                               JavaUtils.isTrue(val));
+                        httpChunkStream = JavaUtils.isTrue(val);
                     }
                 } else {
                     method.addRequestHeader(key, value);

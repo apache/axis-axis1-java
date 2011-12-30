@@ -90,8 +90,7 @@ public class TestAutoTypes extends TestCase {
     }
 
     public void testEchoBeanArray() throws Exception {
-        IAutoTypes simpleProxy = getSimpleProxy();
-        SimpleBean[] beans = (SimpleBean[]) simpleProxy.echoBeanArray(new SimpleBean[]{
+        SimpleBean[] beans = (SimpleBean[]) getSimpleProxy().echoBeanArray(new SimpleBean[]{
             new SimpleBean(), new SimpleBean(),
             new SimpleBean(), new SimpleBean(), new SimpleBean(),
             new SimpleBean()});

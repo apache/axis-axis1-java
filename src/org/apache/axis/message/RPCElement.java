@@ -233,7 +233,7 @@ public class RPCElement extends SOAPBodyElement
                             context.setCurElement(this);
                         }
 
-                        publishToHandler(context);
+                        publishToHandler((org.xml.sax.ContentHandler) context);
 
                         // If parameter values are located in headers,
                         // get the information and publish the header

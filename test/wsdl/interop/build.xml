@@ -178,7 +178,7 @@ Copyright:
     </wsdl2java>
     <!-- SOAPBuilders Interoperability Lab "Round 2" -->
     <!--     http://www.whitemesa.com/interop.htm    -->
-    <wsdl2java url="http://www.cs.fsu.edu/~engelen/interop2.wsdl"
+    <wsdl2java url="http://soapinterop.java.sun.com/round2/base?WSDL"
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
@@ -189,7 +189,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/" package="interop.test"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.test"/>
     </wsdl2java>
-    <wsdl2java url="http://www.cs.fsu.edu/~engelen/interop2B.wsdl"
+    <wsdl2java url="http://soapinterop.java.sun.com/round2/groupb?WSDL"
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
@@ -263,7 +263,7 @@ Copyright:
     <!-- Step 8.  Test second generated client against  -->
     <!--          pre-built server                      -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://www.whitemesa.com/r3/import1.wsdl"
+    <wsdl2java url="http://soapinterop.java.sun.com/round3/groupd/import1?WSDL"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
@@ -303,7 +303,7 @@ Copyright:
     <!-- SOAP Builder's round III web services -->
     <!-- interoperability testing:  import2    -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://www.whitemesa.com/r3/import2.wsdl"
+    <wsdl2java url="http://soapinterop.java.sun.com/round3/groupd/import2?WSDL"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2"/>
@@ -342,7 +342,6 @@ Copyright:
     <!-- SOAP Builder's round III web services       -->
     <!-- interoperability testing:  absolute import2 -->
     <!-- Steps 1, 2 and 4: -->
-<!--
     <wsdl2java url="http://www.dolphinharbor.org/services/R3Import2/service.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
@@ -354,7 +353,6 @@ Copyright:
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/absimport2/*.java" />
     </javac>
--->
     <!-- Step 3:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 5:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 6:  -->
@@ -380,7 +378,7 @@ Copyright:
     <!-- SOAP Builder's round III web services -->
     <!-- interoperability testing:  import3    -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://www.whitemesa.com/r3/import3.wsdl"
+    <wsdl2java url="http://soapinterop.java.sun.com/round3/groupd/import3?WSDL"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main2/" package="test.wsdl.interop3.import3"/>
@@ -453,6 +451,18 @@ Copyright:
                serverSide="yes"
                verbose="no"
                noimports="no">
+    </wsdl2java>
+    <!-- This tests .NET document/literal WSDL.
+         We get this WSDL file from the internet on purpose,
+         file is only for reference.
+    <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
+     -->
+    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
+               output="${axis.home}/build/work"
+               verbose="no"
+               serverSide="no"
+               testcase="no">
+        <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
     </wsdl2java>
 
     <!-- jaxrpc sample -->
@@ -534,18 +544,6 @@ Copyright:
                verbose="yes"
                noimports="no">
     </wsdl2java>
-    
-    //     This tests .NET document/literal WSDL.
-    //     NOTE: PerfectXML.net is not longer up (tomj 4/7/06)
-    //     See test/wsdl/literal for local version
-    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
-               output="${axis.home}/build/work"
-               verbose="no"
-               serverSide="no"
-               testcase="no">
-        <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
-    </wsdl2java>
-
     -->
 
     <copy todir="${build.dir}/work/test/wsdl/interop" overwrite="yes">
@@ -557,12 +555,9 @@ Copyright:
 
     <copy todir="${build.dir}/work/samples" overwrite="yes">
       <fileset dir="${samples.dir}">
-        <include name="addr/*BindingImpl.java"/>
-        <include name="echo/*BindingImpl.java"/>
-        <include name="jaxrpc/*BindingImpl.java"/>
-        <include name="addr/*TestCase.java"/>
-        <include name="echo/*TestCase.java"/>
-        <include name="jaxrpc/*TestCase.java"/>
+        <include name="**/*BindingImpl.java"/>
+        <include name="**/*TestCase.java"/>
+        <exclude name="ws-i/scm/**/*.java" />
 	  </fileset>
     </copy>
 
@@ -576,9 +571,7 @@ Copyright:
       <include name="net/**/*.java" />
       <include name="org/**/*.java" />
       <include name="interop/**/*.java" />
-      <include name="samples/addr/*.java" />
-      <include name="samples/echo/*.java" />
-      <include name="samples/jaxrpc/*.java" />
+      <include name="samples/**/*.java" />
       <include name="test/**/*.java" />
       <exclude name="test/wsdl/interop3/**/*.java" />
       <exclude name="test/wsdl/interop3/**/*.java" />

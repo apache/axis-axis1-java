@@ -19,14 +19,11 @@ package org.apache.axis.client;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
-import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.wsa.EndpointReference;
-import org.apache.axis.wsa.WSAConstants;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
@@ -41,13 +38,10 @@ import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.handler.HandlerRegistry;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -483,10 +477,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         // We can't prefill information if WSDL is not specified,
         // So just return the call that we just created.
-        if (wsdlParser == null) {
-            _call = call ;
+        if (wsdlParser == null)
             return call;
-        }
 
         Port port = wsdlService.getPort(portName.getLocalPart());
         if (port == null)
@@ -512,26 +504,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                             Messages.getMessage("cantSetURI00", "" + exp));
                 }
             }
-            else if ( obj instanceof UnknownExtensibilityElement ) {
-              UnknownExtensibilityElement ee = 
-                (UnknownExtensibilityElement) obj ;
-              QName QN1 = new QName(WSAConstants.NS_WSA1,"ReferenceParameters");
-              QName QN2 = new QName(WSAConstants.NS_WSA2,"ReferenceParameters");
-              QName eeQ = ee.getElementType();
-              if ( QN1.equals(eeQ) || QN2.equals(eeQ) ) {
-                try {
-                  call.setTo( call.getTargetEndpointAddress() );
-                  call.getTo().addReferenceParameters( ee.getElement() );
-                  call.getTo().setWSAVersion( eeQ.getNamespaceURI() );
-                }
-                catch(Exception exp) {
-                  throw new ServiceException(
-                          Messages.getMessage("cantSetURI00", "" + exp));
-                }
-              }
-            }
         }
-        _call = call ;
 
         return (call);
     }
@@ -552,7 +525,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         Call call = (org.apache.axis.client.Call) createCall();
         call.setOperation(portName, operationName);
-        _call = call ;
         return (call);
     }
 
@@ -572,7 +544,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
         Call call = (org.apache.axis.client.Call) createCall();
         call.setOperation(portName, operationName);
-        _call = call ;
         return (call);
     }
 
@@ -585,9 +556,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall() throws ServiceException {
-        Call call = new org.apache.axis.client.Call(this);
-        _call = call ;
-        return call;
+        _call = new org.apache.axis.client.Call(this);
+        return _call;
     }
 
     /**
@@ -833,20 +803,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public void setEngineConfiguration(EngineConfiguration config) {
         this.config = config;
-    }
-
-    public void setClientConfig(String filename) throws Exception {
-      InputStream input = null ;
-      if ( (new File(filename)).exists() )
-        input = new FileInputStream( filename );
-      else {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        input = cl.getResourceAsStream( filename );
-      }
-      if ( input == null ) throw new Exception("Can't locate: " + filename );
-      FileProvider config = new FileProvider( input );
-      setEngineConfiguration( config );
-      setEngine( getAxisClient() );
     }
 
     /**

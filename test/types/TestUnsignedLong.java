@@ -94,24 +94,4 @@ public class TestUnsignedLong extends TestCase {
     public void testMinExclusive() throws Exception {
         runPassTest(BigInteger.ZERO, "0");
     }
-
-    public void testCompareTo() throws Exception {
-        UnsignedLong v1, v2;
-
-        v1 = new UnsignedLong(500);
-        v2 = new UnsignedLong(600);
-
-        assertTrue(v1.compareTo(v2) < 0);
-        assertTrue(v2.compareTo(v1) > 0);
-
-        v2 = new UnsignedLong(500);
-
-        assertTrue(v1.compareTo(v2) == 0);
-        assertTrue(v2.compareTo(v1) == 0);
-
-        v2 = v1;
-
-        assertTrue(v1.compareTo(v2) == 0);
-    }
-
 }

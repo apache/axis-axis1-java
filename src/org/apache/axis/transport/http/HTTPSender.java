@@ -246,7 +246,7 @@ public class HTTPSender extends BasicHandler {
                     : passwd);
             otherHeaders.append(HTTPConstants.HEADER_AUTHORIZATION)
                     .append(": Basic ")
-                    .append(Base64.encode(tmpBuf.toString().getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING)))
+                    .append(Base64.encode(tmpBuf.toString().getBytes()))
                     .append("\r\n");
         }
 
@@ -531,25 +531,26 @@ public class HTTPSender extends BasicHandler {
     private void fillHeaders(MessageContext msgContext, String header, StringBuffer otherHeaders) {
         Object ck1 = msgContext.getProperty(header);
         if (ck1 != null) {
-            // Do we have multiple values to set?
             if (ck1 instanceof String[]) {
                 String [] cookies = (String[]) ck1;
-                otherHeaders.append(header).append(": ");
                 for (int i = 0; i < cookies.length; i++) {
-                    // See bug AXIS-2064: https://issues.apache.org/jira/browse/AXIS-2064
-                    // Append the cookie
-                    otherHeaders.append(cookies[i]);
-                    // Append a ';' if not the last cookie
-                    if (i < cookies.length -1)
-                        otherHeaders.append(";");
+                    addCookie(otherHeaders, header, cookies[i]);
                 }
-                otherHeaders.append("\r\n");
             } else {
-                // Simple string value
-                otherHeaders.append(header).append(": ")
-                        .append((String) ck1).append("\r\n");
+                addCookie(otherHeaders, header, (String) ck1);
             }
         }
+    }
+
+    /**
+     * add cookie to headers
+     * @param otherHeaders
+     * @param header
+     * @param cookie
+     */
+    private void addCookie(StringBuffer otherHeaders, String header, String cookie) {
+        otherHeaders.append(header).append(": ")
+                .append(cookie).append("\r\n");
     }
 
     private InputStream readHeadersFromSocket(SocketHolder sockHolder,
@@ -700,20 +701,9 @@ public class HTTPSender extends BasicHandler {
         location = (null == location)
                 ? null
                 : location.trim();
-
-        String contentLength =
-            (String) headers.get(HEADER_CONTENT_LENGTH_LC);
-
-        contentLength = (null == contentLength)
-                ? null
-                : contentLength.trim();
-        int length = -1;
-        if (contentLength != null) {
-            length = Integer.parseInt(contentLength);
-        }
-
+                
         if ((returnCode > 199) && (returnCode < 300)) {
-            if (returnCode == 202 || length == 0) {
+            if (returnCode == 202) {
                 return inp;
             }
             // SOAP return is OK - so fall through
@@ -768,6 +758,13 @@ public class HTTPSender extends BasicHandler {
                 ? null
                 : contentLocation.trim();
 
+        String contentLength = 
+            (String) headers.get(HEADER_CONTENT_LENGTH_LC);
+
+        contentLength = (null == contentLength)
+                ? null
+                : contentLength.trim();
+
         String transferEncoding =
             (String) headers.get(HEADER_TRANSFER_ENCODING_LC);
 
@@ -778,13 +775,6 @@ public class HTTPSender extends BasicHandler {
                 inp = new ChunkedInputStream(inp);
             }
         }
-
-        /* Some soap processors will return a 200 instead of a 202 */
-        /* even when there isn't a soap envelope (ie. length=0),   */
-        /* let's be forgiving and allow those through.             */
-        if ( contentLength != null && "0".equals(contentLength) )
-          return inp ;
-
 
         outMsg = new Message( new SocketInputStream(inp, socketHolder.getSocket()), false,
                               contentType, contentLocation);

@@ -43,7 +43,7 @@ public class SOAPHeaderElement extends MessageElement
 
     protected boolean   processed = false;
 
-    protected String    actor;
+    protected String    actor = "http://schemas.xmlsoap.org/soap/actor/next";
     protected boolean   mustUnderstand = false;
     protected boolean   relay = false;
 
@@ -93,11 +93,8 @@ public class SOAPHeaderElement extends MessageElement
         }
 
         QName roleQName = soapConstants.getRoleAttributeQName();
-        String tmp = elem.getAttributeNS(roleQName.getNamespaceURI(),
+        actor = elem.getAttributeNS(roleQName.getNamespaceURI(),
                                     roleQName.getLocalPart());
-        // Only pick-up the role value if it there - otherwise let it be null
-        if ( tmp != null && !tmp.equals("") ) actor = tmp ;
-
 //        if (actor == null) {
 //            actor = "";
 //        }
@@ -240,12 +237,10 @@ public class SOAPHeaderElement extends MessageElement
             else
                 val = mustUnderstand ? "1" : "0";
 
-            if (mustUnderstand) {
-                setAttribute(soapVer.getEnvelopeURI(),
+            setAttribute(soapVer.getEnvelopeURI(),
                          Constants.ATTR_MUST_UNDERSTAND,
                          val);
-            }
-
+            
             if (soapVer == SOAPConstants.SOAP12_CONSTANTS && relay) {
                 setAttribute(soapVer.getEnvelopeURI(), Constants.ATTR_RELAY,
                              "true");

@@ -75,10 +75,6 @@ public class WSDDOperation extends WSDDElement
         if (retQNameStr != null && !retQNameStr.equals(""))
             desc.setReturnQName(XMLUtils.getQNameFromString(retQNameStr, e));
         
-        String respQNameStr = e.getAttribute(ATTR_RESPQNAME);
-        if (respQNameStr != null && !respQNameStr.equals(""))
-            desc.setResponseQName(XMLUtils.getQNameFromString(respQNameStr, e));
-
         String retTypeStr = e.getAttribute(ATTR_RETTYPE);
         if (retTypeStr != null && !retTypeStr.equals(""))
             desc.setReturnType(XMLUtils.getQNameFromString(retTypeStr, e));

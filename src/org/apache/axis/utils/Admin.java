@@ -39,7 +39,6 @@ import org.xml.sax.InputSource;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -207,23 +206,20 @@ public class Admin
         }
     }
 
-    /** 
-     * Outputs XML document representing this engine's configuration
-     * to the specified writer. 
+    /** Get an XML document representing this engine's configuration.
+     *
+     * This document is suitable for saving and reloading into the
+     * engine.
      *
      * @param engine the AxisEngine to work with
-     * @param writer the writer to which write the engine configuration.
-     *               This function does not close the writer.
+     * @return an XML document holding the engine config
      * @exception AxisFault
      */
-    public static void listConfig(AxisEngine engine, Writer writer)
+    public static Document listConfig(AxisEngine engine)
         throws AxisFault
     {
-        if (writer == null) {
-            return;
-        }
+        StringWriter writer = new StringWriter();
         SerializationContext context = new SerializationContext(writer);
-        context.setDisablePrettyXML(false);
         context.setPretty(true);
         try {
             EngineConfiguration config = engine.getConfig();
@@ -239,22 +235,7 @@ public class Admin
 
             throw new AxisFault(Messages.getMessage("noEngineWSDD"));
         }
-    }
 
-    /** Get an XML document representing this engine's configuration.
-     *
-     * This document is suitable for saving and reloading into the
-     * engine.
-     *
-     * @param engine the AxisEngine to work with
-     * @return an XML document holding the engine config
-     * @exception AxisFault
-     */
-    public static Document listConfig(AxisEngine engine)
-        throws AxisFault
-    {
-        StringWriter writer = new StringWriter();
-        listConfig(engine, writer);
         try {
             writer.close();
             return XMLUtils.newDocument(new InputSource(new StringReader(writer.getBuffer().toString())));

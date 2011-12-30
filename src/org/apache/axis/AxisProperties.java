@@ -135,11 +135,6 @@ public class AxisProperties {
         return altNameDiscoverer;
     }
 
-    public static synchronized void reset() {
-        loaders = null;
-        nameDiscoverer = null;
-    }
-
     /**
      * Create a new instance of a service provider class.
      *

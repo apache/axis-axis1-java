@@ -666,16 +666,15 @@ public class AttachmentsImpl implements Attachments {
      */
 
     public void dispose() {
-        if (this.attachments.size() > 0) {
-            java.util.Iterator iterator = GetAttachmentsIterator();
-            while (iterator.hasNext()) {
-                Part part = (Part) iterator.next();
-                if (part instanceof AttachmentPart) {
-                    AttachmentPart apart=(AttachmentPart)part;
-                    apart.dispose();
-                }
+        java.util.Iterator iterator = GetAttachmentsIterator();
+        while (iterator.hasNext()) {
+            Part part = (Part) iterator.next();
+            if (part instanceof AttachmentPart) {
+                AttachmentPart apart=(AttachmentPart)part;
+                apart.dispose();
             }
         }
+
     }
 
     // consider type-safe e-num here?

@@ -33,21 +33,13 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeaderElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import java.io.File;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
 
 // fixme: fields are declared throughout this class, some at the top, and some
 //  near to where they are used. We should move all field declarations into a
@@ -173,7 +165,6 @@ public class MessageContext implements SOAPMessageContext {
     private String  encodingStyle  = Use.ENCODED.getEncoding();
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
-    private boolean isOneWay       = false;
 
     /**
      * SOAP Actor roles.
@@ -228,7 +219,6 @@ public class MessageContext implements SOAPMessageContext {
 
         OperationDesc [] possibleOperations = null;
 
-        /* DUG - how can you possibly just guess like this??? */
         if (serviceHandler == null) {
             try {
                 if (log.isDebugEnabled()) {
@@ -242,8 +232,8 @@ public class MessageContext implements SOAPMessageContext {
             } catch (ConfigurationException e) {
                 // Didn't find one...
             }
+
         }
-        /* */
 
         if (serviceHandler != null) {
             ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
@@ -265,8 +255,9 @@ public class MessageContext implements SOAPMessageContext {
                         }
                     }
                     if (foundOperations.size() > 0) {
-                        possibleOperations = new OperationDesc[foundOperations.size()];
-                        foundOperations.toArray(possibleOperations);
+                        possibleOperations = (OperationDesc[])
+                            JavaUtils.convert(foundOperations,
+                                              OperationDesc[].class);
                     }
                 }
             }
@@ -382,144 +373,6 @@ public class MessageContext implements SOAPMessageContext {
                 }
             }
         }
-    }
-
-    public void toStream(ObjectOutputStream out) throws Exception {
-      Hashtable table = new Hashtable();
-
-      if ( requestMessage != null )  {
-        SOAPEnvelope env = requestMessage.getSOAPEnvelope();
-        if ( env != null ) {
-          Vector headers = env.getHeaders();
-          Vector muHdrs  = new Vector();
-          for ( int i = 0 ; i < headers.size() ; i++ ) {
-            SOAPHeaderElement she = (SOAPHeaderElement) headers.get(i);
-            // if ( she.getMustUnderstand() && she.isProcessed() ) {
-            if ( she.isProcessed() ) {
-              // Ideally I'd like to just mark this as mU=0 instead of
-              // removing it but I couldn't get axis to do it
-              muHdrs.add( she.getQName() );
-            }
-          }
-          if ( muHdrs.size() > 0 )
-            table.put( "msg.reqMU", muHdrs );
-        }
-        table.put("msg.req", requestMessage.getSOAPPartAsString() );
-      }
-      if ( responseMessage != null )  {
-        SOAPEnvelope env = responseMessage.getSOAPEnvelope();
-        if ( env != null ) {
-          Vector headers = env.getHeaders();
-          Vector muHdrs  = new Vector();
-          for ( int i = 0 ; i < headers.size() ; i++ ) {
-            SOAPHeaderElement she = (SOAPHeaderElement) headers.get(i);
-            // if ( she.getMustUnderstand() && she.isProcessed() ) {
-            if ( she.isProcessed() ) {
-              // Ideally I'd like to just mark this as mU=0 instead of
-              // removing it but I couldn't get axis to do it
-              muHdrs.add( she.getQName() );
-            }
-          }
-          if ( muHdrs.size() > 0 )
-            table.put( "msg.resMU", muHdrs );
-        }
-        table.put("msg.res", responseMessage.getSOAPPartAsString() );
-      }
-      if ( targetService != null ) table.put("msg.svc", targetService );
-      if ( transportName != null ) table.put("msg.trn", transportName );
-      if ( maintainSession ) table.put("msg.mss", "true" );
-      if ( havePassedPivot ) table.put("msg.pvt", "true" );
-      table.put("msg.tim", new Integer(timeout) );
-      if ( highFidelity ) table.put( "msg.hig", "true" );
-      if ( username != null ) table.put( "msg.usr", username );
-      if ( password != null ) table.put( "msg.pwd", password );
-      if ( encodingStyle != null ) table.put( "msg.enc", encodingStyle );
-      if ( useSOAPAction ) table.put( "msg.usa", "true" );
-      if ( SOAPActionURI != null ) table.put( "msg.act", SOAPActionURI );
-
-      Iterator i = getPropertyNames();
-      while ( i.hasNext() ) {
-        String name = (String) i.next();
-        Object obj  = bag.get(name);
-        if ( obj instanceof Serializable ) {
-          // First stop some liars!!
-          if ( obj instanceof org.apache.axis.client.Service ) continue ;
-          if ( obj instanceof org.apache.axis.message.RPCElement ) continue ;
-          if ( name.equals(org.apache.axis.transport.http
-                              .HTTPConstants.MC_HTTP_SERVLET) ) continue ;
-
-          table.put( "__" + name, obj );
-        }
-      }
-      try {
-        out.writeObject( table );
-      } catch(Exception exp) {
-        String tmp = "\nCan't serialize MessageContext("+exp+")\n" +
-                           "Current list of entries that were attempted:\n" ;
-
-        Iterator ii = table.keySet().iterator();
-        while ( ii.hasNext() ) {
-          String key = (String) ii.next();
-          Object val = table.get(key);
-          tmp += "  " + key + " : " + val.getClass() + "\n" ;
-        }
-        throw new Exception( exp.toString() + tmp );
-      }
-    }
-
-    public void fromStream(ObjectInputStream in) throws Exception {
-      Hashtable   table = (Hashtable) in.readObject();
-      Enumeration e  = table.keys();
-      Object      obj   = null ;
-
-      if ( (obj = table.get("msg.req")) != null )
-        (requestMessage = new Message( obj, false )).setMessageContext(this);
-      if ( (obj = table.get("msg.res")) != null )
-        (responseMessage = new Message( obj, false )).setMessageContext(this);
-
-      transportName = (String) table.get("msg.trn");
-      maintainSession = "true".equals((String)table.get("msg.mss"));
-      havePassedPivot = "true".equals((String)table.get("msg.pvt"));
-      timeout = ((Integer)table.get("msg.tim")).intValue();
-      highFidelity = "true".equals((String)table.get("msg.hig"));
-      username = (String) table.get("msg.usr");
-      password = (String) table.get("msg.pwd");
-      // encodingStyle = (String) table.get("msg.enc");
-      useSOAPAction = "true".equals((String)table.get("msg.usa"));
-      SOAPActionURI = (String) table.get("msg.act");
-
-      while ( e.hasMoreElements() ) {
-        String name = (String) e.nextElement();
-        if ( name.startsWith("__") )
-          bag.put( name.substring(2), table.get(name) );
-      }
-
-      // Special because it will look up the service object
-      setTargetService( (String) table.get("msg.svc") );
-
-      // Mark all processed headers as processed
-      Enumeration ee ;
-      if ( (obj = table.get("msg.reqMU")) != null ) {
-        Vector MUs = (Vector) obj ;
-        SOAPEnvelope env = requestMessage.getSOAPEnvelope();
-        for ( int i = 0 ; i < MUs.size() ; i++ ) {
-          QName qn = (QName) MUs.get(i);
-          ee = env.getHeadersByName(qn.getNamespaceURI(), qn.getLocalPart());
-          while (ee.hasMoreElements()) 
-            ((SOAPHeaderElement) ee.nextElement()).setProcessed(true);
-        }
-      }
-
-      if ( (obj = table.get("msg.resMU")) != null ) {
-        Vector MUs = (Vector) obj ;
-        SOAPEnvelope env = responseMessage.getSOAPEnvelope();
-        for ( int i = 0 ; i < MUs.size() ; i++ ) {
-          QName qn = (QName) MUs.get(i);
-          ee = env.getHeadersByName(qn.getNamespaceURI(), qn.getLocalPart());
-          while (ee.hasMoreElements()) 
-            ((SOAPHeaderElement) ee.nextElement()).setProcessed(true);
-        }
-      }
     }
 
     /**
@@ -1502,13 +1355,5 @@ public class MessageContext implements SOAPMessageContext {
             responseMessage.dispose();
             responseMessage=null;
         }
-    }
-
-    public void setIsOneWay(boolean value) {
-      isOneWay = value ;
-    }
-
-    public boolean getIsOneWay() {
-      return isOneWay ;
     }
 }

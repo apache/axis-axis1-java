@@ -167,7 +167,7 @@ public abstract class JavaProvider extends BasicProvider
                                            String serviceName,
                                            MessageContext msgContext,
                                            String clsName) throws Exception {
-        Object obj;
+        Object obj = null;
         boolean makeNewObject = false;
 
         // This is a little tricky.
@@ -276,9 +276,7 @@ public abstract class JavaProvider extends BasicProvider
 
         if ((clsName == null) || clsName.equals("")) {
             throw new AxisFault("Server.NoClassForService",
-                Messages.getMessage("noOption00",
-                                    getServiceClassNameOptionName(),
-                                    serviceName),
+                Messages.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
                 null, null);
         }
 
@@ -286,10 +284,7 @@ public abstract class JavaProvider extends BasicProvider
         Object serviceObject = null;
 
         try {
-            serviceObject = getServiceObject(msgContext,
-                                             service,
-                                             clsName,
-                                             scope);
+            serviceObject = getServiceObject(msgContext, service, clsName, scope);
 
             SOAPEnvelope   resEnv = null;
 
@@ -300,20 +295,16 @@ public abstract class JavaProvider extends BasicProvider
             // be nice if in the future there was a way to detect an error
             // when trying to install a response message in a MessageContext
             // associated with a one-way operation....
-            OperationDesc operation  = msgContext.getOperation();
-            boolean       createdEnv = false ;
-            Message       resMsg     = null ;
-
+            OperationDesc operation = msgContext.getOperation();
             if (operation != null &&
                     OperationType.ONE_WAY.equals(operation.getMep())) {
                 msgContext.setResponseMessage(null);
             } else {
-                resMsg = msgContext.getResponseMessage();
+                Message        resMsg  = msgContext.getResponseMessage();
 
                 // If we didn't have a response message, make sure we set one up
                 // with the appropriate versions of SOAP and Schema
                 if (resMsg == null) {
-                    createdEnv = true ;
                     resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants(),
                                                msgContext.getSchemaVersion());
                     
@@ -330,22 +321,6 @@ public abstract class JavaProvider extends BasicProvider
             SOAPEnvelope   reqEnv  = reqMsg.getSOAPEnvelope();
 
             processMessage(msgContext, reqEnv, resEnv, serviceObject);
-
-            // If the service sets this "IsOneWay" flag then they don't want
-            // a response sent back at all.  However, we can only erase
-            // any env that might be there if we created it just before we
-            // called the service.  If someone else in the processing 
-            // created the env then we can't just blindly erase it - the 
-            // best we can do is erase the Body element.
-            // Ideally, I'd like the service to return back the desired
-            // env instead but I think that would break too many people's
-            // current impls.
-            if ( msgContext.getIsOneWay() ) {
-              if ( createdEnv )
-                msgContext.setResponseMessage( null );
-              else
-                resMsg.getSOAPEnvelope().clearBody();
-            }
         } catch( SAXException exp ) {
             entLog.debug( Messages.getMessage("toAxisFault00"), exp);
             Exception real = exp.getException();
@@ -434,8 +409,8 @@ public abstract class JavaProvider extends BasicProvider
                                     SOAPService service,
                                     MessageContext msgContext)
             throws AxisFault {
-        ClassLoader cl;
-        Class serviceClass;
+        ClassLoader cl = null;
+        Class serviceClass = null;
         AxisEngine engine = service.getEngine();
 
         // If we have a message context, use that to get classloader

@@ -787,7 +787,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         }
         if (this.parent != null) {
             this.parent.removeChild(this);
-            this.parent = null; //remove all old lineage traces from both sides
         }
         if (parent != null) {
             parent.appendChild(this);

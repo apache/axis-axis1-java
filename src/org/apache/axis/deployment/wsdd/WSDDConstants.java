@@ -141,7 +141,6 @@ public class WSDDConstants
     public static final String ATTR_VALUE = "value";
     public static final String ATTR_LOCKED = "locked";
     public static final String ATTR_RETQNAME = "returnQName";
-    public static final String ATTR_RESPQNAME = "responseQName";
     public static final String ATTR_RETTYPE = "returnType";
     public static final String ATTR_RETITEMQNAME = "returnItemQName";
     public static final String ATTR_RETITEMTYPE = "returnItemType";

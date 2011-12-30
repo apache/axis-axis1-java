@@ -16,7 +16,6 @@
 package org.apache.axis.utils ;
 
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.Set;
 import java.util.HashSet;
@@ -107,25 +106,6 @@ public class LockableHashtable extends Hashtable {
         }
         return ret;
     }
-
-    public Set keySet() {
-      Hashtable p = this ;
-      HashSet   v = new HashSet();
-      Set       s = super.keySet();
-      while ( p != null ) {
-        if ( s == null ) s = p.keySet();
-        Iterator i = s.iterator();
-        while ( i.hasNext() )
-          v.add( i.next() );
-        s = null ;
-        if ( p instanceof LockableHashtable )
-          p = ((LockableHashtable)p).parent ;
-        else
-          p = null ;
-      }
-      return v;
-    }
-
     /**
      * New version of the put() method that allows for explicitly marking
      * items added to the hashtable as locked.

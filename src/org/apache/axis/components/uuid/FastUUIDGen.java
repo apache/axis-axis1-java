@@ -30,7 +30,7 @@ public class FastUUIDGen implements UUIDGen {
     private static String nodeStr;
     private static int clockSequence;
 
-    private static long lastTime = 0;
+    private long lastTime = 0;
 
     static {
         // problem: the node should be the IEEE 802 ethernet address, but can not
@@ -78,22 +78,19 @@ public class FastUUIDGen implements UUIDGen {
         timestamp += 0x01b21dd2L << 32;
         timestamp += 0x13814000;
         
-        long localClockSequence;
-
-        synchronized(FastUUIDGen.class) {
-            if (time <= lastTime) {
+        synchronized(this) {
+            if (time - lastTime <= 0) {
                 clockSequence = ((clockSequence + 1) & 16383);
             }
             lastTime = time;
-            localClockSequence = clockSequence;
         }
 
         long timeLow = getBitsValue(timestamp, 32, 32);
         long timeMid = getBitsValue(timestamp, 48, 16);
         long timeHi = getBitsValue(timestamp, 64, 16) | 0x1000;
 
-        long clockSeqLow = getBitsValue(localClockSequence, 8, 8);
-        long clockSeqHi = getBitsValue(localClockSequence, 16, 8) | 0x80;
+        long clockSeqLow = getBitsValue(clockSequence, 8, 8);
+        long clockSeqHi = getBitsValue(clockSequence, 16, 8) | 0x80;
         
         String timeLowStr = leftZeroPadString(Long.toHexString(timeLow), 8);
         String timeMidStr = leftZeroPadString(Long.toHexString(timeMid), 4);

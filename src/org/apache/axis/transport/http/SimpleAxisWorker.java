@@ -37,7 +37,6 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.rpc.holders.StringHolder;
 
 import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
@@ -64,7 +63,7 @@ public class SimpleAxisWorker implements Runnable {
     private static byte ISE[] = ("500 " + Messages.getMessage("internalError01")).getBytes();
 
     // HTTP prefix
-    private static byte HTTP[] = "HTTP/".getBytes();
+    private static byte HTTP[] = "HTTP/1.0 ".getBytes();
 
     // Standard MIME headers for XML payload
     private static byte XML_MIME_STUFF[] =
@@ -178,7 +177,6 @@ public class SimpleAxisWorker implements Runnable {
         // buffers for the headers we care about
         StringBuffer soapAction = new StringBuffer();
         StringBuffer httpRequest = new StringBuffer();
-        String httpVersion = "1.0";
         StringBuffer fileName = new StringBuffer();
         StringBuffer cookie = new StringBuffer();
         StringBuffer cookie2 = new StringBuffer();
@@ -223,15 +221,10 @@ public class SimpleAxisWorker implements Runnable {
                 is.setInputStream(socket.getInputStream());
                 // parse all headers into hashtable
                 MimeHeaders requestHeaders = new MimeHeaders();
-                StringHolder httpVersionHolder = new StringHolder();
                 int contentLength = parseHeaders(is, buf, contentType,
                         contentLocation, soapAction,
                         httpRequest, fileName,
-                        cookie, cookie2, authInfo, requestHeaders,
-                        httpVersionHolder);
-                if (httpVersionHolder.value != null) {
-                    httpVersion = httpVersionHolder.value;
-                }
+                        cookie, cookie2, authInfo, requestHeaders);
                 is.setContentLength(contentLength);
 
                 int paramIdx = fileName.toString().indexOf('?');
@@ -310,8 +303,6 @@ public class SimpleAxisWorker implements Runnable {
                     
                     OutputStream out = socket.getOutputStream();
                     out.write(HTTP);
-                    out.write(httpVersion.getBytes());
-                    out.write(' ');
                     if(fileName.length()==0) {
                         out.write("301 Redirect\nLocation: /axis/\n\n".getBytes());
                         out.flush();
@@ -366,7 +357,7 @@ public class SimpleAxisWorker implements Runnable {
                                 sb.append("<ul>\n");
                                 for (Iterator it = operations.iterator(); it.hasNext();) {
                                     OperationDesc desc = (OperationDesc) it.next();
-                                    sb.append("<li>").append(desc.getName());
+                                    sb.append("<li>" + desc.getName());
                                 }
                                 sb.append("</ul>\n");
                             }
@@ -486,8 +477,6 @@ public class SimpleAxisWorker implements Runnable {
             // Send it on its way...
             OutputStream out = socket.getOutputStream();
             out.write(HTTP);
-            out.write(httpVersion.getBytes());
-            out.write(' ');            
             out.write(status);
 
             if (responseMsg != null) {
@@ -572,8 +561,7 @@ public class SimpleAxisWorker implements Runnable {
                              StringBuffer cookie,
                              StringBuffer cookie2,
                              StringBuffer authInfo,
-                             MimeHeaders headers,
-                             StringHolder httpVersion)
+                             MimeHeaders headers)
             throws java.io.IOException {
         int n;
         int len = 0;
@@ -603,16 +591,11 @@ public class SimpleAxisWorker implements Runnable {
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");
-            int i = 0;
-            for (; i < n - 6; i++) {
+            for (int i = 0; i < n - 6; i++) {
                 char c = (char) (buf[i + 6] & 0x7f);
                 if (c == ' ')
                     break;
                 fileName.append(c);
-            }
-            // Might have HTTP version here!
-            if (i + 14 < n) {
-                httpVersion.value = new String(buf, i + 12, 3);
             }
             log.debug(Messages.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
         } else {

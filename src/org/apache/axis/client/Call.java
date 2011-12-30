@@ -62,7 +62,6 @@ import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.commons.logging.Log;
 
-import javax.activation.DataHandler;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
@@ -75,11 +74,9 @@ import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
-import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -87,7 +84,6 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -95,12 +91,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.WeakHashMap;
 import java.rmi.RemoteException;
-
-import org.apache.axis.wsa.WSAConstants ;
-import org.apache.axis.wsa.MIHeader ;
-import org.apache.axis.wsa.EndpointReference ;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -166,6 +157,8 @@ public class Call implements javax.xml.rpc.Call {
     /** This will be true if an OperationDesc is handed to us whole */
     private boolean operationSetManually       = false;
 
+    // Is this a one-way call?
+    private boolean invokeOneWay               = false;
     private boolean isMsg                      = false;
 
     // Our Transport, if any
@@ -278,14 +271,14 @@ public class Call implements javax.xml.rpc.Call {
      */
     public static final String STREAMING_PROPERTY =
             "axis.streaming";
-
-    /**
-     * Property that allows for a client to get back a SOAP Fault as
-     * a normal soap message instead of having the engine throw an
-     * AxisFault
-     */
-    public static final String DONT_THROW_FAULT = "axis.dontThrowFault" ;
     
+    /**
+     * Internal property to indicate a one way call.
+     * That will disable processing of response handlers.
+     */
+    protected static final String ONE_WAY =
+        "axis.one.way";
+
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
@@ -360,16 +353,6 @@ public class Call implements javax.xml.rpc.Call {
     public Call(URL url) {
         this(new Service());
         setTargetEndpointAddress(url);
-    }
-
-    /**
-     * Build a call from an EPR.
-     *
-     * @param epr the target endpoint EPR
-     */
-    public Call(EndpointReference epr) {
-        this(new Service());
-        setTo(epr);
     }
 
     ////////////////////////////
@@ -780,8 +763,6 @@ public class Call implements javax.xml.rpc.Call {
     public void setSOAPActionURI(String SOAPActionURI) {
         useSOAPAction = true;
         this.SOAPActionURI = SOAPActionURI;
-        if (this.getAction() != null && !SOAPActionURI.equals(this.getAction()))
-            this.setAction( SOAPActionURI );
     } // setSOAPActionURI
 
     /**
@@ -863,7 +844,6 @@ public class Call implements javax.xml.rpc.Call {
                     String  oldProto = tmpURL.getProtocol();
                     if ( protocol.equals(oldProto) ) {
                         this.transport.setUrl( address.toString() );
-                        setProperty(MessageContext.TRANS_URL, address.toString());
                         return ;
                     }
                 }
@@ -882,7 +862,6 @@ public class Call implements javax.xml.rpc.Call {
                                  Messages.getMessage("noTransport01",
                                  protocol), null, null);
                 transport.setUrl(address.toString());
-                setProperty(MessageContext.TRANS_URL, address.toString());
                 setTransport(transport);
                 service.registerTransportForURL(address, transport);
             }
@@ -1668,24 +1647,6 @@ public class Call implements javax.xml.rpc.Call {
                             Messages.getMessage("cantSetURI00", "" + exp) );
                 }
             }
-            else if ( obj instanceof UnknownExtensibilityElement ) {
-              UnknownExtensibilityElement ee =
-                (UnknownExtensibilityElement) obj ;
-              QName QN1 = new QName(WSAConstants.NS_WSA1,"ReferenceParameters");
-              QName QN2 = new QName(WSAConstants.NS_WSA2,"ReferenceParameters");
-              QName eeQ = ee.getElementType();
-              if ( QN1.equals(eeQ) || QN2.equals(eeQ) ) {
-                try {
-                  this.setTo( this.getTargetEndpointAddress() );
-                  this.getTo().addReferenceParameters( ee.getElement() );
-                  this.getTo().setWSAVersion( eeQ.getNamespaceURI() );
-                }
-                catch(Exception exp) {
-                  throw new JAXRPCException(
-                          Messages.getMessage("cantSetURI00", "" + exp));
-                }
-              }
-            }
         }
 
         setOperation(opName.getLocalPart());
@@ -1814,14 +1775,14 @@ public class Call implements javax.xml.rpc.Call {
         for ( i = 0 ; params != null && i < params.length ; i++ )
             if ( !(params[i] instanceof SOAPBodyElement) ) break ;
 
-        if ( params == null || (params.length > 0 && i == params.length) ) {
+        if ( params != null && params.length > 0 && i == params.length ) {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
             isMsg = true ;
             env = new SOAPEnvelope(msgContext.getSOAPConstants(),
                                    msgContext.getSchemaVersion());
 
-            for (i = 0; params != null && i < params.length; i++) {
+            for (i = 0; i < params.length; i++) {
                 env.addBodyElement((SOAPBodyElement) params[i]);
             }
 
@@ -1840,27 +1801,7 @@ public class Call implements javax.xml.rpc.Call {
             }
 
             env = msg.getSOAPEnvelope();
-
-            Vector res = env.getBodyElements();
-            if ( res == null || res.size() == 0 || 
-                 (res.get(0) instanceof RPCElement)) return res ;
-
-            // Copy the elements into a new Vector so that we resolve all
-            // of the prefixes
-            // For SOAPBodyElements, reserialize them so that they are
-            // stand-alone Elements.
-            Vector res1 = new Vector();
-            for (i = 0 ; i < res.size() ; i++ ) {
-              SOAPBodyElement sbe = (SOAPBodyElement) res.get(i);
-              java.io.PrintStream err = System.err ;
-              try {
-                sbe = new SOAPBodyElement( sbe.getAsDOM() );
-              }catch(Exception exp) {
-                throw new java.rmi.RemoteException( exp.toString());
-              }
-              res1.add( sbe );
-            }
-            return res1 ;
+            return( env.getBodyElements() );
         }
 
 
@@ -1888,21 +1829,6 @@ public class Call implements javax.xml.rpc.Call {
         }
     }
 
-    public void invoke( AxisFault af ) throws java.rmi.RemoteException {
-      try {
-        SOAPFault      sf   = new SOAPFault( af );
-        // make sure we pick-up the right namespaces
-        MessageContext mc   = MessageContext.getCurrentContext();
-        AxisEngine.setCurrentMessageContext( msgContext );
-        org.w3c.dom.Element elem = sf.getAsDOM();
-        AxisEngine.setCurrentMessageContext( mc );
-        invoke( new Object[] { new SOAPBodyElement( elem ) } );
-      }
-      catch( Exception exp ) {
-        throw new JAXRPCException( exp );
-      }
-    }
-
     /**
      * Invokes the operation associated with this Call object using the passed
      * in parameters as the arguments to the method.  This will return
@@ -1916,50 +1842,13 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void invokeOneWay(Object[] params) {
         try {
-            msgContext.setIsOneWay( true );
+            invokeOneWay = true;
             invoke( params );
         } catch( Exception exp ) {
             throw new JAXRPCException( exp.toString() );
         } finally {
-            msgContext.setIsOneWay( false );
+            invokeOneWay = false;
         }
-    }
-
-    public void invokeOneWay() {
-        try {
-            msgContext.setIsOneWay( true );
-            invoke();
-        } catch( Exception exp ) {
-            throw new JAXRPCException( exp.toString() );
-        } finally {
-            msgContext.setIsOneWay( false );
-        }
-    }
-
-    public void invokeOneWay( String method, Object [] args ) {
-        try {
-            msgContext.setIsOneWay( true );
-            invoke( method, args );
-        } catch( Exception exp ) {
-            throw new JAXRPCException( exp.toString() );
-        } finally {
-            msgContext.setIsOneWay( false );
-        }
-    }
-
-    public void invokeOneWay( AxisFault af ) {
-        try {
-            msgContext.setIsOneWay( true );
-            invoke( af );
-        } catch( Exception exp ) {
-            throw new JAXRPCException( exp.toString() );
-        } finally {
-            msgContext.setIsOneWay( false );
-        }
-    }
-
-    public boolean isInvokeOneWay() {
-      return msgContext.getIsOneWay();
     }
 
     /************************************************************************/
@@ -2300,15 +2189,6 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Get the current request message in the MessageContext
-     *
-     * @return Message the request message
-     */
-    public Message getRequestMessage() { 
-      return msgContext.getRequestMessage();
-    }
-
-    /**
      * Directly get the response message in our MessageContext.
      *
      * Shortcut for having to go thru the msgContext
@@ -2530,7 +2410,7 @@ public class Call implements javax.xml.rpc.Call {
          * parameter types, check for this case right now and toss a fault
          * if things don't look right.
          */
-        if (!msgContext.getIsOneWay() && operation != null &&
+        if (!invokeOneWay && operation != null &&
                 operation.getNumParams() > 0 && getReturnType() == null) {
             // TCK:
             // Issue an error if the return type was not set, but continue processing.
@@ -2667,7 +2547,6 @@ public class Call implements javax.xml.rpc.Call {
                     } else {
                         outParams.put(param.getQName(), value);
                         outParamsList.add(value);
-                        cacheIfAttachment(value);
                     }
                 }
 
@@ -2719,34 +2598,8 @@ public class Call implements javax.xml.rpc.Call {
         if (operation != null && operation.getReturnClass() != null) {
             result = JavaUtils.convert(result, operation.getReturnClass());
         }
-        cacheIfAttachment(result);
 
         return( result );
-    }
-
-    /**
-     * Prevents Call instances from being garbage collected until all outputs
-     * (parameters and return value) of type "attachment" are finalised.
-     * <p>
-     * See JIRA report AXIS-2574.
-     */
-    private static Map callCache = Collections.synchronizedMap(new WeakHashMap());
-
-    /**
-     * Puts a reference to this Call instance in a cache if the passed
-     * object is an attachment AND depends on a file.
-     * <p>
-     * See JIRA report AXIS 2574.
-     *
-     * @param obj The object to test
-     */
-    private void cacheIfAttachment(Object obj) {
-        if (obj == null) return;
-        if (obj instanceof DataHandler
-                || obj instanceof AttachmentPart
-                || obj instanceof javax.xml.transform.Source) {
-            callCache.put(obj, this);
-        }
     }
 
     /**
@@ -2910,7 +2763,11 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        invokeEngine(msgContext);
+        if(!invokeOneWay) {
+            invokeEngine(msgContext);
+        } else {
+            invokeEngineOneWay(msgContext);
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: Call::invoke()");
@@ -2956,10 +2813,34 @@ public class Call implements javax.xml.rpc.Call {
                 //unless we don't care about the return value or we want
                 //a raw message back
                 //get the fault from the body and throw it
-                if ( !msgContext.isPropertyTrue(Call.DONT_THROW_FAULT,false) )
-                  throw ((SOAPFault)respBody).getFault();
+                throw ((SOAPFault)respBody).getFault();
             }
         }
+    }
+
+    /**
+     * Implement async invocation by running the request in a new thread
+     * @param msgContext
+     */
+    private void invokeEngineOneWay(final MessageContext msgContext) {
+        //TODO: this is not a good way to do stuff, as it has no error reporting facility
+        //create a new class
+        Runnable runnable = new Runnable(){
+            public void run() {
+                msgContext.setProperty(Call.ONE_WAY, Boolean.TRUE);
+                try {
+                    service.getEngine().invoke( msgContext );
+                } catch (AxisFault af){
+                    //TODO: handle errors properly
+                    log.debug(Messages.getMessage("exceptionPrinting"), af);
+                }
+                msgContext.removeProperty(Call.ONE_WAY);
+            }
+        };
+        //create a thread to run it
+        Thread thread = new Thread(runnable);
+        //run it
+        thread.start();
     }
 
     /**
@@ -3106,168 +2987,5 @@ public class Call implements javax.xml.rpc.Call {
     public void clearOperation() {
         operation = null;
         operationSetManually = false;
-    }
-
-    /**
-     * Gets the WS-Addressing MessageID for the outgoing message.
-     *
-     * @param name the name of the property
-     */
-    public String getMessageID() {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      return mih == null ? null : mih.getMessageID();
-    }
-
-    /**
-     * Sets the WS-Addressing wsa:To value
-     *
-     * @param epr The EPR.
-     *
-     * Note: this does not set the transport URL.  As of now they are
-     * treated as two independent entities.
-     */
-    public void setTo(EndpointReference epr) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setTo( epr );
-      setTargetEndpointAddress( epr.getAddress() );
-    }
-
-    /**
-     * Sets the WS-Addressing wsa:To value based on the url passed in.
-     *
-     * @param epr The url to use for the wsa:To's Address element.
-     *
-     * Note: this does not set the transport URL.  As of now they are
-     * treated as two independent entities.
-     */
-    public void setTo(String url) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setTo( EndpointReference.fromLocation( url ) );
-      setTargetEndpointAddress( url );
-    }
-
-    /**
-     * Gets the WS-Addressing wsa:To EPR.
-     */
-    public EndpointReference getTo() {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      return mih == null ? null : mih.getTo();
-    }
-
-    /**
-     * Sets the WS-Addressing wsa:Action
-     */
-    public void setAction(String action) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setAction( action );
-      if ( !action.equals(getSOAPActionURI()) )
-        setSOAPActionURI( action );
-    }
-
-    /**
-     * Gets the WS-Addressing wsa:Action
-     */
-    public String getAction() {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      return mih == null ? null : mih.getAction();
-    }
-
-    /**
-     * Sets the WS-Addressing wsa:From value 
-     *
-     * @param epr The epr to use for the wsa:From
-     */
-    public void setFrom(EndpointReference epr) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setFrom( epr );
-    }
-
-    /**
-     * Sets the WS-Addressing wsa:From value from a url
-     *
-     * @param epr The url to use for the wsa:From
-     */
-    public void setFrom(String url) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setFrom( EndpointReference.fromLocation( url ) );
-    }
-
-    /**
-     * Get the wsa:From EPR
-     *
-     * @return The wsa:From EPR
-     */
-    public EndpointReference getFrom() {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      return mih == null ? null : mih.getFrom();
-    }
-
-    /**
-     * Sets the wsa:ReplyTo EPR
-     * 
-     * @param epr The epr to use for the wsa:ReplyTo
-     */
-    public void setReplyTo(EndpointReference epr) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setReplyTo( epr );
-    }
-
-    /**
-     * Sets the wsa:ReplyTo EPR from a url
-     *
-     * @param url The url to use for the wsa:ReplyTo Address field
-     */
-    public void setReplyTo(String url) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setReplyTo( EndpointReference.fromLocation( url ) );
-    }
-
-    /**
-     * Gets the wsa:ReplyTo EPR
-     *
-     * @return the wsa:ReplyTo EPR
-     */
-    public EndpointReference getReplyTo() {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      return mih == null ? null : mih.getReplyTo();
-    }
-
-    /**
-     * Sets the wsa:FaultTo EPR
-     *
-     * @param epr he epr to use for the wsa:FaultTo
-     */
-    public void setFaultTo(EndpointReference epr) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setFaultTo( epr );
-    }
-
-    /**
-     * Sets the wsa:FaultTo EPR from a url
-     * 
-     * @param url The url to use  for the wsa:FaultTo Address field
-     */
-    public void setFaultTo(String url) {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      if ( mih == null ) mih = new MIHeader( this );
-      mih.setFaultTo( EndpointReference.fromLocation( url ) );
-    }
-
-    /**
-     * Gets the wsa:FaultTo EPR
-     *
-     * @param The wsa:FaultTo EPR
-     */
-    public EndpointReference getFaultTo() {
-      MIHeader mih = (MIHeader) getProperty(WSAConstants.REQ_MIH);
-      return mih == null ? null : mih.getFaultTo();
     }
 }

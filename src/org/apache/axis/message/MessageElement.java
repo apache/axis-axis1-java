@@ -1250,7 +1250,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             return;
         }
 
-        outputContext.startElement(this.prefix, new QName(namespaceURI, name), attributes);
+        outputContext.startElement(new QName(namespaceURI, name), attributes);
         if (children != null) {
             for (Iterator it = children.iterator(); it.hasNext();) {
                 ((NodeImpl)it.next()).output(outputContext);

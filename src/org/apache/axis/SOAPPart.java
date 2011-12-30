@@ -29,6 +29,7 @@ import org.apache.axis.utils.ByteArray;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;

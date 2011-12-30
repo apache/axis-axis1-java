@@ -75,9 +75,6 @@ public class AxisFault extends java.rmi.RemoteException {
     /** SOAP headers which should be serialized with the Fault. */
     protected ArrayList faultHeaders = null;
 
-    public static final String PROP_HOSTNAME_DETAIL = 
-        "axis.addHostnameFaultDetail";
-
     /**
      * Make an AxisFault based on a passed Exception.  If the Exception is
      * already an AxisFault, simply use that.  Otherwise, wrap it in an
@@ -190,9 +187,7 @@ public class AxisFault extends java.rmi.RemoteException {
             removeHostname();
             initFromSOAPFaultException((SOAPFaultException) target);
             //but if they left it out, add it
-            if (isAddHostnameDetail()) {
-                addHostnameIfNeeded();
-            }
+            addHostnameIfNeeded();
         }
 
     }
@@ -232,9 +227,7 @@ public class AxisFault extends java.rmi.RemoteException {
         super (message, t);
         setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
         setFaultString(getMessage());
-        if (isAddHostnameDetail()) {
-            addHostnameIfNeeded();
-        }
+        addHostnameIfNeeded();
     }
 
     /**
@@ -256,7 +249,6 @@ public class AxisFault extends java.rmi.RemoteException {
         // Set the exception message (if any) as the fault string
         setFaultString( target.toString() );
 
-        boolean addHostnameDetail = isAddHostnameDetail();
 
         // Put the exception class into the AXIS SPECIFIC HACK
         //  "exceptionName" element in the details.  This allows
@@ -266,11 +258,10 @@ public class AxisFault extends java.rmi.RemoteException {
         // and the other side uses *that* QName to figure out what exception
         // to use, because the class name may be completly different on the
         // client.
-        if (addHostnameDetail &&
-            (target instanceof AxisFault) &&
+        if ((target instanceof AxisFault) &&
             (target.getClass() != AxisFault.class)) {
-            addFaultDetail(Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME,
-                           target.getClass().getName());
+          addFaultDetail(Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME,
+                    target.getClass().getName());
         }
 
         //add stack trace
@@ -286,9 +277,7 @@ public class AxisFault extends java.rmi.RemoteException {
         }
 
         //add the hostname
-        if (addHostnameDetail) {
-            addHostnameIfNeeded();
-        }
+        addHostnameIfNeeded();
     }
     
     /**
@@ -587,6 +576,7 @@ public class AxisFault extends java.rmi.RemoteException {
      *
      * This is new in SOAP 1.2
      * @since axis1.1
+     * @return
      */
     public String getFaultNode() {
         return( faultNode );
@@ -747,28 +737,11 @@ public class AxisFault extends java.rmi.RemoteException {
      * @throws Exception
      */
     public void output(SerializationContext context) throws Exception {
+
         SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
         if (context.getMessageContext() != null) {
             soapConstants = context.getMessageContext().getSOAPConstants();
         }
-
-        SOAPEnvelope envelope = getAsEnvelope(soapConstants);
-        envelope.output(context);
-    }
-
-    /**
-     * Get this fault as a SOAPEnvelope
-     */
-    public SOAPEnvelope getAsEnvelope()
-            throws Exception {
-        return getAsEnvelope(Constants.DEFAULT_SOAP_VERSION);
-    }
-
-    /**
-     * Get this fault as a SOAPEnvelope with a particular version
-     */
-    public SOAPEnvelope getAsEnvelope(SOAPConstants soapConstants)
-            throws Exception {
 
         SOAPEnvelope envelope = new SOAPEnvelope(soapConstants);
 
@@ -783,7 +756,7 @@ public class AxisFault extends java.rmi.RemoteException {
             }
         }
 
-        return envelope;
+        envelope.output(context);
     }
 
     /**
@@ -927,11 +900,4 @@ public class AxisFault extends java.rmi.RemoteException {
     public void removeHostname() {
         removeFaultDetail(Constants.QNAME_FAULTDETAIL_HOSTNAME);
     }
-
-    private boolean isAddHostnameDetail() {
-        return JavaUtils.isTrue(
-                      AxisProperties.getProperty(PROP_HOSTNAME_DETAIL),
-                      true);
-    }
-    
 }

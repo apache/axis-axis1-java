@@ -131,16 +131,8 @@ public class SimpleChain extends BasicHandler implements Chain {
                 msgContext.setResponseMessage(respMsg);
                 msgContext.setProperty(CAUGHTFAULT_PROPERTY, Boolean.TRUE);
             }
-            // Unless this handler would like to catch its own fault, dec
-            // the index
-            Handler h = (Handler)handlers.elementAt(i);
-            Boolean catchOwn = (Boolean)h.getOption(OPT_CATCH_OWN_FAULTS);
-            if (catchOwn == null || !catchOwn.booleanValue()) {
-                i--;
-            }
-            while( i >= 0 ) {
-                ((Handler) handlers.elementAt( i-- )).onFault( msgContext );
-            }
+            while( --i >= 0 )
+                ((Handler) handlers.elementAt( i )).onFault( msgContext );
             throw f;
         }
     }

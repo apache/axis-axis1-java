@@ -306,7 +306,6 @@ public class SOAPEnvelope extends MessageElement
         }
         this.body = body;
         try {
-//            addChild(body);
             body.setParentElement(this);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
@@ -688,8 +687,6 @@ public class SOAPEnvelope extends MessageElement
             recorder.clear();
             recorder = null;
         }
-        if (dirty) {
-            setDirty();
-        }
+        setDirty();
     }
 }

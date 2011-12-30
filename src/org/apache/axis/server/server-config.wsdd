@@ -40,12 +40,6 @@
   <parameter name="className" value="org.apache.axis.utils.Admin"/>
  </service>
 
- <!-- AdminService is for async responses -->
- <service name="asyncService" provider="java:MSG">
-  <parameter name="allowedMethods" value="process"/>
-  <parameter name="className" value="org.apache.axis.wsa.AsyncService"/>
- </service>
-
  <service name="Version" provider="java:RPC">
   <parameter name="allowedMethods" value="getVersion"/>
   <parameter name="className" value="org.apache.axis.Version"/>

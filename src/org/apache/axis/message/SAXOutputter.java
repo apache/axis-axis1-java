@@ -96,11 +96,7 @@ public class SAXOutputter extends DefaultHandler implements LexicalHandler
         }
 
         try {
-            String prefix = null ;
-            int i = qName.indexOf(":");
-            if ( i >=0 ) prefix = qName.substring(0,i);
-
-            context.startElement(prefix, new QName(namespace,localName), attributes);
+            context.startElement(new QName(namespace,localName), attributes);
         } catch (IOException e) {
             throw new SAXException(e);
         }

@@ -108,8 +108,6 @@ public class OperationDesc implements Serializable {
      */ 
     private OperationType mep = OperationType.REQUEST_RESPONSE;
 
-    private QName responseQName;
-
     /**
      * Default constructor.
      */
@@ -620,15 +618,6 @@ public class OperationDesc implements Serializable {
                 throw new IOException("Unable to deserialize the operation's method: "+ methodName);
             }
         }
-    }
-
-
-    public QName getResponseQName() {
-        return responseQName;
-    }
-
-    public void setResponseQName(QName responseQName) {
-        this.responseQName = responseQName;
     }
 }
 

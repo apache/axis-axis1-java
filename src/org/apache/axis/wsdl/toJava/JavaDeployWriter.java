@@ -302,6 +302,8 @@ public class JavaDeployWriter extends JavaWriter {
      * @param namespaceURI
      * @param localPart
      * @param javaType
+     * @param serializerFactory
+     * @param deserializerFactory
      * @param encodingStyle
      * @throws IOException
      */
@@ -548,8 +550,6 @@ public class JavaDeployWriter extends JavaWriter {
                         returnType = Utils.getXSIType(params.returnParam);
                     }
 
-                    QName responseQName = params.responseQName;
-
                     // Get the operations faults
                     Map faultMap = bEntry.getFaults();
                     ArrayList faults = null;
@@ -562,7 +562,7 @@ public class JavaDeployWriter extends JavaWriter {
                     String SOAPAction = Utils.getOperationSOAPAction(bindingOper);
 
                     // Write the operation metadata
-                    writeOperation(pw, javaOperName, elementQName, responseQName, returnQName,
+                    writeOperation(pw, javaOperName, elementQName, returnQName,
                             returnType, params, binding.getQName(),
                             faults, SOAPAction);
                 }
@@ -612,8 +612,8 @@ public class JavaDeployWriter extends JavaWriter {
      * @param faults
      */
     protected void writeOperation(PrintWriter pw, String javaOperName,
-                                  QName elementQName, QName responseQName,
-                                  QName returnQName, QName returnType, Parameters params,
+                                  QName elementQName, QName returnQName,
+                                  QName returnType, Parameters params,
                                   QName bindingQName, ArrayList faults,
                                   String SOAPAction) {
 
@@ -623,13 +623,6 @@ public class JavaDeployWriter extends JavaWriter {
             pw.print(" qname=\""
                     + Utils.genQNameAttributeString(elementQName, "operNS")
                     + "\"");
-        }
-
-        if (responseQName != null) {
-            pw.print(" responseQName=\""
-                    + Utils.genQNameAttributeStringWithLastLocalPart(responseQName, "respNS")
-                    + "\"");
-
         }
 
         if (returnQName != null) {

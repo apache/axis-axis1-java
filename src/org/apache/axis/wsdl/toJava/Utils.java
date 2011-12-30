@@ -1086,7 +1086,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 || "image/jpeg".equals(mimeName)) {
             return Constants.MIME_IMAGE;
         } else if ("text/xml".equals(mimeName)
-                || "application/xml".equals(mimeName)) {
+                || "applications/xml".equals(mimeName)) {
             return Constants.MIME_SOURCE;
         } else if ("application/octet-stream".equals(mimeName) ||
                    "application/octetstream".equals(mimeName)) {

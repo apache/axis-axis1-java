@@ -16,7 +16,6 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import javax.wsdl.OperationType;
-import javax.xml.namespace.QName;
 import java.util.Map;
 import java.util.Vector;
 
@@ -46,13 +45,6 @@ public class Parameters {
 
     /** Field signature */
     public String signature = null;
-
-    /**
-     * A place to store the response element QName in case this is a wrapped
-     * operation - this will end up reflected in the responseQName attribute of the
-     * operation tag in WSDD.
-     */
-    public QName responseQName;
 
     // The numbers of the respective parameters
 

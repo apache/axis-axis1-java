@@ -33,7 +33,7 @@ import java.util.*;
 public class Utils {
 
     /** cache of namespaces -> maps of localNames -> QNames */
-    static final Map nsmap = Collections.synchronizedMap(new HashMap());
+    static final Map nsmap = new HashMap();
 
     /**
      * Find or create a QName with the specified namespace/localName.
@@ -50,7 +50,7 @@ public class Utils {
         Map ln2qn = (Map) nsmap.get(namespace);
 
         if (null == ln2qn) {        // cache miss
-            ln2qn = Collections.synchronizedMap(new HashMap());
+            ln2qn = new HashMap();
 
             nsmap.put(namespace, ln2qn);
 

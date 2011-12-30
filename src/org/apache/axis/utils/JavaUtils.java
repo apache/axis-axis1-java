@@ -201,7 +201,7 @@ public class JavaUtils
                 javaType == org.apache.axis.types.UnsignedInt.class ||
                 javaType == org.apache.axis.types.UnsignedLong.class ||
                 javaType == org.apache.axis.types.UnsignedShort.class ||
-                org.apache.axis.types.URI.class.isAssignableFrom(javaType) ||
+                javaType == org.apache.axis.types.URI.class ||
                 javaType == org.apache.axis.types.Year.class ||
                 javaType == org.apache.axis.types.YearMonth.class);
     }
@@ -1067,16 +1067,7 @@ public class JavaUtils
         }
         return b.booleanValue();
     }
-    
-    /**
-     * Explicitely clear enum lookup cache.
-     */
-    public static void clearEnumCache() {
-        synchronized (enumMap) {
-            enumMap.clear();
-        }
-    }
-    
+
     private static boolean isEnumClassSub(Class cls) {
         try {
             java.lang.reflect.Method[] methods = cls.getMethods();

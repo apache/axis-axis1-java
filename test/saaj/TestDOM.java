@@ -11,7 +11,6 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
@@ -205,13 +204,4 @@ public class TestDOM extends AxisTestBase {
         return new String(baos.toByteArray());
     }
 
-    public void testCreateElementFromDocument() throws SOAPException {
-        MessageFactory factory = new org.apache.axis.soap.MessageFactoryImpl();
-        SOAPMessage msg = factory.createMessage();
-        org.apache.axis.SOAPPart part = (org.apache.axis.SOAPPart) msg.getSOAPPart();
-        Document doc = part.getSOAPDocument();
-        String elementName = "test";
-        Element element = doc.createElement(elementName);
-        assertEquals(elementName, element.getNodeName());
-    }
 }

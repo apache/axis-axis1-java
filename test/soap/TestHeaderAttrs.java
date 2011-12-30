@@ -49,9 +49,12 @@ public class TestHeaderAttrs extends TestCase {
     
     static final String ACTOR = "http://some.actor/";
     
-    SOAPHeaderElement goodHeader;
-    SOAPHeaderElement badHeader; 
-
+    static SOAPHeaderElement goodHeader = 
+                                       new SOAPHeaderElement(GOOD_HEADER_NS, 
+                                                             GOOD_HEADER_NAME);
+    static SOAPHeaderElement badHeader = 
+                                       new SOAPHeaderElement(BAD_HEADER_NS, 
+                                                             BAD_HEADER_NAME);
 
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer engine = new AxisServer(provider);
@@ -73,9 +76,7 @@ public class TestHeaderAttrs extends TestCase {
     public void setUp() throws Exception {
         engine.init();
         localTransport.setUrl(localURL);
-        goodHeader = new SOAPHeaderElement(GOOD_HEADER_NS, GOOD_HEADER_NAME);
-        badHeader = new SOAPHeaderElement(BAD_HEADER_NS, BAD_HEADER_NAME);
-
+        
         SOAPService service = new SOAPService(new TestHandler(),
                                               new RPCProvider(),
                                               null);

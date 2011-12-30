@@ -141,28 +141,18 @@ public class JavaBeanWriter extends JavaClassWriter {
             // or accessor/mutator pairs as those are inherited from
             // the super type, which must be non-null.
             if (null != extendType) {
-                TypeEntry typeEntry = SchemaUtils
-                    .getComplexElementRestrictionBase(type.getNode(),
-                                                      emitter.getSymbolTable());
-                if (typeEntry != null) {
-                    if (typeEntry.getQName().equals(Constants.XSD_ANYTYPE)) {
-                        enableMemberFields = true;
-                        enableGetters = true;
-                        enableSetters = true;
-                        enableEquals = false;
-                        enableHashCode = false;
-                    } else {
-                        enableMemberFields = false;
-                        enableGetters = false;
-                        enableSetters = false;
-                        enableEquals = false;
-                        enableHashCode = false;
-                    }
-                } else {
-                    // derived by extension.
-                    // Write full constructor, so that instance variables
-                    // in super class are intialized.
-                    enableFullConstructor = true;
+            	if (null != SchemaUtils.getComplexElementRestrictionBase(
+                        type.getNode(), emitter.getSymbolTable())) {
+	                enableMemberFields = false;
+	                enableGetters = false;
+	                enableSetters = false;
+	                enableEquals = false;
+	                enableHashCode = false;
+            	} else {
+            		// derived by extension.
+            		// Write full constructor, so that instance variables
+            		// in super class are intialized.
+        			enableFullConstructor = true;
             	}
             }
         }
@@ -647,14 +637,9 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println();
     }
 
-    /**
-     * Write a constructor containing the fields in this class.
-     * Will not write a construtor with more than 254 arguments as
-     * the Java compiler will choke.
-     */
     protected void writeMinimalConstructor() {
 
-        if (isUnion() || names.size() == 0 || names.size() > 254) {
+        if (isUnion() || names.size() == 0) {
             return;
         }
 
@@ -732,28 +717,6 @@ public class JavaBeanWriter extends JavaClassWriter {
                         + "_";
             }
 
-            // Process the elements
-            Vector elements = te.getContainedElements();
-
-            if (elements != null) {
-                for (int j = 0; j < elements.size(); j++) {
-                    ElementDecl elem = (ElementDecl) elements.get(j);
-
-                    if (elem.getAnyElement()) {
-                        if (!gotAny) {
-                            gotAny = true;
-                            paramTypes.add("org.apache.axis.message.MessageElement []");
-                            paramNames.add(Constants.ANYCONTENT);
-                        }
-                    } else {
-                        paramTypes.add(processTypeName(elem,elem.getType().getName()));
-                        String name = elem.getName() == null ? ("param" + i) : elem.getName();
-                        paramNames.add(JavaUtils.getUniqueValue(
-                            helper.reservedPropNames, name));
-                    }
-                }
-            }
-
             // Process the attributes
             Vector attributes = te.getContainedAttributes();
             if (attributes != null) {
@@ -775,6 +738,27 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }
             }
 
+            // Process the elements
+            Vector elements = te.getContainedElements();
+
+            if (elements != null) {
+                for (int j = 0; j < elements.size(); j++) {
+                    ElementDecl elem = (ElementDecl) elements.get(j);
+
+                    if (elem.getAnyElement()) {
+                        if (!gotAny) {
+                            gotAny = true;
+                            paramTypes.add("org.apache.axis.message.MessageElement []");
+                            paramNames.add(Constants.ANYCONTENT);
+                        }
+                    } else {
+                        paramTypes.add(processTypeName(elem,elem.getType().getName()));
+                        String name = elem.getName() == null ? ("param" + i) : elem.getName();
+                        paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, name));
+                    }
+                }
+            }
         }
 
         if (isMixed && !isAny && !parentIsAny && !parentIsMixed) {
@@ -786,7 +770,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         int localParams = paramTypes.size() - names.size() / 2;
 
         // Now write the constructor signature
-        if (paramTypes.size() > 0 && paramTypes.size() < 255) {
+        if (paramTypes.size() > 0) {
 
             // Prevent name clash between local parameters and the
             // parameters for the super class

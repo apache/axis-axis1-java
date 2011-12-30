@@ -481,8 +481,6 @@ public class Message extends javax.xml.soap.SOAPMessage
         // Support of SOAP 1.2 HTTP binding
         if (soap12) {
             ret = HTTPConstants.HEADER_ACCEPT_APPL_SOAP +"; charset=" + encoding;
-            if ( msgContext.useSOAPAction() )
-              ret += "; action=\"" + msgContext.getSOAPActionURI() + "\"";
         }
 
         if (getSendType() != Attachments.SEND_TYPE_NONE && mAttachments != null &&

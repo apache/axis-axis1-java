@@ -70,15 +70,6 @@ public class ConfigurationException extends IOException {
     }
 
     /**
-     * Construct a ConfigurationException from an Exception.
-     * @param message custom error message
-     * @param exception original exception which was unexpected
-     */
-    public ConfigurationException(String message, Exception exception) {
-        this(message, exception, copyStackByDefault);
-    }
-
-    /**
      * Stringify, including stack trace.
      *
      * @return a <code>String</code> view of this object
@@ -98,20 +89,9 @@ public class ConfigurationException extends IOException {
      * @param exception original exception which was unexpected
      * @param copyStack set to true to copy the orginal exception's stack
      */
-    public ConfigurationException(Exception exception, boolean copyStack) {
-        this(null, exception, copyStack);
-    }
-
-    /**
-     * Construct a ConfigurationException from an Exception.
-     * @param message custom error message
-     * @param exception original exception which was unexpected
-     * @param copyStack set to true to copy the orginal exception's stack
-     */
-    public ConfigurationException(String message, Exception exception, final boolean copyStack) {
-        super((message != null ? message + "\n" : "") + 
-              exception.toString() +
-              (copyStack ? "\n" + JavaUtils.stackToString(exception) : "" ));
+    public ConfigurationException(Exception exception, final boolean copyStack) {
+        super(exception.toString()  + (copyStack ? "\n"
+           + JavaUtils.stackToString(exception) : "" ));
         containedException = exception;
         if(copyStack) {
             stackTrace = JavaUtils.stackToString(this);

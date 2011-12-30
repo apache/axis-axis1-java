@@ -100,23 +100,12 @@ public class UnsignedLong extends java.lang.Number
 
     // implement java.lang.comparable interface
     public int compareTo(Object obj) {
-        return compareTo((UnsignedLong)obj);
-    }
-
-    public int compareTo(UnsignedLong o) {
-        if (lValue == null) {
-            if (o.lValue == null) {
-                return 0;
-            } else {
-                return -1;
-            }
-        } else {
-            if (o.lValue == null) {
-                return 1;
-            } else {
-                return lValue.compareTo(o.lValue);
-            }
-        }
+        if (lValue != null)
+            return lValue.compareTo(obj);
+        else if (equals(obj) == true)
+            return 0;  // null == null
+        else
+            return 1;  // object is greater
     }
 
     // Implement java.lang.Number interface

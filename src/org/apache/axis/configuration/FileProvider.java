@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -199,13 +198,11 @@ public class FileProvider implements WSDDEngineConfiguration {
         throws ConfigurationException {
         if (!readOnly) {
             try {
-                StringWriter strWriter = new StringWriter();
-                Admin.listConfig(engine, strWriter);
-
+                Document doc = Admin.listConfig(engine);
                 Writer osWriter = new OutputStreamWriter(
                         new FileOutputStream(configFile),XMLUtils.getEncoding());
                 PrintWriter writer = new PrintWriter(new BufferedWriter(osWriter));
-                writer.print(strWriter.getBuffer().toString());
+                XMLUtils.DocumentToWriter(doc, writer);
                 writer.println();
                 writer.close();
             } catch (Exception e) {
@@ -232,12 +229,10 @@ public class FileProvider implements WSDDEngineConfiguration {
      */
     public SOAPService getService(QName qname) throws ConfigurationException {
         SOAPService service = deployment.getService(qname);
-        /* Why????? Dug
         if (service == null) {
             throw new ConfigurationException(Messages.getMessage("noService10",
                                                            qname.toString()));
         }
-        */
         return service;
     }
 

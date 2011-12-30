@@ -677,7 +677,7 @@
 
   <target name="axis-clover-setenv">
      <condition property="clover.present" >
-       <available classname="com.cenqua.clover.CloverInstr" classpathref="classpath" />
+       <available classname="com.cortexeb.tools.clover.tasks.CloverTask" classpathref="classpath" />
      </condition>
   </target>
 

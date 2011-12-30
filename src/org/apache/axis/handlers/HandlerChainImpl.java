@@ -31,7 +31,6 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.Node;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -113,24 +112,20 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
 
     public ArrayList getMessageInfo(SOAPMessage message) {
         ArrayList list = new ArrayList();
-        if(message == null || message.getSOAPPart() == null) {
-            return list;
-        }
         try {
+            if(message == null || message.getSOAPPart() == null)
+                return list;
             SOAPEnvelope env = message.getSOAPPart().getEnvelope();
             SOAPBody body = env.getBody();
             Iterator it = body.getChildElements();
             SOAPElement operation = (SOAPElement)it.next();
             list.add(operation.getElementName().toString());
             for (Iterator i = operation.getChildElements(); i.hasNext();) {
-                Node node = (Node)i.next();
-                if (node instanceof SOAPElement) {
-                    SOAPElement elt = (SOAPElement)node;
-                    list.add(elt.getElementName().toString());
-                }
+                SOAPElement elt = (SOAPElement)i.next();
+                list.add(elt.getElementName().toString());
             }
         } catch (Exception e) {
-            log.debug("Exception in getMessageInfo", e);
+            log.debug("Exception in getMessageInfo : ", e);
         }
         return list;
     }

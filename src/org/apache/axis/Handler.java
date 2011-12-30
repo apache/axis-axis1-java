@@ -31,13 +31,6 @@ import java.util.List;
  */
 public interface Handler extends Serializable {
     /**
-     * If this option is set, then we will receive an onFault() call after
-     * our own invoke() fails.  Otherwise we only get onFault() for later
-     * Handlers.
-     */
-    static final String OPT_CATCH_OWN_FAULTS = "handler.catchOwnFaults";
-
-    /**
      * Init is called when the chain containing this Handler object
      * is instantiated.
      */

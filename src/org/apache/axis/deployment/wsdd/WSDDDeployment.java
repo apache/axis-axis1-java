@@ -155,20 +155,6 @@ public class WSDDDeployment
             deployMapping(typeMapping);
     }
 
-    public void undeployTypeMapping(WSDDTypeMapping typeMapping)
-    {
-        QName qname = typeMapping.getQName();
-        String encoding = typeMapping.getEncodingStyle();
-        
-        // We have to include the encoding in the key
-        // because otherwise we would overwrite exiting mappings
-        typeMappings.remove(qname + encoding);
-
-        if (tmrDeployed) {
-            undeployMapping(typeMapping);
-        }
-    }
-
     /**
      * Default constructor
      */
@@ -325,11 +311,6 @@ public class WSDDDeployment
         } catch (Exception e) {
             throw new WSDDException(e);
         }
-    }
-
-    private void undeployMapping(WSDDTypeMapping mapping)
-    {
-        // not implemented
     }
 
     public void writeToContext(SerializationContext context)

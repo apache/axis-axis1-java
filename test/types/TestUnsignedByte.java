@@ -92,24 +92,4 @@ public class TestUnsignedByte extends TestCase {
     public void testMinExclusive() throws Exception {
        runPassTest(0L);
     }
-
-    public void testCompareTo() throws Exception {
-        UnsignedByte v1, v2;
-
-        v1 = new UnsignedByte(100);
-        v2 = new UnsignedByte(200);
-
-        assertTrue(v1.compareTo(v2) < 0);
-        assertTrue(v2.compareTo(v1) > 0);
-
-        v2 = new UnsignedByte(100);
-
-        assertTrue(v1.compareTo(v2) == 0);
-        assertTrue(v2.compareTo(v1) == 0);
-
-        v2 = v1;
-
-        assertTrue(v1.compareTo(v2) == 0);
-    }
-
 }

@@ -22,7 +22,6 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.i18n.Messages;
-import org.apache.axis.Handler;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.MessageElement;
@@ -30,7 +29,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -69,69 +67,12 @@ public class MsgProvider extends JavaProvider {
                                 Object obj)
         throws Exception
     {
-        OperationDesc operation  = msgContext.getOperation();
-        Method        method     = null ;
-        int           methodType = 0 ;
-
+        OperationDesc operation = msgContext.getOperation();
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
         QName opQName = null;
         
         if (operation == null) {
-          Class   cls      = obj.getClass();
-          String  opName   = null ;
-          if ( reqEnv.getFirstBody() != null )
-            opName = reqEnv.getFirstBody().getQName().getLocalPart();
-
-          Handler h = msgContext.getService();
-          String  tmp     = (String) h.getOption( "allowedMethods" );
-
-          if ( "*".equals(tmp) )
-            ; // opName = tmp ;
-          else if ( tmp.indexOf(" ") < 0 && tmp.indexOf(",") < 0 )
-            opName = tmp ;
-          else {
-            boolean gotOne = false ;
-            StringTokenizer st = new StringTokenizer(tmp," ,");
-
-            while (st.hasMoreTokens()) {
-              String nt = st.nextToken();
-              if ( nt.equals(opName) ) {
-                gotOne = true ;
-                break ;
-              }
-            }
-            if ( !gotOne )
-              throw new AxisFault(Messages.getMessage("noOperationForQName",
-                                                      reqEnv.getFirstBody().
-                                                      getQName().toString()));
-          }
-          if ( method == null ) { try {
-            method = cls.getDeclaredMethod(opName,
-                                   new Class[] {SOAPEnvelope.class,
-                                                SOAPEnvelope.class});
-            methodType = OperationDesc.MSG_METHOD_SOAPENVELOPE ;
-          } catch(NoSuchMethodException exp) {} }
-
-          if ( method == null ) { try {
-            method = cls.getDeclaredMethod(opName,
-                                   new Class[] {SOAPBodyElement[].class});
-            methodType = OperationDesc.MSG_METHOD_BODYARRAY ;
-          } catch(NoSuchMethodException exp) {} }
-
-          if ( method == null ) { try {
-            method = cls.getDeclaredMethod(opName,
-                                   new Class[] {Element[].class});
-            methodType = OperationDesc.MSG_METHOD_ELEMENTARRAY ;
-          } catch(NoSuchMethodException exp) {} }
-
-          if ( method == null ) { try {
-            method = cls.getDeclaredMethod(opName,
-                                   new Class[] {Document.class});
-            methodType = OperationDesc.MSG_METHOD_DOCUMENT ;
-          } catch(NoSuchMethodException exp) {} }
-
-          if ( method == null ) {
             Vector bodyElements = reqEnv.getBodyElements();
             if(bodyElements.size() > 0) {
                 MessageElement element = (MessageElement) bodyElements.get(0);
@@ -141,17 +82,16 @@ public class MsgProvider extends JavaProvider {
                     operation = serviceDesc.getOperationByElementQName(opQName);
                 }
             }
-            if (operation == null)
-              throw new AxisFault(Messages.getMessage("noOperationForQName",
-                              opQName == null ? "null" : opQName.toString()));
-            method = operation.getMethod();
-            methodType = operation.getMessageOperationStyle();
-          }
         }
-        else {
-          method = operation.getMethod();
-          methodType = operation.getMessageOperationStyle();
+
+        if (operation == null) {
+            throw new AxisFault(Messages.getMessage("noOperationForQName",
+                                opQName == null ? "null" : opQName.toString()));
         }
+        
+        Method method = operation.getMethod();
+
+        int methodType = operation.getMessageOperationStyle();
 
         if (methodType != OperationDesc.MSG_METHOD_SOAPENVELOPE) {
             // dig out just the body, and pass it on

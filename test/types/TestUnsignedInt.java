@@ -93,23 +93,4 @@ public class TestUnsignedInt extends TestCase {
        runPassTest(0L);
     }
 
-    public void testCompareTo() throws Exception {
-        UnsignedInt v1, v2;
-
-        v1 = new UnsignedInt(500);
-        v2 = new UnsignedInt(600);
-
-        assertTrue(v1.compareTo(v2) < 0);
-        assertTrue(v2.compareTo(v1) > 0);
-
-        v2 = new UnsignedInt(500);
-
-        assertTrue(v1.compareTo(v2) == 0);
-        assertTrue(v2.compareTo(v1) == 0);
-
-        v2 = v1;
-
-        assertTrue(v1.compareTo(v2) == 0);
-    }
-
 }
