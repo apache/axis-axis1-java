@@ -33,6 +33,7 @@
         <module>axis</module>
         <module>axis-jaxrpc</module>
         <module>axis-saaj</module>
+        <module>axis-ant</module>
     </modules>
     <build>
         <pluginManagement>
