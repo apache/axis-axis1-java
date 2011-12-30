@@ -73,6 +73,8 @@ Copyright:
                  <include name="test/**/build.xml"/>
                  <exclude name="test/wsdl/**/build.xml" />
                  <exclude name="test/functional/build.xml"/>
+                 <!-- TODO: these tests are not working because they rely on a 3rd party service that is no longer available -->
+                 <exclude name="test/client/build.xml"/>
                </patternset>
              </fileset>
         </param>
