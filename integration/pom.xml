@@ -127,8 +127,6 @@
                         -->
                         <exclude>test/dynamic/TestDynamicInvoker.java</exclude>
                         <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
-                        <!-- TODO: this test causes an OOM error; investigate why -->
-                        <exclude>test/encoding/TestSer.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
