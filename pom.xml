@@ -34,6 +34,8 @@
         <module>axis-jaxrpc</module>
         <module>axis-saaj</module>
         <module>axis-ant</module>
+        <module>axis-maven-plugin</module>
+        <module>integration</module>
     </modules>
     <build>
         <pluginManagement>
