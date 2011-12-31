@@ -203,6 +203,13 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <includes>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <!-- TODO: tests that don't follow standard naming convention -->
+                        <include>test/faults/FaultDecode.java</include>
+                        <include>test/faults/FaultEncode.java</include>
+                    </includes>
                     <excludes>
                         <!-- Quote: "comment out for now - this class is a mess" -->
                         <exclude>test/utils/TestOptions.java</exclude>
@@ -212,6 +219,8 @@
                         <!-- These are actually not unit tests -->
                         <exclude>test/concurrency/TestService.java</exclude>
                         <exclude>test/MSGDispatch/TestService.java</exclude>
+                        <exclude>test/soap/TestFaultHandler.java</exclude>
+                        <exclude>test/soap/TestHandler.java</exclude>
                     </excludes>
                     <!-- TODO: this is bad; it could mean that Axis is not working properly on modern JREs -->
                     <argLine>-Xbootclasspath/p:${project.build.directory}/endorsed/xmlParserAPIs.jar</argLine>

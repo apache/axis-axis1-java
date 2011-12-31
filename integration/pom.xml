@@ -52,6 +52,7 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
+                        <id>echo</id>
                         <goals>
                             <goal>wsdl2java</goal>
                         </goals>
@@ -71,12 +72,61 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>addr</id>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                        <configuration>
+                            <file>../samples/addr/AddressBook.wsdl</file>
+                            <output>${project.build.directory}/work</output>
+                            <typeMappingVersion>1.1</typeMappingVersion>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:AddressFetcher2</namespace>
+                                    <package>samples.addr</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- TODO: quick and dirty hack to be able to compile all tests -->
+                                <mkdir dir="${project.build.directory}/work/samples/client"/>
+                                <copy file="../samples/client/DynamicInvoker.java" todir="${project.build.directory}/work/samples/client"/>
+                            </target>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <includes>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <!-- TODO: test doesn't follow standard naming convention -->
+                        <include>test/dynamic/ServiceGetPort.java</include>
+                    </includes>
                     <excludes>
+                        <!-- Quote:
+                            // FIX BUILD 05/27/03 : "junit" tests should NOT be accessing the
+                            // network at all - these tests should move to test.wsdl.dynamic
+                            // and should not reference services which might go down. ~~gdaniels
+                        -->
+                        <exclude>test/dynamic/TestDynamicInvoker.java</exclude>
+                        <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
                         <!-- TODO: this test causes an OOM error; investigate why -->
                         <exclude>test/encoding/TestSer.java</exclude>
                     </excludes>

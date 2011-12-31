@@ -39,7 +39,7 @@ public class ServiceGetPort extends TestCase {
     
     public void testGetGeneratedStub() throws Exception {
         Service service = ServiceFactory.newInstance().createService(
-                new URL("file:samples/addr/AddressBook.wsdl"),
+                new URL("file:../samples/addr/AddressBook.wsdl"),
                 new QName("urn:AddressFetcher2", "AddressBookService"));
         QName portName = new QName("urn:AddressFetcher2", "AddressBook");
         Remote stub = service.getPort(portName, AddressBook.class);
