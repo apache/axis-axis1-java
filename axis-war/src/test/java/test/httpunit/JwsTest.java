@@ -17,6 +17,8 @@
 
 package test.httpunit;
 
+import java.net.URLEncoder;
+
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebResponse;
@@ -122,14 +124,12 @@ public class JwsTest extends HttpUnitTestBase {
      * send a complex unicode round the loop and see what happens
      * @throws Exception
      */
-    /* this is failing but it may be in the test code
     public void testEchoHeadersEchoUnicode() throws Exception {
         WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setParameter("method", "echo");
-        request.setParameter("param", "\u221a");
-        assertStringInBody(request, "\u221a");
+                + "/EchoHeaders.jws?method=echo&param=" + URLEncoder.encode("\u221a", "UTF-8"));
+        // TODO: Axis actually returns a character entity; may be related to AXIS-2342
+//        assertStringInBody(request, "\u221a");
+        assertStringInBody(request, "&#x221A;");
     }
-    */
 
 }

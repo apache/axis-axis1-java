@@ -24,7 +24,6 @@ import org.apache.axis.utils.Messages;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
@@ -116,14 +115,12 @@ public class QSMethodHandler extends AbstractQueryStringHandler  {
                 " xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                 "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
                 "</SOAP-ENV:Envelope>";
-        ByteArrayInputStream istream =
-                new ByteArrayInputStream (msgtxt.getBytes());
         Message responseMsg = null;
 
         try {
             AxisServer engine = (AxisServer) msgContext.getProperty
                     (HTTPConstants.PLUGIN_ENGINE);
-            Message msg = new Message (istream, false);
+            Message msg = new Message (msgtxt, false);
 
             msgContext.setRequestMessage (msg);
             engine.invoke (msgContext);
