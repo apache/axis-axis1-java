@@ -1176,33 +1176,7 @@ which can be done via a system property or a properties file in the
 classpath.
 <p>Log4J can be configured using the file log4j.properties in the
 classpath; later
-versions also support an XML configuration. Axis includes a
-preconfigured
-log4j.properties file in <tt>axis.jar</tt>. While this is adequate for
-basic use,
-any complex project will want to modify their own version of the file.
-Here is
-what to do </p>
-<ol>
-  <li>Open up axis.jar in a zipfile viewer and remove log4j.properties
-from the jar
-  </li>
-  <li>Or, when building your own copy of axis.jar, set the Ant property
-    <tt>exclude.log4j.configuration</tt> to keep the properties file
-out the JAR.
-  </li>
-  <li>Create your own log4J.properties file, and include it in <tt>WEB-INF/classes</tt>
-(server-side), in your main application JAR file client side.
-  </li>
-  <li>Edit this log4J properties file to your hearts content. Server
-side,
-setting up rolling logs with fancy html output is convenient, though
-once you
-start clustering the back end servers that ceases to be as usuable.
-Log4J power tools,
-such as 'chainsaw', are the secret here.
-  </li>
-</ol>
+versions also support an XML configuration.</p>
 <h3>Log Categories</h3>
 Axis classes that log information create their own per-class log, each
 of which
