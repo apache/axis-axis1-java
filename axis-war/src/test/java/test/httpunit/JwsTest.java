@@ -78,9 +78,7 @@ public class JwsTest extends HttpUnitTestBase {
      */
     public void testEchoHeadersEcho() throws Exception {
         WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setParameter("method","echo");
-        request.setParameter("param", "foo bar");
+                + "/EchoHeaders.jws?method=echo&param=foo+bar");
         assertStringInBody(request, "foo bar");
     }
 
@@ -100,9 +98,7 @@ public class JwsTest extends HttpUnitTestBase {
      */
     public void testAxisFaultIsXML() throws Exception {
         WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setParameter("method", "throwAxisFault");
-        request.setParameter("param", "oops!");
+                + "/EchoHeaders.jws?method=throwAxisFault&param=oops!");
         expectErrorCode(request, 500,
             "<faultcode>soapenv:Server.generalException</faultcode>");
     }
@@ -113,9 +109,7 @@ public class JwsTest extends HttpUnitTestBase {
      */
     public void testExceptionIsXML() throws Exception {
         WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setParameter("method", "throwAxisFault");
-        request.setParameter("param", "oops!");
+                + "/EchoHeaders.jws?method=throwAxisFault&param=oops!");
         expectErrorCode(request, 500,
                 "<faultcode>soapenv:Server.userException</faultcode>");
     }
