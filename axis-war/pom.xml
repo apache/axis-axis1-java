@@ -63,7 +63,7 @@
                     <stopPort>9999</stopPort>
                     <webAppConfig>
                         <contextPath>/axis</contextPath>
-                        <descriptor>src/test/web.xml</descriptor>
+                        <descriptor>${basedir}/src/test/web.xml</descriptor>
                     </webAppConfig>
                 </configuration>
                 <executions>
