@@ -18,7 +18,16 @@
  */
 package org.apache.axis.maven;
 
-public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] wsddFiles) throws Exception;
-    void stopServer(int port) throws Exception;
+import org.apache.maven.project.MavenProject;
+
+/**
+ * Create Java classes from local or remote WSDL for usage in test cases.
+ * 
+ * @goal wsdl2java-test
+ * @phase generate-test-sources
+ */
+public class Wsdl2JavaTestMojo extends AbstractWsdl2JavaMojo {
+    protected void addSourceRoot(MavenProject project, String path) {
+        project.addTestCompileSourceRoot(path);
+    }
 }

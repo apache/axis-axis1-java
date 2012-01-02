@@ -19,6 +19,7 @@
 package org.apache.axis.maven;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.axis.transport.http.SimpleAxisServer;
@@ -26,9 +27,11 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Start a {@link SimpleAxisServer} instance in a separate JVM.
@@ -61,7 +64,17 @@ public class StartServerMojo extends AbstractServerMojo {
      */
     private ToolchainManager toolchainManager;
     
+    /**
+     * Directory with WSDD files for services to deploy.
+     * 
+     * @parameter
+     */
+    private File wsddDir;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
+        Log log = getLog();
+        
+        // Locate java executable to use
         String executable;
         Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk", session);
         if (tc != null) {
@@ -69,16 +82,43 @@ public class StartServerMojo extends AbstractServerMojo {
         } else {
             executable = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         }
-        getLog().debug("Java executable: " + executable);
+        if (log.isDebugEnabled()) {
+            log.debug("Java executable: " + executable);
+        }
+        
+        // Get class path
         List classPathElements;
         try {
             classPathElements = project.getTestClasspathElements();
         } catch (DependencyResolutionRequiredException ex) {
             throw new MojoExecutionException("Unexpected exception", ex);
         }
-        getLog().debug("Class path elements: " + classPathElements);
+        if (log.isDebugEnabled()) {
+            log.debug("Class path elements: " + classPathElements);
+        }
+        
+        // Select WSDD files
+        String[] wsddFiles;
+        if (wsddDir != null) {
+            DirectoryScanner scanner = new DirectoryScanner();
+            scanner.setBasedir(wsddDir);
+            scanner.setIncludes(new String[] { "**/deploy.wsdd" });
+            scanner.scan();
+            String[] includedFiles = scanner.getIncludedFiles();
+            wsddFiles = new String[includedFiles.length];
+            for (int i=0; i<includedFiles.length; i++) {
+                wsddFiles[i] = new File(wsddDir, includedFiles[i]).getPath();
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("WSDD files: " + Arrays.asList(wsddFiles));
+            }
+        } else {
+            wsddFiles = null;
+        }
+        
+        // Start the server
         try {
-            getServerManager().startServer(executable, (String[])classPathElements.toArray(new String[classPathElements.size()]), getPort());
+            getServerManager().startServer(executable, (String[])classPathElements.toArray(new String[classPathElements.size()]), getPort(), wsddFiles);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

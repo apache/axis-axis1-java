@@ -81,6 +81,8 @@ public class Emitter extends Parser {
     /** Field bDeploySkeleton */
     private boolean bDeploySkeleton = false;
 
+    private boolean bImplementationWanted = true;
+    
     /** Field bEmitTestCase */
     private boolean bEmitTestCase = false;
 
@@ -199,6 +201,24 @@ public class Emitter extends Parser {
     public boolean isSkeletonWanted() {
         return bDeploySkeleton;
     }    // isSkeletonWanted
+
+    /**
+     * Turn on/off generation of (empty) implementation classes. Defaults to <code>true</code>.
+     * 
+     * @param value
+     */
+    public void setImplementationWanted(boolean value) {
+        bImplementationWanted = value;
+    }
+
+    /**
+     * Indicate if we should be generating implementation classes.
+     * 
+     * @return 
+     */
+    public boolean isImplementationWanted() {
+        return bImplementationWanted;
+    }
 
     /**
      * Turn on/off Helper class generation

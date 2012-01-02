@@ -50,15 +50,17 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>axis-maven-plugin</artifactId>
                 <version>${project.version}</version>
+                <configuration>
+                    <output>${project.build.directory}/work</output>
+                </configuration>
                 <executions>
                     <execution>
                         <id>echo</id>
                         <goals>
-                            <goal>wsdl2java</goal>
+                            <goal>wsdl2java-test</goal>
                         </goals>
                         <configuration>
                             <file>../samples/echo/InteropTest.wsdl</file>
-                            <output>${project.build.directory}/work</output>
                             <typeMappingVersion>1.1</typeMappingVersion>
                             <mappings>
                                 <mapping>
@@ -75,11 +77,10 @@
                     <execution>
                         <id>addr</id>
                         <goals>
-                            <goal>wsdl2java</goal>
+                            <goal>wsdl2java-test</goal>
                         </goals>
                         <configuration>
                             <file>../samples/addr/AddressBook.wsdl</file>
-                            <output>${project.build.directory}/work</output>
                             <typeMappingVersion>1.1</typeMappingVersion>
                             <mappings>
                                 <mapping>
@@ -90,10 +91,31 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>wrapped</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/wrapped/CityBBB.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:CityBBB</namespace>
+                                    <package>test.wsdl.wrapped</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>start-server</id>
                         <goals>
                             <goal>start-server</goal>
                         </goals>
+                        <configuration>
+                            <wsddDir>${project.build.directory}/work</wsddDir>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>stop-server</id>
@@ -141,6 +163,22 @@
                         <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>test/wsdl/**/*TestCase.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
