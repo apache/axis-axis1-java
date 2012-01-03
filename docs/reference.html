@@ -22,6 +22,7 @@
   </ul>
   <li><a href="#Deployment">Deployment (WSDD) Reference</a></li>
   <li><a href="#global_configuration">Global Axis Configuration</a></li>
+  <li><a href="#servlet_configuration">AxisServlet Configuration</a></li>
   <li><a href="#individual_service">Individual Service Configuration</a></li>
   <li><a href="#axis_logging">Axis Logging Configuration</a></li>
   <li><a href="#axis_components">Pre-Configured Axis Components
@@ -855,10 +856,6 @@ new class implementing <tt>EngineConfiguration</tt> and name it here
 to use alternate configuration mechanisms. </td>
     </tr>
     <tr>
-      <td><b>axis.jws.servletClassDir</b></td>
-      <td>Path to where compiled JWS pages are placed. </td>
-    </tr>
-    <tr>
       <td><b>axis.sendMinimizedElements</b></td>
       <td>Flag to turn on support for a when .NET1.0 can't correctly
 handle some bits of XML <a
@@ -910,6 +907,18 @@ container. </td>
 	  </td>
     </tr>
 <!-- end table -->
+  </tbody>
+</table>
+<h2><a name="servlet_configuration">AxisServlet configuration</a></h2>
+<p>The following properties are recognized by AxisServlet. They may be specified as servlet parameters,
+context parameters or system properties:</p>
+<table>
+  <tbody>
+    <tr>
+      <td><b>axis.jws.servletClassDir</b></td>
+      <td>Path to where compiled JWS pages are placed. This may be an absolute path or a path relative
+      to the web application root.</td>
+    </tr>
   </tbody>
 </table>
 <h2><a name="individual_service">Individual Service Configuration</a></h2>

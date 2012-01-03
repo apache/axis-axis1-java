@@ -10,6 +10,10 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     <param-name>axis.development.system</param-name>
     <param-value>true</param-value>
   </context-param>
+  <context-param>
+    <param-name>axis.jws.servletClassDir</param-name>
+    <param-value>${project.build.directory}/tmp/jwsClasses</param-value>
+  </context-param>
   
     <listener>
         <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>

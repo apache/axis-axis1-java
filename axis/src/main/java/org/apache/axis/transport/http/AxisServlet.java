@@ -190,7 +190,7 @@ public class AxisServlet extends AxisServletBase {
          * should fix any NPE's in the mean time.
          */
         if (jwsClassDir != null) {
-            if (getHomeDir() != null) {
+            if (getHomeDir() != null && !new File(jwsClassDir).isAbsolute()) {
                 jwsClassDir = getHomeDir() + jwsClassDir;
             }
         } else {
