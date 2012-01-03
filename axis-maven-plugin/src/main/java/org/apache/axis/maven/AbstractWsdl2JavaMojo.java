@@ -147,12 +147,6 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         emitter.setOutputDir(output.getAbsolutePath());
         emitter.setServerSide(serverSide);
         emitter.setSkeletonWanted(skeleton);
-        // In a Maven build, generated sources are always written to a directory other than
-        // the source directory. By default, the emitter would generate an empty implementation
-        // because it doesn't see the implementation provided by the developer. We don't want this
-        // because these two classes would collide. Therefore implementationWanted is hardcoded
-        // to false:
-        emitter.setImplementationWanted(false);
 //        emitter.setVerbose(verbose);
 //        emitter.setDebug(debug);
 //        emitter.setQuiet(quiet);
@@ -177,7 +171,9 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //                    Project.MSG_VERBOSE);
 //            ClassUtils.setDefaultClassLoader(cl);
 //        }
-
+        
+        configureEmitter(emitter);
+        
         try {
             emitter.run(wsdlUrl);
         } catch (Exception ex) {
@@ -187,5 +183,6 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         addSourceRoot(project, output.getAbsolutePath());
     }
     
+    protected abstract void configureEmitter(Emitter emitter);
     protected abstract void addSourceRoot(MavenProject project, String path);
 }

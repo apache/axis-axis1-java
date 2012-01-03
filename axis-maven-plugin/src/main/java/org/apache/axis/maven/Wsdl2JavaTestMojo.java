@@ -18,6 +18,7 @@
  */
 package org.apache.axis.maven;
 
+import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -27,6 +28,25 @@ import org.apache.maven.project.MavenProject;
  * @phase generate-test-sources
  */
 public class Wsdl2JavaTestMojo extends AbstractWsdl2JavaMojo {
+    /**
+     * Flag indicating whether a default (empty) implementation should be generated.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean implementation;
+    
+    /**
+     * Flag indicating whether a basic unit test should be generated.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean testCase;
+    
+    protected void configureEmitter(Emitter emitter) {
+        emitter.setImplementationWanted(implementation);
+        emitter.setTestCaseWanted(testCase);
+    }
+
     protected void addSourceRoot(MavenProject project, String path) {
         project.addTestCompileSourceRoot(path);
     }

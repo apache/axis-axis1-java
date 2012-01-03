@@ -90,6 +90,96 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <!-- Import Test 1:  some namespace->package mappings from the -->
+                    <!--                 command line, some generated, some from   -->
+                    <!--                 NStoPkg.properties.                       -->
+                    <execution>
+                        <id>_import-1</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/_import/Import.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <implementation>true</implementation>
+                            <testCase>true</testCase>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:import</namespace>
+                                    <package>test.wsdl.import</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:importBinding1</namespace>
+                                    <package>test.wsdl.import.binding1</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:importBinding2</namespace>
+                                    <package>test.wsdl.import.binding2</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- Import Test 2:  all namespace->package mappings from the -->
+                    <!--                 command line.                            -->
+                    <execution>
+                        <id>_import-2</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/_import/Import.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <implementation>true</implementation>
+                            <testCase>true</testCase>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:import</namespace>
+                                    <package>test.import2</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:importBinding1</namespace>
+                                    <package>test.import2.binding1</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:importBinding2</namespace>
+                                    <package>test.import2.binding2</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:types.import.test</namespace>
+                                    <package>test.import2.types</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:iface.import.test</namespace>
+                                    <package>test.import2.iface</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:messages.import.test</namespace>
+                                    <package>test.import2.messages</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- Import Test 3:  all namespace->package mappings from the -->
+                    <!--                 command line.  Make sure an xsd:import   -->
+                    <!--                 statement inside a schema inside a type  -->
+                    <!--                 works properly.                          -->
+                    <execution>
+                        <id>_import-3</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/_import/ImportMessagesXSDImport.wsdl</file>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:types.import.test</namespace>
+                                    <package>test.import.test3</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>wrapped</id>
                         <goals>
@@ -173,7 +263,7 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>test/wsdl/**/*TestCase.java</include>
+                                <include>**/*TestCase.java</include>
                             </includes>
                         </configuration>
                     </execution>
