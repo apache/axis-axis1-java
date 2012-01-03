@@ -328,11 +328,15 @@ Axis provides to do this, which takes almost no effort at all!
 JWS (Java Web Service) Files - Instant Deployment</h3>
 OK, here's step 1 : copy the above .java file into your webapp directory,
 and rename it "Calculator.jws". So you might do something like this:
-<pre>% copy Calculator.java <i><font color="#0000FF">&lt;your-webapp-root></font></i>/axis/Calculator.jws</pre>
+<pre>% copy Calculator.java <i><font color="#0000FF">&lt;your-webapp-root></font></i>/Calculator.jws</pre>
 Now for step 2... hm, wait a minute. You're done! You should now be able
-to access the service at the following URL (assuming your Axis web application
-is on port 8080):
+to access the service at the following URL (assuming your container serves
+on port 8080 and that your web application is called axis):
 <p><a href="http://localhost:8080/axis/Calculator.jws">http://localhost:8080/axis/Calculator.jws</a>
+<p>
+If you followed the link (and the deployment has been successful), 
+you'll see a message information you that there is a Web Service deployed here.
+</p>
 <p>Axis automatically locates the file, compiles the class, and converts
 SOAP calls correctly into Java invocations of your service class. Try it
 out - there's a calculator client in samples/userguide/example2/CalcClient.java,
