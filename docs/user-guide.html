@@ -37,6 +37,7 @@ Table of Contents</h3>
   <li> <a href="#newbie">Newbie Tips: Finding Your Way Around</a></li>
   <li> <a href="#tcpmon">Appendix : Using TCPMon</a></li>
   <li> <a href="#soapmon">Appendix : Using SOAP Monitor</a></li>
+  <li> <a href="#server">Appendix : Using the Standalone server</a></li>
   <li> <a href="#Glossary">Glossary</a></li>
 </ul>
 
@@ -1645,6 +1646,40 @@ web application to change the port to be used.
 To enable it, read <a href="install.html#soapmon">Enabling the 
 SOAP Monitor</a> in the Installation instructions.
 
+<h2> <a NAME="server"></a>Appendix : Using the Standalone Soap Server</h2>
+To run the standalone server from the command line:
+<pre>% java org.apache.axis.transport.http.SimpleAxisServer [-t maxpool] [-m maxsess] [-p port]</pre>
+<p>
+The following options can be specified: 
+</p>
+<ul>
+<li>
+-t maxpool Specify the maxium pool size for the server.
+This is the maximum number of simultaneous connections (threads) the server can accept (run). The default is 100.
+</li>
+<li>
+-m maxsess
+This is the maximum number of sessions the server will run. Again, the default is 100.
+</li>
+<li>
+-p port
+This is the port number the server will use to run. The default is 8080 which is also used by Tomcat. Unexpected results will occur if you start the server on a port that is already in use. 
+</li>
+</ul>
+The following jars need to be on the classpath (as a minimum):
+<ul>
+<li>axis.jar</li>
+<li>commons-discovery-0.2.jar</li>
+<li>commons-logging-1.0.4.jar</li>
+<li>jaxrpc.jar</li>
+<li>saaj.jar</li>
+<li>wsdl4j-1.5.1.jar</li>
+<li>activation.jar (*)</li>
+<li>mail.jar (*)</li>
+</ul>
+<p>
+(*) These are not included in the distribution, and must be downloaded from java.sun.com
+</p>
 <a NAME="Glossary">
 <h2>Glossary</h2></a>
 
