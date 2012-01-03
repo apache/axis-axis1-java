@@ -96,13 +96,20 @@
                             <skip>true</skip>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
                     <execution>
-                        <id>surefire-it</id>
-                        <phase>integration-test</phase>
                         <goals>
-                            <goal>test</goal>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
                         </goals>
                         <configuration>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
                             <systemPropertyVariables>
                                 <test.functional.webapp.url>http://localhost:8080/axis</test.functional.webapp.url>
                             </systemPropertyVariables>

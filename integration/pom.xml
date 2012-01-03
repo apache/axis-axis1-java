@@ -235,23 +235,14 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/Test*.java</include>
-                        <include>**/*Test.java</include>
-                        <!-- TODO: test doesn't follow standard naming convention -->
-                        <include>test/dynamic/ServiceGetPort.java</include>
-                    </includes>
-                    <excludes>
-                        <!-- Quote:
-                            // FIX BUILD 05/27/03 : "junit" tests should NOT be accessing the
-                            // network at all - these tests should move to test.wsdl.dynamic
-                            // and should not reference services which might go down. ~~gdaniels
-                        -->
-                        <exclude>test/dynamic/TestDynamicInvoker.java</exclude>
-                        <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
-                    </excludes>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -263,8 +254,21 @@
                         </goals>
                         <configuration>
                             <includes>
+                                <include>**/Test*.java</include>
+                                <include>**/*Test.java</include>
                                 <include>**/*TestCase.java</include>
+                                <!-- TODO: test doesn't follow standard naming convention -->
+                                <include>test/dynamic/ServiceGetPort.java</include>
                             </includes>
+                            <excludes>
+                                <!-- Quote:
+                                    // FIX BUILD 05/27/03 : "junit" tests should NOT be accessing the
+                                    // network at all - these tests should move to test.wsdl.dynamic
+                                    // and should not reference services which might go down. ~~gdaniels
+                                -->
+                                <exclude>test/dynamic/TestDynamicInvoker.java</exclude>
+                                <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
