@@ -19,6 +19,7 @@
 package org.apache.axis.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Start a {@link SimpleAxisServer} instance in a separate JVM.
@@ -63,6 +65,13 @@ public class StartServerMojo extends AbstractServerMojo {
      * @component
      */
     private ToolchainManager toolchainManager;
+    
+    /**
+     * @parameter default-value="${project.build.directory}/axis-server"
+     * @required
+     * @readonly
+     */
+    private File workDirBase;
     
     /**
      * Directory with WSDD files for services to deploy.
@@ -116,9 +125,21 @@ public class StartServerMojo extends AbstractServerMojo {
             wsddFiles = null;
         }
         
+        // Prepare a work directory where the server can create a server-config.wsdd file
+        File workDir = new File(workDirBase, String.valueOf(getPort()));
+        if (workDir.exists()) {
+            try {
+                FileUtils.deleteDirectory(workDir);
+            } catch (IOException ex) {
+                throw new MojoFailureException("Failed to clean the work directory", ex);
+            }
+        } else {
+            workDir.mkdirs();
+        }
+        
         // Start the server
         try {
-            getServerManager().startServer(executable, (String[])classPathElements.toArray(new String[classPathElements.size()]), getPort(), wsddFiles);
+            getServerManager().startServer(executable, (String[])classPathElements.toArray(new String[classPathElements.size()]), getPort(), workDir, wsddFiles);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

@@ -29,7 +29,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class DefaultServerManager implements ServerManager {
     private final Map servers = new HashMap();
 
-    public void startServer(String jvm, String[] classpath, int port, String[] wsddFiles) throws Exception {
+    public void startServer(String jvm, String[] classpath, int port, File workDir, String[] wsddFiles) throws Exception {
         AdminClient adminClient = new AdminClient(true);
         adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
         Process process = Runtime.getRuntime().exec(new String[] {
@@ -39,7 +39,7 @@ public class DefaultServerManager implements ServerManager {
                 "org.apache.axis.transport.http.SimpleAxisServer",
                 "-p",
                 String.valueOf(port)
-        });
+        }, null, workDir);
         servers.put(Integer.valueOf(port), new Server(process, adminClient));
         // TODO: need to set up stdout/stderr forwarding; otherwise the process will hang
         // TODO: need to ping the server and wait until it becomes ready
