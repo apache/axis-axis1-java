@@ -267,7 +267,8 @@ the <code>getVersion</code> method:<br>
 <br>
 This should return something like:
 <pre class="xml">  &lt;?xml version="1.0" encoding="UTF-8" ?&gt; <br>  &lt;soapenv:Envelope <br>      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" <br>      xmlns:xsd="http://www.w3.org/2001/XMLSchema" <br>      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br>      &lt;soapenv:Body&gt;<br>      &lt;getVersionResponse <br>          soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"&gt;<br>          &lt;getVersionReturn <br>              xsi:type="xsd:string"&gt;<br>              Apache Axis version: 1.1 Built on Apr 04, 2003 (01:30:37 PST)<br>          &lt;/getVersionReturn&gt; <br>      &lt;/getVersionResponse&gt;<br>      &lt;/soapenv:Body&gt;<br>  &lt;/soapenv:Envelope&gt;<br></pre>
-The Axis version and build date may of course be different.
+Your browser may display the result in a formatted way; be sure to check the source code of your returned page. The Axis version and build date may of course be different.
+
 <h3>Test a JWS Endpoint</h3>
 Now let's test a JWS web service. Axis' JWS Web Services are java files
 you save into the Axis webapp <i>anywhere but the WEB-INF tree</i>,
@@ -348,13 +349,13 @@ Computer" and select "Properties". Click the "Advanced" tab and create
 the new environmental variables.&nbsp; It is often better to use
 WordPad to create the variable string and then paste it into the
 appropriate text field.<br>
-<pre class="xml">    set AXIS_HOME=c:\axis<br>    set AXIS_LIB=%AXIS_HOME%\lib<br>    set AXISCLASSPATH=%AXIS_LIB%\axis.jar;%AXIS_LIB%\commons-discovery.jar;<br>          %AXIS_LIB%\commons-logging.jar;%AXIS_LIB%\jaxrpc.jar;%AXIS_LIB%\saaj.jar;<br>          %AXIS_LIB%\log4j-1.2.8.jar;%AXIS_LIB%\xml-apis.jar;%AXIS_LIB%\xercesImpl.jar<br></pre>
+<pre class="xml">    set AXIS_HOME=c:\axis<br>    set AXIS_LIB=%AXIS_HOME%\lib<br>    set AXISCLASSPATH=%AXIS_LIB%\axis.jar;%AXIS_LIB%\commons-discovery.jar;<br>          %AXIS_LIB%\commons-logging.jar;%AXIS_LIB%\jaxrpc.jar;%AXIS_LIB%\saaj.jar;<br>          %AXIS_LIB%\log4j-1.2.8.jar;%AXIS_LIB%\xml-apis.jar;%AXIS_LIB%\xercesImpl.jar;<br>          %AXIS_LIB%\wsdl4j.jar<br></pre>
 Unix users have to do something similar. Below we have installed AXIS
 into /usr/axis and are using the bash shell. See your shell's
 documentation for differences. To make variables permenate you will
 need to add them to your shell's startup (dot) files. Again, see your
 shell's documentation.
-<pre class="xml">    set AXIS_HOME=/usr/axis<br>    set AXIS_LIB=$AXIS_HOME/lib<br>    set AXISCLASSPATH=$AXIS_LIB/axis.jar:$AXIS_LIB/commons-discovery.jar:<br>          $AXIS_LIB/commons-logging.jar:$AXIS_LIB/jaxrpc.jar:$AXIS_LIB/saaj.jar:<br>          $AXIS_LIB/log4j-1.2.8.jar:$AXIS_LIB/xml-apis.jar:$AXIS_LIB/xercesImpl.jar<br>    export AXIS_HOME; export AXIS_LIB; export AXISCLASSPATH<br></pre>
+<pre class="xml">    set AXIS_HOME=/usr/axis<br>    AXIS_LIB=$AXIS_HOME/lib<br>    AXISCLASSPATH=$AXIS_LIB/axis.jar:$AXIS_LIB/commons-discovery.jar:<br>          $AXIS_LIB/commons-logging.jar:$AXIS_LIB/jaxrpc.jar:$AXIS_LIB/saaj.jar:<br>          $AXIS_LIB/log4j-1.2.8.jar:$AXIS_LIB/xml-apis.jar:$AXIS_LIB/xercesImpl.jar:<br>          $AXIS_LIB/wsdl4j.jar<br>    export AXIS_HOME; export AXIS_LIB; export AXISCLASSPATH<br></pre>
 To use Axis client code, you can select AXISCLASSPATH when
 invoking Java by entering
 <pre class="xml">java -cp %AXISCLASSPATH% ...</pre>
@@ -395,7 +396,7 @@ org.apache.axis.client.AdminClient
   </code>&nbsp;<b><br>
 On UNIX</b> <br>
   <code class="java">java -cp $AXISCLASSPATH
-org.apache.axis.client.AdminClient <br>
+org.apache.axis.client.AdminClient
 -lhttp://localhost:8080/axis/services/AdminService deploy.wsdd</code> </blockquote>
 If you get some java client error (like ClassNotFoundException), then
 you haven't set up your AXISCLASSPATH (or CLASSPATH) variable right,
@@ -429,12 +430,11 @@ quote demo.</p>
   <li> Change directory to the distribution directory for xml-axis and
 execute the following command (or its Unix equivalent):
     <blockquote> <b>On Windows</b> <code class="java"><br>
-java -cp .;%AXISCLASSPATH% samples.stock.GetQuote <br>
+java -cp .;%AXISCLASSPATH% samples.stock.GetQuote
 -lhttp://localhost:8080/axis/servlet/AxisServlet -uuser1 -wpass1 XXX</code><br>
       <br>
       <span style="font-weight: bold;">On UNIX</span><br>
-      <code class="java">java -cp $AXISCLASSPATH samples.stock.GetQuote
-      <br>
+      <code class="java">java -cp .:$AXISCLASSPATH samples.stock.GetQuote
 -lhttp://localhost:8080/axis/servlet/AxisServlet -uuser1 -wpass1 XXX</code>&nbsp;<code
  class="java"></code><br>
       <br>
@@ -600,7 +600,7 @@ org.apache.axis.client.AdminClient
   </code>&nbsp;<b><br/>
 On UNIX</b> <br/>
   <code class="java">java -cp $AXISCLASSPATH
-org.apache.axis.client.AdminClient <br/>
+org.apache.axis.client.AdminClient
 -lhttp://localhost:8080/axis/services/AdminService deploy-monitor.wsdd</code> </blockquote>
 	 <span style="font-weight: bold;">SOAPMonitorService Deployment Descriptor (deploy-monitor.wsdd)</span>
 <pre class="xml">&lt;deployment xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
