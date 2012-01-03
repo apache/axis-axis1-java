@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+    <mkdir dir="${project.build.directory}/work/test/wsdl/qname"/>
+    
+    <!-- Test #1 for Bug 19274 - Java2WSDL failure: Attempted to write schema for bad QName -->
+    <!-- Generate WSDL from java -->
+    <java2wsdl classname="test.wsdl.qname.MyServiceInterface"
+               implclass="test.wsdl.qname.MyServiceImpl"
+               location="http://whereever/MyService/servicesMyservice"
+               namespace="urn:sample"
+               namespaceimpl="urn:sample-impl"
+               style="WRAPPED"
+               serviceelementname="MyService" 
+               output="${project.build.directory}/work/test/wsdl/qname/MyService.wsdl">
+        <classpath refid="maven.test.classpath"/>
+        <mapping package="test.wsdl.qname" namespace="http://test.com/qname" />
+    </java2wsdl>
+    
+    <!-- Test #2 for Bug 19274 - Java2WSDL failure: Attempted to write schema for bad QName -->
+    <!-- Generate WSDL from java -->
+    <java2wsdl classname="test.wsdl.qname.foo"
+               location="http://yada.yada/"
+               namespace="urn:sample2"
+               namespaceimpl="urn:sample2-impl"
+		       style="DOCUMENT"
+               use="LITERAL"
+		       serviceelementname="Foo"                
+               output="${project.build.directory}/work/test/wsdl/qname/MyService2.wsdl">
+        <classpath refid="maven.test.classpath"/>
+        <mapping package="test.wsdl.qname" namespace="http://test.com/qname" />
+    </java2wsdl>
+  </target>
+</project>
