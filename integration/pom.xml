@@ -180,6 +180,31 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <!-- This tests Bug 9642 -  Java Date not deserialize properly.  -->
+                    <execution>
+                        <id>adaptive</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/adaptive/adaptive.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://com.test/wsdl/Adaptive</namespace>
+                                    <package>test.wsdl.adaptive</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>http://com.test/types/Adaptive</namespace>
+                                    <package>test.wsdl.adaptive.types</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>http://java.sun.com/jax-rpc-ri/internal</namespace>
+                                    <package>test.wsdl.adaptive.types.internal</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>wrapped</id>
                         <goals>
@@ -268,6 +293,8 @@
                                 -->
                                 <exclude>test/dynamic/TestDynamicInvoker.java</exclude>
                                 <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
+                                <!-- Excluded in r257238; see AXIS-750 -->
+                                <exclude>test/wsdl/adaptive/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>
