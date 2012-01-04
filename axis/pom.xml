@@ -152,7 +152,7 @@
                             <source>
                                 import java.util.Date
                                 import java.text.MessageFormat
-                                project.properties['today'] = MessageFormat.format("{0,date,MMM dd, yyyy (hh:mm:ss z)}", new Date())
+                                project.properties['today'] = MessageFormat.format("{0,date,MMM dd, yyyy (HH:mm:ss z)}", new Date())
                             </source>
                         </configuration>
                     </execution>
