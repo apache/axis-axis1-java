@@ -206,6 +206,27 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>any</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/any/any.wsdl</file>
+                            <all>true</all>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:partner.soap.sforce.com</namespace>
+                                    <package>test.wsdl.any</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:sobject.partner.soap.sforce.com</namespace>
+                                    <package>test.wsdl.any</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>wrapped</id>
                         <goals>
                             <goal>wsdl2java-test</goal>

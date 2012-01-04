@@ -99,6 +99,13 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
      */
     private boolean skeleton;
     
+    /**
+     * flag to generate code for all elements, even unreferenced ones
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean all;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         String wsdlUrl;
         if (file != null && url != null) {
@@ -143,7 +150,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //        emitter.setNamespaceExcludes(nsExcludes);
 //        emitter.setProperties(properties);
 //        emitter.setImports(!noImports);
-//        emitter.setAllWanted(all);
+        emitter.setAllWanted(all);
         emitter.setOutputDir(output.getAbsolutePath());
         emitter.setServerSide(serverSide);
         emitter.setSkeletonWanted(skeleton);
