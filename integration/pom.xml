@@ -55,7 +55,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>echo</id>
+                        <id>samples-echo</id>
                         <goals>
                             <goal>wsdl2java-test</goal>
                         </goals>
@@ -75,7 +75,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>addr</id>
+                        <id>samples-addr</id>
                         <goals>
                             <goal>wsdl2java-test</goal>
                         </goals>
@@ -227,6 +227,160 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>arrays</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/arrays/ArrayTest.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:ArrayTest2</namespace>
+                                    <package>test.wsdl.arrays</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>arrays2</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/arrays2/arraytest.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://www.xyz.net/webservices/arraytest/1.0</namespace>
+                                    <package>test.wsdl.arrays2</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>http://www.xyz.net/schemas/arraytest/data/1.0</namespace>
+                                    <package>test.wsdl.arrays2.data</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>http://www.xyz.net/schemas/arraytest/innerdata/1.0</namespace>
+                                    <package>test.wsdl.arrays2.data.inner</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>arrays4</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/arrays4/ArrayTest.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:ArrayTest4</namespace>
+                                    <package>test.wsdl.arrays4</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>attachments</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/attachments/mime.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>attrGroup</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/attrGroup/AttrGroupService.wsdl</file>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://tempuri.org/</namespace>
+                                    <package>test.wsdl.attrGroup</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- This is a DII test with multiple output params -->
+                    <execution>
+                        <id>dataset</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/dataset/DataService.wsdl</file>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://tempuri.org/</namespace>
+                                    <package>test.wsdl.dataset</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- DataType Structure Test -->
+                    <execution>
+                        <id>datatypes</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/datatypes/DataTypes.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <wrapArrays>true</wrapArrays>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:dataTypes</namespace>
+                                    <package>test.wsdl.datatypes</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- This tests Bug 9642 -  Java Date not deserialize properly.  -->
+                    <execution>
+                        <id>date</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/date/testdate.wsdl</file>
+                            <serverSide>true</serverSide>
+                        </configuration>
+                    </execution>
+                    <!-- This tests holders for complextype Bug:10247 -->
+                    <execution>
+                        <id>echo</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/echo/echo.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://echo.services</namespace>
+                                    <package>test.wsdl.echo</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>http://types.echo.services</namespace>
+                                    <package>test.wsdl.echo</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>wrapped</id>
                         <goals>
                             <goal>wsdl2java-test</goal>
@@ -316,6 +470,10 @@
                                 <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
                                 <!-- Excluded in r257238; see AXIS-750 -->
                                 <exclude>test/wsdl/adaptive/**</exclude>
+                                <!-- TODO: remote service no longer available -->
+                                <exclude>test/wsdl/dataset/**</exclude>
+                                <!-- These are not test cases -->
+                                <exclude>test/wsdl/date/TestdateSoapBinding*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

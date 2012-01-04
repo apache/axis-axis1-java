@@ -106,6 +106,15 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
      */
     private boolean all;
     
+    /**
+     * Set the wrap arrays flag - if true this will make new classes
+     * like "ArrayOfString" for literal "wrapped" arrays.  Otherwise it
+     * will use "String []" and generate appropriate metadata.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean wrapArrays;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         String wsdlUrl;
         if (file != null && url != null) {
@@ -160,7 +169,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         emitter.setTypeMappingVersion(typeMappingVersion);
 //        emitter.setNowrap(noWrapped);
 //        emitter.setAllowInvalidURL(allowInvalidURL);
-//        emitter.setWrapArrays(wrapArrays);
+        emitter.setWrapArrays(wrapArrays);
 //        if (namespaceMappingFile != null) {
 //            emitter.setNStoPkg(namespaceMappingFile.toString());
 //        }
