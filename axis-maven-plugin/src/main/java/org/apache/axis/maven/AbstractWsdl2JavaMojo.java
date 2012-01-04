@@ -181,6 +181,8 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         
         configureEmitter(emitter);
         
+        getLog().info("Processing " + wsdlUrl);
+        
         try {
             emitter.run(wsdlUrl);
         } catch (Exception ex) {
