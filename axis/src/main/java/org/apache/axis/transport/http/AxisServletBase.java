@@ -258,7 +258,13 @@ public class AxisServletBase extends HttpServlet {
     protected static Map getEngineEnvironment(HttpServlet servlet) {
         Map environment = new HashMap();
 
-        String attdir= servlet.getInitParameter(AxisEngine.ENV_ATTACHMENT_DIR);
+        String attdir = AxisProperties.getProperty(AxisEngine.ENV_ATTACHMENT_DIR);
+        if (attdir == null) {
+            attdir = servlet.getInitParameter(AxisEngine.ENV_ATTACHMENT_DIR);
+        }
+        if (attdir == null) {
+            attdir = servlet.getServletContext().getInitParameter(AxisEngine.ENV_ATTACHMENT_DIR);
+        }
         if (attdir != null)
             environment.put(AxisEngine.ENV_ATTACHMENT_DIR, attdir);
 
