@@ -24,12 +24,11 @@ import java.util.HashMap;
 
 import org.apache.axis.constants.Scope;
 import org.apache.axis.wsdl.toJava.Emitter;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
-public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
+public abstract class AbstractWsdl2JavaMojo extends AbstractAxisMojo {
     /**
      * The maven project.
      *

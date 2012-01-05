@@ -18,25 +18,15 @@
  */
 package org.apache.axis.maven;
 
-public abstract class AbstractServerMojo extends AbstractAxisMojo {
-    /**
-     * The port of the Axis server.
-     * 
-     * @parameter default-value="8080"
-     * @required
-     */
-    private int port;
-    
+import org.apache.maven.plugin.AbstractMojo;
+
+import com.github.veithen.ulog.PlexusLoggerInjector;
+
+public abstract class AbstractAxisMojo extends AbstractMojo {
     /**
      * @component
      */
-    private ServerManager serverManager;
-
-    public int getPort() {
-        return port;
-    }
-
-    public ServerManager getServerManager() {
-        return serverManager;
-    }
+    // This is necessary to set up logging such that all messages logged by the Axis
+    // libraries through commons logging are redirected to Plexus logs.
+    PlexusLoggerInjector loggerInjector;
 }
