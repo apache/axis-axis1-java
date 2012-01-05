@@ -448,6 +448,113 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>inout</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/inout/inout.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://www.apache.org/inout</namespace>
+                                    <package>test.wsdl.inout</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jaxrpcdynproxy</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/jaxrpcdynproxy/AddressInOut.wsdl</file>
+                            <serverSide>true</serverSide>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>marrays</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/marrays/MArrayTest.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:MArrayTests</namespace>
+                                    <package>test.wsdl.marrays</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>marshall</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/marshall/marshall.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <typeMappingVersion>1.3</typeMappingVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>marshall2</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/marshall2/marshall2.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <typeMappingVersion>1.3</typeMappingVersion>
+                            <wrapArrays>true</wrapArrays>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>multiref</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/multiref/MultiRefTest.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:MultiRefTest2</namespace>
+                                    <package>test.wsdl.multiref</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- Check to make sure we map XML names that are illegal Java correctly -->
+                    <execution>
+                        <id>names</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/names/JavaNames.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <implementation>true</implementation>
+                            <testCase>true</testCase>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://test.com/reference</namespace>
+                                    <package>test.filegen</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>wrapped</id>
                         <goals>
                             <goal>wsdl2java-test</goal>
@@ -541,6 +648,8 @@
                                 <exclude>test/wsdl/dataset/**</exclude>
                                 <!-- These are not test cases -->
                                 <exclude>test/wsdl/date/TestdateSoapBinding*</exclude>
+                                <exclude>test/wsdl/inout/TestFailed.java</exclude>
+                                <exclude>test/wsdl/marshall2/types/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>
