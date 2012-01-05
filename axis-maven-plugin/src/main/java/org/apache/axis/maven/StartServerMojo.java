@@ -20,7 +20,7 @@ package org.apache.axis.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.axis.transport.http.SimpleAxisServer;
@@ -74,11 +74,11 @@ public class StartServerMojo extends AbstractServerMojo {
     private File workDirBase;
     
     /**
-     * Directory with WSDD files for services to deploy.
+     * A set of WSDD files for services to deploy.
      * 
      * @parameter
      */
-    private File wsddDir;
+    private WSDD[] wsdds;
     
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
@@ -107,19 +107,23 @@ public class StartServerMojo extends AbstractServerMojo {
         }
         
         // Select WSDD files
-        String[] wsddFiles;
-        if (wsddDir != null) {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir(wsddDir);
-            scanner.setIncludes(new String[] { "**/deploy.wsdd" });
-            scanner.scan();
-            String[] includedFiles = scanner.getIncludedFiles();
-            wsddFiles = new String[includedFiles.length];
-            for (int i=0; i<includedFiles.length; i++) {
-                wsddFiles[i] = new File(wsddDir, includedFiles[i]).getPath();
+        List wsddFiles;
+        if (wsdds != null && wsdds.length > 0) {
+            wsddFiles = new ArrayList();
+            for (int i=0; i<wsdds.length; i++) {
+                WSDD wsdd = wsdds[i];
+                DirectoryScanner scanner = new DirectoryScanner();
+                scanner.setBasedir(wsdd.getDirectory());
+                scanner.setIncludes(wsdd.getIncludes());
+                scanner.setExcludes(wsdd.getExcludes());
+                scanner.scan();
+                String[] includedFiles = scanner.getIncludedFiles();
+                for (int j=0; j<includedFiles.length; j++) {
+                    wsddFiles.add(new File(wsdd.getDirectory(), includedFiles[j]).getPath());
+                }
             }
             if (log.isDebugEnabled()) {
-                log.debug("WSDD files: " + Arrays.asList(wsddFiles));
+                log.debug("WSDD files: " + wsddFiles);
             }
         } else {
             wsddFiles = null;
@@ -139,7 +143,11 @@ public class StartServerMojo extends AbstractServerMojo {
         
         // Start the server
         try {
-            getServerManager().startServer(executable, (String[])classPathElements.toArray(new String[classPathElements.size()]), getPort(), workDir, wsddFiles);
+            getServerManager().startServer(executable,
+                    (String[])classPathElements.toArray(new String[classPathElements.size()]),
+                    getPort(),
+                    workDir,
+                    wsddFiles == null ? null : (String[])wsddFiles.toArray(new String[wsddFiles.size()]));
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

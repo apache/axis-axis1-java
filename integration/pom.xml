@@ -879,7 +879,14 @@
                             <goal>start-server</goal>
                         </goals>
                         <configuration>
-                            <wsddDir>${project.build.directory}/work</wsddDir>
+                            <wsdds>
+                                <wsdd>
+                                    <directory>${project.build.directory}/work</directory>
+                                    <includes>
+                                        <include>**/deploy.wsdd</include>
+                                    </includes>
+                                </wsdd>
+                            </wsdds>
                         </configuration>
                     </execution>
                     <execution>
