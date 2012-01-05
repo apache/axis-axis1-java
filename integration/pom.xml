@@ -380,6 +380,73 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <!-- extension Sample Test -->
+                    <execution>
+                        <id>extension</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/extension/extension.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://tempuri.org/</namespace>
+                                    <package>test.wsdl.extension</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- WSDL fault generation test -->
+                    <execution>
+                        <id>faults</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/faults/FaultService.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://test.com/wsdl/faults</namespace>
+                                    <package>test.wsdl.faults</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <!-- This tests the getPort method in generated services.  -->
+                    <execution>
+                        <id>getPort</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/getPort/getPort.wsdl</file>
+                            <serverSide>true</serverSide>
+                        </configuration>
+                    </execution>
+                    <!-- Include test -->
+                    <execution>
+                        <id>include</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/include/AddressBook.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <implementation>true</implementation>
+                            <testCase>true</testCase>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:AddressFetcher2</namespace>
+                                    <package>test.wsdl.include</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>wrapped</id>
                         <goals>
