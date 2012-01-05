@@ -881,6 +881,12 @@
                         <configuration>
                             <wsdds>
                                 <wsdd>
+                                    <directory>src/test/wsdd</directory>
+                                    <includes>
+                                        <include>**/deploy.wsdd</include>
+                                    </includes>
+                                </wsdd>
+                                <wsdd>
                                     <directory>${project.build.directory}/work</directory>
                                     <includes>
                                         <include>**/deploy.wsdd</include>
