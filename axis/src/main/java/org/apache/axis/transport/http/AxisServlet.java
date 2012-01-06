@@ -777,7 +777,7 @@ public class AxisServlet extends AxisServletBase {
             sendResponse(contentType, res, responseMsg);
         } else {
             // No content, so just indicate accepted
-            res.setStatus(202);
+            res.setStatus(HttpServletResponse.SC_ACCEPTED);
         }
         
         if (isDebug) {
