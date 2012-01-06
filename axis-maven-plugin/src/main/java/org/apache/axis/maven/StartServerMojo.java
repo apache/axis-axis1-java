@@ -80,6 +80,20 @@ public class StartServerMojo extends AbstractServerMojo {
      */
     private WSDD[] wsdds;
     
+    /**
+     * If this flag is set to <code>true</code>, then the execution of the goal will block after the
+     * server has been started and the services are deployed. This is useful if one wants to
+     * manually test some services deployed on the server or if one wants to run the integration
+     * tests from an IDE. The flag can only be set using the command line, but not in the POM.
+     * <p>
+     * Note: this feature is implemented using a flag (instead of a distinct goal) to make sure that
+     * the server is configured in exactly the same way as in a normal integration test execution.
+     * 
+     * @parameter expression="${axis.server.foreground}" default-value="false"
+     * @readonly
+     */
+    private boolean foreground;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
@@ -150,6 +164,18 @@ public class StartServerMojo extends AbstractServerMojo {
                     wsddFiles == null ? null : (String[])wsddFiles.toArray(new String[wsddFiles.size()]));
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
+        }
+        
+        if (foreground) {
+            Object lock = new Object();
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException ex) {
+                    // Set interrupt flag and continue
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
     }
 }
