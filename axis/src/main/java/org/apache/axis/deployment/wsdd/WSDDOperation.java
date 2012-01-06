@@ -171,6 +171,10 @@ public class WSDDOperation extends WSDDElement
             attrs.addAttribute("", ATTR_SOAPACTION, ATTR_SOAPACTION, "CDATA", desc.getSoapAction());
         }
 
+        if (desc.getMep() != null) {
+            attrs.addAttribute("", ATTR_MEP, ATTR_MEP, "CDATA", desc.getMepString());
+        }
+
         context.startElement(getElementName(), attrs);
 
         if (desc.getDocumentation() != null) {

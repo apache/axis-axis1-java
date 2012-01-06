@@ -53,13 +53,19 @@ public class OperationDesc implements Serializable {
 
     public static final int MSG_METHOD_NONCONFORMING = -4;
     
-    public static Map mepStrings = new HashMap();
+    private static final Map mepStringToOperationType = new HashMap();
+    private static final Map operationTypeToMepString = new HashMap();
     
     static {
-        mepStrings.put("request-response", OperationType.REQUEST_RESPONSE);
-        mepStrings.put("oneway", OperationType.ONE_WAY);
-        mepStrings.put("solicit-response", OperationType.SOLICIT_RESPONSE);
-        mepStrings.put("notification", OperationType.NOTIFICATION);
+        addMep("request-response", OperationType.REQUEST_RESPONSE);
+        addMep("oneway", OperationType.ONE_WAY);
+        addMep("solicit-response", OperationType.SOLICIT_RESPONSE);
+        addMep("notification", OperationType.NOTIFICATION);
+    }
+    
+    private static void addMep(String mepString, OperationType operationType) {
+        mepStringToOperationType.put(mepString, operationType);
+        operationTypeToMepString.put(operationType, mepString);
     }
 
     protected static Log log =
@@ -585,11 +591,20 @@ public class OperationDesc implements Serializable {
     }
     
     /**
+     * Get the MEP as a string.
+     * 
+     * @return the string representation of the MEP
+     */
+    public String getMepString() {
+        return (String)operationTypeToMepString.get(mep);
+    }
+    
+    /**
      * Set the MEP using a string like "request-response"
      * @param mepString
      */ 
     public void setMep(String mepString) {
-        OperationType newMep = (OperationType)mepStrings.get(mepString);
+        OperationType newMep = (OperationType)mepStringToOperationType.get(mepString);
         if (newMep != null) {
             mep = newMep;
         }
