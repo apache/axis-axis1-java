@@ -4,14 +4,14 @@
              targetNamespace="urn:oneway.wsdl.test"
              xmlns:tns="urn:oneway.wsdl.test"
              xmlns:typens="urn:oneway.wsdl.test"
-             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
   <types>
     <xsd:schema targetNamespace="urn:oneway.wsdl.test"
-                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
       <xsd:simpleType name="stateType">
         <xsd:restriction base="xsd:string">
