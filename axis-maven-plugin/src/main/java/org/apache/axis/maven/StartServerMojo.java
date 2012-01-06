@@ -21,6 +21,7 @@ package org.apache.axis.maven;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.axis.transport.http.SimpleAxisServer;
@@ -94,6 +95,22 @@ public class StartServerMojo extends AbstractServerMojo {
      */
     private boolean foreground;
     
+    /**
+     * The arguments to pass to the server JVM when debug mode is enabled.
+     * 
+     * @parameter default-value="-Xdebug -Xrunjdwp:transport=dt_socket,address=8899,server=y,suspend=y"
+     */
+    private String debugArgs;
+    
+    /**
+     * Indicates whether the server should be started in debug mode. This flag can only be set from
+     * the command lined.
+     * 
+     * @parameter expression="${axis.server.debug}" default-value="false"
+     * @readonly
+     */
+    private boolean debug;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
@@ -143,6 +160,15 @@ public class StartServerMojo extends AbstractServerMojo {
             wsddFiles = null;
         }
         
+        // Compute JVM arguments
+        List vmArgs = new ArrayList();
+        if (debug) {
+            vmArgs.addAll(Arrays.asList(debugArgs.split(" ")));
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Additional VM args: " + vmArgs);
+        }
+        
         // Prepare a work directory where the server can create a server-config.wsdd file
         File workDir = new File(workDirBase, String.valueOf(getPort()));
         if (workDir.exists()) {
@@ -160,8 +186,10 @@ public class StartServerMojo extends AbstractServerMojo {
             getServerManager().startServer(executable,
                     (String[])classPathElements.toArray(new String[classPathElements.size()]),
                     getPort(),
+                    (String[])vmArgs.toArray(new String[vmArgs.size()]),
                     workDir,
-                    wsddFiles == null ? null : (String[])wsddFiles.toArray(new String[wsddFiles.size()]));
+                    wsddFiles == null ? null : (String[])wsddFiles.toArray(new String[wsddFiles.size()]),
+                    debug || foreground ? Integer.MAX_VALUE : 20000);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

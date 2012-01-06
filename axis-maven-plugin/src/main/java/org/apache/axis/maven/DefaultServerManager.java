@@ -21,7 +21,10 @@ package org.apache.axis.maven;
 import java.io.File;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -41,17 +44,21 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         this.logger = logger;
     }
 
-    public void startServer(String jvm, String[] classpath, int port, File workDir, String[] wsddFiles) throws Exception {
+    public void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, String[] wsddFiles, int timeout) throws Exception {
         AdminClient adminClient = new AdminClient(true);
         adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
-        Process process = Runtime.getRuntime().exec(new String[] {
-                jvm,
-                "-cp",
-                StringUtils.join(classpath, File.pathSeparator),
-                "org.apache.axis.transport.http.SimpleAxisServer",
-                "-p",
-                String.valueOf(port)
-        }, null, workDir);
+        List cmdline = new ArrayList();
+        cmdline.add(jvm);
+        cmdline.add("-cp");
+        cmdline.add(StringUtils.join(classpath, File.pathSeparator));
+        cmdline.addAll(Arrays.asList(vmArgs));
+        cmdline.add("org.apache.axis.transport.http.SimpleAxisServer");
+        cmdline.add("-p");
+        cmdline.add(String.valueOf(port));
+        if (logger.isDebugEnabled()) {
+            logger.debug("Starting process with command line: " + cmdline);
+        }
+        Process process = Runtime.getRuntime().exec((String[])cmdline.toArray(new String[cmdline.size()]), null, workDir);
         servers.put(Integer.valueOf(port), new Server(process, adminClient));
         // TODO: need to set up stdout/stderr forwarding; otherwise the process will hang
         
@@ -59,15 +66,23 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         String versionUrl = "http://localhost:" + port + "/axis/services/Version";
         Call call = new Call(new URL(versionUrl));
         call.setOperationName(new QName(versionUrl, "getVersion"));
+        long start = System.currentTimeMillis();
         for (int i=0; ; i++) {
             try {
                 String result = (String)call.invoke(new Object[0]);
                 logger.info("Server ready on port " + port + ": " + result.replace('\n', ' '));
                 break;
             } catch (RemoteException ex) {
-                if (i == 50) {
+                if (System.currentTimeMillis() > start + timeout) {
                     throw ex;
                 }
+            }
+            try {
+                int exitValue = process.exitValue();
+                // TODO: choose a better exception here
+                throw new RemoteException("The server process unexpectedly died with exit status " + exitValue);
+            } catch (IllegalThreadStateException ex) {
+                // This means that the process is still running; continue
             }
             Thread.sleep(200);
         }
