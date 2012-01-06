@@ -591,8 +591,7 @@
                         <configuration>
                             <file>src/test/wsdl/oneway/oneway.wsdl</file>
                             <serverSide>true</serverSide>
-                            <!-- TODO: this is strange, because there is an Impl class, but with the wrong name -->
-                            <implementation>true</implementation>
+                            <implementationClassName>test.wsdl.oneway.OnewayImpl</implementationClassName>
                         </configuration>
                     </execution>
                     <!-- This tests polymorphism of return values -->

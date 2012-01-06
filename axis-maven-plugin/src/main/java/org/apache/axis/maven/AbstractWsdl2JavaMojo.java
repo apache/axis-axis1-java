@@ -91,6 +91,15 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractAxisMojo {
     private boolean serverSide;
     
     /**
+     * Set the name of the class implementing the web service.
+     * This is especially useful when exporting a java class
+     * as a web service using Java2WSDL followed by WSDL2Java.
+     * 
+     * @parameter
+     */
+    private String implementationClassName;
+    
+    /**
      * deploy skeleton (true) or implementation (false) in deploy.wsdd.
      * Default is false.  Assumes server-side="true".
      * 
@@ -173,7 +182,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractAxisMojo {
 //            emitter.setNStoPkg(namespaceMappingFile.toString());
 //        }
 //        emitter.setTimeout(timeout);
-//        emitter.setImplementationClassName(implementationClassName);
+        emitter.setImplementationClassName(implementationClassName);
 
 //        Authenticator.setDefault(new DefaultAuthenticator(username, password));
 //        if (classpath != null) {
