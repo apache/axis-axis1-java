@@ -104,7 +104,7 @@ public class StartServerMojo extends AbstractServerMojo {
     
     /**
      * Indicates whether the server should be started in debug mode. This flag can only be set from
-     * the command lined.
+     * the command line.
      * 
      * @parameter expression="${axis.server.debug}" default-value="false"
      * @readonly
