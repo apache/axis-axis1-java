@@ -83,9 +83,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private static Map cachedWSDL = new WeakHashMap();
     private static boolean cachingWSDL = true;
 
-    // The last call object
-    protected Call _call = null;
-
     /**
      * A Hashtable mapping addresses (URLs) to Transports (objects)
      */
@@ -556,8 +553,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall() throws ServiceException {
-        _call = new org.apache.axis.client.Call(this);
-        return _call;
+        return new org.apache.axis.client.Call(this);
     }
 
     /**
@@ -835,17 +831,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public boolean getMaintainSession() {
         return maintainSession;
-    }
-
-    /**
-     * Returns last Call object associated with this service. Note that since
-     * the Service is not thread-safe, you may not get the last call object
-     * that you created on this thread. please use Stub._getCall
-     *
-     * @deprecated please use Stub._getCall
-     */
-    public Call getCall() throws ServiceException {
-        return _call;
     }
 
     /**
