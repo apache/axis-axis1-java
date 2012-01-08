@@ -29,6 +29,7 @@
     <name>Axis</name>
     <version>1.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <url>http://axis.apache.org/axis/java/</url>
     <modules>
         <module>axis</module>
         <module>axis-jaxrpc</module>
@@ -89,9 +90,32 @@
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.7</version>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>issue-tracking</report>
+                            <report>mailing-list</report>
+                            <!-- report>project-team</report -->
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
     
     <!-- TODO: remove this once a ulog release is deployed to Maven Central -->
     <repositories>
