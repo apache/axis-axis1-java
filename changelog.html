@@ -16,6 +16,19 @@ h1 {  margin-left: -30px}
 <body>
 <h1>Axis Change Log</h1>
 
+<h2>Axis 1.4.1</h2>
+
+<h3>Changes from 1.4 final</h3>
+
+<ul>
+<li>The Axis build has been migrated from Ant to Maven. This implies that the source distribution has
+a completely different structure.
+<li>A Maven plugin has been added. This plugin can be used as an alternative to the Axis Ant tasks.
+<li>A new stand-alone server has been added. It uses an embedded Jetty server and superseded the old
+SimpleAxisServer. The Maven plugin has goals to start/stop stand-alone server instances so that the new
+stand-alone server can be easily integrated into integration tests executed using Maven.
+</ul>
+
 <h2>Axis 1.4</h2>
 
 <h3>Changes from 1.3 final</h3>
