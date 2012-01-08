@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Changelog for Axis 1.2.1</title>
+    </properties>
+    <body>
+        <section name="Changes from 1.2 final">
+            <ul>
+                <li>Cleanup array handling for rpc/lit and doc/lit</li>
+                <li>Enhancements to HTTPSender/CommonsHTTPSender (including better cookie support)</li>
+                <li>Generate array of wrappers for soapenc array nillable elements</li>
+                <li>Better handling of elementFormDefault during dynamic wsdl generation</li>
+                <li>Fix for gracefully handling IncompatibleClassChangeError in websphere/weblogic</li>
+                <li>Better SAAJ support (dirty flag was not set leading to serialization problems)</li>
+                <li>Fix out-of-memory errors for services without attachments returning large response messages</li>
+                <li>Last but not the least more test cases...</li>
+            </ul>
+        </section>
+        <section name="Changes from 1.2rc3">
+            <ul>
+                <li>Tons of changes to typemapping system to better support jax-rpc1.1 and .NET</li>
+                <li>Improved SAAJ 1.2 support</li>
+                <li>Much better for rpc/lit and doc/lit (especially for arrays)</li>
+                <li>Map schema "wrapped" arrays (with inner &lt;item&gt; elements) into arrays of the item type, instead of JavaBeans, by default.  Introduce the "-w" or "--wrapArrays" option to WSDL2Java to switch back to the earlier behavior.</li>
+                <li>Fix some WS-I related bugs. Makes it easier to deploy WS-I BP compatible services.</li>
+                <li>Internationalized happyaxis jsp pages.</li>
+                <li>Updated to latest dependency jars. (ex wsdl4j-1.5.1.jar)</li>
+                <li>Improved commons httpclient support.</li>
+                <li>Support for sending and receiving multiple cookies</li>
+                <li>Lots of fixes for performance enhancements (including eliminating ThreadLocal's)</li>
+                <li>Improved JMX support - Start/Stop server/services and deploy/modify services</li>
+            </ul>
+        </section>
+        <section name="Changes from 1.2beta2">
+            <ul>
+                <li>When generating WSDL, don't change the scoping rules for type mappings.  In other words, use the most specific mappings just like we do for message processing.</li>
+                <li>Fix problem with version string</li>
+                <li>Remove JAXP interfaces (should come from jaxp.jar, not jaxrpc.jar)</li>
+            </ul>
+        </section>
+        <section name="Changes from 1.1">
+            <ul>
+                <li>Preliminary SAAJ 1.2 support!</li>
+                <li>Improved doc/literal support</li>
+                <li>Improved handling of array types + WSDL generation</li>
+                <li>More logical type mapping registration (SOAP-ENC types are in a separate registry which then delegates to the default one)</li>
+                <li>Improved schema support (we deal with lists and groups now)</li>
+                <li>ServiceDesc metadata is now more generic - ServiceDesc is an interface and JavaServiceDesc implements it to do specific Java processing.</li>
+                <li>Throw fault when bad values for "mustUnderstand" attribute are parsed</li>
+                <li>log4j.properties is no longer in axis.jar. This is to avoid conflicts
+                with the configuration files in other bits of the application.</li>
+                <li>Many bugfixes. See <a href="docs/svnlog.txt">docs/svnlog.txt</a></li>
+            </ul>
+        </section>
+    </body>
+</document>

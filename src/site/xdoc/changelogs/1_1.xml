@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Changelog for Axis 1.1</title>
+    </properties>
+    <body>
+        <section name="Changes from 1.0 to 1.1 that may break your code">
+            <ul>
+              <li> We have changed how we map http URLs to packages, such that any directories 
+                in the URL are used as well as the hostname. The previous behavior was a defect, 
+                as it would import WSDL from the same site into the same place. If you do 
+                not explicitly state the mappings of URIs to packages, things may now end 
+                up in different places </li>
+              <li> The default socket timeout for clients is now 60 seconds, not infinity. 
+                You can use the setTimeout() option on any binding (cast it to an <tt>org.apache.axis.client.Stub</tt> 
+                first) to change this.</li>
+              <li>The API for writing custom schema from a Serializer (writeSchema()) has 
+                changed! We now return an Element which should be suitable for either dropping 
+                under an &lt;element&gt; or &lt;attribute&gt; declaration as an anonymous 
+                type OR for putting a name=&quot;&quot; attribute on and making global in 
+                the schema. See any of our included serializers (MapSerializer is a good'un) 
+                for an example.</li>
+            </ul>
+        </section>
+        <section name="Changes from 1.1RC2">
+            <p>For a full list of ALL changes in CVS since 1.1RC2, <a href="http://ws.apache.org/axis/changelogs/11rc2-11-diff.html">click 
+              here</a>.</p>
+        </section>
+        <section name="Changes from 1.0 to 1.1">
+            <ul>
+              <li>Vastly improved SOAP 1.2 support</li>
+              <li>There is a new email transport in transport/mail</li>
+              <li>Added serializers/deserializers for Castor compatibility</li> 
+              <li>Improved WSDL schema generation APIs for custom types</li>
+              <li>Added CORBA and RMI providers</li>
+              <li>Improved EJBProvider's ability to be a &quot;good EJB citizen&quot; (deals 
+                better with JNDI, etc)</li>
+              <li>Improved multiref deserialization code</li> 
+              <li>Axis supports JMS for reliable messaging between client and server. Note 
+                that the actual wire format of JMS messages is vendor-specific at present, 
+                so you may not be able to use this to connect arbitrary JMS clients and servers 
+                without special bridging software. Refer to your particular JMS vendor for 
+                details. (rule-of-thumb is &quot;if you can get a JMS connection working, 
+                we can talk SOAP over it.&quot; :))</li>
+              <li>We include a more recent version of wsdl4j.jar (23/mar/2003).</li> 
+              <li>The misnamed org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl is now 
+                called DefaultSOAPEncodingTypeMappingImpl (the old class is still there but 
+                deprecated)</li>
+              <li>Log4J 1.2.8 is the version of log4J we use, though Axis still works with 
+                older versions (i.e. we dont use the XML configuration mechanism.).</li> 
+              <li>Many more WSDL and interop issues reported (thank you!) and fixed.</li>
+              <li>One late breaking interop fix was a workaround for a bug in .NET1.0, which 
+                does not like empty arrays very much. This fix is not enabled by default. 
+                If you have trouble with .NET1.0 clients handling arrays, look up <b>axis.sendMinimizedElements</b> 
+                in the global configuaration section of the reference manual.</li>
+              <li>Axis Ant tasks are now documented, and are much enhanced.</li>
+                <!-- you only get this if you build axis yourself, so  
+              <li>Axis now includes a Castor serializer, handing off XML marshalling to <a href="http://castor.exolab.org/">Castor</a>. 
+                Castor integration offers schema validation and autogenerated Java classes 
+                from a Schema. Pending documentation and tests, this code is left for the 
+                experienced Castor user, who should look at the classes in org.apache.axis.encoding.ser.castor 
+                to discover what is available.
+                -->
+              <li>Fixed a bug where clients running Java1.4 needed servlet.jar on their classpath</li> 
+              <li>Fixed <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=13682"> 
+                a bug</a> with Axis shutdown on Tomcat 3.3.1</li>
+              <li>Various documentation tweaks: improved installation guide, more reference 
+                documentation and a new security guide for anyone using Axis in production.</li> 
+              <li>On the subject of security, three security issues were fixed; two related 
+                to XML entity/file inclusion on inbound messages and one potentially enabling 
+                cross-site-scripting.</li>
+              <li>Tcpmon lets you specify delays in message handling: sleep times in milliseconds 
+                every so-many bytes sent or received. This is useful if you want to see what 
+                happens to your client application over a slow link. Usually it becomes clear 
+                that your client application grinds to a halt unless all the calls are in 
+                a separate thread from any GUI.</li> 
+              <li>Attachments are extended with direct access to the filename, and the ability 
+                to detach the file from the <tt>AttachmentPart</tt> so it wont get deleted 
+                on cleanup. Yes, attachments should now get automatically cleaned up when 
+                their owning <tt>AttachmentPart</tt> is finalized. Look at the javadocs for 
+                the specifics.</li>
+              <li>CommonsHTTPSender updated to use <a href="http://jakarta.apache.org/commons/httpclient/downloads.html">Jakarta 
+                Commons's HTTPClient 2.0 RC3</a></li>
+            </ul>
+            <subsection name="Improvements in Exception Handling">
+                <p>
+                    The JAX-RPC specification of exceptions is now implemented; you may well be able
+                    to send abitrary exceptions over the wire and have them retranslated into Java
+                    Exceptions at the far end. Of course, non-Java destinations have a little problem there,
+                    all they get are the XML details to make sense of somehow. There is a lot to
+                    be said for creating, filling and throwing an <tt>AxisFault</tt> directly, and documenting
+                    the <tt>faultdetails</tt> elements for callers of all languages to make sense of. Axis now
+                    makes it easier to work with these details; consult at the <tt>AxisFault</tt> javadocs to
+                    see the new fault detail methods.
+                </p>
+                <p>
+                    Axis no longer reports AxisFaults at INFO level on the client or server,
+                    unless you configure the logging parameters to do so;
+                    see the reference documents for details on how to do this. There is one
+                    exception: we do log server-side any AxisFaults created from RunTimeExceptions
+                    that are thrown by web service methods you implement. This is because those
+                    are usually bugs (like null pointer exceptions) that service developers like
+                    to know about before
+                </p>
+                <p>
+                    For security reasons we have stopped sending stack traces over the wire to
+                    callers by default. The reference manual shows how to enable this on
+                    development systems.
+                </p>
+                <p>
+                    Finally, we know we still have more to do to get exceptions fully under control. 
+                    For example, global <tt>OnFault</tt> handlers are apparently not called consistently, 
+                    and we need to do a lot more interop testing across platforms and languages. 
+                    We also need a willing volunter to provide a guide to exceptions in SOAP and 
+                    Axis.
+                </p>
+            </subsection> 
+        </section>
+    </body>
+</document>
