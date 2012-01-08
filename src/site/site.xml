@@ -25,6 +25,11 @@
     </skin>
     <publishDate format="yyyy-MM-dd" position="right"/>
     <version position="right"/>
+    <custom>
+        <fluidoSkin>
+            <searchEnabled>true</searchEnabled>
+        </fluidoSkin>
+    </custom>
     <body>
         <breadcrumbs>
             <item name="Apache" href="http://www.apache.org/"/>
