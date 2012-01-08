@@ -57,7 +57,6 @@
             <item name="Architecture Guide" href="architecture-guide.html"/>
             <item name="Reference Guide" href="reference.html"/>
             <item name="Reading Guide" href="reading.html"/>
-            <item name="Building Axis" href="building-axis.html"/>
         </menu>
         <menu name="More...">
             <item name="Ant tasks" href="axis-ant/index.html"/>
