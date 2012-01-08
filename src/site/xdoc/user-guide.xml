@@ -1,19 +1,16 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <title>Axis User's Guide</title>
-   <link href="axis.css" rel=stylesheet type=text/css>
 </head>
 <body >
 
 <center>
 <h1>
-<img SRC="images/axis.jpg" height=96 width=176></h1></center>
+<img SRC="images/axis.jpg" height="96" width="176"/></h1></center>
 
 <h1>Axis User's Guide</h1>
 <i>1.4 Version</i>
-<br><i>Feedback: <a href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
+<br/><i>Feedback: <a href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
 
 <h3>
 Table of Contents</h3>
@@ -66,27 +63,27 @@ clients, servers, gateways, etc.
 The current version of Axis is written in Java, but
 a C++ implementation of the client side of Axis is being developed.
 <p>
-But Axis isn't just a SOAP engine -- it also includes:
+But Axis isn't just a SOAP engine -- it also includes:</p>
 <ul>
-  <li> a simple stand-alone server,
-  <li> a server which plugs into servlet engines such as Tomcat,
-  <li> extensive support for the <i>Web Service Description Language (WSDL)</i>,
-  <li> emitter tooling that generates Java classes from WSDL.
-  <li> some sample programs, and
-  <li> a tool for monitoring TCP/IP packets.
+  <li> a simple stand-alone server,</li>
+  <li> a server which plugs into servlet engines such as Tomcat,</li>
+  <li> extensive support for the <i>Web Service Description Language (WSDL)</i>,</li>
+  <li> emitter tooling that generates Java classes from WSDL.</li>
+  <li> some sample programs, and</li>
+  <li> a tool for monitoring TCP/IP packets.</li>
 </ul>
 <p>
 Axis is the third generation of Apache SOAP (which began at IBM as "SOAP4J").
 In late 2000, the committers of Apache SOAP v2 began discussing
 how to make the engine much more flexible, configurable, and able to handle
-both SOAP and the upcoming XML Protocol specification from the W3C.
+both SOAP and the upcoming XML Protocol specification from the W3C.</p>
 <p>After a little while, it became clear that a ground-up rearchitecture
 was required. Several of the v2 committers proposed very similar designs,
 all based around configurable "chains" of message "handlers" which would
 implement small bits of functionality in a very flexible and composable
-manner.
+manner.</p>
 <p>After months of continued discussion and coding
-effort in this direction, Axis now delivers the following key features:
+effort in this direction, Axis now delivers the following key features:</p>
 <ul>
   <li> <b>Speed.</b> Axis uses SAX (event-based) parsing to acheive significantly 
     greater speed than earlier versions of Apache SOAP.</li>
@@ -113,7 +110,7 @@ We hope you enjoy using Axis. Please note that this is an open-source effort
 involved and lend a hand! The Axis developer community welcomes your 
 participation.  And in case you're wondering what <i>Axis</i> stands for,
 it's <b>A</b>pache E<b>X</b>tensible <b>I</b>nteraction <b>S</b>ystem -
-a fancy way of implying it's a very configurable SOAP engine.
+a fancy way of implying it's a very configurable SOAP engine.</p>
 <h4>
 <b>Let us know what you think!</b></h4>
 Please send feedback about the package to "<a href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a>".
@@ -158,7 +155,7 @@ for instructions on installing Axis as a web application on your J2EE server.
 <p>Before running the examples in this guide, you'll need to make sure
 that your CLASSPATH includes 
 (Note: If you build Axis from a CVS checkout, 
-these will be in xml-axis/java/build/lib instead of axis-1_2/lib):
+these will be in xml-axis/java/build/lib instead of axis-1_2/lib):</p>
 <ul>
 <li>axis-1_2/lib/axis.jar</li>
 <li>axis-1_2/lib/jaxrpc.jar</li>
@@ -204,7 +201,7 @@ method on the public Axis server at Apache.
 24  }</pre>
 (You'll find this file in <a href="../samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</a>)
 <p>Assuming you have a network connection active, this program can be run
-as follows:
+as follows:</p>
 <pre class="example">% java samples.userguide.example1.TestClient
 Sent 'Hello!', got 'Hello!'
 %</pre>
@@ -217,7 +214,7 @@ the desired service, passing in an array of parameters - in this case just
 one String.
 <p>You can see what happens to the arguments by looking at the SOAP request that 
   goes out on the wire (look at the colored sections, and notice they match the 
-  values in the call above): 
+  values in the call above):</p>
 <pre class="xml">&lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                    xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
@@ -266,7 +263,7 @@ from client.invoke(). Let's take a moment and investigate how this happens,
 which sheds light on a potential problem (to which, of course, we have
 a solution - so don't fret :)).
 <p>Here's what a typical response might look like to the echoString method: </p>
-<pre class="xml">&lt;?xml version="1.0" encoding="UTF-8"?><br> &lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+<pre class="xml">&lt;?xml version="1.0" encoding="UTF-8"?><br/> &lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
                     xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 
   &lt;SOAP-ENV:Body>
@@ -305,7 +302,7 @@ the client side in Axis:</p>
   the expected return type:</p>
 <pre class="example">call.setReturnClass(String.class);</pre>
 <p>OK - so now you know the basics of accessing SOAP services as a client.
-But how do you publish your own services?
+But how do you publish your own services?</p>
 <h2>
 <a NAME="PublishingServices"></a>Publishing Web Services with Axis</h2>
 Let's say we have a simple class like the following:
@@ -323,7 +320,7 @@ Let's say we have a simple class like the following:
 (You'll find this very class in <a href="../samples/userguide/example2/Calculator.java">samples/userguide/example2/Calculator.java</a>.)
 <p>How do we go about making this class available via SOAP? There are a
 couple of answers to that question, but we'll start with the easiest way
-Axis provides to do this, which takes almost no effort at all!
+Axis provides to do this, which takes almost no effort at all!</p>
 <h3>
 JWS (Java Web Service) Files - Instant Deployment</h3>
 OK, here's step 1 : copy the above .java file into your webapp directory,
@@ -332,7 +329,7 @@ and rename it "Calculator.jws". So you might do something like this:
 Now for step 2... hm, wait a minute. You're done! You should now be able
 to access the service at the following URL (assuming your container serves
 on port 8080 and that your web application is called axis):
-<p><a href="http://localhost:8080/axis/Calculator.jws">http://localhost:8080/axis/Calculator.jws</a>
+<p><a href="http://localhost:8080/axis/Calculator.jws">http://localhost:8080/axis/Calculator.jws</a></p>
 <p>
 If you followed the link (and the deployment has been successful), 
 you'll see a message information you that there is a Web Service deployed here.
@@ -340,20 +337,21 @@ you'll see a message information you that there is a Web Service deployed here.
 <p>Axis automatically locates the file, compiles the class, and converts
 SOAP calls correctly into Java invocations of your service class. Try it
 out - there's a calculator client in samples/userguide/example2/CalcClient.java,
-which you can use like this:
+which you can use like this:</p>
 <pre class="example">% java samples.userguide.example2.CalcClient -p8080 add 2 5
 Got result : 7
 % java samples.userguide.example2.CalcClient -p8080 subtract 10 9
 Got result : 1
 %</pre>
+<p>
 (Note that you may need to replace the "-p8080" with whatever port your
-J2EE server is running on)
+J2EE server is running on)</p>
 <p>
 <i><b>Important:</b></i> JWS web services are intended for simple web services.
 You cannot use packages in the pages, and as the code is compiled at run
 time you can not find out about errors until after deployment.
 Production quality web services should use Java classes with custom
-deployment.  
+deployment.</p>
 
 <h3>
 Custom Deployment - Introducing WSDD</h3>
@@ -396,11 +394,11 @@ providers.
   name, and another to tell the engine that any public method on that class may 
   be called via SOAP (that's what the "*" means; we could also have restricted 
   the SOAP-accessible methods by using a space or comma separated list of available 
-  method names).
+  method names).</p>
 <h4>Advanced WSDD - specifying more options</h4>
 <p>WSDD descriptors can also contain other information about services, and also 
   other pieces of Axis called &quot;Handlers&quot; which we'll cover in a later 
-  section.
+  section.</p>
 <h5>Scoped Services</h5>
 <p>Axis supports scoping service objects (the actual Java objects which implement 
   your methods) three ways. &quot;Request&quot; scope, the default, will create 
@@ -433,7 +431,7 @@ file in the example3/ directory which you can use just as you did the deploy.wsd
 file above.  Run the AdminClient on that file, then try the service
 Client again and see what happens.
 <p>You can also use the AdminClient to get a listing of all the deployed
-components in the server:
+components in the server:</p>
 <pre class="example">% java org.apache.axis.client.AdminClient list
 &lt;big XML document returned here></pre>
 In there you'll see services, handlers, transports, etc. Note that this
@@ -466,13 +464,13 @@ a service. Here's a sample deploy.wsdd file (this is example 4 in samples/usergu
 &lt;/deployment></pre>
 <p>The first section defines a Handler called "track" that is implemented
 by the class samples.userguide.example4.LogHandler. We give this Handler
-an option to let it know which file to write its messages into.
+an option to let it know which file to write its messages into.</p>
 <p>Then we define a service, LogTestService, which is an RPC service just
 like we saw above in our first example. The difference is the &lt;requestFlow>
 element inside the &lt;service> - this indicates a set of Handlers that
 should be invoked when the service is invoked, before the provider. By
 inserting a reference to "track", we ensure that the message will be logged
-each time this service is invoked.
+each time this service is invoked.</p>
 <h4>
 Remote Administration</h4>
 Note that by default, the Axis server is configured to only accept administration
@@ -488,7 +486,7 @@ Add an option as follows:
 </b>&lt;/service></pre>
 <p><b>WARNING: enabling remote administration may give unauthorized parties
 access to your machine. If you do this, please make sure to add security
-to your configuration!</b>
+to your configuration!</b></p>
 <h3>Service Styles - RPC, Document, Wrapped, and Message</h3>
 <p>There are four &quot;styles&quot; of service in Axis. <b>RPC</b> services 
   use the SOAP RPC conventions, and also the SOAP &quot;section 5&quot; encoding. 
@@ -555,7 +553,7 @@ to be encoded. (See the SOAP spec for more on multi-ref serialization.)
   the outer element and take each of the inner ones as a parameter.</p>
 <p>The document or wrapped style is indicated in WSDD as follows:</p>
 <p><span class="example">&lt;service ... style=&quot;document&quot;&gt;</span> 
-  for document style<br>
+  for document style<br/>
   <span class="example">&lt;service ... style=&quot;wrapped&quot;&gt;</span> for 
   wrapped style</p>
 <p>In most cases you won't need to worry about document or wrapped services if 
@@ -565,9 +563,9 @@ to be encoded. (See the SOAP spec for more on multi-ref serialization.)
   when you want Axis to step back and let your code at the actual XML instead 
   of turning it into Java objects. There are four valid signatures for your message-style 
   service methods:</p>
-<p><code>public Element [] method(Element [] bodies);</code><code><br>
-  public SOAPBodyElement [] method (SOAPBodyElement [] bodies);</code><code><br>
-  public Document method(Document body);<br>
+<p><code>public Element [] method(Element [] bodies);</code><code><br/>
+  public SOAPBodyElement [] method (SOAPBodyElement [] bodies);</code><code><br/>
+  public Document method(Document body);<br/>
   public void method(SOAPEnvelope req, SOAPEnvelope resp);</code> </p>
 <p>The first two will pass your method arrays of either DOM Elements or SOAPBodyElements 
   - the arrays will contain one element for each XML element inside the &lt;soap:body&gt; 
@@ -601,7 +599,7 @@ to be encoded. (See the SOAP spec for more on multi-ref serialization.)
 	&lt;service name=&quot;MessageService&quot; <font color="#FF0000">style=&quot;message&quot;</font>&gt;
     &lt;parameter name=&quot;className&quot; value=&quot;samples.message.MessageService&quot;/&gt;
     &lt;parameter name=&quot;allowedMethods&quot; value=&quot;echoElements&quot;/&gt;
-  &lt;/service&gt;<br>&lt;/deployment&gt;</pre>
+  &lt;/service&gt;<br/>&lt;/deployment&gt;</pre>
 <p>Note that the &quot;style&quot; attribute is different from the RPC deployment 
   example. The &quot;message&quot; style tells Axis that this service is to be 
   handled by <code>org.apache.axis.providers.java.MsgProvider</code> rather than 
@@ -643,12 +641,12 @@ some of the salient points.
 </table>
 <p> If the WSDL says that an object can be <tt>nillable</tt>, that is the caller 
   may choose to return a value of <tt>nil</tt>, then the primitive data types 
-  are replaced by their wrapper classes, such as Byte, Double, Boolean, etc. 
+  are replaced by their wrapper classes, such as Byte, Double, Boolean, etc.</p>
 <h4>SOAP Encoding Datatypes</h4>
 <p> Alongside the XSD datatypes are the SOAP 'Section 5' datatypes that are all 
   nillable, and so only ever map to the wrapper classes. These types exist because 
   they all support the &quot;ID&quot; and &quot;HREF&quot; attributes, and so 
-  will be used when in an RPC-encoded context to support multi-ref serialization.
+  will be used when in an RPC-encoded context to support multi-ref serialization.</p>
   
   
 <h3>Exceptions</h3>
@@ -661,10 +659,11 @@ chapter 14 in the JAX-RPC specification
 
 <h4>RemoteExceptions map to SOAP Faults</h4>
 
+<p>
 If the server method throws a <tt>java.rmi.RemoteException</tt> then
 this will be mapped into a SOAP Fault. The <tt>faultcode</tt> of this will contain
 the classname of the fault. The recipient is expected to deserialize the
-body of the fault against the classname. 
+body of the fault against the classname.</p> 
 
 <p>
 
@@ -673,41 +672,43 @@ the received fault, this mechanism does not work. Unless you include
 information about the exception class in the WSDL description of the
 service, or sender and receiver share the implementation, 
 you can only reliably throw <tt>java.rmi.RemoteException</tt>
-instances, rather than subclasses.
+instances, rather than subclasses.</p>
 
 <p>
 
 When an implementation in another language receives such an exception,
 it should see the name of the class as the faultCode, but still be left
 to parse the body of the exception. You need to experiment to find out
-what happens there. 
+what happens there.</p>
 
 <h4>Exceptions are represented as <tt>wsdl:fault</tt> elements</h4>
  
+<p>
 If a method is marked as throwing an <tt>Exception</tt> that is not
 an instance or a subclass of <tt>java.rmi.RemoteException</tt>, then
 things are subtly different. The exception is no longer a SOAP Fault, but
-described as a <tt>wsdl:fault</tt> in the WSDL of the method. 
+described as a <tt>wsdl:fault</tt> in the WSDL of the method.</p> 
 
+<p>
 According to the JAX-RPC specification, your subclass of Exception 
 must have accessor methods to access all the fields in the object to be
 marshalled <i>and</i> a constructor that takes as parameters all the 
 same fields (i.e, arguments of the same name and type). This is a kind of
 immutable variant of a normal <a href="http://java.sun.com/products/javabeans">JavaBean</a>. The fields in the object must be
-of the datatypes that can be reliably mapped into WSDL.
+of the datatypes that can be reliably mapped into WSDL.</p>
 
 <p>
 
 If your exception meets this specification, then the WSDL describing the
 method will describe the exception too, enabling callers to create stub
-implementations of the exception, regardless of platform. 
+implementations of the exception, regardless of platform.</p>
 
 <p>
 
 Again, to be sure of interoperability, you need to be experiment a bit.
 Remember, the calling language may not have the notion of Exceptions, or
 at least not be as rigorous as Java in the rules as to how exceptions
-must be handled. 
+must be handled.</p>
 
 <h3>What Axis can send via SOAP with restricted Interoperability</h3>
 
@@ -766,7 +767,7 @@ object. Since Order is not a basic type which Axis understands by default,
 trying to run this service without a type mapping will result in a fault.
 (If you want to try this for yourself, you can use the bad-deploy.wsdd
 file in the example5 directory.) But if we put a beanMapping into our deployment,
-all will be well. Here's how to run this example (from the example5 directory):
+all will be well. Here's how to run this example (from the example5 directory):</p>
 <pre class="example">% java org.apache.axis.client.AdminClient -llocal:///AdminService deploy.wsdd
 &lt;Admin>Done processing&lt;/Admin>
 
@@ -796,7 +797,7 @@ and some tools to help make your life easier when you do so.
 version! For now look at the DataSer/DataDeser 
 classes (in samples/encoding).  
 Also look at the BeanSerializer, BeanDeserializer, ArraySerializer, ArrayDeserializer and other classes in the org.apache.axis.encoding.ser package.
-</font></i>
+</font></i></p>
 <h4>
 Deploying custom mappings - the &lt;typeMapping> tag</h4>
 Now that you've built your serializers and deserializers, you need to tell
@@ -814,12 +815,12 @@ be used to marshal an object of the specified Java class
 (i.e., my.java.thingy) into XML. Another, <b>deserializer</b>, is
 the class name of a Deserializer <i>factory</i> that gets the deserializer
 to be used to unmarshall XML into the correct Java class.  The final attribute,
-the <b>encodingStyle</b>, which is SOAP encoding.
+the <b>encodingStyle</b>, which is SOAP encoding.</p>
 <p>(The &lt;beanMapping> tag is really just shorthand for a &lt;typeMapping> tag 
   with <tt>serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"</tt>,
 <tt>deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"</tt>, 
   and <tt>encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"</tt>, but clearly it 
-  can save a lot of typing!) 
+  can save a lot of typing!) </p>
 <h4>Deploying array mappings - the &lt;arrayMapping> tag</h4>
 Another variation around typeMapping is arrayMapping. The arrayMapping tag is useful
 for advanced users wanting to exatly control how their arrays are serialized throught
@@ -840,7 +841,7 @@ way. A WSDL description of a service tells us, in a machine-understandable
 way, the interface to the service, the data types it uses, and where the
 service is located. Please see the spec (follow the link in the first sentence)
 for details about WSDL's format and options.
-<p>Axis supports WSDL in three ways:
+<p>Axis supports WSDL in three ways:</p>
 <ol>
 <li>
 When you deploy a service in Axis, users may then access your service's
@@ -871,10 +872,9 @@ and return it as XML in your browser (try it!). The resulting description
 may be saved or used as input to proxy-generation, described next. You
 can give the WSDL-generation URL to your online partners, and they'll be
 able to use it to access your service with toolkits like .NET, SOAP::Lite,
-or any other software which supports using WSDL.
+or any other software which supports using WSDL.</p>
 <p>You can also generate WSDL files from existing Java classes (see <a href="#Java2WSDL: Building WSDL from Java">Java2WSDL:
-Building WSDL from Java</a> ).
-<br> 
+Building WSDL from Java</a> ).</p>
 <h3><a NAME="WSDL2Java: Building stubs, skeletons, and data"></a>WSDL2Java:
 Building stubs, skeletons, and data types from WSDL</h3>
 
@@ -895,7 +895,7 @@ from WSDL.  For this discussion, assume we executed the following:</p>
 <p>The generated files will reside in the directory "AddressFetcher2". 
 They are put here because that is the target namespace from the WSDL and namespaces map to Java packages. 
 Namespaces will be discussed in detail later.</p>
-<table BORDER COLS=2 WIDTH="100%" >
+<table BORDER="1" COLS="2" WIDTH="100%" >
 <tr>
 <td><b>WSDL clause</b></td>
 
@@ -956,7 +956,7 @@ the <a href="../samples/addr/AddressBook.wsdl">Address Book sample</a>):</p>
   &lt;/xsd:all>
 &lt;/xsd:complexType>
 </pre>
-<p>WSDL2Java will generate:
+<p>WSDL2Java will generate:</p>
 <pre class="example">
 public class Phone implements java.io.Serializable {
     public Phone() {...}
@@ -1032,7 +1032,7 @@ operations on the service.  For example, given the WSDL:</p>
   &lt;/operation>
 &lt;/portType>
 </pre>
-<p>WSDL2Java will generate:
+<p>WSDL2Java will generate:</p>
 <pre class="example">
 public interface AddressBook extends java.rmi.Remote {
     public void addEntry(String name, Address address) throws java.rmi.RemoteException;
@@ -1042,28 +1042,28 @@ public interface AddressBook extends java.rmi.Remote {
 <p>A note about the name of the SDI.  The name of the SDI is typically the 
 name of the portType.  However, to construct the SDI, WSDL2Java needs 
 information from both the portType <b>and</b> the binding.  
-(This is unfortunate and is a topic of discussion for WSDL version 2.)
+(This is unfortunate and is a topic of discussion for WSDL version 2.)</p>
 
 
 <p>JAX-RPC says (section 4.3.3):  "The name of the Java interface is mapped
 from the name attribute of the wsdl:portType element. ... If the mapping to
 a service definition interface uses elements of the wsdl:binding ..., then
 the name of the service definition interface is mapped from the name of the
-wsdl:binding element."
+wsdl:binding element."</p>
 <p>Note the name of the spec.  It contains the string "RPC".  So this spec,
 and WSDL2Java, assumes that the interface generated from the portType is an
 RPC interface.  If information from the binding tells us otherwise (in
 other words, we use elements of the wsdl:binding), then the name of the
-interface is derived instead from the binding.
+interface is derived instead from the binding.</p>
 <p>Why?  We could have one portType - pt - and two bindings - bRPC and
 bDoc.  Since document/literal changes what the interface looks like, we 
 cannot use a single interface for both of these bindings, so we end up with 
 two interfaces - one named pt and another named bDoc - and two stubs - 
-bRPCStub (which implements pt) and bDocStub (which implements bDoc).
+bRPCStub (which implements pt) and bDocStub (which implements bDoc).</p>
 <p>Ugly, isn't it?  But you can see why it's necessary.  Since 
 document/literal changes what the interface looks like, and we could 
 have more than one binding referring to a single portType, we have to 
-create more than one interface, and each interface must have a unique name.
+create more than one interface, and each interface must have a unique name.</p>
 
 <h4>
 Bindings</h4>
@@ -1076,11 +1076,11 @@ letting you call it exactly as if it were a local object. In other words,
 you don't need to deal with the endpoint URL, namespace, or parameter arrays
 which are involved in dynamic invocation via the Service and Call objects.
 The stub hides all that work for you.
-<p>Given the following WSDL snippet:
+<p>Given the following WSDL snippet:</p>
 <pre class="example">&lt;binding name="AddressBookSOAPBinding" type="tns:AddressBook">
   ...
 &lt;/binding></pre>
-<p>WSDL2Java will generate:
+<p>WSDL2Java will generate:</p>
 <pre class="example">public class AddressBookSOAPBindingStub extends org.apache.axis.client.Stub
                                         implements AddressBook {
     public AddressBookSOAPBindingStub() throws org.apache.axis.AxisFault
@@ -1090,11 +1090,11 @@ The stub hides all that work for you.
                                       javax.xml.rpc.Service service)
         throws org.apache.axis.AxisFault
     {...}
-<br>    public AddressBookSOAPBindingStub(javax.xml.rpc.Service service)
+<br/>    public AddressBookSOAPBindingStub(javax.xml.rpc.Service service)
         throws org.apache.axis.AxisFault
     {...}
-<br>    public void addEntry(String name, Address address) throws RemoteException
-    {...}<br>}</pre>
+<br/>    public void addEntry(String name, Address address) throws RemoteException
+    {...}<br/>}</pre>
 <h4>
 Services</h4>
 Normally, a client program would not instantiate a stub directly. 
@@ -1107,13 +1107,13 @@ For example, given the WSDL:
     &lt;soap:address location="http://localhost:8080/axis/services/AddressBook"/>
   &lt;/port>
 &lt;/service></pre>
-<p>WSDL2Java will generate the service interface:
+<p>WSDL2Java will generate the service interface:</p>
 <pre class="example">public interface AddressBookService extends javax.xml.rpc.Service {
     public String getAddressBookAddress();
-<br>    public AddressBook getAddressBook() throws javax.xml.rpc.ServiceException;
-<br>    public AddressBook getAddressBook(URL portAddress) throws javax.xml.rpc.ServiceException;
+<br/>    public AddressBook getAddressBook() throws javax.xml.rpc.ServiceException;
+<br/>    public AddressBook getAddressBook(URL portAddress) throws javax.xml.rpc.ServiceException;
 }</pre>
-<p>WSDL2Java will also generate the locator which implements this interface:
+<p>WSDL2Java will also generate the locator which implements this interface:</p>
 <pre class="example">public class AddressBookServiceLocator extends org.apache.axis.client.Service
                                        implements AddressBookService {
     ...
@@ -1123,8 +1123,8 @@ service element of the WSDL. The locator is the implementation of this
 service interface.  It implements these get methods. It serves as
 a locator for obtaining Stub instances. The Service class will by default
 make a Stub which points to the endpoint URL described in the WSDL file,
-but you may also specify a different URL when you ask for the PortType.
-<p>A typical usage of the stub classes would be as follows:
+but you may also specify a different URL when you ask for the PortType.</p>
+<p>A typical usage of the stub classes would be as follows:</p>
 
 <pre class="example">public class Tester
 {
@@ -1138,7 +1138,7 @@ but you may also specify a different URL when you ask for the PortType.
         // Make the actual call
         Address address = new Address(...);
         port.addEntry("Russell Butek", address);
-    }<br>}</pre>
+    }<br/>}</pre>
 
 <h4>
 Server-side bindings</h4>
@@ -1150,9 +1150,8 @@ For instance, using the AddressBook.wsdl as we had above:
 <pre class="example">% java org.apache.axis.wsdl.WSDL2Java --server-side --skeletonDeploy true AddressBook.wsdl</pre>
 <p>You will see that WSDL2Java generates all the classes that were generated
 before for the client, but it generates a few new files:
-<br> 
-<br> 
-<table BORDER COLS=2 WIDTH="100%" >
+</p>
+<table BORDER="1" COLS="2" WIDTH="100%" >
 <tr>
 <td><b>WSDL clause</b></td>
 
@@ -1189,12 +1188,10 @@ generated.  Instead, the generated deploy.wsdd will indicate that the implementa
 class is deployed directly.  In such cases, the deploy.wsdd contains extra meta
 data describing the operations and parameters of the implementation class.
 
-Here is how you run WSDL2Java to deploy directly to the implementation:
+Here is how you run WSDL2Java to deploy directly to the implementation:</p>
 <pre class="example">% java org.apache.axis.wsdl.WSDL2Java --server-side AddressBook.wsdl</pre>
-<p>And here are the server side files that are generated:
-<br> 
-<br> 
-<table BORDER COLS=2 WIDTH="100%" >
+<p>And here are the server side files that are generated:</p>
+<table BORDER="1" COLS="2" WIDTH="100%" >
 <tr>
 <td><b>WSDL clause</b></td>
 
@@ -1247,18 +1244,18 @@ will generate:
     }
 }</pre>
 <p>(The real skeleton is actually much richer.  For brevity we just show 
-  you the basic skeleton.) 
+  you the basic skeleton.)</p>
 <p>The skeleton contains an implementation of the AddressBook service. 
 This implementation is either passed into the skeleton on construction,
 or an instance of the generated implementation is created.  When the
 Axis engine calls the skeleton's addEntry method, it simply delegates the
-invocation to the real implementation's addEntry method.
+invocation to the real implementation's addEntry method.</p>
 <h5>
 Implementation Template Description </h5>
 <p>WSDL2Java also generates an implementation template
-from the binding:
+from the binding:</p>
 <pre class="example">public class AddressBookSOAPBindingImpl implements AddressBook {
-<br>    public void addEntry(String name, Address address)
+<br/>    public void addEntry(String name, Address address)
         throws java.rmi.RemoteException {
     }
 }</pre>
@@ -1277,7 +1274,7 @@ compiled the code, and made the classes available to your Axis engine.</p>
 from Java</h3>
 The Java2WSDL and WSDL2Java emitters make it easy to develop a new web service.  
 The following sections describe the steps in building a web service from a Java interface.
-<br> 
+<br/> 
 <h4>
 Step 1: Provide a Java interface or class</h4>
 Write and compile a Java interface (or class) that describes the web service
@@ -1294,16 +1291,16 @@ public interface WidgetPrice {
     public String getWidgetPrice(String widgetName);
 }</pre>
 <p><b>Note: </b>If you compile your class with debug information, Java2WSDL
-will use the debug information to obtain the method parameter names.
+will use the debug information to obtain the method parameter names.</p>
 <h4>
 Step 2: Create WSDL using Java2WSDL</h4>
 Use the Java2WSDL tool to create a WSDL file from the interface above.
 <p>Here is an example invocation that produces the wsdl file (<tt>wp.wsdl</tt>)
-from the interface described in the previous section (entered all on one line):
+from the interface described in the previous section (entered all on one line):</p>
 <pre class="example">% java org.apache.axis.wsdl.Java2WSDL -o wp.wsdl  
     -l"http://localhost:8080/axis/services/WidgetPrice" -n  "urn:Example6" 
     -p"samples.userguide.example6" "urn:Example6"  samples.userguide.example6.WidgetPrice</pre>
-<p>Where:
+<p>Where:</p>
 <ul>
 <li>
 -o indicates the name of the <b><i>output WSDL</i></b> file</li>
@@ -1332,7 +1329,7 @@ arrays and Holder classes.
   guide</a>.
   
 There is an <a href="ant/axis-java2wsdl.html">Ant Task</a> to integrate this
-action with an Ant based build process.
+action with an Ant based build process.</p>
   
 <h4>
 Step 3: Create Bindings using WSDL2Java</h4>
@@ -1340,11 +1337,11 @@ Step 3: Create Bindings using WSDL2Java</h4>
 Use the generated WSDL file to build the appropriate client/server bindings
 for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and data">WSDL2Java</a>):
 <pre class="example">% java org.apache.axis.wsdl.WSDL2Java -o . -d Session -s -S true  -Nurn:Example6 samples.userguide.example6 wp.wsdl</pre>
-<p>This will generate the following files:
+<p>This will generate the following files:</p>
 <ul>
   <li> <b><tt>WidgetPriceSoapBindingImpl.java</tt></b> : Java file containing 
     the default server implementation of the WidgetPrice web service.</li>
-  <br>
+  <br/>
   You will need to modify the *SoapBindingImpl file to add your implementation 
   (see  <a href="../samples/userguide/example6/WidgetPriceSoapBindingImpl.java">../samples/userguide/example6/WidgetPriceSoapBindingImpl.java</a> 
   ). 
@@ -1373,15 +1370,15 @@ need to refactor Axis to maintain and improve its modularity.
 <p>Hence certain interfaces are designated as <i>published</i>, which means
 that they are relatively stable. As Axis is refactored, the Axis developers
 will try to avoid changing published interfaces unnecessarily and will
-certainly consider the impact on users of any modifications.
+certainly consider the impact on users of any modifications.</p>
 <p>So if you stick to using only published interfaces, you'll minimise
 the pain of migrating between releases of Axis. On the other hand, if you
 decide to use unpublished interfaces, migrating between releases could
 be an interesting exercise! If you would like an interface to be published,
 you should make the case for this on the
 <a href="mailto:axis-user@ws.apache.org">axis-user</a>
-mailing list.
-<p>The current list of published interfaces is as follows:
+mailing list.</p>
+<p>The current list of published interfaces is as follows:</p>
 <ul>
 <li>
 JAX-RPC interfaces.  
@@ -1486,6 +1483,7 @@ new versions of the specification are released.
 <li>org.apache.axis.wsdl.WSDL2Java</li>
 <li>org.apache.axis.wsdl.Java2WSDL</li>
 </ul>
+</li>
 </ul>
 <h2><a name="newbie"></a>Newbie Tips: Finding Your Way Around</h2>
 <p>So you've skimmed the User's Guide and written your first .jws service, 
@@ -1512,7 +1510,7 @@ archives.</a></b>
     the best place to look. Chances are someone has wanted the same thing and 
     someone else has used (or developed) Axis long enough know the name.</li>
 	
-    <li> Consult the <A HREF="http://ws.apache.org/axis">Axis web site</a> for updated documentation and the 
+    <li> Consult the <a HREF="http://ws.apache.org/axis">Axis web site</a> for updated documentation and the 
       <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages">Axis Wiki</a>
       for its Frequently Asked Questions (FAQ), installation notes,
       interoperability issues lists, and other useful information.
@@ -1554,7 +1552,7 @@ You only need
     constant, like those defined in
 <code>org.apache.axis.transport.http.HTTPConstants</code>. 
     So, for example, to retrieve the ServletContext for the Axis Servlet, you 
-    would want: <code>((HttpServlet)msgC.getProperty(HTTPConstants.MC_HTTP_SERVLET)).getServletContext();</code><br>
+    would want: <code>((HttpServlet)msgC.getProperty(HTTPConstants.MC_HTTP_SERVLET)).getServletContext();</code><br/>
   </li>
 </ul>
 <p>From within your service, the current MessageContext object is always
@@ -1594,29 +1592,29 @@ package. To run it from the command line:
 Without any of the optional arguments, you will get a gui which looks like
 this:
 <center>
-<p><img SRC="images/tcpmon1.jpg" height=599 width=599></center>
+<img SRC="images/tcpmon1.jpg" height="599" width="599"/></center>
 
 <p>To use the program, you should select a local port which tcpmon will
 monitor for incoming connections, a target host where it will forward such
 connections, and the port number on the target machine which should be
 "tunneled" to. Then click "add". You should then notice another tab appearing
 in the window for your new tunneled connection. Looking at that panel,
-you'll see something like this:
+you'll see something like this:</p>
 <center>
-<p><img SRC="images/tcpmon2.jpg" height=600 width=599></center>
+<img SRC="images/tcpmon2.jpg" height="600" width="599"/></center>
 
 <p>Now each time a SOAP connection is made to the local port, you will
 see the request appear in the "Request" panel, and the response from the
 server in the "Response" panel. Tcpmon keeps a log of all request/response
 pairs, and allows you to view any particular pair by selecting an entry
 in the top panel. You may also remove selected entries, or all of them,
-or choose to save to a file for later viewing.
+or choose to save to a file for later viewing.</p>
 <p>The "resend" button will resend the request you are currently viewing, and 
   record a new response. This is particularly handy in that you can edit the XML 
   in the request window before resending - so you can use this as a great tool 
   for testing the effects of different XML on SOAP servers. Note that you may 
   need to change the content-length HTTP header value before resending an edited 
-  request. 
+  request.</p>
 
 <h2> <a NAME="soapmon"></a>Appendix: Using the SOAP Monitor </h2>
 Web service developers often have the need to see the SOAP messages
@@ -1629,22 +1627,22 @@ server.
 In this utility, a handler has been written and added to the global 
 handler chain.  As SOAP requests and responses are received, the SOAP 
 message information is forwarded to a SOAP monitor service where it 
-can be displayed using a web browser interface.
+can be displayed using a web browser interface.</p>
 <p>
 The SOAP message information is accessed with a web browser by going
 to http://localhost:&lt;port&gt;/axis/SOAPMonitor (where
 &lt;port&gt; is the port number where the application server is
-running).
+running).</p>
 <p>
 The SOAP message information is displayed through a web browser
 by using an applet that opens a socket connection to the SOAP
 monitor service.  This applet requires a Java plug-in 1.3 or 
 higher to be installed in your browser.  If you do not have a
-correct plug-in, the browser should prompt you to install one.
+correct plug-in, the browser should prompt you to install one.</p>
 <p>
 The port used by the SOAP monitor service to comminicate with
 applets is configurable.  Edit the web.xml file for the Axis
-web application to change the port to be used.
+web application to change the port to be used.</p>
 
 <b>Note: The SOAP Monitor is NOT enabled by default for security reasons.</b>
 To enable it, read <a href="install.html#soapmon">Enabling the 

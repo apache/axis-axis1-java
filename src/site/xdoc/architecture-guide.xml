@@ -1,41 +1,38 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <title>Axis Architecture Guide</title>
-<link href="axis.css" rel=stylesheet type=text/css>
 </head>
 <body>
 
 <center>
 <h1>
-<img SRC="images/axis.jpg" height=96 width=176></h1></center>
+<img SRC="images/axis.jpg" height="96" width="176"/></h1></center>
 
 <h1>
 Axis Architecture Guide</h1>
-<br><i>1.2 Version</i>
-<br><i>Feedback: <a href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
+<br/><i>1.2 Version</i>
+<br/><i>Feedback: <a href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
 <h3>
 Contents</h3>
 <a href="#Introduction">Introduction</a>
-<br><a href="#Overview">Architecture Overview</a>
-<br><a href="#Subsystems">Subsystems</a>
-<br><a href="#Message Flow">Message Flow Subsystem</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#Handlers">Handlers and Chains</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#Message Contexts">Message Contexts</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#Engine">Engine</a>
-<br><a href="#Administration Subsystem">Administration Subsystem</a>
-<br><a href="#Message Model Subsystem">Message Model Subsystem</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#SOAP message model">SOAP Message Model</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#Message elements">Message Elements</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#D13n">Deserialization</a>
-<br><a href="#Encoding Subsystem">Encoding Subsystem</a>
-<br><a href="#WSDL Subsystem">WSDL Tools Subsystem</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#WSDL2Java">WSDL2Java</a>
-<br><a href="#Sequence Diagrams">Interaction Diagrams</a>
-<br>&nbsp;&nbsp;&nbsp; <a href="#Client Interaction">Client Side Processing</a>
-<br><a href="#Pluggable-Component Discovery">Pluggable-Component Discovery</a>
-<br><a href="#Open Issues">Open Issues</a>
+<br/><a href="#Overview">Architecture Overview</a>
+<br/><a href="#Subsystems">Subsystems</a>
+<br/><a href="#Message Flow">Message Flow Subsystem</a>
+<br/>&#160;&#160;&#160; <a href="#Handlers">Handlers and Chains</a>
+<br/>&#160;&#160;&#160; <a href="#Message Contexts">Message Contexts</a>
+<br/>&#160;&#160;&#160; <a href="#Engine">Engine</a>
+<br/><a href="#Administration Subsystem">Administration Subsystem</a>
+<br/><a href="#Message Model Subsystem">Message Model Subsystem</a>
+<br/>&#160;&#160;&#160; <a href="#SOAP message model">SOAP Message Model</a>
+<br/>&#160;&#160;&#160; <a href="#Message elements">Message Elements</a>
+<br/>&#160;&#160;&#160; <a href="#D13n">Deserialization</a>
+<br/><a href="#Encoding Subsystem">Encoding Subsystem</a>
+<br/><a href="#WSDL Subsystem">WSDL Tools Subsystem</a>
+<br/>&#160;&#160;&#160; <a href="#WSDL2Java">WSDL2Java</a>
+<br/><a href="#Sequence Diagrams">Interaction Diagrams</a>
+<br/>&#160;&#160;&#160; <a href="#Client Interaction">Client Side Processing</a>
+<br/><a href="#Pluggable-Component Discovery">Pluggable-Component Discovery</a>
+<br/><a href="#Open Issues">Open Issues</a>
 <h2>
 <a NAME="Introduction"></a>Introduction</h2>
 This guide records some of the rationale of the architecture and design
@@ -54,7 +51,7 @@ to each Handler invocation is a <b>MessageContext</b>. A MessageContext
 is a structure which contains several important parts: 1) a "request" message,
 2) a "response" message, and 3) a bag of properties. More on this in a
 bit.
-<p>There are two basic ways in which Axis is invoked:
+<p>There are two basic ways in which Axis is invoked:</p>
 <ol>
 <li>
 As a <b>server</b>, a <b>Transport Listener</b> will create a MessageContext
@@ -68,20 +65,20 @@ framework.</li>
 <p>
 In either case, the Axis framework's job is simply to pass the resulting
 MessageContext through the configured set of Handlers, each of which has
-an opportunity to do whatever it is designed to do with the MessageContext.
+an opportunity to do whatever it is designed to do with the MessageContext.</p>
 <h3>
 Message Path on the Server</h3>
 The server side message path is shown in the following diagram. The small
 cylinders represent Handlers and the larger, enclosing cylinders represent
 <b>Chains</b> (ordered collections of Handlers which will be described
 shortly).
-<br><img SRC="images/ServerMessagePath.jpg" VSPACE=30 height=282 width=602>
-<br>A message arrives (in some protocol-specific manner) at a Transport
+<br/><img SRC="images/ServerMessagePath.jpg" VSPACE="30" height="282" width="602"/>
+<br/>A message arrives (in some protocol-specific manner) at a Transport
 Listener. In this case, let's assume the Listener is a HTTP servlet. It's
 the Listener's job to package the protocol-specific data into a <b>Message</b>
 object (org.apache.axis.Message), and put the Message into a <b>MessageContext</b>.
 The MessageContext is also loaded with various <b>properties</b> by the
-Listener -&nbsp; in this example the property "http.SOAPAction" would be
+Listener -&#160; in this example the property "http.SOAPAction" would be
 set to the value of the SOAPAction HTTP header. The Transport Listener
 also sets the <b>transportName</b> String on the MessageContext , in this
 case to "http". Once the MessageContext is ready to go, the Listener hands
@@ -92,10 +89,10 @@ Chain, or perhaps both. A <b>Chain</b> is a Handler consisting of a sequence
 of Handlers which are invoked in turn -- more on Chains later. If a transport
 request Chain exists, it will be invoked, passing the MessageContext into
 the invoke() method. This will result in calling all the Handlers specified
-in the request Chain configuration.
+in the request Chain configuration.</p>
 <p>After the transport request Handler, the engine locates a global request
 Chain, if configured, and
-then invokes any Handlers specified therein.
+then invokes any Handlers specified therein.</p>
 <p>At some point during the processing up until now, some Handler has hopefully
 set the <b>serviceHandler</b> field of the MessageContext (this is usually
 done in the HTTP transport by the "URLMapper" Handler, which maps a URL
@@ -106,19 +103,19 @@ in Axis are typically instances of the "SOAPService" class (org.apache.axis.hand
 which may contain <b>request</b> and <b>response</b> Chains (similar to
 what we saw at the transport and global levels), and must contain a <b>provider</b>,
 which is simply a Handler responsible for implementing the actual back
-end logic of the service.
+end logic of the service.</p>
 <p>For RPC-style requests, the provider is the org.apache.axis.providers.java.RPCProvider
 class. This is just another Handler that, when invoked, attempts to call
 a backend Java object whose class is determined by the "className" parameter
 specified at deployment time. It uses the SOAP RPC convention for determining
 the method to call, and makes sure the types of the incoming XML-encoded
-arguments match the types of the required parameters of the resulting method.
+arguments match the types of the required parameters of the resulting method.</p>
 <h3>
 The Message Path on the Client</h3>
 The Message Path on the client side is similar to that on the server side,
 except the order of scoping is reversed, as shown below.
-<br><img SRC="images/ClientMessagePath.jpg" VSPACE=30 height=281 width=592>
-<br>The <b>service</b> Handler, if any, is called first - on the client
+<br/><img SRC="images/ClientMessagePath.jpg" VSPACE="30" height="281" width="592"/>
+<br/>The <b>service</b> Handler, if any, is called first - on the client
 side, there is no "provider" since the service is being provided by a remote
 node, but there is still the possibility of request and response Chains.
 The service request and response Chains perform any service-specific
@@ -131,7 +128,7 @@ operations are necessary to get the message to and from the target SOAP
 server, is invoked to send the message. The response (if any) is placed
 into the responseMessage field of the MessageContext, and the MessageContext
 then propagates through the response Chains - first the transport, then
-the global, and finally the service.
+the global, and finally the service.</p>
 <h2>
 <a NAME="Subsystems"></a>Subsystems</h2>
 Axis comprises several subsystems working together with the aim of separating
@@ -142,15 +139,15 @@ use the whole of it (or hack the code).
 are independent of the higher layers. The 'stacked' boxes represent mutually
 independent, although not necessary mutually exclusive, alternatives. For
 example, the HTTP, SMTP, and JMS transports are independent of each other but
-may be used together.
-<p><img SRC="images/subsystems.jpg">
+may be used together.</p>
+<img SRC="images/subsystems.jpg"/>
 <p>
 In fact, the Axis source code is not as cleanly separated into subsystems
 as the above diagram might imply. Some subsystems are spread over
 several packages and some packages overlap more than one subsystem.
 Proposals to improve the code structure and make it
 conform more accurately to the notional Axis subsystems will be considered
-when we get a chance. 
+when we get a chance.</p>
 
 <h2>
 <a NAME="Message Flow"></a>Message Flow Subsystem</h2>
@@ -167,20 +164,20 @@ kinds are combined together into Chains. So the overall sequence of Handlers
 comprises three Chains: transport, global, and service. The following diagram
 shows two sequences of handlers: the client-side sequence on the left and
 the server-side sequence on the right.
-<br><img SRC="images/pivots.jpg" height=240 width=403>
+<br/><img SRC="images/pivots.jpg" height="240" width="403"/>
 <p>A web service does not necessarily send a response message to each request
 message, although many do. However, response Handlers are still useful
 in the message path even when there isn't a response message, e.g. to stop
-timers, clean up resources, etc.
+timers, clean up resources, etc.</p>
 <p>A Chain is a composite Handler, i.e. it aggregates a collection of Handlers
 as well as implementing the Handler interface as shown in the following
-UML diagram:
-<br><img SRC="images/chainclasses.jpg">
+UML diagram:</p>
+<br/><img SRC="images/chainclasses.jpg"/>
 <p>A Chain also has similarities to the Chain of Responsibility design pattern
 in which a request flows along a sequence of Handlers until it is processed.
 Although an Axis Chain may process a request in stages over a succession of
 Handlers, it has the same advantages as Chain of Responsibility:
-flexibility and the ease with which new function can be added.
+flexibility and the ease with which new function can be added.</p>
 <p>Back to message processing -- a message is processed by passing through
 the appropriate Chains. A message context is used to pass the message and
 associated environment through the sequence of Handlers. The model is that
@@ -194,42 +191,44 @@ the old Chain retired when it is no longer in use. Message contexts that
 were using the old Chain continue to use it until they are finished. This
 means that Chains do not need to cope with the addition and removal of
 Handlers while the Chains are processing message contexts -- an important
-simplification.
+simplification.</p>
 <p>The deployment registry has factories for Handlers and Chains. Handlers
 and Chains can be defined to have 'per-access', 'per-request', or 'singleton'
 scope although the registry currently only distinguishes between these
 by constructing non-singleton scope objects when requested and constructing
 singleton scope objects once and holding on to them for use on subsequent
-creation requests.
+creation requests.</p>
 <h4>
 Targeted Chains</h4>
+<p>
 A <b>Targeted Chain</b> is a special kind of chain which may have any or
 all of: a request Handler, a pivot Handler, and a response Handler. The
 following class diagram shows how Targeted Chains relate to Chains. Note
 that a Targeted Chain is an aggregation of Handlers by virtue of extending
-the Chain interface which is an aggregation of Handlers.
-<p><img SRC="images/targetedchainclasses.jpg">
+the Chain interface which is an aggregation of Handlers.</p>
+<img SRC="images/targetedchainclasses.jpg"/>
 <p>A service is a special kind of Targeted Chain in which the pivot Handler
-is known as a "provider".
+is known as a "provider".</p>
 <h4>
 Fault Processing</h4>
+<p>
 Now let's consider what happens when a fault occurs. The Handlers prior
 to the Handler that raised the fault are driven, in reverse order, for
 onFault (previously misnamed 'undo'). The scope of this backwards scan
 is interesting: all Handlers previously invoked for the current Message
-Context are driven.
+Context are driven.</p>
 <p><i>Need to explain how "FaultableHandlers" and "WSDD Fault Flows" fit
-in.</i>
+in.</i></p>
 <h3>
 <a NAME="Message Contexts"></a>Message Contexts</h3>
 The current structure of a MessageContext is shown below. Each message
 context may be associated with a request Message and/or a response Message.
 Each Message has a SOAPPart and an Attachments object, both of which implement
 the Part interface.
-<br><img SRC="images/messagecontext.jpg">
-<br>The typing of Message Contexts needs to be carefully considered in
+<br/><img SRC="images/messagecontext.jpg"/>
+<br/>The typing of Message Contexts needs to be carefully considered in
 relation to the Axis architecture. Since a Message Context appears on the
-Handler interface, it should not be tied to or biassed in favour of&nbsp;
+Handler interface, it should not be tied to or biassed in favour of&#160;
 SOAP. The current implementation is marginally biassed towards SOAP in
 that the setServiceHandler method narrows the specified Handler to a SOAPService.
 
@@ -239,46 +238,49 @@ Axis has an abstract AxisEngine class with two concrete subclasses: AxisClient
 drives the client side handler chains and AxisServer drives the server
 side handler chains. The relationships between these classes is fairly
 simple:
-<br><img SRC="images/engineclasses.jpg">
-<h4>Engine Configuration</h3>
+<br/><img SRC="images/engineclasses.jpg"/>
+<h4>Engine Configuration</h4>
+<p>
 The EngineConfiguration interface is the means of configuring the Handler
 factories and global options of an engine instance. An instance of a
 concrete implementation of EngineConfiguration must be passed to the engine
 when it is created and the engine must be notified if the EngineConfiguration
 contents are modified. The engine keeps a reference to the EngineConfiguration
-and then uses it to obtain Handler factories and global options.
+and then uses it to obtain Handler factories and global options.</p>
 <p>
 The EngineConfiguration interface belongs to the Message Flow subsystem
 which means that the Message Flow subsystem does not depend on the
-Administration subsystem.
+Administration subsystem.</p>
 <h2>
 <a NAME="Administration Subsystem"></a>Administration Subsystem</h2>
+<p>
 The Administration subsystem provides a way of configuring Axis engines.
 The configuration information an engine needs is a collection of factories for
 runtime artefacts such as Chains and SOAPServices and a set of global
-configuration options for the engine.
+configuration options for the engine.</p>
 <p>
 The Message Flow subsystem's EngineConfiguration interface
 is implemented by the Administration subsystem. FileProvider enables
 an engine to be configured statically from a file containing a
 deployment descriptor which is understood by the WSDDDeployment class.
 SimpleProvider, on the other hand, enables an engine to be configured
-dynamically.
-<br><img SRC="images/engineconfig.jpg">
+dynamically.</p>
+<br/><img SRC="images/engineconfig.jpg"/>
 <h3>
 WSDD-Based Administration</h3>
+<p>
 WSDD is an XML grammer for deployment descriptors which are used to
 statically configure Axis engines.
 Each Handler needs configuration in terms of the concrete class name
 of a factory for the Handler, a set of options for the handler, and
 a lifecycle scope value which determines the scope of sharing of
-instances of the Handler.
+instances of the Handler.</p>
 <p>
 The structure of the WSDD grammar is mirrored by a class hierarchy of factories
 for runtime artefacts.
 The following diagram shows the classes and the types of runtime
-artefacts they produce (a dotted arrow means "instantiates").
-<br><img SRC="images/wsddclasses.jpg">
+artefacts they produce (a dotted arrow means "instantiates").</p>
+<br/><img SRC="images/wsddclasses.jpg"/>
 <h2><a NAME="Message Model Subsystem"></a>Message Model Subsystem</h2>
 <h3><a name="SOAP message model"></a>SOAP Message Model</h3>
 The XML syntax of a SOAP message is fairly simple.
@@ -294,9 +296,9 @@ used for reporting errors.
 <p>
 Some of the XML elements of a SOAP message define namespaces, each in terms
 of a URI and a local name, and encoding styles, a standard one of which
-is defined by SOAP.
+is defined by SOAP.</p>
 <p>
-Header entries may be tagged with the following optional SOAP attributes:
+Header entries may be tagged with the following optional SOAP attributes:</p>
 <ul>
 <li><i>actor</i> which specifies the intended recipient of the header
 entry in terms of a URI, and</li>
@@ -305,19 +307,19 @@ recipient of the header entry is required to process the header
 entry.</li>
 </ul>
 <p>
-So the SOAP message model looks like this:
-<br><img SRC="images/soapmessagemodel.jpg">
+So the SOAP message model looks like this:</p>
+<br/><img SRC="images/soapmessagemodel.jpg"/>
 
 <h3><a name="Message elements"></a>Message Elements</h3>
 The classes which represent SOAP messages form a class hierarchy based on
 the MessageElement class which takes care of namespaces and encodings.
 The SOAPHeaderElement class looks after the actor and mustUnderstand
 attributes.
-<br><img SRC="images/messagemodelclasses.jpg">
+<br/><img SRC="images/messagemodelclasses.jpg"/>
 
 During deserialization, a parse tree is constructed consisting of instances
 of the above classes in parent-child relationships as shown below.
-<br><img SRC="images/messagetree.jpg">
+<br/><img SRC="images/messagetree.jpg"/>
 <h3><a name="D13n"></a>Deserialization</h3>
 The class mainly responsible for XML parsing, i.e. deserialization, is DeserializationContext 
 ('DC'). DC manages the construction of the parse tree and maintains a stack of 
@@ -327,36 +329,36 @@ for deserialization (see <a href="#Encoding Subsystem">Encoding Subsystem</a>)
 and a SAX event recorder. 
 <p>Elements that we scan over, or ones for which we don't have a particular
 deserializer, are recorded - in other words, the SAX events are placed into
-a queue which may be 'played back' at a later time to any SAX ContentHandler.
+a queue which may be 'played back' at a later time to any SAX ContentHandler.</p>
 <p>Once a SOAPEnvelope has been built, either through a parse or manual
 construction by the user, it may be output using a SerializationContext (also
 see <a href="#Encoding Subsystem">Encoding Subsystem</a>).
 MessageElements all have an output() method which lets them write out their
-contents.
-<p>The SAX handlers form a class hierarchy:
-<br><img SRC="images/SAXHandlerClasses.jpg">
-<p>and stack up as shown in the following diagram:
-<br><img SRC="images/SAXhandlers.jpg">
+contents.</p>
+<p>The SAX handlers form a class hierarchy:</p>
+<br/><img SRC="images/SAXHandlerClasses.jpg"/>
+<p>and stack up as shown in the following diagram:</p>
+<br/><img SRC="images/SAXhandlers.jpg"/>
 <p>Initially, the SAX handler stack just contains an instance of
 EnvelopeHandler which represents the fact that parsing of the SOAP envelope
 has not yet started.
 The EnvelopeHandler is constructed with a reference to an EnvelopeBuilder,
-which is the SAX handler responsible for parsing the SOAP envelope.
+which is the SAX handler responsible for parsing the SOAP envelope.</p>
 <p>During parsing, DC receives the events from the SAX parser and notifies either 
   the SAX handler on the top of its handler stack, the SAX event recorder, or 
-  both. 
+  both.</p>
 <p>On the start of an element, DC calls the SAX handler on the top of its handler 
   stack for onStartChild. This method returns a SAX handler to be used to parse 
   the child, which DC pushes on its SAX handler stack and calls for startElement. 
   startElement, amongst other things, typically creates a new MessageElement of 
   the appropriate class and calls DC for pushNewElement. The latter action creates 
-  the parent-child relationships of the parse tree. 
+  the parent-child relationships of the parse tree.</p> 
 <p>On the end of an element, DC pops the top SAX handler from its handler stack 
   and calls it for endElement. It then drives SAX handler which is now on the 
   top of the handler stack for onEndChild. Finally, it sets the MessageElement 
-  that is currently being deserialized to the parent of the current one. 
+  that is currently being deserialized to the parent of the current one.</p> 
 <p>Elements which are not defined by SOAP are treated using a SOAPHandler
-as a SAX event handler and a MessageElement as a node in the parse tree.
+as a SAX event handler and a MessageElement as a node in the parse tree.</p>
 <h2><a NAME="Encoding Subsystem"></a>Encoding Subsystem</h2>
 Encoding is most easily understood from the bottom up. The basic
 requirement is to transform between values of programming language
@@ -365,15 +367,15 @@ encoding (or 'serializing') Java objects and primitives into XML
 and decoding (or 'deserializing') XML into Java objects and primitives.
 The basic classes that implement these steps are <i>serializers</i>
 and <i>deserializers</i>.
-<br><img SRC="images/serclasses.jpg">
+<br/><img SRC="images/serclasses.jpg"/>
 <p>
 Particular serializers and deserializers are written to support
 a specific XML processing mechanism such as DOM or SAX.
 So <i>serializer factories</i> and <i>deserializer factories</i>
 are introduced to construct serializers and deserializers
 for a XML processing mechanism which is specified
-as a parameter.
-<br><img SRC="images/serfactoryclasses.jpg">
+as a parameter.</p>
+<br/><img SRC="images/serfactoryclasses.jpg"/>
 <p>
 As is apparent from the above class diagrams, each pair of Java
 type and XML data type which needs encoding
@@ -385,26 +387,26 @@ deserializer factory.
 Such a mapping is known as a <i>type mapping</i>.
 The type mapping class hierarchy is shown below. Notice how
 the default type mapping instantiates the various serializer and
-deserialiser factories.
-<br><img SRC="images/typemappingclasses.jpg">
+deserialiser factories.</p>
+<br/><img SRC="images/typemappingclasses.jpg"/>
 <p>
 There is one final level of indirection. How do we know
 which type mapping to use for a particular message?
 This is determined by the encoding which is specified in
 the message. A <i>type mapping registry</i> maintains
 a map from encoding name (URI) to type mapping.
-Note that the XML data type QNames are defined by the encoding.
-<br><img SRC="images/typemappingclasses.jpg">
+Note that the XML data type QNames are defined by the encoding.</p>
+<br/><img SRC="images/typemappingclasses.jpg"/>
 <p>
 So, in summary, to encode a Java object or primitive data value
 to a XML datatype or to decode the latter to the former,
-we need to know:
+we need to know:</p>
 <ul>
 <li>the Java type we are dealing with,</li>
 <li>the QName of the XML data type we want to encode it as,</li>
 <li>the XML processing mechanism we are using, and</li>
 <li>the encoding name.</li>
-<eul>
+</ul>
 
 <h2>
 <a NAME="WSDL Subsystem"></a>WSDL Tools Subsystem</h2>
@@ -416,7 +418,7 @@ to make life easier for the user.
 This tool takes a description of a web service written in WSDL
 and emits Java artefacts used to access the web service.
 <p>
-There are three layers inside the tool:
+There are three layers inside the tool:</p>
 <ul>
 <li>framework:  SymbolTable, Emitter, WriterFactory</li>
 <li>WSDL2Java plugin to the framework:  WSDL2Java (the main),
@@ -434,11 +436,12 @@ tbd.
 
 <h3>
 <a NAME="Client Interaction"></a>Client Side Processing</h3>
+<p>
 The client side Axis processing constructs a Call object with associated
 Service, MessageContext, and request Message as shown below before invoking
-the AxisClient engine.
-<p><img SRC="images/clientobjects.jpg" height=120 width=349>
-<br>An instance of&nbsp; Service and its related AxisClient instance are
+the AxisClient engine.</p>
+<img SRC="images/clientobjects.jpg" height="120" width="349"/>
+<br/>An instance of&#160; Service and its related AxisClient instance are
 created before the Call object. The Call object is then created by invoking
 the Service.createCall <i>factory method</i>. Call.setOperation creates
 a Transport instance, if a suitable one is not already associated with
@@ -446,7 +449,7 @@ the Call instance. Then Call.invoke creates a MessageContext and associated
 request Message, drives AxisClient.invoke, and processes the resultant
 MessageContext. This significant method calls in this sequence are shown
 in the following interaction diagram.
-<br><img SRC="images/clientinteraction.jpg" height=503 width=731>
+<br/><img SRC="images/clientinteraction.jpg" height="503" width="731"/>
 
 <h2>
 <a NAME="Pluggable-Component Discovery"></a>Pluggable-Component Discovery</h2>
@@ -456,7 +459,7 @@ provide discovery features, it is foreseen that there are situations where
 these may evolve over time.
 For example, as leading-edge technologies are
 reworked and adopted as standards,
-discovery mechanisms are likely to change.
+discovery mechanisms are likely to change.</p>
 <p>
 Therefore,
 component discovery must be relegated to a <b>single</b>
@@ -465,7 +468,7 @@ typically an AXIS-specific factory method.
 These factory methods should conform to current standards,
 when available.
 As technologies evolve and/or are standardized, the factory methods
-should be kept up-to-date with appropriate discovery mechanisms.
+should be kept up-to-date with appropriate discovery mechanisms.</p>
 
 <h2>
 <a NAME="Open Issues"></a>Open Issues</h2>
@@ -485,7 +488,7 @@ Are the encoding and message model subsystems independent of the other subsystem
 
 <li>
 (Possibly related to the previous issue) How should we distribute the classes
-in the above diagram between the Axis subsystems taking into account&nbsp;
+in the above diagram between the Axis subsystems taking into account&#160;
 SOAP-specific and HTTP-specific features?</li>
 
 <li>
@@ -499,7 +502,7 @@ itself a Targeted Chain with global request and response Handlers and a
 service pivot Handler (which is itself a Targeted Chain as we have just
 described). Such an Axis Engine architecture is shown in the diagram below.</li>
 
-<br><img SRC="images/stcengine.jpg" height=312 width=667>
+<br/><img SRC="images/stcengine.jpg" height="312" width="667"/>
 <li>
 WSDDService.faultFlows is initialised to an empty Vector and there is no
 way of adding a fault flow to it. Is this dead code or is something else
@@ -513,18 +516,18 @@ of faults raised in a downstream system and stored in the message context
 by the pivot Handler. These faults are passed through any response Handlers,
 but do not cause onFault to be driven in the local engine.</li>
 
-<br>&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
+<br/>&#160;
+<p>&#160;</p>
+<br/>&#160;
+<br/>&#160;
 <p>We need to consider what's going on here. If you take a sequence of
 Handlers and then introduce a distribution boundary into the sequence,
 what effect should that have on the semantics of the sequence in terms
 of its effects on message contexts? The following diagram shows a client-side
 Handler sequence invoking a server-side Handler sequence. We need to consider
 how the semantics of this combined sequence compares with the sequence
-formed by omitting the transport-related Handlers.
-<br><img SRC="images/pivots2.jpg" height=413 width=658>
+formed by omitting the transport-related Handlers.</p>
+<br/><img SRC="images/pivots2.jpg" height="413" width="658"/>
 </ol>
 
 </body>
