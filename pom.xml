@@ -35,6 +35,7 @@
         <module>axis-saaj</module>
         <module>axis-ant</module>
         <module>axis-maven-plugin</module>
+        <module>axis-standalone-server</module>
         <module>integration</module>
         <module>axis-war</module>
     </modules>

@@ -52,7 +52,7 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         cmdline.add("-cp");
         cmdline.add(StringUtils.join(classpath, File.pathSeparator));
         cmdline.addAll(Arrays.asList(vmArgs));
-        cmdline.add("org.apache.axis.transport.http.SimpleAxisServer");
+        cmdline.add("org.apache.axis.server.standalone.StandaloneAxisServer");
         cmdline.add("-p");
         cmdline.add(String.valueOf(port));
         if (logger.isDebugEnabled()) {
@@ -60,7 +60,8 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         }
         Process process = Runtime.getRuntime().exec((String[])cmdline.toArray(new String[cmdline.size()]), null, workDir);
         servers.put(Integer.valueOf(port), new Server(process, adminClient));
-        // TODO: need to set up stdout/stderr forwarding; otherwise the process will hang
+        new Thread(new StreamPump(process.getInputStream(), System.out), "axis-server-" + port + "-stdout").start();
+        new Thread(new StreamPump(process.getErrorStream(), System.err), "axis-server-" + port + "-stderr").start();
         
         // Wait for server to become ready
         String versionUrl = "http://localhost:" + port + "/axis/services/Version";
