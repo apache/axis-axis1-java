@@ -514,6 +514,7 @@ Example:
 
 <source>&lt;globalConfiguration&gt;
   &lt;parameter name="adminPassword" value="admin"/&gt;
+  &lt;parameter name="axis.servicesPath" value="/services/"/&gt;
   &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;
   &lt;parameter name="sendMultiRefs" value="true"/&gt;
   &lt;parameter name="sendXsiTypes" value="true"/&gt;
