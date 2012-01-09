@@ -34,8 +34,8 @@
         <breadcrumbs>
             <item name="Apache" href="http://www.apache.org/"/>
             <item name="Axis" href="http://axis.apache.org/"/>
-            <item name="Axis 1.x" href="http://axis.apache.org/axis1/"/>
-            <item name="Java" href="http://axis.apache.org/axis1/java/"/>
+            <item name="Axis 1.x" href="http://axis.apache.org/axis/"/>
+            <item name="Java" href="http://axis.apache.org/axis/java/"/>
         </breadcrumbs>
         <menu name="Downloads">
             <item name="Releases" href="releases.html"/>
