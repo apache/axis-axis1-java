@@ -458,7 +458,7 @@ Example:<br/>
   &lt;/requestFlow&gt;
 &lt;/service&gt;
 </source>
-<b>Metadata</b> may be specified about particular operations in your service by using the &lt;operation&gt; tag inside a service. This enables you to map the java parameter names of a method to particular XML names, to specify the parameter modes for your parameters, and to map particular XML names to particular operations.<br/><br/>
+Metadata may be specified about particular operations in your service by using the &lt;operation&gt; tag inside a service. This enables you to map the java parameter names of a method to particular XML names, to specify the parameter modes for your parameters, and to map particular XML names to particular operations.<br/><br/>
 <source>&lt;operation name="method"&gt;
 &lt;/operation&gt;</source>
 </dd>
@@ -665,17 +665,164 @@ context parameters or system properties:</p>
 
 <section name="Individual Service Configuration">
 
-<p><i>TODO</i></p>
+<p>Here is a service element with examples of the current set of options you can set. More may exists (consult the source, as usual).</p>
+<source>
+&lt;service name=&quot;MyServiceName&quot; 
+		provider=&quot;java:RPC&quot; 
+		style=&quot;rpc|document|wrapped&quot; 
+		use=&quot;encoded|literal&quot;
+		streaming=&quot;off|on&quot;
+		attachment=&quot;MIME|DIME|NONE&quot;&gt;
 
-<p>Here are some of the per-service configuration options are available; these can be set in the wsdd file used to deploy a service, from where they will be picked up.</p>
+ &lt;parameter name=&quot;className&quot; value=&quot;org.apache.mystuff.MyService&quot;/&gt;
+ &lt;parameter name=&quot;allowedMethods&quot; value=&quot;method1 method2 method3&quot;/&gt;
+ &lt;parameter name=&quot;wsdlTargetNamespace&quot; value=&quot;http://mystuff.apache.org/MyService&quot;/&gt;
+ &lt;parameter name=&quot;wsdlServiceElement&quot; value=&quot;MyService&quot;/&gt;
+ &lt;parameter name=&quot;wsdlServicePort&quot; value=&quot;MyServicePort&quot;/&gt;
+ &lt;parameter name=&quot;wsdlPortType&quot; value=&quot;MyPort&quot;/&gt;
+ &lt;parameter name=&quot;wsdlSoapActionMode&quot; value=&quot;NONE|DEFAULT|OPERATION&quot;/&gt;
 
-<p>More may exist.</p>
+ &lt;parameter name=&quot;SingleSOAPVersion&quot; value=&quot;1.1|1.2/&gt;
+
+ &lt;documentation&gt;Service level info&lt;/documentation&gt;
+ &lt;endpointURL&gt;http://example.com:5050/my/custom/url/to/service&lt;/endpointURL&gt;
+ &lt;wsdlFile&gt;/path/to/wsdl/file&lt;/wsdlFile&gt;
+ &lt;namespace&gt;http://my.namespace.com/myservice&lt;/namespace&gt;
+ &lt;handlerInfoChain&gt;handlerChainName&lt;/handlerInfoChain&gt;
+ 
+ &lt;operation ... /&gt;
+
+ &lt;typeMapping ... /&gt;
+  
+ &lt;beanMapping ... /&gt;
+  
+&lt;/service&gt;</source>
+
+<subsection name="Service Element Attributes">
+
+<dl>
+<dt>name</dt>
+<dd>The name of the service.</dd>
+
+<dt>provider</dt>
+<dd>The provider for the service.  The recognized providers are: java:RPC, java:MSG,
+java:EJB, java:COM, java:BSF, java:CORBA, java:RMI and "Handler"
+where <tt>xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"</tt>.  The RPC provider supports
+both rpc/encoded, document/literal and wrapped/literal services.  the MSG provider supports the
+'fixed signature' service which takes XML in and returns XML our directly.  The other providers must be
+built in to Axis. See the code in org.apache.axis.providers.</dd>
+
+<dt>style</dt>
+<dd>The style of the service.  
+"rpc" uses the RPC style of wrapping the parts of the message an element that has the same name
+as the operation.
+"document" style means the messages in and out of the service are exactly as
+they are describe by the XML Schema in the WSDL.
+"wrapped" is a subset of the document style.  The arguments to the operation are wrapped up in and
+element that has the same name as the operation.  This is the style of service .NET generates by
+default.  The generated WSDL specifies document style (and literal use) but Axis will 'unwrapped'
+the parts of the message for the Axis service at the back end.</dd>
+
+<dt>use</dt>
+<dd>This can be either "encoded" or "literal".  Encoded means the SOAP 1.1 "Section 5 Encoding" is used to
+encode the data structures returned by the service and incoming XML is decoded using the same rules.
+Literal use means no such encoding is performed.</dd>
+
+<dt>streaming</dt>
+<dd>Valid values are "on" or "off".  This turns on or off the streaming mode of the XML deserializer.
+The default is currently off.  Certain Axis functionality may not function properly if this is turned
+on.  Use with caution.</dd>
+
+<dt>attachment</dt>
+<dd>Valied values are "MIME" for SOAP with attachements (SwA), "DIME" for DIME support and "NONE" for no attachement
+support at all.  The default mode of Axis is to use MIME attachements (SwA).</dd>
+
+</dl>
+
+</subsection>
+
+<subsection name="Elements allowed in the Service element">
+
+<dl>
+<dt>&lt;wsdlFile&gt;</dt>
+<dd>The path to a WSDL File; can be an absolute path or a
+resource that axis.jar can load. Useful to export your custom WSDL
+file. When specify a path to a resource, place a forward slash to start
+at the beginning of the classpath (e.g "/org/someone/res/mywsdl.wsdl").
+How does Axis know whether to return a file or resource? It looks for a
+file first, if that is missing a resource is returned. </dd>
+
+<dt>&lt;documentation&gt;</dt>
+<dd>Documentation text that will get inserted in to the document element of the WSDL for the service</dd>
+
+<dt>&lt;endpointURL&gt;</dt>
+<dd>Specify the endpoint URL of the service, which will override the transport level URL
+created by the Axis servlet.  This is usefull if you have a proxy handling requests
+and you need the endpoint URL to reflect a different hostname than the one Axis is
+executing on.</dd>
+
+<dt>&lt;namespace&gt;</dt>
+<dd>Specify the default namespace for the service.</dd>
+
+<dt>&lt;handlerInfoChain&gt;</dt>
+<dd>Specify the JAX RPC handler chain for this service.</dd>
+</dl>
+
+<p>In addition, as described above, the <b>&lt;requestFlow&gt;</b> and/or <b>&lt;responseFlow&gt;</b> elements are also allowed in the service element.</p>
+
+</subsection>
+
+<subsection name="Service Level Parameters">
+
+<p>The following parameters can be set on a service wide basis using the &lt;parameter&gt; tag. There may be more than those documented here, but this list should be almost complete.</p>
 
 <table>
 
 <tr>
-  <td><b>style</b></td>
-  <td>whether to use RPC:enc or doc/lit encoding</td>
+  <td><strong>className</strong></td>
+  <td>The fully qualified name of the implemenation class of the service.</td>
+</tr>
+
+<tr>
+  <td><strong>allowedMethods</strong></td>
+  <td>A space or comma seperated list of method names, or "*" for all methods in the service class.  
+  If this parameter isn't specified, all methods ("*") is the default.
+  </td>
+</tr>
+
+<tr>
+  <td><strong>wsdlPortType</strong></td>
+  <td>The name of the portType element in the generated WSDL for the service.</td>
+</tr>
+
+<tr>
+  <td><strong>wsdlServiceElement</strong></td>
+  <td>The name of the Service element in the generated WSDL for the service.</td>
+</tr>
+
+<tr>
+  <td><strong>wsdlServicePort</strong></td>
+  <td>The name of the port in the generated WSDL for the service.</td>
+</tr>
+
+<tr>
+  <td><strong>wsdlTargetNamespace</strong></td>
+  <td>The target namespace in the generated WSDL for the service.</td>
+</tr>
+
+<tr>
+  <td><strong>wsdlInputSchema</strong></td>
+  <td>A comma separated list of of input Schema for the generated WSDL for the service.</td>
+</tr>
+
+<tr>
+  <td><strong>wsdlSoapActionMode</strong></td>
+  <td>Values are DEFAULT, OPERATION or NONE. 
+  OPERATION forces soapAction to the name of the operation.  
+  DEFAULT causes the soapAction to be set according to the 
+  operations meta data, specifically the soapAction attribute of the operation
+  in the deployment information.  
+  NONE forces the soapAction to "".  The default is DEFAULT.</td>
 </tr>
 
 <tr>
@@ -683,12 +830,114 @@ context parameters or system properties:</p>
   <td>When set to either "1.1" or "1.2", this configures a service to only accept the specified SOAP version. Attempts to connect to the service using another version will result in a fault.</td>
 </tr>
 
-<tr>
-  <td><b>wsdlFile</b></td>
-  <td>The path to a WSDL File; can be an absolute path or a resource that axis.jar can load. Useful to export your custom WSDL file. When specify a path to a resource, place a forward slash to start at the beginning of the classpath (e.g "/org/someone/res/mywsdl.wsdl"). How does Axis know whether to return a file or resource? It looks for a file first, if that is missing a resource is returned.</td>
-</tr>
-
 </table>
+
+</subsection>
+
+</section>
+
+<section name="Individual Operation Configuration">
+
+<p>Here is an <tt>&lt;operation&gt;</tt> element with examples of the current set of options you can set. More may exists (consult the source, as usual).</p>
+<source>
+&lt;operation name=&quot;GetQuote&quot; 
+           qname=&quot;operNS:GetQuote&quot; 
+           returnQName=&quot;GetQuoteResult&quot; 
+           returnType=&quot;xsd:float&quot; 
+           soapAction=&quot;&quot; 
+           returnHeader="true|false"&gt;
+
+    &lt;documentation&gt;Operation level documentation here&lt;/documentation&gt;
+
+    &lt;parameter name=&quot;ticker&quot; type=&quot;tns:string&quot;/&gt;
+
+    &lt;fault name=&quot;InvalidTickerFaultMessage&quot; 
+           qname=&quot;tickerSymbol&quot; 
+           class=&quot;test.wsdl.faults.InvalidTickerFaultMessage&quot; 
+           type=&quot;xsd:string&quot;/&gt;
+&lt;/operation&gt;
+</source>
+
+<p>The example above omits the XML Namespace declarations (xmlns:foo="http://my.namespace/") that could appear
+in each of the elements for the namespaces used.</p>
+
+<subsection name="Operation Attributes">
+
+<dl>
+<dt>name</dt>
+<dd>The name of the operation.  This would generally match the name of the function in your service implementation.</dd>
+
+<dt>qname</dt>
+<dd>The Qualified Name of the top level element for this operation.  This is how Axis maps operations for document/literal services,
+which do not have the operation name in the QName of the XML element on the wire.</dd>
+
+<dt>returnQName</dt>
+<dd>The Qualified Name of the XML element that is returned from this operation.</dd>
+
+<dt>returnType</dt>
+<dd>The Qualified Name of the return type.</dd>
+
+<dt>returnHeader</dt>
+<dd>If true, the return value of the operation is contained in a header.</dd>
+
+<dt>soapAction</dt>
+<dd>The value of the SOAPAction attribute for this operation in the WSDL generated for this service.</dd>
+</dl>
+
+</subsection>
+
+<subsection name="Elements allowed in the Operation Element">
+
+<dl>
+<dt>&lt;documentation&gt;</dt>
+<dd>Documentation text that will get inserted in to the document element of the WSDL for the operation.</dd>
+
+<dt>&lt;parameter&gt;</dt>
+<dd>
+<p>Defines a parameter for the operation. Valid attributes are:</p>
+<table>
+<tr><td><strong>name</strong></td> 
+<td>The name of the parameter.</td></tr>
+<tr><td><strong>qname</strong></td> 
+<td>The QName of the parameter, used in preference to name.</td>
+</tr>
+<tr><td><strong>mode</strong></td> 
+<td>The mode of the parameter.  One of "in", "out" or "inout".</td></tr>
+<tr><td><strong>inHeader</strong></td> 
+<td>If "true", this parameter is an input header.</td></tr>
+<tr><td><strong>outHeader</strong></td> 
+<td>If "true", this parameter is an output header.</td></tr>
+<tr><td><strong>type</strong></td> 
+<td>The QName of the type of the parameter.</td></tr>
+</table>
+<p>
+<strong>NOTE:</strong> A <tt>&lt;documentation&gt;</tt> element may appear as a child of parameter.
+</p>
+</dd>
+
+<dt>&lt;fault&gt;</dt>
+<dd>
+<p>Defines the type information for each fault that the operation may throw.
+Valid attributes are:</p>
+<table>
+<tr><td><strong>name</strong></td> 
+<td>The name of the fault.</td></tr>
+<tr><td><strong>qname</strong></td> 
+<td>The QName of the fault.</td>
+</tr>
+<tr><td><strong>class</strong></td> 
+<td>The Java class that represents this fault.</td></tr>
+<tr>
+  <td><strong>type</strong></td> 
+  <td>The QName of the type that represents the data for this fault.</td>
+</tr>
+</table>
+
+</dd>
+
+</dl>
+
+</subsection>
 
 </section>
 
