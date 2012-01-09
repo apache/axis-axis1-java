@@ -35,10 +35,10 @@
 
 <subsection name="WSDL2Java Reference">
 
-<p>Usage: java org.apache.axis.wsdl.WSDL2Java [options] WSDL-URI<br/>
-Options:</p>
+<source>Usage: java org.apache.axis.wsdl.WSDL2Java [options] WSDL-URI
+Options:
 
-<source>-h, --help
+-h, --help
   print this message and exit
 -v, --verbose
   print informational messages
@@ -221,11 +221,11 @@ The default behavior (as of Axis 1.2 final) is to map this XML construct to a Ja
 <subsection name="Java2WSDL Reference">
 
 <p>Here is the help message generated from the current tool:</p>
-<p>Java2WSDL emitter<br/>
-Usage: java org.apache.axis.wsdl.Java2WSDL [options] class-of-portType<br/>
-Options:</p>
-
-<source>-h, --help
+<source>
+Java2WSDL emitter
+Usage: java org.apache.axis.wsdl.Java2WSDL [options] class-of-portType
+Options:
+-h, --help
   print this message and exit
 -I, --input &lt;argument&gt;
   input WSDL filename
@@ -272,10 +272,10 @@ Options:</p>
   indicate 1.1 or 1.2.  The default is 1.1 (SOAP 1.1 JAX-RPC 
   compliant  1.2 indicates SOAP 1.1 encoded.)
 -A, --soapAction &lt;argument&gt;
-  value of the operations soapAction field. Values are DEFAULT,
+  value of the operation's soapAction field. Values are DEFAULT,
   OPERATION or NONE. OPERATION forces soapAction to the name
   of the operation.  DEFAULT causes the soapAction to be set
-  according to the operations meta data (usually "").  NONE forces
+  according to the operation's meta data (usually "").  NONE forces
   the soapAction to "".  The default is DEFAULT.
 -y, --style &lt;argument&gt;
   The style of binding in the WSDL, either DOCUMENT, RPC, or WRAPPED.
@@ -413,8 +413,8 @@ Service
 <dt>&lt;undeployment&gt;</dt>
 <dd>The root element of the deployment document which tells Axis that this is an undeployment.</dd>
 
-<dt>&lt;handler [name="<i>name</i>"] type="<i>type</i>"/&gt;</dt>
-<dd>Belongs at the top level inside a <b>&lt;deployment&gt;</b> or <b>&lt;undeployment&gt;</b>, or inside a <b>&lt;chain&gt;</b>, <b>&lt;requestFlow&gt;</b>, or <b>&lt;responseFlow&gt;</b>. Defines a Handler, and indicates the type of the handler. "Type" is either the name of another previously defined Handler, or a QName of the form "<b>java:<i>class.name</i></b>". The optional "name" attribute allows you to refer to this Handler definition in other parts of the deployment. May contain an arbitrary number of &lt;<b>parameter name="</b><i>name</i><b>" value="</b><i>value</i><b>"</b>&gt; elements, each of which will supply an option to the deployed Handler.</dd>
+<dt>&lt;handler [name="<i>name</i>"] type="<i>type</i>"&gt;</dt>
+<dd>Belongs at the top level inside a <b>&lt;deployment&gt;</b> or <b>&lt;undeployment&gt;</b>, or inside a <b>&lt;chain&gt;</b>, <b>&lt;requestFlow&gt;</b>, or <b>&lt;responseFlow&gt;</b>. Defines a Handler, and indicates the type of the handler. "Type" is either the name of another previously defined Handler, or a QName of the form "<b>java:<i>class.name</i></b>". The optional "name" attribute allows you to refer to this Handler definition in other parts of the deployment. May contain an arbitrary number of <b>&lt;parameter name="<i>name</i>" value="<i>value</i>"&gt;</b> elements, each of which will supply a parameter to the deployed Handler.</dd>
 
 <dt>&lt;service name="<i>name</i>" provider="<i>provider</i>" &gt;</dt>
 <dd>Deploys/undeploys an Axis Service. This is the most complex WSDD tag, so we're going to spend a little time on it.<br/><br/>
@@ -431,7 +431,7 @@ For more details regarding the Java Provider please see <b>WHERE???</b>.</p>
 documentation on how or if it supports this option.</i></p>
 <p><b><u>Note, Exposing any web service has security implications.</u></b><br/>As a best practices guide it is <u>highly</u> recommend when offering a web service in unsecure environment to restrict allowed methods to only those required for the service being offered. And, for those that are made available, to <b>fully</b> understand their function and how they may access and expose your systems's resources.</p>
   </li>
-  <li><b>allowedRoles</b> : comma-separated list of roles allowed to access this service (Note that these are security roles, as opposed to SOAP roles. Security roles control access, SOAP roles control which SOAP headers are processed.)</li>
+  <li><b>allowedRoles</b> : comma-separated list of roles allowed to access this service. (Note that these are security roles, as opposed to SOAP roles. Security roles control access, SOAP roles control which SOAP headers are processed.)</li>
   <li><b>extraClasses</b> : Specify a space or comma seperated list of class names which should be included in the <b>types</b> section of the WSDL document. This is useful in the case where your service interface references a base class and you would like your WSDL to contain XML Schema type defintions for these other classes.</li>
 </ul>
 If you wish to define handlers which should be invoked either before or after the service's provider, you may do so with the <b>&lt;requestFlow&gt;</b> and the <b>&lt;responseFlow&gt;</b> subelements. Either of those elements may be specified inside the <b>&lt;service&gt;</b> element, and their semantics are identical to the <b>&lt;chain&gt;</b> element described below - in other words, they may contain <b>&lt;handler&gt;</b> and <b>&lt;chain</b>&gt; elements which will be invoked in the order they are specified.<br/>
