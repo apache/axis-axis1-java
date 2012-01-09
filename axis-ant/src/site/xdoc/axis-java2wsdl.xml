@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Axis-java2wsdl Task</title>
+  </properties>
+  <body>
+
+<section name="Description">
+
+<p>Generates a WSDL description from a Java class.</p>
+
+</section>
+
+<section name="Parameters">
+
+<table>
+  <tr>
+    <th>Attribute</th>
+    <th>Description</th>
+    <th>Type</th>
+  </tr>
+  <tr>
+    <td>bindingname</td>
+    <td>The name to use use for the binding element. If not specified, the value of the <code>servicePortName</code> + "SoapBinding" is used.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>classname</td>
+    <td>the class name to import, eg. org.example.Foo. Required. The class must be on the classpath.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>exclude</td>
+    <td>Comma separated list of methods to exclude from the wsdl file.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>extraclasses</td>
+    <td>The setter for the "extraClasses" attribute</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>implclass</td>
+    <td>Sometimes extra information is available in the implementation class file. Use this option to specify the implementation class.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>importschema</td>
+    <td>Option attribute that indicates the name of an XML Schema file that should be physically imported into the generated WSDL.</td>
+    <td>File</td>
+  </tr>
+  <tr>
+    <td>input</td>
+    <td>Optional attribute that indicates the name of the input wsdl file. The output wsdl file will contain everything from the input wsdl file plus the new constructs. If a new construct is already present in the input wsdl file, it is not added. This option is useful for constructing a wsdl file with multiple ports, bindings, or portTypes.</td>
+    <td>File</td>
+  </tr>
+  <tr>
+    <td>location</td>
+    <td>The url of the location of the service. The name after the last slash or backslash is the name of the service port (unless overridden by the -s option). The service port address location attribute is assigned the specified value.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>locationimport</td>
+    <td>the location of the interface WSDL when generating an implementation WSDL Required when <code>outputImpl</code> is set</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>methods</td>
+    <td>If this option is specified, only the indicated methods in your interface class will be exported into the WSDL file. The methods list must be comma separated. If not specified, all methods declared in the interface class will be exported into the WSDL file</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>namespace</td>
+    <td>the target namespace. Required.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>namespaceimpl</td>
+    <td>Namespace of the implementation WSDL.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>output</td>
+    <td>The name of the output WSDL file. If not specified, a suitable default WSDL file is written into the current directory.</td>
+    <td>java.io.File</td>
+  </tr>
+  <tr>
+    <td>outputimpl</td>
+    <td>Use this option to indicate the name of the output implementation WSDL file. If specified, Java2WSDL will produce separate interface and implementation WSDL files. If not, a single WSDL file is generated</td>
+    <td>File</td>
+  </tr>
+  <tr>
+    <td>porttypename</td>
+    <td>Indicates the name to use use for the portType element. If not specified, the class-of-portType name is used.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>serviceelementname</td>
+    <td>the name of the service element. If not specified, the service element is the <code>portTypeName</code>Service.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>serviceportname</td>
+    <td>service port name (obtained from location if not specified)</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>soapaction</td>
+    <td>The setter for the "soapAction" attribute</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>stopclasses</td>
+    <td>Comma separated list of classes which stop the Java2WSDL inheritance search.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>style</td>
+    <td>The style of the WSDL document: RPC, DOCUMENT or WRAPPED. If RPC, a rpc/encoded wsdl is generated. If DOCUMENT, a document/literal wsdl is generated. If WRAPPED, a document/literal wsdl is generated using the wrapped approach.</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>typemappingversion</td>
+    <td>the default type mapping registry to use. Either 1.1 or 1.2. Default is 1.1</td>
+    <td>"1.1", "1.2"</td>
+  </tr>
+  <tr>
+    <td>use</td>
+    <td>Set the use option</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>useinheritedmethods</td>
+    <td>should inherited methods be exported too? Default=false</td>
+    <td>boolean</td>
+  </tr>
+</table>
+
+</section>
+
+<section name="Parameters as nested elements">
+
+<dl>
+<dt>complextype (org.apache.axis.tools.ant.wsdl.ComplexType)</dt>
+<dd>Nested element for Complex Types. Each Complex Type uses the following fields:</dd>
+
+<dt>mapping (org.apache.axis.tools.ant.wsdl.NamespaceMapping)</dt>
+<dd>add a mapping of namespaces to packages</dd>
+
+<dt>mappingset (org.apache.axis.tools.ant.wsdl.MappingSet)</dt>
+<dd>add a mapping of namespaces to packages</dd>
+
+<dt>classpath (org.apache.tools.ant.types.Path)</dt>
+<dd>add a classpath containing the java classes.</dd>
+</dl>
+
+</section>
+
+  </body>
+</document>

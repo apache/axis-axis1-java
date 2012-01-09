@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Axis-admin Task</title>
+  </properties>
+  <body>
+
+<section name="Description">
+
+<p>Task to administer a local or remote Axis server. Remember, for remote admin, the server has to be accept remote management calls.</p>
+
+</section>
+
+<section name="Parameters">
+
+<table>
+  <tr>
+    <th>Attribute</th>
+    <th>Description</th>
+    <th>Type</th>
+  </tr>
+  <tr>
+    <td>debug</td>
+    <td>set a debug flag</td>
+    <td>boolean</td>
+  </tr>
+  <tr>
+    <td>failonerror</td>
+    <td>Whether or not the build should halt if this task fails. Defaults to <code>true</code>.</td>
+    <td>boolean</td>
+  </tr>
+  <tr>
+    <td>fileprotocol</td>
+    <td>specifies that a simple file protocol be used</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>hostname</td>
+    <td>name the host to admin</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>newpassword</td>
+    <td>set a new password; only valid if action=passwd</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>password</td>
+    <td>the admin password</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>port</td>
+    <td>the port to connect to</td>
+    <td>int</td>
+  </tr>
+  <tr>
+    <td>servletpath</td>
+    <td>the path to the AxisAdmin servlet</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>transportchain</td>
+    <td>set the transport chain to use</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>url</td>
+    <td>full url to the admin endpoint</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>username</td>
+    <td>username to log in as</td>
+    <td>String</td>
+  </tr>
+  <tr>
+    <td>xmlfile</td>
+    <td>the name of the XML file containing deployment information</td>
+    <td>File</td>
+  </tr>
+</table>
+
+</section>
+
+  </body>
+</document>
