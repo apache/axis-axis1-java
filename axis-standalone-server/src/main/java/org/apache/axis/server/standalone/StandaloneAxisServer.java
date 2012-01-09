@@ -61,6 +61,7 @@ public class StandaloneAxisServer {
         int port = Integer.parseInt(cmdLine.getOptionValue("p"));
         
         Server server = new Server(port);
+        server.setGracefulShutdown(1000);
         Context context = new Context(server, "/axis");
         context.setSessionHandler(new SessionHandler());
         QuitListener quitListener = new QuitListener();
