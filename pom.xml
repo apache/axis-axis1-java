@@ -64,6 +64,7 @@
         <module>axis-maven-plugin</module>
         <module>axis-standalone-server</module>
         <module>axis-castor</module>
+        <module>axis-jms</module>
         <module>integration</module>
         <module>axis-war</module>
     </modules>
