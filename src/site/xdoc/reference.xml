@@ -580,11 +580,6 @@ alternate configuration mechanisms.</td>
 </tr>
 
 <tr>
-  <td><b>axis.jws.servletClassDir</b></td>
-  <td>Path to where compiled JWS pages are placed.</td>
-</tr>
-
-<tr>
   <td><b>axis.sendMinimizedElements</b></td>
   <td>Flag to turn on support for a when .NET1.0 can't correctly handle some bits of XML <a href="http://issues.apache.org/jira/secure/ViewIssue.jspa?key=AXIS-667">that it should.</a> The flag defaults to true; if some .NET clients are failing to handle a Web Service returning an empty array inside another object, set this flag to <i>false</i>.</td>
 </tr>
@@ -634,6 +629,26 @@ alternate configuration mechanisms.</td>
 </tr>
 
 </tbody>
+</table>
+
+</section>
+
+<section name="AxisServlet configuration">
+
+<p>The following properties are recognized by AxisServlet. They may be specified as servlet parameters,
+context parameters or system properties:</p>
+
+<table>
+  <tr>
+    <td><b>axis.jws.servletClassDir</b></td>
+    <td>Path to where compiled JWS pages are placed. This may be an absolute path or a path relative
+    to the web application root.</td>
+  </tr>
+  <tr>
+    <td><b>axis.attachments.Directory</b></td>
+    <td>The directory where temporary files for attachments are stored. Defaults to the WEB-INF/attachments
+   	directory for exploded WARs.</td>
+  </tr>
 </table>
 
 </section>
