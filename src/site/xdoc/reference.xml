@@ -405,10 +405,20 @@ Service
   <ul> 
     <li><b>&lt;parameter&gt;</b> : This is used to set options on the Axis engine - see the <a href="#GlobalAxisConfiguration">Global Axis Configuration</a> section below for more details. Any number of <b>&lt;parameter&gt;</b> elements may appear.</li>
     <li><b>&lt;role&gt;</b> : This is used to set a SOAP actor/role URI which the engine will recognize. This allows SOAP headers targeted at that role to be successfully processed by the engine. Any number of <b>&lt;role&gt;</b> elements may appear.</li>
-    <li><b>&lt;requestFlow&gt;</b> : This is used to configure global request Handlers, which will be invoked before the actual service on every request. You may put any number of <b>&lt;handler&gt;</b> or <b>&lt;chain&gt;</b> elements (see below) inside the <b>&lt;requestFlow&gt;</b>, but there may only be one <b>&lt;requestFlow&gt;</b>.</li>
-    <li><b>&lt;responseFlow&gt;</b> : This is used to configure global response Handlers, which will be invoked after the actual service on every request. You may put any number of <b>&lt;handler&gt;</b> or <b>&lt;chain&gt;</b> elements (see below) inside the <b>&lt;responseFlow&gt;</b>, but there may only be one <b>&lt;responseFlow&gt;</b>.</li>
+    <li><b>&lt;requestFlow&gt;</b> : This is used to configure global request Handlers, which will be invoked before the actual service on every request.</li>
+    <li><b>&lt;responseFlow&gt;</b> : This is used to configure global response Handlers, which will be invoked after the actual service on every request.</li>
   </ul> 
 </dd> 
+
+<dt>&lt;requestFlow [name="<i>name</i>"] [type="<i>type</i>"] &gt;</dt>
+<dd>This is used to configure handlers in request flow. You may put any number of <strong>&lt;handler&gt;</strong> or 
+    <strong>&lt;chain&gt;</strong> elements (see below) inside the <strong>&lt;requestFlow&gt;</strong>, 
+    but there may only be one <strong>&lt;requestFlow&gt;</strong>.</dd>
+
+<dt>&lt;responseFlow [name="<i>name</i>"] [type="<i>type</i>"] &gt;</dt>
+<dd>This is used to configure handlers in response flow. You may put any number of <strong>&lt;handler&gt;</strong> or 
+    <strong>&lt;chain&gt;</strong> elements (see below) inside the <strong>&lt;responseFlow&gt;</strong>, 
+    but there may only be one <strong>&lt;responseFlow&gt;</strong>.</dd>
 
 <dt>&lt;undeployment&gt;</dt>
 <dd>The root element of the deployment document which tells Axis that this is an undeployment.</dd>
