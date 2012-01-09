@@ -671,14 +671,7 @@ alternate configuration mechanisms.</td>
 
 <p>Axis uses the Jakarta Projects's <a href="http://jakarta.apache.org/commons/logging/">commons-logging API</a>, as implemented in <code>commons-logging.jar</code> to implement logging throughout the code. Normally this library routes the logging to the Log4j library, provided that an implementation of log4j is on the classpath of the server or client. The commons-logging API can also bind to Avalon, <code>System.out</code> or the Java1.4 logger. The JavaDocs for the library explain the process for selecting a logger, which can be done via a system property or a properties file in the classpath.</p>
 
-<p>Log4J can be configured using the file log4j.properties in the classpath; later versions also support an XML configuration. Axis includes a preconfigured log4j.properties file in <code>axis.jar</code>. While this is adequate for basic use, any complex project will want to modify their own version of the file. Here is what to do</p>
-
-<ol>
-  <li>Open up axis.jar in a zipfile viewer and remove log4j.properties from the jar</li>
-  <li>Or, when building your own copy of axis.jar, set the Ant property <code>exclude.log4j.configuration</code> to keep the properties file out the JAR.</li>
-  <li>Create your own log4J.properties file, and include it in <code>WEB-INF/classes</code> (server-side), in your main application JAR file client side.</li>
-  <li>Edit this log4J properties file to your hearts content. Server side, setting up rolling logs with fancy html output is convenient, though once you start clustering the back end servers that ceases to be as usuable. Log4J power tools, such as 'chainsaw', are the secret here.</li>
-</ol>
+<p>Log4J can be configured using the file log4j.properties in the classpath; later versions also support an XML configuration.</p>
 
 <subsection name="Log Categories">
 
