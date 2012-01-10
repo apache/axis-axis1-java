@@ -111,6 +111,22 @@ public class StartServerMojo extends AbstractServerMojo {
      */
     private boolean debug;
     
+    /**
+     * The arguments to pass to the server JVM when JMX is enabled.
+     * 
+     * @parameter default-value="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+     */
+    private String jmxArgs;
+    
+    /**
+     * Indicates whether the server should be started with remote JMX enabled. This flag can only be
+     * set from the command line.
+     * 
+     * @parameter expression="${axis.server.jmx}" default-value="false"
+     * @readonly
+     */
+    private boolean jmx;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
@@ -163,7 +179,10 @@ public class StartServerMojo extends AbstractServerMojo {
         // Compute JVM arguments
         List vmArgs = new ArrayList();
         if (debug) {
-            vmArgs.addAll(Arrays.asList(debugArgs.split(" ")));
+            processVMArgs(vmArgs, debugArgs);
+        }
+        if (jmx) {
+            processVMArgs(vmArgs, jmxArgs);
         }
         if (log.isDebugEnabled()) {
             log.debug("Additional VM args: " + vmArgs);
@@ -205,5 +224,9 @@ public class StartServerMojo extends AbstractServerMojo {
                 }
             }
         }
+    }
+    
+    private static void processVMArgs(List vmArgs, String args) {
+        vmArgs.addAll(Arrays.asList(args.split(" ")));
     }
 }
