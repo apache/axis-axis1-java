@@ -1,0 +1,780 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Integration Guide</title>
+  </properties>
+  <body>
+
+<section name="Table of Contents">
+
+<macro name="toc"/>
+
+</section>
+
+<section name="Introduction">
+
+<p>The primary purpose of this guide is to present how Axis can be integrated into an existing web application server, such as Tomcat or WebSphere, for example. Axis has a number of Pluggable APIs that are necessary for such an integration.</p>
+
+<p>The reader may find useful background information in the <a href="architecture-guide.html">Architecture Guide</a>.</p>
+
+</section>
+
+<section name="Pluggable APIs">
+
+<p>The following are the points that are pluggable in order to integrate Axis into a web application server. The first subsection details a number of pluggable components in general. More details are provided for other components in the remaining subsections.</p>
+
+<subsection name="Components">
+
+<p>This section describes in general how to plug specializations of various components into Axis.</p>
+
+<h4>General Strategy</h4>
+
+<p>To override the default behavior for a pluggable component:</p>
+
+<ul>
+  <li>Develop implementation of components interface</li>
+  <li>Define the implementation class to Axis by either creating a service definition file (prefered) or by setting a system property.
+    <ul>
+      <li><b>PREFERED:</b> To create a service definition file:
+        <ul>
+          <li>The name of the service definition file is derived from the interface or abstract class which the service implements/extends:<br/>
+            <code>/META-INF/services/&lt;componentPackage&gt;.&lt;interfaceName&gt;</code>.</li>
+          <li>Put the fully qualified class name of the implementation class on a line by itself in the service definition file.</li>
+        </ul>
+      </li>
+      <li>Set system property:
+        <ul>
+          <li>The name of the system property is the name of the interface.</li>
+          <li>The value of the system property is the name of the implementation.</li>
+          <li>The optional system property name (in table, below) may be also be used.</li>
+          <li>Setting a system property is not prefered, particularly in a J2EE or other application hosting environment, because it imposes a directive across all applications. This may or may not be appropriate behavior. If it is to be done, it should never be done from within a Web Application at runtime.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Package the implementation class and, if used, the service definition file in a JAR file and/or place it where it can be picked up by a class loader (CLASSPATH).</li>
+</ul>
+
+<h4>Example 1</h4>
+
+<p>To override the default behavior for the Java Compiler:</p>
+
+<ul>
+  <li>An implementation of the <code>Compiler</code> interface is already provided for the <code>Jikes</code> compiler.</li>
+  <li>Create the service definition file named:<br/>
+    <code>/META-INF/services/org.apache.axis.components.compiler.Compiler</code></li>
+  <li>Add the following line to the service definition file:<br/>
+    <code>org.apache.axis.components.compiler.Jikes</code></li>
+  <li>Since <code>org.apache.axis.components.compiler.Jikes</code> is packaged with Axis, all that needs to be done is to ensure that the service definition file is loadable by a class loader.</li>
+</ul>
+
+<h4>Example 2</h4>
+
+<p>To override the default behavior for the SocketFactory in an environment that does not allow resources to be located/loaded appropriately, or where the behavior needs to be forced to a specific implementation:</p>
+
+<ul>
+  <li>Provide an implementation of the <code>SocketFactory</code> interface, for example <code>your.package.YourSocketFactory</code></li>
+  <li>Set the system property named<br/>
+    <code>org.apache.axis.components.net.SocketFactory</code><br/>
+    to the value<br/>
+    <code>your.package.YourSocketFactory</code><br/><br/>
+    This can be done by using the JVM commandline<br/>
+    <code>-Dorg.apache.axis.components.net.SocketFactory=your.package.YourSocketFactory</code></li>
+  <li>Ensure that the implementation class is loadable by a class loader.</li>
+</ul>
+
+<h4>Reference</h4>
+
+<p>(Component/Package: org.apache.axis.components.*)</p>
+
+<table>
+
+<tr>
+  <th>Component/Package</th>
+  <th>Factory</th>
+  <th>Interface</th>
+  <th>Optional System Property</th>
+  <th>Default Implementation</th>
+</tr>
+
+<tr>
+  <td>compiler</td>
+  <td>CompilerFactory.getCompiler()</td>
+  <td>Compiler</td>
+  <td>axis.Compiler</td>
+  <td>Javac</td>
+</tr>
+
+<tr>
+  <td>image</td>
+  <td>ImageIOFactory.getImageIO()</td>
+  <td>ImageIO</td>
+  <td>axis.ImageIO</td>
+  <td>MerlinIO, JimiIO, JDK13IO</td>
+</tr>
+
+<tr>
+  <td>jms</td>
+  <td>JMSVendorAdapterFactory.getJMSVendorAdapter()</td>
+  <td>JMSVendorAdapter</td>
+  <td></td>
+  <td>JNDIVendorAdapter</td>
+</tr>
+
+<tr>
+  <td>net</td>
+  <td>SocketFactoryFactory.getFactory()</td>
+  <td>SocketFactory</td>
+  <td>axis.socketFactory</td>
+  <td>DefaultSocketFactory</td>
+</tr>
+
+<tr>
+  <td>net</td>
+  <td>SocketFactoryFactory.getSecureFactory()</td>
+  <td>SecureSocketFactory</td>
+  <td>axis.socketSecureFactory</td>
+  <td>JSSESocketFactory</td>
+</tr>
+</table>
+
+<!--
+<h3><a name="System Management Plug"></a>System Management</h3>
+What points are necessary to manage Axis?
+<ul>
+  <li>Justification/Rationale - why is this plug point necessary? Spec compliance?</li>
+  <li>Interfaces</li>
+  <li>Mechanism</li>
+  <ul>
+    <li>Life cycle</li>
+    <li>Exception handling - in general; plug-in shouldn't throw any exceptions - does runtime ignore? Log?)</li>
+    <li>Multiple thread support? Ie., is synchronization required?</li>
+  </ul>
+  <li>Configuration/reconfiguration</li>
+  <li>Default behavior if not plugged.</li>
+  <li>Example</li>
+</ul>
+-->
+
+</subsection>
+
+<subsection name="Logging/Tracing">
+
+<p>Axis logging and tracing is based on the Logging component of the <a href="http://jakarta.apache.org/commons/index.html">Jakarta Commons</a> project, or the Jakarta Commons Logging (JCL) SPI. The JCL provides a Log interface with thin-wrapper implementations for other logging tools, including <a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>, <a href="http://jakarta.apache.org/avalon/logkit/index.html">Avalon LogKit</a>, and <a>JDK 1.4</a>. The interface maps closely to Log4J and LogKit.</p>
+
+<h4>Justification/Rationale</h4>
+
+<p>A pluggable logging/trace facility enables Axis to direct logging/trace messages to a host web application server's logging facility. A central logging facility with a single point of configuration/control is superior to distinct logging mechanisms for each of a multitude of middleware components that are to be integrated into a web application server.</p>
+
+<h4>Integration</h4>
+
+<p>The minimum requirement to integrate with another logger is to provide an implementation of the <code>org.apache.commons.logging.Log</code> interface. In addition, an implementation of the <code>org.apache.commons.logging.LogFactory</code> interface can be provided to meet specific requirements for connecting to, or instantiating, a logger.</p>
+
+<ul>
+  <li><b>org.apache.commons.logging.Log</b>
+    <p>The <code>Log</code> interface defines the following methods for use in writing log/trace messages to the log:</p>
+    <source>  log.fatal(Object message);
+  log.fatal(Object message, Throwable t);
+  log.error(Object message);
+  log.error(Object message, Throwable t);
+  log.warn(Object message);
+  log.warn(Object message, Throwable t);
+  log.info(Object message);
+  log.info(Object message, Throwable t);
+  log.debug(Object message);
+  log.debug(Object message, Throwable t);
+  log.trace(Object message);
+  log.trace(Object message, Throwable t);
+
+  log.isFatalEnabled();
+  log.isErrorEnabled();
+  log.isWarnEnabled();
+  log.isInfoEnabled();
+  log.isDebugEnabled();
+  log.isTraceEnabled();</source>
+    <p>Semantics for these methods are such that it is expected that the severity of messages is ordered, from highest to lowest:</p>
+    <ul>
+      <li>fatal - Consider logging to console and system log.</li>
+      <li>error - Consider logging to console and system log.</li>
+      <li>warn - Consider logging to console and system log.</li>
+      <li>info - Consider logging to console and system log.</li>
+      <li>debug - Log to system log, if enabled.</li>
+      <li>trace - Log to system log, if enabled.</li>
+    </ul>
+  </li>
+  <li><b>org.apache.commons.logging.LogFactory</b>
+    <p>If desired, the default implementation of the <code>org.apache.commons.logging.LogFactory</code> interface can be overridden, allowing the JDK 1.3 Service Provider discovery process to locate and create a LogFactory specific to the needs of the application. Review the Javadoc for the <code>LogFactoryImpl.java</code> for details.</p>
+  </li>
+</ul>
+
+<h4>Mechanism</h4>
+
+<ul>
+  <li><b>Life cycle</b>
+    <p>The JCL LogFactory implementation must assume responsibility for either connecting/disconnecting to a logging toolkit, or instantiating/initializing/destroying a logging toolkit.</p>
+  </li>
+  <li><b>Exception handling</b>
+    <p>The JCL Log interface doesn't specify any exceptions to be handled, the implementation must catch any exceptions.</p>
+  </li>
+  <li><b>Multiple threads</b>
+    <p>The JCL Log and LogFactory implementations must ensure that any synchronization required by the logging toolkit is met.</p>
+  </li>
+</ul>
+
+<h4>Logger Configuration</h4>
+
+<ul>
+  <li><b>Log</b>
+    <p>The default <code>LogFactory</code> provided by JCL can be configured to instantiate a specific implementation of the <code>org.apache.commons.logging.Log</code> interface by setting the property <code>org.apache.commons.logging.Log</code>. This property can be specified as a system property, or in the <code>commons-logging.properties</code> file, which must exist in the CLASSPATH.</p>
+  </li>
+  <li><b>Default logger if not plugged</b>
+    <p>The Jakarta Commons Logging SPI uses the implementation of the <code>org.apache.commons.logging.Log</code> interface specified by the system property <code>org.apache.commons.logging.Log</code>. If the property is not specified or the class is not available then the JCL provides access to a default logging toolkit by searching the CLASSPATH for the following toolkits, in order of preference:</p>
+    <ul>
+      <li><a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a></li>
+      <li>JDK 1.4</li>
+      <li>JCL SimpleLog</li>
+    </ul>
+  </li>
+</ul>
+
+</subsection>
+
+<subsection name="Configuration">
+
+<p>The internal data model used by Axis is based on an Axis specific data model: Web Services Deployment Descriptor (WSDD). Axis initially obtains the WSDD information for a service from an instance of <code>org.apache.axis.EngineConfiguration</code>.</p>
+
+<p>The EngineConfiguration is provided by an implementation of the interface <code>org.apache.axis.EngineConfigurationFactory</code>, which currently provides methods that return client and server configurations.</p>
+
+<p>Our focus will be how to define the implementation class for <code>EngineConfigurationFactory</code>.</p>
+
+<ul>
+  <li>Justification/Rationale
+    <p>While the default behaviour is sufficient for general use of Axis, integrating Axis into an existing application server may require an alternate deployment model. A customized implementation of the EngineConfigurationFactory would map from the hosts deployment model to Axis's internal deployment model.</p>
+  </li>
+  <li>Mechanism
+    <p>The relevant sequence of instructions used to obtain configuration information and initialize Axis is as follows:</p>
+    <source>EngineConfigurationFactory factory = EngineConfigurationFactoryFinder(someContext);
+EngineCongfiguration config = factory.getClientEngineConfig();
+AxisClient = new AxisClient(config);</source>
+    <p>The details may vary (server versus client, whether other factories are involved, etc). Regardless, the point is that integration code is responsible for calling <code>EngineConfigurationFactoryFinder(someContext)</code> and ensuring that the results are handed to Axis. <code>someContext</code> is key to how the factory finder locates the appropriate implementation of EngineConfigurationFactory to be used, if any.</p>
+    <p>EngineConfigurationFactoryFinder works as follows:</p>
+    <ul>
+      <li>Obtain a list of classes that implement <code>org.apache.axis.EngineConfigurationFactory</code>, in the following order:
+        <ul>
+          <li>The value of the system property <code>axis.EngineConfigFactory</code>.</li>
+          <li>The value of the system property <code>org.apache.axis.EngineConfigurationFactory</code>.</li>
+          <li>Locate all resources named <code>META-INF/services/org.apache.axis.EngineConfigurationFactory</code>. Each line of such a resource identifies the name of a class implementing the interface ('#' comments, through end-of-line).</li>
+          <li><code>org.apache.axis.configuration.EngineConfigurationFactoryServlet</code></li>
+          <li><code>org.apache.axis.configuration.EngineConfigurationFactoryDefault</code></li>
+        </ul>
+      </li>
+      <li>Classes implementing EngineConfigurationFactory are required to provide the method<br/>
+        <code>public static EngineConfigurationFactory newFactory(Object)</code><br/>
+        This method is called, passing <code>someContext</code> as the parameter.</li>
+      <li>The <code>newFactory</code> method is required to check the <code>someContext</code> parameter to determine if it is meaningfull to the class (at a minimum, verify that it is of an expected type, or class) and may, in addition, examine the overall runtime environment. If the environment can provide information required by an EngineConfigurationFactory, then the <code>newFactory()</code> may return in instance of that factory. Otherwise, <code>newFactory()</code> must return null.</li>
+      <li>EngineConfigurationFactoryFinder returns the first non-null factory it obtains.</li>
+    </ul>
+  </li>
+  <li>Default behavior
+    <p>The default behaviour is provided by the last two elements of the list of implementing classes, as described above:</p>
+    <ul>
+      <li><code>org.apache.axis.configuration.EngineConfigurationFactoryServlet</code>
+        <p><code>newFactory(obj)</code> is called. If <code>obj instanceof javax.servlet.ServletContext</code> is true, then an instance of this class is returned.</p>
+        <p>The default Servlet factory is expected to function as a server (as a client it will incorrectly attempt to load the WSDD file <code>client-config.wsdd</code> from the current working directory!).</p>
+        <p>The default Servlet factory will open the Web Application resource <code>/WEB-INF/server-config.wsdd</code> (The name of this file may be changed using the system property <code>axis.ServerConfigFile</code>):</p>
+        <ul>
+          <li>If it exists as an accessible file (i.e. not in a JAR/WAR file), then it opens it as a file. This allows changes to be saved, if changes are allowed &amp; made using the Admin tools.</li>
+          <li>If it does not exist as a file, then an attempt is made to access it as a resource stream (getResourceAsStream), which works for JAR/WAR file contents.</li>
+          <li>If the resource is simply not available, an attempt is made to create it as a file.</li>
+          <li>If all above attempts fail, a final attempt is made to access <code>org.apache.axis.server.server-config.wsdd</code> as a data stream.</li>
+        </ul>
+      </li>
+      <li><code>org.apache.axis.configuration.EngineConfigurationFactoryDefault</code>
+        <p><code>newFactory(obj)</code> is called. If <code>obj</code> is null then an instance of this class is returned. A non-null <code>obj</code> is presumed to require a non-default factory.</p>
+        <p>The default factory will load the WSDD files <code>client-config.wsdd</code> or <code>server-config.wsdd</code>, as appropriate, from the current working directory. The names of these files may be changed using the system properties <code>axis.ClientConfigFile</code> and <code>axis.ServerConfigFile</code>, respectively.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+</subsection>
+
+<subsection name="Handlers">
+
+<p>See the <a href="architecture-guide.html">Architecture Guide</a> for current information on Handlers.</p>
+
+</subsection>
+
+<subsection name="Internationalization">
+
+<p>Axis supports internationalization by providing both a property file of the strings used in Axis, and an extension mechanism that facilitates accessing internal Axis messages and extending the messages available to integration code based on existing Axis code.</p>
+
+<h4>Translation</h4>
+
+<ul>
+  <li>Justification/Rationale
+    <p>In order for readers of languages other than English to be comfortable with Axis, we provide a mechanism for the strings used in Axis to be translated. We do not provide any translations in Axis; we merely provide a means by which translators can easily plug in their translations.</p>
+  </li>
+  <li>Mechanism
+    <p>Axis provides english messages in the Java resource named org.apache.axis.i18n.resource.properties (in the source tree, the file is named xml-axis/java/src/org/apache/axis/i18n/resource.properties).</p>
+    <p>Axis makes use of the Java internationalization mechanism - i.e., a java.util.ResourceBundle backed by a properties file - and the java.text.MessageFormat class to substitute parameters into the message text.</p>
+    <ul>
+      <li>java.util.ResourceBundle retrieves message text from a property file using a key provided by the program. Entries in a message resource file are of the form &lt;key&gt;=&lt;message&gt;.</li>
+      <li>java.text.MessageFormat substitutes variables for markers in the message text. Markers use the syntax <code>"{X}"</code> where <code>X</code> is the number of the variable, starting at 0.</li>
+    </ul>
+    <p>For example: <code>myMsg00=My {0} is {1}.</code></p>
+    <p>Translation requires creating an alternate version of the property file provided by Axis for a target language. The JavaDoc for <code>java.utils.ResourceBundle</code> provides details on how to identify different property files for different locales.</p>
+    <p>For details on using Axis's internationalization tools, see the <a href="developers-guide.html">Developer's Guide</a>.</p>
+  </li>
+  <li>Default behavior
+    <p>The default behavior, meaning what happens when a translated file doesn't exist for a given locale, is to fall back on the English-language properties file. If that file doesn't exist (unlikely unless something is seriously wrong), Axis will throw an exception with an English-language reason message.</p>
+  </li>
+</ul>
+
+<h4>Extending Message Files</h4>
+
+<p>Axis provides a Message file extension mechanism that allows Axis-based code to use Axis message keys, as well as new message keys unique to the extended code.</p>
+
+<ul>
+  <li>Justification/Rationale
+    <p>Axis provides pluggable interfaces for various Axis entities, including EngineConfigurationFactory's, Provides, and Handlers. Axis also provides a variety of implementations of these entities. It is convenient to use Axis source code for such implementations as starting points for developing extentions and customizations that fulfill the unique needs of the end user.</p>
+  </li>
+  <li>Procedure
+    <p>To extend the Axis message file:</p>
+    <ul>
+      <li>Copy the Axis source file <code>java/src/org/apache/axis/i18n/Messages.java</code> to your project/package, say <code>my/project/package/path/Messages.java</code>.
+        <ul>
+          <li>Set the <code>package</code> declaration in the copied file to the correct package name.</li>
+          <li>Set the private attribute <code>projectName</code> to <code>"my.project"</code>: the portion of the package name that is common to your project. <code>projectName</code> must be equal to or be a prefix of the copied Messages package name.</li>
+        </ul>
+      </li>
+      <li>Create the file <code>my/project/package/path/resource.properties</code>. Add new message key/value pairs to this file.</li>
+      <li>As you copy Axis source files over to your project, change the <code>import org.apache.axis.i18n.Messages</code> statement to <code>import my.project.package.path.Messages</code>.</li>
+      <li>Use the methods provided by the class Messages, as discussed in the <a href="developers-guide.html">Developer's Guide</a>, to access the new messages.</li>
+    </ul>
+  </li>
+  <li>Behavior
+    <ul>
+      <li>Local Search
+        <p><code>Messages</code> begins looking for a key's value in the <code>resources.properties</code> resource in it's (Messages) package.</p>
+      </li>
+      <li>Hierarchical Search
+        <p>If <code>Messages</code> cannot locate either the key, or the resource file, it walks up the package hierarchy until it finds it. The top of the hierarchy, above which it will not search, is defined by the <code>projectName</code> attribute, set above.</p>
+      </li>
+      <li>Default behavior
+        <p>If the key cannot be found in the package hierarchy then a default resource is used. The default behaviour is determined by the <code>parent</code> attribute of the <code>Messages</code> class copied to your extensions directory.</p>
+        <p>Unless changed, the default behavior, meaning what happens when a key isn't defined in the new properties file, is to fall back to the Axis properties file (org.apache.axis.i18n.resource.properties).</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+</subsection>
+
+<subsection name="Performance Monitoring">
+
+<p>Axis does not yet include specific Performance Monitoring Plugs.</p>
+
+<!--
+<ul>
+  <li>Justification/Rationale - why is this plug point necessary? Spec compliance?</li>
+  <li>Interfaces</li>
+  <li>Mechanism</li>
+  <ul>
+    <li>Life cycle</li>
+    <li>Exception handling - in general; plug-in shouldn't throw any exceptions - does runtime ignore? Log?)</li>
+    <li>Multiple thread support? Ie., is synchronization required?</li>
+  </ul>
+  <li>Configuration/reconfiguration</li>
+  <li>Default behavior if not plugged.</li>
+  <li>Example</li>
+</ul>
+-->
+
+</subsection>
+
+<subsection name="Encoding">
+
+<p>Axis does not yet include an Encoding Plug.</p>
+
+<!--
+How can a system integrator plug in other encoding mechanisms such as SOAP 1.2 or optimized XML-based encoding?
+<ul>
+  <li>Justification/Rationale - why is this plug point necessary? Spec compliance?</li>
+  <li>Interfaces</li>
+  <li>Mechanism</li>
+  <ul>
+    <li>Life cycle</li>
+    <li>Exception handling - in general; plug-in shouldn't throw any exceptions - does runtime ignore? Log?)</li>
+    <li>Multiple thread support? Ie., is synchronization required?</li>
+  </ul>
+  <li>Configuration/reconfiguration</li>
+  <li>Default behavior if not plugged.</li>
+  <li>Example</li>
+</ul>
+-->
+
+</subsection>
+
+<subsection name="WSDL Parser and Code Generator Framework">
+
+<p>WSDL2Java is Axis's tool to generate Java artifacts from WSDL. This tool is extensible. If users of Axis wish to extend Axis, then they may also need to extend or change the generated artifacts. For example, if Axis is inserted into some product which has an existing deployment model that's different than Axis's deployment model, then that product's version of WSDL2Java will be required to generate deployment descriptors other than Axis's deploy.wsdd.</p>
+
+<p>What follows immediately is a description of the framework. If you would rather dive down into the dirt of <a href="#WSDL%20Examples">examples</a>, you could learn a good deal just from them. Then you could come back up here and learn the gory details.</p>
+
+<p>There are three parts to WSDL2Java:</p>
+
+<ol>
+  <li>The symbol table</li>
+  <li>The parser front end with a generator framework</li>
+  <li>The code generator back end (WSDL2Java itself)</li>
+</ol>
+
+<h4>Symbol Table</h4>
+
+<p>The symbol table, found in org.apache.axis.wsdl.symbolTable, will contain all the symbols from a WSDL document, both the symbols from the WSDL constructs themselves (portType, binding, etc), and also the XML schema types that the WSDL refers to.</p>
+
+<p><font color="#FF0000">NOTE: Needs lots of description here.</font></p>
+
+<p>The symbol table is not extensible, but you <b>can</b> add fields to it by using the Dynamic Variables construct:</p>
+
+<ul>
+  <li>You must have some constant object for a dynamic variable key. For example: public static final String MY_KEY = "my key";</li>
+  <li>You set the value of the variable in your GeneratorFactory.generatorPass: entry.setDynamicVar(MY_KEY, myValue);</li>
+  <li>You get the value of the variable in your generators: Object myValue = entry.getDynamicVar(MY_KEY);</li>
+</ul>
+
+<h4>Parser Front End and Generator Framework</h4>
+
+<p>The parser front end and generator framework is located in org.apache.axis.wsdl.gen. The parser front end consists of two files:</p>
+
+<ul>
+  <li>Parser
+    <source>public class Parser {
+  public Parser();
+  public boolean isDebug();
+  public void setDebug(boolean);
+  public boolean isImports();
+  public void setImports(boolean);
+  public boolean isVerbose();
+  public void setVerbose(boolean);
+  public long getTimeout();
+  public void setTimeout(long);
+  public java.lang.String getUsername();
+  public void setUsername(java.lang.String);
+  public java.lang.String getPassword();
+  public void setPassword(java.lang.String);
+  public GeneratorFactory getFactory();
+  public void setFactory(GeneratorFactory);
+  public org.apache.axis.wsdl.symbolTable.SymbolTable getSymbolTable();
+  public javax.wsdl.Definition getCurrentDefinition();
+  public java.lang.String getWSDLURI();
+  public void run(String wsdl) throws java.lang.Exception;
+  public void run(String context, org.w3c.dom.Document wsdlDoc)
+    throws java.io.IOException, javax.wsdl.WSDLException;
+}</source>
+    <p>The basic behavior of this class is simple: you instantiate a Parser, then you run it.</p>
+    <source>Parser parser = new Parser();
+parser.run("myfile.wsdl");</source>
+    <p>There are various options on the parser that have accessor methods:</p>
+    <ul>
+      <li>debug - default is false - dump the symbol table after the WSDL file has been parsed</li>
+      <li>imports - default is true - should imported files be visited?</li>
+      <li>verbose - default is false - list each file as it is being parsed</li>
+      <li>timeout - default is 45 - the number of seconds to wait before halting the parse</li>
+      <li>username - no default - needed for protected URI's</li>
+      <li>password - no default - needed for protected URI's</li>
+    </ul>
+    <p>Other miscellaneous methods on the parser:</p>
+    <ul>
+      <li>get/setFactory - get or set the GeneratorFactory on this parser - see below for details. The default generator factory is NoopFactory, which generates nothing.</li>
+      <li>getSymbolTable - once a run method is called, the symbol table will be populated and can get queried.</li>
+      <li>getCurrentDefinition - once a run method is called, the parser will contain a Definition object which represents the given wsdl file. Definition is a WSDL4J object.</li>
+      <li>getWSDLURI - once the run method which takes a string is called, the parser will contain the string representing the location of the WSDL file. Note that the other run method - run(String context, Document wsdlDoc) - does not provide a location for the wsdl file. If this run method is used, getWSDLURI will be null.</li>
+      <li>There are two run methods. The first, as shown above, takes a URI string which represents the location of the WSDL file. If you've already parsed the WSDL file into an XML Document, then you can use the second run method, which takes a context and the WSDL Document.</li>
+    </ul>
+    <p>An extension of this class would ...</p>
+    <p><font color="#FF0000">NOTE: continue this sentiment...</font></p>
+  </li>
+
+  <li>WSDL2
+    <p>Parser is the programmatic interface into the WSDL parser. WSDL2 is the command line tool for the parser. It provides an extensible framework for calling the Parser from the command line. It is named WSDL2 because extensions of it will likely begin with WSDL2: <b>WSDL2</b>Java, <b>WSDL2</b>Lisp, <b>WSDL2</b>XXX.</p>
+    <source>public class WSDL2 {
+  protected WSDL2();
+  protected Parser createParser();
+  protected Parser getParser();
+  protected void addOptions(org.apache.axis.utils.CLOptionDescriptor[]);
+  protected void parseOption(org.apache.axis.utils.CLOption);
+  protected void validateOptions();
+  protected void printUsage();
+  protected void run(String[]);
+  public static void main(String[]);
+}</source>
+    <p>Like all good command line tools, it has a main method. Unlike some command line tools, however, its methods are not static. Static methods are not extensible. WSDL2's main method constructs an instance of itself and calls methods on that instance rather than calling static methods. These methods follow a behavior pattern. The main method is very simple:</p>
+    <source>public static void main(String[] args) {
+  WSDL2 wsdl2 = new WSDL2();
+  wsdl2.run(args);
+}</source>
+    <p>The constructor calls createParser to construct a Parser or an extension of Parser.</p>
+    <p>run calls:</p>
+    <ul>
+      <li>parseOption to parse each command line option and call the appropriate Parser accessor. For example, when this method parses --verbose, it calls parser.setVerbose(true)</li>
+      <li>validateOptions to make sure all the option values are consistent</li>
+      <li>printUsage if the usage of the tool is in error</li>
+      <li>parser.run(args);</li>
+    </ul>
+    <p>If an extension has additional options, then it is expected to call addOptions before calling run. So extensions will call, as necessary, getParser, addOptions, run. Extensions will override, as necessary, createParser, parseOption, validateOptions, printUsage.</p>
+    <p>The generator framework consists of 2 files:</p>
+    <ul>
+      <li>Generator
+        <p>The Generator interface is very simple. It just defines a generate method.</p>
+        <source>public interface Generator
+{
+  public void generate() throws java.io.IOException;
+}</source>
+      </li>
+      <li>GeneratorFactory
+        <source>public interface GeneratorFactory
+{
+  public void generatorPass(javax.wsdl.Definition, SymbolTable);
+  public Generator getGenerator(javax.wsdl.Message, SymbolTable);
+  public Generator getGenerator(javax.wsdl.PortType, SymbolTable);
+  public Generator getGenerator(javax.wsdl.Binding, SymbolTable);
+  public Generator getGenerator(javax.wsdl.Service, SymbolTable);
+  public Generator getGenerator(TypeEntry, SymbolTable);
+  public Generator getGenerator(javax.wsdl.Definition, SymbolTable);
+  public void setBaseTypeMapping(BaseTypeMapping);
+  public BaseTypeMapping getBaseTypeMapping();
+}</source>
+        <p>The GeneratorFactory interface defines a set of methods that the parser uses to get generators. There should be a generator for each of the WSDL constructs (message, portType, etc - note that these depend on the WSDL4J classes: javax.xml.Message, javax.xml.PortType, etc); a generator for schema types; and a generator for the WSDL Definition itself. This last generator is used to generate anything that doesn't fit into the previous categories.</p>
+        <p>In addition to the getGeneratorMethods, the GeneratorFactory defines a generatorPass method which provides the factory implementation a chance to walk through the symbol table to do any preprocessing before the actual generation begins.</p>
+        <p>Accessors for the base type mapping are also defined. These are used to translate QNames to base types in the given target mapping.</p>
+      </li>
+    </ul>
+    <p>In addition to Parser, WSDL2, Generator, and GeneratorFactory, the org.apache.axis.wsdl.gen package also contains a couple of no-op classes: NoopGenerator and NoopFactory. NoopGenerator is a convenience class for extensions that do not need to generate artifacts for every WSDL construct. For example, WSDL2Java does not generate anything for messages, therefore its factory's getGenerator(Message, SymbolTable) method returns an instance of NoopGenerator. NoopFactory returns a NoopGenerator for all getGenerator methods. The default factory for Parser is the NoopFactory.</p>
+  </li>
+</ul>
+
+<h4>Code Generator Back End</h4>
+
+<p>The meat of the WSDL2Java back end generators is in org.apache.axis.wsdl.toJava. Emitter extends Parser. org.apache.axis.wsdl.WSDL2Java extends WSDL2. JavaGeneratorFactory implements GeneratorFactory. And the various JavaXXXWriter classes implement the Generator interface.</p>
+
+<p><font color="#FF0000">NOTE: Need lots more description here...</font></p>
+
+<h4>WSDL Framework Extension Examples</h4>
+
+<p>Everything above sounds rather complex. It is, but that doesn't mean your extension has to be.</p>
+
+<h5>Example 1 - Simple extension of WSDL2Java - additional artifact</h5>
+
+<p>The simplest extension of the framework is one which generates everything that WSDL2Java already generates, plus something new. Example 1 is such an extension. It's extra artifact is a file for each service that lists that service's ports. I don't know why you'd want to do this, but it makes for a good, simple example. See samples/integrationGuide/example1 for the complete implementation of this example.</p>
+
+<ul>
+  <li>First you must create your writer that writes the new artifact. This new class extends org.apache.axis.wsdl.toJava.JavaWriter. JavaWriter dictates behavior to its extensions; it calls writeFileHeader and writeFileBody. Since we don't care about a file header for this example, writeFileHeader is a no-op method. writeFileBody does the real work of this writer.
+    <source>public class MyListPortsWriter extends JavaWriter {
+  private Service service;
+  public MyListPortsWriter(
+      Emitter emitter,
+      ServiceEntry sEntry,
+      SymbolTable symbolTable) {
+    super(emitter,
+          new QName(
+            sEntry.getQName().getNamespaceURI(),
+            sEntry.getQName().getLocalPart() + "Lst"),
+          "",
+          "lst",
+          "Generating service port list file",
+          "service list");
+    this.service = sEntry.getService();
+  }
+  protected void writeFileHeader() throws IOException {
+  }
+  protected void writeFileBody() throws IOException {
+    Map portMap = service.getPorts();
+    Iterator portIterator = portMap.values().iterator();
+
+    while (portIterator.hasNext()) {
+      Port p = (Port) portIterator.next();
+      pw.println(p.getName());
+    }
+    pw.close();
+  }
+}</source>
+  </li>
+  <li>Then you need a main program. This main program extends WSDL2Java so that it gets all the functionality of that tool. The main of this tool does 3 things:
+    <ul>
+      <li>instantiates itself</li>
+      <li>adds MyListPortsWriter to the list of generators for a WSDL service</li>
+      <li>calls the run method.</li>
+    </ul>
+    <p>That's it! The base tool does all the rest of the work.</p>
+    <source>public class MyWSDL2Java extends WSDL2Java {
+
+  public static void main(String args[]) {
+    MyWSDL2Java myWSDL2Java = new MyWSDL2Java();
+
+    JavaGeneratorFactory factory =
+        (JavaGeneratorFactory) myWSDL2Java.getParser().getFactory();
+    factory.addGenerator(Service.class, MyListPortsWriter.class);
+
+    myWSDL2Java.run(args);
+  }
+}</source>
+  </li>
+</ul>
+
+<h5>Example 2 - Not quite as simple an extension of WSDL2Java - change an artifact</h5>
+
+<p>In this example, we'll replace deploy.wsdd with mydeploy.useless. For brevity, mydeploy.useless is rather useless. Making it useful is an exercise left to the reader. See samples/integrationGuide/example2 for the complete implementation of this example.</p>
+
+<ul>
+  <li>First, here is the writer for the mydeploy.useless. This new class extends org.apache.axis.wsdl.toJava.JavaWriter. JavaWriter dictates behavior to its extensions; it calls writeFileHeader and writeFileBody. Since we don't care about a file header for this example, writeFileHeader is a no-op method. writeFileBody does the real work of this writer. It simply writes a bit of a song, depending on user input.
+    <p>Note that we've also overridden the generate method. The parser always calls generate, but since this is a server-side artifact, we don't want to generate it unless we are generating server-side artifacts (in other words, in terms of the command line options, we've specified the --serverSide option).</p>
+    <source>public class MyDeployWriter extends JavaWriter {
+  public MyDeployWriter(Emitter emitter, Definition definition,
+      SymbolTable symbolTable) {
+    super(emitter,
+          new QName(definition.getTargetNamespace(), "deploy"),
+          "",
+          "useless",
+          "Generating deploy.useless", "deploy");
+  }
+  public void generate() throws IOException {
+    if (emitter.isServerSide()) {
+      super.generate();
+    }
+  }
+  protected void writeFileHeader() throws IOException {
+  }
+  protected void writeFileBody() throws IOException {
+    MyEmitter myEmitter = (MyEmitter) emitter;
+    if (myEmitter.getSong() == MyEmitter.RUM) {
+      pw.println("Yo!  Ho!  Ho!  And a bottle of rum.");
+    }
+    else if (myEmitter.getSong() == MyEmitter.WORK) {
+      pw.println("Hi ho!  Hi ho!  It's off to work we go.");
+    }
+    else {
+      pw.println("Feelings...  Nothing more than feelings...");
+    }
+    pw.close();
+  }
+}</source>
+  </li>
+  <li>Since we're changing what WSDL2Java generates, rather than simply adding to it like the previous example did, calling addGenerator isn't good enough. In order to change what WSDL2Java generates, you have to create a generator factory and provide your own generators. Since we want to keep most of WSDL2Java's artifacts, we can simply extend WSDL2Java's factory - JavaGeneratorFactory - and override the addDefinitionGenerators method.
+    <source>public class MyGeneratorFactory extends JavaGeneratorFactory {
+  protected void addDefinitionGenerators() {
+    // WSDL2Java's JavaDefinitionWriter
+    addGenerator(Definition.class, JavaDefinitionWriter.class);
+
+    // our DeployWriter
+    addGenerator(Definition.class, MyDeployWriter.class);
+
+    // WSDL2Java's JavaUndeployWriter
+    addGenerator(Definition.class, JavaUndeployWriter.class);
+  }
+}</source>
+  </li>
+
+  <li>Now we must write the API's to our tool. Since we've added an option - song - we need both the programmatic API - an extension of Parser (actually Emitter in this case since we're extending WSDL2Java and Emitter is WSDL2Java's parser extension) - and the command line API.
+    <p>Here is our programmatic API. It adds song accessors to Emitter. It also, in the constructor, lets the factory know about the emitter and the emitter know about the factory.</p>
+    <source>public class MyEmitter extends Emitter {
+  public static final int RUM  = 0;
+  public static final int WORK = 1;
+  private int song = -1;
+
+  public MyEmitter() {
+    MyGeneratorFactory factory = new MyGeneratorFactory();
+    setFactory(factory);
+    factory.setEmitter(this);
+  }
+  public int getSong() {
+    return song;
+  }
+  public void setSong(int song) {
+    this.song = song;
+  }
+}</source>
+    <p>And here is our command line API. It's a bit more complex that our previous example's main program, but it does 2 extra things:</p>
+    <ol>
+      <li>accept a new command line option: --song rum|work (this is the biggest chunk of the new work).</li>
+      <li>create a new subclass of Parser</li>
+    </ol>
+    <source>public class WSDL2Useless extends WSDL2Java {
+  protected static final int SONG_OPT = 'g';
+  protected static final CLOptionDescriptor[] options
+    = new CLOptionDescriptor[]{
+        new CLOptionDescriptor("song",
+            CLOptionDescriptor.ARGUMENT_REQUIRED,
+            SONG_OPT,
+            "Choose a song for deploy.useless:  work or rum")
+  };
+
+  public WSDL2Useless() {
+    addOptions(options);
+  }
+  protected Parser createParser() {
+    return new MyEmitter();
+  }
+  protected void parseOption(CLOption option) {
+    if (option.getId() == SONG_OPT) {
+      String arg = option.getArgument();
+      if (arg.equals("rum")) {
+        ((MyEmitter) parser).setSong(MyEmitter.RUM);
+      }
+      else if (arg.equals("work")) {
+        ((MyEmitter) parser).setSong(MyEmitter.WORK);
+      }
+    }
+    else {
+      super.parseOption(option);
+    }
+  }
+  public static void main(String args[]) {
+    WSDL2Useless useless = new WSDL2Useless();
+
+    useless.run(args);
+  }
+}</source>
+    <p>Let's go through this one method at a time.</p>
+    <ul>
+      <li>constructor - this constructor adds the new option --song rum|work. (the abbreviated version of this option is "-g", rather an odd abbreviation, but "-s" is the abbreviation for --serverSide and "-S" is the abbreviation for --skeletonDeploy. Bummer. I just picked some other letter.)</li>
+      <li>createParser - we've got to provide a means by which the parent class can get our Parser extension.</li>
+      <li>parseOption - this method processes our new option. If the given option isn't ours, just let super.parseOption do its work.</li>
+      <li>main - this main is actually simpler than the first example's main. The first main had to add our generator to the list of generators. In this example, the factory already did that, so all that this main must do is instantiate itself and run itself.</li>
+    </ul>
+  </li>
+</ul>
+
+</subsection>
+
+</section>
+
+<section name="Client SSL">
+
+<p>The default pluggable secure socket factory module (see <a href="#PluggableAPIs">Pluggable APIs</a>) uses JSSE security. Review the JSSE documentation for details on installing, registering, and configuring JSSE for your runtime environment.</p>
+
+</section>
+
+  </body>
+</document>
