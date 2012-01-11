@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Releases</title>
+  </properties>
+  <body>
+
+<section name="Releases">
+
+<table>
+  <tr> 
+    <td><b>Name</b></td>
+    <td><b>Date</b></td>
+    <td><b>Description</b></td>
+  </tr>
+  <tr>
+    <td><a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_4/">1.4</a></td>
+    <td>April 22, 2006</td>
+    <td>Final Version 1.4</td>
+  </tr>
+  <tr>
+    <td><a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_3/">1.3</a></td>
+    <td>October 5, 2005</td>
+    <td>Final Version 1.3</td>
+  </tr>
+  <tr>
+    <td><a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2_1/">1.2.1</a></td>
+    <td>June 15, 2005</td>
+    <td>Final Version 1.2.1</td>
+  </tr>
+  <tr>
+    <td><a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2/">1.2</a></td>
+    <td>May 4, 2005</td>
+    <td>Final Version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2RC3/">1.2RC3</a></td>
+    <td>March 1, 2005</td>
+    <td>Release Candidate #3 for version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_2RC2/">1.2RC2</a></td>
+    <td>November 17, 2004</td>
+    <td>Release Candidate #2 for version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_2RC1/">1.2RC1</a></td>
+    <td>September 30, 2004</td>
+    <td>Release Candidate #1 for version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_2beta3/">1.2beta3</a></td>
+    <td>August 17, 2004</td>
+    <td>Third beta release for version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_2beta2/">1.2beta2</a></td>
+    <td>July 14, 2004</td>
+    <td>Second beta release for version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_2beta/">1.2beta1</a></td>
+    <td>April 1, 2004</td>
+    <td>First beta release for version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_2alpha/">1.2alpha</a></td>
+    <td>December 1, 2003</td>
+    <td>Alpha Version 1.2</td>
+  </tr>
+  <tr>
+    <td><a href="http://ws.apache.org/axis/download.cgi">1.1</a> (from mirror)</td>
+    <td>June 16, 2003</td>
+    <td>Final Version 1.1</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_1rc2">1.1rc2</a></td>
+    <td>March 5, 2003</td>
+    <td>Release Candidate #2 for version 1.1</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_1RC1">1.1rc1</a></td>
+    <td>February 9, 2003</td>
+    <td>Release Candidate #1 for version 1.1</td>
+  </tr>
+  <tr>
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_1beta">1.1beta</a></td>
+    <td>December 3, 2002</td>
+    <td>Beta for 1.1 release</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_0/">1.0</a></td>
+    <td>October 7, 2002</td>
+    <td>Release 1.0</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_0rc2/">1.0rc2</a></td>
+    <td>September 30, 2002</td>
+    <td>Release Candidate #2 for version 1.0</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/1_0rc1/">1.0rc1</a></td>
+    <td>September 6, 2002</td>
+    <td>Release Candidate #1 for version 1.0</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/beta3/">Beta 3</a></td>
+    <td>July 9, 2002</td>
+    <td>Third beta release (<a href="beta2-beta3.html">changes since beta 2</a>)</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/beta2/">Beta 2</a></td>
+    <td>April 29, 2002</td>
+    <td>Second beta release (<a href="beta1-beta2.html">changes since beta 1</a>)</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/beta1/">Beta 1</a></td>
+    <td>March 15, 2002</td>
+    <td>First beta release.</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/alpha3">Alpha 3</a></td>
+    <td>December 14, 2001</td>
+    <td>Third Alpha - add JAX RPC, WSDD, more WSDL functionallity, etc.</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/alpha2">Alpha 2</a></td>
+    <td>September 21, 2001</td>
+    <td>Second Alpha - add WSDL functionality, many bug fixes</td>
+  </tr>
+  <tr> 
+    <td><a href="http://archive.apache.org/dist/ws/axis/alpha1">Alpha 1</a></td>
+    <td>August 15, 2001</td>
+    <td>First Alpha release</td>
+  </tr>
+</table>
+
+<p>For nightly builds, see the <a href="../interim.html">Interim Drops</a> page.</p>
+
+</section>
+
+  </body>
+</document>
