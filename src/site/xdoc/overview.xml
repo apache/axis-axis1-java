@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Documentation overview</title>
+  </properties>
+  <body>
+
+<section name="Documentation">
+
+<p>This is the documentation for <a href="http://ws.apache.org/axis/">Apache Axis 1.4</a>. If the version of Axis you are using is older or newer than this version, then this is the wrong documentation to be using. Read the version that came with your copy of Axis.</p>
+
+<subsection name="Documentation for Axis Users">
+
+<ul>
+  <li><a href="install.html">Installation Instructions</a></li>
+  <li><a href="user-guide.html">User's Guide</a></li>
+  <li><a href="client-side-axis.html">Client-side Axis</a></li>
+  <li><a href="security.html">Securing an Axis-based Web Service</a></li>
+  <li><a href="ant/ant.html">Axis Ant Tasks</a></li>
+  <li><a href="reference.html">Reference Material</a></li>
+  <li><a href="reading.html">Further Reading</a></li>
+</ul>
+
+</subsection>
+
+<subsection name="Documentation for Axis Developers">
+
+<ul>
+  <li><a href="http://ws.apache.org/axis/java/apiDocs/index.html">API Documentation</a></li>
+  <li><a href="building-axis.html">Building Axis</a> - Guidelines for building Axis with/without optional components.</li>
+  <li><a href="developers-guide.html">Developer's Guide</a> - Collection of guidelines for developing code in Axis.</li>
+  <li><a href="integration-guide.html">Integration Guide</a> - Description of APIs and development direction to allow integration into an existing web application server.</li>
+  <li><a href="architecture-guide.html">Architecture Guide</a> - Axis design concepts and rationale.</li>
+</ul>
+
+</subsection>
+
+</section>
+
+  </body>
+</document>
