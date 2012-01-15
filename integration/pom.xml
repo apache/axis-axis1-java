@@ -899,6 +899,9 @@
                                     </includes>
                                 </wsdd>
                             </wsdds>
+                            <jwsDirs>
+                                <jwsDir>../axis-war/src/main/webapp</jwsDir>
+                            </jwsDirs>
                         </configuration>
                     </execution>
                     <execution>

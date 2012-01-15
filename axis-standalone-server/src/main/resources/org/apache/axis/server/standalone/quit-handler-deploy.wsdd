@@ -2,9 +2,13 @@
 <deployment name="defaultClientConfig"
             xmlns="http://xml.apache.org/axis/wsdd/"
             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
-    <globalConfiguration>
+    <service name="AdminService" provider="java:MSG">
+        <namespace>http://xml.apache.org/axis/wsdd/</namespace>
+        <parameter name="allowedMethods" value="AdminService"/>
+        <parameter name="enableRemoteAdmin" value="false"/>
+        <parameter name="className" value="org.apache.axis.utils.Admin"/>
         <responseFlow>
             <handler type="java:org.apache.axis.server.standalone.QuitHandler"/>
         </responseFlow>
-    </globalConfiguration>
+    </service>
 </deployment>

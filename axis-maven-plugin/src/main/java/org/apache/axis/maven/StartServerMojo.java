@@ -82,6 +82,13 @@ public class StartServerMojo extends AbstractServerMojo {
     private WSDD[] wsdds;
     
     /**
+     * A set of directories to look up JWS files from.
+     * 
+     * @parameter
+     */
+    private File[] jwsDirs;
+    
+    /**
      * If this flag is set to <code>true</code>, then the execution of the goal will block after the
      * server has been started and the services are deployed. This is useful if one wants to
      * manually test some services deployed on the server or if one wants to run the integration
@@ -208,6 +215,7 @@ public class StartServerMojo extends AbstractServerMojo {
                     (String[])vmArgs.toArray(new String[vmArgs.size()]),
                     workDir,
                     wsddFiles == null ? null : (String[])wsddFiles.toArray(new String[wsddFiles.size()]),
+                    jwsDirs,
                     debug || foreground ? Integer.MAX_VALUE : 20000);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);

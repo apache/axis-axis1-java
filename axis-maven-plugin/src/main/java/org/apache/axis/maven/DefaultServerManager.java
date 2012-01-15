@@ -44,7 +44,7 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         this.logger = logger;
     }
 
-    public void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, String[] wsddFiles, int timeout) throws Exception {
+    public void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, String[] wsddFiles, File[] jwsDirs, int timeout) throws Exception {
         AdminClient adminClient = new AdminClient(true);
         adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
         List cmdline = new ArrayList();
@@ -55,6 +55,12 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         cmdline.add("org.apache.axis.server.standalone.StandaloneAxisServer");
         cmdline.add("-p");
         cmdline.add(String.valueOf(port));
+        cmdline.add("-w");
+        cmdline.add(workDir.getAbsolutePath());
+        if (jwsDirs != null && jwsDirs.length > 0) {
+            cmdline.add("-j");
+            cmdline.add(StringUtils.join(jwsDirs, File.pathSeparator));
+        }
         if (logger.isDebugEnabled()) {
             logger.debug("Starting process with command line: " + cmdline);
         }
