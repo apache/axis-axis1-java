@@ -901,6 +901,7 @@
                             </wsdds>
                             <jwsDirs>
                                 <jwsDir>../axis-war/src/main/webapp</jwsDir>
+                                <jwsDir>src/test/jws</jwsDir>
                             </jwsDirs>
                         </configuration>
                     </execution>
@@ -969,6 +970,8 @@
                                 <exclude>test/wsdl/adaptive/**</exclude>
                                 <!-- TODO: remote service no longer available -->
                                 <exclude>test/wsdl/dataset/**</exclude>
+                                <!-- TODO: this causes problems in subsequent tests because auto types modify a shared TypeMapping -->
+                                <exclude>test/functional/TestAutoTypes.java</exclude>
                                 <!-- These are not test cases -->
                                 <exclude>test/wsdl/date/TestdateSoapBinding*</exclude>
                                 <exclude>test/wsdl/inout/TestFailed.java</exclude>

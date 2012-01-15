@@ -32,13 +32,13 @@ public class TestAutoTypes extends TestCase {
 
     protected void setUp() throws java.lang.Exception {
         AxisProperties.setProperty("axis.doAutoTypes", "true");
-        String[] args = {"test/functional/auto-deploy.wsdd"};
+        String[] args = { System.getProperty("basedir") + "/src/test/wsdd/functional/auto-deploy.wsdd" };
         AdminClient.main(args);
     }
 
     protected void tearDown() throws java.lang.Exception {
         AxisProperties.setProperty("axis.doAutoTypes", "false");
-        String[] args = {"test/functional/auto-undeploy.wsdd"};
+        String[] args = { System.getProperty("basedir") + "/src/test/wsdd/functional/auto-undeploy.wsdd" };
         AdminClient.main(args);
     }
 
@@ -49,10 +49,10 @@ public class TestAutoTypes extends TestCase {
 
         //location of wsdl file
         String wsdlLocation = "http://" + thisHost + ":" + thisPort +
-                "/jws/AutoTypesTest.jws?wsdl";
+                "/axis/AutoTypesTest.jws?wsdl";
         URL urlWsdl = new URL(wsdlLocation);
         String nameSpaceUri = "http://" + thisHost + ":" + thisPort +
-                "/jws/AutoTypesTest.jws";
+                "/axis/AutoTypesTest.jws";
         String serviceName = "AutoTypesTestService";
         String portName = "AutoTypesTest";
         ServiceFactory serviceFactory = ServiceFactory.newInstance();
