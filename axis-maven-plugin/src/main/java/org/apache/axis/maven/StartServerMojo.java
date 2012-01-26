@@ -110,11 +110,10 @@ public class StartServerMojo extends AbstractServerMojo {
     private String debugArgs;
     
     /**
-     * Indicates whether the server should be started in debug mode. This flag can only be set from
-     * the command line.
+     * Indicates whether the server should be started in debug mode. This flag should only be set
+     * from the command line.
      * 
      * @parameter expression="${axis.server.debug}" default-value="false"
-     * @readonly
      */
     private boolean debug;
     
@@ -126,11 +125,10 @@ public class StartServerMojo extends AbstractServerMojo {
     private String jmxArgs;
     
     /**
-     * Indicates whether the server should be started with remote JMX enabled. This flag can only be
-     * set from the command line.
+     * Indicates whether the server should be started with remote JMX enabled. This flag should only
+     * be set from the command line.
      * 
      * @parameter expression="${axis.server.jmx}" default-value="false"
-     * @readonly
      */
     private boolean jmx;
     
