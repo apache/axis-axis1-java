@@ -28,7 +28,6 @@ public class SAX2EventRecorder {
     
     private static final Integer Z = new Integer(0);
 
-    private static final Integer STATE_SET_DOCUMENT_LOCATOR = new Integer(0);
     private static final Integer STATE_START_DOCUMENT = new Integer(1);
     private static final Integer STATE_END_DOCUMENT = new Integer(2);
     private static final Integer STATE_START_PREFIX_MAPPING = new Integer(3);
@@ -53,11 +52,9 @@ public class SAX2EventRecorder {
     private static final Integer STATE_END_CDATA = new Integer(17);
     private static final Integer STATE_COMMENT = new Integer(18);
     
-    org.xml.sax.Locator locator;
     objArrayVector events = new objArrayVector();
     
     public void clear() {
-        locator = null;
         events = new objArrayVector();
     }
     public int getLength()
@@ -65,10 +62,6 @@ public class SAX2EventRecorder {
         return events.getLength();
     }
     
-    public int setDocumentLocator(org.xml.sax.Locator p1) {
-        locator = p1;
-        return events.add(STATE_SET_DOCUMENT_LOCATOR, Z,Z,Z,Z);
-    }
     public int startDocument() {
         return events.add(STATE_START_DOCUMENT, Z,Z,Z,Z);
     }
@@ -186,9 +179,6 @@ public class SAX2EventRecorder {
                 
             } else if (event == STATE_SKIPPED_ENTITY) {
                 handler.skippedEntity((String)events.get(n,1));
-                
-            } else if (event == STATE_SET_DOCUMENT_LOCATOR) {
-                handler.setDocumentLocator(locator);
                 
             } else if (event == STATE_START_DOCUMENT) {
                 handler.startDocument();

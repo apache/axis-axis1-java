@@ -84,8 +84,6 @@ public class DeserializationContext implements ContentHandler, DTDHandler,
 
     private NSStack namespaces = new NSStack();
 
-    private Locator locator;
-
     // Class used for deserialization using class metadata from
     // downstream deserializers
     private Class destClass;
@@ -964,14 +962,11 @@ public class DeserializationContext implements ContentHandler, DTDHandler,
 
     public void setDocumentLocator(Locator locator)
     {
-        if (!doneParsing && (recorder != null)) {
-            recorder.setDocumentLocator(locator);
-        }
-        this.locator = locator;
-    }
-
-    public Locator getDocumentLocator() {
-        return locator;
+        // We don't store the Locator because we don't need it. In addition it is typically
+        // a reference to some internal object of the parser and not keeping that reference
+        // ensures that this object (which may be heavyweight) can be garbage collected
+        // early (see AXIS-2863 for an issue that may be related to this: in that case,
+        // Locator is implemented by oracle.xml.parser.v2.XMLReader).
     }
 
     public void characters(char[] p1, int p2, int p3) throws SAXException {
