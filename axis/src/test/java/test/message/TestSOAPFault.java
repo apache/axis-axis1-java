@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
-import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 /**
  * @author steve.johnson@riskmetrics.com (Steve Johnson)
@@ -47,7 +47,7 @@ public class TestSOAPFault extends TestCase {
      */
     public static void main(String[] argv) throws Exception {
         TestSOAPFault tester = new TestSOAPFault("TestSOAPFault");
-        tester.testSoapFaultBUG();
+        tester.testAxis1008();
     }
 
     /**
@@ -59,34 +59,25 @@ public class TestSOAPFault extends TestCase {
         super(name);
     }
 
-    String xmlString =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-            "<soapenv:Body>" +
-            "<soapenv:Fault>" +
-            "<faultcode>soapenv:13001</faultcode>" +
-            "<faultstring>java.lang.Exception: File already exists</faultstring>" +
-            "<faultactor>urn:RiskMetricsDirect:1.0:object-service-service:CreateObject</faultactor>" +
-            "<detail/>" +
-            "</soapenv:Fault>" +
-            "</soapenv:Body>" +
-            "</soapenv:Envelope>";
-
     /**
-     * Method testSoapFaultBUG
+     * Regression test for AXIS-1008.
      * 
      * @throws Exception 
      */
-    public void testSoapFaultBUG() throws Exception {
-        ByteArrayInputStream bis = new ByteArrayInputStream(xmlString.getBytes());
-        MessageFactory msgFactory = MessageFactory.newInstance();
-        SOAPMessage msg = msgFactory.createMessage(null, bis);
-			
-        //now attempt to access the fault
-        if (msg.getSOAPPart().getEnvelope().getBody().hasFault()) {
-            SOAPFault fault =
-                    msg.getSOAPPart().getEnvelope().getBody().getFault();
-            System.out.println("Fault: " + fault.getFaultString());
+    public void testAxis1008() throws Exception {
+        InputStream in = TestSOAPFault.class.getResourceAsStream("AXIS-1008.xml");
+        try {
+            MessageFactory msgFactory = MessageFactory.newInstance();
+            SOAPMessage msg = msgFactory.createMessage(null, in);
+    			
+            //now attempt to access the fault
+            if (msg.getSOAPPart().getEnvelope().getBody().hasFault()) {
+                SOAPFault fault =
+                        msg.getSOAPPart().getEnvelope().getBody().getFault();
+                System.out.println("Fault: " + fault.getFaultString());
+            }
+        } finally {
+            in.close();
         }
     }
 }    
