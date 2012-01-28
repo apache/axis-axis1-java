@@ -15,15 +15,12 @@
  */
 package org.apache.axis.utils;
 
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
 import org.xml.sax.InputSource;
 
 public class DefaultEntityResolver implements org.xml.sax.EntityResolver {
-    protected static Log log =
-        LogFactory.getLog(XMLUtils.class.getName());
-
-    public DefaultEntityResolver() {
+    public static final DefaultEntityResolver INSTANCE = new DefaultEntityResolver();
+    
+    private DefaultEntityResolver() {
     }
 
     public InputSource resolveEntity(String publicId, String systemId) {

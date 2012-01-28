@@ -274,7 +274,7 @@ public class XMLUtils {
             // We may need to uncomment the deprecated setting
             // in case that it is considered necessary.
             try {
-                reader.setEntityResolver(new DefaultEntityResolver());
+                reader.setEntityResolver(DefaultEntityResolver.INSTANCE);
             } catch (Throwable t) {
                 log.debug("Failed to set EntityResolver on DocumentBuilder", t);
             }
@@ -357,7 +357,7 @@ public class XMLUtils {
         try {
             db = getDocumentBuilder();
             try {
-                db.setEntityResolver(new DefaultEntityResolver());
+                db.setEntityResolver(DefaultEntityResolver.INSTANCE);
             } catch (Throwable t) {
                 log.debug("Failed to set EntityResolver on DocumentBuilder", t);
             }
