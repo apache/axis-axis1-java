@@ -29,7 +29,6 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
@@ -366,7 +365,7 @@ public class DeserializerImpl extends SOAPHandler
 
                 SAX2EventRecorder r = context.getRecorder();
                 context.setRecorder(null);
-                ((MessageElement)ref).publishToHandler((DefaultHandler) context);
+                ((MessageElement)ref).publishToHandler(context);
                 context.setRecorder(r);
             } else {
 

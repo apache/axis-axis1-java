@@ -25,6 +25,8 @@ import org.apache.axis.constants.Use;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.DefaultEntityResolver;
+import org.apache.axis.utils.DefaultErrorHandler;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -42,12 +44,14 @@ import org.apache.axis.message.EnvelopeHandler;
 import org.apache.axis.message.NullAttributes;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.Locator;
 import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
@@ -62,8 +66,8 @@ import java.lang.reflect.Method;
  * an AXIS compliant DeserializationContext must extend the org.xml.sax.helpers.DefaultHandler.
  */
 
-public class DeserializationContext extends DefaultHandler
-        implements javax.xml.rpc.encoding.DeserializationContext, LexicalHandler {
+public class DeserializationContext implements ContentHandler, DTDHandler,
+        javax.xml.rpc.encoding.DeserializationContext, LexicalHandler {
     protected static Log log =
             LogFactory.getLog(DeserializationContext.class.getName());
 
@@ -223,12 +227,24 @@ public class DeserializationContext extends DefaultHandler
         if (inputSource != null) {
             SAXParser parser = XMLUtils.getSAXParser();
             try {
-                parser.setProperty("http://xml.org/sax/properties/lexical-handler", this);
-                parser.parse(inputSource, this);
+                // We only set the DeserializationContext as ContentHandler and DTDHandler, but
+                // we use singletons for the EntityResolver and ErrorHandler. This reduces the risk
+                // that the SAX parser internally keeps a reference to the DeserializationContext
+                // after we release the parser. E.g. Oracle's SAX parser (oracle.xml.parser.v2) keeps a
+                // reference to the EntityResolver, although we reset the EntityResolver in
+                // XMLUtils#releaseSAXParser. That reference is only cleared when the parser is reused.
+                XMLReader reader = parser.getXMLReader();
+                reader.setContentHandler(this);
+                reader.setEntityResolver(DefaultEntityResolver.INSTANCE);
+                reader.setErrorHandler(DefaultErrorHandler.INSTANCE);
+                reader.setDTDHandler(this);
+                
+                reader.setProperty("http://xml.org/sax/properties/lexical-handler", this);
+                reader.parse(inputSource);
 
                 try {
                     // cleanup - so that the parser can be reused.
-                    parser.setProperty("http://xml.org/sax/properties/lexical-handler", nullLexicalHandler);
+                    reader.setProperty("http://xml.org/sax/properties/lexical-handler", nullLexicalHandler);
                 } catch (Exception e){
                     // Ignore.
                 }
@@ -1164,6 +1180,15 @@ public class DeserializationContext extends DefaultHandler
         */
     }
 
+    public void notationDecl(String name, String publicId, String systemId) throws SAXException {
+        // Do nothing; we never get here
+    }
+
+    public void unparsedEntityDecl(String name, String publicId, String systemId,
+            String notationName) throws SAXException {
+        // Do nothing; we never get here
+    }
+
     public void endDTD()
             throws SAXException
     {
@@ -1207,12 +1232,6 @@ public class DeserializationContext extends DefaultHandler
         if (recorder != null)
             recorder.comment(ch, start, length);
     }
-
-    public InputSource resolveEntity(String publicId, String systemId)
-    {
-        return XMLUtils.getEmptyInputSource();
-    }
-
 
     /** We only need one instance of this dummy handler to set into the parsers. */
     private static final NullLexicalHandler nullLexicalHandler = new NullLexicalHandler();
