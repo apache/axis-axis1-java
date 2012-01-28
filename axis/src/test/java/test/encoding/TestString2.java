@@ -19,10 +19,6 @@ public class TestString2 extends TestCase {
 
     public static final String myNS = "urn:myNS";
     
-    public TestString2(String name) {
-        super(name);
-    }
-
     private void runtest(String value, String expected) throws Exception {
         MessageContext msgContext = new MessageContext(new AxisServer());
         MessageFactory factory = MessageFactory.newInstance();

@@ -1,8 +1,6 @@
 package test.utils.bytecode;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -20,16 +18,6 @@ import org.apache.axis.utils.bytecode.ChainedParamReader;
 public class TestChainedParamReader extends TestCase{
     private TestDerivedClass test =null;
     private ChainedParamReader reader;
-    public TestChainedParamReader(String name) {
-        super(name);
-    }
-    public static Test suite() {
-        return new TestSuite(TestChainedParamReader.class);
-    }
-
-    protected void setup() {
-        test = this.new TestDerivedClass(1);
-    }
 
     public void testGetMethodParameters(){
         try {

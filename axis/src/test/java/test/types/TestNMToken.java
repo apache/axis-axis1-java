@@ -23,12 +23,6 @@ import org.apache.axis.types.NMToken;
  * Test validation of types.NMToken
  */
 public class TestNMToken extends TestCase {
-
-
-    public TestNMToken(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

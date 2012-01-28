@@ -23,14 +23,6 @@ public class TestArrayListConversions extends TestCase {
     private AxisServer server;
     private LocalTransport transport;
 
-    public TestArrayListConversions() {
-        super("service");
-    }
-
-    public TestArrayListConversions(String name) {
-        super(name);
-    }
-
     private static boolean equals(List list, Object obj) {
         if ((list == null) || (obj == null))
             return false;
@@ -134,19 +126,6 @@ public class TestArrayListConversions extends TestCase {
         for (int i = 0; i < l.size(); i++) {
             String s = (String)l.get(i);
             assertEquals("Value " + i + " didn't match", s, v.get(i));
-        }
-    }
-
-    public static void main(String[] args) {
-        TestArrayListConversions tester = new TestArrayListConversions("TestArrayListConversions");
-        try {
-            tester.setUp();
-            tester.testArrayConversion();
-            tester.testLinkedListConversion();
-            tester.testVectorConversion();
-            tester.testReturnAsVector();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

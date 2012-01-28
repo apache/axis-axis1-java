@@ -12,11 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
 public class TestHeaders extends junit.framework.TestCase {
-
-    public TestHeaders(String name) {
-        super(name);
-    }
-
     public void testAddingHeaderElements() throws Exception {
         SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
         SOAPEnvelope soapEnv = soapMessage.getSOAPPart().getEnvelope();

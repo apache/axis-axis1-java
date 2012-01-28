@@ -1,6 +1,5 @@
 package test.encoding;
 
-import junit.framework.TestCase;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -65,11 +64,5 @@ public class TestOutputter extends XMLTestCase {
     public void testEscapedAttributes() throws Exception {
         roundtrip("<abc foo=\"&lt;&amp;&gt;\"/>");
         // roundtrip("<abc foo=\"&lt;&amp;&gt;\"/>");
-    }
-
-    public static void main(String [] args) throws Exception
-    {
-        TestOutputter tester = new TestOutputter("test");
-        tester.testString();
     }
 }

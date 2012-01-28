@@ -68,14 +68,6 @@ public class TestBasicProvider extends TestCase {
             + " </service>\n" 
             + "</deployment>";
 
-    public TestBasicProvider() {
-        super("test");
-    }
-
-    public TestBasicProvider(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
 
         server = new AxisServer(new XMLStringProvider(wsdd));
@@ -120,11 +112,4 @@ public class TestBasicProvider extends TestCase {
         assertEquals( "wrong type for part", part.getTypeName().getLocalPart(), "string");
 
     }
-
-    public static void main(String args[]) throws Exception {
-        TestBasicProvider tester = new TestBasicProvider();
-        tester.setUp();
-        tester.testGenerateWSDL();
-    }
-
 }

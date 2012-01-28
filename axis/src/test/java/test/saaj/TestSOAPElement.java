@@ -6,8 +6,6 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.Text;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;

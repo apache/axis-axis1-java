@@ -16,25 +16,19 @@
 
 package test.wsdd;
 
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.Handler;
 import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
-import javax.xml.rpc.holders.StringHolder;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
-import org.w3c.dom.NodeList;
 
 /**
  * Tests 
@@ -81,14 +75,6 @@ public class TestJAXRPCHandlerInfoChain extends TestCase implements Handler {
             + "   </handlerInfoChain>"
             + " </service>\n"
             + "</deployment>";
-
-    public TestJAXRPCHandlerInfoChain() {
-        super("test");
-    }
-
-    public TestJAXRPCHandlerInfoChain(String s) {
-        super(s);
-    }
 
     protected void setUp() throws Exception {
         transport = new LocalTransport(new AxisServer(new XMLStringProvider(wsdd)));

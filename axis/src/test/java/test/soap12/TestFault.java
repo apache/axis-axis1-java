@@ -1,13 +1,10 @@
 package test.soap12;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
@@ -25,16 +22,6 @@ import java.io.Writer;
  * @author Andras Avar (andras.avar@nokia.com)
  */
 public class TestFault extends TestCase {
-    public static Test suite() {
-        return new TestSuite(TestFault.class);
-    }
-
-    public TestFault(String name) {
-        super(name);
-    }
-    public void setUp() throws Exception {
-    }
-
     public static final QName FAULTCODE = new QName("http://c","faultcode_c");
     public static final QName FAULTSUBCODE[] = { new QName("http://a","subcode_a"),
                                                  new QName("http://b","subcode_b") };

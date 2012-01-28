@@ -1,8 +1,6 @@
 package test.utils;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.toJava.Utils;
 
@@ -19,17 +17,6 @@ import java.util.Vector;
 
 public class TestJavaUtils extends TestCase
 {
-
-    public TestJavaUtils (String name) {
-        super(name);
-    }
-    public static Test suite() {
-        return new TestSuite(TestJavaUtils.class);
-    }
-
-    public void setup() {
-    }
-
     /** 
      * See JSR-101: JAX-RPC, Appendix: Mapping of XML Names
      */
@@ -216,10 +203,4 @@ public class TestJavaUtils extends TestCase
         Calendar[] calendars = new Calendar[1];
         assertTrue(!JavaUtils.isConvertable(strings, calendars.getClass()));
     }    
-
-    public static void main(String args[]){
-        TestJavaUtils tester = new TestJavaUtils("TestJavaUtils");
-        tester.testIsConvert();
-        tester.testConvert();
-    }
 }

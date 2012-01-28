@@ -1,22 +1,11 @@
 package test.utils;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.axis.utils.StringUtils;
 
 public class TestStringUtils extends TestCase
 {
-
-    public TestStringUtils (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestStringUtils.class);
-    }
-
     public void testStripWhite() {
         assertEquals(null, StringUtils.strip(null, null));
         assertEquals("", StringUtils.strip("", null));

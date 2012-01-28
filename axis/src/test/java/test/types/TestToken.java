@@ -23,12 +23,6 @@ import org.apache.axis.types.Token;
  * Test validation of encoding.Token
  */
 public class TestToken extends TestCase {
-
-
-    public TestToken(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

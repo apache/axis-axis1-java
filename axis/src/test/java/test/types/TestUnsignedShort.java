@@ -23,11 +23,6 @@ import org.apache.axis.types.UnsignedShort;
  * Test validation of types.UnsignedShort
  */
 public class TestUnsignedShort extends TestCase {
-
-    public TestUnsignedShort(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

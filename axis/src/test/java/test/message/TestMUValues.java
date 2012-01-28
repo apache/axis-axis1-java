@@ -22,10 +22,6 @@ import org.apache.axis.server.AxisServer;
 public class TestMUValues extends TestCase {
     private AxisEngine engine;
 
-    public TestMUValues(String name) {
-        super(name);
-    }
-
     private String header =
         "<?xml version=\"1.0\"?>\n" +
         "<soap:Envelope " +

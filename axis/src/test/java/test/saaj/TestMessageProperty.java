@@ -12,10 +12,6 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.Text;
 
 public class TestMessageProperty extends junit.framework.TestCase {
-    public TestMessageProperty(String name) {
-        super(name);
-    }
-
     private static final String textValue = "\uc548\ub155\ud558\uc138\uc694";
     
     private SOAPMessage createTestMessage() throws Exception {

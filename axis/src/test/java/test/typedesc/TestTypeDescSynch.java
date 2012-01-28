@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.description.AttributeDesc;
 import org.apache.axis.description.TypeDesc;
 
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
@@ -35,14 +34,6 @@ import javax.xml.namespace.QName;
  * @author gawor@mcs.anl.gov
  */ 
 public class TestTypeDescSynch extends TestCase { 
-    
-    public TestTypeDescSynch(String name) {
-        super(name);
-    }
-    
-    public TestTypeDescSynch() {
-        super("Test TypeDesc Synch");
-    }
     
     // with won't fail
     public void testFields() throws Exception {
@@ -136,17 +127,6 @@ public class TestTypeDescSynch extends TestCase {
             }
             
             
-        }
-    }
-    
-    public static void main(String args[])
-    {
-        try {
-            TestTypeDescSynch tester = new TestTypeDescSynch("TypeDesc Test");
-            tester.testSynch();
-            tester.testFields();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

@@ -7,14 +7,6 @@ import test.GenericLocalTest;
 import java.util.Vector;
 
 public class TestCircularRefs extends GenericLocalTest {
-    public TestCircularRefs() {
-        super("foo");
-    }
-
-    public TestCircularRefs(String s) {
-        super(s);
-    }
-
 	public void testCircularVectors() throws Exception {
         try {
             Call call = getCall();

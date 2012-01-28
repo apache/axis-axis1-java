@@ -15,9 +15,7 @@
  */
 package test.chains;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -36,17 +34,6 @@ public class TestChainFault extends TestCase
 {
   // correlation message
     public static String FAULT_MESSAGE = "Blew a gasket!";
-
-    public TestChainFault (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestChainFault.class);
-    }
-
-    protected void setup() {
-    }
 
     private class TestMessageContext extends MessageContext {
 

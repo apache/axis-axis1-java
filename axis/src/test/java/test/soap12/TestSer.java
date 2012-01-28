@@ -35,10 +35,6 @@ public class TestSer extends TestCase {
 
     public static final String myNS = "urn:myNS";
 
-    public TestSer(String name) {
-        super(name);
-    }
-
     public void testDataNoHrefs () throws Exception {
         doTestData(false);
     }

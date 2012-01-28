@@ -24,6 +24,8 @@ import org.custommonkey.xmlunit.XMLTestCase;
  * @author steve loughran
  */
 public abstract class AxisTestBase extends XMLTestCase {
+    public AxisTestBase() {
+    }
 
     public AxisTestBase(String s) {
         super(s);

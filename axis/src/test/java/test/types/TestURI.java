@@ -23,11 +23,6 @@ import org.apache.axis.types.URI;
  * Test validation of types.Day
  */
 public class TestURI extends TestCase {
-
-    public TestURI(String name) {
-        super(name);
-    }
-
     /**
      * Bug AXIS-814
      */

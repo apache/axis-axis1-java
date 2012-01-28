@@ -22,11 +22,6 @@ package test.soap12;
 import org.apache.axis.soap.SOAPConstants;
 
 public class TestHeaderAttrs extends test.soap.TestHeaderAttrs {
-
-    public TestHeaderAttrs(String name) {
-        super(name);
-    }
-
     /**
      * Use SOAP version 1.2.  Otherwise, run the same tests.
      */

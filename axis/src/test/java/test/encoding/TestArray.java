@@ -16,10 +16,6 @@ public class TestArray extends TestCase {
     static Log log =
             LogFactory.getLog(TestArray.class.getName());
 
-    public TestArray(String name) {
-        super(name);
-    }
-    
     public void testArray1() {
         String tab_items [] = new String[4];
         tab_items[0] = "table item 1";

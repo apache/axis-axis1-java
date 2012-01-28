@@ -15,16 +15,13 @@
  */
 package test.message;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
@@ -33,7 +30,6 @@ import java.util.Iterator;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.apache.axis.Message;
-import org.apache.axis.utils.XMLUtils;
 
 /**
  * @author john.gregg@techarch.com
@@ -41,26 +37,6 @@ import org.apache.axis.utils.XMLUtils;
  * @version $Revision$
  */
 public class TestSOAPBody extends TestCase {
-
-    /**
-     * Method suite
-     *
-     * @return
-     */
-    public static Test suite() {
-        return new TestSuite(test.message.TestSOAPBody.class);
-    }
-
-    /**
-     * Method main
-     *
-     * @param argv
-     */
-    public static void main(String[] argv) throws Exception {
-        TestSOAPBody tester = new TestSOAPBody("TestSOAPBody");
-        tester.testSoapBodyBUG();
-    }
-
     /**
      * Constructor TestSOAPBody
      *

@@ -3,21 +3,14 @@ package test.encoding;
 import junit.framework.TestCase;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.xml.sax.InputSource;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.ByteArrayInputStream;
 
 /** Little serialization test with a struct.
@@ -26,10 +19,6 @@ public class TestString extends TestCase {
 
     public static final String myNS = "urn:myNS";
     
-    public TestString(String name) {
-        super(name);
-    }
-
     private void runtest(String value, String expected) throws Exception {
         MessageContext msgContext = new MessageContext(new AxisServer());
         MessageFactory factory = MessageFactory.newInstance();

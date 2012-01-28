@@ -23,11 +23,6 @@ import org.apache.axis.types.Year;
  * Test validation of types.Year
  */
 public class TestYear extends TestCase {
-
-    public TestYear(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  values should be invalid.
      */

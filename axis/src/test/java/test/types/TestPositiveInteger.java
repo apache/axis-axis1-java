@@ -23,11 +23,6 @@ import org.apache.axis.types.PositiveInteger;
  * Test validation of types.positiveInteger
  */
 public class TestPositiveInteger extends TestCase {
-
-    public TestPositiveInteger(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

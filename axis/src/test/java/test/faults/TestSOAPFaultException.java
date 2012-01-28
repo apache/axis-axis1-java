@@ -17,15 +17,11 @@
 package test.faults;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
-import org.apache.axis.*;
-import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDService;
@@ -33,13 +29,10 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.SOAPBody;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFault;
-import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.soap.SOAP11Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.local.LocalTransport;
-import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -60,22 +53,6 @@ public class TestSOAPFaultException extends TestCase {
     private static final SOAPConstants soapConsts = new SOAP11Constants();
     private static final QName QNAME_FAULT_SERVER_USER = new QName(soapConsts.getEnvelopeURI(), Constants.FAULT_SERVER_USER);
     private static final String SERVICE_NAME = "FailingService";
-
-    /**
-     * A construktor is needed for instanciation cause this class is also 
-     * used as service implementation
-     */
-    public TestSOAPFaultException() {
-        super("TestSOAPFaultException");
-    }
-
-    public TestSOAPFaultException(String s) {
-        super(s);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestSOAPFaultException.class);
-    }
 
     /**
      * Tests the defaults generated from a SOAPFaultException

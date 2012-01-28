@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.server.AxisServer;
 
@@ -25,17 +23,6 @@ public class TestGlobalConfiguration extends TestCase
             " </globalConfiguration>\n" +
             "</deployment>";
 
-    public TestGlobalConfiguration (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestGlobalConfiguration.class);
-    }
-
-    protected void setup() {
-    }
-
     public void testEngineProperties() throws Exception
     {
         XMLStringProvider provider = new XMLStringProvider(doc);
@@ -53,10 +40,5 @@ public class TestGlobalConfiguration extends TestCase
                    roles.contains(ROLE));
         assertTrue("Engine roles did not contain " + ROLE2,
                    roles.contains(ROLE2));
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestGlobalConfiguration tester = new TestGlobalConfiguration("foo");
-        tester.testEngineProperties();
     }
 }

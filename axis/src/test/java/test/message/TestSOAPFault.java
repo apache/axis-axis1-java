@@ -15,9 +15,7 @@
  */
 package test.message;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPFault;
@@ -30,35 +28,6 @@ import java.io.InputStream;
  * @version $Revision$
  */
 public class TestSOAPFault extends TestCase {
-
-    /**
-     * Method suite
-     * 
-     * @return 
-     */
-    public static Test suite() {
-        return new TestSuite(TestSOAPFault.class);
-    }
-
-    /**
-     * Method main
-     * 
-     * @param argv 
-     */
-    public static void main(String[] argv) throws Exception {
-        TestSOAPFault tester = new TestSOAPFault("TestSOAPFault");
-        tester.testAxis1008();
-    }
-
-    /**
-     * Constructor TestSOAPFault
-     * 
-     * @param name 
-     */
-    public TestSOAPFault(String name) {
-        super(name);
-    }
-
     /**
      * Regression test for AXIS-1008.
      * 

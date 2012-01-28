@@ -1,9 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.apache.axis.Handler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -28,17 +25,6 @@ public class TestRoles extends TestCase
             "  <role>" + SERVICE_ROLE + "</role>" +
             " </service>\n"+
             "</deployment>";
-
-    public TestRoles (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestRoles.class);
-    }
-
-    protected void setup() {
-    }
 
     /**
      * Initialize an engine with a single handler with a parameter set, and
@@ -67,10 +53,5 @@ public class TestRoles extends TestCase
                    roles.contains(SERVICE_ROLE));
         assertFalse("Global role is accessible from specific list",
                    roles.contains(GLOBAL_ROLE));
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestRoles tester = new TestRoles("foo");
-        tester.testOptions();
     }
 }

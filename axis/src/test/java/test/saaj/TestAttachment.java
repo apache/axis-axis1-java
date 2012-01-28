@@ -5,28 +5,14 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.MimeHeaders;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.Iterator;
-import java.net.URL;
 
 public class TestAttachment extends junit.framework.TestCase {
-
-    public TestAttachment(String name) {
-        super(name);
-    }
-
     public void testStringAttachment() throws Exception {
         SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection con = scFactory.createConnection();
@@ -123,12 +109,5 @@ public class TestAttachment extends junit.framework.TestCase {
         public OutputStream getOutputStream(){
             throw new UnsupportedOperationException("I don't give output streams");
         }
-    }
-    
-    public static void main(String[] args) throws Exception {
-        test.saaj.TestAttachment tester = new test.saaj.TestAttachment("TestSAAJ");
-        tester.testMultipleAttachments();
-        tester.testStringAttachment();
-        tester.testBadAttSize();
     }
 }

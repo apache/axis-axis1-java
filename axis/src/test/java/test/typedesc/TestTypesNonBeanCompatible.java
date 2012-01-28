@@ -16,7 +16,6 @@
 package test.typedesc;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;

@@ -34,14 +34,6 @@ import javax.xml.rpc.ParameterMode;
 public class TestBeans extends GenericLocalTest {
     private QName TYPE_QNAME = new QName("ns", "dataType");
 
-    public TestBeans() {
-        super("service");
-    }
-
-    public TestBeans(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
         super.setUp(false); // don't deploy here
         TypeMapping tm = (TypeMapping)config.getTypeMappingRegistry().

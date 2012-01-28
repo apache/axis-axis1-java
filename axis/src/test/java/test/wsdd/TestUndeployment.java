@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.Handler;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -41,17 +39,6 @@ public class TestUndeployment extends TestCase
             " <handler name=\"other\"/>\n" +
             "</undeployment>";
 
-    public TestUndeployment (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestUndeployment.class);
-    }
-
-    protected void setup() {
-    }
-
     /**
      * Load up a server with a couple of handlers as spec'ed above,
      * then undeploy one of them.  Confirm that all looks reasonable
@@ -78,10 +65,5 @@ public class TestUndeployment extends TestCase
         
         handler = server.getHandler(HANDLER_NAME);
         assertNotNull("Couldn't get handler (2nd time)", handler);
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestUndeployment tester = new TestUndeployment("foo");
-        tester.testUndeployHandler();
     }
 }

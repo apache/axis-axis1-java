@@ -23,11 +23,6 @@ import org.apache.axis.types.NormalizedString;
  * Test validation of encoding.NormalizedString
  */
 public class TestNormalizedString extends TestCase {
-
-    public TestNormalizedString(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

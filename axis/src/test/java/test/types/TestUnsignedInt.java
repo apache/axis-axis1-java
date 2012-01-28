@@ -23,11 +23,6 @@ import org.apache.axis.types.UnsignedInt;
  * Test validation of types.UnsignedInt
  */
 public class TestUnsignedInt extends TestCase {
-
-    public TestUnsignedInt(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

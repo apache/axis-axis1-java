@@ -17,10 +17,6 @@ public class TestAutoTypes extends TestCase {
 
     private AxisServer server = new AxisServer();
 
-    public TestAutoTypes(String name) {
-        super(name);
-    }
-    
     public void testAutoTypes() throws Exception
     {
         TypeMappingRegistry tmr = server.getTypeMappingRegistry();

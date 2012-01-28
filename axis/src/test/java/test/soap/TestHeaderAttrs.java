@@ -18,7 +18,6 @@ package test.soap;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -65,10 +64,6 @@ public class TestHeaderAttrs extends TestCase {
     // Which SOAP version are we using?  Default to SOAP 1.1
     protected SOAPConstants soapVersion = SOAPConstants.SOAP11_CONSTANTS;
 
-    public TestHeaderAttrs(String name) {
-        super(name);
-    }
-    
     /**
      * Prep work.  Make a server, tie a LocalTransport to it, and deploy
      * our little test service therein.

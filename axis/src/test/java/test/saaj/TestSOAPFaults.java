@@ -21,10 +21,6 @@ import java.util.Iterator;
 import org.custommonkey.xmlunit.XMLUnit;
 
 public class TestSOAPFaults extends AxisTestBase {
-    public TestSOAPFaults(String name) {
-        super(name);
-    }
-
     public void testQuick() throws Exception {
         MessageFactory msgfactory = MessageFactory.newInstance();
         SOAPFactory factory = SOAPFactory.newInstance();
@@ -170,10 +166,5 @@ public class TestSOAPFaults extends AxisTestBase {
         } finally {
             XMLUnit.setIgnoreWhitespace(ws);
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        TestSOAPFaults detailTest = new TestSOAPFaults("TestSOAPFaults");
-        detailTest.testQuick();
     }
 }

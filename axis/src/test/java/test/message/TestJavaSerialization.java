@@ -45,11 +45,6 @@ import java.util.Iterator;
  * @author Glyn Normington (glyn@apache.org)
  */
 public class TestJavaSerialization extends TestCase {
-
-    public TestJavaSerialization(String name) {
-        super(name);
-    }
-
     public void testSOAPEnvelope() throws Exception {
         // Create an example SOAP envelope
         SOAPEnvelope env = new org.apache.axis.message.SOAPEnvelope();

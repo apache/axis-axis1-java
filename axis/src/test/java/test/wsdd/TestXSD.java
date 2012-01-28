@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -23,14 +21,6 @@ public class TestXSD extends TestCase {
 
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-    public TestXSD(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestXSD.class);
-    }
-
     protected void setUp() throws Exception {
         String schemaSource = "wsdd/WSDD.xsd";
 
@@ -44,12 +34,6 @@ public class TestXSD extends TestCase {
         // Specify other factory configuration settings
         File f = new File(schemaSource);
         dbf.setAttribute(JAXP_SCHEMA_SOURCE, f.toURL().toExternalForm());
-    }
-
-    public static void main(String[] args) throws Exception {
-        TestXSD tester = new TestXSD("TestXSD");
-        tester.setUp();
-        tester.testWSDD();
     }
 
     public void testWSDD() throws Exception {

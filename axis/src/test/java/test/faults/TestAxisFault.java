@@ -18,8 +18,6 @@
 package test.faults;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.NoEndPointException;
@@ -35,15 +33,6 @@ import javax.xml.parsers.ParserConfigurationException;
  * unit tests for the ubiquitous AxisFault 
  */
 public class TestAxisFault extends TestCase {
-
-    public TestAxisFault(String s) {
-        super(s);
-    }
-
-
-    public static Test suite() {
-        return new TestSuite(TestAxisFault.class);
-    }
     /**
      * test that exceptions are filled in
      */

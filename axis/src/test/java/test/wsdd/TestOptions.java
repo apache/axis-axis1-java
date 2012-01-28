@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.Handler;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -25,17 +23,6 @@ public class TestOptions extends TestCase
             " </handler>\n" +
             " <handler type=\"logger\" name=\"other\"/>\n" +
             "</deployment>";
-
-    public TestOptions (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestOptions.class);
-    }
-
-    protected void setup() {
-    }
 
     /**
      * Initialize an engine with a single handler with a parameter set, and
@@ -70,10 +57,5 @@ public class TestOptions extends TestCase
 
         optVal = server.getOption("someOptionWhichIsntSet");
         assertNull("Got value for bad option on 2nd handler!", optVal);
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestOptions tester = new TestOptions("foo");
-        tester.testOptions();
     }
 }

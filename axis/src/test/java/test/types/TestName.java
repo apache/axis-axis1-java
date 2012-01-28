@@ -23,12 +23,6 @@ import org.apache.axis.types.Name;
  * Test validation of types.Name
  */
 public class TestName extends TestCase {
-
-
-    public TestName(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

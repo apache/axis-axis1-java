@@ -1,8 +1,6 @@
 package test.utils;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
@@ -12,17 +10,6 @@ import java.io.ObjectOutputStream;
 
 public class TestQName extends TestCase
 {
-    public TestQName (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestQName.class);
-    }
-
-    protected void setup() {
-    }
-
     public void testQName2StringConstructor()
     {
         QName qname = new QName("rdf","article");

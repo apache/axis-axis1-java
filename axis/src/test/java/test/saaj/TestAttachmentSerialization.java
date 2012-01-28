@@ -41,15 +41,6 @@ import java.io.OutputStream;
 public class TestAttachmentSerialization extends TestCase {
     static Log log = LogFactory.getLog(TestAttachmentSerialization.class.getName());
 
-    public TestAttachmentSerialization(String name) {
-        super(name);
-    }
-
-    public static void main(String args[]) throws Exception {
-        TestAttachmentSerialization tester = new TestAttachmentSerialization("tester");
-        tester.testAttachments();
-    }
-
     public void testAttachments() throws Exception {
         try {
             ByteArrayOutputStream bais = new ByteArrayOutputStream();

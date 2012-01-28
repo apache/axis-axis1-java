@@ -1,25 +1,12 @@
 package test.utils.cache;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.utils.cache.JavaClass;
 
 import java.lang.reflect.Method;
 
 public class TestJavaClass extends TestCase
 {
-    public TestJavaClass (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestJavaClass.class);
-    }
-    
-    protected void setup() {
-    }
-
     public void testGetJavaClass()
     {
         Class c = new java.util.Date().getClass(); 

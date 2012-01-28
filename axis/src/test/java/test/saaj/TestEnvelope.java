@@ -26,12 +26,6 @@ import java.util.Iterator;
 import junit.framework.AssertionFailedError;
 
 public class TestEnvelope extends junit.framework.TestCase {
-
-    public TestEnvelope(String name) {
-        super(name);
-    }
-
-
     String xmlString =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
@@ -269,17 +263,5 @@ public class TestEnvelope extends junit.framework.TestCase {
             i.next();
         }
         return count;
-    }
-
-    public static void main(String[] args) throws Exception {
-        test.saaj.TestEnvelope tester = new test.saaj.TestEnvelope("TestEnvelope");
-        tester.testFaults2();
-        tester.testEnvelope();
-        tester.testText3();
-        tester.testText2();
-        tester.testText1();
-        tester.testHeaderElements();
-        tester.testFaults();
-        tester.testAttributes();
     }
 }

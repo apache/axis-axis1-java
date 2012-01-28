@@ -1,25 +1,16 @@
 package test.jaxrpc;
 
-import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.Detail;
 import org.apache.axis.server.AxisServer;
 
 import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.handler.HandlerChain;
-import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.soap.SOAPFaultException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TestSOAPService
         extends AJAXRPC {

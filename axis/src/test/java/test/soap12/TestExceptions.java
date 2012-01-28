@@ -12,14 +12,6 @@ import javax.xml.namespace.QName;
  * Ensure that SOAP 1.2's FAULT_SUBCODE_PROC_NOT_PRESENT is thrown if the method is not found
  */ 
 public class TestExceptions extends GenericLocalTest {
-    public TestExceptions() {
-        super("foo");
-    }
-
-    public TestExceptions(String s) {
-        super(s);
-    }
-
     /**
      * base test ensure that SOAP1.2 works :)
      * @throws Exception

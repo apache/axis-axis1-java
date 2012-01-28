@@ -104,9 +104,4 @@ public class TestRoundTrip extends TestCase {
             assertEquals("The result is not what is expected.", ret1, ret2);
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        TestRoundTrip trip = new TestRoundTrip("Test RoundTrip");
-        trip.testRoundTrip();
-    }
 }

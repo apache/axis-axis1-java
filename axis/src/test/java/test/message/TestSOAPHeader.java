@@ -15,9 +15,7 @@
  */
 package test.message;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
@@ -39,28 +37,6 @@ import java.util.Iterator;
  * @version $Revision$
  */
 public class TestSOAPHeader extends TestCase {
-
-    /**
-     * Method suite
-     *
-     * @return
-     */
-    public static Test suite() {
-        return new TestSuite(test.message.TestSOAPHeader.class);
-    }
-
-    /**
-     * Method main
-     *
-     * @param argv
-     */
-    public static void main(String[] argv) throws Exception {
-        TestSOAPHeader tester = new TestSOAPHeader("TestSOAPHeader");
-        tester.setUp();
-        tester.testExamineHeaderElements1();
-        tester.testSoapHeadersBUG();
-    }
-
     /** Field ACTOR */
     public static final transient String ACTOR = "http://slashdot.org/";
 

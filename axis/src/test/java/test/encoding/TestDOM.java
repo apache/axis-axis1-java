@@ -1,6 +1,5 @@
 package test.encoding;
 
-import junit.framework.TestCase;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -29,11 +28,6 @@ import java.io.StringWriter;
  */
 
 public class TestDOM extends XMLTestCase {
-
-    public TestDOM(String name) {
-        super(name);
-    }
-
     private String header =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<SOAP-ENV:Envelope" +
@@ -176,16 +170,6 @@ public class TestDOM extends XMLTestCase {
 
         assertXMLIdentical("Deserialization invalidated XML",
                 new Diff(xml2, writer.getBuffer().toString()), true);
-    }
-
-    public static void main(String [] args) throws Exception
-    {
-        TestDOM tester = new TestDOM("TestDOM");
-        tester.testAttributes();
-        tester.testHeaders();
-        tester.testNodeWithAttribute();
-        tester.testEmptyNode();
-        tester.testDOM();
     }
 }
 

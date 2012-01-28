@@ -23,11 +23,6 @@ import org.apache.axis.types.UnsignedByte;
  * Test validation of types.UnsignedByte
  */
 public class TestUnsignedByte extends TestCase {
-
-    public TestUnsignedByte(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

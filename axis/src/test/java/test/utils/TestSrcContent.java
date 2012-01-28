@@ -1,9 +1,7 @@
 package test.utils;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.PatternCompiler;
@@ -37,14 +35,6 @@ import java.io.FileInputStream;
  * Based on code in TestMessages.java.
  */
 public class TestSrcContent extends TestCase {
-    public TestSrcContent(String name) {
-        super(name);
-    } // ctor
-
-    public static Test suite() {
-        return new TestSuite(TestSrcContent.class);
-    }
-
     private static final String LS = System.getProperty("line.separator");
 
     private String errors = "";

@@ -27,7 +27,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
@@ -49,14 +48,6 @@ public class TestDerivatedBeanSerializer extends TestCase {
 
 	StringWriter stringWriter;
 	SerializationContext context;
-
-	/**
-	 * Constructor for DerivatedBeanSerializerTest.
-	 * @param arg0
-	 */
-	public TestDerivatedBeanSerializer(String arg0) {
-		super(arg0);
-	}
 
 	/**
 	 * @see TestCase#setUp()

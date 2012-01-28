@@ -45,10 +45,6 @@ public class TestApplicationScope extends TestCase {
     private AxisServer server;
     private String SERVICE_NAME = "TestService";
 
-    public TestApplicationScope(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
         config = new BasicServerConfig();
         server = new AxisServer(config);

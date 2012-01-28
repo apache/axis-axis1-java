@@ -1,7 +1,5 @@
 package test.utils;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.AxisEngine;
@@ -14,14 +12,6 @@ import java.io.StringReader;
 
 public class TestNSStack extends AxisTestBase
 {
-    public TestNSStack(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestNSStack.class);
-    }
-
     protected void setUp() throws Exception {
         AxisProperties.setProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,"false");
     }
@@ -81,12 +71,5 @@ public class TestNSStack extends AxisTestBase
         } finally {
             XMLUnit.setIgnoreWhitespace(oldIgnore);
         }
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        TestNSStack test = new TestNSStack("TestNSStack");
-        test.testNSStack1();
-        test.testNSStack2();
     }
 }

@@ -1,8 +1,6 @@
 package test.utils.bytecode;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -18,20 +16,6 @@ import org.apache.axis.utils.bytecode.ParamNameExtractor;
  * 
  */
 public class TestParamNameExtractor extends TestCase {
-    TestClass t = null;
-
-    public TestParamNameExtractor(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestParamNameExtractor.class);
-    }
-
-    protected void setup() {
-        t = this.new TestClass();
-    }
-
     public void testExtractParameter() {
         //now get the nonoverloadmethod
         Method[] methods = TestClass.class.getMethods();

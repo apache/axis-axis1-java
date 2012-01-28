@@ -29,12 +29,6 @@ import java.util.GregorianCalendar;
  * @todo try to find original author, add more docs
  */
 public class TestDuration extends TestCase {
-
-
-    public TestDuration(String name) {
-        super(name);
-    }
-
     public void testValidDurations() throws Exception {
         // invoke the web service as if it was a local java object
         String[] durationStrings = new String[11];

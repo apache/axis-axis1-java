@@ -36,14 +36,6 @@ public class TestBook extends GenericLocalTest {
             new QName("http://holdertest.org/xsd", "ArrayOfBook");
     private QName TYPE_BOOK = new QName("http://holdertest.org/xsd", "Book");
 
-    public TestBook() {
-        super("service");
-    }
-
-    public TestBook(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
         super.setUp(false); // don't deploy here
         TypeMapping tm = (TypeMapping)config.getTypeMappingRegistry().

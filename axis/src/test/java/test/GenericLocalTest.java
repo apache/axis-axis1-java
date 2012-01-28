@@ -50,6 +50,9 @@ public abstract class GenericLocalTest extends TestCase {
     protected LocalTransport transport;
     protected SOAPService service = null;
 
+    public GenericLocalTest() {
+    }
+
     public GenericLocalTest(String s) {
         super(s);
     }

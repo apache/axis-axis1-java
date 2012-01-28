@@ -25,10 +25,6 @@ import org.apache.axis.types.Id;
 public class TestId extends TestCase {
   // This needs to be extended to test ID specific things
 
-    public TestId(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

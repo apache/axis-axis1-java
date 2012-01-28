@@ -23,11 +23,6 @@ import org.apache.axis.types.NonNegativeInteger;
  * Test validation of types.NonNegativeInteger
  */
 public class TestNonNegativeInteger extends TestCase {
-
-    public TestNonNegativeInteger(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

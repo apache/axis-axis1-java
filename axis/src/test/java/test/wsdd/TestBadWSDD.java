@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.Handler;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.configuration.XMLStringProvider;
@@ -50,17 +48,6 @@ public class TestBadWSDD extends TestCase
     static final String badHandler = 
             " <handler name=\"nameButNoType\"/>\n";
 
-    public TestBadWSDD (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestBadWSDD.class);
-    }
-
-    protected void setup() {
-    }
-
     /**
      * Initialize an engine with a single handler with a parameter set, and
      * another reference to that same handler with a different name.
@@ -91,10 +78,5 @@ public class TestBadWSDD extends TestCase
         }
         
         fail("Successfully processed bad WSDD!");
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestBadWSDD tester = new TestBadWSDD("foo");
-        tester.testOptions();
     }
 }

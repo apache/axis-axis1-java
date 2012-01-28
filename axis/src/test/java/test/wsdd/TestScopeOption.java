@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.Handler;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -21,17 +19,6 @@ public class TestScopeOption extends TestCase
                       "scope=\"";
     static final String doc2 = "\"/>\n" +
             "</deployment>";
-
-    public TestScopeOption (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestScopeOption.class);
-    }
-
-    protected void setup() {
-    }
 
     /**
      * Initialize an engine with a single handler with per-access scope.
@@ -72,10 +59,5 @@ public class TestScopeOption extends TestCase
         assertNotNull("Couldn't get second logger handler from engine!", h2);
         
         assertTrue("Singleton Handlers were different!", (h1 == h2));
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestScopeOption tester = new TestScopeOption("foo");
-        tester.testPerAccessScope();
     }
 }

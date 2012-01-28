@@ -79,15 +79,4 @@ public class TestSOAPFaultDetail extends junit.framework.TestCase
 
         return env.getFirstBody();
     }
-
-    /**
-     * Main
-     */
-    public static void main(String[] args)
-            throws Exception
-    {
-        TestSOAPFaultDetail detailTest = new TestSOAPFaultDetail("faultdetails");
-        detailTest.testDetails();
-    }
-
 }

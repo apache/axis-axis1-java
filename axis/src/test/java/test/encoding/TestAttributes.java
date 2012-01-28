@@ -7,7 +7,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.BasicServerConfig;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
@@ -37,10 +36,6 @@ public class TestAttributes extends TestCase {
             LogFactory.getLog(TestAttributes.class.getName());
 
     public static final String myNS = "urn:myNS";
-
-    public TestAttributes(String name) {
-        super(name);
-    }
 
     public void testBean () throws Exception {
         MessageContext msgContext = new MessageContext(new AxisServer(new BasicServerConfig()));

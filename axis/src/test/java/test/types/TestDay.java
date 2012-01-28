@@ -25,11 +25,6 @@ import java.text.NumberFormat;
  * Test validation of types.Day
  */
 public class TestDay extends TestCase {
-
-    public TestDay(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  values should be invalid.
      */

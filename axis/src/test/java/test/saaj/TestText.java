@@ -22,11 +22,6 @@ import javax.xml.parsers.DocumentBuilder;
 import java.io.ByteArrayInputStream;
 
 public class TestText extends junit.framework.TestCase {
-
-    public TestText(String name) {
-        super(name);
-    }
-
     // Test SAAJ addTextNode performance
     public void testAddTextNode() throws Exception {
         SOAPFactory soapFactory = SOAPFactory.newInstance();
@@ -206,11 +201,5 @@ public class TestText extends junit.framework.TestCase {
         if (children.getLength() != 0)
             for (int i = 0; i < children.getLength(); i++)
                 processNode(children.item(i));
-    }
-
-    
-    public static void main(String[] args) throws Exception {
-        TestText tester = new TestText("TestEnvelope");
-        tester.testAddTextNode();
     }
 }

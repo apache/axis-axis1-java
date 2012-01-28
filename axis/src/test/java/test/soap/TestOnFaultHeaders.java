@@ -46,10 +46,6 @@ public class TestOnFaultHeaders extends TestCase {
 
     static final String localURL = "local:///testService";
 
-    public TestOnFaultHeaders(String s) {
-        super(s);
-    }
-
     public void setUp() throws Exception {
         engine.init();
         localTransport.setUrl(localURL);

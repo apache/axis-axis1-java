@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.Chain;
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
@@ -20,16 +18,6 @@ public class TestStructure extends TestCase
     static final String INPUT_FILE = "testStructure1.wsdd";
     AxisServer server;
 
-    public TestStructure (String name) 
-    {
-        super(name);
-    }
-
-    public static Test suite() 
-    {
-        return new TestSuite(TestStructure.class);
-    }
-
     protected void setUp() 
     {
         InputStream is = getClass().getResourceAsStream(INPUT_FILE);
@@ -37,13 +25,6 @@ public class TestStructure extends TestCase
         server = new AxisServer(provider);
     }
 
-    public static void main(String[] args) throws Exception 
-    {
-        TestStructure tester = new TestStructure("TestStructure");
-        tester.setUp();
-        tester.testServiceBackReference();
-    }
-    
     public void testChainAnonymousHandler() throws Exception
     {
         Chain chainOne = (Chain) server.getHandler("chain.one");

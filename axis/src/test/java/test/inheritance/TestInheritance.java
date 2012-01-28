@@ -13,10 +13,6 @@ public class TestInheritance extends TestCase {
     private AxisServer server;
     private LocalTransport transport;
 
-    public TestInheritance(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
         SimpleProvider config = new SimpleProvider();
 

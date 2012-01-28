@@ -45,10 +45,6 @@ import java.util.Iterator;
 public class TestMessageService extends TestCase {
     LocalTransport transport;
 
-    public TestMessageService(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
         SOAPService service = new SOAPService(new MsgProvider());
 

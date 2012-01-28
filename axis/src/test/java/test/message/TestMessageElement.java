@@ -50,20 +50,12 @@ import java.io.StringReader;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
-
 /**
  * Test {@link MessageElement} class.
  *
  * @author Glyn Normington (glyn@apache.org)
  */
 public class TestMessageElement extends AxisTestBase {
-
-    public TestMessageElement(String name) {
-        super(name);
-    }
-
     // Test JAXM methods...
     public void testParentage() throws Exception {
         SOAPElement parent = new MessageElement("ns", "parent");
@@ -461,10 +453,5 @@ public class TestMessageElement extends AxisTestBase {
         MessageElement elem = dser.getEnvelope().getFirstBody();
         assertTrue(elem.getDeserializationContext() != null);
         return elem.getValue();
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        new TestRunner().doRun( new TestMessageElement( "TestMessageElement" ) );
     }
 }

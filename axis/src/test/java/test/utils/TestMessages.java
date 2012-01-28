@@ -1,15 +1,12 @@
 package test.utils;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.Vector;
-
 
 /**
  * This TestCase verifies:
@@ -18,14 +15,6 @@ import java.util.Vector;
  *   - tests Messages extension mechanism
  */
 public class TestMessages extends TestCase {
-    public TestMessages(String name) {
-        super(name);
-    } // ctor
-
-    public static Test suite() {
-        return new TestSuite(TestMessages.class);
-    }
-
     /**
      * Call getMessage for each key in resource.properties
      * to make sure they are all well formed.

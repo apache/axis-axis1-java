@@ -1,25 +1,12 @@
 package test.utils.cache;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.utils.cache.JavaMethod;
 
 import java.lang.reflect.Method;
 
 public class TestJavaMethod extends TestCase
 {
-    public TestJavaMethod (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestJavaMethod.class);
-    }
-
-    protected void setup() {
-    }
-
     public void testGetMethodWithVectorMethods()
     {
         Class vector = new java.util.Vector().getClass(); 

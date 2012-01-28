@@ -25,11 +25,6 @@ import java.text.NumberFormat;
  * Test validation of types.MonthDay
  */
 public class TestMonthDay extends TestCase {
-
-    public TestMonthDay(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  values should be invalid.
      */

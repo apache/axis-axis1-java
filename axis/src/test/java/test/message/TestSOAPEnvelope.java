@@ -34,10 +34,6 @@ import javax.xml.soap.SOAPHeader;
  */
 public class TestSOAPEnvelope extends TestCase {
 
-    public TestSOAPEnvelope(String name) {
-        super(name);
-    }
-
     // Test JAXM methods...
 
     public void testName() throws Exception {
@@ -110,10 +106,4 @@ public class TestSOAPEnvelope extends TestCase {
 		SOAPHeaderElement she = msg.getSOAPEnvelope().getHeaderByName(null,"testHeader");
         assertTrue(she != null);
 	}
-    
-    public static void main(String args[]) throws Exception {
-        TestSOAPEnvelope tester = new TestSOAPEnvelope("TestSOAPEnvelope");
-        tester.testNullpointer();
-        tester.testNullpointerInHeader();
-    }
 }

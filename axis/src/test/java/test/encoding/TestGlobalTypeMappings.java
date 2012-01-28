@@ -35,14 +35,6 @@ import javax.xml.rpc.ParameterMode;
 public class TestGlobalTypeMappings extends GenericLocalTest {
     private QName TYPE_QNAME = new QName("ns", "dataType");
 
-    public TestGlobalTypeMappings() {
-        super("service");
-    }
-
-    public TestGlobalTypeMappings(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
         super.setUp(false); // don't deploy here
         TypeMapping tm = (TypeMapping)config.getTypeMappingRegistry().

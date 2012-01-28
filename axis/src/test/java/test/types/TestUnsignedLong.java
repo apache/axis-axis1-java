@@ -25,11 +25,6 @@ import java.math.BigInteger;
  * Test validation of types.UnsignedLong
  */
 public class TestUnsignedLong extends TestCase {
-
-    public TestUnsignedLong(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

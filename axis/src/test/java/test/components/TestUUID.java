@@ -23,23 +23,12 @@
 
 package test.components;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.components.uuid.FastUUIDGen;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 
 public class TestUUID extends TestCase {
-
-    public TestUUID(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestUUID.class);
-    }
-
     public void testUUID() {
         long startTime = 0;
         long endTime = 0;

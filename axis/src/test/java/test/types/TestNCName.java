@@ -23,12 +23,6 @@ import org.apache.axis.types.NCName;
  * Test validation of types.NCName
  */
 public class TestNCName extends TestCase {
-
-
-    public TestNCName(String name) {
-        super(name);
-    }
-
     /**
      * Run a failure test.  value should be invalid.
      */

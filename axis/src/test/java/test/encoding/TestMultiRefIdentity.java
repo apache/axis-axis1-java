@@ -16,9 +16,7 @@
 
 package test.encoding;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.encoding.SerializationContext;
 
 import javax.xml.namespace.QName;
@@ -30,33 +28,6 @@ import java.io.CharArrayWriter;
  * @version $Revision$
  */
 public class TestMultiRefIdentity extends TestCase {
-    
-    public static Test suite() {
-        return new TestSuite(test.encoding.TestMultiRefIdentity.class);
-    }
-    
-    public static void main(String[] argv) {
-        
-        boolean swing = false;
-        if (argv.length > 0) {
-            if ("-swing".equals(argv[0])) {
-                swing = true;
-            }
-        }
-        
-        if (swing) {
-            junit.swingui.TestRunner.main(new String[] {"test.encoding.TestMultiRefIdentity"});
-        } else {
-            System.out.println("use '-swing' for the Swing version.");
-            junit.textui.TestRunner.main(new String[] {"test.encoding.TestMultiRefIdentity"});
-        }
-    }
-    
-    
-    public TestMultiRefIdentity(String name) {
-        super(name);
-    }
-    
     /**
        Tests when beans are identical and use default hashCode().
     */

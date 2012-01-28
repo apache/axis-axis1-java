@@ -18,7 +18,6 @@ package test.message;
 
 import junit.framework.TestCase;
 import org.apache.axis.Message;
-import org.apache.axis.message.MimeHeaders;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
@@ -31,11 +30,6 @@ import java.io.ByteArrayInputStream;
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class TestMessageSerialization extends TestCase {
-
-    public TestMessageSerialization(String name) {
-        super(name);
-    }
-
     public void test1() throws Exception {
         String messageText = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
             + "<soap:Header>"

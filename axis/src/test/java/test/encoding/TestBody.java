@@ -19,11 +19,6 @@ import javax.xml.namespace.QName;
  * to be set...
  */
 public class TestBody extends TestCase {
-
-    public TestBody(String name) {
-        super(name);
-    }
-
     private String namespace = "http://xml.apache.org/axis/TestBody";
 
     private String request = "<?xml version=\"1.0\"?>\n" + "<soap:Envelope " + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " + "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">" + "<soap:Body>\n" + "<method xmlns=\"" + namespace + "\">\n" + "<arg>5</arg>" + "</method>\n" + "</soap:Body>\n" + "</soap:Envelope>\n";
@@ -54,10 +49,5 @@ public class TestBody extends TestCase {
 
         // verify the service is set
         assertEquals("The target is not the same as the message context service handler", target, msgContext.getService());
-    }
-
-    public static void main(String[] args) throws Exception {
-        TestBody tester = new TestBody("test");
-        tester.testBodyNamespace();
     }
 }

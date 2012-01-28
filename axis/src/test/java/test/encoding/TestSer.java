@@ -6,7 +6,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCElement;
@@ -34,10 +33,6 @@ public class TestSer extends TestCase {
             LogFactory.getLog(TestSer.class.getName());
 
     public static final String myNS = "urn:myNS";
-
-    public TestSer(String name) {
-        super(name);
-    }
 
     public void testDataNoHrefs () throws Exception {
         doTestData(false);

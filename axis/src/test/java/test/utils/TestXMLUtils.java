@@ -1,7 +1,5 @@
 package test.utils;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis.encoding.DeserializationContext;
 import test.AxisTestBase;
 import org.apache.axis.utils.XMLUtils;
@@ -27,18 +25,6 @@ import java.util.Iterator;
 
 public class TestXMLUtils extends AxisTestBase
 {
-
-    public TestXMLUtils (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestXMLUtils.class);
-    }
-
-    public void setup() {
-    }
-
     public void testNewDocumentNoArgConstructor() throws Exception
     {
         Document doc = XMLUtils.newDocument();
@@ -421,12 +407,5 @@ public class TestXMLUtils extends AxisTestBase
         } finally {
             XMLUnit.setIgnoreWhitespace(oldIgnore);
         }
-    }
-    
-    public static void main(String[] args) throws Exception
-    {
-        TestXMLUtils test = new TestXMLUtils("TestXMLUtils");
-        test.testSAXXXE3();
-        test.testNSStack();
     }
 }

@@ -34,14 +34,6 @@ public class TestAllowedMethods extends TestCase {
             " </service>\n" +
             "</deployment>";
 
-    public TestAllowedMethods() {
-        super("test");
-    }
-
-    public TestAllowedMethods(String s) {
-        super(s);
-    }
-
     protected void setUp() throws Exception {
         XMLStringProvider config = new XMLStringProvider(doc1);
         server = new AxisServer(config);

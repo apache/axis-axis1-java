@@ -15,9 +15,7 @@
  */
 package test.chains;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.InternalException;
@@ -27,17 +25,6 @@ import org.apache.axis.handlers.BasicHandler;
 
 public class TestSimpleChain extends TestCase
 {
-    public TestSimpleChain (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestSimpleChain.class);
-    }
-
-    protected void setup() {
-    }
-
     private class TestHandler extends BasicHandler {
         public TestHandler() {}
         public void invoke(MessageContext msgContext) throws AxisFault {}

@@ -1,8 +1,6 @@
 package test.wsdd;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.Handler;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.client.Call;
@@ -44,17 +42,6 @@ public class TestAdminService extends TestCase
             " <handler name=\"other\"/>\n" +
             "</undeployment>";
 
-    public TestAdminService (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestAdminService.class);
-    }
-
-    protected void setup() {
-    }
-
     /**
      * Load up a server with a couple of handlers as spec'ed above,
      * then undeploy one of them.  Confirm that all looks reasonable
@@ -83,10 +70,5 @@ public class TestAdminService extends TestCase
         
         handler = server.getHandler(HANDLER_NAME);
         assertNotNull("Couldn't get handler (2nd time)", handler);
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestAdminService tester = new TestAdminService("foo");
-        tester.testUndeployHandlerViaAdmin();
     }
 }

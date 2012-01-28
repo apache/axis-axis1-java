@@ -41,19 +41,6 @@ public class TestSimpleSession extends TestCase implements ServiceLifecycle {
             "</deployment>";
     static XMLStringProvider clientProvider = new XMLStringProvider(clientWSDD);
 
-    /**
-     * Default constructor for use as service
-     */
-    public TestSimpleSession()
-    {
-        super("serviceTest");
-    }
-
-    public TestSimpleSession(String name)
-    {
-        super(name);
-    }
-    
     public void testSessionAPI() {
         SimpleSession session = new SimpleSession();
         Object val = new Float(5.6666);
@@ -167,13 +154,6 @@ public class TestSimpleSession extends TestCase implements ServiceLifecycle {
         count = new Integer(count.intValue() + 1);
         session.set("counter", count);
         return count;
-    }
-
-    public static void main(String args[]) throws Exception
-    {
-        TestSimpleSession test = new TestSimpleSession("test");
-        test.testSessionAPI();
-        test.testSessionService();
     }
 
     private static int initCalls = 0;

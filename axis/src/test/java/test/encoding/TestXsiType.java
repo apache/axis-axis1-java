@@ -7,7 +7,6 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
@@ -28,15 +27,6 @@ public class TestXsiType extends TestCase {
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer server = new AxisServer(provider);
     
-    public TestXsiType()
-    {
-        super("testing");
-    }
-
-    public TestXsiType(String name) {
-        super(name);
-    }
-
     /**
      * Trivial test just to make sure there aren't xsi:type attributes
      */ 
@@ -106,12 +96,5 @@ public class TestXsiType extends TestCase {
     public double serviceMethod()
     {
         return 3.14159;
-    }
-
-    public static void main(String [] args) throws Exception
-    {
-        TestXsiType tester = new TestXsiType("test");
-        tester.testNoXsiTypes();
-        tester.testTypelessDeserialization();
     }
 }

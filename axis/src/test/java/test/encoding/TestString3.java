@@ -9,8 +9,6 @@ import org.apache.axis.server.AxisServer;
 import org.xml.sax.InputSource;
 
 import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.MessageFactory;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 
 /** 
@@ -20,10 +18,6 @@ public class TestString3 extends TestCase {
 
     public static final String myNS = "urn:myNS";
     
-    public TestString3(String name) {
-        super(name);
-    }
-
     static String xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
             "<soapenv:Body>" +
             "<ns1:method1 xmlns:ns1=\"urn:myNamespace\">" +

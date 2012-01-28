@@ -1,7 +1,6 @@
 package test.utils.bytecode;
+
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
@@ -17,18 +16,7 @@ import org.apache.axis.utils.bytecode.ParamReader;
  * 
  */
 public class TestParamReader  extends TestCase{
-    private TestDerivedClass test =null;
     private ParamReader reader;
-    public TestParamReader(String name) {
-        super(name);
-    }
-    public static Test suite() {
-        return new TestSuite(TestParamReader.class);
-    }
-
-    protected void setup() {
-        test = this.new TestDerivedClass(1);
-    }
 
     public void testGetMethodParameters(){
         try {
@@ -84,10 +72,6 @@ public class TestParamReader  extends TestCase{
 
     }
 
-    public static void main(String [] arg) {
-        TestParamReader t = new TestParamReader("");
-        t.testGetConstructorParameters();
-    }
     class TestBaseClass {
         public void subClassInherit(int intValue) {
         }

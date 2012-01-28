@@ -26,10 +26,6 @@ import java.util.Iterator;
 import test.AxisTestBase;
 
 public class TestDOM extends AxisTestBase {
-    public TestDOM(String name) {
-        super(name);
-    }
-
     public void testOwnerDocument() throws Exception {
         final SOAPMessage message = MessageFactory.newInstance().createMessage();
         SOAPPart soapPart = message.getSOAPPart();

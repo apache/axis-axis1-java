@@ -15,11 +15,6 @@ import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayInputStream;
 
 public class TestImport extends AxisTestBase {
-
-    public TestImport(String name) {
-        super(name);
-    }
-
     private static final String SAMPLE_1 =
             "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
             "\n" +

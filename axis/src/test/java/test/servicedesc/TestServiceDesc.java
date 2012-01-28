@@ -23,18 +23,7 @@ import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 
-import javax.xml.namespace.QName;
-
 public class TestServiceDesc extends TestCase { 
-    
-    public TestServiceDesc(String name) {
-        super(name);
-    }
-    
-    public TestServiceDesc() {
-        super("Test ServiceDesc Synch");
-    }
- 
     public void testFaultSynch() throws Exception {
         JavaServiceDesc desc = new JavaServiceDesc();
         desc.setTypeMapping(DefaultTypeMappingImpl.getSingletonDelegate());

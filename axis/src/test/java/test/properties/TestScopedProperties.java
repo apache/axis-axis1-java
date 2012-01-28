@@ -46,10 +46,6 @@ public class TestScopedProperties extends TestCase {
     private SimpleProvider config;
     private AxisServer server;
 
-    public TestScopedProperties(String s) {
-        super(s);
-    }
-
     /**
      * Sets up the server side for this test.  We deploy a service with
      * a PropertyHandler as a request handler, and PropertyHandler as the

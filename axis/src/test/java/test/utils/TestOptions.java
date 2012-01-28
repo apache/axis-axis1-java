@@ -1,25 +1,12 @@
 package test.utils;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.axis.utils.Options;
 
 import java.net.MalformedURLException;
 
 public class TestOptions extends TestCase
 {
-    public TestOptions (String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(TestOptions.class);
-    }
-
-    protected void setup() {
-    }
-
     public void testOptionsConstructor() throws MalformedURLException
     {
         String[] fake_args = { "-h 127.0.0.1","-p 8081","-u scott","-w tiger" };

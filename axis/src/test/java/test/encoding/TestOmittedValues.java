@@ -63,14 +63,6 @@ public class TestOmittedValues extends TestCase {
           "</soap:Body>\n" +
         "</soap:Envelope>\n";
 
-    public TestOmittedValues(String s) {
-        super(s);
-    }
-
-    public TestOmittedValues() {
-        super("service version");
-    }
-
     public void testOmittedValue() throws Exception {
         // Set up a server and deploy our service
         BasicServerConfig config = new BasicServerConfig();

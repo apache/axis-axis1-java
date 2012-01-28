@@ -16,11 +16,6 @@ import java.util.Iterator;
  * Test case for Prefixes
  */ 
 public class TestPrefixes extends junit.framework.TestCase {
-
-    public TestPrefixes(String name) {
-        super(name);
-    }
-
     /**
      * Test for Bug 18274 - prefix name not set during adding child element
      * @throws Exception
