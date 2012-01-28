@@ -17,14 +17,20 @@ package test.message;
 
 import junit.framework.TestCase;
 
+import javax.xml.soap.Detail;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * @author steve.johnson@riskmetrics.com (Steve Johnson)
  * @author Davanum Srinivas (dims@yahoo.com)
+ * @author Andreas Veithen
+ * 
  * @version $Revision$
  */
 public class TestSOAPFault extends TestCase {
@@ -45,6 +51,33 @@ public class TestSOAPFault extends TestCase {
                         msg.getSOAPPart().getEnvelope().getBody().getFault();
                 System.out.println("Fault: " + fault.getFaultString());
             }
+        } finally {
+            in.close();
+        }
+    }
+    
+    /**
+     * Regression test for AXIS-2705. The issue occurs when a SOAP fault has a detail element
+     * containing text (and not elements). Note that such a SOAP fault violates the SOAP spec, but
+     * Axis should nevertheless be able to process it.
+     * 
+     * @throws Exception
+     */
+    public void _testAxis2705() throws Exception {
+        InputStream in = TestSOAPFault.class.getResourceAsStream("AXIS-2705.xml");
+        try {
+            MessageFactory msgFactory = MessageFactory.newInstance();
+            SOAPMessage msg = msgFactory.createMessage(null, in);
+            SOAPBody body = msg.getSOAPPart().getEnvelope().getBody();
+            assertTrue(body.hasFault());
+            SOAPFault fault = body.getFault();
+            Detail detail = fault.getDetail();
+            assertNotNull(detail);
+            Iterator it = detail.getChildElements();
+            assertTrue(it.hasNext());
+            SOAPElement detailElement = (SOAPElement)it.next();
+            assertNull(detailElement.getNamespaceURI());
+            assertEquals("text", detailElement.getLocalName());
         } finally {
             in.close();
         }
