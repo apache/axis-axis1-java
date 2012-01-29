@@ -23,6 +23,10 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
+
+import org.apache.axis.AxisFault;
+import org.w3c.dom.Element;
+
 import java.io.InputStream;
 import java.util.Iterator;
 
@@ -63,7 +67,7 @@ public class TestSOAPFault extends TestCase {
      * 
      * @throws Exception
      */
-    public void _testAxis2705() throws Exception {
+    public void testAxis2705() throws Exception {
         InputStream in = TestSOAPFault.class.getResourceAsStream("AXIS-2705.xml");
         try {
             MessageFactory msgFactory = MessageFactory.newInstance();
@@ -71,13 +75,11 @@ public class TestSOAPFault extends TestCase {
             SOAPBody body = msg.getSOAPPart().getEnvelope().getBody();
             assertTrue(body.hasFault());
             SOAPFault fault = body.getFault();
-            Detail detail = fault.getDetail();
-            assertNotNull(detail);
-            Iterator it = detail.getChildElements();
-            assertTrue(it.hasNext());
-            SOAPElement detailElement = (SOAPElement)it.next();
-            assertNull(detailElement.getNamespaceURI());
-            assertEquals("text", detailElement.getLocalName());
+            AxisFault axisFault = ((org.apache.axis.message.SOAPFault)fault).getFault();
+            Element[] details = axisFault.getFaultDetails();
+            assertEquals(1, details.length);
+            Element detailElement = details[0];
+            assertEquals("text", detailElement.getTagName());
         } finally {
             in.close();
         }
