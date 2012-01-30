@@ -36,5 +36,6 @@
         <module>bidbuy-sample</module>
         <module>echo-sample</module>
         <module>encoding-sample</module>
+        <module>faults-sample</module>
     </modules>
 </project>

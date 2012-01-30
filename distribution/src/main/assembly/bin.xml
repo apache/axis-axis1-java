@@ -64,6 +64,14 @@
             <directory>../samples/encoding-sample/src/main/wsdd</directory>
             <outputDirectory>samples/encoding</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>../samples/faults-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../samples/faults-sample/src/main/wsdd</directory>
+            <outputDirectory>samples/faults</outputDirectory>
+        </fileSet>
     </fileSets>
     <dependencySets>
         <dependencySet>

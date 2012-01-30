@@ -35,7 +35,7 @@ public class TestFaultsSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/faults/deploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
     
