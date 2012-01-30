@@ -47,7 +47,7 @@ public class GetQuote2 {
 
       /* Now use those QNames as pointers into the WSDL doc */
       /******************************************************/
-      Service service = new Service( new URL("file:GetQuote.wsdl"), servQN );
+      Service service = new Service( GetQuote2.class.getResource("GetQuote.wsdl"), servQN );
       Call    call    = (Call) service.createCall( portQN, "getQuote" );
 
       /* Strange - but allows the user to change just certain portions of */

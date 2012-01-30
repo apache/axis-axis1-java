@@ -79,7 +79,7 @@ public class StartServerMojo extends AbstractServerMojo {
      * 
      * @parameter
      */
-    private WSDD[] wsdds;
+    private FileSet[] wsdds;
     
     /**
      * A set of directories to look up JWS files from.
@@ -87,6 +87,14 @@ public class StartServerMojo extends AbstractServerMojo {
      * @parameter
      */
     private File[] jwsDirs;
+    
+    /**
+     * A set of config files to copy to the <tt>WEB-INF</tt> dir. An example of a config file
+     * would be <tt>users.lst</tt> used by <code>SimpleSecurityProvider</code>.
+     *
+     * @parameter
+     */
+    private FileSet[] configs;
     
     /**
      * If this flag is set to <code>true</code>, then the execution of the goal will block after the
@@ -162,11 +170,8 @@ public class StartServerMojo extends AbstractServerMojo {
         if (wsdds != null && wsdds.length > 0) {
             wsddFiles = new ArrayList();
             for (int i=0; i<wsdds.length; i++) {
-                WSDD wsdd = wsdds[i];
-                DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir(wsdd.getDirectory());
-                scanner.setIncludes(wsdd.getIncludes());
-                scanner.setExcludes(wsdd.getExcludes());
+                FileSet wsdd = wsdds[i];
+                DirectoryScanner scanner = wsdd.createScanner();
                 scanner.scan();
                 String[] includedFiles = scanner.getIncludedFiles();
                 for (int j=0; j<includedFiles.length; j++) {
@@ -200,8 +205,27 @@ public class StartServerMojo extends AbstractServerMojo {
             } catch (IOException ex) {
                 throw new MojoFailureException("Failed to clean the work directory", ex);
             }
-        } else {
-            workDir.mkdirs();
+        }
+        workDir.mkdirs();
+        
+        if (configs != null && configs.length > 0) {
+            File webInfDir = new File(workDir, "WEB-INF");
+            webInfDir.mkdirs();
+            for (int i=0; i<configs.length; i++) {
+                FileSet config = configs[i];
+                DirectoryScanner scanner = config.createScanner();
+                scanner.scan();
+                String[] includedFiles = scanner.getIncludedFiles();
+                for (int j=0; j<includedFiles.length; j++) {
+                    String includedFile = includedFiles[j];
+                    File source = new File(config.getDirectory(), includedFile);
+                    try {
+                        FileUtils.copyFile(source, new File(webInfDir, includedFile));
+                    } catch (IOException ex) {
+                        throw new MojoFailureException("Unable to copy " + source, ex);
+                    }
+                }
+            }
         }
         
         // Start the server

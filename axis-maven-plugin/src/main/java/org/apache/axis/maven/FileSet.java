@@ -20,7 +20,9 @@ package org.apache.axis.maven;
 
 import java.io.File;
 
-public class WSDD {
+import org.codehaus.plexus.util.DirectoryScanner;
+
+public class FileSet {
     private File directory;
     private String[] includes;
     private String[] excludes;
@@ -47,5 +49,13 @@ public class WSDD {
     
     public void setExcludes(String[] excludes) {
         this.excludes = excludes;
+    }
+    
+    public DirectoryScanner createScanner() {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(directory);
+        scanner.setIncludes(includes);
+        scanner.setExcludes(excludes);
+        return scanner;
     }
 }

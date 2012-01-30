@@ -36,7 +36,7 @@ public class TestStockSample extends TestCase {
     }
     
     public void doTestStockJWS () throws Exception {
-        String[] args = { "-uuser1", "-wpass1", "XXX", "-sjws/StockQuoteService.jws" };
+        String[] args = { "-uuser1", "-wpass1", "XXX", "-saxis/StockQuoteService.jws" };
         float val = new GetQuote().getQuote(args);
         assertEquals("TestStockSample.doTestStockJWS(): stock price should be 66.25", val, 66.25, 0.01);
         
@@ -53,7 +53,7 @@ public class TestStockSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/stock/deploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
     
@@ -76,7 +76,7 @@ public class TestStockSample extends TestCase {
     }
     
     public void doTestUndeploy () throws Exception {
-        String[] args = { "samples/stock/undeploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/undeploy.wsdd" };
         AdminClient.main(args);
     }
 
