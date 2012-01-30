@@ -120,6 +120,12 @@ public class StandaloneAxisServer {
             mapping.setPathSpec("/services/*");
             servletHandler.addServletMapping(mapping);
         }
+        {
+            ServletMapping mapping = new ServletMapping();
+            mapping.setServletName("AxisServlet");
+            mapping.setPathSpec("/servlet/AxisServlet");
+            servletHandler.addServletMapping(mapping);
+        }
         if (enableJWS) {
             ServletMapping mapping = new ServletMapping();
             mapping.setServletName("AxisServlet");

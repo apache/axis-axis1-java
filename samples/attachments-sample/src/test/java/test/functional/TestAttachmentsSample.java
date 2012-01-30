@@ -36,37 +36,37 @@ public class TestAttachmentsSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        AdminClient.main(new String[]{"samples/attachments/attachdeploy.wsdd" });
-        AdminClient.main(new String[]{"samples/attachments/testref.wsdd"});
+        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/attachdeploy.wsdd" });
+        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/testref.wsdd"});
     }
     
     public void doTestAttachments1() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echo(false, "samples/attachments/README");
+        boolean res = new EchoAttachment(opts).echo(false, System.getProperty("basedir") + "/pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
     public void doTestAttachmentsD1() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echo(true, "samples/attachments/README");
+        boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
     
     public void doTestAttachmentsDimeLeaveEmpty() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echo(true, "samples/attachments/leaveempty.txt");
+        boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/src/test/files/leaveempty.txt");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
     public void doTestAttachments2() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echoDir(false, "samples/attachments");
+        boolean res = new EchoAttachment(opts).echoDir(false, System.getProperty("basedir") + "/src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 
     public void doTestAttachmentsD2() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echoDir(true, "samples/attachments");
+        boolean res = new EchoAttachment(opts).echoDir(true, System.getProperty("basedir") + "/src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 
@@ -77,8 +77,8 @@ public class TestAttachmentsSample extends TestCase {
     }
     
     public void doTestUndeploy () throws Exception {
-        AdminClient.main(new String[]{ "samples/attachments/attachundeploy.wsdd" });
-        AdminClient.main(new String[]{ "samples/attachments/testrefundeploy.wsdd" });
+        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/attachundeploy.wsdd" });
+        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/testrefundeploy.wsdd" });
     }
 
     public static void main(String args[]) throws Exception {

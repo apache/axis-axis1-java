@@ -67,6 +67,7 @@
         <module>axis-jms</module>
         <module>integration</module>
         <module>axis-war</module>
+        <module>samples</module>
         <module>distribution</module>
     </modules>
     <dependencyManagement>
