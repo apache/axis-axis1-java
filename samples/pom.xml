@@ -33,5 +33,6 @@
     </description>
     <modules>
         <module>attachments-sample</module>
+        <module>bidbuy-sample</module>
     </modules>
 </project>

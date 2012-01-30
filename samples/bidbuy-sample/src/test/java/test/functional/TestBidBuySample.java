@@ -34,7 +34,7 @@ public class TestBidBuySample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/bidbuy/deploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
     
