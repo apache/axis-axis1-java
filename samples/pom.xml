@@ -35,5 +35,6 @@
         <module>attachments-sample</module>
         <module>bidbuy-sample</module>
         <module>echo-sample</module>
+        <module>encoding-sample</module>
     </modules>
 </project>

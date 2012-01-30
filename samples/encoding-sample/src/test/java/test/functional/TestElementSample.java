@@ -48,12 +48,12 @@ public class TestElementSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/encoding/deploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
     
     public void doTestUndeploy () throws Exception {
-        String[] args = { "samples/encoding/undeploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/undeploy.wsdd" };
         AdminClient.main(args);
     }
 
