@@ -66,7 +66,7 @@
                             <goal>wsdl2java-test</goal>
                         </goals>
                         <configuration>
-                            <file>../samples/echo/InteropTest.wsdl</file>
+                            <file>../distribution/src/main/files/samples/echo/InteropTest.wsdl</file>
                             <typeMappingVersion>1.1</typeMappingVersion>
                             <mappings>
                                 <mapping>
@@ -86,7 +86,7 @@
                             <goal>wsdl2java-test</goal>
                         </goals>
                         <configuration>
-                            <file>../samples/addr/AddressBook.wsdl</file>
+                            <file>../distribution/src/main/files/samples/addr/AddressBook.wsdl</file>
                             <typeMappingVersion>1.1</typeMappingVersion>
                             <mappings>
                                 <mapping>
@@ -925,7 +925,7 @@
                             <target>
                                 <!-- TODO: quick and dirty hack to be able to compile all tests -->
                                 <mkdir dir="${project.build.directory}/work/samples/client"/>
-                                <copy file="../samples/client/DynamicInvoker.java" todir="${project.build.directory}/work/samples/client"/>
+                                <copy file="../distribution/src/main/files/samples/client/DynamicInvoker.java" todir="${project.build.directory}/work/samples/client"/>
                             </target>
                         </configuration>
                     </execution>
