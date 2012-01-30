@@ -44,6 +44,18 @@
             <directory>../samples/bidbuy-sample/src/main/wsdd</directory>
             <outputDirectory>samples/bidbuy</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>../samples/echo-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../samples/echo-sample/src/main/wsdl</directory>
+            <outputDirectory>samples/echo</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../samples/echo-sample/src/main/wsdd</directory>
+            <outputDirectory>samples/echo</outputDirectory>
+        </fileSet>
     </fileSets>
     <dependencySets>
         <dependencySet>

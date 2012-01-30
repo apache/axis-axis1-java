@@ -34,5 +34,6 @@
     <modules>
         <module>attachments-sample</module>
         <module>bidbuy-sample</module>
+        <module>echo-sample</module>
     </modules>
 </project>
