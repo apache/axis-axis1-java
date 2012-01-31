@@ -37,6 +37,7 @@
         <module>echo-sample</module>
         <module>encoding-sample</module>
         <module>faults-sample</module>
+        <module>message-sample</module>
         <module>stock-sample</module>
     </modules>
 </project>

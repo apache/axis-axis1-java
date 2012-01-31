@@ -34,7 +34,7 @@ public class TestMessageSample extends TestCase {
     }
     
     public void doTestDeploy() throws Exception {
-        String[] args = { "samples/message/deploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
     
@@ -52,7 +52,7 @@ public class TestMessageSample extends TestCase {
     }
     
     public void doTestUndeploy () throws Exception {
-        String[] args = { "samples/message/undeploy.wsdd" };
+        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/undeploy.wsdd" };
         AdminClient.main(args);
     }
 
