@@ -81,6 +81,10 @@
             <outputDirectory>samples/message</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>../samples/misc-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>../samples/stock-sample/src/main/java</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
