@@ -73,6 +73,14 @@
             <outputDirectory>samples/faults</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>../samples/handler-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../samples/handler-sample/src/main/wsdd</directory>
+            <outputDirectory>samples/handler</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>../samples/message-sample/src/main/java</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
