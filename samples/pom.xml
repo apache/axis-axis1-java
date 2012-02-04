@@ -41,5 +41,6 @@
         <module>message-sample</module>
         <module>misc-sample</module>
         <module>stock-sample</module>
+        <module>transport-sample</module>
     </modules>
 </project>

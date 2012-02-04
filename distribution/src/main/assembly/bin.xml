@@ -112,6 +112,10 @@
             <directory>../samples/stock-sample/src/main/wsdd</directory>
             <outputDirectory>samples/stock</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>../samples/transport-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
     </fileSets>
     <dependencySets>
         <dependencySet>
