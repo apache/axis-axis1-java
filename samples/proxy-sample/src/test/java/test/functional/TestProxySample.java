@@ -50,13 +50,13 @@ public class TestProxySample extends TestCase {
             log.info("Testing deployment...");
             
             // deploy the proxy service
-            String[] args = { "samples/proxy/deploy.wsdd" };
+            String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
             AdminClient.main(args);
             
             log.info("Testing server-side client deployment...");
             
             // deploy the proxy service
-            String[] args2 = { "samples/proxy/client_deploy.xml" };
+            String[] args2 = { System.getProperty("basedir") + "/src/main/wsdd/client_deploy.wsdd" };
             AdminClient.main(args2);
             
             log.info("Testing service...");
