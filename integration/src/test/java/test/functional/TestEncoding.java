@@ -33,7 +33,7 @@ public class TestEncoding extends TestCase {
             Service service = new Service();
             service.getEngine().setOption(AxisEngine.PROP_XML_ENCODING, "UTF-8");
             call = (Call) service.createCall();
-            call.setTargetEndpointAddress(new URL("http://localhost:8080/jws/EchoHeaders.jws"));
+            call.setTargetEndpointAddress(new URL("http://localhost:8080/axis/EchoHeaders.jws"));
         }
     }
 
@@ -109,7 +109,7 @@ public class TestEncoding extends TestCase {
         SOAPElement symbol = bodyElement.addChildElement(name);
         symbol.addTextNode("Hello");
 
-        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/jws/EchoHeaders.jws");
+        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/axis/EchoHeaders.jws");
         SOAPMessage response = con.call(message, endpoint);
         String responseEncoding = (String) response.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
         assertEquals(requestEncoding.toLowerCase(), responseEncoding.toLowerCase());
