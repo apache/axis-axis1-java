@@ -54,7 +54,7 @@
         <plugins>
             <plugin>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>axis-maven-plugin</artifactId>
+                <artifactId>maven-wsdl2java-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
                     <output>${project.build.directory}/work</output>
@@ -879,6 +879,13 @@
                             </mappings>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>maven-axis-server-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
                     <execution>
                         <id>start-server</id>
                         <goals>

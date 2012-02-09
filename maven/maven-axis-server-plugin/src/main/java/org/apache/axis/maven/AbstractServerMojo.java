@@ -18,7 +18,18 @@
  */
 package org.apache.axis.maven;
 
-public abstract class AbstractServerMojo extends AbstractAxisMojo {
+import org.apache.maven.plugin.AbstractMojo;
+
+import com.github.veithen.ulog.PlexusLoggerInjector;
+
+public abstract class AbstractServerMojo extends AbstractMojo {
+    /**
+     * @component
+     */
+    // This is necessary to set up logging such that all messages logged by the Axis
+    // libraries through commons logging are redirected to Plexus logs.
+    PlexusLoggerInjector loggerInjector;
+    
     /**
      * The port of the Axis server.
      * 

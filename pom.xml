@@ -61,7 +61,7 @@
         <module>axis-jaxrpc</module>
         <module>axis-saaj</module>
         <module>axis-ant</module>
-        <module>axis-maven-plugin</module>
+        <module>maven</module>
         <module>axis-standalone-server</module>
         <module>axis-castor</module>
         <module>axis-jms</module>
@@ -154,19 +154,4 @@
             </plugin>
         </plugins>
     </reporting>
-    
-    <!-- TODO: remove this once a ulog release is deployed to Maven Central -->
-    <repositories>
-        <repository>
-            <id>veithen-github-mvn-repo</id>
-            <url>https://raw.github.com/veithen/mvn-repo/master/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    
 </project>
