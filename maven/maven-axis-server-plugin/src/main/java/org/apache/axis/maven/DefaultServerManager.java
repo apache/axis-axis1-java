@@ -44,7 +44,21 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         this.logger = logger;
     }
 
-    public void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, String[] wsddFiles, File[] jwsDirs, int timeout) throws Exception {
+    private void process(AdminClient adminClient, File[] wsddFiles) throws Exception {
+        for (int i=0; i<wsddFiles.length; i++) {
+            File wsddFile = wsddFiles[i];
+            if (logger.isDebugEnabled()) {
+                logger.debug("Starting to process " + wsddFile);
+            }
+            String result = adminClient.process(wsddFile.getPath());
+            if (logger.isDebugEnabled()) {
+                logger.debug("AdminClient result: " + result);
+            }
+            logger.info("Processed " + wsddFile);
+        }
+    }
+    
+    public void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception {
         AdminClient adminClient = new AdminClient(true);
         adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
         List cmdline = new ArrayList();
@@ -65,7 +79,7 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
             logger.debug("Starting process with command line: " + cmdline);
         }
         Process process = Runtime.getRuntime().exec((String[])cmdline.toArray(new String[cmdline.size()]), null, workDir);
-        servers.put(Integer.valueOf(port), new Server(process, adminClient));
+        servers.put(Integer.valueOf(port), new Server(process, adminClient, undeployments));
         new Thread(new StreamPump(process.getInputStream(), System.out), "axis-server-" + port + "-stdout").start();
         new Thread(new StreamPump(process.getErrorStream(), System.err), "axis-server-" + port + "-stderr").start();
         
@@ -95,24 +109,14 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         }
         
         // Deploy services
-        if (wsddFiles != null) {
-            for (int i=0; i<wsddFiles.length; i++) {
-                String wsddFile = wsddFiles[i];
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Starting deployment of " + wsddFile);
-                }
-                String result = adminClient.process(wsddFile);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("AdminClient result: " + result);
-                }
-                logger.info("Deployed " + wsddFile);
-            }
-        }
+        process(adminClient, deployments);
     }
     
     public void stopServer(int port) throws Exception {
         Server server = (Server)servers.remove(Integer.valueOf(port));
-        server.getAdminClient().quit();
+        AdminClient adminClient = server.getAdminClient();
+        process(adminClient, server.getUndeployments());
+        adminClient.quit();
         server.getProcess().waitFor();
         logger.info("Server on port " + port + " stopped");
     }

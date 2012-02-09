@@ -18,15 +18,19 @@
  */
 package org.apache.axis.maven;
 
+import java.io.File;
+
 import org.apache.axis.client.AdminClient;
 
 public class Server {
     private final Process process;
     private final AdminClient adminClient;
+    private final File[] undeployments;
 
-    public Server(Process process, AdminClient adminClient) {
+    public Server(Process process, AdminClient adminClient, File[] undeployments) {
         this.process = process;
         this.adminClient = adminClient;
+        this.undeployments = undeployments;
     }
 
     public Process getProcess() {
@@ -35,5 +39,9 @@ public class Server {
 
     public AdminClient getAdminClient() {
         return adminClient;
+    }
+
+    public File[] getUndeployments() {
+        return undeployments;
     }
 }

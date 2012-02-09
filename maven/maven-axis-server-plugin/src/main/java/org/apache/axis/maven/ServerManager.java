@@ -21,6 +21,6 @@ package org.apache.axis.maven;
 import java.io.File;
 
 public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, String[] wsddFiles, File[] jwsDirs, int timeout) throws Exception;
+    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception;
     void stopServer(int port) throws Exception;
 }

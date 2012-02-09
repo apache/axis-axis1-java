@@ -17,99 +17,48 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Options;
-import org.apache.commons.logging.Log;
 import samples.attachments.EchoAttachment;
 import samples.attachments.TestRef;
-
 
 /** Test the attachments sample code.
  */
 public class TestAttachmentsSample extends TestCase {
-    static Log log =
-            LogFactory.getLog(TestAttachmentsSample.class.getName());
-
-    public TestAttachmentsSample(String name) {
-        super(name);
-    }
-    
-    public void doTestDeploy () throws Exception {
-        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/attachdeploy.wsdd" });
-        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/testref.wsdd"});
-    }
-    
-    public void doTestAttachments1() throws Exception {
+    public void testAttachments1() throws Exception {
         Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echo(false, System.getProperty("basedir") + "/pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
-    public void doTestAttachmentsD1() throws Exception {
+    public void testAttachmentsD1() throws Exception {
         Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
     
-    public void doTestAttachmentsDimeLeaveEmpty() throws Exception {
+    public void testAttachmentsDimeLeaveEmpty() throws Exception {
         Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/src/test/files/leaveempty.txt");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
-    public void doTestAttachments2() throws Exception {
+    public void testAttachments2() throws Exception {
         Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echoDir(false, System.getProperty("basedir") + "/src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 
-    public void doTestAttachmentsD2() throws Exception {
+    public void testAttachmentsD2() throws Exception {
         Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echoDir(true, System.getProperty("basedir") + "/src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 
-    public void doTestAttachmentsTestRef() throws Exception {
+    public void testAttachmentsTestRef() throws Exception {
         Options opts = new Options( new String[]{});
         boolean res = new TestRef(opts).testit();
         assertEquals("Didn't process attachments correctly", res, true);
     }
-    
-    public void doTestUndeploy () throws Exception {
-        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/attachundeploy.wsdd" });
-        AdminClient.main(new String[]{ System.getProperty("basedir") + "/src/main/wsdd/testrefundeploy.wsdd" });
-    }
-
-    public static void main(String args[]) throws Exception {
-        TestAttachmentsSample tester = new TestAttachmentsSample("tester");
-        tester.testAttachmentsService();
-    }
-
-    public void testAttachmentsService () throws Exception {
-        try {
-            log.info("Testing deployment...");
-            doTestDeploy();
-            log.info("Testing single file attachment...");
-            doTestAttachments1();
-            log.info("Testing multiple file attachments...");
-            doTestAttachments2();
-            log.info("Testing single file DIME attachment...");
-            doTestAttachmentsD1();
-            log.info("Testing multiple file DIME attachments...");
-            doTestAttachmentsD2();
-            log.info("Testing attachment references...");
-            doTestAttachmentsTestRef();
-            log.info("Testing undeployment...");
-            doTestUndeploy();
-            log.info("Test complete.");
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            throw new Exception("Fault returned from test: "+e);
-        }
-    }
-    
 }
 
 

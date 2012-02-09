@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
@@ -35,6 +39,7 @@ import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.w3c.dom.Element;
 
 /**
  * Start a {@link SimpleAxisServer} instance in a separate JVM.
@@ -75,7 +80,9 @@ public class StartServerMojo extends AbstractServerMojo {
     private File workDirBase;
     
     /**
-     * A set of WSDD files for services to deploy.
+     * A set of WSDD files for services to deploy. The WSDD files may be deployment or undeployment
+     * requests. Undeployment requests will be processed when the server is stopped. The primary use
+     * case for this is to test undeployment.
      * 
      * @parameter
      */
@@ -166,23 +173,49 @@ public class StartServerMojo extends AbstractServerMojo {
         }
         
         // Select WSDD files
-        List wsddFiles;
+        List deployments = new ArrayList();
+        List undeployments = new ArrayList();
         if (wsdds != null && wsdds.length > 0) {
-            wsddFiles = new ArrayList();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            DocumentBuilder documentBuilder;
+            try {
+                documentBuilder = dbf.newDocumentBuilder();
+            } catch (ParserConfigurationException ex) {
+                throw new MojoFailureException("Unable to initialize DOM parser", ex);
+            }
             for (int i=0; i<wsdds.length; i++) {
                 FileSet wsdd = wsdds[i];
                 DirectoryScanner scanner = wsdd.createScanner();
                 scanner.scan();
                 String[] includedFiles = scanner.getIncludedFiles();
                 for (int j=0; j<includedFiles.length; j++) {
-                    wsddFiles.add(new File(wsdd.getDirectory(), includedFiles[j]).getPath());
+                    File wsddFile = new File(wsdd.getDirectory(), includedFiles[j]);
+                    Element wsddElement;
+                    try {
+                        wsddElement = documentBuilder.parse(wsddFile).getDocumentElement();
+                    } catch (Exception ex) {
+                        log.warn("Skipping " + wsddFile + ": not an XML file", ex);
+                        continue;
+                    }
+                    if ("http://xml.apache.org/axis/wsdd/".equals(wsddElement.getNamespaceURI())) {
+                        String type = wsddElement.getLocalName();
+                        if (type.equals("deployment")) {
+                            deployments.add(wsddFile);
+                        } else if (type.equals("undeployment")) {
+                            undeployments.add(wsddFile);
+                        } else {
+                            log.warn("Skipping " + wsddFile + ": unexpected WSDD type");
+                        }
+                    } else {
+                        log.warn("Skipping " + wsddFile + ": not a WSDD file");
+                    }
                 }
             }
             if (log.isDebugEnabled()) {
-                log.debug("WSDD files: " + wsddFiles);
+                log.debug("Deployments: " + deployments);
+                log.debug("Undeployments: " + undeployments);
             }
-        } else {
-            wsddFiles = null;
         }
         
         // Compute JVM arguments
@@ -235,7 +268,8 @@ public class StartServerMojo extends AbstractServerMojo {
                     getPort(),
                     (String[])vmArgs.toArray(new String[vmArgs.size()]),
                     workDir,
-                    wsddFiles == null ? null : (String[])wsddFiles.toArray(new String[wsddFiles.size()]),
+                    (File[])deployments.toArray(new File[deployments.size()]),
+                    (File[])undeployments.toArray(new File[undeployments.size()]),
                     jwsDirs,
                     debug || foreground ? Integer.MAX_VALUE : 20000);
         } catch (Exception ex) {
