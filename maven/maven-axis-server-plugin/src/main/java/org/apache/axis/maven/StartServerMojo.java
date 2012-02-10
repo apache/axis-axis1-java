@@ -28,6 +28,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
@@ -198,11 +199,11 @@ public class StartServerMojo extends AbstractServerMojo {
                         log.warn("Skipping " + wsddFile + ": not an XML file", ex);
                         continue;
                     }
-                    if ("http://xml.apache.org/axis/wsdd/".equals(wsddElement.getNamespaceURI())) {
+                    if (WSDDConstants.URI_WSDD.equals(wsddElement.getNamespaceURI())) {
                         String type = wsddElement.getLocalName();
-                        if (type.equals("deployment")) {
+                        if (type.equals(WSDDConstants.ELEM_WSDD_DEPLOY)) {
                             deployments.add(wsddFile);
-                        } else if (type.equals("undeployment")) {
+                        } else if (type.equals(WSDDConstants.ELEM_WSDD_UNDEPLOY)) {
                             undeployments.add(wsddFile);
                         } else {
                             log.warn("Skipping " + wsddFile + ": unexpected WSDD type");
