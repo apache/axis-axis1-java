@@ -12,11 +12,6 @@ import junit.framework.TestCase;
  * Test MIME headers.
  */
 public class TestMimeHeaders extends TestCase {
-
-    public TestMimeHeaders(String s) {
-        super(s);
-    }
-
     public void testTransferMimeHeadersToHttpHeaders() throws Exception {
         SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection con = scFactory.createConnection();

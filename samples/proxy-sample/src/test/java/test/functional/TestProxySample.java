@@ -17,56 +17,14 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
 import samples.misc.TestClient;
-
 
 /** Test the proxy sample code.
  */
 public class TestProxySample extends TestCase {
-    static Log log =
-            LogFactory.getLog(TestProxySample.class.getName());
-
-    public TestProxySample(String name) {
-        super(name);
-    }
-    
-    public void doTest () throws Exception {
+    public void test() throws Exception {
         String[] args = { "-d" };
         TestClient.mainWithService(args, "ProxyService");
-    }
-    
-    // temp for debugging
-    public static void main (String[] args) throws Exception {
-        new TestProxySample("foo").doTest();
-    }
-    
-    public void testService () throws Exception {
-        try {
-            log.info("Testing proxy sample.");
-            
-            log.info("Testing deployment...");
-            
-            // deploy the proxy service
-            String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
-            AdminClient.main(args);
-            
-            log.info("Testing server-side client deployment...");
-            
-            // deploy the proxy service
-            String[] args2 = { System.getProperty("basedir") + "/src/main/wsdd/client_deploy.wsdd" };
-            AdminClient.main(args2);
-            
-            log.info("Testing service...");
-            doTest();
-            log.info("Test complete.");
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            throw new Exception("Fault returned from test: "+e);
-        }
     }
 }
 

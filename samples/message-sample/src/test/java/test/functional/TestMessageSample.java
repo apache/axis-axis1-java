@@ -17,28 +17,12 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
 import samples.message.TestMsg;
-
 
 /** Test the message sample code.
  */
 public class TestMessageSample extends TestCase {
-    static Log log =
-            LogFactory.getLog(TestMessageSample.class.getName());
-
-    public TestMessageSample(String name) {
-        super(name);
-    }
-    
-    public void doTestDeploy() throws Exception {
-        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
-        AdminClient.main(args);
-    }
-    
-    public void doTestMessage() throws Exception {
+    public void testMessage() throws Exception {
         String[] args = { };
         String res = (new TestMsg()).doit(args);
         String expected="Res elem[0]=<ns1:e1 xmlns:ns1=\"urn:foo\">Hello</ns1:e1>" 
@@ -50,33 +34,6 @@ public class TestMessageSample extends TestCase {
                         +"</ns3:e3>";
         assertEquals("test result elements", expected, res);
     }
-    
-    public void doTestUndeploy () throws Exception {
-        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/undeploy.wsdd" };
-        AdminClient.main(args);
-    }
-
-    public static void main(String args[]) throws Exception {
-        TestMessageSample tester = new TestMessageSample("tester");
-        tester.testMessageService();
-    }
-
-    public void testMessageService () throws Exception {
-        try {
-            log.info("Testing message sample.");
-            log.info("Testing deployment...");
-            doTestDeploy();
-            log.info("Testing service...");
-            doTestMessage();
-            doTestUndeploy();
-            log.info("Test complete.");
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            throw new Exception("Fault returned from test: "+e);
-        }
-    }
-    
 }
 
 

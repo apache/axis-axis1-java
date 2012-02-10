@@ -17,25 +17,13 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.transport.http.SimpleAxisWorker;
 import org.apache.axis.utils.NetworkUtils;
-import org.apache.commons.logging.Log;
 import samples.encoding.TestElem;
-
 
 /** Test the ElementService sample code.
  */
 public class TestElementSample extends TestCase {
-    static Log log =
-            LogFactory.getLog(TestElementSample.class.getName());
-
-    public TestElementSample(String name) {
-        super(name);
-    }
-    
-    public void doTestElement () throws Exception {
+    public void testElement () throws Exception {
         String thisHost = NetworkUtils.getLocalHostname();
         String thisPort = System.getProperty("test.functional.ServicePort","8080");
 
@@ -45,32 +33,6 @@ public class TestElementSample extends TestCase {
         String res = TestElem.doit(args, xml);
         System.out.println("Received: " + res );
         assertEquals("TestElementSample.doit(): xml must match", res, xml);
-    }
-    
-    public void doTestDeploy () throws Exception {
-        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
-        AdminClient.main(args);
-    }
-    
-    public void doTestUndeploy () throws Exception {
-        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/undeploy.wsdd" };
-        AdminClient.main(args);
-    }
-
-    public static void main(String args[]) throws Exception {
-        TestElementSample tester = new TestElementSample("tester");
-        tester.testElementService();
-    }
-
-    public void testElementService () throws Exception {
-        log.info("Testing element sample.");
-        log.info("Testing deployment...");
-        doTestDeploy();
-        log.info("Testing service...");
-        doTestElement();
-        log.info("Testing undeployment...");
-        doTestUndeploy();
-        log.info("Test complete.");
     }
 }
 

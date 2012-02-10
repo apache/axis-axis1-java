@@ -76,6 +76,14 @@
                             <jwsDirs>
                                 <jwsDir>src/main/jws</jwsDir>
                             </jwsDirs>
+                            <wsdds>
+                                <wsdd>
+                                    <directory>src/main/wsdd</directory>
+                                    <includes>
+                                        <include>**/*.wsdd</include>
+                                    </includes>
+                                </wsdd>
+                            </wsdds>
                         </configuration>
                     </execution>
                     <execution>

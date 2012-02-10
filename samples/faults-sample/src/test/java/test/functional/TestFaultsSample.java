@@ -17,12 +17,9 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.client.AdminClient;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 import samples.faults.EmployeeClient;
-
-
 
 /** Test the faults sample code.
  */
@@ -30,21 +27,12 @@ public class TestFaultsSample extends TestCase {
     static Log log =
             LogFactory.getLog(TestFaultsSample.class.getName());
 
-    public TestFaultsSample(String name) {
-        super(name);
-    }
-    
-    public void doTestDeploy () throws Exception {
-        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
-        AdminClient.main(args);
-    }
-    
-    public void doTest1 () throws Exception {
+    public void test1 () throws Exception {
         String[] args = { "#001" };
         EmployeeClient.main(args);
     }
     
-    public void doTest2 () throws Exception {
+    public void test2 () throws Exception {
         String[] args = { "#002" };
         try {
             EmployeeClient.main(args);
@@ -52,27 +40,6 @@ public class TestFaultsSample extends TestCase {
             return;
         }
         fail("Should not reach here");
-    }
-
-    public void testFaultsService () throws Exception {
-        try {
-            log.info("Testing faults sample.");
-            log.info("Testing deployment...");
-            doTestDeploy();
-            log.info("Testing service...");
-            doTest1();
-            doTest2();
-            log.info("Test complete.");
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            throw new Exception("Fault returned from test: "+e);
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        TestFaultsSample tester = new TestFaultsSample("test");
-        tester.testFaultsService();
     }
 }
 

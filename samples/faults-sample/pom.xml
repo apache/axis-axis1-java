@@ -67,6 +67,16 @@
                         <goals>
                             <goal>start-server</goal>
                         </goals>
+                        <configuration>
+                            <wsdds>
+                                <wsdd>
+                                    <directory>src/main/wsdd</directory>
+                                    <includes>
+                                        <include>**/*.wsdd</include>
+                                    </includes>
+                                </wsdd>
+                            </wsdds>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>stop-server</id>

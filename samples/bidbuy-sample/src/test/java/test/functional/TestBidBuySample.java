@@ -17,50 +17,14 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
 import samples.bidbuy.TestClient;
-
 
 /** Test the stock sample code.
  */
 public class TestBidBuySample extends TestCase {
-    static Log log =
-            LogFactory.getLog(TestBidBuySample.class.getName());
-
-    public TestBidBuySample(String name) {
-        super(name);
-    }
-    
-    public void doTestDeploy () throws Exception {
-        String[] args = { System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
-        AdminClient.main(args);
-    }
-    
-    public void doTest () throws Exception {
+    public void test () throws Exception {
         String[] args = { "http://localhost:8080" };
         TestClient.main(args);
-    }
-    
-    public void testBidBuyService () throws Exception {
-        try {
-            log.info("Testing bidbuy sample.");
-            log.info("Testing deployment...");
-            doTestDeploy();
-            log.info("Testing service...");
-            doTest();
-            log.info("Test complete.");
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            throw new Exception("Fault returned from test: "+e);
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        TestBidBuySample tester = new TestBidBuySample("test");
-        tester.testBidBuyService();
     }
 }
 
