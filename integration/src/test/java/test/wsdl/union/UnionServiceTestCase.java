@@ -23,21 +23,21 @@ public class UnionServiceTestCase extends TestCase {
         // so, basically, if this compiles, we are good to go
         // but running it won't hurt anything
 
-        FooOpenEnum enum = null;
+        FooOpenEnum e = null;
 
         String testStrURI = "http://foobar/A";
-        enum = new FooOpenEnum(testStrURI);
-        assertEquals(testStrURI, enum.toString());
+        e = new FooOpenEnum(testStrURI);
+        assertEquals(testStrURI, e.toString());
         
         URI testURI = new URI(testStrURI);
-        enum = new FooOpenEnum(testURI);
-        assertEquals(testStrURI, enum.toString());
-        assertEquals(testURI, enum.getAnyURIValue());
+        e = new FooOpenEnum(testURI);
+        assertEquals(testStrURI, e.toString());
+        assertEquals(testURI, e.getAnyURIValue());
         
-        enum = new FooOpenEnum(FooEnum.value1);
-        assertEquals(FooEnum.value1.toString(), enum.toString());
-        assertEquals(FooEnum.value1, enum.getFooEnumValue());
-        assertEquals(FooEnum._value1, enum.getAnyURIValue());
+        e = new FooOpenEnum(FooEnum.value1);
+        assertEquals(FooEnum.value1.toString(), e.toString());
+        assertEquals(FooEnum.value1, e.getFooEnumValue());
+        assertEquals(FooEnum._value1, e.getAnyURIValue());
     }
 
     public void testBasicUnion2() throws Exception {

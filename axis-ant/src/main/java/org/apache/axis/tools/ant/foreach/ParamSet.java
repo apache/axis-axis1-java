@@ -83,9 +83,9 @@ public class ParamSet {
         and then <item>s. The ordering of the buildfile is
         not guaranteed. */
         Vector values = new Vector();
-        Enumeration enum = filesets.elements();
-        while (enum.hasMoreElements()) {
-            FileSet fileSet = (FileSet) enum.nextElement();
+        Enumeration e = filesets.elements();
+        while (e.hasMoreElements()) {
+            FileSet fileSet = (FileSet) e.nextElement();
             File base = fileSet.getDir(project);
             DirectoryScanner scanner = fileSet.getDirectoryScanner(project);
             if (TYPE_DIR != type) {
@@ -103,9 +103,9 @@ public class ParamSet {
                 }
             }
         }
-        enum = items.elements();
-        while (enum.hasMoreElements()) {
-            ParamItem item = (ParamItem) enum.nextElement();
+        e = items.elements();
+        while (e.hasMoreElements()) {
+            ParamItem item = (ParamItem) e.nextElement();
             values.addElement(item.getValue());
         }
         return values.elements();
