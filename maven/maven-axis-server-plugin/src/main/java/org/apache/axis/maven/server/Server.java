@@ -16,24 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.maven;
+package org.apache.axis.maven.server;
 
-import org.apache.axis.transport.http.SimpleAxisServer;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import java.io.File;
 
-/**
- * Stop a {@link SimpleAxisServer} instance.
- * 
- * @goal stop-server
- * @phase post-integration-test
- */
-public class StopServerMojo extends AbstractServerMojo {
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        try {
-            getServerManager().stopServer(getPort());
-        } catch (Exception ex) {
-            throw new MojoFailureException("Failed to stop server", ex);
-        }
+import org.apache.axis.client.AdminClient;
+
+public class Server {
+    private final Process process;
+    private final AdminClient adminClient;
+    private final File[] undeployments;
+
+    public Server(Process process, AdminClient adminClient, File[] undeployments) {
+        this.process = process;
+        this.adminClient = adminClient;
+        this.undeployments = undeployments;
+    }
+
+    public Process getProcess() {
+        return process;
+    }
+
+    public AdminClient getAdminClient() {
+        return adminClient;
+    }
+
+    public File[] getUndeployments() {
+        return undeployments;
     }
 }

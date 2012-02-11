@@ -16,11 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.maven;
+package org.apache.axis.maven.server;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception;
-    void stopServer(int port) throws Exception;
+public class StreamPump implements Runnable {
+    private final InputStream in;
+    private final OutputStream out;
+    
+    public StreamPump(InputStream in, OutputStream out) {
+        this.in = in;
+        this.out = out;
+    }
+
+    public void run() {
+        try {
+            byte[] buffer = new byte[4096];
+            int c;
+            while ((c = in.read(buffer)) != -1) {
+                out.write(buffer, 0, c);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

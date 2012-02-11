@@ -16,38 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.maven;
+package org.apache.axis.maven.wsdl2java;
 
-import org.apache.maven.plugin.AbstractMojo;
-
-import com.github.veithen.ulog.PlexusLoggerInjector;
-
-public abstract class AbstractServerMojo extends AbstractMojo {
-    /**
-     * @component
-     */
-    // This is necessary to set up logging such that all messages logged by the Axis
-    // libraries through commons logging are redirected to Plexus logs.
-    PlexusLoggerInjector loggerInjector;
+public class Mapping {
+    private String namespace;
+    private String packageName;
     
-    /**
-     * The port of the Axis server.
-     * 
-     * @parameter default-value="8080"
-     * @required
-     */
-    private int port;
+    public String getNamespace() {
+        return namespace;
+    }
     
-    /**
-     * @component
-     */
-    private ServerManager serverManager;
-
-    public int getPort() {
-        return port;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+    
+    public String getPackage() {
+        return packageName;
+    }
+    
+    public void setPackage(String packageName) {
+        this.packageName = packageName;
     }
 
-    public ServerManager getServerManager() {
-        return serverManager;
+    public String toString() {
+        return "(" + namespace + "|" + packageName + ")";
     }
 }
