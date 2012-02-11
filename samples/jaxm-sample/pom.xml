@@ -21,28 +21,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis</groupId>
-        <artifactId>axis-project</artifactId>
+        <artifactId>samples</artifactId>
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>samples</artifactId>
-    <name>Samples</name>
-    <packaging>pom</packaging>
-    <description>
-        Root POM for the Axis samples.
-    </description>
-    <modules>
-        <module>attachments-sample</module>
-        <module>bidbuy-sample</module>
-        <module>echo-sample</module>
-        <module>encoding-sample</module>
-        <module>faults-sample</module>
-        <module>handler-sample</module>
-        <module>jaxm-sample</module>
-        <module>message-sample</module>
-        <module>misc-sample</module>
-        <module>proxy-sample</module>
-        <module>stock-sample</module>
-        <module>transport-sample</module>
-    </modules>
+    <artifactId>jaxm-sample</artifactId>
+    <name>JAXM Sample</name>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
