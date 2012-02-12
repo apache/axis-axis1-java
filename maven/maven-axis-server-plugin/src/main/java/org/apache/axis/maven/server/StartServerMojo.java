@@ -81,6 +81,14 @@ public class StartServerMojo extends AbstractServerMojo {
     private File workDirBase;
     
     /**
+     * The port of the Axis server.
+     * 
+     * @parameter default-value="8080"
+     * @required
+     */
+    private int port;
+    
+    /**
      * A set of WSDD files for services to deploy. The WSDD files may be deployment or undeployment
      * requests. Undeployment requests will be processed when the server is stopped. The primary use
      * case for this is to test undeployment.
@@ -232,7 +240,7 @@ public class StartServerMojo extends AbstractServerMojo {
         }
         
         // Prepare a work directory where the server can create a server-config.wsdd file
-        File workDir = new File(workDirBase, String.valueOf(getPort()));
+        File workDir = new File(workDirBase, String.valueOf(port));
         if (workDir.exists()) {
             try {
                 FileUtils.deleteDirectory(workDir);
@@ -266,7 +274,7 @@ public class StartServerMojo extends AbstractServerMojo {
         try {
             getServerManager().startServer(executable,
                     (String[])classPathElements.toArray(new String[classPathElements.size()]),
-                    getPort(),
+                    port,
                     (String[])vmArgs.toArray(new String[vmArgs.size()]),
                     workDir,
                     (File[])deployments.toArray(new File[deployments.size()]),

@@ -31,21 +31,9 @@ public abstract class AbstractServerMojo extends AbstractMojo {
     PlexusLoggerInjector loggerInjector;
     
     /**
-     * The port of the Axis server.
-     * 
-     * @parameter default-value="8080"
-     * @required
-     */
-    private int port;
-    
-    /**
      * @component
      */
     private ServerManager serverManager;
-
-    public int getPort() {
-        return port;
-    }
 
     public ServerManager getServerManager() {
         return serverManager;
