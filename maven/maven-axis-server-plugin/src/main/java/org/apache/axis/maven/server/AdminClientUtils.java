@@ -20,7 +20,23 @@ package org.apache.axis.maven.server;
 
 import java.io.File;
 
-public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception;
-    void stopAll() throws Exception;
+import org.apache.axis.client.AdminClient;
+import org.codehaus.plexus.logging.Logger;
+
+public final class AdminClientUtils {
+    private AdminClientUtils() {}
+    
+    public static void process(Logger logger, AdminClient adminClient, File[] wsddFiles) throws Exception {
+        for (int i=0; i<wsddFiles.length; i++) {
+            File wsddFile = wsddFiles[i];
+            if (logger.isDebugEnabled()) {
+                logger.debug("Starting to process " + wsddFile);
+            }
+            String result = adminClient.process(wsddFile.getPath());
+            if (logger.isDebugEnabled()) {
+                logger.debug("AdminClient result: " + result);
+            }
+            logger.info("Processed " + wsddFile);
+        }
+    }
 }

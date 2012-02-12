@@ -18,9 +18,21 @@
  */
 package org.apache.axis.maven.server;
 
-import java.io.File;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
-public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception;
-    void stopAll() throws Exception;
+/**
+ * Stop all processes created by {@link StartServerMojo}.
+ * 
+ * @goal stop-all
+ * @phase post-integration-test
+ */
+public class StopAllMojo extends AbstractServerMojo {
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        try {
+            getServerManager().stopAll();
+        } catch (Exception ex) {
+            throw new MojoFailureException("Errors occurred while attempting to stop processes", ex);
+        }
+    }
 }

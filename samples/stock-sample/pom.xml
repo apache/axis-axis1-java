@@ -89,7 +89,7 @@
                     <execution>
                         <id>stop-server</id>
                         <goals>
-                            <goal>stop-server</goal>
+                            <goal>stop-all</goal>
                         </goals>
                     </execution>
                 </executions>

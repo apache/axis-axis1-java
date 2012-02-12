@@ -18,21 +18,25 @@
  */
 package org.apache.axis.maven.server;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.logging.Logger;
 
 /**
- * Stop a {@link org.apache.axis.server.standalone.StandaloneAxisServer} instance.
+ * Action to be executed when a process is stopped. Typically (but not necessarily) this involves
+ * sending a request to initiate a clean shutdown of the process.
  * 
- * @goal stop-server
- * @phase post-integration-test
+ * @author Andreas Veithen
  */
-public class StopServerMojo extends AbstractServerMojo {
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        try {
-            getServerManager().stopServer(getPort());
-        } catch (Exception ex) {
-            throw new MojoFailureException("Failed to stop server", ex);
-        }
-    }
+public interface ProcessStopAction {
+    /**
+     * Indicates that the process is expected to be still running after the action is completed.
+     */
+    int RUNNING = 1;
+
+    /**
+     * Indicates that the action has sent a request to the process to initiate a clean shutdown,
+     * i.e. that the process is expected to be stopping (but not necessarily to be stopped yet).
+     */
+    int STOPPING = 2;
+    
+    int execute(Logger logger) throws Exception;
 }

@@ -21,27 +21,20 @@ package org.apache.axis.maven.server;
 import java.io.File;
 
 import org.apache.axis.client.AdminClient;
+import org.codehaus.plexus.logging.Logger;
 
-public class Server {
-    private final Process process;
+public class AxisServerStopAction implements ProcessStopAction {
     private final AdminClient adminClient;
     private final File[] undeployments;
 
-    public Server(Process process, AdminClient adminClient, File[] undeployments) {
-        this.process = process;
+    public AxisServerStopAction(AdminClient adminClient, File[] undeployments) {
         this.adminClient = adminClient;
         this.undeployments = undeployments;
     }
 
-    public Process getProcess() {
-        return process;
-    }
-
-    public AdminClient getAdminClient() {
-        return adminClient;
-    }
-
-    public File[] getUndeployments() {
-        return undeployments;
+    public int execute(Logger logger) throws Exception {
+        AdminClientUtils.process(logger, adminClient, undeployments);
+        adminClient.quit();
+        return STOPPING;
     }
 }

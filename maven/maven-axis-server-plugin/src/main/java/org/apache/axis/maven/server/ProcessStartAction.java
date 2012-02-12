@@ -18,9 +18,14 @@
  */
 package org.apache.axis.maven.server;
 
-import java.io.File;
+import org.codehaus.plexus.logging.Logger;
 
-public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception;
-    void stopAll() throws Exception;
+/**
+ * Action to be executed after a given process has been started. This is typically used to configure
+ * the server process, e.g. to deploy services.
+ * 
+ * @author Andreas Veithen
+ */
+public interface ProcessStartAction {
+    void execute(Logger logger, Process process) throws Exception;
 }

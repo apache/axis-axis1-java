@@ -20,23 +20,18 @@ package org.apache.axis.maven.server;
 
 import java.io.File;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
 
 import org.apache.axis.client.AdminClient;
-import org.apache.axis.client.Call;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 
 public class DefaultServerManager implements ServerManager, LogEnabled {
-    private final Map servers = new HashMap();
+    private final List managedProcesses = new ArrayList();
     
     private Logger logger;
     
@@ -44,20 +39,6 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         this.logger = logger;
     }
 
-    private void process(AdminClient adminClient, File[] wsddFiles) throws Exception {
-        for (int i=0; i<wsddFiles.length; i++) {
-            File wsddFile = wsddFiles[i];
-            if (logger.isDebugEnabled()) {
-                logger.debug("Starting to process " + wsddFile);
-            }
-            String result = adminClient.process(wsddFile.getPath());
-            if (logger.isDebugEnabled()) {
-                logger.debug("AdminClient result: " + result);
-            }
-            logger.info("Processed " + wsddFile);
-        }
-    }
-    
     public void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception {
         AdminClient adminClient = new AdminClient(true);
         adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
@@ -79,45 +60,38 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
             logger.debug("Starting process with command line: " + cmdline);
         }
         Process process = Runtime.getRuntime().exec((String[])cmdline.toArray(new String[cmdline.size()]), null, workDir);
-        servers.put(Integer.valueOf(port), new Server(process, adminClient, undeployments));
+        managedProcesses.add(new ManagedProcess(process, "Server on port " + port, new AxisServerStopAction(adminClient, undeployments)));
         new Thread(new StreamPump(process.getInputStream(), System.out), "axis-server-" + port + "-stdout").start();
         new Thread(new StreamPump(process.getErrorStream(), System.err), "axis-server-" + port + "-stderr").start();
         
-        // Wait for server to become ready
-        String versionUrl = "http://localhost:" + port + "/axis/services/Version";
-        Call call = new Call(new URL(versionUrl));
-        call.setOperationName(new QName(versionUrl, "getVersion"));
-        long start = System.currentTimeMillis();
-        for (int i=0; ; i++) {
-            try {
-                String result = (String)call.invoke(new Object[0]);
-                logger.info("Server ready on port " + port + ": " + result.replace('\n', ' '));
-                break;
-            } catch (RemoteException ex) {
-                if (System.currentTimeMillis() > start + timeout) {
-                    throw ex;
-                }
-            }
-            try {
-                int exitValue = process.exitValue();
-                // TODO: choose a better exception here
-                throw new RemoteException("The server process unexpectedly died with exit status " + exitValue);
-            } catch (IllegalThreadStateException ex) {
-                // This means that the process is still running; continue
-            }
-            Thread.sleep(200);
-        }
-        
-        // Deploy services
-        process(adminClient, deployments);
+        new AxisServerStartAction(port, adminClient, deployments, timeout).execute(logger, process);
     }
     
-    public void stopServer(int port) throws Exception {
-        Server server = (Server)servers.remove(Integer.valueOf(port));
-        AdminClient adminClient = server.getAdminClient();
-        process(adminClient, server.getUndeployments());
-        adminClient.quit();
-        server.getProcess().waitFor();
-        logger.info("Server on port " + port + " stopped");
+    public void stopAll() throws Exception {
+        Exception savedException = null;
+        for (Iterator it = managedProcesses.iterator(); it.hasNext(); ) {
+            ManagedProcess server = (ManagedProcess)it.next();
+            int result;
+            try {
+                result = server.getStopAction().execute(logger);
+            } catch (Exception ex) {
+                if (savedException == null) {
+                    savedException = ex;
+                }
+                result = -1;
+            }
+            if (result == ProcessStopAction.STOPPING) {
+                server.getProcess().waitFor();
+            } else {
+                server.getProcess().destroy();
+            }
+            logger.info(server.getDescription() + " stopped");
+        }
+        // TODO: need to clear the collection because the same ServerManager instance may be used by multiple projects in a reactor build;
+        //       note that this means that the plugin is not thread safe (i.e. doesn't support parallel builds in Maven 3)
+        managedProcesses.clear();
+        if (savedException != null) {
+            throw savedException;
+        }
     }
 }

@@ -18,9 +18,26 @@
  */
 package org.apache.axis.maven.server;
 
-import java.io.File;
+public class ManagedProcess {
+    private final Process process;
+    private final String description;
+    private final ProcessStopAction stopAction;
 
-public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception;
-    void stopAll() throws Exception;
+    public ManagedProcess(Process process, String description, ProcessStopAction stopAction) {
+        this.process = process;
+        this.description = description;
+        this.stopAction = stopAction;
+    }
+
+    public Process getProcess() {
+        return process;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ProcessStopAction getStopAction() {
+        return stopAction;
+    }
 }
