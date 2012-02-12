@@ -18,12 +18,11 @@
  */
 package org.apache.axis.maven.server;
 
-import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Stop a {@link SimpleAxisServer} instance.
+ * Stop a {@link org.apache.axis.server.standalone.StandaloneAxisServer} instance.
  * 
  * @goal stop-server
  * @phase post-integration-test

@@ -29,7 +29,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,7 +42,8 @@ import org.codehaus.plexus.util.FileUtils;
 import org.w3c.dom.Element;
 
 /**
- * Start a {@link SimpleAxisServer} instance in a separate JVM.
+ * Start a {@link org.apache.axis.server.standalone.StandaloneAxisServer} instance in a separate
+ * JVM.
  * 
  * @goal start-server
  * @phase pre-integration-test
