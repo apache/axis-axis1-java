@@ -23,7 +23,7 @@ import samples.bidbuy.TestClient;
  */
 public class TestBidBuySample extends TestCase {
     public void test () throws Exception {
-        String[] args = { "http://localhost:8080" };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080") };
         TestClient.main(args);
     }
 }

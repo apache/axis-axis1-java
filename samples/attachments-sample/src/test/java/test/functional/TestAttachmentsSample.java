@@ -24,38 +24,38 @@ import samples.attachments.TestRef;
 /** Test the attachments sample code.
  */
 public class TestAttachmentsSample extends TestCase {
+    private Options opts;
+    
+    protected void setUp() throws Exception {
+        opts = new Options(new String[] { "-p", System.getProperty("test.functional.ServicePort", "8080") });
+    }
+
     public void testAttachments1() throws Exception {
-        Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echo(false, System.getProperty("basedir") + "/pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
     public void testAttachmentsD1() throws Exception {
-        Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
     
     public void testAttachmentsDimeLeaveEmpty() throws Exception {
-        Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/src/test/files/leaveempty.txt");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
     public void testAttachments2() throws Exception {
-        Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echoDir(false, System.getProperty("basedir") + "/src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 
     public void testAttachmentsD2() throws Exception {
-        Options opts = new Options( new String[]{});
         boolean res = new EchoAttachment(opts).echoDir(true, System.getProperty("basedir") + "/src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 
     public void testAttachmentsTestRef() throws Exception {
-        Options opts = new Options( new String[]{});
         boolean res = new TestRef(opts).testit();
         assertEquals("Didn't process attachments correctly", res, true);
     }

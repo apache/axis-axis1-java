@@ -25,12 +25,13 @@ import samples.stock.GetQuote2;
  */
 public class TestStockSample extends TestCase {
     public void testStockJWS () throws Exception {
-        String[] args = { "-uuser1", "-wpass1", "XXX", "-saxis/StockQuoteService.jws" };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"),
+                "-uuser1", "-wpass1", "XXX", "-saxis/StockQuoteService.jws" };
         float val = new GetQuote().getQuote(args);
         assertEquals("TestStockSample.doTestStockJWS(): stock price should be 66.25", val, 66.25, 0.01);
         
         // This should FAIL
-        args[3] = "-sjws/AltStockQuoteService.jws";
+        args[5] = "-sjws/AltStockQuoteService.jws";
         try {
           val = new GetQuote().getQuote(args);
         } catch (AxisFault e) {
@@ -48,13 +49,15 @@ public class TestStockSample extends TestCase {
     }
     
     public void testStock () throws Exception {
-        String[] args = { "-uuser1", "-wpass1", "XXX" };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"),
+                "-uuser1", "-wpass1", "XXX" };
         float val = new GetQuote().getQuote(args);
         assertEquals("Stock price is not the expected 55.25 +/- 0.01", val, 55.25, 0.01);
     }
     
     public void testStockNoAction () throws Exception {
-        String[] args = { "-uuser1", "-wpass1", "XXX_noaction" };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"),
+                "-uuser1", "-wpass1", "XXX_noaction" };
         float val = new GetQuote().getQuote(args);
         assertEquals("Stock price is not the expected 55.25 +/- 0.01", val, 55.25, 0.01);
     }

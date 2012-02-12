@@ -58,6 +58,24 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-network-port</id>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <portNames>
+                                <portName>test.functional.ServicePort</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>maven-axis-server-plugin</artifactId>
                 <version>${project.version}</version>
@@ -68,6 +86,7 @@
                             <goal>start-server</goal>
                         </goals>
                         <configuration>
+                            <port>${test.functional.ServicePort}</port>
                             <configs>
                                 <config>
                                     <directory>src/main/config</directory>
@@ -106,6 +125,9 @@
                             <includes>
                                 <include>**/Test*.java</include>
                             </includes>
+                            <systemPropertyVariables>
+                                <test.functional.ServicePort>${test.functional.ServicePort}</test.functional.ServicePort>
+                            </systemPropertyVariables>
                         </configuration>
                     </execution>
                 </executions>

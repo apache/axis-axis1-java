@@ -22,7 +22,9 @@ public class TestMimeHeaders extends TestCase {
         String headerValue = "bar";
         message.getMimeHeaders().addHeader(headerName, headerValue);
 
-        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/axis/services/TestMimeHeaderService");
+        URLEndpoint endpoint = new URLEndpoint("http://localhost:"
+                + System.getProperty("test.functional.ServicePort", "8080")
+                + "/axis/services/TestMimeHeaderService");
         SOAPMessage response = con.call(message, endpoint);
         String[] responseHeader = response.getMimeHeaders().getHeader(headerName);
         assertTrue("Response header was null", responseHeader != null);

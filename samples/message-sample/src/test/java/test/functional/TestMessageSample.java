@@ -23,7 +23,7 @@ import samples.message.TestMsg;
  */
 public class TestMessageSample extends TestCase {
     public void testMessage() throws Exception {
-        String[] args = { };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080") };
         String res = (new TestMsg()).doit(args);
         String expected="Res elem[0]=<ns1:e1 xmlns:ns1=\"urn:foo\">Hello</ns1:e1>" 
                         +"Res elem[1]=<ns2:e1 xmlns:ns2=\"urn:foo\">World</ns2:e1>"

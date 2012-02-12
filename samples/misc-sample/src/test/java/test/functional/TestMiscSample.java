@@ -23,7 +23,7 @@ import samples.misc.TestClient;
  */
 public class TestMiscSample extends TestCase {
     public void test() throws Exception {
-        String[] args = { "-d" };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"), "-d" };
         TestClient.main(args);
     }
 }

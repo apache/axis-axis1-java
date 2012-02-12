@@ -28,12 +28,12 @@ public class TestFaultsSample extends TestCase {
             LogFactory.getLog(TestFaultsSample.class.getName());
 
     public void test1 () throws Exception {
-        String[] args = { "#001" };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"), "#001" };
         EmployeeClient.main(args);
     }
     
     public void test2 () throws Exception {
-        String[] args = { "#002" };
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"), "#002" };
         try {
             EmployeeClient.main(args);
         } catch (samples.faults.NoSuchEmployeeFault nsef) {
