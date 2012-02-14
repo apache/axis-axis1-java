@@ -20,6 +20,7 @@ package org.apache.axis.maven.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.axis.client.AdminClient;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
@@ -39,6 +41,7 @@ import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -159,26 +162,26 @@ public class StartServerMojo extends AbstractServerMojo {
         Log log = getLog();
         
         // Locate java executable to use
-        String executable;
+        String jvm;
         Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk", session);
         if (tc != null) {
-            executable = tc.findTool("java");
+            jvm = tc.findTool("java");
         } else {
-            executable = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+            jvm = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         }
         if (log.isDebugEnabled()) {
-            log.debug("Java executable: " + executable);
+            log.debug("Java executable: " + jvm);
         }
         
         // Get class path
-        List classPathElements;
+        List classpath;
         try {
-            classPathElements = project.getTestClasspathElements();
+            classpath = project.getTestClasspathElements();
         } catch (DependencyResolutionRequiredException ex) {
             throw new MojoExecutionException("Unexpected exception", ex);
         }
         if (log.isDebugEnabled()) {
-            log.debug("Class path elements: " + classPathElements);
+            log.debug("Class path elements: " + classpath);
         }
         
         // Select WSDD files
@@ -271,16 +274,32 @@ public class StartServerMojo extends AbstractServerMojo {
         }
         
         // Start the server
+        List cmdline = new ArrayList();
+        cmdline.add(jvm);
+        cmdline.add("-cp");
+        cmdline.add(StringUtils.join(classpath.iterator(), File.pathSeparator));
+        cmdline.addAll(vmArgs);
+        cmdline.add("org.apache.axis.server.standalone.StandaloneAxisServer");
+        cmdline.add("-p");
+        cmdline.add(String.valueOf(port));
+        cmdline.add("-w");
+        cmdline.add(workDir.getAbsolutePath());
+        if (jwsDirs != null && jwsDirs.length > 0) {
+            cmdline.add("-j");
+            cmdline.add(StringUtils.join(jwsDirs, File.pathSeparator));
+        }
         try {
-            getServerManager().startServer(executable,
-                    (String[])classPathElements.toArray(new String[classPathElements.size()]),
-                    port,
-                    (String[])vmArgs.toArray(new String[vmArgs.size()]),
+            AdminClient adminClient = new AdminClient(true);
+            adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
+            getProcessManager().startProcess(
+                    "Server on port " + port,
+                    (String[])cmdline.toArray(new String[cmdline.size()]),
                     workDir,
-                    (File[])deployments.toArray(new File[deployments.size()]),
-                    (File[])undeployments.toArray(new File[undeployments.size()]),
-                    jwsDirs,
-                    debug || foreground ? Integer.MAX_VALUE : 20000);
+                    new AxisServerStartAction(port, adminClient,
+                            (File[])deployments.toArray(new File[deployments.size()]),
+                            debug || foreground ? Integer.MAX_VALUE : 20000),
+                    new AxisServerStopAction(adminClient,
+                            (File[])undeployments.toArray(new File[undeployments.size()])));
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
 public class StopAllMojo extends AbstractServerMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-            getServerManager().stopAll();
+            getProcessManager().stopAll();
         } catch (Exception ex) {
             throw new MojoFailureException("Errors occurred while attempting to stop processes", ex);
         }

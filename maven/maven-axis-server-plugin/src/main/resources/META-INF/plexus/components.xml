@@ -20,8 +20,8 @@
 <component-set>
     <components>
         <component>
-            <role>org.apache.axis.maven.server.ServerManager</role>
-            <implementation>org.apache.axis.maven.server.DefaultServerManager</implementation>
+            <role>org.apache.axis.maven.server.ProcessManager</role>
+            <implementation>org.apache.axis.maven.server.DefaultProcessManager</implementation>
         </component>
     </components>
 </component-set>

@@ -19,18 +19,15 @@
 package org.apache.axis.maven.server;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.axis.client.AdminClient;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.util.StringUtils;
 
-public class DefaultServerManager implements ServerManager, LogEnabled {
+public class DefaultProcessManager implements ProcessManager, LogEnabled {
     private final List managedProcesses = new ArrayList();
     
     private Logger logger;
@@ -39,32 +36,15 @@ public class DefaultServerManager implements ServerManager, LogEnabled {
         this.logger = logger;
     }
 
-    public void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception {
-        AdminClient adminClient = new AdminClient(true);
-        adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
-        List cmdline = new ArrayList();
-        cmdline.add(jvm);
-        cmdline.add("-cp");
-        cmdline.add(StringUtils.join(classpath, File.pathSeparator));
-        cmdline.addAll(Arrays.asList(vmArgs));
-        cmdline.add("org.apache.axis.server.standalone.StandaloneAxisServer");
-        cmdline.add("-p");
-        cmdline.add(String.valueOf(port));
-        cmdline.add("-w");
-        cmdline.add(workDir.getAbsolutePath());
-        if (jwsDirs != null && jwsDirs.length > 0) {
-            cmdline.add("-j");
-            cmdline.add(StringUtils.join(jwsDirs, File.pathSeparator));
-        }
+    public void startProcess(String description, String[] cmdline, File workDir, ProcessStartAction startAction, ProcessStopAction stopAction) throws Exception {
         if (logger.isDebugEnabled()) {
-            logger.debug("Starting process with command line: " + cmdline);
+            logger.debug("Starting process with command line: " + Arrays.asList(cmdline));
         }
-        Process process = Runtime.getRuntime().exec((String[])cmdline.toArray(new String[cmdline.size()]), null, workDir);
-        managedProcesses.add(new ManagedProcess(process, "Server on port " + port, new AxisServerStopAction(adminClient, undeployments)));
-        new Thread(new StreamPump(process.getInputStream(), System.out), "axis-server-" + port + "-stdout").start();
-        new Thread(new StreamPump(process.getErrorStream(), System.err), "axis-server-" + port + "-stderr").start();
-        
-        new AxisServerStartAction(port, adminClient, deployments, timeout).execute(logger, process);
+        Process process = Runtime.getRuntime().exec(cmdline, null, workDir);
+        managedProcesses.add(new ManagedProcess(process, description, stopAction));
+        new Thread(new StreamPump(process.getInputStream(), System.out)).start();
+        new Thread(new StreamPump(process.getErrorStream(), System.err)).start();
+        startAction.execute(logger, process);
     }
     
     public void stopAll() throws Exception {

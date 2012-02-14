@@ -33,9 +33,9 @@ public abstract class AbstractServerMojo extends AbstractMojo {
     /**
      * @component
      */
-    private ServerManager serverManager;
+    private ProcessManager processManager;
 
-    public ServerManager getServerManager() {
-        return serverManager;
+    public ProcessManager getProcessManager() {
+        return processManager;
     }
 }

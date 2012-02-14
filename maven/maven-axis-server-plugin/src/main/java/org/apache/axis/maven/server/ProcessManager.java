@@ -20,7 +20,7 @@ package org.apache.axis.maven.server;
 
 import java.io.File;
 
-public interface ServerManager {
-    void startServer(String jvm, String[] classpath, int port, String[] vmArgs, File workDir, File[] deployments, File[] undeployments, File[] jwsDirs, int timeout) throws Exception;
+public interface ProcessManager {
+    void startProcess(String description, String[] cmdline, File workDir, ProcessStartAction startAction, ProcessStopAction stopAction) throws Exception;
     void stopAll() throws Exception;
 }
