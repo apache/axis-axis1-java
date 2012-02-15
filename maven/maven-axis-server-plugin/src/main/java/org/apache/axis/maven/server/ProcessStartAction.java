@@ -27,5 +27,10 @@ import org.codehaus.plexus.logging.Logger;
  * @author Andreas Veithen
  */
 public interface ProcessStartAction {
+    ProcessStartAction NOP = new ProcessStartAction() {
+        public void execute(Logger logger, Process process) throws Exception {
+        }
+    };
+    
     void execute(Logger logger, Process process) throws Exception;
 }

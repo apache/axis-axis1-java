@@ -27,6 +27,12 @@ import org.codehaus.plexus.logging.Logger;
  * @author Andreas Veithen
  */
 public interface ProcessStopAction {
+    ProcessStopAction NOP = new ProcessStopAction() {
+        public int execute(Logger logger) throws Exception {
+            return RUNNING;
+        }
+    };
+    
     /**
      * Indicates that the process is expected to be still running after the action is completed.
      */

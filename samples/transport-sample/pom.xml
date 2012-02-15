@@ -58,8 +58,73 @@
                     <execution>
                         <id>default-test</id>
                         <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-network-port</id>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <portNames>
+                                <portName>test.functional.TCPListenerPort</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>maven-axis-server-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <goals>
+                            <goal>start-process</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>samples.transport.tcp.TCPListener</mainClass>
+                            <args>
+                                <arg>-p</arg>
+                                <arg>${test.functional.TCPListenerPort}</arg>
+                            </args>
+                            <workDir>${project.build.directory}/axis-server/${test.functional.TCPListenerPort}</workDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <goals>
+                            <goal>stop-all</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/Test*.java</include>
+                            </includes>
                             <!-- Prevent Axis from creating a server-config.wsdd file in the source tree -->
                             <workingDirectory>${project.build.directory}/work</workingDirectory>
+                            <systemPropertyVariables>
+                                <test.functional.TCPListenerPort>${test.functional.TCPListenerPort}</test.functional.TCPListenerPort>
+                            </systemPropertyVariables>
                         </configuration>
                     </execution>
                 </executions>

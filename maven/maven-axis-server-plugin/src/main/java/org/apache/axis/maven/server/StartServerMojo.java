@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -31,14 +30,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.toolchain.Toolchain;
-import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -52,30 +46,7 @@ import org.w3c.dom.Element;
  * @phase pre-integration-test
  * @requiresDependencyResolution test
  */
-public class StartServerMojo extends AbstractServerMojo {
-    /**
-     * The maven project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-    
-    /**
-     * The current build session instance. This is used for toolchain manager API calls.
-     * 
-     * @parameter default-value="${session}"
-     * @required
-     * @readonly
-     */
-    private MavenSession session;
-    
-    /**
-     * @component
-     */
-    private ToolchainManager toolchainManager;
-    
+public class StartServerMojo extends AbstractStartProcessMojo {
     /**
      * @parameter default-value="${project.build.directory}/axis-server"
      * @required
@@ -128,61 +99,8 @@ public class StartServerMojo extends AbstractServerMojo {
      */
     private boolean foreground;
     
-    /**
-     * The arguments to pass to the server JVM when debug mode is enabled.
-     * 
-     * @parameter default-value="-Xdebug -Xrunjdwp:transport=dt_socket,address=8899,server=y,suspend=y"
-     */
-    private String debugArgs;
-    
-    /**
-     * Indicates whether the server should be started in debug mode. This flag should only be set
-     * from the command line.
-     * 
-     * @parameter expression="${axis.server.debug}" default-value="false"
-     */
-    private boolean debug;
-    
-    /**
-     * The arguments to pass to the server JVM when JMX is enabled.
-     * 
-     * @parameter default-value="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
-     */
-    private String jmxArgs;
-    
-    /**
-     * Indicates whether the server should be started with remote JMX enabled. This flag should only
-     * be set from the command line.
-     * 
-     * @parameter expression="${axis.server.jmx}" default-value="false"
-     */
-    private boolean jmx;
-    
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
-        
-        // Locate java executable to use
-        String jvm;
-        Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk", session);
-        if (tc != null) {
-            jvm = tc.findTool("java");
-        } else {
-            jvm = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Java executable: " + jvm);
-        }
-        
-        // Get class path
-        List classpath;
-        try {
-            classpath = project.getTestClasspathElements();
-        } catch (DependencyResolutionRequiredException ex) {
-            throw new MojoExecutionException("Unexpected exception", ex);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Class path elements: " + classpath);
-        }
         
         // Select WSDD files
         List deployments = new ArrayList();
@@ -230,18 +148,6 @@ public class StartServerMojo extends AbstractServerMojo {
             }
         }
         
-        // Compute JVM arguments
-        List vmArgs = new ArrayList();
-        if (debug) {
-            processVMArgs(vmArgs, debugArgs);
-        }
-        if (jmx) {
-            processVMArgs(vmArgs, jmxArgs);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Additional VM args: " + vmArgs);
-        }
-        
         // Prepare a work directory where the server can create a server-config.wsdd file
         File workDir = new File(workDirBase, String.valueOf(port));
         if (workDir.exists()) {
@@ -274,30 +180,26 @@ public class StartServerMojo extends AbstractServerMojo {
         }
         
         // Start the server
-        List cmdline = new ArrayList();
-        cmdline.add(jvm);
-        cmdline.add("-cp");
-        cmdline.add(StringUtils.join(classpath.iterator(), File.pathSeparator));
-        cmdline.addAll(vmArgs);
-        cmdline.add("org.apache.axis.server.standalone.StandaloneAxisServer");
-        cmdline.add("-p");
-        cmdline.add(String.valueOf(port));
-        cmdline.add("-w");
-        cmdline.add(workDir.getAbsolutePath());
+        List args = new ArrayList();
+        args.add("-p");
+        args.add(String.valueOf(port));
+        args.add("-w");
+        args.add(workDir.getAbsolutePath());
         if (jwsDirs != null && jwsDirs.length > 0) {
-            cmdline.add("-j");
-            cmdline.add(StringUtils.join(jwsDirs, File.pathSeparator));
+            args.add("-j");
+            args.add(StringUtils.join(jwsDirs, File.pathSeparator));
         }
         try {
             AdminClient adminClient = new AdminClient(true);
             adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
-            getProcessManager().startProcess(
+            startJavaProcess(
                     "Server on port " + port,
-                    (String[])cmdline.toArray(new String[cmdline.size()]),
+                    "org.apache.axis.server.standalone.StandaloneAxisServer",
+                    (String[])args.toArray(new String[args.size()]),
                     workDir,
                     new AxisServerStartAction(port, adminClient,
                             (File[])deployments.toArray(new File[deployments.size()]),
-                            debug || foreground ? Integer.MAX_VALUE : 20000),
+                            isDebug() || foreground ? Integer.MAX_VALUE : 20000),
                     new AxisServerStopAction(adminClient,
                             (File[])undeployments.toArray(new File[undeployments.size()])));
         } catch (Exception ex) {
@@ -315,9 +217,5 @@ public class StartServerMojo extends AbstractServerMojo {
                 }
             }
         }
-    }
-    
-    private static void processVMArgs(List vmArgs, String args) {
-        vmArgs.addAll(Arrays.asList(args.split(" ")));
     }
 }

@@ -50,22 +50,26 @@ public class DefaultProcessManager implements ProcessManager, LogEnabled {
     public void stopAll() throws Exception {
         Exception savedException = null;
         for (Iterator it = managedProcesses.iterator(); it.hasNext(); ) {
-            ManagedProcess server = (ManagedProcess)it.next();
+            ManagedProcess managedProcess = (ManagedProcess)it.next();
             int result;
+            logger.debug("Executing stop action");
             try {
-                result = server.getStopAction().execute(logger);
+                result = managedProcess.getStopAction().execute(logger);
             } catch (Exception ex) {
                 if (savedException == null) {
                     savedException = ex;
                 }
                 result = -1;
             }
-            if (result == ProcessStopAction.STOPPING) {
-                server.getProcess().waitFor();
-            } else {
-                server.getProcess().destroy();
+            if (logger.isDebugEnabled()) {
+                logger.debug("result = " + result);
             }
-            logger.info(server.getDescription() + " stopped");
+            if (result == ProcessStopAction.STOPPING) {
+                managedProcess.getProcess().waitFor();
+            } else {
+                managedProcess.getProcess().destroy();
+            }
+            logger.info(managedProcess.getDescription() + " stopped");
         }
         // TODO: need to clear the collection because the same ServerManager instance may be used by multiple projects in a reactor build;
         //       note that this means that the plugin is not thread safe (i.e. doesn't support parallel builds in Maven 3)

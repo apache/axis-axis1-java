@@ -40,18 +40,20 @@ import java.net.URL;
 public class TestTCPTransportSample extends TestCase {
     static Log log =
             LogFactory.getLog(TestTCPTransportSample.class.getName());
+    
+    private static String uri = "tcp://localhost:" + System.getProperty("test.functional.TCPListenerPort", "8088");
 
     public TestTCPTransportSample(String name) {
         super(name);
     }
 
     public void doTestDeploy () throws Exception {
-        String[] args = { "-ltcp://localhost:8088", "samples/transport/deploy.wsdd" };
+        String[] args = { "-l" + uri, System.getProperty("basedir", ".") + "/src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
 
     public void doTestUndeploy () throws Exception {
-        String[] args = { "-ltcp://localhost:8088", "samples/stock/undeploy.wsdd" };
+        String[] args = { "-l" + uri, "samples/stock/undeploy.wsdd" };
         AdminClient.main(args);
     }
 
@@ -59,7 +61,7 @@ public class TestTCPTransportSample extends TestCase {
         try {
             log.info("Testing TCP stock service...");
             GetQuote tester = new GetQuote();
-            tester.getQuote(new String [] { "-ltcp://localhost:8088", "XXX" });
+            tester.getQuote(new String [] { "-l" + uri, "XXX" });
             String   symbol = "XXX"; // args[0] ;
 
             EngineConfiguration defaultConfig =
@@ -73,7 +75,7 @@ public class TestTCPTransportSample extends TestCase {
 
             Call     call    = (Call) service.createCall();
 
-            call.setTargetEndpointAddress( new URL("tcp://localhost:8088") );
+            call.setTargetEndpointAddress( new URL(uri) );
             call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
             call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
             call.setReturnType( XMLType.XSD_FLOAT );
