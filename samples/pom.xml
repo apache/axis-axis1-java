@@ -39,6 +39,7 @@
         <module>faults-sample</module>
         <module>handler-sample</module>
         <module>jaxm-sample</module>
+        <module>jaxrpc-sample</module>
         <module>message-sample</module>
         <module>misc-sample</module>
         <module>proxy-sample</module>

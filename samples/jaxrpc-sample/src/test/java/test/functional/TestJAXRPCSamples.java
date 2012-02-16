@@ -34,11 +34,6 @@ public class TestJAXRPCSamples extends TestCase {
         super(name);
     } // ctor
 
-    public void doTestDeploy() throws Exception {
-        String[] args = {"samples/stock/deploy.wsdd"};
-        AdminClient.main(args);
-    } // doTestDeploy
-
     public void doTestGetQuoteXXX() throws Exception {
         String[] args = {"-uuser1", "-wpass1", "XXX"};
         float val = new GetQuote1().getQuote1(args);
@@ -50,11 +45,6 @@ public class TestJAXRPCSamples extends TestCase {
         String[] args = {"-uuser1", "-wpass1", "XXX"};
         GetQuote1.main(args);
     } // doTestGetQuoteMain
-
-    public void doTestUndeploy() throws Exception {
-        String[] args = {"samples/stock/undeploy.wsdd"};
-        AdminClient.main(args);
-    } // doTestStockNoAction
 
 //    public void testGetQuote() throws Exception {
 //        try {
@@ -76,29 +66,28 @@ public class TestJAXRPCSamples extends TestCase {
 
     public void testGetInfo() throws Exception {
         log.info("Testing JAX-RPC GetInfo sample.");
-        log.info("Testing deployment...");
-        doTestDeploy();
         log.info("Testing service...");
-        String[] args = {"-uuser3", "-wpass3", "IBM", "symbol"};
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"),
+                "-uuser3", "-wpass3", "IBM", "symbol"};
         GetInfo.main(args);
-        args = new String[] {"-uuser3", "-wpass3", "MACR", "name"};
+        args = new String[] { "-p", System.getProperty("test.functional.ServicePort", "8080"),
+                "-uuser3", "-wpass3", "MACR", "name"};
         GetInfo.main(args);
-        args = new String[] {"-uuser3", "-wpass3", "CSCO", "address"};
+        args = new String[] { "-p", System.getProperty("test.functional.ServicePort", "8080"),
+                "-uuser3", "-wpass3", "CSCO", "address"};
         GetInfo.main(args);
-        log.info("Testing undeployment...");
-        doTestUndeploy();
         log.info("Test complete.");
     } // testGetInfo
 
     public void testHello() throws Exception {
         log.info("Testing JAX-RPC hello sample.");
-        samples.jaxrpc.hello.HelloClient.main(new String[]{});
+        samples.jaxrpc.hello.HelloClient.main(new String[]{ "http://localhost:" + System.getProperty("test.functional.ServicePort", "8080") });
         log.info("Test complete.");
     }
 
     public void testAddress() throws Exception {
         log.info("Testing JAX-RPC Address sample.");
-        samples.jaxrpc.address.AddressClient.main(new String[]{});
+        samples.jaxrpc.address.AddressClient.main(new String[]{ "http://localhost:" + System.getProperty("test.functional.ServicePort", "8080") });
         log.info("Test complete.");
     }
 

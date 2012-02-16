@@ -85,6 +85,14 @@
             <outputDirectory>/</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>../samples/jaxrpc-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../samples/jaxrpc-sample/src/main/wsdl</directory>
+            <outputDirectory>samples/jaxrpc</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>../samples/message-sample/src/main/java</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>

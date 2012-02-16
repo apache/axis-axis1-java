@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class AddressClient {
     public static void main(String[] args) throws Exception {
-        URL urlWsdl = new URL("http://localhost:8080/axis/services/Address?wsdl");
+        URL urlWsdl = new URL((args.length > 0 ? args[0] : "http://localhost:8080") + "/axis/services/Address?wsdl");
         String nameSpaceUri = "http://address.jaxrpc.samples";
         String serviceName = "AddressServiceService";
         String portName = "Address";

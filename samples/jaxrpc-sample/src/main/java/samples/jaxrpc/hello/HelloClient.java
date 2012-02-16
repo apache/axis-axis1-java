@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class HelloClient {
     public static void main(String[] args) throws Exception {
-        String UrlString = "http://localhost:8080/axis/services/HelloPort?wsdl";
+        String UrlString = (args.length > 0 ? args[0] : "http://localhost:8080") + "/axis/services/HelloPort?wsdl";
         String nameSpaceUri = "http://hello.jaxrpc.samples/";
         String serviceName = "HelloWorld";
         String portName = "HelloPort";
