@@ -19,6 +19,8 @@
 package org.apache.axis.maven.server;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 import com.github.veithen.ulog.PlexusLoggerInjector;
 
@@ -35,7 +37,25 @@ public abstract class AbstractServerMojo extends AbstractMojo {
      */
     private ProcessManager processManager;
 
+    /**
+     * Set this to <code>true</code> to skip running tests, but still compile them. This is the same
+     * flag that is also used by the Surefire and Failsafe plugins.
+     * 
+     * @parameter expression="${skipTests}" default-value="false"
+     */
+    private boolean skipTests;
+    
     public ProcessManager getProcessManager() {
         return processManager;
     }
+
+    public final void execute() throws MojoExecutionException, MojoFailureException {
+        if (skipTests) {
+            getLog().info("Tests are skipped.");
+        } else {
+            doExecute();
+        }
+    }
+    
+    protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 }

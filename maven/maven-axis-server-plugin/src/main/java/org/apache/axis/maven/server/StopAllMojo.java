@@ -28,7 +28,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @phase post-integration-test
  */
 public class StopAllMojo extends AbstractServerMojo {
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         try {
             getProcessManager().stopAll();
         } catch (Exception ex) {

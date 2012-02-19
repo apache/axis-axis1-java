@@ -99,7 +99,7 @@ public class StartServerMojo extends AbstractStartProcessMojo {
      */
     private boolean foreground;
     
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
         // Select WSDD files
