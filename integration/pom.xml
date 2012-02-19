@@ -258,6 +258,23 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>anytype</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/work/test/wsdl/anytype/AnyService.wsdl</file>
+                            <all>true</all>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://test.com/AnyService</namespace>
+                                    <package>test.wsdl.anytype</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>arrays</id>
                         <goals>
                             <goal>wsdl2java-test</goal>
