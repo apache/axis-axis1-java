@@ -22,7 +22,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.axis.maven.shared.nsmap.Mapping;
 import org.apache.axis.maven.shared.nsmap.MappingUtil;
@@ -84,6 +86,23 @@ public class GenerateWsdlMojo extends AbstractMojo {
     private Mapping[] mappings;
     
     /**
+     * The style of the WSDL document: RPC, DOCUMENT or WRAPPED.
+     * If RPC, a rpc/encoded wsdl is generated. If DOCUMENT, a
+     * document/literal wsdl is generated. If WRAPPED, a
+     * document/literal wsdl is generated using the wrapped approach.
+     *
+     * @parameter
+     */
+    private String style;
+
+    /**
+     * Set the use option
+     * 
+     * @parameter
+     */
+    private String use;
+    
+    /**
      * The url of the location of the service. The name after the last slash or
      * backslash is the name of the service port (unless overridden by the -s
      * option). The service port address location attribute is assigned the
@@ -101,6 +120,13 @@ public class GenerateWsdlMojo extends AbstractMojo {
      * @required
      */
     private File output;
+    
+    /**
+     * Sets the deploy flag
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean deploy;
     
     public void execute() throws MojoExecutionException, MojoFailureException {
         List classpath;
@@ -129,11 +155,20 @@ public class GenerateWsdlMojo extends AbstractMojo {
             } catch (ClassNotFoundException ex) {
                 throw new MojoFailureException("Class " + className + " not found");
             }
+            if (style != null) {
+                emitter.setStyle(style);
+            }
+            if (use != null) {
+                emitter.setUse(use);
+            }
             emitter.setIntfNamespace(namespace);
             emitter.setLocationUrl(location);
             output.getParentFile().mkdirs();
             try {
                 emitter.emit(output.getAbsolutePath(), Emitter.MODE_ALL);
+                if (deploy) {
+                    generateServerSide(emitter, /*(outputImpl != null) ? outputImpl :*/ output.getAbsolutePath());
+                }
             } catch (Exception ex) {
                 throw new MojoFailureException("java2wsdl failed", ex);
             }
@@ -141,5 +176,58 @@ public class GenerateWsdlMojo extends AbstractMojo {
             // TODO: apparently this is a no-op
             ClassUtils.setDefaultClassLoader(null);
         }
+    }
+
+    // Copy & paste from Java2WsdlAntTask
+    /**
+     * Generate the server side artifacts from the generated WSDL
+     * 
+     * @param j2w the Java2WSDL emitter
+     * @param wsdlFileName the generated WSDL file
+     * @throws Exception
+     */
+    protected void generateServerSide(Emitter j2w, String wsdlFileName) throws Exception {
+        org.apache.axis.wsdl.toJava.Emitter w2j = new org.apache.axis.wsdl.toJava.Emitter();
+        File wsdlFile = new File(wsdlFileName);
+        w2j.setServiceDesc(j2w.getServiceDesc());
+        w2j.setQName2ClassMap(j2w.getQName2ClassMap());
+        w2j.setOutputDir(wsdlFile.getParent());
+        w2j.setServerSide(true);   
+        w2j.setDeploy(true);
+        w2j.setHelperWanted(true);
+
+        // setup namespace-to-package mapping
+        String ns = j2w.getIntfNamespace();
+        String clsName = j2w.getCls().getName();
+        int idx = clsName.lastIndexOf(".");
+        String pkg = null;
+        if (idx > 0) {
+            pkg = clsName.substring(0, idx);            
+            w2j.getNamespaceMap().put(ns, pkg);
+        }
+        
+        Map nsmap = j2w.getNamespaceMap();
+        if (nsmap != null) {
+            for (Iterator i = nsmap.keySet().iterator(); i.hasNext(); ) {
+                pkg = (String) i.next();
+                ns = (String) nsmap.get(pkg);
+                w2j.getNamespaceMap().put(ns, pkg);
+            }
+        }
+        
+        // set 'deploy' mode
+        w2j.setDeploy(true);
+        
+        if (j2w.getImplCls() != null) {
+            w2j.setImplementationClassName(j2w.getImplCls().getName());
+        } else {
+            if (!j2w.getCls().isInterface()) {
+                w2j.setImplementationClassName(j2w.getCls().getName());
+            } else {
+                throw new Exception("implementation class is not specified.");
+            }
+        }
+        
+        w2j.run(wsdlFileName);
     }
 }

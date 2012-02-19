@@ -75,6 +75,27 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>arrays3</id>
+                        <goals>
+                            <goal>generate-wsdl</goal>
+                        </goals>
+                        <configuration>
+                            <output>${project.build.directory}/work/test/wsdl/arrays3/generated/arrays3.wsdl</output>
+                            <className>test.wsdl.arrays3.AddrBookServiceImpl</className>
+                            <namespace>http://arrays3.test</namespace>
+                            <location>http://localhost:8080/axis/services/arrays3</location>
+                            <style>WRAPPED</style>
+                            <use>literal</use>
+                            <deploy>true</deploy>
+                            <mappings>
+                                <mapping>
+                                    <package>test.wsdl.arrays3</package>
+                                    <namespace>http://arrays3.test</namespace>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -312,6 +333,21 @@
                                 <mapping>
                                     <namespace>http://www.xyz.net/schemas/arraytest/innerdata/1.0</namespace>
                                     <package>test.wsdl.arrays2.data.inner</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>arrays3</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/work/test/wsdl/arrays3/generated/arrays3.wsdl</file>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://arrays3.test</namespace>
+                                    <package>test.wsdl.arrays3.testclient</package>
                                 </mapping>
                             </mappings>
                         </configuration>
