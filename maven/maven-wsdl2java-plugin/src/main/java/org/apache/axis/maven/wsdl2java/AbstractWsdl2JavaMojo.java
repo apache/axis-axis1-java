@@ -20,9 +20,10 @@ package org.apache.axis.maven.wsdl2java;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.HashMap;
 
 import org.apache.axis.constants.Scope;
+import org.apache.axis.maven.shared.nsmap.Mapping;
+import org.apache.axis.maven.shared.nsmap.MappingUtil;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -162,11 +163,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 
         //do the mappings, with namespaces mapped as the key
         if (mappings != null && mappings.length > 0) {
-            HashMap namespaceMap = new HashMap();
-            for (int i=0; i<mappings.length; i++) {
-                namespaceMap.put(mappings[i].getNamespace(), mappings[i].getPackage());
-            }
-            emitter.setNamespaceMap(namespaceMap);
+            emitter.setNamespaceMap(MappingUtil.getNamespaceToPackageMap(mappings));
         }
 //        emitter.setTestCaseWanted(testCase);
 //        emitter.setHelperWanted(helperGen);

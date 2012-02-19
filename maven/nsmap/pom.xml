@@ -25,41 +25,9 @@
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>maven-wsdl2java-plugin</artifactId>
-    <packaging>maven-plugin</packaging>
-    <name>wsdl2java plugin</name>
+    <artifactId>nsmap</artifactId>
+    <name>Maven plugin common classes</name>
     <description>
-        Axis wsdl2java Maven plugin.
+    	Contains classes shared by maven-wsdl2java-plugin and maven-java2wsdl-plugin.
     </description>
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>nsmap</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.veithen.ulog</groupId>
-            <artifactId>ulog</artifactId>
-        </dependency>
-    </dependencies>
-    <reporting>
-        <plugins>
-            <plugin>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>2.9</version>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>

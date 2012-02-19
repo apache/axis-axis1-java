@@ -67,7 +67,9 @@
         </dependencies>
     </dependencyManagement>
     <modules>
+    	<module>nsmap</module>
         <module>maven-wsdl2java-plugin</module>
+        <module>maven-java2wsdl-plugin</module>
         <module>maven-axis-server-plugin</module>
     </modules>
     

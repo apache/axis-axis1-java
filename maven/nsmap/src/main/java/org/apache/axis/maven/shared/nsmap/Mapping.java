@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.maven.wsdl2java;
+package org.apache.axis.maven.shared.nsmap;
 
 public class Mapping {
     private String namespace;

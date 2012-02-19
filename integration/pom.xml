@@ -54,6 +54,31 @@
         <plugins>
             <plugin>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>maven-java2wsdl-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>anytype</id>
+                        <goals>
+                            <goal>generate-wsdl</goal>
+                        </goals>
+                        <configuration>
+                            <output>${project.build.directory}/work/test/wsdl/anytype/AnyService.wsdl</output>
+                            <className>test.wsdl.anytype.AnyService</className>
+                            <namespace>http://test.com/AnyService</namespace>
+                            <location>http://localhost:8080/axis/services/AnyService</location>
+                            <mappings>
+                                <mapping>
+                                    <package>test.wsdl.anytype</package>
+                                    <namespace>http://test.com/AnyService</namespace>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>maven-wsdl2java-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>

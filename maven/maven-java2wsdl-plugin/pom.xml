@@ -25,11 +25,11 @@
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>maven-wsdl2java-plugin</artifactId>
+    <artifactId>maven-java2wsdl-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>wsdl2java plugin</name>
+    <name>java2wsdl plugin</name>
     <description>
-        Axis wsdl2java Maven plugin.
+        Axis java2wsdl Maven plugin.
     </description>
     <dependencies>
         <dependency>
