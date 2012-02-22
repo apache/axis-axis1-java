@@ -62,6 +62,7 @@
                         <goals>
                             <goal>generate-wsdl</goal>
                         </goals>
+                        <phase>process-classes</phase>
                         <configuration>
                             <output>${project.build.directory}/work/test/wsdl/anytype/AnyService.wsdl</output>
                             <className>test.wsdl.anytype.AnyService</className>
@@ -78,7 +79,7 @@
                     <execution>
                         <id>arrays3</id>
                         <goals>
-                            <goal>generate-wsdl</goal>
+                            <goal>deploy</goal>
                         </goals>
                         <configuration>
                             <output>${project.build.directory}/work/test/wsdl/arrays3/generated/arrays3.wsdl</output>
@@ -87,7 +88,6 @@
                             <location>http://localhost:8080/axis/services/arrays3</location>
                             <style>WRAPPED</style>
                             <use>literal</use>
-                            <deploy>true</deploy>
                             <mappings>
                                 <mapping>
                                     <package>test.wsdl.arrays3</package>
@@ -979,6 +979,13 @@
                                 </wsdd>
                                 <wsdd>
                                     <directory>${project.build.directory}/work</directory>
+                                    <includes>
+                                        <include>**/deploy.wsdd</include>
+                                    </includes>
+                                </wsdd>
+                                <!-- TODO: we need to fix the deploy goal (and also wsdl2java) so that we can specify the output location for the WSDD files -->
+                                <wsdd>
+                                    <directory>${project.build.directory}/generated-sources/deploy</directory>
                                     <includes>
                                         <include>**/deploy.wsdd</include>
                                     </includes>

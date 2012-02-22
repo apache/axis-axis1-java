@@ -53,6 +53,16 @@
             <groupId>com.github.veithen.ulog</groupId>
             <artifactId>ulog</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-manager</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-javac</artifactId>
+            <version>1.8.1</version>
+        </dependency>
     </dependencies>
     <reporting>
         <plugins>
