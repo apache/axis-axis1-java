@@ -33,6 +33,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 import com.github.veithen.ulog.PlexusLoggerInjector;
 
@@ -61,6 +62,13 @@ public abstract class AbstractGenerateWsdlMojo extends AbstractMojo {
      */
     private String className;
 
+    /**
+     * A list of classes to include in the schema generation.
+     * 
+     * @parameter
+     */
+    private String[] extraClasses;
+    
     /**
      * The target namespace for the interface.
      * 
@@ -131,8 +139,14 @@ public abstract class AbstractGenerateWsdlMojo extends AbstractMojo {
                 throw new MojoExecutionException("Unexpected exception", ex);
             }
         }
+        ClassLoader cl = new URLClassLoader(urls);
         // TODO: this will likely make the plugin non thread safe
-        ClassUtils.setDefaultClassLoader(new URLClassLoader(urls));
+        ClassUtils.setDefaultClassLoader(cl);
+        if (extraClasses != null) {
+            for (int i=0; i<extraClasses.length; i++) {
+                ClassUtils.setClassLoader(extraClasses[i], cl);
+            }
+        }
         try {
             Emitter emitter = new Emitter();
             if (mappings != null && mappings.length > 0) {
@@ -142,6 +156,13 @@ public abstract class AbstractGenerateWsdlMojo extends AbstractMojo {
                 emitter.setCls(className);
             } catch (ClassNotFoundException ex) {
                 throw new MojoFailureException("Class " + className + " not found");
+            }
+            if (extraClasses != null) {
+                try {
+                    emitter.setExtraClasses(StringUtils.join(extraClasses, ","));
+                } catch (ClassNotFoundException ex) {
+                    throw new MojoExecutionException("Extra class not found: " + ex.getMessage());
+                }
             }
             if (style != null) {
                 emitter.setStyle(style);

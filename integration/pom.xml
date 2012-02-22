@@ -116,6 +116,29 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>gateway</id>
+                        <goals>
+                            <goal>generate-wsdl</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <output>${project.build.directory}/work/test/wsdl/gateway/Gateway.wsdl</output>
+                            <className>test.wsdl.gateway.Gateway</className>
+                            <extraClasses>
+                                <extraClass>test.wsdl.gateway.MyClass</extraClass>
+                                <extraClass>test.wsdl.gateway.OutClass</extraClass>
+                            </extraClasses>
+                            <namespace>http://test.com/gateway</namespace>
+                            <location>http://localhost:8080/axis/services/Gateway</location>
+                            <mappings>
+                                <mapping>
+                                    <package>test.wsdl.gateway</package>
+                                    <namespace>http://test.com/gateway</namespace>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>map</id>
                         <goals>
                             <goal>generate-wsdl</goal>
@@ -551,6 +574,23 @@
                                 <mapping>
                                     <namespace>http://test.com/wsdl/faults</namespace>
                                     <package>test.wsdl.faults</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>gateway</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/work/test/wsdl/gateway/Gateway.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <all>true</all>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://test.com/gateway</namespace>
+                                    <package>test.wsdl.gateway</package>
                                 </mapping>
                             </mappings>
                         </configuration>
