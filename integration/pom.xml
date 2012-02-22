@@ -115,6 +115,25 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>map</id>
+                        <goals>
+                            <goal>generate-wsdl</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <output>${project.build.directory}/work/test/wsdl/map/MapService.wsdl</output>
+                            <className>test.wsdl.map.MapService</className>
+                            <namespace>http://test.com/MapService</namespace>
+                            <location>http://localhost:8080/axis/services/MapService</location>
+                            <mappings>
+                                <mapping>
+                                    <package>test.wsdl.map</package>
+                                    <namespace>http://test.com/MapService</namespace>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -593,6 +612,23 @@
                         <configuration>
                             <file>src/test/wsdl/jaxrpcdynproxy/AddressInOut.wsdl</file>
                             <serverSide>true</serverSide>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>map</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/work/test/wsdl/map/MapService.wsdl</file>
+                            <all>true</all>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://test.com/MapService</namespace>
+                                    <package>test.wsdl.map</package>
+                                </mapping>
+                            </mappings>
                         </configuration>
                     </execution>
                     <execution>
