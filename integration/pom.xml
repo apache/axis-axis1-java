@@ -96,6 +96,25 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>document</id>
+                        <goals>
+                            <goal>generate-wsdl</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <output>${project.build.directory}/work/test/wsdl/document/document.wsdl</output>
+                            <className>test.wsdl.document.TestService</className>
+                            <namespace>http://document.wsdl.test</namespace>
+                            <location>http://localhost:8080/axis/services/DocumentTest</location>
+                            <mappings>
+                                <mapping>
+                                    <package>test.wsdl.document</package>
+                                    <namespace>http://document.wsdl.test</namespace>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -441,6 +460,23 @@
                         <configuration>
                             <file>src/test/wsdl/date/testdate.wsdl</file>
                             <serverSide>true</serverSide>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>document</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/work/test/wsdl/document/document.wsdl</file>
+                            <deployScope>session</deployScope>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://document.wsdl.test</namespace>
+                                    <package>test.wsdl.document</package>
+                                </mapping>
+                            </mappings>
                         </configuration>
                     </execution>
                     <!-- This tests holders for complextype Bug:10247 -->
