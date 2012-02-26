@@ -42,8 +42,6 @@ public class FileGenTestCase extends AxisFileGenTestBase {
      */
     protected Set shouldExist() {
         HashSet set = new HashSet();
-        set.add("AllOptionTestCase.java");
-        set.add("FileGenTestCase.java");
         set.add("OpFault.java");
         set.add("PortTypeSoap.java");
         set.add("ReferenceService.java");
@@ -64,7 +62,8 @@ public class FileGenTestCase extends AxisFileGenTestBase {
      * The directory containing the files that should exist.
      */
     protected String rootDir() {
-        return "build" + File.separator + "work" + File.separator + 
+        return System.getProperty("basedir", ".") + File.separator +
+                "target" + File.separator + "work" + File.separator + 
                 "test" + File.separator + "wsdl" + File.separator +
                 "filegen";
     }

@@ -43,6 +43,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -61,6 +66,7 @@
                                 <taskdef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask" classpathref="maven.compile.classpath" />
                                 <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask" classpathref="maven.compile.classpath" />
                                 <ant antfile="src/test/ant/extra/build.xml" target="test" inheritrefs="true" />
+                                <ant antfile="src/test/ant/filegen/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/qname/build.xml" target="test" inheritrefs="true" />
                             </target>
                         </configuration>
