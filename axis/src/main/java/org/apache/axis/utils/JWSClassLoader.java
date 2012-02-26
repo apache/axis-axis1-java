@@ -67,8 +67,6 @@ public class JWSClassLoader extends ClassLoader {
         /*************************************/
         byte[] data = baos.toByteArray();
         defineClass( name, data, 0, data.length );
-
-        ClassUtils.setClassLoader(name,this);
     }
 
     /**

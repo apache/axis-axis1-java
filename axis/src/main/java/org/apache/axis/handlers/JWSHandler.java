@@ -26,7 +26,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Scope;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.ClasspathUtils;
 import org.apache.axis.utils.JWSClassLoader;
 import org.apache.axis.utils.Messages;
@@ -40,7 +39,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.
@@ -57,7 +58,8 @@ public class JWSHandler extends BasicHandler
     public final String OPTION_JWS_FILE_EXTENSION = "extension";
     public final String DEFAULT_JWS_FILE_EXTENSION = Constants.JWS_DEFAULT_FILE_EXTENSION;
 
-    protected static HashMap soapServices = new HashMap();
+    private final Map/*<String,SOAPService>*/ soapServices = new HashMap();
+    private final Map/*<String,ClassLoader>*/ classloaders = new Hashtable();
 
     /**
      * Just set up the service, the inner service will do the rest...
@@ -233,16 +235,17 @@ public class JWSHandler extends BasicHandler
                                          Messages.getMessage("badCompile00", jFile),
                                          null, new Element[] { root } );
                 }
-                ClassUtils.removeClassLoader( clsName );
+                classloaders.remove( clsName );
                 // And clean out the cached service.
                 soapServices.remove(clsName);
             }
             
-            ClassLoader cl = ClassUtils.getClassLoader(clsName);
+            ClassLoader cl = (ClassLoader)classloaders.get(clsName);
             if (cl == null) {
                 cl = new JWSClassLoader(clsName,
                                         msgContext.getClassLoader(),
                                         cFile);
+                classloaders.put(clsName, cl);
             }
             
             msgContext.setClassLoader(cl);
