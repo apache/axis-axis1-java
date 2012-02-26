@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+    <mkdir dir="${project.build.directory}/work/test/wsdl/clash"/>
+    
+    <!-- Name clash test -->
+    <wsdl2java url="src/test/wsdl/clash/clash.wsdl"
+               output="${project.build.directory}/work"
+               testcase="yes"
+               serverSide="yes">
+    </wsdl2java>
+
+    <wsdl2java url="src/test/wsdl/clash/duplicate-element.wsdl"
+               output="${project.build.directory}/work"
+               wrapArrays="yes">
+    </wsdl2java>
+  </target>
+</project>
