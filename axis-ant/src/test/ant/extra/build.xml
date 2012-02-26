@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+    <mkdir dir="${project.build.directory}/work/test/wsdl/extra"/>
+    
+    <!-- Generate WSDL from java -->
+    <java2wsdl output="${project.build.directory}/work/test/wsdl/extra/MyService.wsdl"
+               className= "test.wsdl.extra.MyService"
+               extraClasses="test.wsdl.extra.Extra"
+               namespace="http://test.com/extraClasses"
+               location="http://localhost:8080/axis/services/MyService">
+        <classpath refid="maven.test.classpath"/>
+        <mapping package="test.wsdl.extra" namespace="http://test.com/extraClasses" />
+    </java2wsdl>
+    
+    <!-- Verify files generated based on everything in WSDL -->
+    <wsdl2java url="${project.build.directory}/work/test/wsdl/extra/MyService.wsdl"
+               output="${project.build.directory}/work"
+               all="yes"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="http://test.com/extraClasses" package="test.wsdl.extra"/>
+    </wsdl2java>
+  </target>
+</project>

@@ -38,6 +38,11 @@
             <artifactId>ant</artifactId>
             <version>1.5.1</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -45,13 +50,17 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>test</phase>
+                        <!-- We run this in process-test-classes so that we can refer to test classes
+                             (e.g. in java2wsdl), but also run unit tests that verify the output. -->
+                        <phase>process-test-classes</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
                                 <taskdef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask" classpathref="maven.compile.classpath" />
+                                <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask" classpathref="maven.compile.classpath" />
+                                <ant antfile="src/test/ant/extra/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/qname/build.xml" target="test" inheritrefs="true" />
                             </target>
                         </configuration>
