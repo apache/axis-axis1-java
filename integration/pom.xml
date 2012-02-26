@@ -457,6 +457,26 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>axis2098</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/axis2098/helloworld.wsdl</file>
+                            <all>true</all>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://helloworld.ch/schema/service</namespace>
+                                    <package>test.wsdl.axis2098</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>http://helloworld.ch/schema/types</namespace>
+                                    <package>test.wsdl.axis2098</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                     <!-- This is a DII test with multiple output params -->
                     <execution>
                         <id>dataset</id>
