@@ -578,6 +578,22 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>echo2</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/echo2/echo2.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:echo2.wsdl.test</namespace>
+                                    <package>test.wsdl.echo2</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                     <!-- extension Sample Test -->
                     <execution>
                         <id>extension</id>
