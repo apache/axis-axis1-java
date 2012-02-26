@@ -15,28 +15,8 @@
  */
 package test.wsdl.choice;
 
-import java.util.Date;
-import java.util.Calendar;
-
-import org.apache.axis.types.URI;
-import org.apache.axis.encoding.ser.CalendarSerializer;
-
 import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
-
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.Text;
-import org.apache.axis.utils.Options;
-import org.apache.commons.logging.Log;
-import org.apache.log4j.Logger;
-
-import javax.xml.namespace.QName;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Calendar;
 
 public class ChoiceServiceTestCase extends TestCase {
 
@@ -49,7 +29,6 @@ public class ChoiceServiceTestCase extends TestCase {
         try {
             ChoiceServiceLocator locator = new ChoiceServiceLocator();
             binding = locator.getChoiceServiceSoap();
-            deployServer();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -126,7 +105,6 @@ public class ChoiceServiceTestCase extends TestCase {
         try {
             ChoiceServiceLocator locator = new ChoiceServiceLocator();
             binding = locator.getChoiceServiceSoap();
-            deployServer();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -169,29 +147,4 @@ public class ChoiceServiceTestCase extends TestCase {
         r2 = binding.get(r1);
         assertTrue(r2 != null);
     }
-
-
-    private void deployServer() {
-        final String INPUT_FILE = "server-deploy.wsdd";
-
-        InputStream is = getClass().getResourceAsStream(INPUT_FILE);
-        if (is == null) {
-            // try current directory
-            try {
-                is = new FileInputStream(INPUT_FILE);
-            } catch (FileNotFoundException e) {
-                is = null;
-            }
-        }
-        assertNotNull("Unable to find " + INPUT_FILE + ". Make sure it is on the classpath or in the current directory.", is);
-        AdminClient admin = new AdminClient();
-        try {
-            Options opts = new Options( null );
-            opts.setDefaultURL("http://localhost:8080/axis/services/AdminService");
-            admin.process(opts, is);
-        } catch (Exception e) {
-            assertTrue("Unable to deploy " + INPUT_FILE + ". ERROR: " + e, false);
-        }
-    }
-
 }

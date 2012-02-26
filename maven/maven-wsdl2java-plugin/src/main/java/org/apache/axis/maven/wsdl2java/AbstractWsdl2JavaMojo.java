@@ -134,6 +134,13 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
      */
     private boolean wrapArrays;
     
+    /**
+     * Set the noWrapped flag.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean noWrapped;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         String wsdlUrl;
         if (file != null && url != null) {
@@ -182,7 +189,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //        emitter.setDebug(debug);
 //        emitter.setQuiet(quiet);
         emitter.setTypeMappingVersion(typeMappingVersion);
-//        emitter.setNowrap(noWrapped);
+        emitter.setNowrap(noWrapped);
 //        emitter.setAllowInvalidURL(allowInvalidURL);
         emitter.setWrapArrays(wrapArrays);
 //        if (namespaceMappingFile != null) {

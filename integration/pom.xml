@@ -477,6 +477,22 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>choice</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/choice/ChoiceService.wsdl</file>
+                            <noWrapped>true</noWrapped>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://tempuri.org/</namespace>
+                                    <package>test.wsdl.choice</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                     <!-- This is a DII test with multiple output params -->
                     <execution>
                         <id>dataset</id>
