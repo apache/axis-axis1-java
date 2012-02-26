@@ -594,6 +594,18 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>esr</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/esr/esr.wsdl</file>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <helperGen>true</helperGen>
+                        </configuration>
+                    </execution>
                     <!-- extension Sample Test -->
                     <execution>
                         <id>extension</id>

@@ -141,6 +141,13 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
      */
     private boolean noWrapped;
     
+    /**
+     * Turn on/off Helper class generation.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean helperGen;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         String wsdlUrl;
         if (file != null && url != null) {
@@ -173,7 +180,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
             emitter.setNamespaceMap(MappingUtil.getNamespaceToPackageMap(mappings));
         }
 //        emitter.setTestCaseWanted(testCase);
-//        emitter.setHelperWanted(helperGen);
+        emitter.setHelperWanted(helperGen);
 //        if (factory != null) {
 //            emitter.setFactory(factory);
 //        }
