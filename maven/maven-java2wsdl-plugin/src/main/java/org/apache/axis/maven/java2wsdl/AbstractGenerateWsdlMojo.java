@@ -26,14 +26,12 @@ import java.util.List;
 
 import org.apache.axis.maven.shared.nsmap.Mapping;
 import org.apache.axis.maven.shared.nsmap.MappingUtil;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 import com.github.veithen.ulog.PlexusLoggerInjector;
 
@@ -140,49 +138,41 @@ public abstract class AbstractGenerateWsdlMojo extends AbstractMojo {
             }
         }
         ClassLoader cl = new URLClassLoader(urls);
-        // TODO: this will likely make the plugin non thread safe
-        ClassUtils.setDefaultClassLoader(cl);
-        if (extraClasses != null) {
-            for (int i=0; i<extraClasses.length; i++) {
-                ClassUtils.setClassLoader(extraClasses[i], cl);
-            }
+        Emitter emitter = new Emitter();
+        if (mappings != null && mappings.length > 0) {
+            emitter.setNamespaceMap(MappingUtil.getPackageToNamespaceMap(mappings));
         }
         try {
-            Emitter emitter = new Emitter();
-            if (mappings != null && mappings.length > 0) {
-                emitter.setNamespaceMap(MappingUtil.getPackageToNamespaceMap(mappings));
-            }
-            try {
-                emitter.setCls(className);
-            } catch (ClassNotFoundException ex) {
-                throw new MojoFailureException("Class " + className + " not found");
-            }
-            if (extraClasses != null) {
+            emitter.setCls(cl.loadClass(className));
+        } catch (ClassNotFoundException ex) {
+            throw new MojoFailureException("Class " + className + " not found");
+        }
+        if (extraClasses != null) {
+            Class[] loadedExtraClasses = new Class[extraClasses.length];
+            for (int i=0; i<extraClasses.length; i++) {
                 try {
-                    emitter.setExtraClasses(StringUtils.join(extraClasses, ","));
+                    loadedExtraClasses[i] = cl.loadClass(extraClasses[i]);
                 } catch (ClassNotFoundException ex) {
-                    throw new MojoExecutionException("Extra class not found: " + ex.getMessage());
+                    throw new MojoExecutionException("Extra class not found: " + extraClasses[i]);
                 }
             }
-            if (style != null) {
-                emitter.setStyle(style);
-            }
-            if (use != null) {
-                emitter.setUse(use);
-            }
-            emitter.setIntfNamespace(namespace);
-            emitter.setLocationUrl(location);
-            output.getParentFile().mkdirs();
-            try {
-                emitter.emit(output.getAbsolutePath(), Emitter.MODE_ALL);
-            } catch (Exception ex) {
-                throw new MojoFailureException("java2wsdl failed", ex);
-            }
-            postProcess(emitter, output);
-        } finally {
-            // TODO: apparently this is a no-op
-            ClassUtils.setDefaultClassLoader(null);
+            emitter.setExtraClasses(loadedExtraClasses);
         }
+        if (style != null) {
+            emitter.setStyle(style);
+        }
+        if (use != null) {
+            emitter.setUse(use);
+        }
+        emitter.setIntfNamespace(namespace);
+        emitter.setLocationUrl(location);
+        output.getParentFile().mkdirs();
+        try {
+            emitter.emit(output.getAbsolutePath(), Emitter.MODE_ALL);
+        } catch (Exception ex) {
+            throw new MojoFailureException("java2wsdl failed", ex);
+        }
+        postProcess(emitter, output);
     }
 
     protected abstract void postProcess(Emitter emitter, File wsdlFile) throws MojoExecutionException, MojoFailureException;

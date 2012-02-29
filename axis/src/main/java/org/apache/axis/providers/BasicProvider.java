@@ -232,7 +232,7 @@ public abstract class BasicProvider extends BasicHandler {
             }
 
             if (extraClasses != null && extraClasses.length() > 0) {
-                emitter.setExtraClasses(extraClasses);
+                emitter.setExtraClasses(extraClasses, msgContext.getClassLoader());
             }
 
             if (msgContext.isPropertyTrue(AxisEngine.PROP_EMIT_ALL_TYPES)) {

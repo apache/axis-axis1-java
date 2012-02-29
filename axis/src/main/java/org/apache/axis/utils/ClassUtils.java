@@ -34,9 +34,6 @@ public final class ClassUtils {
     private static ClassLoader defaultClassLoader
             = ClassUtils.class.getClassLoader();
 
-    /** hash table of class loaders */
-    private static java.util.Hashtable classloaders = new java.util.Hashtable();
-
     /**
      * Set the default ClassLoader. If loader is null, the default loader is
      * not changed.
@@ -51,42 +48,6 @@ public final class ClassUtils {
     public static ClassLoader getDefaultClassLoader() {
         return defaultClassLoader;
     }
-
-    /**
-     * Set the ClassLoader associated with the given className. If either the
-     * class name or the loader are null, no action is performed.
-     *
-     * @param className the name of a class
-     * @param loader the ClassLoader for the class
-     */
-    public static void setClassLoader(String className, ClassLoader loader) {
-        if (className != null && loader != null)
-            classloaders.put(className, loader);
-    }
-
-    /**
-     * Obtain the ClassLoader (if any) associated with the given
-     * className.
-     *
-     * @param className the name of a class
-     * @return class loader
-     */
-    public static ClassLoader getClassLoader(String className) {
-        if (className == null) {
-            return null;
-        }
-        return (ClassLoader) classloaders.get(className);
-    }
-
-    /**
-     * Deregister the ClassLoader for a given className.
-     *
-     * @param className the name of a class
-     */
-    public static void removeClassLoader(String className) {
-        classloaders.remove(className);
-    }
-
 
     /**
      * Use this method instead of Class.forName
@@ -161,15 +122,6 @@ public final class ClassUtils {
             AccessController.doPrivileged(
                     new PrivilegedAction() {
                         public Object run() {
-                            try {
-                                // Check if the class is a registered class then
-                                // use the classloader for that class.
-                                ClassLoader classLoader = getClassLoader(className);
-                                return Class.forName(className, true, classLoader);
-                            } catch (ClassNotFoundException cnfe) {
-                            } catch (SecurityException cnfe) {
-                            }
-                            
                             try {
                                 // Try the context class loader
                                 ClassLoader classLoader =

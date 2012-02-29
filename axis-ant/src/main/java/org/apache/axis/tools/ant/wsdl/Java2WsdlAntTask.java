@@ -18,7 +18,6 @@ package org.apache.axis.tools.ant.wsdl;
 import org.apache.axis.encoding.TypeMappingImpl;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.TypeMappingDelegate;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -37,7 +36,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /*
  * Important. we autogenerate the ant task docs from this.
@@ -149,16 +147,6 @@ public class Java2WsdlAntTask extends Task
                 classpath == null ? createClasspath() : classpath,
                 false);
         
-        ClassUtils.setDefaultClassLoader(cl);
-        //add extra classes to the classpath when the classpath attr is not null
-        if (extraClasses != null) {
-            StringTokenizer tokenizer = new StringTokenizer(extraClasses, " ,");
-            while (tokenizer.hasMoreTokens()) {
-                String clsName = tokenizer.nextToken();
-                ClassUtils.setClassLoader(clsName, cl);
-            }
-        }
-
         CommandlineJava.SysProperties sysProperties =
                 commandline.getSystemProperties();
         if (sysProperties != null) {
@@ -185,9 +173,9 @@ public class Java2WsdlAntTask extends Task
                 emitter.setBindingName(bindingName);
             }
             log("Java2WSDL " + className, Project.MSG_INFO);
-            emitter.setCls(className);
+            emitter.setCls(cl.loadClass(className));
             if (implClass != null) {
-                emitter.setImplCls(implClass);
+                emitter.setImplCls(cl.loadClass(implClass));
             }
             if (exclude != null) {
                 emitter.setDisallowedMethods(exclude);
@@ -196,7 +184,7 @@ public class Java2WsdlAntTask extends Task
                 emitter.setStopClasses(stopClasses);
             }
             if (extraClasses != null) {
-                emitter.setExtraClasses(extraClasses);
+                emitter.setExtraClasses(extraClasses, cl);
             }
 
             TypeMappingRegistryImpl tmr = new TypeMappingRegistryImpl();

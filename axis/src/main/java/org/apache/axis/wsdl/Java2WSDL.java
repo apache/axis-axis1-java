@@ -264,6 +264,11 @@ public class Java2WSDL {
     protected boolean isDeploy = false;
     
     /**
+     * The class loader to use to load classes specified on the command line.
+     */
+    private ClassLoader classLoader = Java2WSDL.class.getClassLoader();
+    
+    /**
      * Instantiate a Java2WSDL emitter.
      */
     protected Java2WSDL() {
@@ -336,7 +341,14 @@ public class Java2WSDL {
                 break;
 
             case IMPL_CLASS_OPT:
-                emitter.setImplCls(option.getArgument());
+                try {
+                    emitter.setImplCls(classLoader.loadClass(option.getArgument()));
+                } catch (ClassNotFoundException e) {
+                    System.out.println(Messages.getMessage("j2woptBadClass01",
+                            e.toString()));
+
+                    status = false;
+                }
                 break;
 
             case HELP_OPT:
@@ -474,7 +486,7 @@ public class Java2WSDL {
 
             case EXTRA_CLASSES_OPT:
                 try {
-                    emitter.setExtraClasses(option.getArgument());
+                    emitter.setExtraClasses(option.getArgument(), classLoader);
                 } catch (ClassNotFoundException e) {
                     System.out.println(Messages.getMessage("j2woptBadClass00",
                             e.toString()));
@@ -488,9 +500,9 @@ public class Java2WSDL {
                 break;
 
             case CLASSPATH_OPT:
-                ClassUtils.setDefaultClassLoader(ClassUtils.createClassLoader(
+                classLoader = ClassUtils.createClassLoader(
                         option.getArgument(),
-                        this.getClass().getClassLoader()));
+                        this.getClass().getClassLoader());
                 break;
                 
             case DEPLOY_OPT:
@@ -581,7 +593,7 @@ public class Java2WSDL {
             emitter.setTypeMappingRegistry(tmr);
 
             // Find the class using the name
-            emitter.setCls(className);
+            emitter.setCls(classLoader.loadClass(className));
 
             // Generate a full wsdl, or interface & implementation wsdls
             if (wsdlImplFilename == null) {

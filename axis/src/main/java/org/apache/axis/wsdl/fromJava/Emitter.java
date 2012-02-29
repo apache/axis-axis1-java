@@ -35,7 +35,6 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -2070,16 +2069,6 @@ public class Emitter {
     }
 
     /**
-     * Sets the <code>Class</code> to export
-     * 
-     * @param className the name of the <code>Class</code> to export
-     * @throws ClassNotFoundException 
-     */
-    public void setCls(String className) throws ClassNotFoundException {
-        cls = ClassUtils.forName(className);
-    }
-
-    /**
      * Returns the implementation <code>Class</code> if set
      * 
      * @return the implementation Class or null
@@ -2095,20 +2084,6 @@ public class Emitter {
      */
     public void setImplCls(Class implCls) {
         this.implCls = implCls;
-    }
-
-    /**
-     * Sets the implementation <code>Class</code>
-     * 
-     * @param className the name of the implementation <code>Class</code>
-     */
-    public void setImplCls(String className) {
-
-        try {
-            implCls = ClassUtils.forName(className);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     /**
@@ -2706,14 +2681,17 @@ public class Emitter {
     }
 
     /**
-     * Provide a comma or space seperated list of classes which
-     * the emitter will produce WSDL type definitions for.
-     * The classes will be added to the current list.
+     * Convenience method that processes a comma or space separated list of classes which the
+     * emitter will produce WSDL type definitions for. The classes will be added to the current
+     * list.
      * 
-     * @param text 
-     * @throws ClassNotFoundException 
+     * @param text
+     *            a comma or space separated list of class names
+     * @param classLoader
+     *            the class loader that should be used to load the classes
+     * @throws ClassNotFoundException
      */
-    public void setExtraClasses(String text) throws ClassNotFoundException {
+    public void setExtraClasses(String text, ClassLoader classLoader) throws ClassNotFoundException {
 
         ArrayList clsList = new ArrayList();
 
@@ -2724,7 +2702,7 @@ public class Emitter {
                 String clsName = tokenizer.nextToken();
 
                 // Let the caller handler ClassNotFoundException
-                Class cls = ClassUtils.forName(clsName);
+                Class cls = classLoader.loadClass(clsName);
 
                 clsList.add(cls);
             }
