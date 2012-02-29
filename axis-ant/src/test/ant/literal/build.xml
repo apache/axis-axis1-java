@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+<!--
+    remote version of the WSDL
+    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
+-->
+    <wsdl2java url="src/test/wsdl/literal/SalesRankNPrice.wsdl"
+               output="${project.build.directory}/work"
+               verbose="no"
+               serverSide="no"
+               testcase="no">
+        <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
+    </wsdl2java>
+  </target>
+</project>
