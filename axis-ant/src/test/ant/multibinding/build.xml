@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+    <!-- Multiple-binding test with different literal usage -->
+    <wsdl2java url="src/test/wsdl/multibinding/multibinding.wsdl"
+               output="${project.build.directory}/work"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               testcase="yes">
+    </wsdl2java>
+  </target>
+</project>
