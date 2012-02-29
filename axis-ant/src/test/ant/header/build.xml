@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+    <!-- Explicit Header Test -->
+    <wsdl2java url="src/test/wsdl/header/header.wsdl"
+               output="${project.build.directory}/work"
+               deployscope="none"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               testcase="yes">
+    </wsdl2java>
+  </target>
+</project>

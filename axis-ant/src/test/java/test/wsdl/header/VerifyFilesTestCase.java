@@ -48,7 +48,6 @@ public class VerifyFilesTestCase extends FileGenTestCase {
         set.add("ImplicitFault.java");
         set.add("Op1Fault.java");
         set.add("PortType.java");
-        set.add("VerifyFilesTestCase.java");
         set.add("deploy.wsdd");
         set.add("undeploy.wsdd");
         return set;
@@ -59,7 +58,8 @@ public class VerifyFilesTestCase extends FileGenTestCase {
      * The directory containing the files that should exist.
      */
     protected String rootDir() {
-        return "build" + File.separator + "work" + File.separator + 
+        return System.getProperty("basedir", ".") + File.separator +
+                "target" + File.separator + "work" + File.separator + 
                 "test" + File.separator + "wsdl" + File.separator +
                 "header";
     } // rootDir

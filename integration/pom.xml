@@ -671,6 +671,19 @@
                             <implementation>true</implementation>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>header</id>
+                        <goals>
+                            <goal>wsdl2java-test</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/header/header.wsdl</file>
+                            <deployScope>none</deployScope>
+                            <serverSide>true</serverSide>
+                            <skeleton>true</skeleton>
+                            <implementation>true</implementation>
+                        </configuration>
+                    </execution>
                     <!-- Include test -->
                     <execution>
                         <id>include</id>
