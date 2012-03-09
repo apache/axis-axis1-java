@@ -1,0 +1,44 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements. See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership. The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License. You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied. See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+           -----
+           About
+           -----
+
+  By default Axis uses <<<HTTPSender>>> as the client-side HTTP transport. That implementation doesn't support
+  keep-alive connections (i.e. connection pooling). Axis also ships a HTTP transport based on
+  {{{http://hc.apache.org/httpclient-3.x/}Commons HttpClient}}. This implementation supports connection
+  pooling, but imposes additional requirements on application code, in particular
+  that the service locator must be instantiated only once (for more information, see
+  the {{{http://wiki.apache.org/ws/FrontPage/Axis/AxisCommonsHTTP}AxisCommonsHTTP how-to}}). This means that
+  it is not always possible to use it as a drop-in replacement for the default <<<HTTPSender>>> and that
+  it may require changes to the application code.
+  
+  To overcome this issue, Axis 1.4.1 introduces another client-side HTTP transport which is based
+  on the <<<java.net.HttpURLConnection>>> API. This API built into the Java runtime supports keep-alive
+  connections. Since there is a single connection pool managed by the JRE, all Axis stubs can take advantage
+  of it, regardless of how service locators are instantiated. This means that this transport doesn't impose
+  additional requirements on application code and can be used as a drop-in replacement of the default
+  <<<HTTPSender>>>. However, it only works with Java 1.5 or higher because it relies on features of
+  the <<<java.net.HttpURLConnection>>> API that were not available in earlier Java versions.
+  
+  To use the java.net based HTTP transport, add <<<$jarName>>> to the class path and set up
+  <<<client-config.wsdd>>> with the right pivot handler for the <<<http>>> transport, as shown in the following
+  sample:
+  
+%{snippet|id=deployment|file=src/test/resources/client-config.wsdd}
+  
