@@ -62,7 +62,8 @@
             <item name="Ant tasks" href="axis-ant/index.html"/>
             <item name="Maven plugin" href="axis-maven-plugin/index.html"/>
             <item name="Castor support" href="axis-castor/index.html"/>
-            <item name="JMS support" href="axis-jms/index.html"/>
+            <item name="JMS transport" href="axis-jms/index.html"/>
+            <item name="java.net HTTP transport" href="axis-rt-transports-http-javanet/index.html"/>
         </menu>
         <menu ref="reports" inherit="bottom"/>
         <menu name="Apache" inherit="bottom">

@@ -29,3 +29,13 @@ Changes from 1.4 final
     * A new stand-alone server has been added. It uses an embedded Jetty server and superseded the old
       SimpleAxisServer. The Maven plugin has goals to start/stop stand-alone server instances so that the new
       stand-alone server can be easily integrated into integration tests executed using Maven.
+    
+    * A new HTTP transport has been added. It can be used as an alternative to the default <<<HTTPSender>>>
+      or the Commons HttpClient based transport (<<<CommonsHTTPSender>>>). It uses the
+      <<<java.net.HttpURLConnection>>> API which supports HTTP 1.1 keep-alive connections. In contrast to
+      <<<CommonsHTTPSender>>>, it doesn't impose any additional requirements on the application code
+      (see the {{{http://wiki.apache.org/ws/FrontPage/Axis/AxisCommonsHTTP}AxisCommonsHTTP how-to}}) and can therefore be used
+      as a drop-in replacement for <<<HTTPSender>>>. However, it requires Java 1.5
+      because it relies on features of the <<<java.net.HttpURLConnection>>> API that were not available in
+      earlier Java versions.
+

@@ -64,6 +64,7 @@
         <module>maven</module>
         <module>axis-standalone-server</module>
         <module>axis-castor</module>
+        <module>axis-rt-transports-http-javanet</module>
         <module>axis-jms</module>
         <module>integration</module>
         <module>axis-war</module>
