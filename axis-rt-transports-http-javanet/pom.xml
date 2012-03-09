@@ -30,10 +30,6 @@
     <description>
     	An alternative HTTP transport that uses the java.net.HttpURLConnection API. This transport only works with Java 1.5.
     </description>
-    <properties>
-        <!-- Used by the site -->
-        <jarName>${project.artifactId}-${project.version}.jar</jarName>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
