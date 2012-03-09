@@ -9,6 +9,9 @@ package test.wsdl.attachments;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+
+import test.HttpTestUtil;
+
 import java.util.Arrays;
 
 public class AttachmentTestCase extends junit.framework.TestCase {
@@ -30,7 +33,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test1AttachmentPortRPCGetCompanyInfo2() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -47,7 +51,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test2AttachmentPortRPCInputPlainText() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -63,7 +68,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test3AttachmentPortRPCInoutPlainText() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -81,7 +87,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test4AttachmentPortRPCEchoPlainText() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -99,7 +106,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test5AttachmentPortRPCOutputPlainText() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -117,7 +125,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test6AttachmentPortRPCInputMimeMultipart() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -133,7 +142,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test7AttachmentPortRPCInoutMimeMultipart() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -150,7 +160,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test8AttachmentPortRPCEchoMimeMultipart() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -167,7 +178,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test9AttachmentPortRPCOutputMimeMultipart() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -184,7 +196,8 @@ public class AttachmentTestCase extends junit.framework.TestCase {
     public void test10AttachmentPortRPCEchoAttachment() throws Exception {
         test.wsdl.attachments.Pt1 binding;
         try {
-            binding = new test.wsdl.attachments.AttachmentLocator().getAttachmentPortRPC();
+            AttachmentLocator loc = new AttachmentLocator();
+            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

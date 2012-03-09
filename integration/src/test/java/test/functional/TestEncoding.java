@@ -5,6 +5,8 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
+import test.HttpTestUtil;
+
 import javax.xml.messaging.URLEndpoint;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
@@ -15,8 +17,6 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
-
-import java.net.URL;
 
 /**
  * Test string encoding roundtrip.
@@ -33,7 +33,7 @@ public class TestEncoding extends TestCase {
             Service service = new Service();
             service.getEngine().setOption(AxisEngine.PROP_XML_ENCODING, "UTF-8");
             call = (Call) service.createCall();
-            call.setTargetEndpointAddress(new URL("http://localhost:8080/axis/EchoHeaders.jws"));
+            call.setTargetEndpointAddress(HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/EchoHeaders.jws"));
         }
     }
 
@@ -109,7 +109,7 @@ public class TestEncoding extends TestCase {
         SOAPElement symbol = bodyElement.addChildElement(name);
         symbol.addTextNode("Hello");
 
-        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/axis/EchoHeaders.jws");
+        URLEndpoint endpoint = new URLEndpoint(HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/EchoHeaders.jws").toString());
         SOAPMessage response = con.call(message, endpoint);
         String responseEncoding = (String) response.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
         assertEquals(requestEncoding.toLowerCase(), responseEncoding.toLowerCase());

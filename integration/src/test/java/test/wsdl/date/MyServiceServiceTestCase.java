@@ -7,6 +7,8 @@
 
 package test.wsdl.date;
 
+import test.HttpTestUtil;
+
 public class MyServiceServiceTestCase extends junit.framework.TestCase {
     public MyServiceServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,7 @@ public class MyServiceServiceTestCase extends junit.framework.TestCase {
 
     public void testtestdateWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.date.MyServiceServiceLocator().gettestdateAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.date.MyServiceServiceLocator().gettestdateAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.date.MyServiceServiceLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -22,8 +24,8 @@ public class MyServiceServiceTestCase extends junit.framework.TestCase {
     public void test1testdateGetInfo() throws Exception {
         test.wsdl.date.TestdateSoapBindingStub binding;
         try {
-            binding = (test.wsdl.date.TestdateSoapBindingStub)
-                          new test.wsdl.date.MyServiceServiceLocator().gettestdate();
+            MyServiceServiceLocator loc = new MyServiceServiceLocator();
+            binding = (TestdateSoapBindingStub)loc.gettestdate(HttpTestUtil.getTestEndpoint(loc.gettestdateAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

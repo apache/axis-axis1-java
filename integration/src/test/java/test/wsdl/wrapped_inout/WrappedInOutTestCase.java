@@ -7,6 +7,8 @@
 
 package test.wsdl.wrapped_inout;
 
+import test.HttpTestUtil;
+
 public class WrappedInOutTestCase extends junit.framework.TestCase {
     public WrappedInOutTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test1WrappedInOutEchoString() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -32,7 +35,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test1WrappedInOutEchoEmptyString() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -50,7 +54,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test2WrappedInOutEchoStringIO() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -68,7 +73,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test3WrappedInOutEchoStringIOret() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -88,7 +94,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test4WrappedInOutEchoStringInIO() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -106,7 +113,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test5WrappedInOutEchoStringBig() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -128,7 +136,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test6WrappedInOutHelloInOut() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -151,7 +160,8 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
     public void test7WrappedInOutEchoPhone() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {
-            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+            WrappedInOutLocator loc = new WrappedInOutLocator();
+            binding = loc.getWrappedInOut(HttpTestUtil.getTestEndpoint(loc.getWrappedInOutAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

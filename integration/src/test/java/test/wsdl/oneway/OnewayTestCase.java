@@ -20,6 +20,9 @@ import junit.framework.TestCase;
 
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.Stub;
+
+import test.HttpTestUtil;
+
 import java.rmi.RemoteException;
 
 /**
@@ -35,10 +38,11 @@ public class OnewayTestCase extends TestCase {
      * Sessions shouldn't work with oneway operations, so the call to getAddressFromName
      * should return null.
      */
-    public void test1NoSessionOnOneway() {
+    public void test1NoSessionOnOneway() throws Exception {
         Oneway binding;
         try {
-            binding = new OnewayServiceLocator().getOneway();
+            OnewayServiceLocator loc = new OnewayServiceLocator();
+            binding = loc.getOneway(HttpTestUtil.getTestEndpoint(loc.getOnewayAddress()));
         }
         catch (ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -61,10 +65,11 @@ public class OnewayTestCase extends TestCase {
      * but since this is a oneway operation, that exception should not propagate
      * back to the client.
      */
-    public void test2NoExceptionOnOneway() {
+    public void test2NoExceptionOnOneway() throws Exception {
         Oneway binding;
         try {
-            binding = new OnewayServiceLocator().getOneway();
+            OnewayServiceLocator loc = new OnewayServiceLocator();
+            binding = loc.getOneway(HttpTestUtil.getTestEndpoint(loc.getOnewayAddress()));
         }
         catch (ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);

@@ -7,6 +7,8 @@
 
 package test.wsdl.header;
 
+import test.HttpTestUtil;
+
 public class HeaderServiceTestCase extends junit.framework.TestCase {
     public HeaderServiceTestCase(java.lang.String name) {
         super(name);
@@ -25,8 +27,8 @@ public class HeaderServiceTestCase extends junit.framework.TestCase {
     public void test1headerOp1() throws Exception {
         test.wsdl.header.BindingStub binding;
         try {
-            binding = (test.wsdl.header.BindingStub)
-                          new test.wsdl.header.HeaderServiceLocator().getheader();
+            HeaderServiceLocator loc = new HeaderServiceLocator();
+            binding = (BindingStub)loc.getheader(HttpTestUtil.getTestEndpoint(loc.getheaderAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -52,8 +54,8 @@ public class HeaderServiceTestCase extends junit.framework.TestCase {
     public void test2headerOp2() throws Exception {
         test.wsdl.header.BindingStub binding;
         try {
-            binding = (test.wsdl.header.BindingStub)
-                          new test.wsdl.header.HeaderServiceLocator().getheader();
+            HeaderServiceLocator loc = new HeaderServiceLocator();
+            binding = (BindingStub)loc.getheader(HttpTestUtil.getTestEndpoint(loc.getheaderAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

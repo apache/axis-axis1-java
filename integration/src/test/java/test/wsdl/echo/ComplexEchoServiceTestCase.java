@@ -7,6 +7,8 @@
 
 package test.wsdl.echo;
 
+import test.HttpTestUtil;
+
 public class ComplexEchoServiceTestCase extends junit.framework.TestCase {
     public ComplexEchoServiceTestCase(String name) {
         super(name);
@@ -14,15 +16,16 @@ public class ComplexEchoServiceTestCase extends junit.framework.TestCase {
 
     public void testComplexEchoServiceWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoServiceAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoServiceAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.echo.ComplexEchoServiceLocator().getServiceName());
         assertTrue(service != null);
     }
 
-    public void test1ComplexEchoServiceEcho() {
+    public void test1ComplexEchoServiceEcho() throws Exception {
         test.wsdl.echo.Echo binding;
         try {
-            binding = new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoService();
+            ComplexEchoServiceLocator loc = new ComplexEchoServiceLocator();
+            binding = loc.getComplexEchoService(HttpTestUtil.getTestEndpoint(loc.getComplexEchoServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -44,8 +47,8 @@ public class ComplexEchoServiceTestCase extends junit.framework.TestCase {
     public void test2ComplexEchoServiceEcho2() throws Exception {
         test.wsdl.echo.ComplexEchoServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.echo.ComplexEchoServiceSoapBindingStub)
-                    new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoService();
+            ComplexEchoServiceLocator loc = new ComplexEchoServiceLocator();
+            binding = (ComplexEchoServiceSoapBindingStub)loc.getComplexEchoService(HttpTestUtil.getTestEndpoint(loc.getComplexEchoServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
@@ -75,8 +78,8 @@ public class ComplexEchoServiceTestCase extends junit.framework.TestCase {
     public void test2ComplexEchoServiceEcho21() throws Exception {
         test.wsdl.echo.ComplexEchoServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.echo.ComplexEchoServiceSoapBindingStub)
-                    new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoService();
+            ComplexEchoServiceLocator loc = new ComplexEchoServiceLocator();
+            binding = (ComplexEchoServiceSoapBindingStub)loc.getComplexEchoService(HttpTestUtil.getTestEndpoint(loc.getComplexEchoServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)

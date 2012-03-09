@@ -7,6 +7,8 @@
 
 package test.wsdl.nested;
 import org.apache.axis.message.MessageElement;
+
+import test.HttpTestUtil;
 import test.wsdl.nested.holders.PE_ADDRESSHolder;
 import test.wsdl.nested.holders.RETURNHolder;
 
@@ -24,10 +26,11 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
     }
     */
 
-    public void test1NestedNestedSvc2() {
+    public void test1NestedNestedSvc2() throws Exception {
         test.wsdl.nested.Nested2PortType binding;
         try {
-            binding = new test.wsdl.nested.Nested2ServiceLocator().getNested();
+            Nested2ServiceLocator loc = new Nested2ServiceLocator();
+            binding = loc.getNested(HttpTestUtil.getTestEndpoint(loc.getNestedAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -58,7 +61,7 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception {
         Nested2ServiceTestCase testcase = new Nested2ServiceTestCase("Nested2ServiceTestCase");
         testcase.test1NestedNestedSvc2();
     }

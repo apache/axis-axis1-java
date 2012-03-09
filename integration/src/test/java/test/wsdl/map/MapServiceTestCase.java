@@ -8,6 +8,8 @@ package test.wsdl.map;
 import java.util.Map;
 import java.util.HashMap;
 
+import test.HttpTestUtil;
+
 public class MapServiceTestCase extends junit.framework.TestCase {
     public MapServiceTestCase(java.lang.String name) {
         super(name);
@@ -15,7 +17,8 @@ public class MapServiceTestCase extends junit.framework.TestCase {
     public void test1EchoMap() throws Exception {
         test.wsdl.map.MapService binding;
         try {
-            binding = new MapServiceServiceLocator().getMapService();
+            MapServiceServiceLocator loc = new MapServiceServiceLocator();
+            binding = loc.getMapService(HttpTestUtil.getTestEndpoint(loc.getMapServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

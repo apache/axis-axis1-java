@@ -9,6 +9,8 @@ package test.wsdl.arrays;
 
 import java.util.Vector;
 
+import test.HttpTestUtil;
+
 public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
     public PersonalInfoBookServiceTestCase(String name) {
         super(name);
@@ -43,7 +45,8 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
 
         // Get the stub and set Session
         test.wsdl.arrays.PersonalInfoBook binding;
-        binding = new PersonalInfoBookServiceLocator().getPersonalInfoBook();
+        PersonalInfoBookServiceLocator loc = new PersonalInfoBookServiceLocator();
+        binding = loc.getPersonalInfoBook(HttpTestUtil.getTestEndpoint(loc.getPersonalInfoBookAddress()));
         assertTrue("binding is null", binding != null);
         ((PersonalInfoBookSOAPBindingStub) binding).setMaintainSession (true);
 

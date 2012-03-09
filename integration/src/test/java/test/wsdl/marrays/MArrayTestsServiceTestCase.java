@@ -10,6 +10,8 @@ package test.wsdl.marrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import test.HttpTestUtil;
+
 public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
     test.wsdl.marrays.MArrayTests binding;
 
@@ -19,13 +21,14 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        binding = new MArrayTestsServiceLocator().getMArrayTests();
+        MArrayTestsServiceLocator loc = new MArrayTestsServiceLocator();
+        binding = loc.getMArrayTests(HttpTestUtil.getTestEndpoint(loc.getMArrayTestsAddress()));
         assertTrue("binding is null", binding != null);
     }
 
     public void testMArrayTestsWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.marrays.MArrayTestsServiceLocator().getMArrayTestsAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.marrays.MArrayTestsServiceLocator().getMArrayTestsAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.marrays.MArrayTestsServiceLocator().getServiceName());
         assertTrue(service != null);
     }

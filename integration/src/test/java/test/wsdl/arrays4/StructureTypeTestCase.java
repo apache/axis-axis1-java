@@ -1,5 +1,7 @@
 package test.wsdl.arrays4;
 
+import test.HttpTestUtil;
+
 /**
  * StructureTypeTestCase
  * <p/>
@@ -15,8 +17,9 @@ public class StructureTypeTestCase extends junit.framework.TestCase {
     public void testEchoStruct() throws Exception {
         ArrayTest4SOAPBindingStub binding;
         try {
+            ArrayTest4ServiceLocator loc = new ArrayTest4ServiceLocator();
             binding = (ArrayTest4SOAPBindingStub)
-                    new ArrayTest4ServiceLocator().getArrayTest4();
+                    loc.getArrayTest4(HttpTestUtil.getTestEndpoint(loc.getArrayTest4Address()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();

@@ -6,6 +6,9 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceFactory;
+
+import test.HttpTestUtil;
+
 import java.rmi.RemoteException;
 
 public class JAXRPCHandler2TestCase extends TestCase {
@@ -16,7 +19,7 @@ public class JAXRPCHandler2TestCase extends TestCase {
 
     public void testJAXRPCHandler2() throws Exception {
         String serviceEndpointUrl =
-                "http://localhost:8080/axis/services/EchoService2";
+                HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/services/EchoService2").toString();
         String qnameService = "EchoService2";
         String qnamePort = "EchoServicePort";
         Call call;
@@ -40,7 +43,7 @@ public class JAXRPCHandler2TestCase extends TestCase {
 
     public void testJAXRPCHandler3() throws Exception {
         String serviceEndpointUrl =
-                "http://localhost:8080/axis/services/EchoService3";
+                HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/services/EchoService3").toString();
         String qnameService = "EchoService3";
         String qnamePort = "EchoServicePort";
         Call call;

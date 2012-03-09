@@ -7,6 +7,8 @@
 
 package test.wsdl.wrapped2;
 
+import test.HttpTestUtil;
+
 public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public EmployeeDatabaseTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,7 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
 
     public void testEmployeeDatabaseWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabaseAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabaseAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.wrapped2.EmployeeDatabaseLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -22,8 +24,8 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public void test1EmployeeDatabaseGetEmployeeCount() throws Exception {
         test.wsdl.wrapped2.EmployeeDBBindingStub binding;
         try {
-            binding = (test.wsdl.wrapped2.EmployeeDBBindingStub)
-                          new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabase();
+            EmployeeDatabaseLocator loc = new EmployeeDatabaseLocator();
+            binding = (EmployeeDBBindingStub)loc.getEmployeeDatabase(HttpTestUtil.getTestEndpoint(loc.getEmployeeDatabaseAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -44,8 +46,8 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public void test2EmployeeDatabaseAddGroups() throws Exception {
         test.wsdl.wrapped2.EmployeeDBBindingStub binding;
         try {
-            binding = (test.wsdl.wrapped2.EmployeeDBBindingStub)
-                          new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabase();
+            EmployeeDatabaseLocator loc = new EmployeeDatabaseLocator();
+            binding = (EmployeeDBBindingStub)loc.getEmployeeDatabase(HttpTestUtil.getTestEndpoint(loc.getEmployeeDatabaseAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -66,8 +68,8 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public void test3EmployeeDatabaseIsManager() throws Exception {
         test.wsdl.wrapped2.EmployeeDBBindingStub binding;
         try {
-            binding = (test.wsdl.wrapped2.EmployeeDBBindingStub)
-                          new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabase();
+            EmployeeDatabaseLocator loc = new EmployeeDatabaseLocator();
+            binding = (EmployeeDBBindingStub)loc.getEmployeeDatabase(HttpTestUtil.getTestEndpoint(loc.getEmployeeDatabaseAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -88,8 +90,8 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public void test4EmployeeDatabasePromoteEmployee() throws Exception {
         test.wsdl.wrapped2.EmployeeDBBindingStub binding;
         try {
-            binding = (test.wsdl.wrapped2.EmployeeDBBindingStub)
-                          new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabase();
+            EmployeeDatabaseLocator loc = new EmployeeDatabaseLocator();
+            binding = (EmployeeDBBindingStub)loc.getEmployeeDatabase(HttpTestUtil.getTestEndpoint(loc.getEmployeeDatabaseAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -110,8 +112,8 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public void test5EmployeeDatabaseGetEmployees() throws Exception {
         test.wsdl.wrapped2.EmployeeDBBindingStub binding;
         try {
-            binding = (test.wsdl.wrapped2.EmployeeDBBindingStub)
-                          new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabase();
+            EmployeeDatabaseLocator loc = new EmployeeDatabaseLocator();
+            binding = (EmployeeDBBindingStub)loc.getEmployeeDatabase(HttpTestUtil.getTestEndpoint(loc.getEmployeeDatabaseAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -132,8 +134,8 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public void test6EmployeeDatabaseScheduleMtg() throws Exception {
         test.wsdl.wrapped2.EmployeeDBBindingStub binding;
         try {
-            binding = (test.wsdl.wrapped2.EmployeeDBBindingStub)
-                          new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabase();
+            EmployeeDatabaseLocator loc = new EmployeeDatabaseLocator();
+            binding = (EmployeeDBBindingStub)loc.getEmployeeDatabase(HttpTestUtil.getTestEndpoint(loc.getEmployeeDatabaseAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

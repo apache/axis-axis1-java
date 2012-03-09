@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.net.URI;
 
+import test.HttpTestUtil;
 import test.wsdl.marshall2.types.JavaBean;
 import test.wsdl.marshall2.types.JavaBean2;
 
@@ -26,7 +27,7 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
 
     public void testMarshall2PortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2PortAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2PortAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.marshall2.Marshall2ServiceLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -34,8 +35,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test1Marshall2PortBigDecimalArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -59,8 +60,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test2Marshall2PortBigDecimalTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -81,8 +82,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test3Marshall2PortBigIntegerArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -107,8 +108,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test4Marshall2PortBigIntegerTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -129,8 +130,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test5Marshall2PortBooleanArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -151,8 +152,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test6Marshall2PortBooleanTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -173,8 +174,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test7Marshall2PortByteArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -195,8 +196,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test8Marshall2PortByteTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -217,8 +218,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test9Marshall2PortDoubleArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -239,8 +240,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test10Marshall2PortDoubleTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -261,8 +262,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test11Marshall2PortFloatArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -283,8 +284,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test12Marshall2PortFloatTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -305,8 +306,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test13Marshall2PortIntArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -327,8 +328,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test14Marshall2PortIntTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -349,8 +350,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test15Marshall2PortLongArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -371,8 +372,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test16Marshall2PortLongTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -393,8 +394,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test17Marshall2PortShortArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -415,8 +416,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test18Marshall2PortShortTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -437,8 +438,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test19Marshall2PortStringArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -464,8 +465,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test20Marshall2PortStringTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -486,8 +487,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test21Marshall2PortQnameTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -508,8 +509,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test22Marshall2PortQnameArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -533,8 +534,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test23Marshall2PortCalendarArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -558,8 +559,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test24Marshall2PortCalendarTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -580,8 +581,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test25Marshall2PortJavaBeanArrayTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -649,8 +650,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test26Marshall2PortJavaBeanTest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -693,8 +694,8 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
     public void test27Marshall2PortAnyURITest() throws Exception {
         test.wsdl.marshall2.MarshallTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.marshall2.MarshallTestSoapBindingStub)
-                          new test.wsdl.marshall2.Marshall2ServiceLocator().getMarshall2Port();
+            Marshall2ServiceLocator loc = new Marshall2ServiceLocator();
+            binding = (MarshallTestSoapBindingStub)loc.getMarshall2Port(HttpTestUtil.getTestEndpoint(loc.getMarshall2PortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

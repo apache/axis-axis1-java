@@ -7,6 +7,8 @@
 
 package test.wsdl.wrapped;
 
+import test.HttpTestUtil;
+
 public class City_BBBTestCase extends junit.framework.TestCase {
     public City_BBBTestCase(String name) {
         super(name);
@@ -14,14 +16,15 @@ public class City_BBBTestCase extends junit.framework.TestCase {
 
     public void testCity_BBBPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.wrapped.City_BBBLocator().getCity_BBBPortAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.wrapped.City_BBBLocator().getCity_BBBPortAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.wrapped.City_BBBLocator().getServiceName());
         assertTrue(service != null);
     }
 
     public void test1CityBBBPortGetAttraction() throws Exception {
         City_BBBPortType binding;
-        binding = new City_BBBLocator().getCity_BBBPort();
+        City_BBBLocator loc = new City_BBBLocator();
+        binding = loc.getCity_BBBPort(HttpTestUtil.getTestEndpoint(loc.getCity_BBBPortAddress()));
 
         assertTrue("binding is null", binding != null);
         
@@ -33,7 +36,8 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     public void test2CityBBBPortGetAttractions() throws Exception {
         City_BBBPortType binding;
         try {
-            binding = new City_BBBLocator().getCity_BBBPort();
+            City_BBBLocator loc = new City_BBBLocator();
+            binding = loc.getCity_BBBPort(HttpTestUtil.getTestEndpoint(loc.getCity_BBBPortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -52,7 +56,8 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     public void test3CityBBBPortGetAttractions() throws Exception {
         City_BBBPortType binding;
         try {
-            binding = new City_BBBLocator().getCity_BBBPort();
+            City_BBBLocator loc = new City_BBBLocator();
+            binding = loc.getCity_BBBPort(HttpTestUtil.getTestEndpoint(loc.getCity_BBBPortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -69,7 +74,8 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     public void test4CityBBBPortGetAttractions() throws Exception {
         City_BBBPortType binding;
         try {
-            binding = new City_BBBLocator().getCity_BBBPort();
+            City_BBBLocator loc = new City_BBBLocator();
+            binding = loc.getCity_BBBPort(HttpTestUtil.getTestEndpoint(loc.getCity_BBBPortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -88,7 +94,8 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     public void test5CityBBBPortGetAttractions() throws Exception {
         City_BBBPortType binding;
         try {
-            binding = new City_BBBLocator().getCity_BBBPort();
+            City_BBBLocator loc = new City_BBBLocator();
+            binding = loc.getCity_BBBPort(HttpTestUtil.getTestEndpoint(loc.getCity_BBBPortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -107,7 +114,8 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     public void test6CityBBBPortGetAttractions() throws Exception {
         City_BBBPortType binding;
         try {
-            binding = new City_BBBLocator().getCity_BBBPort();
+            City_BBBLocator loc = new City_BBBLocator();
+            binding = loc.getCity_BBBPort(HttpTestUtil.getTestEndpoint(loc.getCity_BBBPortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -131,7 +139,8 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     public void test7CityBBBPortGetAttractions() throws Exception {
         City_BBBPortType binding;
         try {
-            binding = new City_BBBLocator().getCity_BBBPort();
+            City_BBBLocator loc = new City_BBBLocator();
+            binding = loc.getCity_BBBPort(HttpTestUtil.getTestEndpoint(loc.getCity_BBBPortAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);

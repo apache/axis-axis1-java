@@ -7,6 +7,8 @@
 
 package test.wsdl.polymorphism;
 
+import test.HttpTestUtil;
+
 public class PolymorphismTest_ServiceTestCase extends junit.framework.TestCase {
     public PolymorphismTest_ServiceTestCase(String name) {
         super(name);
@@ -14,15 +16,16 @@ public class PolymorphismTest_ServiceTestCase extends junit.framework.TestCase {
 
     public void testPolymorphismTestWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.polymorphism.PolymorphismTest_ServiceLocator().getPolymorphismTestAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.polymorphism.PolymorphismTest_ServiceLocator().getPolymorphismTestAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.polymorphism.PolymorphismTest_ServiceLocator().getServiceName());
         assertTrue(service != null);
     }
 
-    public void test1PolymorphismTestGetBAsA() {
+    public void test1PolymorphismTestGetBAsA() throws Exception {
         test.wsdl.polymorphism.PolymorphismTest_PortType binding;
         try {
-            binding = new test.wsdl.polymorphism.PolymorphismTest_ServiceLocator().getPolymorphismTest();
+            PolymorphismTest_ServiceLocator loc = new PolymorphismTest_ServiceLocator();
+            binding = loc.getPolymorphismTest(HttpTestUtil.getTestEndpoint(loc.getPolymorphismTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -50,10 +53,11 @@ public class PolymorphismTest_ServiceTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test1PolymorphismTestGetCAsA() {
+    public void test1PolymorphismTestGetCAsA() throws Exception {
         test.wsdl.polymorphism.PolymorphismTest_PortType binding;
         try {
-            binding = new test.wsdl.polymorphism.PolymorphismTest_ServiceLocator().getPolymorphismTest();
+            PolymorphismTest_ServiceLocator loc = new PolymorphismTest_ServiceLocator();
+            binding = loc.getPolymorphismTest(HttpTestUtil.getTestEndpoint(loc.getPolymorphismTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);

@@ -7,8 +7,7 @@
 
 package test.wsdl.esr;
 
-import org.apache.axis.transport.http.SimpleAxisWorker;
-import org.apache.axis.utils.NetworkUtils;
+import test.HttpTestUtil;
 
 import javax.xml.namespace.QName;
 
@@ -19,7 +18,7 @@ public class EsrTestServiceTestCase extends junit.framework.TestCase {
 
     public void testEsrTestWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.esr.EsrTestServiceLocator().getEsrTestAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.esr.EsrTestServiceLocator().getEsrTestAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.esr.EsrTestServiceLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -27,11 +26,8 @@ public class EsrTestServiceTestCase extends junit.framework.TestCase {
     public void test1EsrTestEsrInOut() {
         // Using WSDL file to make a SOAP call
         try {
-            String thisHost = NetworkUtils.getLocalHostname();
-            String thisPort = System.getProperty("test.functional.ServicePort", "8080");
-
             //load wsdl file
-            String wsdlLocation = "http://" + thisHost + ":" + thisPort + "/axis/services/EsrTest?WSDL";
+            String wsdlLocation = HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/services/EsrTest") + "?WSDL";
             javax.xml.rpc.Service svc =
                     new org.apache.axis.client.Service(
                             wsdlLocation,
@@ -85,11 +81,8 @@ public class EsrTestServiceTestCase extends junit.framework.TestCase {
     public void test1EsrTestEsrInOut2() {
         // Using WSDL file to make a SOAP call
         try {
-            String thisHost = NetworkUtils.getLocalHostname();
-            String thisPort = System.getProperty("test.functional.ServicePort", "8080");
-
             //load wsdl file
-            String wsdlLocation = "http://" + thisHost + ":" + thisPort + "/axis/services/EsrTest?WSDL";
+            String wsdlLocation = HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/services/EsrTest") + "?WSDL";
             javax.xml.rpc.Service svc =
                     new org.apache.axis.client.Service(
                             wsdlLocation,

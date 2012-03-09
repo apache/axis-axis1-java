@@ -7,6 +7,8 @@
 
 package test.wsdl.gateway;
 
+import test.HttpTestUtil;
+
 public class GatewayServiceTestCase extends junit.framework.TestCase {
     public GatewayServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,8 @@ public class GatewayServiceTestCase extends junit.framework.TestCase {
     public void test1GatewayTest1() throws Exception {
         test.wsdl.gateway.Gateway binding;
         try {
-            binding = new test.wsdl.gateway.GatewayServiceLocator().getGateway();
+            GatewayServiceLocator loc = new GatewayServiceLocator();
+            binding = loc.getGateway(HttpTestUtil.getTestEndpoint(loc.getGatewayAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -34,7 +37,8 @@ public class GatewayServiceTestCase extends junit.framework.TestCase {
     public void test2GatewayTest2() throws Exception {
         test.wsdl.gateway.Gateway binding;
         try {
-            binding = new test.wsdl.gateway.GatewayServiceLocator().getGateway();
+            GatewayServiceLocator loc = new GatewayServiceLocator();
+            binding = loc.getGateway(HttpTestUtil.getTestEndpoint(loc.getGatewayAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -53,7 +57,8 @@ public class GatewayServiceTestCase extends junit.framework.TestCase {
     public void test3GatewayTest3() throws Exception {
         test.wsdl.gateway.Gateway binding;
         try {
-            binding = new test.wsdl.gateway.GatewayServiceLocator().getGateway();
+            GatewayServiceLocator loc = new GatewayServiceLocator();
+            binding = loc.getGateway(HttpTestUtil.getTestEndpoint(loc.getGatewayAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -71,7 +76,8 @@ public class GatewayServiceTestCase extends junit.framework.TestCase {
     public void test4GatewayTest4() throws Exception {
         test.wsdl.gateway.Gateway binding;
         try {
-            binding = new test.wsdl.gateway.GatewayServiceLocator().getGateway();
+            GatewayServiceLocator loc = new GatewayServiceLocator();
+            binding = loc.getGateway(HttpTestUtil.getTestEndpoint(loc.getGatewayAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

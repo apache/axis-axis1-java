@@ -17,6 +17,8 @@
 package test.wsdl.multiref;
 
 import org.apache.axis.utils.Options;
+
+import test.HttpTestUtil;
 import test.wsdl.multiref.holders.NodeHolder;
 
 import java.net.URL;
@@ -33,7 +35,7 @@ public class Main {
         Options opts = new Options(args);
         
         MultiRefTestService service = new MultiRefTestServiceLocator();
-        opts.setDefaultURL( service.getMultiRefTestAddress() );
+        opts.setDefaultURL(HttpTestUtil.getTestEndpoint(service.getMultiRefTestAddress()).toString());
         URL serviceURL = new URL(opts.getURL());
         if (serviceURL == null)
             serviceURL = new URL(service.getMultiRefTestAddress());

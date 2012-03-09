@@ -29,6 +29,8 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import test.HttpTestUtil;
+
 import javax.xml.rpc.ServiceException;
 
 public class Qualify_ServiceTestCase extends junit.framework.TestCase {
@@ -39,11 +41,11 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
         super(name);
     }
 
-    public void test1QualifySimple() {
+    public void test1QualifySimple() throws Exception {
         Qualify_ServiceLocator locator = new Qualify_ServiceLocator();
         Qualify_BindingStub binding;
         try {
-            binding = (Qualify_BindingStub)locator.getQualify();
+            binding = (Qualify_BindingStub)locator.getQualify(HttpTestUtil.getTestEndpoint(locator.getQualifyAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
@@ -96,11 +98,11 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test2QualifyFormOverride() {
+    public void test2QualifyFormOverride() throws Exception {
         Qualify_ServiceLocator locator = new Qualify_ServiceLocator();
         test.wsdl.qualify.Qualify_BindingStub binding;
         try {
-            binding = (test.wsdl.qualify.Qualify_BindingStub)locator.getQualify();
+            binding = (test.wsdl.qualify.Qualify_BindingStub)locator.getQualify(HttpTestUtil.getTestEndpoint(locator.getQualifyAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }

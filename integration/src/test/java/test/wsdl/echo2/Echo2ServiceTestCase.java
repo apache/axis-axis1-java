@@ -13,6 +13,8 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.SOAPBody;
 
+import test.HttpTestUtil;
+
 public class Echo2ServiceTestCase extends junit.framework.TestCase {
     public Echo2ServiceTestCase(java.lang.String name) {
         super(name);
@@ -21,7 +23,7 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
     public void testEcho2WSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory
                 .newInstance();
-        java.net.URL url = new java.net.URL(
+        java.net.URL url = HttpTestUtil.getTestEndpoint(
                 new test.wsdl.echo2.Echo2ServiceLocator().getEcho2Address()
                         + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url,
@@ -31,8 +33,8 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
 
     public void test1Echo2EchoMyBase64Bean() throws Exception {
         test.wsdl.echo2.Echo2SoapBindingStub binding;
-        binding = (test.wsdl.echo2.Echo2SoapBindingStub) new test.wsdl.echo2.Echo2ServiceLocator()
-                .getEcho2();
+        Echo2ServiceLocator loc = new Echo2ServiceLocator();
+        binding = (Echo2SoapBindingStub)loc.getEcho2(HttpTestUtil.getTestEndpoint(loc.getEcho2Address()));
         assertNotNull("binding is null", binding);
         // Time out after a minute
         binding.setTimeout(60000);
@@ -126,8 +128,8 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
 
     public void test1Echo2EchoArrayOfMyBase64Bean() throws Exception {
         test.wsdl.echo2.Echo2SoapBindingStub binding;
-        binding = (test.wsdl.echo2.Echo2SoapBindingStub) new test.wsdl.echo2.Echo2ServiceLocator()
-                .getEcho2();
+        Echo2ServiceLocator loc = new Echo2ServiceLocator();
+        binding = (Echo2SoapBindingStub)loc.getEcho2(HttpTestUtil.getTestEndpoint(loc.getEcho2Address()));
         assertNotNull("binding is null", binding);
         // Time out after a minute
         binding.setTimeout(60000);
@@ -158,7 +160,7 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
         test.wsdl.echo2.Echo2SoapBindingStub binding;
         Echo2ServiceLocator loc = new test.wsdl.echo2.Echo2ServiceLocator();
         try {
-            binding = (test.wsdl.echo2.Echo2SoapBindingStub)loc.getEcho2();
+            binding = (Echo2SoapBindingStub)loc.getEcho2(HttpTestUtil.getTestEndpoint(loc.getEcho2Address()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -205,8 +207,8 @@ public class Echo2ServiceTestCase extends junit.framework.TestCase {
     public void test3Echo2EchoArrayOfString_SoapEncArray() throws Exception {
         test.wsdl.echo2.Echo2SoapBindingStub binding;
         try {
-            binding = (test.wsdl.echo2.Echo2SoapBindingStub) new test.wsdl.echo2.Echo2ServiceLocator()
-                    .getEcho2();
+            Echo2ServiceLocator loc = new Echo2ServiceLocator();
+            binding = (Echo2SoapBindingStub)loc.getEcho2(HttpTestUtil.getTestEndpoint(loc.getEcho2Address()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();

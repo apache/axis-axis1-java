@@ -29,6 +29,8 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
+import test.HttpTestUtil;
+
 import javax.xml.rpc.ServiceException;
 
 public class AttributeQualify_ServiceTestCase extends junit.framework.TestCase {
@@ -39,11 +41,11 @@ public class AttributeQualify_ServiceTestCase extends junit.framework.TestCase {
         super(name);
     }
 
-    public void test1AttributeQualifyEchoPhone() {
+    public void test1AttributeQualifyEchoPhone() throws Exception {
         test.wsdl.qualify2.AttributeQualify_BindingStub binding;
         test.wsdl.qualify2.AttributeQualify_ServiceLocator locator = new test.wsdl.qualify2.AttributeQualify_ServiceLocator();
         try {
-            binding = (test.wsdl.qualify2.AttributeQualify_BindingStub)locator.getAttributeQualify();
+            binding = (test.wsdl.qualify2.AttributeQualify_BindingStub)locator.getAttributeQualify(HttpTestUtil.getTestEndpoint(locator.getAttributeQualifyAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);

@@ -7,6 +7,8 @@
 
 package test.wsdl.axis2098;
 
+import test.HttpTestUtil;
+
 public class MyServiceTestCase extends junit.framework.TestCase {
     public MyServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,7 @@ public class MyServiceTestCase extends junit.framework.TestCase {
 
     public void testHelloWorldWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.axis2098.MyServiceLocator().getHelloWorldAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.axis2098.MyServiceLocator().getHelloWorldAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.axis2098.MyServiceLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -22,9 +24,8 @@ public class MyServiceTestCase extends junit.framework.TestCase {
     public void test1HelloWorldHelloWorld() throws Exception {
         test.wsdl.axis2098.MySOAPBindingStub binding;
         try {
-            binding = (test.wsdl.axis2098.MySOAPBindingStub)
-                          new test.wsdl.axis2098.MyServiceLocator().getHelloWorld();
-
+            MyServiceLocator loc = new MyServiceLocator();
+            binding = (MySOAPBindingStub)loc.getHelloWorld(HttpTestUtil.getTestEndpoint(loc.getHelloWorldAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

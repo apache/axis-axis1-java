@@ -9,14 +9,17 @@ package test.wsdl.datatypes;
 
 import javax.xml.namespace.QName;
 
+import test.HttpTestUtil;
+
 public class DataTypesTestCase extends junit.framework.TestCase {
     public DataTypesTestCase(String name) {
         super(name);
     }
-    public void test1DataTypesSoapSayHello() {
+    public void test1DataTypesSoapSayHello() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -33,10 +36,11 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test2DataTypesSoapSayHelloName() {
+    public void test2DataTypesSoapSayHelloName() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -53,10 +57,11 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test3DataTypesSoapGetIntArray() {
+    public void test3DataTypesSoapGetIntArray() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -77,10 +82,11 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test4DataTypesSoapGetMode() {
+    public void test4DataTypesSoapGetMode() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -97,10 +103,11 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test5DataTypesSoapGetOrder() {
+    public void test5DataTypesSoapGetOrder() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -118,10 +125,11 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test6DataTypesSoapGetOrders() {
+    public void test6DataTypesSoapGetOrders() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -149,10 +157,11 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void test7DataTypesSoapGetSimpleList() {
+    public void test7DataTypesSoapGetSimpleList() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -180,7 +189,8 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     public void test5DataTypesGetUsageType() throws Exception {
         DataTypes_PortType binding;
         try {
-            binding = new DataTypes_ServiceLocator().getDataTypes();
+            DataTypes_ServiceLocator loc = new DataTypes_ServiceLocator();
+            binding = loc.getDataTypes(HttpTestUtil.getTestEndpoint(loc.getDataTypesAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

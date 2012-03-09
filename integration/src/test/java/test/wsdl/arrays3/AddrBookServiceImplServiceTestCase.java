@@ -7,6 +7,9 @@
 
 package test.wsdl.arrays3;
 
+import test.HttpTestUtil;
+import test.wsdl.arrays3.testclient.AddrBookServiceImplServiceLocator;
+import test.wsdl.arrays3.testclient.Arrays3SoapBindingStub;
 import junit.framework.AssertionFailedError;
 
 public class AddrBookServiceImplServiceTestCase extends junit.framework.TestCase {
@@ -16,7 +19,7 @@ public class AddrBookServiceImplServiceTestCase extends junit.framework.TestCase
 
     public void testAddressBookWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.arrays3.testclient.AddrBookServiceImplServiceLocator().getarrays3Address() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.arrays3.testclient.AddrBookServiceImplServiceLocator().getarrays3Address() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.arrays3.testclient.AddrBookServiceImplServiceLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -24,8 +27,8 @@ public class AddrBookServiceImplServiceTestCase extends junit.framework.TestCase
     public void testFunctional() throws Exception {
         test.wsdl.arrays3.testclient.Arrays3SoapBindingStub binding;
         try {
-            binding = (test.wsdl.arrays3.testclient.Arrays3SoapBindingStub)
-                          new test.wsdl.arrays3.testclient.AddrBookServiceImplServiceLocator().getarrays3();
+            AddrBookServiceImplServiceLocator loc = new AddrBookServiceImplServiceLocator();
+            binding = (Arrays3SoapBindingStub)loc.getarrays3(HttpTestUtil.getTestEndpoint(loc.getarrays3Address()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

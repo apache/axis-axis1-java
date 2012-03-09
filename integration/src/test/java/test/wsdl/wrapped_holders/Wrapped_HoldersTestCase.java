@@ -7,6 +7,8 @@
 
 package test.wsdl.wrapped_holders;
 
+import test.HttpTestUtil;
+
 /**
  * This test verify's that arrays in a wrapped doc/lit service get holders
  * generated for them, and that they work.
@@ -20,7 +22,8 @@ public class Wrapped_HoldersTestCase extends junit.framework.TestCase {
     public void test1ThingFind_aThing() throws Exception {
         test.wsdl.wrapped_holders.Thing binding;
         try {
-            binding = new test.wsdl.wrapped_holders.Wrapped_holdersLocator().getThing();
+            Wrapped_holdersLocator loc = new Wrapped_holdersLocator();
+            binding = loc.getThing(HttpTestUtil.getTestEndpoint(loc.getThingAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

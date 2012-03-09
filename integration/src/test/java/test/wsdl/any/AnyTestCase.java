@@ -1,6 +1,8 @@
 
 package test.wsdl.any;
 
+import test.HttpTestUtil;
+
 /**
  * @author Ashutosh Shahi
  *
@@ -15,7 +17,7 @@ public class AnyTestCase extends junit.framework.TestCase{
     
     public void testAny1() throws Exception{
     	AnyServiceLocator loc = new AnyServiceLocator(); 
-    	Soap svc = loc.getSoap();
+    	Soap svc = loc.getSoap(HttpTestUtil.getTestEndpoint(loc.getSoapAddress()));
     	
     	QueryResult qr = svc.query("blah");
     	

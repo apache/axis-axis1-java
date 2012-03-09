@@ -216,7 +216,6 @@
                             <serverSide>true</serverSide>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
-                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:import</namespace>
@@ -245,7 +244,6 @@
                             <serverSide>true</serverSide>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
-                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:import</namespace>
@@ -695,7 +693,6 @@
                             <serverSide>true</serverSide>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
-                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:AddressFetcher2</namespace>
@@ -819,7 +816,6 @@
                             <file>src/test/wsdl/names/JavaNames.wsdl</file>
                             <serverSide>true</serverSide>
                             <implementation>true</implementation>
-                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>http://test.com/reference</namespace>
@@ -1044,7 +1040,6 @@
                             <serverSide>true</serverSide>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
-                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices</namespace>
@@ -1149,6 +1144,24 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-network-port</id>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <portNames>
+                                <portName>test.functional.ServicePort</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>maven-axis-server-plugin</artifactId>
                 <version>${project.version}</version>
@@ -1159,6 +1172,7 @@
                             <goal>start-server</goal>
                         </goals>
                         <configuration>
+                            <port>${test.functional.ServicePort}</port>
                             <wsdds>
                                 <wsdd>
                                     <directory>src/test/wsdd</directory>
@@ -1258,6 +1272,9 @@
                                 <exclude>test/wsdl/inout/TestFailed.java</exclude>
                                 <exclude>test/wsdl/marshall2/types/**</exclude>
                             </excludes>
+                            <systemPropertyVariables>
+                                <test.functional.ServicePort>${test.functional.ServicePort}</test.functional.ServicePort>
+                            </systemPropertyVariables>
                         </configuration>
                     </execution>
                 </executions>

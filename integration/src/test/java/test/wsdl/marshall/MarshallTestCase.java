@@ -13,6 +13,8 @@ import org.apache.axis.Message;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPBody;
 
+import test.HttpTestUtil;
+
 public class MarshallTestCase extends junit.framework.TestCase {
 
     private static final String DIMS = "[3]";
@@ -24,10 +26,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void testMarshallPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory
                 .newInstance();
-        java.net.URL url = new java.net.URL(
-                new test.wsdl.marshall.MarshallLocator()
-                        .getMarshallPortAddress()
-                        + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(
+                new MarshallLocator().getMarshallPortAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url,
                 new test.wsdl.marshall.MarshallLocator().getServiceName());
         assertTrue(service != null);
@@ -36,8 +36,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test1MarshallPortMyBeanArray() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -56,8 +56,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test2MarshallPortMyBeanMultiArray() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -77,8 +77,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test3MarshallPortMyBean() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -97,8 +97,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test4MarshallPortArrayOfSoapEncString() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -128,8 +128,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test5MarshallPortArrayOfXsdString() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -159,8 +159,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test6MarshallPortArrayOfbase64Binary() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -188,8 +188,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test7MarshallPortArrayOfhexBinary() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -217,8 +217,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test8MarshallPortArrayOfsoapencbase64() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -247,8 +247,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
             throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -278,8 +278,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test10MarshallPortArrayOfhexBinaryUnbounded() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -309,8 +309,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
             throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -340,8 +340,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test12MarshallPortArrayOfArrayOfSoapEncString() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();
@@ -411,8 +411,8 @@ public class MarshallTestCase extends junit.framework.TestCase {
     public void test13MarshallPortArrayOfArrayOfinteger() throws Exception {
         test.wsdl.marshall.MarshallBindingStub binding;
         try {
-            binding = (test.wsdl.marshall.MarshallBindingStub) new test.wsdl.marshall.MarshallLocator()
-                    .getMarshallPort();
+            MarshallLocator loc = new MarshallLocator();
+            binding = (MarshallBindingStub)loc.getMarshallPort(HttpTestUtil.getTestEndpoint(loc.getMarshallPortAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             if (jre.getLinkedCause() != null)
                 jre.getLinkedCause().printStackTrace();

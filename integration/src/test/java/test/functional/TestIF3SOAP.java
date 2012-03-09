@@ -1,6 +1,7 @@
 package test.functional;
 
 import junit.framework.TestCase;
+import test.HttpTestUtil;
 import test.rpc.IF1;
 import test.rpc.IF2SOAP;
 import test.rpc.IF3SOAP;
@@ -10,18 +11,15 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public final class TestIF3SOAP extends TestCase {
-    private static final String URL = "http://localhost:8080/axis/services/IF3SOAP";
-    private static final String Service = "IF3SOAP";
-    
     private IF3SOAPProxy m_soap;
     
     public TestIF3SOAP(String name) {
         super(name);
     }
     
-    protected void setUp() {
+    protected void setUp() throws Exception {
         if (m_soap == null)
-            m_soap = new IF3SOAPProxy(Service, URL);
+            m_soap = new IF3SOAPProxy("IF3SOAP", HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/services/IF3SOAP").toString());
     } // setUp
     
     

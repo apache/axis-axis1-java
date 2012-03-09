@@ -4,6 +4,8 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceFactory;
 import java.net.URL;
+
+import test.HttpTestUtil;
 import test.wsdl.jaxrpcdynproxy.holders.AddressBeanHolder;
 import junit.framework.TestCase;
 import java.net.URL;
@@ -29,7 +31,7 @@ public class JAXRPCDynProxyTestCase extends TestCase {
   }
 
   public void testInOut() throws Exception {
-      URL urlWsdl = new URL("http://localhost:8080/axis/services/AddressInOut?wsdl");
+      URL urlWsdl = HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/services/AddressInOut?wsdl");
       String nameSpaceUri = "http://jaxrpcdynproxy.wsdl.test";
       String serviceName = "AddressInOut";
       String portName = "AddressInOut";

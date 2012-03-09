@@ -7,6 +7,8 @@
 
 package test.wsdl.extension;
 
+import test.HttpTestUtil;
+
 public class PlanWSTestCase extends junit.framework.TestCase {
     public PlanWSTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,7 @@ public class PlanWSTestCase extends junit.framework.TestCase {
 
     public void testPlanWSSoapWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.extension.PlanWSLocator().getPlanWSSoapAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.extension.PlanWSLocator().getPlanWSSoapAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.extension.PlanWSLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -22,8 +24,8 @@ public class PlanWSTestCase extends junit.framework.TestCase {
     public void test1PlanWSSoapGetPlan() throws Exception {
         test.wsdl.extension.PlanWSSoapStub binding;
         try {
-            binding = (test.wsdl.extension.PlanWSSoapStub)
-                          new test.wsdl.extension.PlanWSLocator().getPlanWSSoap();
+            PlanWSLocator loc = new PlanWSLocator();
+            binding = (PlanWSSoapStub)loc.getPlanWSSoap(HttpTestUtil.getTestEndpoint(loc.getPlanWSSoapAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

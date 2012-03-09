@@ -7,6 +7,8 @@
 
 package test.wsdl.anytype;
 
+import test.HttpTestUtil;
+
 public class AnyServiceServiceTestCase extends junit.framework.TestCase {
     public AnyServiceServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,8 @@ public class AnyServiceServiceTestCase extends junit.framework.TestCase {
     public void test1AnyServiceRun() throws Exception {
         test.wsdl.anytype.AnyService binding;
         try {
-            binding = new test.wsdl.anytype.AnyServiceServiceLocator().getAnyService();
+            AnyServiceServiceLocator loc = new AnyServiceServiceLocator();
+            binding = loc.getAnyService(HttpTestUtil.getTestEndpoint(loc.getAnyServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

@@ -7,6 +7,8 @@
 
 package test.wsdl.ram;
 
+import test.HttpTestUtil;
+
 public class RamServiceTestCase extends junit.framework.TestCase {
     public RamServiceTestCase(String name) {
         super(name);
@@ -14,15 +16,16 @@ public class RamServiceTestCase extends junit.framework.TestCase {
 
     public void testRamWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.ram.RamServiceLocator().getRamAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.ram.RamServiceLocator().getRamAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.ram.RamServiceLocator().getServiceName());
         assertTrue(service != null);
     }
 
-    public void test1RamValidate() {
+    public void test1RamValidate() throws Exception {
         Ram binding;
         try {
-            binding = new RamServiceLocator().getRam();
+            RamServiceLocator loc = new RamServiceLocator();
+            binding = loc.getRam(HttpTestUtil.getTestEndpoint(loc.getRamAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -66,7 +69,7 @@ public class RamServiceTestCase extends junit.framework.TestCase {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception {
         RamServiceTestCase test = new RamServiceTestCase("RamServiceTestCase");
         test.test1RamValidate();
     }

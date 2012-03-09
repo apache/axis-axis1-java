@@ -7,6 +7,8 @@
 
 package test.wsdl.faults;
 
+import test.HttpTestUtil;
+
 
 
 
@@ -24,10 +26,11 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
     }
     */
 
-    public void testFaultServiceGetQuote() {
+    public void testFaultServiceGetQuote() throws Exception {
         test.wsdl.faults.FaultServicePortType binding;
         try {
-            binding = new FaultServiceLocator().getFaultService();
+            FaultServiceLocator loc = new FaultServiceLocator();
+            binding = loc.getFaultService(HttpTestUtil.getTestEndpoint(loc.getFaultServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.
@@ -57,7 +60,8 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
     public void testFaultServiceThrowFault() throws Exception {
         test.wsdl.faults.FaultServicePortType binding;
         try {
-            binding = new FaultServiceLocator().getFaultService();
+            FaultServiceLocator loc = new FaultServiceLocator();
+            binding = loc.getFaultService(HttpTestUtil.getTestEndpoint(loc.getFaultServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.
@@ -94,10 +98,11 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void testFaultServiceThrowExtensionFault() {
+    public void testFaultServiceThrowExtensionFault() throws Exception {
         test.wsdl.faults.FaultServicePortType binding;
         try {
-            binding = new FaultServiceLocator().getFaultService();
+            FaultServiceLocator loc = new FaultServiceLocator();
+            binding = loc.getFaultService(HttpTestUtil.getTestEndpoint(loc.getFaultServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.

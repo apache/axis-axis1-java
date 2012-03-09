@@ -3,6 +3,8 @@ package test.wsdl.inout;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.axis.holders.DateHolder;
+
+import test.HttpTestUtil;
 import test.wsdl.inout.holders.AddressHolder;
 import test.wsdl.inout.holders.PhoneHolder;
 
@@ -50,9 +52,10 @@ public class DetailedInoutTestCase extends TestCase
         returnPhone.setNumber("two");
         returnAddress.setPhoneNumber(returnPhone);
         try {
-            io = new InoutServiceLocator().getInoutService();
+            InoutServiceLocator loc = new InoutServiceLocator();
+            io = loc.getInoutService(HttpTestUtil.getTestEndpoint(loc.getInoutServiceAddress()));
         }
-        catch (ServiceException jre) {
+        catch (Exception jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException:  " + jre);
         }
     }

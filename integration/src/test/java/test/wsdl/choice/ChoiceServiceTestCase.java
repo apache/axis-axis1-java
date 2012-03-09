@@ -15,6 +15,7 @@
  */
 package test.wsdl.choice;
 
+import test.HttpTestUtil;
 import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
 
@@ -28,7 +29,7 @@ public class ChoiceServiceTestCase extends TestCase {
         ChoiceServiceSoap binding;
         try {
             ChoiceServiceLocator locator = new ChoiceServiceLocator();
-            binding = locator.getChoiceServiceSoap();
+            binding = locator.getChoiceServiceSoap(HttpTestUtil.getTestEndpoint(locator.getChoiceServiceSoapAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -104,7 +105,7 @@ public class ChoiceServiceTestCase extends TestCase {
         ChoiceServiceSoap binding;
         try {
             ChoiceServiceLocator locator = new ChoiceServiceLocator();
-            binding = locator.getChoiceServiceSoap();
+            binding = locator.getChoiceServiceSoap(HttpTestUtil.getTestEndpoint(locator.getChoiceServiceSoapAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);

@@ -7,6 +7,8 @@
 
 package test.wsdl.primitiveWrappers;
 
+import test.HttpTestUtil;
+
 public class TypeWrapper_ServiceTestCase extends junit.framework.TestCase {
     public TypeWrapper_ServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,7 @@ public class TypeWrapper_ServiceTestCase extends junit.framework.TestCase {
 
     public void testTypeWrapperWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.primitiveWrappers.TypeWrapper_ServiceLocator().getTypeWrapperAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.primitiveWrappers.TypeWrapper_ServiceLocator().getTypeWrapperAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.primitiveWrappers.TypeWrapper_ServiceLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -22,8 +24,8 @@ public class TypeWrapper_ServiceTestCase extends junit.framework.TestCase {
     public void test1TypeWrapperTestWrapping() throws Exception {
         test.wsdl.primitiveWrappers.TypeWrapper_BindingStub binding;
         try {
-            binding = (test.wsdl.primitiveWrappers.TypeWrapper_BindingStub)
-                          new test.wsdl.primitiveWrappers.TypeWrapper_ServiceLocator().getTypeWrapper();
+            TypeWrapper_ServiceLocator loc = new TypeWrapper_ServiceLocator();
+            binding = (TypeWrapper_BindingStub)loc.getTypeWrapper(HttpTestUtil.getTestEndpoint(loc.getTypeWrapperAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
