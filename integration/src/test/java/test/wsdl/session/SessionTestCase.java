@@ -6,6 +6,8 @@
  */
 package test.wsdl.session;
 
+import test.HttpTestUtil;
+
 /**
  * Class SessionTestCase
  */
@@ -63,7 +65,7 @@ public class SessionTestCase extends junit.framework.TestCase {
                 // Create an instance of the Web service interface.
                 SessionTestServerServiceLocator wsloc =
                         new SessionTestServerServiceLocator();
-                SessionTestServer ws = wsloc.getSessionTest();
+                SessionTestServer ws = wsloc.getSessionTest(HttpTestUtil.getTestEndpoint(wsloc.getSessionTestAddress()));
 
                 // Maintain sessions for test calls.
                 ((org.apache.axis.client.Stub) ws).setMaintainSession(true);
@@ -78,7 +80,10 @@ public class SessionTestCase extends junit.framework.TestCase {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                synchronized (testLock) {
+                    failed++;
+                }
                 e.printStackTrace();
             }
             // checkout
