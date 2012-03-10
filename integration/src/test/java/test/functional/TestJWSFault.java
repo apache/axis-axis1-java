@@ -17,7 +17,8 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.AxisFault;
+
+import test.HttpTestUtil;
 
 import javax.xml.messaging.URLEndpoint;
 import javax.xml.soap.MessageFactory;
@@ -29,56 +30,32 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
-import java.net.SocketException;
-
 
 /**
  * Test the JAX-RPC compliance samples.
  */
 public class TestJWSFault extends TestCase {
     public void testJWSFault() throws Exception {
-        try {
-	        SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
-	        SOAPConnection con = scFactory.createConnection();
-	
-	        MessageFactory factory = MessageFactory.newInstance();
-	        SOAPMessage message = factory.createMessage();
-	
-	        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
-	        SOAPBody body = envelope.getBody();
-	
-	        Name bodyName = envelope.createName("echo");
-	        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
-	
-	        Name name = envelope.createName("arg0");
-	        SOAPElement symbol = bodyElement.addChildElement(name);
-	        symbol.addTextNode("Hello");
-	
-	        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/axis/FaultTest.jws");
-	        SOAPMessage response = con.call(message, endpoint);
-	        SOAPBody respBody = response.getSOAPPart().getEnvelope().getBody();
-	        assertTrue(respBody.hasFault());
-        } catch (javax.xml.soap.SOAPException e) {
-            Throwable t = e.getCause();
-            if (t != null) {
-                t.printStackTrace();
-                if (t instanceof AxisFault) {
-                  AxisFault af = (AxisFault) t;
-                  if ((af.detail instanceof SocketException)
-							|| (af.getFaultCode().getLocalPart().equals("HTTP"))) {
-						System.out.println("Connect failure caused testJWSFault to be skipped.");
-						return;
-					}
-                }
-                throw new Exception("Fault returned from test: " + t);
-            } else {
-                e.printStackTrace();
-                throw new Exception("Exception returned from test: " + e);
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new Exception("Fault returned from test: " + t);
-        }
+        SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection con = scFactory.createConnection();
+
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage message = factory.createMessage();
+
+        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+        SOAPBody body = envelope.getBody();
+
+        Name bodyName = envelope.createName("echo");
+        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
+
+        Name name = envelope.createName("arg0");
+        SOAPElement symbol = bodyElement.addChildElement(name);
+        symbol.addTextNode("Hello");
+
+        URLEndpoint endpoint = new URLEndpoint(HttpTestUtil.getTestEndpoint("http://localhost:8080/axis/FaultTest.jws").toString());
+        SOAPMessage response = con.call(message, endpoint);
+        SOAPBody respBody = response.getSOAPPart().getEnvelope().getBody();
+        assertTrue(respBody.hasFault());
     }
 }
 
