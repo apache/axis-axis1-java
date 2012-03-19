@@ -160,4 +160,11 @@
             </plugin>
         </plugins>
     </reporting>
+    <distributionManagement>
+        <site>
+            <!-- Dummy site URL to be able to use site:stage -->
+            <id>axis-dummy</id>
+            <url>dav:http://localhost/sites/axis</url>
+        </site>
+    </distributionManagement>
 </project>
