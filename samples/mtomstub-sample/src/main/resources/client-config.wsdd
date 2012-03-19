@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment name="defaultClientConfig"
+            xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <globalConfiguration>
+        <parameter name="disablePrettyXML" value="true"/>
+        <parameter name="enableNamespacePrefixOptimization" value="false"/>
+    </globalConfiguration>
+    <transport name="http" pivot="java:org.apache.axis.transport.http.HTTPSender"/>
+    <transport name="local" pivot="java:org.apache.axis.transport.local.LocalSender"/>
+    <transport name="java" pivot="java:org.apache.axis.transport.java.JavaSender"/>
+<!-- START SNIPPET: typeMapping -->
+    <typeMapping languageSpecificType="java:javax.activation.DataHandler" qname="xs:base64Binary"
+                 deserializer="org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory"
+                 serializer="org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory" 
+                 encodingStyle=""/>
+<!-- END SNIPPET: typeMapping -->
+</deployment>
+

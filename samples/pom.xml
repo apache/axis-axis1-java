@@ -41,6 +41,7 @@
         <module>jaxm-sample</module>
         <module>jaxrpc-sample</module>
         <module>message-sample</module>
+        <module>mtomstub-sample</module>
         <module>misc-sample</module>
         <module>proxy-sample</module>
         <module>stock-sample</module>

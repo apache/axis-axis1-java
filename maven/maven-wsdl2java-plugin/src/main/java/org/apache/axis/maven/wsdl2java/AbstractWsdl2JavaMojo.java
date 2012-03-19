@@ -21,9 +21,12 @@ package org.apache.axis.maven.wsdl2java;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.constants.Scope;
 import org.apache.axis.maven.shared.nsmap.Mapping;
 import org.apache.axis.maven.shared.nsmap.MappingUtil;
+import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -148,6 +151,14 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
      */
     private boolean helperGen;
     
+    /**
+     * A set of Java to XML type mappings that override the default mappings. This can be used to
+     * change the Java class associated with an XML type.
+     * 
+     * @parameter
+     */
+    private JavaXmlTypeMapping[] javaXmlTypeMappings;
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         String wsdlUrl;
         if (file != null && url != null) {
@@ -216,6 +227,23 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //                    Project.MSG_VERBOSE);
 //            ClassUtils.setDefaultClassLoader(cl);
 //        }
+        
+        if (javaXmlTypeMappings != null && javaXmlTypeMappings.length > 0) {
+            GeneratorFactory factory = emitter.getFactory();
+            CustomizableBaseTypeMapping btm = new CustomizableBaseTypeMapping(factory.getBaseTypeMapping());
+            for (int i=0; i<javaXmlTypeMappings.length; i++) {
+                String xmlTypeName = javaXmlTypeMappings[i].getXmlType();
+                if (xmlTypeName.length() == 0 || xmlTypeName.charAt(0) != '{') {
+                    throw new MojoFailureException("Invalid XML type '" + xmlTypeName + "'");
+                }
+                int idx = xmlTypeName.indexOf('}', 1);
+                if (idx == -1) {
+                    throw new MojoFailureException("Invalid XML type '" + xmlTypeName + "'");
+                }
+                btm.addMapping(new QName(xmlTypeName.substring(1, idx), xmlTypeName.substring(idx+1)), javaXmlTypeMappings[i].getJavaType());
+            }
+            factory.setBaseTypeMapping(btm);
+        }
         
         configureEmitter(emitter);
         

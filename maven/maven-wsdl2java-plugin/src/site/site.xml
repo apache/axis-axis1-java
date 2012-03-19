@@ -23,5 +23,8 @@
             <item name="Introduction" href="index.html"/>
             <item name="Goals" href="plugin-info.html"/>
         </menu>
+        <menu name="Examples">
+            <item name="Changing the Java class associated with an XML type" href="java-xml-type-mappings.html"/>
+        </menu>
     </body>
 </project>

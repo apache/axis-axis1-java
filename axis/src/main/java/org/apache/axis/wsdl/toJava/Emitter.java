@@ -22,10 +22,8 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.gen.Parser;
-import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.w3c.dom.Document;
@@ -65,9 +63,6 @@ public class Emitter extends Parser {
 
     /** Field typeMappingVersion */
     protected String typeMappingVersion = "1.2";
-
-    /** Field baseTypeMapping */
-    protected BaseTypeMapping baseTypeMapping = null;
 
     /** Field namespaces */
     protected Namespaces namespaces = null;
@@ -646,13 +641,8 @@ public class Emitter extends Parser {
      * @throws IOException 
      */
     private void setup() throws IOException {
-
-        if (baseTypeMapping == null) {
-            setTypeMappingVersion(typeMappingVersion);
-        }
-
-        getFactory().setBaseTypeMapping(baseTypeMapping);
-
+        tmr.doRegisterFromVersion(typeMappingVersion);
+        
         namespaces = new Namespaces(outputDir);
 
         if (packageName != null) {
@@ -793,26 +783,6 @@ public class Emitter extends Parser {
      */
     public void setTypeMappingVersion(String typeMappingVersion) {
         this.typeMappingVersion = typeMappingVersion;
-        tmr.doRegisterFromVersion(typeMappingVersion);
-        baseTypeMapping = new BaseTypeMapping() {
-
-            final TypeMapping defaultTM = getDefaultTypeMapping();
-
-            public String getBaseName(QName qNameIn) {
-
-                javax.xml.namespace.QName qName =
-                        new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
-                                qNameIn.getLocalPart());
-                Class cls =
-                        defaultTM.getClassForQName(qName);
-
-                if (cls == null) {
-                    return null;
-                } else {
-                    return JavaUtils.getTextClassName(cls.getName());
-                }
-            }
-        };
     }
 
     // The remainder are deprecated methods.
