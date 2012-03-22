@@ -17,12 +17,16 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="Apache Axis">
+<project name="Ant tasks">
     <body>
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+            <item name="Dependencies" href="dependencies.html"/>
+        </menu>
         <menu name="Tasks">
-            <item name="Axis-admin" href="axis-admin.html"/>
-            <item name="Axis-java2wsdl" href="axis-java2wsdl.html"/>
-            <item name="Axis-wsdl2java" href="axis-wsdl2java.html"/>
+            <item name="axis-admin" href="axis-admin.html"/>
+            <item name="axis-java2wsdl" href="axis-java2wsdl.html"/>
+            <item name="axis-wsdl2java" href="axis-wsdl2java.html"/>
         </menu>
     </body>
 </project>

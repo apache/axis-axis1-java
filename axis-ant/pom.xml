@@ -26,7 +26,14 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>axis-ant</artifactId>
-    <name>Ant tasks</name>
+    <name>Axis :: Ant tasks</name>
+    <url>${baseUrl}/ant</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/ant</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

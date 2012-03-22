@@ -26,10 +26,17 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>axis-standalone-server</artifactId>
-    <name>Axis :: Simple server</name>
+    <name>Axis :: Stand-alone server</name>
     <description>
         A Jetty based stand-alone Axis server that replaces the former SimpleAxisServer.
     </description>
+    <url>${baseUrl}/standalone-server</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/standalone-server</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -48,4 +55,20 @@
             <version>6.1.26</version>
         </dependency>
     </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>dependencies</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

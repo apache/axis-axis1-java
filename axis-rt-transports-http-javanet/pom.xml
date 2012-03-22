@@ -30,6 +30,13 @@
     <description>
     	An alternative HTTP transport that uses the java.net.HttpURLConnection API. This transport only works with Java 1.5.
     </description>
+    <url>${baseUrl}/transports/http-javanet</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/transports/http-javanet</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -27,10 +27,17 @@
     </parent>
     <artifactId>maven-java2wsdl-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>java2wsdl plugin</name>
+    <name>Axis :: Maven :: maven-java2wsdl-plugin</name>
     <description>
         Axis java2wsdl Maven plugin.
     </description>
+    <url>${baseUrl}/maven/java2wsdl</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/maven/java2wsdl</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

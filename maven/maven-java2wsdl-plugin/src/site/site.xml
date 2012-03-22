@@ -17,15 +17,11 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="Maven plugins">
+<project name="maven-java2wsdl-plugin">
     <body>
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
-        </menu>
-        <menu name="Plugins">
-            <item name="maven-wsdl2java-plugin" href="wsdl2java/index.html"/>
-            <item name="maven-java2wsdl-plugin" href="java2wsdl/index.html"/>
-            <item name="maven-axis-server-plugin" href="axis-server/index.html"/>
+            <item name="Goals" href="plugin-info.html"/>
         </menu>
     </body>
 </project>

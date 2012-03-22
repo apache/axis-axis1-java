@@ -30,6 +30,13 @@
     <description>
         Contains serializers and deserializers for Castor.
     </description>
+    <url>${baseUrl}/castor</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/castor</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -29,7 +29,7 @@
     <name>Axis</name>
     <version>1.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <url>http://axis.apache.org/axis/java/</url>
+    <url>${baseUrl}/</url>
     <issueManagement>
         <system>jira</system>
         <url>http://issues.apache.org/jira/browse/AXIS</url>
@@ -160,11 +160,15 @@
             </plugin>
         </plugins>
     </reporting>
+    <properties>
+        <baseUrl>http://axis.apache.org/axis/java</baseUrl>
+        <!-- Dummy site URL to be able to use site:stage -->
+        <baseSiteUrl>dav:http://localhost/sites/axis</baseSiteUrl>
+    </properties>
     <distributionManagement>
         <site>
-            <!-- Dummy site URL to be able to use site:stage -->
-            <id>axis-dummy</id>
-            <url>dav:http://localhost/sites/axis</url>
+            <id>axis</id>
+            <url>${baseSiteUrl}/</url>
         </site>
     </distributionManagement>
 </project>

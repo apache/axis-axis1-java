@@ -37,6 +37,13 @@
             <item name="Axis 1.x" href="http://axis.apache.org/axis/"/>
             <item name="Java" href="http://axis.apache.org/axis/java/"/>
         </breadcrumbs>
+        <menu name="About">
+            <item name="Introduction" href="index.html"/>
+            <item name="Issue Tracking" href="issue-tracking.html"/>
+            <item name="Mailing Lists" href="mail-lists.html"/>
+            <item name="Source Repository" href="source-repository.html"/>
+            <item name="Dependencies" href="core/dependencies.html"/>
+        </menu>
         <menu name="Downloads">
             <item name="Releases" href="releases.html"/>
             <item name="Changelogs" href="changelog.html" collapse="true">
@@ -59,13 +66,13 @@
             <item name="Reading Guide" href="reading.html"/>
         </menu>
         <menu name="More...">
-            <item name="Ant tasks" href="axis-ant/index.html"/>
+            <item name="Ant tasks" href="ant/index.html"/>
             <item name="Maven plugins" href="maven/index.html"/>
-            <item name="Castor support" href="axis-castor/index.html"/>
-            <item name="JMS transport" href="axis-jms/index.html"/>
-            <item name="java.net HTTP transport" href="axis-rt-transports-http-javanet/index.html"/>
+            <item name="Castor support" href="castor/index.html"/>
+            <item name="JMS transport" href="transports/jms/index.html"/>
+            <item name="java.net HTTP transport" href="transports/http-javanet/index.html"/>
+            <item name="Stand-alone server" href="standalone-server/index.html"/>
         </menu>
-        <menu ref="reports" inherit="bottom"/>
         <menu name="Apache" inherit="bottom">
             <item name="License" href="http://www.apache.org/licenses/LICENSE-2.0.html" />
             <item name="Sponsorship" href="http://www.apache.org/foundation/sponsorship.html"/>

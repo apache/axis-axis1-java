@@ -27,6 +27,13 @@
     </parent>
     <artifactId>axis</artifactId>
     <name>Axis :: Core</name>
+    <url>${baseUrl}/core</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/core</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -245,7 +252,6 @@
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>index</report>
                             <report>dependencies</report>
                         </reports>
                     </reportSet>

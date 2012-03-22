@@ -30,6 +30,13 @@
     <description>
         Contains the Axis JMS transport.
     </description>
+    <url>${baseUrl}/transports/jms</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/transports/jms</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -30,4 +30,15 @@
     <description>
     	Contains classes shared by maven-wsdl2java-plugin and maven-java2wsdl-plugin.
     </description>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
