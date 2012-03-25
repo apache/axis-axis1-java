@@ -30,6 +30,11 @@
             <searchEnabled>true</searchEnabled>
         </fluidoSkin>
     </custom>
+    <bannerRight>
+        <name>Apache Axis</name>
+        <src>images/axis-small.png</src>
+        <href>http://axis.apache.org/axis/java</href>
+    </bannerRight>
     <body>
         <breadcrumbs>
             <item name="Apache" href="http://www.apache.org/"/>
