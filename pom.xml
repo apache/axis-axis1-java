@@ -55,7 +55,7 @@
             <archive>http://mail-archives.apache.org/mod_mbox/axis-axis1-java-user/</archive>
         </mailingList>
     </mailingLists>
-    <inceptionYear>2001</inceptionYear>
+    <inceptionYear>2000</inceptionYear>
     <modules>
         <module>axis</module>
         <module>axis-jaxrpc</module>
