@@ -27,7 +27,7 @@
 
 <section name="Documentation">
 
-<p>This is the documentation for <a href="http://ws.apache.org/axis/">Apache Axis 1.4</a>. If the version of Axis you are using is older or newer than this version, then this is the wrong documentation to be using. Read the version that came with your copy of Axis.</p>
+<p>This is the documentation for Apache Axis ${project.version}. If the version of Axis you are using is older or newer than this version, then this is the wrong documentation to be using. Read the version that came with your copy of Axis.</p>
 
 <subsection name="Documentation for Axis Users">
 
