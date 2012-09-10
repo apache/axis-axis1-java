@@ -358,9 +358,12 @@ public class ProjectResourceBundle extends ResourceBundle {
     }
 
     /**
-     * Clears the internal cache
+     * Clears the internal cache.
+     * <p>
+     * Note: In Axis 1.4 this method was named <code>clearCache</code>. However, that name conflicts
+     * with a method in the base class introduced in Java 1.6.
      */
-    public static void clearCache()
+    public static void clearBundleCache()
     {
         bundleCache.clear();
     }
