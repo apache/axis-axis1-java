@@ -166,7 +166,12 @@
                                 <artifactItem>
                                     <groupId>xerces</groupId>
                                     <artifactId>xmlParserAPIs</artifactId>
-                                 </artifactItem>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>axis-saaj</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
                             </artifactItems>
                             <overWrite>true</overWrite>
                             <outputDirectory>${project.build.directory}/endorsed</outputDirectory>
@@ -189,8 +194,8 @@
                         <exclude>org/apache/axis/encoding/ser/xbeans/**</exclude>
                     </excludes>
                     <compilerArgument>
-                        <!-- Necessary because we only support DOM 2 -->
-                        -Xbootclasspath/p:${project.build.directory}/endorsed/xmlParserAPIs.jar
+                        <!-- Necessary because we only support DOM 2 and SAAJ 1.2 -->
+                        -Xbootclasspath/p:${project.build.directory}/endorsed/xmlParserAPIs.jar${path.separator}${project.build.directory}/endorsed/axis-saaj.jar
                     </compilerArgument>
                 </configuration>
             </plugin>
