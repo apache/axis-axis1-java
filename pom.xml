@@ -112,10 +112,29 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.11</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <!-- Axis doesn't contain META-INF/services/* files for SAAJ. Instead, the SAAJ API
+                                 library provided by Axis uses the Axis SAAJ implementation by default. That's an issue on Java 1.6
+                                 because the SAAJ API provided by the JRE will be used. Therefore we need to set this system property
+                                 to execute the SAAJ unit tests on Java 1.6. -->
+                            <javax.xml.soap.MessageFactory>org.apache.axis.soap.MessageFactoryImpl</javax.xml.soap.MessageFactory>
+                            <javax.xml.soap.SOAPFactory>org.apache.axis.soap.SOAPFactoryImpl</javax.xml.soap.SOAPFactory>
+                            <javax.xml.soap.SOAPConnectionFactory>org.apache.axis.soap.SOAPConnectionFactoryImpl</javax.xml.soap.SOAPConnectionFactory>
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.11</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <!-- See the corresponding surefire configuration for more information about this. -->
+                            <javax.xml.soap.MessageFactory>org.apache.axis.soap.MessageFactoryImpl</javax.xml.soap.MessageFactory>
+                            <javax.xml.soap.SOAPFactory>org.apache.axis.soap.SOAPFactoryImpl</javax.xml.soap.SOAPFactory>
+                            <javax.xml.soap.SOAPConnectionFactory>org.apache.axis.soap.SOAPConnectionFactoryImpl</javax.xml.soap.SOAPConnectionFactory>
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
