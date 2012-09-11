@@ -379,11 +379,17 @@ public class DeserializationContext implements ContentHandler, DTDHandler,
         // Check for type
         String type = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
                                          "type");
-        if (type != null) {
+        if (type == null) {
+            log.debug("No xsi:type attribute found");
+            return null;
+        } else {
             // Return the type attribute value converted to a QName
-            return getQNameFromString(type);
+            QName result = getQNameFromString(type);
+            if (log.isDebugEnabled()) {
+                log.debug("xsi:type attribute found; raw=" + type + "; resolved=" + result);
+            }
+            return result;
         }
-        return null;
     }
 
     /**

@@ -112,6 +112,11 @@ public class BeanSerializer implements Serializer, Serializable {
         // Get the encoding style
         boolean isEncoded = context.isEncoded();
 
+        if (log.isDebugEnabled()) {
+            log.debug("Start serializing bean; xmlType=" + xmlType + "; javaType=" + javaType
+                    + "; name=" + name + "; isEncoded=" + isEncoded);
+        }
+        
         // check whether we have and xsd:any namespace="##any" type
         boolean suppressElement = !isEncoded &&
                                   name.getNamespaceURI().equals("") &&

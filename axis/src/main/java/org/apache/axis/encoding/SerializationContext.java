@@ -832,6 +832,12 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                           Boolean sendType)
         throws IOException
     {
+        if (log.isDebugEnabled()) {
+            log.debug("Start serializing element; elemQName=" + elemQName
+                    + "; xmlType=" + xmlType + "; javaClass=" + javaClass
+                    + "; sendNull=" + sendNull + "; sendType=" + sendType + "; value=" + value);
+        }
+        
         boolean sendXSITypeCache = sendXSIType;
         if (sendType != null) {
             sendXSIType = sendType.booleanValue();
@@ -1095,8 +1101,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     {
         java.util.ArrayList vecQNames = null;
         if (debugEnabled) {
-            log.debug(Messages.getMessage("startElem00",
-                    "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
+            log.debug(Messages.getMessage("startElem00", qName.toString()));
         }
 
         if (startOfDocument && sendXMLDecl) {
@@ -1402,6 +1407,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                                 "type") != -1)))
             return attributes;
 
+        if (log.isDebugEnabled()) {
+            log.debug("Adding xsi:type attribute for type " + type);
+        }
+        
         AttributesImpl attrs = new AttributesImpl();
         if (attributes != null && 0 < attributes.getLength() )
             attrs.setAttributes(attributes);
@@ -1604,6 +1613,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      **/
     private Serializer getSerializer(Class javaType, QName xmlType,
                                      QNameHolder actualXMLType) {
+        if (log.isDebugEnabled()) {
+            log.debug("Getting serializer for javaType=" + javaType + " and xmlType=" + xmlType);
+        }
+        
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
         if (actualXMLType != null) {
@@ -1664,6 +1677,13 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
             }
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Serializer is " + ser);
+            if (actualXMLType != null) {
+                log.debug("Actual XML type is " + actualXMLType.value);
+            }
+        }
+        
         return ser;
     }
 

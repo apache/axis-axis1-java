@@ -184,6 +184,12 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
 
         QName elemQName = new QName(namespace, localName);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Start processing child; xmlType=" + xmlType + "; javaType=" + javaType
+                    + "; elemQName=" + elemQName + "; isEncoded=" + isEncoded);
+        }
+        
         // The collectionIndex needs to be reset for Beans with multiple arrays
         if ((prevQName == null) || (!prevQName.equals(elemQName))) {
             collectionIndex = -1;
@@ -493,6 +499,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                            Class javaType, 
                                            String href,
                                            DeserializationContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Getting deserializer for xmlType=" + xmlType + ", javaType=" + javaType + ", href=" + href);
+        }
+        
         if (javaType.isArray()) {
             context.setDestinationClass(javaType);
         } 
@@ -535,6 +545,11 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             cacheStringDSer = (SimpleDeserializer) dSer;
             cacheXMLType = xmlType;
         }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Deserializer is " + dSer);
+        }
+        
         return dSer;
     }
 
