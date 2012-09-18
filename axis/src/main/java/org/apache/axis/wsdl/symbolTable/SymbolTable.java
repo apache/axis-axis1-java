@@ -16,11 +16,13 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.URLHashSet;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -89,6 +91,7 @@ import java.util.Vector;
  * public PortTypeEntry getPortTypeEntry(QName name), etc.
  */
 public class SymbolTable {
+    private static final Log log = LogFactory.getLog(SymbolTable.class.getName());
 
     // used to cache dervied types
     protected HashMap derivedTypes = new HashMap();
@@ -1621,6 +1624,10 @@ public class SymbolTable {
 
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Processing port type " + portType.getQName());
+            }
 
             // If the portType is undefined, then we're parsing a Definition
             // that didn't contain a portType, merely a binding that referred
@@ -1677,6 +1684,10 @@ public class SymbolTable {
                                             portType.getQName().getLocalPart()));
                         }
 
+                        if (log.isDebugEnabled()) {
+                            log.debug("Processing operation " + operation.getName());
+                        }
+                        
                         String namespace =
                                 portType.getQName().getNamespaceURI();
                         Parameters parms = getOperationParameters(operation,
