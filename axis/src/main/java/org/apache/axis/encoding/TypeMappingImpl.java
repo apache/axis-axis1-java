@@ -113,6 +113,10 @@ public class TypeMappingImpl implements Serializable
             }
             return hashcode;
         }
+        
+        public String toString() {
+            return "(" + javaType + "," + xmlType + ")";
+        }
     }
 
     private HashMap qName2Pair;     // QName to Pair Mapping
@@ -241,6 +245,11 @@ public class TypeMappingImpl implements Serializable
                                          "badJavaType" : "badXmlType"));
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Registering type mapping: javaType=" + javaType + ", xmlType=" + xmlType
+                    + ", sf=" + sf + ", dsf=" + dsf);
+        }
+        
         //REMOVED_FOR_TCK
         //if (sf != null &&
         //    !(sf instanceof javax.xml.rpc.encoding.SerializerFactory)) {
@@ -580,11 +589,20 @@ public class TypeMappingImpl implements Serializable
      * @return
      */
     public QName getTypeQNameExact(Class javaType, TypeMappingDelegate next) {
-        if (javaType == null)
+        if (log.isDebugEnabled()) {
+            log.debug("getTypeQNameExact for javaType=" + javaType);
+        }
+        
+        if (javaType == null) {
+            log.debug("javaType == null; getTypeQNameExact returning null");
             return null;
+        }
        
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
+        if (log.isDebugEnabled()) {
+            log.debug("class2Pair gives: " + pair);
+        }
 
         if (isDotNetSoapEncFixNeeded() && pair != null ) {
             // Hack alert!
@@ -607,6 +625,9 @@ public class TypeMappingImpl implements Serializable
             xmlType = pair.xmlType;
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("getTypeQNameExact returning " + xmlType);
+        }
         return xmlType;
     }
 
