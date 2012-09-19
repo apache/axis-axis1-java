@@ -15,7 +15,6 @@
  */
 package org.apache.axis.tools.ant.wsdl;
 
-import org.apache.axis.encoding.TypeMappingImpl;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.TypeMappingDelegate;
 import org.apache.axis.wsdl.fromJava.Emitter;
