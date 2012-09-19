@@ -38,6 +38,7 @@
         <module>encoding-sample</module>
         <module>faults-sample</module>
         <module>handler-sample</module>
+        <module>integrationguide-sample</module>
         <module>jaxm-sample</module>
         <module>jaxrpc-sample</module>
         <module>message-sample</module>

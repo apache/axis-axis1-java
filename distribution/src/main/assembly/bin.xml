@@ -81,6 +81,10 @@
             <outputDirectory>samples/handler</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>../samples/integrationguide-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>../samples/jaxm-sample/src/main/java</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
