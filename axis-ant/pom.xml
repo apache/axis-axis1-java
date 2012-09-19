@@ -55,6 +55,11 @@
             <artifactId>xmlunit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -75,6 +80,7 @@
                                 <ant antfile="src/test/ant/clash/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/extra/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/filegen/build.xml" target="test" inheritrefs="true" />
+                                <ant antfile="src/test/ant/generatorfactory/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/header/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/literal/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/multibinding/build.xml" target="test" inheritrefs="true" />

@@ -210,6 +210,17 @@ public class Wsdl2javaAntTask extends Task
             // Instantiate the emitter
             Emitter emitter = createEmitter();
 
+            if (classpath != null) {
+                AntClassLoader cl = new AntClassLoader(
+                        getClass().getClassLoader(),
+                        getProject(),
+                        classpath,
+                        true);
+                log("Using CLASSPATH " + cl.getClasspath(),
+                        Project.MSG_VERBOSE);
+                ClassUtils.setDefaultClassLoader(cl);
+            }
+
             //extract the scope
             Scope scope = Scope.getScope(deployScope, null);
             if (scope != null) {
@@ -253,17 +264,6 @@ public class Wsdl2javaAntTask extends Task
 			emitter.setImplementationClassName(implementationClassName);
 
             Authenticator.setDefault(new DefaultAuthenticator(username, password));
-            if (classpath != null) {
-                AntClassLoader cl = new AntClassLoader(
-                        getClass().getClassLoader(),
-                        getProject(),
-                        classpath,
-                        false);
-                log("Using CLASSPATH " + cl.getClasspath(),
-                        Project.MSG_VERBOSE);
-                ClassUtils.setDefaultClassLoader(cl);
-            }
-
             try {
                 if(url.indexOf(':') == -1)
                     url = getProject().resolveFile(url).getAbsolutePath();
