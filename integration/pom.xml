@@ -1272,6 +1272,8 @@
                                 <exclude>test/wsdl/dataset/**</exclude>
                                 <!-- TODO: this causes problems in subsequent tests because auto types modify a shared TypeMapping -->
                                 <exclude>test/functional/TestAutoTypes.java</exclude>
+                                <!-- TODO: fails on Java 1.6 because of AXIS-2876 -->
+                                <exclude>test/wsdl/echo/ComplexEchoServiceTestCase.java</exclude>
                                 <!-- These are not test cases -->
                                 <exclude>test/wsdl/date/TestdateSoapBinding*</exclude>
                                 <exclude>test/wsdl/inout/TestFailed.java</exclude>
