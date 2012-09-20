@@ -80,7 +80,7 @@
         <axis-admin xmlfile="undeploy.wsdd"/>
     </target>
     
-    <target name="j2w-simplebean">
+    <target name="j2w-simplebean" depends="compile">
         <axis-java2wsdl classname="samples.ejb.SimpleBean" classpath="${build.dir}"
                         methods="sayHello"
                         output="simplebean.wsdl"

@@ -96,7 +96,10 @@
                                 
                                 <property name="deploy.dir" value="${project.build.directory}/jboss/deploy"/>
                                 <mkdir dir="${deploy.dir}"/>
-                                <ant dir="${project.build.directory}/axis-${project.version}/samples/ejb" antfile="ant-build.xml" target="j2w-nicethingsbean"/>
+                                <ant dir="${project.build.directory}/axis-${project.version}/samples/ejb" antfile="ant-build.xml">
+                                    <target name="j2w-simplebean"/>
+                                    <target name="j2w-nicethingsbean"/>
+                                </ant>
                                 
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/encoding"/>
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/faults"/>
