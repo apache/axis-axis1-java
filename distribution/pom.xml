@@ -93,6 +93,11 @@
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/attachments"/>
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/bidbuy"/>
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/echo"/>
+                                
+                                <property name="deploy.dir" value="${project.build.directory}/jboss/deploy"/>
+                                <mkdir dir="${deploy.dir}"/>
+                                <ant dir="${project.build.directory}/axis-${project.version}/samples/ejb" antfile="ant-build.xml" target="j2w-nicethingsbean"/>
+                                
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/encoding"/>
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/faults"/>
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/handler"/>
@@ -127,6 +132,25 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/axis-${project.version}/lib</outputDirectory>
                             <includeArtifactIds>junit</includeArtifactIds>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-jboss-libs</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>jboss</groupId>
+                                    <artifactId>jboss-j2ee</artifactId>
+                                    <version>3.2.3</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${project.build.directory}/jboss/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>

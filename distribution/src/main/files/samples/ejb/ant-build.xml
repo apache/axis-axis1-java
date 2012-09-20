@@ -10,7 +10,7 @@
     <property name="axis.dir" location="../../"/>
 
     <path id="classpath.id">
-        <fileset dir="${axis.dir}/build/lib">
+        <fileset dir="${axis.dir}/lib">
             <include name="*.jar"/>
         </fileset>
         <pathelement location="${deploy.dir}/../lib/jboss-j2ee.jar"/>
@@ -89,13 +89,14 @@
                         namespaceImpl="http://localhost:8080/axis/services/SimpleBean"/> 
     </target>
     
-    <target name="j2w-nicethingsbean">
+    <target name="j2w-nicethingsbean" depends="compile">
         <axis-java2wsdl classname="samples.ejb.NiceThingsBean"
                         methods="sayHello,findNiceThingsFor,updateNiceThingsFor"
                         output="nicethings.wsdl"
                         location="http://localhost:8080/axis/services/NiceThingsBean"
                         namespace="http://localhost:8080/axis/services/NiceThingsBean"
                         namespaceImpl="http://localhost:8080/axis/services/NiceThingsBean">
+            <classpath refid="classpath.id"/>
             <complextype classname="samples.ejb.NiceThings"
                          namespace="urn:NiceThingsBean"/>
 <!-- You can also pass in another serializer/deserializer if you don't want to use the default 

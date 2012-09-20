@@ -144,7 +144,7 @@ public class Java2WsdlAntTask extends Task
         AntClassLoader cl = new AntClassLoader(getClass().getClassLoader(),
         		getProject(),
                 classpath == null ? createClasspath() : classpath,
-                false);
+                true);
         
         CommandlineJava.SysProperties sysProperties =
                 commandline.getSystemProperties();
@@ -194,7 +194,7 @@ public class Java2WsdlAntTask extends Task
             TypeMappingDelegate tmi = (TypeMappingDelegate)tmr.getDefaultTypeMapping();
             Iterator i = complexTypes.iterator();
             while (i.hasNext()) {
-                ((ComplexType) i.next()).register(tmi);
+                ((ComplexType) i.next()).register(cl, tmi);
             }
             
             if (style != null) {

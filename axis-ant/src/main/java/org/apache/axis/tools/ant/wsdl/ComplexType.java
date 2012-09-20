@@ -48,15 +48,15 @@ public class ComplexType {
         this.namespace = namespace;
     }
     
-    public void register(TypeMapping tm) throws ClassNotFoundException {
-        Class cl = Class.forName(className);
+    public void register(ClassLoader cl, TypeMapping tm) throws ClassNotFoundException {
+        Class cls = cl.loadClass(className);
         String localName = className.substring((className.lastIndexOf(".") + 1));  
         QName qName = new QName(namespace,localName);
         SerializerFactory sf = BaseSerializerFactory.createFactory(
-                                    Class.forName(serializer), cl, qName);
+                                    cl.loadClass(serializer), cls, qName);
         DeserializerFactory df = BaseDeserializerFactory.createFactory(
-                                    Class.forName(deserializer), cl, qName);
+                                    cl.loadClass(deserializer), cls, qName);
         
-        tm.register(cl, qName, sf, df);
+        tm.register(cls, qName, sf, df);
     }
 }
