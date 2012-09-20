@@ -22,32 +22,22 @@ import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Create Java classes from local or remote WSDL for usage in test cases.
+ * Create Java classes from local or remote WSDL.
  * 
- * @goal wsdl2java-test
- * @phase generate-test-sources
+ * @goal generate-sources
+ * @phase generate-sources
  */
-public class Wsdl2JavaTestMojo extends AbstractWsdl2JavaMojo {
-    /**
-     * Flag indicating whether a default (empty) implementation should be generated.
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean implementation;
-    
-    /**
-     * Flag indicating whether a basic unit test should be generated.
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean testCase;
-    
+public class GenerateSourcesMojo extends AbstractWsdl2JavaMojo {
     protected void configureEmitter(Emitter emitter) {
-        emitter.setImplementationWanted(implementation);
-        emitter.setTestCaseWanted(testCase);
+        // In a Maven build, generated sources are always written to a directory other than
+        // the source directory. By default, the emitter would generate an empty implementation
+        // because it doesn't see the implementation provided by the developer. We don't want this
+        // because these two classes would collide. Therefore implementationWanted is hardcoded
+        // to false:
+        emitter.setImplementationWanted(false);
     }
 
     protected void addSourceRoot(MavenProject project, String path) {
-        project.addTestCompileSourceRoot(path);
+        project.addCompileSourceRoot(path);
     }
 }

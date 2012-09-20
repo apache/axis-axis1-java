@@ -102,7 +102,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/generated/wsdl/DownloadFile.wsdl</file>

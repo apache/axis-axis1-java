@@ -53,7 +53,7 @@
                     <execution>
                         <id>samples-echo</id>
                         <goals>
-                            <goal>wsdl2java</goal>
+                            <goal>generate-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/main/wsdl/InteropTest.wsdl</file>

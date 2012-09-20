@@ -28,9 +28,9 @@ maven-wsdl2java-plugin
   The plugin has two goals. They are essentially identical, except for the build phase in which they
   are used:
 
-  * {{{./wsdl2java-mojo.html}wsdl2java:wsdl2java}} is used to generate code that will be compiled during
+  * {{{./generate-sources-mojo.html}wsdl2java:generate-sources}} is used to generate code that will be compiled during
     the <<<compile>>> phase.
   
-  * {{{./wsdl2java-test-mojo.html}wsdl2java:wsdl2java-test}} is used to generate code that will be
+  * {{{./generate-test-sources-mojo.html}wsdl2java:generate-test-sources}} is used to generate code that will be
     compiled during the <<<test-compile>>> phase. Execution of the goal may be skipped if tests are
     disabled.

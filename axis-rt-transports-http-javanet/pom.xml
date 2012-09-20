@@ -70,7 +70,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/test.wsdl</file>

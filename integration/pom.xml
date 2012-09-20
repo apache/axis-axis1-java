@@ -175,7 +175,7 @@
                     <execution>
                         <id>samples-echo</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>../samples/echo-sample/src/main/wsdl/InteropTest.wsdl</file>
@@ -195,7 +195,7 @@
                     <execution>
                         <id>samples-addr</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>../distribution/src/main/files/samples/addr/AddressBook.wsdl</file>
@@ -214,7 +214,7 @@
                     <execution>
                         <id>_import-1</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/_import/Import.wsdl</file>
@@ -242,7 +242,7 @@
                     <execution>
                         <id>_import-2</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/_import/Import.wsdl</file>
@@ -284,7 +284,7 @@
                     <execution>
                         <id>_import-3</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/_import/ImportMessagesXSDImport.wsdl</file>
@@ -300,7 +300,7 @@
                     <execution>
                         <id>adaptive</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/adaptive/adaptive.wsdl</file>
@@ -324,7 +324,7 @@
                     <execution>
                         <id>any</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/any/any.wsdl</file>
@@ -345,7 +345,7 @@
                     <execution>
                         <id>anytype</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/anytype/AnyService.wsdl</file>
@@ -362,7 +362,7 @@
                     <execution>
                         <id>arrays</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/arrays/ArrayTest.wsdl</file>
@@ -380,7 +380,7 @@
                     <execution>
                         <id>arrays2</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/arrays2/arraytest.wsdl</file>
@@ -404,7 +404,7 @@
                     <execution>
                         <id>arrays3</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/arrays3/generated/arrays3.wsdl</file>
@@ -419,7 +419,7 @@
                     <execution>
                         <id>arrays4</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/arrays4/ArrayTest.wsdl</file>
@@ -437,7 +437,7 @@
                     <execution>
                         <id>attachments</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/attachments/mime.wsdl</file>
@@ -448,7 +448,7 @@
                     <execution>
                         <id>attrGroup</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/attrGroup/AttrGroupService.wsdl</file>
@@ -463,7 +463,7 @@
                     <execution>
                         <id>axis2098</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/axis2098/helloworld.wsdl</file>
@@ -483,7 +483,7 @@
                     <execution>
                         <id>choice</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/choice/ChoiceService.wsdl</file>
@@ -500,7 +500,7 @@
                     <execution>
                         <id>dataset</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/dataset/DataService.wsdl</file>
@@ -516,7 +516,7 @@
                     <execution>
                         <id>datatypes</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/datatypes/DataTypes.wsdl</file>
@@ -536,7 +536,7 @@
                     <execution>
                         <id>date</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/date/testdate.wsdl</file>
@@ -546,7 +546,7 @@
                     <execution>
                         <id>document</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/document/document.wsdl</file>
@@ -564,7 +564,7 @@
                     <execution>
                         <id>echo</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/echo/echo.wsdl</file>
@@ -584,7 +584,7 @@
                     <execution>
                         <id>echo2</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/echo2/echo2.wsdl</file>
@@ -600,7 +600,7 @@
                     <execution>
                         <id>esr</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/esr/esr.wsdl</file>
@@ -613,7 +613,7 @@
                     <execution>
                         <id>extension</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/extension/extension.wsdl</file>
@@ -632,7 +632,7 @@
                     <execution>
                         <id>faults</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/faults/FaultService.wsdl</file>
@@ -648,7 +648,7 @@
                     <execution>
                         <id>gateway</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/gateway/Gateway.wsdl</file>
@@ -666,7 +666,7 @@
                     <execution>
                         <id>getPort</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/getPort/getPort.wsdl</file>
@@ -677,7 +677,7 @@
                     <execution>
                         <id>header</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/header/header.wsdl</file>
@@ -691,7 +691,7 @@
                     <execution>
                         <id>include</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/include/AddressBook.wsdl</file>
@@ -709,7 +709,7 @@
                     <execution>
                         <id>inout</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/inout/inout.wsdl</file>
@@ -726,7 +726,7 @@
                     <execution>
                         <id>jaxrpcdynproxy</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/jaxrpcdynproxy/AddressInOut.wsdl</file>
@@ -736,7 +736,7 @@
                     <execution>
                         <id>map</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/map/MapService.wsdl</file>
@@ -753,7 +753,7 @@
                     <execution>
                         <id>marrays</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/marrays/MArrayTest.wsdl</file>
@@ -771,7 +771,7 @@
                     <execution>
                         <id>marshall</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/marshall/marshall.wsdl</file>
@@ -783,7 +783,7 @@
                     <execution>
                         <id>marshall2</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/marshall2/marshall2.wsdl</file>
@@ -796,7 +796,7 @@
                     <execution>
                         <id>multiref</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/multiref/MultiRefTest.wsdl</file>
@@ -815,7 +815,7 @@
                     <execution>
                         <id>names</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/names/JavaNames.wsdl</file>
@@ -833,7 +833,7 @@
                     <execution>
                         <id>nested</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/nested/Nested.wsdl</file>
@@ -851,7 +851,7 @@
                     <execution>
                         <id>omit</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/omit/omit.wsdl</file>
@@ -861,7 +861,7 @@
                     <execution>
                         <id>oneway</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/oneway/oneway.wsdl</file>
@@ -873,7 +873,7 @@
                     <execution>
                         <id>polymorphism</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/polymorphism/polymorphism.wsdl</file>
@@ -889,7 +889,7 @@
                     <execution>
                         <id>primitiveWrappers</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/primitiveWrappers/primitiveWrappers.wsdl</file>
@@ -900,7 +900,7 @@
                     <execution>
                         <id>qualify</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/qualify/qualifytest.wsdl</file>
@@ -917,7 +917,7 @@
                     <execution>
                         <id>qualify2</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/qualify2/attribute-qualify.wsdl</file>
@@ -933,7 +933,7 @@
                     <execution>
                         <id>ram</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/ram/ram.wsdl</file>
@@ -953,7 +953,7 @@
                     <execution>
                         <id>session</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/session/session.wsdl</file>
@@ -966,7 +966,7 @@
                     <execution>
                         <id>stubheaders</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/stubheaders/stubheaders.wsdl</file>
@@ -982,7 +982,7 @@
                     <execution>
                         <id>union</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/union/UnionService.wsdl</file>
@@ -997,7 +997,7 @@
                     <execution>
                         <id>wrapped</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapped/CityBBB.wsdl</file>
@@ -1015,7 +1015,7 @@
                     <execution>
                         <id>wrapped2</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapped2/employee.wsdl</file>
@@ -1037,7 +1037,7 @@
                     <execution>
                         <id>wrapped_choice</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapped_choice/reportservice.wsdl</file>
@@ -1056,7 +1056,7 @@
                     <execution>
                         <id>wrapped_holders</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapped_holders/thing.wsdl</file>
@@ -1072,7 +1072,7 @@
                     <execution>
                         <id>wrapped_inout</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapped_inout/wrapped_inout.wsdl</file>
@@ -1088,7 +1088,7 @@
                     <execution>
                         <id>wrapperHolder</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapperHolder/bug1191.wsdl</file>
@@ -1104,7 +1104,7 @@
                     <execution>
                         <id>wrapperHolder2</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapperHolder2/bug2102.wsdl</file>
@@ -1120,7 +1120,7 @@
                     <execution>
                         <id>xsd</id>
                         <goals>
-                            <goal>wsdl2java-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/xsd/good.wsdl</file>

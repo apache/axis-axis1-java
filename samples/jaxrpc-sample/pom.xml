@@ -74,7 +74,7 @@
                     <execution>
                         <id>address</id>
                         <goals>
-                            <goal>wsdl2java</goal>
+                            <goal>generate-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/main/wsdl/address/Address.wsdl</file>
@@ -84,7 +84,7 @@
                     <execution>
                         <id>hello</id>
                         <goals>
-                            <goal>wsdl2java</goal>
+                            <goal>generate-sources</goal>
                         </goals>
                         <configuration>
                             <file>src/main/wsdl/hello/HelloWorld.wsdl</file>
