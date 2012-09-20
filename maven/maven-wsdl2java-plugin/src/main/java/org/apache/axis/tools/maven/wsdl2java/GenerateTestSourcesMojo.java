@@ -18,6 +18,8 @@
  */
 package org.apache.axis.tools.maven.wsdl2java;
 
+import java.io.File;
+
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.project.MavenProject;
 
@@ -28,6 +30,17 @@ import org.apache.maven.project.MavenProject;
  * @phase generate-test-sources
  */
 public class GenerateTestSourcesMojo extends AbstractWsdl2JavaMojo {
+    /**
+     * Output directory for generated source files.
+     * 
+     * @parameter default-value="${project.build.directory}/generated-test-sources/wsdl2java"
+     */
+    private File testSourceOutputDirectory;
+
+    protected File getSourceOutputDirectory() {
+        return testSourceOutputDirectory;
+    }
+
     /**
      * Flag indicating whether a default (empty) implementation should be generated.
      * 

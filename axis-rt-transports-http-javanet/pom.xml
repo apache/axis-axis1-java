@@ -74,7 +74,6 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/test.wsdl</file>
-		                    <output>${project.build.directory}/work</output>
 		                    <serverSide>true</serverSide>
                             <mappings>
                                 <mapping>
@@ -129,7 +128,7 @@
                         	<port>${testPort}</port>
                             <wsdds>
                                 <wsdd>
-                                    <directory>${project.build.directory}/work</directory>
+                                    <directory>${project.build.directory}/generated-test-sources/wsdl2java</directory>
                                     <includes>
                                         <include>**/deploy.wsdd</include>
                                     </includes>

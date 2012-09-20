@@ -168,9 +168,6 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>maven-wsdl2java-plugin</artifactId>
                 <version>${project.version}</version>
-                <configuration>
-                    <output>${project.build.directory}/work</output>
-                </configuration>
                 <executions>
                     <execution>
                         <id>samples-echo</id>
@@ -1186,7 +1183,7 @@
                                     </includes>
                                 </wsdd>
                                 <wsdd>
-                                    <directory>${project.build.directory}/work</directory>
+                                    <directory>${project.build.directory}/generated-test-sources/wsdl2java</directory>
                                     <includes>
                                         <include>**/deploy.wsdd</include>
                                     </includes>
@@ -1224,8 +1221,8 @@
                         <configuration>
                             <target>
                                 <!-- TODO: quick and dirty hack to be able to compile all tests -->
-                                <mkdir dir="${project.build.directory}/work/samples/client"/>
-                                <copy file="../distribution/src/main/files/samples/client/DynamicInvoker.java" todir="${project.build.directory}/work/samples/client"/>
+                                <mkdir dir="${project.build.directory}/generated-test-sources/wsdl2java/samples/client"/>
+                                <copy file="../distribution/src/main/files/samples/client/DynamicInvoker.java" todir="${project.build.directory}/generated-test-sources/wsdl2java/samples/client"/>
                             </target>
                         </configuration>
                     </execution>

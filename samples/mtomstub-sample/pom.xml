@@ -96,9 +96,6 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>maven-wsdl2java-plugin</artifactId>
                 <version>${project.version}</version>
-                <configuration>
-                    <output>${project.build.directory}/generated/src</output>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>

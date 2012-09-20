@@ -67,9 +67,6 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>maven-wsdl2java-plugin</artifactId>
                 <version>${project.version}</version>
-                <configuration>
-                    <output>${project.build.directory}/work</output>
-                </configuration>
                 <executions>
                     <execution>
                         <id>address</id>
@@ -131,7 +128,7 @@
                                     </includes>
                                 </wsdd>
                                 <wsdd>
-                                    <directory>${project.build.directory}/work</directory>
+                                    <directory>${project.build.directory}/generated-sources/wsdl2java</directory>
                                     <includes>
                                         <include>**/*.wsdd</include>
                                     </includes>

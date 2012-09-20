@@ -68,14 +68,6 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     private String url;
     
     /**
-     * Output directory for emitted files.
-     * 
-     * @parameter
-     * @required
-     */
-    private File output;
-
-    /**
      * Add scope to deploy.xml: "Application", "Request", "Session".
      * 
      * @parameter
@@ -200,7 +192,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //        emitter.setProperties(properties);
 //        emitter.setImports(!noImports);
         emitter.setAllWanted(all);
-        emitter.setOutputDir(output.getAbsolutePath());
+        emitter.setOutputDir(getSourceOutputDirectory().getAbsolutePath());
         emitter.setServerSide(serverSide);
         emitter.setSkeletonWanted(skeleton);
 //        emitter.setVerbose(verbose);
@@ -255,9 +247,10 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
             throw new MojoFailureException("wsdl2java failed", ex);
         }
         
-        addSourceRoot(project, output.getAbsolutePath());
+        addSourceRoot(project, getSourceOutputDirectory().getAbsolutePath());
     }
     
+    protected abstract File getSourceOutputDirectory();
     protected abstract void configureEmitter(Emitter emitter);
     protected abstract void addSourceRoot(MavenProject project, String path);
 }
