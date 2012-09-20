@@ -144,6 +144,20 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     private boolean helperGen;
     
     /**
+     * The location of the deployment WSDD file to be generated.
+     * 
+     * @parameter
+     */
+    private File deployWsdd;
+    
+    /**
+     * The location of the undeployment WSDD file to be generated.
+     * 
+     * @parameter
+     */
+    private File undeployWsdd;
+    
+    /**
      * A set of Java to XML type mappings that override the default mappings. This can be used to
      * change the Java class associated with an XML type.
      * 
@@ -168,7 +182,14 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         }
         
         // Instantiate the emitter
-        Emitter emitter = new Emitter();
+        EmitterEx emitter = new EmitterEx();
+        if (deployWsdd != null) {
+            emitter.setDeployWsdd(deployWsdd.getAbsolutePath());
+        }
+        if (undeployWsdd != null) {
+            emitter.setUndeployWsdd(undeployWsdd.getAbsolutePath());
+        }
+        emitter.setFactory(new JavaGeneratorFactoryEx(emitter));
 
         //extract the scope
         Scope scope = Scope.getScope(deployScope, null);
@@ -184,9 +205,6 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         }
 //        emitter.setTestCaseWanted(testCase);
         emitter.setHelperWanted(helperGen);
-//        if (factory != null) {
-//            emitter.setFactory(factory);
-//        }
 //        emitter.setNamespaceIncludes(nsIncludes);
 //        emitter.setNamespaceExcludes(nsExcludes);
 //        emitter.setProperties(properties);

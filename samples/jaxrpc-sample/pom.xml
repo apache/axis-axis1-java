@@ -76,6 +76,7 @@
                         <configuration>
                             <file>src/main/wsdl/address/Address.wsdl</file>
                             <serverSide>true</serverSide>
+                            <deployWsdd>${project.build.directory}/wsdd/address.wsdd</deployWsdd>
                         </configuration>
                     </execution>
                     <execution>
@@ -86,6 +87,7 @@
                         <configuration>
                             <file>src/main/wsdl/hello/HelloWorld.wsdl</file>
                             <serverSide>true</serverSide>
+                            <deployWsdd>${project.build.directory}/wsdd/hello.wsdd</deployWsdd>
                         </configuration>
                     </execution>
                 </executions>
@@ -128,10 +130,7 @@
                                     </includes>
                                 </wsdd>
                                 <wsdd>
-                                    <directory>${project.build.directory}/generated-sources/wsdl2java</directory>
-                                    <includes>
-                                        <include>**/*.wsdd</include>
-                                    </includes>
+                                    <directory>${project.build.directory}/wsdd</directory>
                                 </wsdd>
                             </wsdds>
                         </configuration>

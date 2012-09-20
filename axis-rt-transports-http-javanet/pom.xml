@@ -81,6 +81,7 @@
                                     <package>org.apache.axis.transport.http.javanet</package>
                                 </mapping>
                             </mappings>
+                            <deployWsdd>${project.build.directory}/deploy.wsdd</deployWsdd>
                         </configuration>
                     </execution>
                 </executions>
@@ -128,9 +129,9 @@
                         	<port>${testPort}</port>
                             <wsdds>
                                 <wsdd>
-                                    <directory>${project.build.directory}/generated-test-sources/wsdl2java</directory>
+                                    <directory>${project.build.directory}</directory>
                                     <includes>
-                                        <include>**/deploy.wsdd</include>
+                                        <include>deploy.wsdd</include>
                                     </includes>
                                 </wsdd>
                             </wsdds>
