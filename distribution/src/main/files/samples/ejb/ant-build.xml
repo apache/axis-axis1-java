@@ -7,34 +7,34 @@
     <property name="build.dir" value="build"/>
     <property name="src.dir" value="src"/>
     <property name="metainf.dir" value="META-INF"/>
- 	  <property name="axis.dir" location="../../"/>
+    <property name="axis.dir" location="../../"/>
 
-	<path id="classpath.id">
-		<fileset dir="${axis.dir}/build/lib">
-			<include name="*.jar"/>
-		</fileset>
-    <pathelement location="${deploy.dir}/../lib/jboss-j2ee.jar"/>
-    <pathelement location="${build.dir}"/>
-	</path>
+    <path id="classpath.id">
+        <fileset dir="${axis.dir}/build/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${deploy.dir}/../lib/jboss-j2ee.jar"/>
+        <pathelement location="${build.dir}"/>
+    </path>
 
-  <taskdef name="axis-java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask"
-    loaderref="axis" >
+    <taskdef name="axis-java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask"
+             loaderref="axis" >
         <classpath refid="classpath.id"/>
-  </taskdef>
-  <taskdef name="axis-admin" classname="org.apache.axis.tools.ant.axis.AdminClientTask"
-    loaderref="axis" >
+    </taskdef>
+    <taskdef name="axis-admin" classname="org.apache.axis.tools.ant.axis.AdminClientTask"
+             loaderref="axis" >
         <classpath refid="classpath.id"/>
-  </taskdef>
-  <taskdef name="axis-wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask"
-    loaderref="axis" >
+    </taskdef>
+    <taskdef name="axis-wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask"
+             loaderref="axis" >
         <classpath refid="classpath.id"/>
-  </taskdef>
+    </taskdef>
   
-	<target name="w2j-simplebean" depends="j2w-simplebean">
-			<axis-wsdl2java output="${build.dir}/java" testcase="true" url="./simplebean.wsdl"> 
-				<mapping namespace="http://localhost:8080/axis/services/SimpleBean" package="com.test.simplebean"/>
-			</axis-wsdl2java> 
-	</target>
+    <target name="w2j-simplebean" depends="j2w-simplebean">
+        <axis-wsdl2java output="${build.dir}/java" testcase="true" url="./simplebean.wsdl"> 
+            <mapping namespace="http://localhost:8080/axis/services/SimpleBean" package="com.test.simplebean"/>
+        </axis-wsdl2java> 
+    </target>
 
     <target name="prepare">
         <delete>
@@ -44,21 +44,20 @@
     </target>
 
     <target name="compile" depends="prepare">
-         <javac classpathref="classpath.id" srcdir="${src.dir}" destdir="${build.dir}"/>
+        <javac classpathref="classpath.id" srcdir="${src.dir}" destdir="${build.dir}"/>
     </target>
 
     <target name="build-client" depends="w2j-simplebean">
-         <javac classpathref="classpath.id" srcdir="${build.dir}/java" destdir="${build.dir}"/>
+        <javac classpathref="classpath.id" srcdir="${build.dir}/java" destdir="${build.dir}"/>
     </target>        
     
     <target name="run-junit" depends="build-client, deployws">
-			<junit>
-				<classpath refid="classpath.id"/>
-				<formatter type="plain" usefile="false"/>
-				<test name="com.test.simplebean.SimpleBeanServiceTestCase"/>
-			</junit>
-		</target>        
-
+        <junit>
+            <classpath refid="classpath.id"/>
+            <formatter type="plain" usefile="false"/>
+            <test name="com.test.simplebean.SimpleBeanServiceTestCase"/>
+        </junit>
+    </target>        
     
     <target name="jar" depends="compile">
         <jar destfile="${app.name}.jar">
@@ -66,7 +65,7 @@
                 <include name="**/*.class" />
             </fileset>
             <metainf dir="${metainf.dir}"/>
-        </jar>	
+        </jar>    
     </target>
     
     <target name="deployejb" depends="jar">
@@ -82,8 +81,8 @@
     </target>
     
     <target name="j2w-simplebean">
-        <axis-java2wsdl	classname="samples.ejb.SimpleBean" classpath="${build.dir}"
-			methods="sayHello"
+        <axis-java2wsdl classname="samples.ejb.SimpleBean" classpath="${build.dir}"
+                        methods="sayHello"
                         output="simplebean.wsdl"
                         location="http://localhost:8080/axis/services/SimpleBean"
                         namespace="http://localhost:8080/axis/services/SimpleBean"
@@ -91,13 +90,12 @@
     </target>
     
     <target name="j2w-nicethingsbean">
-        <axis-java2wsdl	classname="samples.ejb.NiceThingsBean"
-			methods="sayHello,findNiceThingsFor,updateNiceThingsFor"
+        <axis-java2wsdl classname="samples.ejb.NiceThingsBean"
+                        methods="sayHello,findNiceThingsFor,updateNiceThingsFor"
                         output="nicethings.wsdl"
                         location="http://localhost:8080/axis/services/NiceThingsBean"
                         namespace="http://localhost:8080/axis/services/NiceThingsBean"
-                        namespaceImpl=
-                            "http://localhost:8080/axis/services/NiceThingsBean">
+                        namespaceImpl="http://localhost:8080/axis/services/NiceThingsBean">
             <complextype classname="samples.ejb.NiceThings"
                          namespace="urn:NiceThingsBean"/>
 <!-- You can also pass in another serializer/deserializer if you don't want to use the default 
@@ -106,8 +104,8 @@
                  deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"  -->
         </axis-java2wsdl>  
     </target>        
-	<target name="clean">
-		<delete dir="${build.dir}"/>
-	</target>
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
 </project>
 
