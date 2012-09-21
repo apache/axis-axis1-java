@@ -30,7 +30,7 @@ import org.apache.maven.project.MavenProject;
  */
 public class GenerateTestSourcesMojo extends AbstractWsdl2JavaMojo {
     /**
-     * Output directory for generated source files.
+     * Output directory for generated Java files.
      * 
      * @parameter default-value="${project.build.directory}/generated-test-sources/wsdl2java"
      */

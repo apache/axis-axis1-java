@@ -68,7 +68,17 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     private String url;
     
     /**
-     * Add scope to deploy.xml: "Application", "Request", "Session".
+     * Determines the scope that will be specified for the service in the deployment WSDD. Valid
+     * values are <code>application</code>, <code>request</code> and <code>session</code>. This
+     * parameter has no effect if {@link #generate} is set to <code>client</code> or if
+     * {@link #deployWsdd} is not specified. If this parameter is not specified, then no explicit
+     * scope will be configured in the deployment WSDD, in which case the scope defaults to
+     * <code>request</code>.
+     * <br>
+     * Note that these semantics (in particular the default scope <code>request</code>) are
+     * compatible with the <code>deployScope</code> parameter of the wsdl2java Ant task. This
+     * simplifies the migration of Ant builds to Maven. However, for most services,
+     * <code>application</code> is a more reasonable setting.
      * 
      * @parameter
      */
@@ -85,22 +95,19 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
      * The default type mapping registry to use. Either 1.1 or 1.2.
      * 
      * @parameter default-value="1.2"
-     * @required
      */
     private String typeMappingVersion;
     
     /**
-     * <p>
      * Specifies what artifacts should be generated. Valid values are:
      * <ul>
      * <li><code>client</code>: generate client stubs
      * <li><code>server</code>: generate server side artifacts
      * <li><code>both</code>: generate all artifacts
      * </ul>
-     * <p>
      * The <code>server</code> mode can also be used for clients that rely on dynamic proxies
      * created using the JAX-RPC {@link ServiceFactory} API, because they don't need client stubs.
-     * <p>
+     * <br>
      * Also note that the <code>both</code> mode is only really meaningful if {@link #skeleton} is
      * set to <code>true</code> or if {@link #deployWsdd} is specified. If none of these conditions
      * is satisfied, then <code>client</code> and <code>both</code> will generate the same set of
@@ -112,19 +119,20 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     private String generate;
     
     /**
-     * Set the name of the class implementing the web service.
-     * This is especially useful when exporting a java class
-     * as a web service using Java2WSDL followed by WSDL2Java.
-     * This parameter is ignored if {@link #generate} is set to <code>client</code>.
+     * Set the name of the class implementing the web service. This parameter is ignored if
+     * {@link #generate} is set to <code>client</code>. If this parameter is not specified, then a
+     * default class name will be chosen if necessary.
      * 
      * @parameter
      */
     private String implementationClassName;
     
     /**
-     * deploy skeleton (true) or implementation (false) in deploy.wsdd.
-     * Default is false. This parameter is ignored if {@link #generate} is set to
-     * <code>client</code>.
+     * Specifies whether a skeleton should be generated. If this parameter is set to
+     * <code>false</code>, a skeleton will not be generated. Instead, the generated deployment WSDD
+     * will indicate that the implementation class is deployed directly. In such cases, the WSDD
+     * contains extra meta data describing the operations and parameters of the implementation
+     * class. This parameter is ignored if {@link #generate} is set to <code>client</code>.
      * 
      * @parameter default-value="false"
      */
@@ -181,7 +189,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     
     /**
      * A set of Java to XML type mappings that override the default mappings. This can be used to
-     * change the Java class associated with an XML type.
+     * <a href="java-xml-type-mappings.html">change the Java class associated with an XML type</a>.
      * 
      * @parameter
      */
