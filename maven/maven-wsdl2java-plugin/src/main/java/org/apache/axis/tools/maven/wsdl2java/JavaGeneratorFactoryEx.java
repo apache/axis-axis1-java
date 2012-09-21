@@ -20,13 +20,13 @@ package org.apache.axis.tools.maven.wsdl2java;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
+import javax.wsdl.Service;
 
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.toJava.Emitter;
-import org.apache.axis.wsdl.toJava.JavaBindingWriter;
 import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
 import org.apache.axis.wsdl.toJava.JavaGeneratorFactory;
 
@@ -45,6 +45,14 @@ public class JavaGeneratorFactoryEx extends JavaGeneratorFactory {
         }
     }
 
+    public Generator getGenerator(Service service, SymbolTable symbolTable) {
+        if (((EmitterEx)emitter).isClientSide()) {
+            return super.getGenerator(service, symbolTable);
+        } else {
+            return new NoopGenerator();
+        }
+    }
+    
     public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
         if (include(binding.getQName())) {
             Generator writer = new JavaBindingWriterEx(emitter, binding, symbolTable);

@@ -22,6 +22,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.ServiceFactory;
 
 import org.apache.axis.constants.Scope;
 import org.apache.axis.tools.maven.shared.nsmap.Mapping;
@@ -89,16 +90,32 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     private String typeMappingVersion;
     
     /**
-     * emit server-side bindings for web service; default=false
+     * <p>
+     * Specifies what artifacts should be generated. Valid values are:
+     * <ul>
+     * <li><code>client</code>: generate client stubs
+     * <li><code>server</code>: generate server side artifacts
+     * <li><code>both</code>: generate all artifacts
+     * </ul>
+     * <p>
+     * The <code>server</code> mode can also be used for clients that rely on dynamic proxies
+     * created using the JAX-RPC {@link ServiceFactory} API, because they don't need client stubs.
+     * <p>
+     * Also note that the <code>both</code> mode is only really meaningful if {@link #skeleton} is
+     * set to <code>true</code> or if {@link #deployWsdd} is specified. If none of these conditions
+     * is satisfied, then <code>client</code> and <code>both</code> will generate the same set of
+     * artifacts.
      * 
-     * @parameter default-value="false"
+     * @parameter
+     * @required
      */
-    private boolean serverSide;
+    private String generate;
     
     /**
      * Set the name of the class implementing the web service.
      * This is especially useful when exporting a java class
      * as a web service using Java2WSDL followed by WSDL2Java.
+     * This parameter is ignored if {@link #generate} is set to <code>client</code>.
      * 
      * @parameter
      */
@@ -106,7 +123,8 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     
     /**
      * deploy skeleton (true) or implementation (false) in deploy.wsdd.
-     * Default is false.  Assumes server-side="true".
+     * Default is false. This parameter is ignored if {@link #generate} is set to
+     * <code>client</code>.
      * 
      * @parameter default-value="false"
      */
@@ -143,14 +161,19 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     private boolean helperGen;
     
     /**
-     * The location of the deployment WSDD file to be generated.
+     * The location of the deployment WSDD file to be generated. This parameter is ignored if
+     * {@link #generate} is set to <code>client</code>. If this parameter is not specified, then no
+     * deployment WSDD will be generated.
      * 
      * @parameter
      */
     private File deployWsdd;
     
     /**
-     * The location of the undeployment WSDD file to be generated.
+     * The location of the undeployment WSDD file to be generated. This parameter is ignored if
+     * {@link #generate} is set to <code>client</code>. If this parameter is not specified, then no
+     * undeployment WSDD will be generated. Note that (in contrast to {@link #deployWsdd}) this
+     * parameter is rarely used: in general, no undeployment WSDD is required.
      * 
      * @parameter
      */
@@ -182,6 +205,18 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         
         // Instantiate the emitter
         EmitterEx emitter = new EmitterEx();
+        if (generate.equals("client")) {
+            emitter.setClientSide(true);
+            emitter.setServerSide(false);
+        } else if (generate.equals("server")) {
+            emitter.setClientSide(false);
+            emitter.setServerSide(true);
+        } else if (generate.equals("both")) {
+            emitter.setClientSide(true);
+            emitter.setServerSide(true);
+        } else {
+            throw new MojoExecutionException("Invalid value '" + generate + "' for the 'generate' parameter");
+        }
         if (deployWsdd != null) {
             emitter.setDeployWsdd(deployWsdd.getAbsolutePath());
         }
@@ -210,7 +245,6 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //        emitter.setImports(!noImports);
         emitter.setAllWanted(all);
         emitter.setOutputDir(getSourceOutputDirectory().getAbsolutePath());
-        emitter.setServerSide(serverSide);
         emitter.setSkeletonWanted(skeleton);
 //        emitter.setVerbose(verbose);
 //        emitter.setDebug(debug);

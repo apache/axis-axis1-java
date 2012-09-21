@@ -75,7 +75,7 @@
                         </goals>
                         <configuration>
                             <file>src/main/wsdl/address/Address.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>server</generate>
                             <deployWsdd>${project.build.directory}/wsdd/address.wsdd</deployWsdd>
                         </configuration>
                     </execution>
@@ -86,7 +86,7 @@
                         </goals>
                         <configuration>
                             <file>src/main/wsdl/hello/HelloWorld.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>server</generate>
                             <deployWsdd>${project.build.directory}/wsdd/hello.wsdd</deployWsdd>
                         </configuration>
                     </execution>

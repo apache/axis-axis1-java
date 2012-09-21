@@ -32,6 +32,14 @@ public class JavaBindingWriterEx extends JavaBindingWriter {
         super(emitter, binding, symbolTable);
     }
 
+    protected Generator getJavaStubWriter(Emitter emitter, BindingEntry bEntry, SymbolTable st) {
+        if (((EmitterEx)emitter).isClientSide()) {
+            return super.getJavaStubWriter(emitter, bEntry, st);
+        } else {
+            return new NoopGenerator();
+        }
+    }
+
     protected Generator getJavaImplWriter(Emitter emitter, BindingEntry bEntry, SymbolTable st) {
         if (((EmitterEx)emitter).isGenerateImplementation()) {
             return super.getJavaImplWriter(emitter, bEntry, st);

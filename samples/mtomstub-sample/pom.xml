@@ -103,6 +103,7 @@
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/generated/wsdl/DownloadFile.wsdl</file>
+                            <generate>client</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://service.mtomstub.samples/</namespace>

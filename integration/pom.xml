@@ -176,6 +176,7 @@
                         </goals>
                         <configuration>
                             <file>../samples/echo-sample/src/main/wsdl/InteropTest.wsdl</file>
+                            <generate>client</generate>
                             <typeMappingVersion>1.1</typeMappingVersion>
                             <mappings>
                                 <mapping>
@@ -196,6 +197,7 @@
                         </goals>
                         <configuration>
                             <file>../distribution/src/main/files/samples/addr/AddressBook.wsdl</file>
+                            <generate>client</generate>
                             <typeMappingVersion>1.1</typeMappingVersion>
                             <mappings>
                                 <mapping>
@@ -215,7 +217,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/_import/Import.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
                             <mappings>
@@ -244,7 +246,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/_import/Import.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
                             <mappings>
@@ -287,6 +289,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/_import/ImportMessagesXSDImport.wsdl</file>
+                            <generate>client</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:types.import.test</namespace>
@@ -303,7 +306,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/adaptive/adaptive.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://com.test/wsdl/Adaptive</namespace>
@@ -329,7 +332,7 @@
                         <configuration>
                             <file>src/test/wsdl/any/any.wsdl</file>
                             <all>true</all>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:partner.soap.sforce.com</namespace>
@@ -351,7 +354,7 @@
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/anytype/AnyService.wsdl</file>
                             <all>true</all>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://test.com/AnyService</namespace>
@@ -369,7 +372,7 @@
                         <configuration>
                             <file>src/test/wsdl/arrays/ArrayTest.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -387,7 +390,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/arrays2/arraytest.wsdl</file>
-                            <deployScope>session</deployScope>
+                            <generate>client</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://www.xyz.net/webservices/arraytest/1.0</namespace>
@@ -411,6 +414,7 @@
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/arrays3/generated/arrays3.wsdl</file>
+                            <generate>client</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://arrays3.test</namespace>
@@ -427,7 +431,7 @@
                         <configuration>
                             <file>src/test/wsdl/arrays4/ArrayTest.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -445,7 +449,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/attachments/mime.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <deployWsdd>${project.build.directory}/wsdd/attachments.wsdd</deployWsdd>
                         </configuration>
@@ -457,6 +461,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/attrGroup/AttrGroupService.wsdl</file>
+                            <generate>client</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://tempuri.org/</namespace>
@@ -472,6 +477,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/axis2098/helloworld.wsdl</file>
+                            <generate>client</generate>
                             <all>true</all>
                             <mappings>
                                 <mapping>
@@ -492,6 +498,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/choice/ChoiceService.wsdl</file>
+                            <generate>client</generate>
                             <noWrapped>true</noWrapped>
                             <mappings>
                                 <mapping>
@@ -509,6 +516,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/dataset/DataService.wsdl</file>
+                            <generate>client</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://tempuri.org/</namespace>
@@ -526,7 +534,7 @@
                         <configuration>
                             <file>src/test/wsdl/datatypes/DataTypes.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <wrapArrays>true</wrapArrays>
                             <mappings>
@@ -546,7 +554,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/date/testdate.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <deployWsdd>${project.build.directory}/wsdd/date.wsdd</deployWsdd>
                         </configuration>
                     </execution>
@@ -558,7 +566,7 @@
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/document/document.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://document.wsdl.test</namespace>
@@ -576,7 +584,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/echo/echo.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://echo.services</namespace>
@@ -597,7 +605,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/echo2/echo2.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:echo2.wsdl.test</namespace>
@@ -614,7 +622,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/esr/esr.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <helperGen>true</helperGen>
                             <deployWsdd>${project.build.directory}/wsdd/esr.wsdd</deployWsdd>
@@ -629,7 +637,7 @@
                         <configuration>
                             <file>src/test/wsdl/extension/extension.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -648,7 +656,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/faults/FaultService.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://test.com/wsdl/faults</namespace>
@@ -665,7 +673,7 @@
                         </goals>
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/gateway/Gateway.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <all>true</all>
                             <mappings>
                                 <mapping>
@@ -684,7 +692,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/getPort/getPort.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <implementation>true</implementation>
                             <deployWsdd>${project.build.directory}/wsdd/getPort.wsdd</deployWsdd>
                         </configuration>
@@ -697,7 +705,7 @@
                         <configuration>
                             <file>src/test/wsdl/header/header.wsdl</file>
                             <deployScope>none</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
                             <deployWsdd>${project.build.directory}/wsdd/header.wsdd</deployWsdd>
@@ -711,7 +719,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/include/AddressBook.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
                             <mappings>
@@ -730,7 +738,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/inout/inout.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -748,7 +756,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/jaxrpcdynproxy/AddressInOut.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>server</generate>
                             <deployWsdd>${project.build.directory}/wsdd/jaxrpcdynproxy.wsdd</deployWsdd>
                         </configuration>
                     </execution>
@@ -760,7 +768,7 @@
                         <configuration>
                             <file>${project.build.directory}/work/test/wsdl/map/MapService.wsdl</file>
                             <all>true</all>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://test.com/MapService</namespace>
@@ -778,7 +786,7 @@
                         <configuration>
                             <file>src/test/wsdl/marrays/MArrayTest.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -797,7 +805,7 @@
                         <configuration>
                             <file>src/test/wsdl/marshall/marshall.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <typeMappingVersion>1.3</typeMappingVersion>
                             <deployWsdd>${project.build.directory}/wsdd/marshall.wsdd</deployWsdd>
                         </configuration>
@@ -810,7 +818,7 @@
                         <configuration>
                             <file>src/test/wsdl/marshall2/marshall2.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <typeMappingVersion>1.3</typeMappingVersion>
                             <wrapArrays>true</wrapArrays>
                             <deployWsdd>${project.build.directory}/wsdd/marshall2.wsdd</deployWsdd>
@@ -824,7 +832,7 @@
                         <configuration>
                             <file>src/test/wsdl/multiref/MultiRefTest.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -843,7 +851,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/names/JavaNames.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <implementation>true</implementation>
                             <mappings>
                                 <mapping>
@@ -863,7 +871,7 @@
                         <configuration>
                             <file>src/test/wsdl/nested/Nested.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -881,7 +889,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/omit/omit.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <deployWsdd>${project.build.directory}/wsdd/omit.wsdd</deployWsdd>
                         </configuration>
                     </execution>
@@ -892,7 +900,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/oneway/oneway.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <implementationClassName>test.wsdl.oneway.OnewayImpl</implementationClassName>
                             <deployWsdd>${project.build.directory}/wsdd/oneway.wsdd</deployWsdd>
                         </configuration>
@@ -905,7 +913,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/polymorphism/polymorphism.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://xml.apache.org/axis/PolymorphismTest</namespace>
@@ -922,7 +930,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/primitiveWrappers/primitiveWrappers.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <deployWsdd>${project.build.directory}/wsdd/primitiveWrappers.wsdd</deployWsdd>
                         </configuration>
                     </execution>
@@ -934,7 +942,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/qualify/qualifytest.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:qualifyTest</namespace>
@@ -952,7 +960,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/qualify2/attribute-qualify.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:attributeQualify</namespace>
@@ -969,7 +977,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/ram/ram.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:ram</namespace>
@@ -991,7 +999,7 @@
                         <configuration>
                             <file>src/test/wsdl/session/session.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <deployWsdd>${project.build.directory}/wsdd/session.wsdd</deployWsdd>
                         </configuration>
@@ -1004,7 +1012,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/stubheaders/stubheaders.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://echo.services</namespace>
@@ -1021,6 +1029,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/union/UnionService.wsdl</file>
+                            <generate>client</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://tempuri.org/</namespace>
@@ -1037,7 +1046,7 @@
                         <configuration>
                             <file>src/test/wsdl/wrapped/CityBBB.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -1056,7 +1065,7 @@
                         <configuration>
                             <file>src/test/wsdl/wrapped2/employee.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <mappings>
                                 <mapping>
@@ -1079,7 +1088,7 @@
                         <configuration>
                             <file>src/test/wsdl/wrapped_choice/reportservice.wsdl</file>
                             <deployScope>session</deployScope>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
                             <mappings>
@@ -1098,7 +1107,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapped_holders/thing.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:Thing</namespace>
@@ -1115,7 +1124,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapped_inout/wrapped_inout.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://tempuri.org/</namespace>
@@ -1132,7 +1141,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapperHolder/bug1191.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:wrapperHolder</namespace>
@@ -1149,7 +1158,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/wrapperHolder2/bug2102.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:wrapperHolder2</namespace>
@@ -1166,7 +1175,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/xsd/good.wsdl</file>
-                            <serverSide>true</serverSide>
+                            <generate>both</generate>
                             <implementation>true</implementation>
                             <mappings>
                                 <mapping>

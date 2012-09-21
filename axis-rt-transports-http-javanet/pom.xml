@@ -74,7 +74,7 @@
                         </goals>
                         <configuration>
                             <file>src/test/wsdl/test.wsdl</file>
-		                    <serverSide>true</serverSide>
+		                    <generate>both</generate>
                             <mappings>
                                 <mapping>
                                     <namespace>http://www.example.org/test/</namespace>
