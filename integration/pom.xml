@@ -70,12 +70,12 @@
                         <phase>process-classes</phase>
                         <configuration>
                             <output>${project.build.directory}/work/test/wsdl/anytype/AnyService.wsdl</output>
-                            <className>test.wsdl.anytype.AnyService</className>
+                            <className>test.wsdl.anytype.org.AnyService</className>
                             <namespace>http://test.com/AnyService</namespace>
                             <location>http://localhost:8080/axis/services/AnyService</location>
                             <mappings>
                                 <mapping>
-                                    <package>test.wsdl.anytype</package>
+                                    <package>test.wsdl.anytype.org</package>
                                     <namespace>http://test.com/AnyService</namespace>
                                 </mapping>
                             </mappings>
@@ -109,12 +109,12 @@
                         <phase>process-classes</phase>
                         <configuration>
                             <output>${project.build.directory}/work/test/wsdl/document/document.wsdl</output>
-                            <className>test.wsdl.document.TestService</className>
+                            <className>test.wsdl.document.org.TestService</className>
                             <namespace>http://document.wsdl.test</namespace>
                             <location>http://localhost:8080/axis/services/DocumentTest</location>
                             <mappings>
                                 <mapping>
-                                    <package>test.wsdl.document</package>
+                                    <package>test.wsdl.document.org</package>
                                     <namespace>http://document.wsdl.test</namespace>
                                 </mapping>
                             </mappings>
@@ -128,16 +128,16 @@
                         <phase>process-classes</phase>
                         <configuration>
                             <output>${project.build.directory}/work/test/wsdl/gateway/Gateway.wsdl</output>
-                            <className>test.wsdl.gateway.Gateway</className>
+                            <className>test.wsdl.gateway.org.Gateway</className>
                             <extraClasses>
-                                <extraClass>test.wsdl.gateway.MyClass</extraClass>
-                                <extraClass>test.wsdl.gateway.OutClass</extraClass>
+                                <extraClass>test.wsdl.gateway.org.MyClass</extraClass>
+                                <extraClass>test.wsdl.gateway.org.OutClass</extraClass>
                             </extraClasses>
                             <namespace>http://test.com/gateway</namespace>
                             <location>http://localhost:8080/axis/services/Gateway</location>
                             <mappings>
                                 <mapping>
-                                    <package>test.wsdl.gateway</package>
+                                    <package>test.wsdl.gateway.org</package>
                                     <namespace>http://test.com/gateway</namespace>
                                 </mapping>
                             </mappings>
@@ -151,12 +151,12 @@
                         <phase>process-classes</phase>
                         <configuration>
                             <output>${project.build.directory}/work/test/wsdl/map/MapService.wsdl</output>
-                            <className>test.wsdl.map.MapService</className>
+                            <className>test.wsdl.map.org.MapService</className>
                             <namespace>http://test.com/MapService</namespace>
                             <location>http://localhost:8080/axis/services/MapService</location>
                             <mappings>
                                 <mapping>
-                                    <package>test.wsdl.map</package>
+                                    <package>test.wsdl.map.org</package>
                                     <namespace>http://test.com/MapService</namespace>
                                 </mapping>
                             </mappings>

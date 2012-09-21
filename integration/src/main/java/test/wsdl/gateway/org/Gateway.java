@@ -1,4 +1,4 @@
-package test.wsdl.gateway;
+package test.wsdl.gateway.org;
 
 public interface Gateway {
 	public String test1(MyClass myClass);

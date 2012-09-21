@@ -13,18 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test.wsdl.map;
+package test.wsdl.anytype.org;
 
-import java.util.Map;
-
-/**
- * Test service for testing Map Schema in WSDL
- */
-public class MapService {
-    /**
-     * echo the input Map
-     */ 
-    public java.util.Map echoMap(Map in) {
-	    return in;
+public class AnyService {
+    public Object run() {
+	    return new String("hello");
     }
 }
