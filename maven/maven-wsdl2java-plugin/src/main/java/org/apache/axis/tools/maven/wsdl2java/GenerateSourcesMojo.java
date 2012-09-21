@@ -20,7 +20,6 @@ package org.apache.axis.tools.maven.wsdl2java;
 
 import java.io.File;
 
-import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -41,13 +40,13 @@ public class GenerateSourcesMojo extends AbstractWsdl2JavaMojo {
         return sourceOutputDirectory;
     }
 
-    protected void configureEmitter(Emitter emitter) {
+    protected void configureEmitter(EmitterEx emitter) {
         // In a Maven build, generated sources are always written to a directory other than
         // the source directory. By default, the emitter would generate an empty implementation
         // because it doesn't see the implementation provided by the developer. We don't want this
         // because these two classes would collide. Therefore implementationWanted is hardcoded
         // to false:
-        emitter.setImplementationWanted(false);
+        emitter.setGenerateImplementation(false);
     }
 
     protected void addSourceRoot(MavenProject project, String path) {

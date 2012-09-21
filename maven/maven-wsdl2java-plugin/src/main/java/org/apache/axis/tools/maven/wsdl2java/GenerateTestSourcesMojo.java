@@ -20,7 +20,6 @@ package org.apache.axis.tools.maven.wsdl2java;
 
 import java.io.File;
 
-import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -55,8 +54,8 @@ public class GenerateTestSourcesMojo extends AbstractWsdl2JavaMojo {
      */
     private boolean testCase;
     
-    protected void configureEmitter(Emitter emitter) {
-        emitter.setImplementationWanted(implementation);
+    protected void configureEmitter(EmitterEx emitter) {
+        emitter.setGenerateImplementation(implementation);
         emitter.setTestCaseWanted(testCase);
     }
 

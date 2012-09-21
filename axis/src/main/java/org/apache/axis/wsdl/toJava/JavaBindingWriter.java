@@ -188,32 +188,30 @@ public class JavaBindingWriter implements Generator {
                             symbolTable);
                 }
 
-                if (emitter.isImplementationWanted()) {
-                    // Use custom implementation classname if available
-                    String fileName = emitter.getImplementationClassName(); 
-                    if ( fileName == null)
-    					fileName = Utils.getJavaLocalName(bEntry.getName())
-                        	    + "Impl.java";
-    				else
-    					fileName = Utils.getJavaLocalName(fileName) + ".java";
-    
-                    try {
-                        if (Utils.fileExists(fileName,
-                                binding.getQName().getNamespaceURI(),
-                                emitter.getNamespaces())) {
-                            if (!emitter.isQuiet()) {
-                                System.out.println(
-                                     Messages.getMessage("wontOverwrite",
-                                                         fileName));
-                            }
-                        } else {
-                            implWriter = getJavaImplWriter(emitter, bEntry,
-                                    symbolTable);
+                // Use custom implementation classname if available
+                String fileName = emitter.getImplementationClassName(); 
+                if ( fileName == null)
+					fileName = Utils.getJavaLocalName(bEntry.getName())
+                    	    + "Impl.java";
+				else
+					fileName = Utils.getJavaLocalName(fileName) + ".java";
+
+                try {
+                    if (Utils.fileExists(fileName,
+                            binding.getQName().getNamespaceURI(),
+                            emitter.getNamespaces())) {
+                        if (!emitter.isQuiet()) {
+                            System.out.println(
+                                 Messages.getMessage("wontOverwrite",
+                                                     fileName));
                         }
-                    } catch (IOException ioe) {
-                        System.err.println(Messages.getMessage("fileExistError00",
-                                fileName));
+                    } else {
+                        implWriter = getJavaImplWriter(emitter, bEntry,
+                                symbolTable);
                     }
+                } catch (IOException ioe) {
+                    System.err.println(Messages.getMessage("fileExistError00",
+                            fileName));
                 }
             }
         }

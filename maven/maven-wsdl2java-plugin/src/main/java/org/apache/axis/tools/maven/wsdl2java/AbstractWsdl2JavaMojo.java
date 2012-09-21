@@ -27,7 +27,6 @@ import org.apache.axis.constants.Scope;
 import org.apache.axis.tools.maven.shared.nsmap.Mapping;
 import org.apache.axis.tools.maven.shared.nsmap.MappingUtil;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
-import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -269,6 +268,6 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     }
     
     protected abstract File getSourceOutputDirectory();
-    protected abstract void configureEmitter(Emitter emitter);
+    protected abstract void configureEmitter(EmitterEx emitter);
     protected abstract void addSourceRoot(MavenProject project, String path);
 }

@@ -19,7 +19,6 @@
 package org.apache.axis.tools.maven.wsdl2java;
 
 import javax.wsdl.Binding;
-import javax.wsdl.Definition;
 
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.gen.NoopGenerator;
@@ -27,30 +26,15 @@ import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaBindingWriter;
-import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
-import org.apache.axis.wsdl.toJava.JavaGeneratorFactory;
 
-public class JavaGeneratorFactoryEx extends JavaGeneratorFactory {
-    public JavaGeneratorFactoryEx(Emitter emitter) {
-        super(emitter);
+public class JavaBindingWriterEx extends JavaBindingWriter {
+    public JavaBindingWriterEx(Emitter emitter, Binding binding, SymbolTable symbolTable) {
+        super(emitter, binding, symbolTable);
     }
 
-    protected void addDefinitionGenerators() {
-        addGenerator(Definition.class, JavaDefinitionWriter.class);
-        if (((EmitterEx)emitter).getDeployWsdd() != null) {
-            addGenerator(Definition.class, JavaDeployWriterEx.class);
-        }
-        if (((EmitterEx)emitter).getUndeployWsdd() != null) {
-            addGenerator(Definition.class, JavaUndeployWriterEx.class);
-        }
-    }
-
-    public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
-        if (include(binding.getQName())) {
-            Generator writer = new JavaBindingWriterEx(emitter, binding, symbolTable);
-            BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
-            bindingWriters.addStuff(writer, bEntry, symbolTable);
-            return bindingWriters;
+    protected Generator getJavaImplWriter(Emitter emitter, BindingEntry bEntry, SymbolTable st) {
+        if (((EmitterEx)emitter).isGenerateImplementation()) {
+            return super.getJavaImplWriter(emitter, bEntry, st);
         } else {
             return new NoopGenerator();
         }

@@ -21,9 +21,18 @@ package org.apache.axis.tools.maven.wsdl2java;
 import org.apache.axis.wsdl.toJava.Emitter;
 
 public class EmitterEx extends Emitter {
+    private boolean generateImplementation;
     private String deployWsdd;
     private String undeployWsdd;
     
+    public boolean isGenerateImplementation() {
+        return generateImplementation;
+    }
+
+    public void setGenerateImplementation(boolean generateImplementation) {
+        this.generateImplementation = generateImplementation;
+    }
+
     public String getDeployWsdd() {
         return deployWsdd;
     }
