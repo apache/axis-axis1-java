@@ -1,7 +1,7 @@
 /*
  * This is a ColdFusion QueryBean object, including meta data.
  */
-package test.wsdl.query;
+package test.wsdl.query.org;
 
 import java.io.Serializable;
 

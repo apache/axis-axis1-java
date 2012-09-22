@@ -66,6 +66,7 @@
         <module>axis-castor</module>
         <module>axis-rt-transports-http-javanet</module>
         <module>axis-jms</module>
+        <module>axis-testutils</module>
         <module>integration</module>
         <module>axis-war</module>
         <module>samples</module>

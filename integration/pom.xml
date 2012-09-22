@@ -40,13 +40,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-testutils</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -158,6 +154,26 @@
                                 <mapping>
                                     <package>test.wsdl.map.org</package>
                                     <namespace>http://test.com/MapService</namespace>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>query</id>
+                        <goals>
+                            <goal>generate-wsdl</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <output>${project.build.directory}/work/test/wsdl/query/QueryTest.wsdl</output>
+                            <className>test.wsdl.query.org.QueryTest</className>
+                            <style>wrapped</style>
+                            <namespace>http://query.wsdl.test</namespace>
+                            <location>http://localhost:8080/axis/services/QueryTest</location>
+                            <mappings>
+                                <mapping>
+                                    <package>test.wsdl.query.org</package>
+                                    <namespace>http://query.wsdl.test</namespace>
                                 </mapping>
                             </mappings>
                         </configuration>
@@ -971,6 +987,18 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>query</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/work/test/wsdl/query/QueryTest.wsdl</file>
+                            <generate>both</generate>
+                            <deployScope>session</deployScope>
+                            <!-- Test has static WSDD; don't generate deploy.wsdd -->
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>ram</id>
                         <goals>
                             <goal>generate-test-sources</goal>
@@ -1317,6 +1345,8 @@
                                 <exclude>test/dynamic/TestJAXRPCDII.java</exclude>
                                 <!-- Excluded in r257238; see AXIS-750 -->
                                 <exclude>test/wsdl/adaptive/**</exclude>
+                                <!-- Excluded in r261718; see AXIS-2107 -->
+                                <exclude>test/wsdl/query/FileGenWrappedTestCase.java</exclude>
                                 <!-- TODO: remote service no longer available -->
                                 <exclude>test/wsdl/dataset/**</exclude>
                                 <!-- TODO: this causes problems in subsequent tests because auto types modify a shared TypeMapping -->

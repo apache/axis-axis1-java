@@ -5,12 +5,12 @@
  *
  */
 
-package test.wsdl.query;
+package test.wsdl.query.org;
 
 public class QueryTest  {
 
     /* echo query */
-    public test.wsdl.query.QueryBean echoQuery(test.wsdl.query.QueryBean argQuery) throws java.rmi.RemoteException {
+    public QueryBean echoQuery(QueryBean argQuery) throws java.rmi.RemoteException {
         return argQuery;
     }
 }

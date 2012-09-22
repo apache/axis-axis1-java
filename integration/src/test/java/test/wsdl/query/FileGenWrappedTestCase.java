@@ -40,15 +40,9 @@ public class FileGenWrappedTestCase extends AxisFileGenTestBase {
         HashSet set = new HashSet();
         set.add("QueryBean.java");
         set.add("QueryTest.java");
-        set.add("QueryTestSoapBindingImpl.java");
         set.add("QueryTestSoapBindingStub.java");
         set.add("QueryTestService.java");
         set.add("QueryTestServiceLocator.java");
-        set.add("QueryTestServiceTestCase.java");
-        set.add("FileGenWrappedTestCase.java");
-        set.add("QueryTest.wsdl");
-        set.add("deploy.wsdd");
-        set.add("undeploy.wsdd");
         return set;
     } // shouldExist
 
@@ -65,7 +59,9 @@ public class FileGenWrappedTestCase extends AxisFileGenTestBase {
      * The directory containing the files that should exist.
      */
     protected String rootDir() {
-        return "build" + File.separator + "work" + File.separator +
+        return System.getProperty("basedir", ".") + File.separator +
+                "target" + File.separator + "generated-test-sources" + File.separator +
+                "wsdl2java" + File.separator +
                 "test" + File.separator + "wsdl" + File.separator +
                 "query";
     } // rootDir

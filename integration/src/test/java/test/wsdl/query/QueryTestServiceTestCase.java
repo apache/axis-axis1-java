@@ -7,6 +7,8 @@
 
 package test.wsdl.query;
 
+import test.HttpTestUtil;
+
 public class QueryTestServiceTestCase extends junit.framework.TestCase {
     public QueryTestServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,7 +16,7 @@ public class QueryTestServiceTestCase extends junit.framework.TestCase {
 
     public void testQueryTestWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.query.QueryTestServiceLocator().getQueryTestAddress() + "?WSDL");
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new test.wsdl.query.QueryTestServiceLocator().getQueryTestAddress() + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.query.QueryTestServiceLocator().getServiceName());
         assertTrue(service != null);
     }
@@ -23,8 +25,8 @@ public class QueryTestServiceTestCase extends junit.framework.TestCase {
     public void test2QueryTestEchoQuery() throws Exception {
         test.wsdl.query.QueryTestSoapBindingStub binding;
         try {
-            binding = (test.wsdl.query.QueryTestSoapBindingStub)
-                          new test.wsdl.query.QueryTestServiceLocator().getQueryTest();
+            QueryTestServiceLocator loc = new QueryTestServiceLocator();
+            binding = (QueryTestSoapBindingStub)loc.getQueryTest(HttpTestUtil.getTestEndpoint(loc.getQueryTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
