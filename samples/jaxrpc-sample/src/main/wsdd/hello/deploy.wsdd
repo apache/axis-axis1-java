@@ -26,13 +26,13 @@
       <requestFlow>
        <handler type="java:org.apache.axis.handlers.JAXRPCHandler">
         <parameter name="scope" value="session"/>
-        <parameter name="className" value="samples.jaxrpc.hello.ClientHandler"/>
+        <parameter name="className" value="samples.jaxrpc.hello.ServerHandler"/>
        </handler>
       </requestFlow>
       <responseFlow>
        <handler type="java:org.apache.axis.handlers.JAXRPCHandler">
         <parameter name="scope" value="session"/>
-        <parameter name="className" value="samples.jaxrpc.hello.ClientHandler"/>
+        <parameter name="className" value="samples.jaxrpc.hello.ServerHandler"/>
        </handler>
       </responseFlow>
   </service>
