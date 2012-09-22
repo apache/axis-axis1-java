@@ -36,7 +36,6 @@ import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.session.Session;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -51,12 +50,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.WeakHashMap;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -106,38 +103,8 @@ public class SOAPService extends SimpleTargetedChain
     public Map serviceObjects = new HashMap();
     public int nextObjectID = 1;
 
-    /**
-     * List of sessions (for all services), key=serviceName, value=Service
-     */
-    static private Hashtable sessions = new Hashtable();
-
     private boolean isRunning = true;
     
-    /** 
-     * Add this passed in Session to this Service's list of sessions
-     */
-    public void addSession(Session session) {
-      WeakHashMap map = (WeakHashMap) sessions.get( this.getName() );
-      if ( map == null )  {
-        map = new WeakHashMap();
-        sessions.put( this.getName(), map);
-      }
-      if ( !map.containsKey(session) ) map.put(session, null);
-    }
-
-    /** 
-     * Remove all of this Service's serviceObjects from it known sessions
-     */
-    public void clearSessions() {
-      WeakHashMap map = (WeakHashMap) sessions.get( this.getName() );
-      if ( map == null ) return ;
-      Iterator iter = map.keySet().iterator();
-      while ( iter.hasNext() ) {
-        Session session = (Session) iter.next();
-        session.remove( this.getName() );
-      }
-    }
-
     /**
      * Actor list - these are just the service-specific ones
      */

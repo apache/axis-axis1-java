@@ -17,8 +17,6 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.MessageContext;
 import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
@@ -161,18 +159,6 @@ public class WSDDUndeployment
 
         for (int n = 0; n < services.size(); n++) {
             qname = (QName)services.get(n);
- 
-            try {
-                String sname = qname.getLocalPart();
-                MessageContext messageContext = MessageContext.getCurrentContext();
-                if (messageContext != null) {
-                    SOAPService service = messageContext.getAxisEngine()
-                            .getService(sname);
-                    if ( service != null ) service.clearSessions();
-                }
-            } catch(Exception exp) {
-                throw new ConfigurationException(exp);
-            }
             registry.undeployService(qname);
         }
     }
