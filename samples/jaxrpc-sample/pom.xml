@@ -87,7 +87,6 @@
                         <configuration>
                             <file>src/main/wsdl/hello/HelloWorld.wsdl</file>
                             <generate>server</generate>
-                            <deployWsdd>${project.build.directory}/wsdd/hello.wsdd</deployWsdd>
                         </configuration>
                     </execution>
                 </executions>
@@ -123,6 +122,12 @@
                         <configuration>
                             <port>${test.functional.ServicePort}</port>
                             <wsdds>
+                                <wsdd>
+                                    <directory>src/main/wsdd</directory>
+                                    <includes>
+                                        <include>**/*.wsdd</include>
+                                    </includes>
+                                </wsdd>
                                 <wsdd>
                                     <directory>../stock-sample/src/main/wsdd</directory>
                                     <includes>
