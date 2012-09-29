@@ -91,16 +91,29 @@ public class StartServerMojo extends AbstractStartProcessMojo {
      * server has been started and the services are deployed. This is useful if one wants to
      * manually test some services deployed on the server or if one wants to run the integration
      * tests from an IDE. The flag should only be set using the command line, but not in the POM.
-     * <p>
-     * Note: this feature is implemented using a flag (instead of a distinct goal) to make sure that
-     * the server is configured in exactly the same way as in a normal integration test execution.
      * 
      * @parameter expression="${axis.server.foreground}" default-value="false"
      */
+    // Note: this feature is implemented using a flag (instead of a distinct goal) to make sure that
+    // the server is configured in exactly the same way as in a normal integration test execution.
     private boolean foreground;
+    
+    /**
+     * Specifies an alternate port number that will override {@link #port} if {@link #foreground} is
+     * set to <code>true</code>. This parameter should be used if the port number configured with
+     * the {@link #port} parameter is allocated dynamically. This makes it easier to run integration
+     * tests from an IDE. For more information, see the <a href="usage.html">usage
+     * documentation</a>.
+     * 
+     * @parameter
+     */
+    private int foregroundPort = -1;
     
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
+        
+        // Determine the port to be used
+        int actualPort = foreground && foregroundPort != -1 ? foregroundPort : port;
         
         // Select WSDD files
         List deployments = new ArrayList();
@@ -149,7 +162,7 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         }
         
         // Prepare a work directory where the server can create a server-config.wsdd file
-        File workDir = new File(workDirBase, String.valueOf(port));
+        File workDir = new File(workDirBase, String.valueOf(actualPort));
         if (workDir.exists()) {
             try {
                 FileUtils.deleteDirectory(workDir);
@@ -182,7 +195,7 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         // Start the server
         List args = new ArrayList();
         args.add("-p");
-        args.add(String.valueOf(port));
+        args.add(String.valueOf(actualPort));
         args.add("-w");
         args.add(workDir.getAbsolutePath());
         if (jwsDirs != null && jwsDirs.length > 0) {
@@ -191,13 +204,13 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         }
         try {
             AdminClient adminClient = new AdminClient(true);
-            adminClient.setTargetEndpointAddress(new URL("http://localhost:" + port + "/axis/services/AdminService"));
+            adminClient.setTargetEndpointAddress(new URL("http://localhost:" + actualPort + "/axis/services/AdminService"));
             startJavaProcess(
-                    "Server on port " + port,
+                    "Server on port " + actualPort,
                     "org.apache.axis.server.standalone.StandaloneAxisServer",
                     (String[])args.toArray(new String[args.size()]),
                     workDir,
-                    new AxisServerStartAction(port, adminClient,
+                    new AxisServerStartAction(actualPort, adminClient,
                             (File[])deployments.toArray(new File[deployments.size()]),
                             isDebug() || foreground ? Integer.MAX_VALUE : 20000),
                     new AxisServerStopAction(adminClient,
@@ -207,6 +220,7 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         }
         
         if (foreground) {
+            log.info("Server started in foreground mode. Press CRTL-C to stop.");
             Object lock = new Object();
             synchronized (lock) {
                 try {
