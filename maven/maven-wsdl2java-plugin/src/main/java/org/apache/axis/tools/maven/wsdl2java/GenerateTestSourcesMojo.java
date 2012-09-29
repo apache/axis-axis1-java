@@ -50,10 +50,24 @@ public class GenerateTestSourcesMojo extends AbstractWsdl2JavaMojo {
      */
     private boolean testCase;
     
+    /**
+     * 
+     * @parameter
+     */
+    private String testHttpPortSystemProperty;
+    
+    /**
+     * 
+     * @parameter
+     */
+    private int testDefaultHttpPort = -1;
+    
     protected void configureEmitter(EmitterEx emitter) {
         emitter.setOutputDir(testSourceOutputDirectory.getAbsolutePath());
         emitter.setGenerateImplementation(implementation);
         emitter.setTestCaseWanted(testCase);
+        emitter.setTestHttpPortSystemProperty(testHttpPortSystemProperty);
+        emitter.setTestDefaultHttpPort(testDefaultHttpPort);
     }
 
     protected void addSourceRoot(MavenProject project) {

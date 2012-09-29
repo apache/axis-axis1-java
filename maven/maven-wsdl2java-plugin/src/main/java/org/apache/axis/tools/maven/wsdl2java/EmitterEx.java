@@ -26,6 +26,8 @@ public class EmitterEx extends Emitter {
     private String clientOutputDirectory;
     private String deployWsdd;
     private String undeployWsdd;
+    private String testHttpPortSystemProperty;
+    private int testDefaultHttpPort = -1;
     
     public boolean isClientSide() {
         return clientSide;
@@ -65,5 +67,21 @@ public class EmitterEx extends Emitter {
     
     public void setUndeployWsdd(String undeployWsdd) {
         this.undeployWsdd = undeployWsdd;
+    }
+
+    public String getTestHttpPortSystemProperty() {
+        return testHttpPortSystemProperty;
+    }
+
+    public void setTestHttpPortSystemProperty(String testHttpPortSystemProperty) {
+        this.testHttpPortSystemProperty = testHttpPortSystemProperty;
+    }
+
+    public int getTestDefaultHttpPort() {
+        return testDefaultHttpPort;
+    }
+
+    public void setTestDefaultHttpPort(int testDefaultHttpPort) {
+        this.testDefaultHttpPort = testDefaultHttpPort;
     }
 }

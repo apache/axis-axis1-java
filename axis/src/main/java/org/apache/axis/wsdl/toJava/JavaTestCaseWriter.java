@@ -42,7 +42,7 @@ import java.util.Map;
 public class JavaTestCaseWriter extends JavaClassWriter {
 
     /** Field sEntry */
-    private ServiceEntry sEntry;
+    protected final ServiceEntry sEntry;
 
     /** Field symbolTable */
     private SymbolTable symbolTable;
@@ -117,10 +117,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             }
 
             pw.println("    public void test"+portName+"WSDL() throws Exception {");
-            pw.println("        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();");
-            pw.println("        java.net.URL url = new java.net.URL(new " + sEntry.getName() + "Locator" + "().get" + portName + "Address() + \"?WSDL\");");
-            pw.println("        javax.xml.rpc.Service service = serviceFactory.createService(url, new " + sEntry.getName() + "Locator().getServiceName());");
-            pw.println("        assertTrue(service != null);");
+            writeWSDLTestCode(pw, portName);
             pw.println("    }");
             pw.println("");
 
@@ -132,6 +129,13 @@ public class JavaTestCaseWriter extends JavaClassWriter {
         }
     }    // writeFileBody
 
+    protected void writeWSDLTestCode(PrintWriter pw, String portName) {
+        pw.println("        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();");
+        pw.println("        java.net.URL url = new java.net.URL(new " + sEntry.getName() + "Locator" + "().get" + portName + "Address() + \"?WSDL\");");
+        pw.println("        javax.xml.rpc.Service service = serviceFactory.createService(url, new " + sEntry.getName() + "Locator().getServiceName());");
+        pw.println("        assertTrue(service != null);");
+    }
+    
     // Methods may be overloaded.  If we just grab the method name
     // for the test method names, we could end up with duplicates.
     // The quick-and-easy solution is to have a test counter so that
@@ -148,7 +152,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
      * @param portType 
      * @param bEntry
      */
-    protected final void writeServiceTestCode(
+    protected void writeServiceTestCode(
             PrintWriter pw, String portName, PortType portType, BindingEntry bEntry) {
 
         Iterator ops = portType.getOperations().iterator();
@@ -307,7 +311,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
      * @param bindingType 
      * @param portName     
      */
-    public final void writeBindingAssignment(
+    public void writeBindingAssignment(
             PrintWriter pw, String bindingType, String portName) {
 
         pw.println("        " + bindingType + " binding");
