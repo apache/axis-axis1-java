@@ -1020,6 +1020,17 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>rpcParams</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/rpcParams/rpcParams.wsdl</file>
+                            <generate>server</generate>
+                            <!-- Don't generate deploy.wsdd; we supply our own -->
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>session</id>
                         <goals>
                             <goal>generate-test-sources</goal>
@@ -1258,6 +1269,7 @@
                         </goals>
                         <configuration>
                             <port>${test.functional.ServicePort}</port>
+                            <foregroundPort>8080</foregroundPort>
                             <wsdds>
                                 <wsdd>
                                     <directory>src/test/wsdd</directory>
