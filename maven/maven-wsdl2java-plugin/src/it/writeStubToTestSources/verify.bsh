@@ -1,0 +1,20 @@
+import java.io.*;
+
+String[] wanted = {
+    "target/generated-sources/wsdl2java/test/AddData_PortType.java",
+    "target/generated-sources/wsdl2java/test/Data.java",
+    "target/generated-test-sources/wsdl2java/test/AddData_Service.java",
+    "target/generated-test-sources/wsdl2java/test/AddData_ServiceLocator.java",
+    "target/generated-test-sources/wsdl2java/test/AddDataSOAPStub.java",
+    "target/classes/test/AddData_PortType.class",
+    "target/classes/test/Data.class",
+    "target/test-classes/test/AddData_Service.class",
+    "target/test-classes/test/AddData_ServiceLocator.class",
+    "target/test-classes/test/AddDataSOAPStub.class",
+};
+
+for (String path : wanted) {
+    if (!new File(basedir, path).exists()) {
+        throw new IllegalStateException("wanted path is missing: " + path);
+    }
+}

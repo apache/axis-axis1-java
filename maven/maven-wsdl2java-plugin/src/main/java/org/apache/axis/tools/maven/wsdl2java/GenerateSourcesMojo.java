@@ -35,12 +35,31 @@ public class GenerateSourcesMojo extends AbstractWsdl2JavaMojo {
      * @parameter default-value="${project.build.directory}/generated-sources/wsdl2java"
      */
     private File sourceOutputDirectory;
-
-    protected File getSourceOutputDirectory() {
-        return sourceOutputDirectory;
-    }
+    
+    /**
+     * Flag indicating whether the stub and locator should be written to
+     * {@link #sourceOutputDirectory} (<code>false</code>) or to {@link #testSourceOutputDirectory}
+     * (<code>false</code>). Set this parameter to <code>true</code> if the main artifact of your
+     * project should not contain client-side code, but you need it in your test cases. Note that
+     * this parameter is only meaningful if <code>generate</code> is set to <code>both</code>.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean writeStubToTestSources;
+    
+    /**
+     * Output directory used for the stub and locator if {@link #writeStubToTestSources} is
+     * <code>true</code>.
+     * 
+     * @parameter default-value="${project.build.directory}/generated-test-sources/wsdl2java"
+     */
+    private File testSourceOutputDirectory;
 
     protected void configureEmitter(EmitterEx emitter) {
+        emitter.setOutputDir(sourceOutputDirectory.getAbsolutePath());
+        if (writeStubToTestSources) {
+            emitter.setClientOutputDirectory(testSourceOutputDirectory.getAbsolutePath());
+        }
         // In a Maven build, generated sources are always written to a directory other than
         // the source directory. By default, the emitter would generate an empty implementation
         // because it doesn't see the implementation provided by the developer. We don't want this
@@ -49,7 +68,10 @@ public class GenerateSourcesMojo extends AbstractWsdl2JavaMojo {
         emitter.setGenerateImplementation(false);
     }
 
-    protected void addSourceRoot(MavenProject project, String path) {
-        project.addCompileSourceRoot(path);
+    protected void addSourceRoot(MavenProject project) {
+        project.addCompileSourceRoot(sourceOutputDirectory.getAbsolutePath());
+        if (writeStubToTestSources) {
+            project.addTestCompileSourceRoot(testSourceOutputDirectory.getAbsolutePath());
+        }
     }
 }

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.example.org/AddData/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AddData" targetNamespace="http://www.example.org/AddData/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.example.org/AddData/">
+      <xsd:element name="AddData">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Dummy" type="xsd:string"/>
+            <xsd:element name="Data" type="tns:data" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+        <xsd:complexType name="data">
+            <xsd:sequence>
+                <xsd:element name="FirstName" type="xsd:string"/>
+                <xsd:element name="LastName" type="xsd:string"/>
+                <xsd:element name="Age" type="xsd:int"/>
+            </xsd:sequence>
+        </xsd:complexType>
+      <xsd:element name="AddDataResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="AddDataRequest">
+    <wsdl:part element="tns:AddData" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="AddDataResponse">
+    <wsdl:part element="tns:AddDataResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="AddData">
+    <wsdl:operation name="AddData">
+      <wsdl:input message="tns:AddDataRequest"/>
+      <wsdl:output message="tns:AddDataResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AddDataSOAP" type="tns:AddData">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="AddData">
+      <soap:operation soapAction="http://www.example.org/AddData/AddData"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AddData">
+    <wsdl:port binding="tns:AddDataSOAP" name="AddDataSOAP">
+      <soap:address location="http://www.example.org/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -23,6 +23,7 @@ import org.apache.axis.wsdl.toJava.Emitter;
 public class EmitterEx extends Emitter {
     private boolean clientSide;
     private boolean generateImplementation;
+    private String clientOutputDirectory;
     private String deployWsdd;
     private String undeployWsdd;
     
@@ -40,6 +41,14 @@ public class EmitterEx extends Emitter {
 
     public void setGenerateImplementation(boolean generateImplementation) {
         this.generateImplementation = generateImplementation;
+    }
+
+    public String getClientOutputDirectory() {
+        return clientOutputDirectory;
+    }
+
+    public void setClientOutputDirectory(String clientOutputDirectory) {
+        this.clientOutputDirectory = clientOutputDirectory;
     }
 
     public String getDeployWsdd() {

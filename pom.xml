@@ -168,6 +168,10 @@
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.7</version>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

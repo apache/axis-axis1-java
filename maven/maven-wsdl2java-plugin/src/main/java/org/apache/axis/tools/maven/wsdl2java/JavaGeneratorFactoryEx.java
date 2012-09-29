@@ -25,6 +25,7 @@ import javax.wsdl.Service;
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
@@ -46,8 +47,11 @@ public class JavaGeneratorFactoryEx extends JavaGeneratorFactory {
     }
 
     public Generator getGenerator(Service service, SymbolTable symbolTable) {
-        if (((EmitterEx)emitter).isClientSide()) {
-            return super.getGenerator(service, symbolTable);
+        if (((EmitterEx)emitter).isClientSide() && include(service.getQName())) {
+            Generator writer = new JavaServiceWriterEx(emitter, service, symbolTable);
+            ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
+            serviceWriters.addStuff(writer, sEntry, symbolTable);
+            return serviceWriters;
         } else {
             return new NoopGenerator();
         }

@@ -36,10 +36,6 @@ public class GenerateTestSourcesMojo extends AbstractWsdl2JavaMojo {
      */
     private File testSourceOutputDirectory;
 
-    protected File getSourceOutputDirectory() {
-        return testSourceOutputDirectory;
-    }
-
     /**
      * Flag indicating whether a default (empty) implementation should be generated.
      * 
@@ -55,11 +51,12 @@ public class GenerateTestSourcesMojo extends AbstractWsdl2JavaMojo {
     private boolean testCase;
     
     protected void configureEmitter(EmitterEx emitter) {
+        emitter.setOutputDir(testSourceOutputDirectory.getAbsolutePath());
         emitter.setGenerateImplementation(implementation);
         emitter.setTestCaseWanted(testCase);
     }
 
-    protected void addSourceRoot(MavenProject project, String path) {
-        project.addTestCompileSourceRoot(path);
+    protected void addSourceRoot(MavenProject project) {
+        project.addTestCompileSourceRoot(testSourceOutputDirectory.getAbsolutePath());
     }
 }

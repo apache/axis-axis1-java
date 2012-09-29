@@ -252,7 +252,6 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //        emitter.setProperties(properties);
 //        emitter.setImports(!noImports);
         emitter.setAllWanted(all);
-        emitter.setOutputDir(getSourceOutputDirectory().getAbsolutePath());
         emitter.setSkeletonWanted(skeleton);
 //        emitter.setVerbose(verbose);
 //        emitter.setDebug(debug);
@@ -306,10 +305,9 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
             throw new MojoFailureException("wsdl2java failed", ex);
         }
         
-        addSourceRoot(project, getSourceOutputDirectory().getAbsolutePath());
+        addSourceRoot(project);
     }
     
-    protected abstract File getSourceOutputDirectory();
     protected abstract void configureEmitter(EmitterEx emitter);
-    protected abstract void addSourceRoot(MavenProject project, String path);
+    protected abstract void addSourceRoot(MavenProject project);
 }

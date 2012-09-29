@@ -18,33 +18,24 @@
  */
 package org.apache.axis.tools.maven.wsdl2java;
 
-import javax.wsdl.Binding;
+import java.io.File;
 
-import org.apache.axis.wsdl.gen.Generator;
-import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.toJava.Emitter;
-import org.apache.axis.wsdl.toJava.JavaBindingWriter;
+import org.apache.axis.wsdl.toJava.JavaStubWriter;
 
-public class JavaBindingWriterEx extends JavaBindingWriter {
-    public JavaBindingWriterEx(Emitter emitter, Binding binding, SymbolTable symbolTable) {
-        super(emitter, binding, symbolTable);
+public class JavaStubWriterEx extends JavaStubWriter {
+    public JavaStubWriterEx(Emitter emitter, BindingEntry bEntry, SymbolTable symbolTable) {
+        super(emitter, bEntry, symbolTable);
     }
 
-    protected Generator getJavaStubWriter(Emitter emitter, BindingEntry bEntry, SymbolTable st) {
-        if (((EmitterEx)emitter).isClientSide()) {
-            return new JavaStubWriterEx(emitter, bEntry, st);
+    protected String getFileName() {
+        String clientOutputDirectory = ((EmitterEx)emitter).getClientOutputDirectory();
+        if (clientOutputDirectory == null) {
+            return super.getFileName();
         } else {
-            return new NoopGenerator();
-        }
-    }
-
-    protected Generator getJavaImplWriter(Emitter emitter, BindingEntry bEntry, SymbolTable st) {
-        if (((EmitterEx)emitter).isGenerateImplementation()) {
-            return super.getJavaImplWriter(emitter, bEntry, st);
-        } else {
-            return new NoopGenerator();
+            return clientOutputDirectory + File.separator + packageName.replaceAll("\\.", File.separator) + File.separator + className + ".java";
         }
     }
 }
