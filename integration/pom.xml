@@ -184,6 +184,10 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>maven-wsdl2java-plugin</artifactId>
                 <version>${project.version}</version>
+                <configuration>
+                    <testHttpPortSystemProperty>test.functional.ServicePort</testHttpPortSystemProperty>
+                    <testDefaultHttpPort>8080</testDefaultHttpPort>
+                </configuration>
                 <executions>
                     <execution>
                         <id>samples-echo</id>
@@ -236,6 +240,7 @@
                             <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
+                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:import</namespace>
@@ -265,6 +270,7 @@
                             <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
+                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:import</namespace>
@@ -738,6 +744,7 @@
                             <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
+                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>urn:AddressFetcher2</namespace>
@@ -869,6 +876,7 @@
                             <file>src/test/wsdl/names/JavaNames.wsdl</file>
                             <generate>both</generate>
                             <implementation>true</implementation>
+                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>http://test.com/reference</namespace>
@@ -1130,6 +1138,7 @@
                             <generate>both</generate>
                             <skeleton>true</skeleton>
                             <implementation>true</implementation>
+                            <testCase>true</testCase>
                             <mappings>
                                 <mapping>
                                     <namespace>http://schemas.microsoft.com/sqlserver/2003/12/reporting/reportingservices</namespace>
