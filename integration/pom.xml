@@ -929,6 +929,20 @@
                             <deployWsdd>${project.build.directory}/wsdd/oneway.wsdd</deployWsdd>
                         </configuration>
                     </execution>
+                    <!-- This tests parameterOrder.  -->
+                    <execution>
+                        <id>parameterOrder</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/parameterOrder/parameterOrder.wsdl</file>
+                            <generate>both</generate>
+                            <deployWsdd>${project.build.directory}/wsdd/parameterOrder.wsdd</deployWsdd>
+                            <testCase>true</testCase>
+                            <implementation>true</implementation>
+                        </configuration>
+                    </execution>
                     <!-- This tests polymorphism of return values -->
                     <execution>
                         <id>polymorphism</id>

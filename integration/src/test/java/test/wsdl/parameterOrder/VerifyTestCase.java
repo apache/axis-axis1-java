@@ -1,6 +1,6 @@
 package test.wsdl.parameterOrder;
 
-
+import test.HttpTestUtil;
 
 /**
 * This class is taken from the generated TestCase.  The generated test case is still generated
@@ -16,10 +16,11 @@ public class VerifyTestCase extends junit.framework.TestCase {
         super(name);
     }
 
-    public void testParameterOrder() {
+    public void testParameterOrder() throws Exception {
         test.wsdl.parameterOrder.ParameterOrderTest binding;
         try {
-            binding = new ParameterOrderServiceLocator().getParameterOrder();
+            ParameterOrderServiceLocator loc = new ParameterOrderServiceLocator();
+            binding = loc.getParameterOrder(HttpTestUtil.getTestEndpoint(loc.getParameterOrderAddress()));
         } catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
