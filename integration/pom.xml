@@ -943,6 +943,24 @@
                             <implementation>true</implementation>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>qnameser</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/qnameser/extension.wsdl</file>
+                            <generate>client</generate>
+                            <noWrapped>true</noWrapped>
+                            <wrapArrays>true</wrapArrays>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://tempuri.org/</namespace>
+                                    <package>test.wsdl.qnameser</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                     <!-- This tests polymorphism of return values -->
                     <execution>
                         <id>polymorphism</id>
@@ -1298,6 +1316,7 @@
                                     <directory>src/test/wsdd</directory>
                                     <includes>
                                         <include>**/deploy.wsdd</include>
+                                        <include>**/server-deploy.wsdd</include>
                                     </includes>
                                 </wsdd>
                                 <wsdd>

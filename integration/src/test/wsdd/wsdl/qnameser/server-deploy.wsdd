@@ -12,10 +12,10 @@
 
   <!-- Services from PlanWS WSDL service -->
 
-  <service name="PlanWSSoap" provider="java:RPC" style="document" use="literal">
+  <service name="PlanWS2Soap" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://tempuri.org/"/>
-      <parameter name="wsdlServiceElement" value="PlanWS"/>
-      <parameter name="wsdlServicePort" value="PlanWSSoap"/>
+      <parameter name="wsdlServiceElement" value="PlanWS2"/>
+      <parameter name="wsdlServicePort" value="PlanWS2Soap"/>
       <parameter name="className" value="test.wsdl.qnameser.PlanService"/>
       <parameter name="wsdlPortType" value="PlanWSSoap"/>
       <parameter name="allowedMethods" value="*"/>

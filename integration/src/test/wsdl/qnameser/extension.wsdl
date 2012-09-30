@@ -85,9 +85,9 @@ style="document" />
     </operation>
   </binding>
 
-  <service name="PlanWS">
-    <port name="PlanWSSoap" binding="s0:PlanWSSoap">
-      <soap:address location="http://localhost:8080/axis/services/PlanWSSoap" />
+  <service name="PlanWS2">
+    <port name="PlanWS2Soap" binding="s0:PlanWSSoap">
+      <soap:address location="http://localhost:8080/axis/services/PlanWS2Soap" />
     </port>
   </service>
 </definitions>
