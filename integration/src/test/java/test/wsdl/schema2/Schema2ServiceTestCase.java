@@ -7,6 +7,8 @@
 
 package test.wsdl.schema2;
 
+import test.HttpTestUtil;
+
 public class Schema2ServiceTestCase extends junit.framework.TestCase {
     public Schema2ServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,16 +16,18 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
 
     public void testSchema2ServiceWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.schema2.Schema2ServiceLocator().getSchema2ServiceAddress() + "?WSDL");
-        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.schema2.Schema2ServiceLocator().getServiceName());
+        Schema2ServiceLocator loc = new Schema2ServiceLocator();
+        javax.xml.rpc.Service service = serviceFactory.createService(
+                HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress() + "?WSDL"), loc.getServiceName());
         assertTrue(service != null);
     }
 
     public void test1Schema2ServiceEchoLanguageTypeTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -42,10 +46,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test2Schema2ServiceEchoTokenTypeTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -64,10 +69,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test3Schema2ServiceEchoNameTypeTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -86,10 +92,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test4Schema2ServiceEchoNCNameTypeTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -108,10 +115,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test5Schema2ServiceEchoIDTypeTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -130,10 +138,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test6Schema2ServiceEchoUnsignedShortTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -152,10 +161,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test7Schema2ServiceEchoUnsignedIntTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -174,10 +184,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test8Schema2ServiceEchoUnsignedByteTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -196,10 +207,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test9Schema2ServiceEchoUnsignedLongTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -218,10 +230,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test10Schema2ServiceEchoNonPositiveIntegerTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -240,10 +253,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test11Schema2ServiceEchoNonNegativeIntegerTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -262,10 +276,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test12Schema2ServiceEchoPositiveIntegerTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -284,10 +299,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test13Schema2ServiceEchoNegativeIntegerTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -306,10 +322,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test14Schema2ServiceEchoTimeTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -328,10 +345,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test15Schema2ServiceEchoDateTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -350,10 +368,11 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test16Schema2ServiceEchoDocumentTest() throws Exception {
-        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        Schema2ServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
-                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+            Schema2ServiceLocator loc = new Schema2ServiceLocator();
+            binding = (Schema2ServiceSoapBindingStub)
+                          loc.getSchema2Service(HttpTestUtil.getTestEndpoint(loc.getSchema2ServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
