@@ -2692,9 +2692,7 @@ public class Call implements javax.xml.rpc.Call {
                 // No direct config, so try the namespace of the first body.
                 reqMsg = msgContext.getRequestMessage();
                 
-                boolean isStream = ((SOAPPart)reqMsg.getSOAPPart()).isBodyStream();
-                
-                if (reqMsg != null && !isStream) {
+                if (reqMsg != null && !((SOAPPart)reqMsg.getSOAPPart()).isBodyStream()) {
                     reqEnv = reqMsg.getSOAPEnvelope();
 
                     SOAPBodyElement body = reqEnv.getFirstBody();
