@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <env:Body>
+    <sb:getTimeResponse xmlns:sb="http://soapinterop.org/"
+        xmlns:rpc="http://www.w3.org/2003/05/soap-rpc"
+        env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+        <rpc:result>return</rpc:result>
+      <return>16:21:59Z</return>
+    </sb:getTimeResponse>
+  </env:Body>
+</env:Envelope>

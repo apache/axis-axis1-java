@@ -36,6 +36,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
@@ -62,6 +63,11 @@ public class JavaNetHTTPSender extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         try {
             Message request = msgContext.getRequestMessage();
+            if (request != null && "GET".equals(msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD))) {
+                // Always ignore the request message if the request is explicitly marked as a GET request
+                request = null;
+            }
+            
             URL url = new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
             
             // Create and configure HttpURLConnection

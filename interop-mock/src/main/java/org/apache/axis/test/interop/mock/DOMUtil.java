@@ -48,6 +48,10 @@ public final class DOMUtil {
     
     private DOMUtil() {}
 
+    public static Document newDocument() {
+        return documentBuilder.newDocument();
+    }
+    
     public static Document parse(Resource resource) throws SAXException, IOException {
         InputStream in = resource.getInputStream();
         try {

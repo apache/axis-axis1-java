@@ -29,6 +29,7 @@ import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 public class Exchange implements InitializingBean {
     private static final Log log = LogFactory.getLog(Exchange.class);
@@ -68,7 +69,9 @@ public class Exchange implements InitializingBean {
         Map<String,String> inferredVariables = new HashMap<String,String>();
         if (match(requestMessage, root, inferredVariables)) {
             log.debug("Message matches");
-            return responseMessage;
+            Element clonedResponseMessage = (Element)DOMUtil.newDocument().importNode(responseMessage, true);
+            substituteVariables(clonedResponseMessage, inferredVariables);
+            return clonedResponseMessage;
         } else {
             log.debug("Message doesn't match");
             return null;
@@ -89,6 +92,13 @@ public class Exchange implements InitializingBean {
         buffer.append(element.getLocalName());
     }
     
+    /**
+     * Get the location of the given element as a pseudo XPath expression for use in log messages.
+     * 
+     * @param element
+     *            the element
+     * @return the location of the element
+     */
     private String getLocation(Element element) {
         StringBuilder buffer = new StringBuilder();
         getLocation(buffer, element);
@@ -96,6 +106,7 @@ public class Exchange implements InitializingBean {
     }
     
     private boolean match(Element expected, Element actual, Map<String,String> inferredVariables) {
+        // Compare local name and namespace URI
         if (!ObjectUtils.equals(expected.getLocalName(), actual.getLocalName())) {
             if (log.isDebugEnabled()) {
                 log.debug("Local name mismatch: expected=" + expected.getLocalName() + "; actual=" + actual.getLocalName());
@@ -108,7 +119,10 @@ public class Exchange implements InitializingBean {
             }
             return false;
         }
+        
         // TODO: compare attributes first
+        
+        // Compare children
         NodeList expectedChildren = expected.getChildNodes();
         NodeList actualChildren = actual.getChildNodes();
         if (expectedChildren.getLength() != actualChildren.getLength()) {
@@ -132,13 +146,71 @@ public class Exchange implements InitializingBean {
                         return false;
                     }
                     break;
+                case Node.TEXT_NODE:
+                    if (!match((Text)expectedChild, (Text)actualChild, inferredVariables)) {
+                        return false;
+                    }
+                    break;
                 default:
                     if (log.isDebugEnabled()) {
-                        log.debug("Unexpected node type");
+                        log.debug("Unexpected node type " + expectedChild.getNodeType());
                     }
                     throw new IllegalStateException("Unexpected node type");
             }
         }
         return true;
+    }
+
+    private boolean match(Text expected, Text actual, Map<String,String> inferredVariables) {
+        String expectedContent = expected.getData();
+        String actualContent = actual.getData();
+        String varName = checkVariable(expectedContent);
+        if (varName != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Inferred variable: " + varName + "=" + actualContent);
+            }
+            inferredVariables.put(varName, actualContent);
+            return true;
+        } else {
+            if (expectedContent.equals(actualContent)) {
+                return true;
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Text content mismatch at " + getLocation((Element)expected.getParentNode())
+                            + ": expected=" + expectedContent + "; actual=" + actualContent);
+                }
+                return false;
+            }
+        }
+    }
+    
+    private String checkVariable(String text) {
+        if (text.startsWith("@") && text.endsWith("@")) {
+            return text.substring(1, text.length()-1);
+        } else {
+            return null;
+        }
+    }
+    
+    private void substituteVariables(Element element, Map<String,String> variables) {
+        Node child = element.getFirstChild();
+        while (child != null) {
+            switch (child.getNodeType()) {
+                case Node.ELEMENT_NODE:
+                    substituteVariables((Element)child, variables);
+                    break;
+                case Node.TEXT_NODE:
+                    Text text = (Text)child;
+                    String varName = checkVariable(text.getData());
+                    if (varName != null) {
+                        text.setData(variables.get(varName));
+                        if (log.isDebugEnabled()) {
+                            log.debug("Substituted variable " + varName + " at " + getLocation(element));
+                        }
+                    }
+                    break;
+            }
+            child = child.getNextSibling();
+        }
     }
 }
