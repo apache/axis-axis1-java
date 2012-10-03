@@ -54,6 +54,13 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>interop-mock</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -109,7 +116,9 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <portNames>
-                                <portName>testPort</portName>
+                                <portName>axis.httpPort</portName>
+                                <portName>jetty.httpPort</portName>
+                                <portName>jetty.stopPort</portName>
                             </portNames>
                         </configuration>
                     </execution>
@@ -126,7 +135,7 @@
                             <goal>start-server</goal>
                         </goals>
                         <configuration>
-                        	<port>${testPort}</port>
+                        	<port>${axis.httpPort}</port>
                             <wsdds>
                                 <wsdd>
                                     <directory>${project.build.directory}</directory>
@@ -146,6 +155,56 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <includeTypes>war</includeTypes>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <configuration>
+                    <war>${project.build.directory}/interop-mock.war</war>
+                    <stopKey>foo</stopKey>
+                    <stopPort>${jetty.stopPort}</stopPort>
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <port>${jetty.httpPort}</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>deploy-war</goal>
+                        </goals>
+                        <configuration>
+                            <daemon>true</daemon>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
@@ -158,7 +217,8 @@
                                 <include>**/Test*.java</include>
                             </includes>
                             <systemPropertyVariables>
-                                <testPort>${testPort}</testPort>
+                                <axis.httpPort>${axis.httpPort}</axis.httpPort>
+                                <jetty.httpPort>${jetty.httpPort}</jetty.httpPort>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>

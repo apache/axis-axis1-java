@@ -67,8 +67,10 @@ public class JavaNetHTTPSender extends BasicHandler {
             // Create and configure HttpURLConnection
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setChunkedStreamingMode(0); // 0 means default chunk size
+            if (request != null) {
+                connection.setDoOutput(true);
+                connection.setChunkedStreamingMode(0); // 0 means default chunk size
+            }
             int timeout = msgContext.getTimeout();
             connection.setConnectTimeout(timeout);
             connection.setReadTimeout(timeout);
@@ -98,14 +100,17 @@ public class JavaNetHTTPSender extends BasicHandler {
                 connection.addRequestProperty(HTTPConstants.HEADER_AUTHORIZATION, "Basic " + Base64.encode(token));
             }
             
-            // Set "Content-Type" header
-            connection.setRequestProperty(HTTPConstants.HEADER_CONTENT_TYPE,
-                    request.getContentType(msgContext.getSOAPConstants()));
+            if (request != null) {
+                // Set "Content-Type" header
+                connection.setRequestProperty(HTTPConstants.HEADER_CONTENT_TYPE,
+                        request.getContentType(msgContext.getSOAPConstants()));
+                
+                // Send request
+                OutputStream out = connection.getOutputStream();
+                request.writeTo(out);
+                out.close();
+            }
             
-            // Send request
-            OutputStream out = connection.getOutputStream();
-            request.writeTo(out);
-            out.close();
             
             // Process response
             int statusCode = connection.getResponseCode();

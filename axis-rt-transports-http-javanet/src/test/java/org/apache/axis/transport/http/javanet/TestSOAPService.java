@@ -27,7 +27,7 @@ public class TestSOAPService extends TestCase {
     
     protected void setUp() throws Exception {
         dummy = new DummyServiceLocator().getDummy(new URL(
-                "http://localhost:" + System.getProperty("testPort", "8080") + "/axis/services/Dummy"));
+                "http://localhost:" + System.getProperty("axis.httpPort", "8080") + "/axis/services/Dummy"));
     }
 
     public void testTwoWay() throws Exception {

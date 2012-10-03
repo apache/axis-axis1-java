@@ -68,6 +68,7 @@
         <module>axis-jms</module>
         <module>axis-testutils</module>
         <module>integration</module>
+        <module>interop-mock</module>
         <module>axis-war</module>
         <module>samples</module>
         <module>distribution</module>

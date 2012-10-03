@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <env:Body>
+    <sb:time xmlns:sb="http://soapinterop.org/">09:21:19Z</sb:time>
+  </env:Body>
+</env:Envelope>

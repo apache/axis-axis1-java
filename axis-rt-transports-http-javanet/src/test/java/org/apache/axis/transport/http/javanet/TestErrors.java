@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
 
 public class TestErrors extends TestCase {
     public void test404() throws Exception {
-        Call call = new Call("http://localhost:" + System.getProperty("testPort", "8080") + "/doesnt-exist");
+        Call call = new Call("http://localhost:" + System.getProperty("axis.httpPort", "8080") + "/doesnt-exist");
         call.setOperationName("test");
         try {
             call.invoke(new Object[0]);
