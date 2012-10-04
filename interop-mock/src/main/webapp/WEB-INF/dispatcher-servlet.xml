@@ -25,7 +25,6 @@
     <!-- Endpoints that mock http://www.whitemesa.net -->
     
     <bean name="/soap12/add-test-rpc" class="org.apache.axis.test.interop.mock.MockPostHandler">
-        <property name="contentType" value="application/soap+xml"/>
         <property name="exchanges">
             <list>
                 <bean class="org.apache.axis.test.interop.mock.Exchange">
@@ -36,17 +35,80 @@
                     <property name="request" value="classpath:w3c/XMLP-4-request.xml"/>
                     <property name="response" value="classpath:w3c/XMLP-4-response.xml"/>
                 </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-5-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-5-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-6-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-6-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-9-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-9-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-11-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-11-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-12-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-12-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/variants/XMLP-12-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-12-response.xml"/>
+                </bean>
             </list>
         </property>
     </bean>
     
     <bean name="/soap12/add-test-doc/getTime" class="org.apache.axis.test.interop.mock.MockGetHandler">
-        <property name="contentType" value="application/soap+xml"/>
         <property name="response" value="classpath:w3c/XMLP-2-response.xml"/>
     </bean>
     
     <bean name="/soap12/add-test-rpc/getTime" class="org.apache.axis.test.interop.mock.MockGetHandler">
-        <property name="contentType" value="application/soap+xml"/>
         <property name="response" value="classpath:w3c/XMLP-3-response.xml"/>
+    </bean>
+
+    <bean name="/soap12/add-test-doc" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-7-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-7-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-8-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-8-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean name="/soap12/add-test-doc-int" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-13.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-13.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-15-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-15-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean name="/soap12/add-test-doc-int-uc" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:w3c/XMLP-14-request.xml"/>
+                    <property name="response" value="classpath:w3c/XMLP-14-response.xml"/>
+                </bean>
+            </list>
+        </property>
     </bean>
 </beans>

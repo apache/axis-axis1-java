@@ -52,8 +52,8 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     
     // Endpoints
     // TODO : Shouldn't be hardcoded!
-//    public static final String HOST = "http://localhost:8080";
-    public static String HOST = "http://www.whitemesa.net";
+    public static String HOST = "http://localhost:9080";
+//    public static String HOST = "http://www.whitemesa.net";
     public static String RPC_ENDPOINT = HOST + "/soap12/add-test-rpc";
     public static String DOC_ENDPOINT = HOST + "/soap12/add-test-doc";
     public static String GET_DOC_ENDPOINT = HOST + "/soap12/add-test-doc/getTime";
@@ -424,7 +424,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         Call call = new Call(DOC_INT_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         call.setOperationStyle(Style.WRAPPED);
-        call.addParameter(new QName(TEST_NS, "inputString"),
+        call.addParameter(new QName("", "inputString"),
                           Constants.XSD_STRING, ParameterMode.IN);
         call.setReturnType(Constants.XSD_STRING);
         
@@ -443,7 +443,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         Call call = new Call(DOC_INT_UC_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         call.setOperationStyle(Style.WRAPPED);
-        call.addParameter(new QName(TEST_NS, "inputString"),
+        call.addParameter(new QName("", "inputString"),
                           Constants.XSD_STRING, ParameterMode.IN);
         call.setReturnType(Constants.XSD_STRING);
         
@@ -466,6 +466,8 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         header.setObjectValue(HEADER_VAL);
         call.addHeader(header);
         
+        call.addParameter(new QName("", "inputString"),
+                Constants.XSD_STRING, ParameterMode.IN);
         call.invoke(ECHO_STRING_QNAME, new Object [] { "body string" });
         
         SOAPEnvelope respEnv = call.getMessageContext().getResponseMessage().getSOAPEnvelope();

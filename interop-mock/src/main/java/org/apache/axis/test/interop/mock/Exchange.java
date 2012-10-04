@@ -18,8 +18,8 @@
  */
 package org.apache.axis.test.interop.mock;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
@@ -38,17 +38,10 @@ public class Exchange implements InitializingBean {
     private Resource response;
     private Element requestMessage;
     private Element responseMessage;
-    
-    public Resource getRequest() {
-        return request;
-    }
+    private String requestContentType;
     
     public void setRequest(Resource request) {
         this.request = request;
-    }
-    
-    public Resource getResponse() {
-        return response;
     }
     
     public void setResponse(Resource response) {
@@ -58,19 +51,26 @@ public class Exchange implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         requestMessage = DOMUtil.parse(request).getDocumentElement();
         DOMUtil.removeWhitespace(requestMessage);
+        requestContentType = SOAPUtil.getContentType(requestMessage);
         responseMessage = DOMUtil.parse(response).getDocumentElement();
         DOMUtil.removeWhitespace(responseMessage);
+    }
+
+    public String getRequestContentType() {
+        return requestContentType;
     }
 
     public Element matchRequest(Element root) {
         if (log.isDebugEnabled()) {
             log.debug("Attempting to match " + request);
         }
-        Map<String,String> inferredVariables = new HashMap<String,String>();
+        Variables inferredVariables = new Variables();
         if (match(requestMessage, root, inferredVariables)) {
             log.debug("Message matches");
             Element clonedResponseMessage = (Element)DOMUtil.newDocument().importNode(responseMessage, true);
-            substituteVariables(clonedResponseMessage, inferredVariables);
+            ExpressionFactory factory = ExpressionFactory.newInstance();
+            Context context = new Context(inferredVariables);
+            substituteVariables(clonedResponseMessage, factory, context);
             return clonedResponseMessage;
         } else {
             log.debug("Message doesn't match");
@@ -105,15 +105,23 @@ public class Exchange implements InitializingBean {
         return buffer.toString();
     }
     
-    private boolean match(Element expected, Element actual, Map<String,String> inferredVariables) {
+    private boolean matchName(String expected, String actual) {
+        if ("__any__".equals(expected)) {
+            return true;
+        } else {
+            return ObjectUtils.equals(expected, actual);
+        }
+    }
+    
+    private boolean match(Element expected, Element actual, Variables inferredVariables) {
         // Compare local name and namespace URI
-        if (!ObjectUtils.equals(expected.getLocalName(), actual.getLocalName())) {
+        if (!matchName(expected.getLocalName(), actual.getLocalName())) {
             if (log.isDebugEnabled()) {
                 log.debug("Local name mismatch: expected=" + expected.getLocalName() + "; actual=" + actual.getLocalName());
             }
             return false;
         }
-        if (!ObjectUtils.equals(expected.getNamespaceURI(), actual.getNamespaceURI())) {
+        if (!matchName(expected.getNamespaceURI(), actual.getNamespaceURI())) {
             if (log.isDebugEnabled()) {
                 log.debug("Namespace mismatch: expected=" + expected.getNamespaceURI() + "; actual=" + actual.getNamespaceURI());
             }
@@ -125,51 +133,59 @@ public class Exchange implements InitializingBean {
         // Compare children
         NodeList expectedChildren = expected.getChildNodes();
         NodeList actualChildren = actual.getChildNodes();
-        if (expectedChildren.getLength() != actualChildren.getLength()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Children count mismatch at " + getLocation(expected) + ": expected=" + expectedChildren.getLength() + "; actual=" + actualChildren.getLength());
-            }
-            return false;
-        }
-        for (int i=0; i<expectedChildren.getLength(); i++) {
-            Node expectedChild = expectedChildren.item(i);
-            Node actualChild = actualChildren.item(i);
-            if (expectedChild.getNodeType() != actualChild.getNodeType()) {
+        int expectedChildrenLength = expectedChildren.getLength();
+        int actualChildrenLength = actualChildren.getLength();
+        // We need to handle the situation where we expect a single child of type text and where there actually is no child
+        // in a special way. Otherwise variable inference doesn't work if the value is the empty string.
+        if (expectedChildrenLength == 1 && expectedChildren.item(0).getNodeType() == Node.TEXT_NODE && actualChildrenLength == 0) {
+            return match((Text)expectedChildren.item(0), null, inferredVariables);
+        } else {
+            if (expectedChildrenLength != actualChildrenLength) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Child type mismatch");
+                    log.debug("Children count mismatch at " + getLocation(expected) + ": expected=" + expectedChildrenLength + "; actual=" + actualChildrenLength);
                 }
                 return false;
             }
-            switch (expectedChild.getNodeType()) {
-                case Node.ELEMENT_NODE:
-                    if (!match((Element)expectedChild, (Element)actualChild, inferredVariables)) {
-                        return false;
-                    }
-                    break;
-                case Node.TEXT_NODE:
-                    if (!match((Text)expectedChild, (Text)actualChild, inferredVariables)) {
-                        return false;
-                    }
-                    break;
-                default:
+            for (int i=0; i<expectedChildrenLength; i++) {
+                Node expectedChild = expectedChildren.item(i);
+                Node actualChild = actualChildren.item(i);
+                if (expectedChild.getNodeType() != actualChild.getNodeType()) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Unexpected node type " + expectedChild.getNodeType());
+                        log.debug("Child type mismatch");
                     }
-                    throw new IllegalStateException("Unexpected node type");
+                    return false;
+                }
+                switch (expectedChild.getNodeType()) {
+                    case Node.ELEMENT_NODE:
+                        if (!match((Element)expectedChild, (Element)actualChild, inferredVariables)) {
+                            return false;
+                        }
+                        break;
+                    case Node.TEXT_NODE:
+                        if (!match((Text)expectedChild, (Text)actualChild, inferredVariables)) {
+                            return false;
+                        }
+                        break;
+                    default:
+                        if (log.isDebugEnabled()) {
+                            log.debug("Unexpected node type " + expectedChild.getNodeType());
+                        }
+                        throw new IllegalStateException("Unexpected node type");
+                }
             }
+            return true;
         }
-        return true;
     }
 
-    private boolean match(Text expected, Text actual, Map<String,String> inferredVariables) {
+    private boolean match(Text expected, Text actual, Variables inferredVariables) {
         String expectedContent = expected.getData();
-        String actualContent = actual.getData();
+        String actualContent = actual == null ? "" : actual.getData();
         String varName = checkVariable(expectedContent);
         if (varName != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Inferred variable: " + varName + "=" + actualContent);
             }
-            inferredVariables.put(varName, actualContent);
+            inferredVariables.bind(varName, actualContent);
             return true;
         } else {
             if (expectedContent.equals(actualContent)) {
@@ -185,29 +201,23 @@ public class Exchange implements InitializingBean {
     }
     
     private String checkVariable(String text) {
-        if (text.startsWith("@") && text.endsWith("@")) {
-            return text.substring(1, text.length()-1);
+        if (text.startsWith("${") && text.endsWith("}")) {
+            return text.substring(2, text.length()-1);
         } else {
             return null;
         }
     }
     
-    private void substituteVariables(Element element, Map<String,String> variables) {
+    private void substituteVariables(Element element, ExpressionFactory expressionFactory, ELContext context) {
         Node child = element.getFirstChild();
         while (child != null) {
             switch (child.getNodeType()) {
                 case Node.ELEMENT_NODE:
-                    substituteVariables((Element)child, variables);
+                    substituteVariables((Element)child, expressionFactory, context);
                     break;
                 case Node.TEXT_NODE:
                     Text text = (Text)child;
-                    String varName = checkVariable(text.getData());
-                    if (varName != null) {
-                        text.setData(variables.get(varName));
-                        if (log.isDebugEnabled()) {
-                            log.debug("Substituted variable " + varName + " at " + getLocation(element));
-                        }
-                    }
+                    text.setData((String)expressionFactory.createValueExpression(context, text.getData(), String.class).getValue(context));
                     break;
             }
             child = child.getNextSibling();

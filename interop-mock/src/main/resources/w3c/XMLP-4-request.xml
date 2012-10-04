@@ -5,9 +5,9 @@
   <env:Body>
     <sb:echoSimpleTypesAsStruct xmlns:sb="http://soapinterop.org/"
           env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-      <inputFloat xsi:type="xsd:float">@floatValue@</inputFloat>
-      <inputInteger xsi:type="xsd:int">@intValue@</inputInteger>
-      <inputString xsi:type="xsd:string">@stringValue@</inputString>
+      <inputFloat xsi:type="xsd:float">${floatValue}</inputFloat>
+      <inputInteger xsi:type="xsd:int">${intValue}</inputInteger>
+      <inputString xsi:type="xsd:string">${stringValue}</inputString>
     </sb:echoSimpleTypesAsStruct>
   </env:Body>
 </env:Envelope>

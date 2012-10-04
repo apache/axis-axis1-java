@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" 
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <env:Header>
+    <sb:__any__ env:role="http://www.w3.org/2003/05/soap-envelope/role/next" 
+                xmlns:sb="__any__">${headerContent}</sb:__any__>
+  </env:Header>
+  <env:Body>
+    <sb:echoString xmlns:sb="http://soapinterop.org/"
+        env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+      <inputString xsi:type="xsd:string">${inputString}</inputString>
+    </sb:echoString>
+  </env:Body>
+</env:Envelope>

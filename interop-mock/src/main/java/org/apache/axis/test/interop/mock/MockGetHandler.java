@@ -19,7 +19,6 @@
 package org.apache.axis.test.interop.mock;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,26 +28,31 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.web.HttpRequestHandler;
+import org.w3c.dom.Element;
 
-public class MockGetHandler implements HttpRequestHandler {
+public class MockGetHandler implements HttpRequestHandler, InitializingBean {
     private static final Log log = LogFactory.getLog(MockGetHandler.class);
     
-    private String contentType;
     private Resource response;
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+    private Element responseMessage;
+    private String responseContentType;
 
     public void setResponse(Resource response) {
         this.response = response;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        responseMessage = DOMUtil.parse(response).getDocumentElement();
+        DOMUtil.removeWhitespace(responseMessage);
+        responseContentType = SOAPUtil.getContentType(responseMessage);
     }
 
     public void handleRequest(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
@@ -56,7 +60,7 @@ public class MockGetHandler implements HttpRequestHandler {
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "This endpoint only supports GET requests");
             return;
         }
-        httpResponse.setContentType(contentType + "; " + Constants.CHARSET_PARAM + "=UTF-8");
+        httpResponse.setContentType(responseContentType + "; " + Constants.CHARSET_PARAM + "=UTF-8");
         Transformer transformer;
         try {
             transformer = TransformerFactory.newInstance().newTransformer();
@@ -67,13 +71,10 @@ public class MockGetHandler implements HttpRequestHandler {
         if (log.isDebugEnabled()) {
             log.debug("Returning " + response);
         }
-        InputStream in = response.getInputStream();
         try {
-            transformer.transform(new StreamSource(in), new StreamResult(httpResponse.getOutputStream()));
+            transformer.transform(new DOMSource(responseMessage), new StreamResult(httpResponse.getOutputStream()));
         } catch (TransformerException ex) {
             throw new ServletException(ex);
-        } finally {
-            in.close();
         }
     }
 }

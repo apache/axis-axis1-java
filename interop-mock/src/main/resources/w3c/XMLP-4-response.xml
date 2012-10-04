@@ -9,9 +9,9 @@
       <rpc:result>return</rpc:result>
       <return xsi:type="ns1:SOAPStruct"
               xmlns:ns1="http://soapinterop.org/xsd">
-        <varString xsi:type="xsd:string">@stringValue@</varString>
-        <varInt xsi:type="xsd:int">@intValue@</varInt>
-        <varFloat xsi:type="xsd:float">@floatValue@</varFloat>
+        <varString xsi:type="xsd:string">${stringValue}</varString>
+        <varInt xsi:type="xsd:int">${intValue}</varInt>
+        <varFloat xsi:type="xsd:float">${floatValue}</varFloat>
       </return>
     </sb:echoSimpleTypesAsStructResponse>
   </env:Body>

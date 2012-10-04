@@ -19,8 +19,10 @@
 package org.apache.axis.test.interop.mock;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -37,25 +39,29 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.HttpRequestHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-public class MockPostHandler implements HttpRequestHandler {
+public class MockPostHandler implements HttpRequestHandler, InitializingBean {
     private static final Log log = LogFactory.getLog(MockPostHandler.class);
     
-    private String contentType;
     private List<Exchange> exchanges;
+    private Set<String> supportedContentTypes;
     
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
     public void setExchanges(List<Exchange> exchanges) {
         this.exchanges = exchanges;
     }
     
+    public void afterPropertiesSet() throws Exception {
+        supportedContentTypes = new HashSet<String>();
+        for (Exchange exchange : exchanges) {
+            supportedContentTypes.add(exchange.getRequestContentType());
+        }
+    }
+
     public void handleRequest(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
         if (!httpRequest.getMethod().equals("POST")) {
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "This endpoint only supports POST requests");
@@ -73,8 +79,9 @@ public class MockPostHandler implements HttpRequestHandler {
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Content-Type header: " + ex.getMessage());
             return;
         }
-        if (!requestContentType.getBaseType().toLowerCase(Locale.ENGLISH).equals(contentType)) {
-            httpResponse.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Only " + contentType + " is supported");
+        String requestBaseContentType = requestContentType.getBaseType().toLowerCase(Locale.ENGLISH);
+        if (!supportedContentTypes.contains(requestBaseContentType)) {
+            httpResponse.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Only " + supportedContentTypes + " are supported");
             return;
         }
         String charset = requestContentType.getParameter(Constants.CHARSET_PARAM);
@@ -93,9 +100,11 @@ public class MockPostHandler implements HttpRequestHandler {
         }
         Element responseMessage = null;
         for (Exchange exchange : exchanges) {
-            responseMessage = exchange.matchRequest(requestDocument.getDocumentElement());
-            if (responseMessage != null) {
-                break;
+            if (exchange.getRequestContentType().equals(requestBaseContentType)) {
+                responseMessage = exchange.matchRequest(requestDocument.getDocumentElement());
+                if (responseMessage != null) {
+                    break;
+                }
             }
         }
         if (responseMessage == null) {
@@ -104,7 +113,7 @@ public class MockPostHandler implements HttpRequestHandler {
         }
         MimeType responseContentType;
         try {
-            responseContentType = new MimeType(contentType);
+            responseContentType = new MimeType(SOAPUtil.getContentType(responseMessage));
         } catch (MimeTypeParseException ex) {
             throw new ServletException("Unexpected exception", ex);
         }
