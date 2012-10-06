@@ -299,11 +299,9 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     }
     
     public void testXMLP8() throws Exception {
-        Call call = new Call(DOC_ENDPOINT);
-        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
-        QName qname = new QName(TEST_NS, "echoReceiverFault");
+        Soap12AddTestPortTypeDoc binding = new WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocPort(new URL(DOC_ENDPOINT));
         try {
-            call.invoke(qname, null);
+            binding.echoReceiverFault("test");
         } catch (AxisFault af) {
             assertEquals(Constants.FAULT_SOAP12_RECEIVER,
                     af.getFaultCode());
