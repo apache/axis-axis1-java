@@ -491,6 +491,8 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         header.setObjectValue(HEADER_VAL);
         call.addHeader(header);
         
+        call.addParameter(new QName("", "inputString"),
+                Constants.XSD_STRING, ParameterMode.IN);
         call.invoke(ECHO_STRING_QNAME, new Object [] { "body string" });
         
         SOAPEnvelope respEnv = call.getMessageContext().getResponseMessage().getSOAPEnvelope();
