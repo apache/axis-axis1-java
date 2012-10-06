@@ -254,6 +254,10 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
                                       "unknown",
                                       "Nobody understands me!");
         unknownHeader.setMustUnderstand(true);
+        
+        // TODO: the role is set by default to next, but using the URI for SOAP 1.1; that looks like a bug
+        unknownHeader.setRole(SOAPConstants.SOAP12_CONSTANTS.getNextRoleURI());
+        
         call.addHeader(unknownHeader);
         try {
             call.invoke(new QName(TEST_NS, "echoVoid"), null);        
