@@ -20,18 +20,48 @@ package org.apache.axis.test.interop.mock;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+/**
+ * Describes a request-response message exchange supported by a {@link MockPostHandler}. An instance
+ * of this class matches a given request against an expected request (specified by a
+ * {@link Resource}), and if the request matches, returns a configurable response (specified by
+ * another {@link Resource}). The configured request and response messages can contain simple
+ * template constructs. During request matching, these templates are used to infer variable values,
+ * and these variables can then be substituted in the response. The following template constructs
+ * are supported:
+ * <ol>
+ * <li><code>${<i>expression</i>}</code> appearing in text nodes. In a request message, the
+ * expression must be a simple variable expression (e.g. <code>${myInputParameter}</code>). During
+ * request matching, the value of the variable will be set to the content of the text node in the
+ * actual request. In a response message, the expression can be any EL expression as defined by the
+ * <code>javax.el</code> API.
+ * <li>Element templates in the form
+ * <code>&lt;t:element t:name="${var}" xmlns:t="http://axis.apache.org/mock/template">...&lt;/t:element></code>.
+ * In a request message this template matches any element, and the {@link QName} of that element
+ * is assigned to the variable specified by the <tt>t:name</tt> attribute. In a response message the
+ * template element will be substituted by an element with the given name. Note that the template
+ * element may have children as well as additional attributes (not in the
+ * <tt>http://axis.apache.org/mock/template</tt> namespace). They are matched/copied as any other
+ * node.
+ * </ol>
+ */
 public class Exchange implements InitializingBean {
+    private static final String MOCK_NS = "http://axis.apache.org/mock/template";
+    
     private static final Log log = LogFactory.getLog(Exchange.class);
     
     private Resource request;
@@ -105,30 +135,87 @@ public class Exchange implements InitializingBean {
         return buffer.toString();
     }
     
-    private boolean matchName(String expected, String actual) {
-        if ("__any__".equals(expected)) {
-            return true;
-        } else {
-            return ObjectUtils.equals(expected, actual);
+    private String getLocation(Attr attr) {
+        StringBuilder buffer = new StringBuilder();
+        getLocation(buffer, attr.getOwnerElement());
+        buffer.append("/@");
+        String prefix = attr.getPrefix();
+        if (prefix != null) {
+            buffer.append(prefix);
+            buffer.append(':');
         }
+        buffer.append(attr.getLocalName());
+        return buffer.toString();
     }
     
     private boolean match(Element expected, Element actual, Variables inferredVariables) {
-        // Compare local name and namespace URI
-        if (!matchName(expected.getLocalName(), actual.getLocalName())) {
-            if (log.isDebugEnabled()) {
-                log.debug("Local name mismatch: expected=" + expected.getLocalName() + "; actual=" + actual.getLocalName());
+        String namespaceURI = expected.getNamespaceURI();
+        String localName = expected.getLocalName();
+        // Check if the element in the actual request is a template construct
+        if (MOCK_NS.equals(namespaceURI)) {
+            if (localName.equals("element")) {
+                inferredVariables.bind(checkVariable(expected.getAttributeNS(MOCK_NS, "name")),
+                        QName.class, new QName(actual.getNamespaceURI(), actual.getLocalName()));
+            } else {
+                log.error("Unexpected template element " + localName);
+                return false;
             }
-            return false;
-        }
-        if (!matchName(expected.getNamespaceURI(), actual.getNamespaceURI())) {
-            if (log.isDebugEnabled()) {
-                log.debug("Namespace mismatch: expected=" + expected.getNamespaceURI() + "; actual=" + actual.getNamespaceURI());
+        } else {
+            // Compare local name and namespace URI
+            if (!ObjectUtils.equals(localName, actual.getLocalName())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Local name mismatch: expected=" + expected.getLocalName() + "; actual=" + actual.getLocalName());
+                }
+                return false;
             }
-            return false;
+            if (!ObjectUtils.equals(namespaceURI, actual.getNamespaceURI())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Namespace mismatch: expected=" + expected.getNamespaceURI() + "; actual=" + actual.getNamespaceURI());
+                }
+                return false;
+            }
         }
         
-        // TODO: compare attributes first
+        // Compare attributes
+        NamedNodeMap expectedAttributes = expected.getAttributes();
+        NamedNodeMap actualAttributes = actual.getAttributes();
+        // Check that all expected attributes are present and have matching values
+        for (int i=0; i<expectedAttributes.getLength(); i++) {
+            Attr expectedAttribute = (Attr)expectedAttributes.item(i);
+            String attrNamespaceURI = expectedAttribute.getNamespaceURI();
+            // Ignore namespace declarations and attributes used in template constructs
+            if (!XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attrNamespaceURI)
+                    && !MOCK_NS.equals(attrNamespaceURI)) {
+                Attr actualAttribute = (Attr)actualAttributes.getNamedItemNS(attrNamespaceURI, expectedAttribute.getLocalName());
+                if (actualAttribute == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Attribute " + getLocation(expectedAttribute) + " not found in actual request");
+                    }
+                    return false;
+                }
+                if (!actualAttribute.getValue().equals(expectedAttribute.getValue())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Attribute value mismatch at " + getLocation(expectedAttribute)
+                                + ": expected=" + expectedAttribute.getValue()
+                                + "; actual=" + actualAttribute.getValue());
+                    }
+                    return false;
+                }
+            }
+        }
+        // Check that there are no unexpected attributes
+        for (int i=0; i<actualAttributes.getLength(); i++) {
+            Attr actualAttribute = (Attr)actualAttributes.item(i);
+            String attrNamespaceURI = actualAttribute.getNamespaceURI();
+            if (!XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attrNamespaceURI) &&
+                    expectedAttributes.getNamedItemNS(attrNamespaceURI, actualAttribute.getLocalName()) == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unexpected attribute at " + getLocation(expected) + ": uri=" + actualAttribute.getNamespaceURI()
+                            + "; name=" + actualAttribute.getLocalName());
+                }
+                return false;
+            }
+        }
         
         // Compare children
         NodeList expectedChildren = expected.getChildNodes();
@@ -182,10 +269,7 @@ public class Exchange implements InitializingBean {
         String actualContent = actual == null ? "" : actual.getData();
         String varName = checkVariable(expectedContent);
         if (varName != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Inferred variable: " + varName + "=" + actualContent);
-            }
-            inferredVariables.bind(varName, actualContent);
+            inferredVariables.bind(varName, String.class, actualContent);
             return true;
         } else {
             if (expectedContent.equals(actualContent)) {

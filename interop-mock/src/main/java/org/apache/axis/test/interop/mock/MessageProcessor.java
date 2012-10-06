@@ -20,17 +20,6 @@ package org.apache.axis.test.interop.mock;
 
 import org.w3c.dom.Element;
 
-public final class SOAPUtil {
-    private SOAPUtil() {}
-    
-    public static String getContentType(Element envelope) {
-        String namespaceURI = envelope.getNamespaceURI();
-        if (SOAPConstants.SOAP12_ENV_NAMESPACE.equals(namespaceURI)) {
-            return "application/soap+xml";
-        } else if (SOAPConstants.SOAP11_ENV_NAMESPACE.equals(namespaceURI)) {
-            return "text/xml";
-        } else {
-            return null;
-        }
-    }
+public interface MessageProcessor {
+    void process(Element message);
 }

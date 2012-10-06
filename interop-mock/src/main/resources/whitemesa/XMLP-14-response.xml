@@ -3,8 +3,8 @@
               xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <env:Body>
-    <sb:unknownFreakyMethod xmlns:sb="http://soapinterop.org/" env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-      <inputInteger xsi:type="xsd:int">${inputInteger}</inputInteger>
-    </sb:unknownFreakyMethod>
+    <sb:echoString xmlns:sb="http://soapinterop.org/">
+      <inputString xsi:type="xsd:string">${fn:toUpperCase(inputString)}</inputString>
+    </sb:echoString>
   </env:Body>
 </env:Envelope>

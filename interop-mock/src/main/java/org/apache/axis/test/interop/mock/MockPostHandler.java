@@ -48,9 +48,14 @@ import org.xml.sax.SAXException;
 public class MockPostHandler implements HttpRequestHandler, InitializingBean {
     private static final Log log = LogFactory.getLog(MockPostHandler.class);
     
+    private List<MessageProcessor> requestProcessors;
     private List<Exchange> exchanges;
     private Set<String> supportedContentTypes;
     
+    public void setRequestProcessors(List<MessageProcessor> requestProcessors) {
+        this.requestProcessors = requestProcessors;
+    }
+
     public void setExchanges(List<Exchange> exchanges) {
         this.exchanges = exchanges;
     }
@@ -98,10 +103,19 @@ public class MockPostHandler implements HttpRequestHandler, InitializingBean {
                 log.debug("Setting charset from request entity: " + charset);
             }
         }
+        Element request = requestDocument.getDocumentElement();
+        if (requestProcessors != null) {
+            for (MessageProcessor processor : requestProcessors) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Executing message processor " + processor);
+                }
+                processor.process(request);
+            }
+        }
         Element responseMessage = null;
         for (Exchange exchange : exchanges) {
             if (exchange.getRequestContentType().equals(requestBaseContentType)) {
-                responseMessage = exchange.matchRequest(requestDocument.getDocumentElement());
+                responseMessage = exchange.matchRequest(request);
                 if (responseMessage != null) {
                     break;
                 }

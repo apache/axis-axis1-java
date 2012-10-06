@@ -8,10 +8,8 @@ with corrections for the following mistakes in the spec:
     in the description the parameter is called inputInteger (see XMLP-4).
   * The response shown in XMLP-9 has a typo (</env:value> instead of </env:Value>).
   * The response shown in XMLP-14 has a typo (<inputString> instead of </inputString>).
-  * The request shown in XMLP-15 has a typo (<inputString> instead of </inputString>).
 
 In addition, the following changes have been made:
 
-  * Request values echoed in responses (or that are irrelevant) have been replaced by template
-    variables.
-  * Local names and namespaces that are irrelevant have been replaced by wildcards (__any__).
+  * Request values (and element names) echoed in responses (or that are irrelevant) have been
+    replaced by template variables.

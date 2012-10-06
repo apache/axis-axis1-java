@@ -24,15 +24,17 @@ import javax.el.ValueExpression;
 
 import org.apache.commons.lang.ObjectUtils;
 
-public final class ValueExpressionLiteral extends ValueExpression {
+public final class ValueExpressionLiteral<T> extends ValueExpression {
     private static final long serialVersionUID = -3847213439349942695L;
     
-    private String value;
+    private final Class<T> clazz;
+    private final T value;
 
-    public ValueExpressionLiteral(String value) {
-        if (value == null) {
+    public ValueExpressionLiteral(Class<T> clazz, T value) {
+        if (clazz == null || value == null) {
             throw new IllegalArgumentException();
         }
+        this.clazz = clazz;
         this.value = value;
     }
 
@@ -49,22 +51,22 @@ public final class ValueExpressionLiteral extends ValueExpression {
     }
    
     public Class<?> getType(ELContext context) {
-        return String.class;
+        return clazz;
     }
 
     public Class<?> getExpectedType() {
-        return String.class;
+        return clazz;
     }
 
     public String getExpressionString() {
-        return value;
+        throw new UnsupportedOperationException();
     }
 
     public boolean equals(Object obj) {
-        return (obj instanceof ValueExpressionLiteral && equals((ValueExpressionLiteral)obj));
+        return (obj instanceof ValueExpressionLiteral && equals((ValueExpressionLiteral<?>)obj));
     }
 
-    public boolean equals(ValueExpressionLiteral ve) {
+    public boolean equals(ValueExpressionLiteral<?> ve) {
         return ve != null && ObjectUtils.equals(value, ve.value);
     }
     

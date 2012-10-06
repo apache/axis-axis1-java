@@ -24,11 +24,19 @@ import java.util.Map;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class Variables extends VariableMapper {
+    private static final Log log = LogFactory.getLog(Variables.class);
+    
     private final Map<String,ValueExpression> variables =  new HashMap<String,ValueExpression>();
     
-    public void bind(String name, String value) {
-        variables.put(name, new ValueExpressionLiteral(value));
+    public <T> void bind(String name, Class<T> clazz, T value) {
+        if (log.isDebugEnabled()) {
+            log.debug("Binding variable: " + name + "=" + value);
+        }
+        variables.put(name, new ValueExpressionLiteral<T>(clazz, value));
     }
       
     public ValueExpression resolveVariable(String name) {
