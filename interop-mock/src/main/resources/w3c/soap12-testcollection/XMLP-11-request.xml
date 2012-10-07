@@ -5,7 +5,7 @@
   <env:Body>
     <sb:echoInteger xmlns:sb="http://soapinterop.org/"
         env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-      <inputInteger xsi:type="xsd:int">${inputInteger}</inputInteger>
+      <inputInteger xsi:type="xsd:int">abc</inputInteger>
     </sb:echoInteger>
   </env:Body>
 </env:Envelope>

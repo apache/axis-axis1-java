@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
   <env:Header>
-    <t:element xmlns:t="http://axis.apache.org/mock/template" t:name="${headerName}"
+    <t:element xmlns:t="http://axis.apache.org/mock/template" t:name="${headerName}" t:attributes="${headerAttributes}"
          env:mustUnderstand="1"
          env:role="http://www.w3.org/2003/05/soap-envelope/role/next">${content}</t:element>
   </env:Header>
   <env:Body>
     <sb:echoVoid xmlns:sb="http://soapinterop.org/"
-        env:encodingstyle="http://www.w3.org/2003/05/soap-encoding" />
+        env:encodingStyle="http://www.w3.org/2003/05/soap-encoding" />
   </env:Body>
 </env:Envelope>

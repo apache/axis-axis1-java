@@ -18,6 +18,9 @@
  */
 package org.apache.axis.test.interop.mock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.xml.XMLConstants;
@@ -151,11 +154,22 @@ public class Exchange implements InitializingBean {
     private boolean match(Element expected, Element actual, Variables inferredVariables) {
         String namespaceURI = expected.getNamespaceURI();
         String localName = expected.getLocalName();
+        String attributesVariableName;
         // Check if the element in the actual request is a template construct
         if (MOCK_NS.equals(namespaceURI)) {
             if (localName.equals("element")) {
                 inferredVariables.bind(checkVariable(expected.getAttributeNS(MOCK_NS, "name")),
                         QName.class, new QName(actual.getNamespaceURI(), actual.getLocalName()));
+                Attr attributesAttr = expected.getAttributeNodeNS(MOCK_NS, "attributes");
+                if (attributesAttr == null) {
+                    attributesVariableName = null;
+                } else {
+                    attributesVariableName = checkVariable(attributesAttr.getValue());
+                    if (attributesVariableName == null) {
+                        log.error("Expected variable at " + getLocation(attributesAttr));
+                        return false;
+                    }
+                }
             } else {
                 log.error("Unexpected template element " + localName);
                 return false;
@@ -174,6 +188,7 @@ public class Exchange implements InitializingBean {
                 }
                 return false;
             }
+            attributesVariableName = null;
         }
         
         // Compare attributes
@@ -203,18 +218,31 @@ public class Exchange implements InitializingBean {
                 }
             }
         }
-        // Check that there are no unexpected attributes
-        for (int i=0; i<actualAttributes.getLength(); i++) {
-            Attr actualAttribute = (Attr)actualAttributes.item(i);
-            String attrNamespaceURI = actualAttribute.getNamespaceURI();
-            if (!XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attrNamespaceURI) &&
-                    expectedAttributes.getNamedItemNS(attrNamespaceURI, actualAttribute.getLocalName()) == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unexpected attribute at " + getLocation(expected) + ": uri=" + actualAttribute.getNamespaceURI()
-                            + "; name=" + actualAttribute.getLocalName());
+        if (attributesVariableName == null) {
+            // Check that there are no unexpected attributes
+            for (int i=0, l=actualAttributes.getLength(); i<l; i++) {
+                Attr actualAttribute = (Attr)actualAttributes.item(i);
+                String attrNamespaceURI = actualAttribute.getNamespaceURI();
+                if (!XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attrNamespaceURI) &&
+                        expectedAttributes.getNamedItemNS(attrNamespaceURI, actualAttribute.getLocalName()) == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Unexpected attribute at " + getLocation(expected) + ": uri=" + actualAttribute.getNamespaceURI()
+                                + "; name=" + actualAttribute.getLocalName());
+                    }
+                    return false;
                 }
-                return false;
             }
+        } else {
+            List<Attr> attributes = new ArrayList<Attr>();
+            for (int i=0, l=actualAttributes.getLength(); i<l; i++) {
+                Attr actualAttribute = (Attr)actualAttributes.item(i);
+                String attrNamespaceURI = actualAttribute.getNamespaceURI();
+                if (!XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attrNamespaceURI) &&
+                        expectedAttributes.getNamedItemNS(attrNamespaceURI, actualAttribute.getLocalName()) == null) {
+                    attributes.add(actualAttribute);
+                }
+            }
+            inferredVariables.bind(attributesVariableName, Attr[].class, attributes.toArray(new Attr[attributes.size()]));
         }
         
         // Compare children

@@ -1,0 +1,1 @@
+This folder contains messages from http://www.w3.org/TR/2007/REC-soap12-part1-20070427/.

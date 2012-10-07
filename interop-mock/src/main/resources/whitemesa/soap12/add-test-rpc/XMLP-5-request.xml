@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" 
+              xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/">
+  <env:Body>
+    <sb:echoVoid xmlns:sb="http://soapinterop.org/" env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </env:Body>
+</env:Envelope>
