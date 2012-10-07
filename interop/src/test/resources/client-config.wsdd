@@ -1,0 +1,10 @@
+<!-- TODO: we should run the tests with the standard HTTP transport, but this doesn't work yet -->
+<deployment name="testClientConfig"
+            xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+   <globalConfiguration>
+       <parameter name="disablePrettyXML" value="true"/>
+       <parameter name="enableNamespacePrefixOptimization" value="false"/>
+   </globalConfiguration>
+   <transport name="http" pivot="java:org.apache.axis.transport.http.javanet.JavaNetHTTPSender"/>
+</deployment>

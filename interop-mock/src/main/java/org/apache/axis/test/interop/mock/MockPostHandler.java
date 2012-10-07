@@ -40,12 +40,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.HttpRequestHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-public class MockPostHandler implements HttpRequestHandler, InitializingBean {
+public class MockPostHandler extends SOAPHandler implements InitializingBean {
     private static final Log log = LogFactory.getLog(MockPostHandler.class);
     
     private List<MessageProcessor> requestProcessors;
@@ -67,7 +66,8 @@ public class MockPostHandler implements HttpRequestHandler, InitializingBean {
         }
     }
 
-    public void handleRequest(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
+    @Override
+    protected void handleSOAPRequest(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
         if (!httpRequest.getMethod().equals("POST")) {
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "This endpoint only supports POST requests");
             return;

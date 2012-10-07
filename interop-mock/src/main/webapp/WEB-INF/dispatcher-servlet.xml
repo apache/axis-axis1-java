@@ -25,6 +25,7 @@
     <!-- Endpoints that mock http://www.whitemesa.net -->
     
     <bean name="/soap12/add-test-rpc" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="wsdl" value="classpath:wsdl/soap12-add-test.wsdl"/>
         <property name="requestProcessors">
             <list>
                 <bean class="org.apache.axis.test.interop.mock.MustUnderstandNormalizer"/>
@@ -92,6 +93,7 @@
     </bean>
 
     <bean name="/soap12/add-test-doc" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="wsdl" value="classpath:wsdl/soap12-add-test.wsdl"/>
         <property name="exchanges">
             <list>
                 <bean class="org.apache.axis.test.interop.mock.Exchange">
@@ -107,6 +109,7 @@
     </bean>
     
     <bean name="/soap12/add-test-doc-int" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="wsdl" value="classpath:wsdl/soap12-add-test.wsdl"/>
         <property name="requestProcessors">
             <list>
                 <bean class="org.apache.axis.test.interop.mock.MustUnderstandNormalizer"/>
@@ -143,6 +146,7 @@
     </bean>
     
     <bean name="/soap12/add-test-doc-int-uc" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="wsdl" value="classpath:wsdl/soap12-add-test.wsdl"/>
         <property name="exchanges">
             <list>
                 <bean class="org.apache.axis.test.interop.mock.Exchange">

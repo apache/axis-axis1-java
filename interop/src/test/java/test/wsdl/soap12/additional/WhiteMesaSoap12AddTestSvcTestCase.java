@@ -52,7 +52,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     
     // Endpoints
     // TODO : Shouldn't be hardcoded!
-    public static String HOST = "http://localhost:9080";
+    public static String HOST = "http://localhost:" + System.getProperty("mock.httpPort", "9080");
 //    public static String HOST = "http://www.whitemesa.net";
     public static String RPC_ENDPOINT = HOST + "/soap12/add-test-rpc";
     public static String DOC_ENDPOINT = HOST + "/soap12/add-test-doc";
@@ -82,28 +82,28 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
 
     public void testSoap12AddTestDocUpperPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocUpperPortAddress() + "?WSDL");
+        java.net.URL url = new java.net.URL(DOC_INT_UC_ENDPOINT + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getServiceName());
         assertTrue(service != null);
     }
 
     public void testSoap12AddTestRpcPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestRpcPortAddress() + "?WSDL");
+        java.net.URL url = new java.net.URL(RPC_ENDPOINT + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getServiceName());
         assertTrue(service != null);
     }
 
     public void testSoap12AddTestDocIntermediaryPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocIntermediaryPortAddress() + "?WSDL");
+        java.net.URL url = new java.net.URL(DOC_INT_ENDPOINT + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getServiceName());
         assertTrue(service != null);
     }
 
     public void testSoap12AddTestDocPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocPortAddress() + "?WSDL");
+        java.net.URL url = new java.net.URL(DOC_ENDPOINT + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getServiceName());
         assertTrue(service != null);
     }

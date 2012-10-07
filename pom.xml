@@ -69,6 +69,7 @@
         <module>axis-testutils</module>
         <module>integration</module>
         <module>interop-mock</module>
+        <module>interop</module>
         <module>axis-war</module>
         <module>samples</module>
         <module>distribution</module>

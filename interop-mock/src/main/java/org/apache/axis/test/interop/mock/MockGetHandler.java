@@ -35,10 +35,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
-import org.springframework.web.HttpRequestHandler;
 import org.w3c.dom.Element;
 
-public class MockGetHandler implements HttpRequestHandler, InitializingBean {
+public class MockGetHandler extends SOAPHandler implements InitializingBean {
     private static final Log log = LogFactory.getLog(MockGetHandler.class);
     
     private Resource response;
@@ -55,7 +54,8 @@ public class MockGetHandler implements HttpRequestHandler, InitializingBean {
         responseContentType = SOAPUtil.getContentType(responseMessage);
     }
 
-    public void handleRequest(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
+    @Override
+    protected void handleSOAPRequest(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
         if (!httpRequest.getMethod().equals("GET")) {
             httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "This endpoint only supports GET requests");
             return;
