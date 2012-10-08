@@ -62,7 +62,7 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>samples-echo</id>
+                        <id>soap12-additional</id>
                         <goals>
                             <goal>generate-test-sources</goal>
                         </goals>
@@ -77,6 +77,26 @@
                                 <mapping>
                                     <namespace>http://example.org/ts-tests/xsd</namespace>
                                     <package>test.wsdl.soap12.additional.xsd</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>soap12-assertion</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>../test/wsdl/soap12/assertion/soap12-test.wsdl</file>
+                            <generate>both</generate>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://whitemesa.net/wsdl/soap12-test</namespace>
+                                    <package>test.wsdl.soap12.assertion</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>http://example.org/ts-tests/xsd</namespace>
+                                    <package>test.wsdl.soap12.assertion.xsd</package>
                                 </mapping>
                             </mappings>
                         </configuration>
@@ -175,6 +195,10 @@
                             <includes>
                                 <include>**/*TestCase.java</include>
                             </includes>
+                            <excludes>
+                                <!-- TODO: need to create mock for this -->
+                                <exclude>test/wsdl/soap12/assertion/**</exclude>
+                            </excludes>
                             <systemPropertyVariables>
                                 <mock.httpPort>${mock.httpPort}</mock.httpPort>
                             </systemPropertyVariables>
