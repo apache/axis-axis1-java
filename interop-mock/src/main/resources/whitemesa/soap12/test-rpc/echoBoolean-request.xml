@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+      <ns1:echoBoolean soapenv:encodingStyle="http://www.w3.org/2003/05/soap-encoding" xmlns:ns1="http://example.org/ts-tests">
+         <inputBoolean id="id0" xsi:type="xsd:boolean">true</inputBoolean>
+      </ns1:echoBoolean>
+   </soapenv:Body>
+</soapenv:Envelope>

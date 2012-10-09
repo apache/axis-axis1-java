@@ -87,7 +87,7 @@
                             <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
-                            <file>../test/wsdl/soap12/assertion/soap12-test.wsdl</file>
+                            <file>../interop-mock/src/main/resources/wsdl/soap12-test.wsdl</file>
                             <generate>both</generate>
                             <mappings>
                                 <mapping>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
+   <SOAP-ENV:Body>
+      <m:echoStructResponse SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding" xmlns:m="http://example.org/ts-tests">
+         <SOAP-RPC:result xmlns:SOAP-RPC="http://www.w3.org/2003/05/soap-rpc">return</SOAP-RPC:result>
+         <return>
+            <varString>EchoStruct</varString>
+            <varInt>10</varInt>
+            <varFloat>-5.0</varFloat>
+         </return>
+      </m:echoStructResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

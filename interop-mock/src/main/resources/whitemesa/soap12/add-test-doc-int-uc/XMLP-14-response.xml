@@ -4,7 +4,7 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <env:Body>
     <sb:echoString xmlns:sb="http://soapinterop.org/">
-      <inputString xsi:type="xsd:string">${fn:toUpperCase(inputString)}</inputString>
+      <inputString xsi:type="xsd:string"><t:value expression="${fn:toUpperCase(inputString)}" type="string" xmlns:t="http://axis.apache.org/mock/template"/></inputString>
     </sb:echoString>
   </env:Body>
 </env:Envelope>

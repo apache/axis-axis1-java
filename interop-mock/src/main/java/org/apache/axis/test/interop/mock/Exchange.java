@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.relaxng.datatype.DatatypeException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Attr;
@@ -37,6 +38,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+
+import com.sun.msv.datatype.xsd.DatatypeFactory;
+import com.sun.msv.datatype.xsd.XSDatatype;
 
 /**
  * Describes a request-response message exchange supported by a {@link MockPostHandler}. An instance
@@ -250,66 +254,73 @@ public class Exchange implements InitializingBean {
         NodeList actualChildren = actual.getChildNodes();
         int expectedChildrenLength = expectedChildren.getLength();
         int actualChildrenLength = actualChildren.getLength();
-        // We need to handle the situation where we expect a single child of type text and where there actually is no child
-        // in a special way. Otherwise variable inference doesn't work if the value is the empty string.
-        if (expectedChildrenLength == 1 && expectedChildren.item(0).getNodeType() == Node.TEXT_NODE && actualChildrenLength == 0) {
-            return match((Text)expectedChildren.item(0), null, inferredVariables);
-        } else {
-            if (expectedChildrenLength != actualChildrenLength) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Children count mismatch at " + getLocation(expected) + ": expected=" + expectedChildrenLength + "; actual=" + actualChildrenLength);
-                }
-                return false;
-            }
-            for (int i=0; i<expectedChildrenLength; i++) {
-                Node expectedChild = expectedChildren.item(i);
-                Node actualChild = actualChildren.item(i);
-                if (expectedChild.getNodeType() != actualChild.getNodeType()) {
+        if (expectedChildrenLength == 1) {
+            Node firstExpectedChild = expectedChildren.item(0);
+            if (firstExpectedChild.getNodeType() == Node.ELEMENT_NODE && MOCK_NS.equals(firstExpectedChild.getNamespaceURI()) && firstExpectedChild.getLocalName().equals("value")) {
+                if (actualChildrenLength == 0) {
+                    return matchValue((Element)firstExpectedChild, "", inferredVariables);
+                } else if (actualChildrenLength == 1) {
+                    Node firstActualChild = actualChildren.item(0);
+                    if (firstActualChild.getNodeType() == Node.TEXT_NODE) {
+                        return matchValue((Element)firstExpectedChild, ((Text)firstActualChild).getData(), inferredVariables);
+                    } else {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Unexpected child type at " + getLocation(expected) + ": expected a text child");
+                        }
+                        return false;
+                    }
+                } else {
                     if (log.isDebugEnabled()) {
-                        log.debug("Child type mismatch");
+                        log.debug("Unexpected content at " + getLocation(expected) + ": expected a single text child");
                     }
                     return false;
                 }
-                switch (expectedChild.getNodeType()) {
-                    case Node.ELEMENT_NODE:
-                        if (!match((Element)expectedChild, (Element)actualChild, inferredVariables)) {
-                            return false;
-                        }
-                        break;
-                    case Node.TEXT_NODE:
-                        if (!match((Text)expectedChild, (Text)actualChild, inferredVariables)) {
-                            return false;
-                        }
-                        break;
-                    default:
-                        if (log.isDebugEnabled()) {
-                            log.debug("Unexpected node type " + expectedChild.getNodeType());
-                        }
-                        throw new IllegalStateException("Unexpected node type");
-                }
             }
-            return true;
         }
-    }
-
-    private boolean match(Text expected, Text actual, Variables inferredVariables) {
-        String expectedContent = expected.getData();
-        String actualContent = actual == null ? "" : actual.getData();
-        String varName = checkVariable(expectedContent);
-        if (varName != null) {
-            inferredVariables.bind(varName, String.class, actualContent);
-            return true;
-        } else {
-            if (expectedContent.equals(actualContent)) {
-                return true;
-            } else {
+        if (expectedChildrenLength != actualChildrenLength) {
+            if (log.isDebugEnabled()) {
+                log.debug("Children count mismatch at " + getLocation(expected) + ": expected=" + expectedChildrenLength + "; actual=" + actualChildrenLength);
+            }
+            return false;
+        }
+        for (int i=0; i<expectedChildrenLength; i++) {
+            Node expectedChild = expectedChildren.item(i);
+            Node actualChild = actualChildren.item(i);
+            if (expectedChild.getNodeType() != actualChild.getNodeType()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Text content mismatch at " + getLocation((Element)expected.getParentNode())
-                            + ": expected=" + expectedContent + "; actual=" + actualContent);
+                    log.debug("Child type mismatch");
                 }
                 return false;
             }
+            switch (expectedChild.getNodeType()) {
+                case Node.ELEMENT_NODE:
+                    if (!match((Element)expectedChild, (Element)actualChild, inferredVariables)) {
+                        return false;
+                    }
+                    break;
+                case Node.TEXT_NODE:
+                    String expectedContent = ((Text)expectedChild).getData();
+                    String actualContent = ((Text)actualChild).getData();
+                    if (!expectedContent.equals(actualContent)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Text content mismatch at " + getLocation(expected)
+                                    + ": expected=" + expectedContent + "; actual=" + actualContent);
+                        }
+                        return false;
+                    }
+                    break;
+                default:
+                    if (log.isDebugEnabled()) {
+                        log.debug("Unexpected node type " + expectedChild.getNodeType());
+                    }
+                    throw new IllegalStateException("Unexpected node type");
+            }
         }
+        return true;
+    }
+
+    private <T> void castAndBindVariable(Variables variables, String name, Class<T> clazz, Object value) {
+        variables.bind(name, clazz, clazz.cast(value));
     }
     
     private String checkVariable(String text) {
@@ -323,16 +334,59 @@ public class Exchange implements InitializingBean {
     private void substituteVariables(Element element, ExpressionFactory expressionFactory, ELContext context) {
         Node child = element.getFirstChild();
         while (child != null) {
-            switch (child.getNodeType()) {
-                case Node.ELEMENT_NODE:
-                    substituteVariables((Element)child, expressionFactory, context);
-                    break;
-                case Node.TEXT_NODE:
-                    Text text = (Text)child;
-                    text.setData((String)expressionFactory.createValueExpression(context, text.getData(), String.class).getValue(context));
-                    break;
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element)child;
+                if (MOCK_NS.equals(childElement.getNamespaceURI())) {
+                    if (childElement.getLocalName().equals("value")) {
+                        Text text = element.getOwnerDocument().createTextNode(substituteValue(childElement, expressionFactory, context));
+                        element.replaceChild(text, child);
+                        child = text;
+                    }
+                    // TODO: throw exception if an unknown element is encountered
+                } else {
+                    substituteVariables(childElement, expressionFactory, context);
+                }
             }
             child = child.getNextSibling();
         }
+    }
+
+    private boolean matchValue(Element element, String text, Variables inferredVariables) {
+        // TODO: null checks
+        Attr expressionAttr = element.getAttributeNodeNS(null, "expression");
+        Attr typeAttr = element.getAttributeNodeNS(null, "type");
+        String varName = checkVariable(expressionAttr.getValue());
+        XSDatatype type;
+        try {
+            type = DatatypeFactory.getTypeByName(typeAttr.getValue());
+        } catch (DatatypeException ex) {
+            // TODO: define a proper exception here
+            throw new RuntimeException(ex);
+        }
+        Object value = type.createJavaObject(text, new ValidationContextImpl());
+        if (value == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("'" + text + "' is not a valid lexical value for type " + type.getName());
+            }
+            return false;
+        } else {
+            castAndBindVariable(inferredVariables, varName, (Class<?>)type.getJavaObjectType(), value);
+            return true;
+        }
+    }
+
+    private String substituteValue(Element element, ExpressionFactory expressionFactory, ELContext context) {
+        // TODO: null checks
+        Attr expressionAttr = element.getAttributeNodeNS(null, "expression");
+        Attr typeAttr = element.getAttributeNodeNS(null, "type");
+        XSDatatype type;
+        try {
+            type = DatatypeFactory.getTypeByName(typeAttr.getValue());
+        } catch (DatatypeException ex) {
+            // TODO: define a proper exception here
+            throw new RuntimeException(ex);
+        }
+        Object value = expressionFactory.createValueExpression(context, expressionAttr.getValue(), type.getJavaObjectType()).getValue(context);
+        return type.serializeJavaObject(value, new SerializationContextImpl());
     }
 }

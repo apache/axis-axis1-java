@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+      <ns1:countItems soapenv:encodingStyle="http://www.w3.org/2003/05/soap-encoding" xmlns:ns1="http://example.org/ts-tests">
+         <inputStringArray soapenc:itemType="xsd:string" soapenc:arraySize="6" xsi:type="soapenc:Array" xmlns:soapenc="http://www.w3.org/2003/05/soap-encoding">
+            <inputStringArray xsi:type="xsd:string">Life</inputStringArray>
+            <inputStringArray xsi:type="xsd:string">is</inputStringArray>
+            <inputStringArray xsi:type="xsd:string">a</inputStringArray>
+            <inputStringArray xsi:type="xsd:string">box</inputStringArray>
+            <inputStringArray xsi:type="xsd:string">of</inputStringArray>
+            <inputStringArray xsi:type="xsd:string">chocolates</inputStringArray>
+         </inputStringArray>
+      </ns1:countItems>
+   </soapenv:Body>
+</soapenv:Envelope>

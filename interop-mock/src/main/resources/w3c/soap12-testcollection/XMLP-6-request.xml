@@ -3,7 +3,7 @@
   <env:Header>
     <t:element xmlns:t="http://axis.apache.org/mock/template" t:name="${headerName}" t:attributes="${headerAttributes}"
          env:mustUnderstand="1"
-         env:role="http://www.w3.org/2003/05/soap-envelope/role/next">${content}</t:element>
+         env:role="http://www.w3.org/2003/05/soap-envelope/role/next"><t:value expression="${content}" type="string"/></t:element>
   </env:Header>
   <env:Body>
     <sb:echoVoid xmlns:sb="http://soapinterop.org/"

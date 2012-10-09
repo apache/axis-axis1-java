@@ -4,7 +4,7 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <env:Body>
     <sb:echoString xmlns:sb="http://soapinterop.org/">
-      <inputString env:encodingStyle="http://this-is-a-bad-encoding-style">${inputString}</inputString>
+      <inputString env:encodingStyle="http://this-is-a-bad-encoding-style"><t:value expression="${inputString}" type="string" xmlns:t="http://axis.apache.org/mock/template"/></inputString>
     </sb:echoString>
   </env:Body>
 </env:Envelope>

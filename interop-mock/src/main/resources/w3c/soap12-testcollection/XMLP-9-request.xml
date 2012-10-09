@@ -5,7 +5,7 @@
   <env:Body>
     <sb:echoString xmlns:sb="http://soapinterop.org/"
         env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-      <inputString env:encodingStyle="unknown">${inputString}</inputString>
+      <inputString env:encodingStyle="unknown"><t:value expression="${inputString}" type="string" xmlns:t="http://axis.apache.org/mock/template"/></inputString>
     </sb:echoString>
   </env:Body>
 </env:Envelope>

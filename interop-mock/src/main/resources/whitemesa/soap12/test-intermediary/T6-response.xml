@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
+   <SOAP-ENV:Header>
+      <test:responseOk xmlns:test="http://example.org/ts-tests">test header</test:responseOk>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body />
+</SOAP-ENV:Envelope>

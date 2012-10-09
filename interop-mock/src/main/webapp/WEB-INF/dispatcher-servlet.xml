@@ -24,6 +24,129 @@
     
     <!-- Endpoints that mock http://www.whitemesa.net -->
     
+    <bean name="/soap12/test-rpc" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="wsdl" value="classpath:wsdl/soap12-test.wsdl"/>
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/countItems-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/countItems-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoBase64-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoBase64-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoBoolean-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoBoolean-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoDate-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoDate-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoDecimal-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoDecimal-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoFloat-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoFloat-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoFloatArray-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoFloatArray-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoIntegerArray-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoIntegerArray-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoNestedArray-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoNestedArray-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoNestedStruct-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoNestedStruct-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoSimpleTypesAsStruct-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoSimpleTypesAsStruct-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoString-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoString-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoStringArray-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoStringArray-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoStruct-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoStruct-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoStructArray-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoStructArray-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/echoStructAsSimpleTypes-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/echoStructAsSimpleTypes-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/isNil-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/isNil-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-rpc/returnVoid-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-rpc/returnVoid-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean name="/soap12/test-doc" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="wsdl" value="classpath:wsdl/soap12-test.wsdl"/>
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-doc/T1-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-doc/T1-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-doc/T2-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-doc/T2-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-doc/T3-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-doc/T3-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-doc/T4-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-doc/T4-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-doc/T5-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-doc/T5-response.xml"/>
+                </bean>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-doc/T12-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-doc/T12-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean name="/soap12/test-intermediary" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:whitemesa/soap12/test-intermediary/T6-request.xml"/>
+                    <property name="response" value="classpath:whitemesa/soap12/test-intermediary/T6-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
     <bean name="/soap12/add-test-rpc" class="org.apache.axis.test.interop.mock.MockPostHandler">
         <property name="wsdl" value="classpath:wsdl/soap12-add-test.wsdl"/>
         <property name="requestProcessors">

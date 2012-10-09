@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:t="http://axis.apache.org/mock/template">
   <env:Body>
     <sb:echoSimpleTypesAsStruct xmlns:sb="http://soapinterop.org/"
           env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-      <inputFloat xsi:type="xsd:float">${floatValue}</inputFloat>
-      <inputInteger xsi:type="xsd:int">${intValue}</inputInteger>
-      <inputString xsi:type="xsd:string">${stringValue}</inputString>
+      <inputFloat xsi:type="xsd:float"><t:value expression="${floatValue}" type="float"/></inputFloat>
+      <inputInteger xsi:type="xsd:int"><t:value expression="${intValue}" type="int"/></inputInteger>
+      <inputString xsi:type="xsd:string"><t:value expression="${stringValue}" type="string"/></inputString>
     </sb:echoSimpleTypesAsStruct>
   </env:Body>
 </env:Envelope>

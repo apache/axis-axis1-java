@@ -4,7 +4,7 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <env:Body>
     <sb:unknownFreakyMethod xmlns:sb="http://soapinterop.org/" env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-      <inputInteger xsi:type="xsd:int">${inputInteger}</inputInteger>
+      <inputInteger xsi:type="xsd:int"><t:value expression="${inputInteger}" type="string" xmlns:t="http://axis.apache.org/mock/template"/></inputInteger>
     </sb:unknownFreakyMethod>
   </env:Body>
 </env:Envelope>

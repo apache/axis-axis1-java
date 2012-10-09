@@ -17,6 +17,7 @@ import org.apache.axis.constants.Style;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.TimeZone;
 import java.util.Calendar;
@@ -25,8 +26,10 @@ import java.util.Iterator;
 
 public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     public final String TEST_NS = "http://example.org/ts-tests";
-    public final String DOC_ENDPOINT = "http://www.whitemesa.net/soap12/test-doc";
-    public final String INTERMEDIARY_ENDPOINT = "http://www.whitemesa.net/soap12/test-intermediary";
+    public final String BASE_URL = "http://localhost:9080";
+    public final String RPC_ENDPOINT = BASE_URL + "/soap12/test-rpc";
+    public final String DOC_ENDPOINT = BASE_URL + "/soap12/test-doc";
+    public final String INTERMEDIARY_ENDPOINT = BASE_URL + "/soap12/test-intermediary";
     public final String ROLE_A = "http://example.org/ts-tests/A";
     public final String ROLE_B = "http://example.org/ts-tests/B";
     public final String ROLE_C = "http://example.org/ts-tests/C";
@@ -37,23 +40,23 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
 
     public void testSoap12TestDocPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestDocPortAddress() + "?WSDL");
+        java.net.URL url = new java.net.URL(DOC_ENDPOINT + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getServiceName());
         assertTrue(service != null);
     }
 
     public void testSoap12TestRpcPortWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPortAddress() + "?WSDL");
+        java.net.URL url = new java.net.URL(RPC_ENDPOINT + "?WSDL");
         javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getServiceName());
         assertTrue(service != null);
     }
 
     public void test1Soap12TestRpcPortReturnVoid() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -71,10 +74,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test2Soap12TestRpcPortEchoStruct() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -99,10 +102,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test3Soap12TestRpcPortEchoStructArray() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -127,10 +130,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test4Soap12TestRpcPortEchoStructAsSimpleTypes() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -160,10 +163,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test5Soap12TestRpcPortEchoSimpleTypesAsStruct() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -189,10 +192,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test6Soap12TestRpcPortEchoNestedStruct() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -225,10 +228,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test7Soap12TestRpcPortEchoNestedArray() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -255,10 +258,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test8Soap12TestRpcPortEchoFloatArray() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -285,10 +288,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test9Soap12TestRpcPortEchoStringArray() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -314,10 +317,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test10Soap12TestRpcPortEchoIntegerArray() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -343,10 +346,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test11Soap12TestRpcPortEchoBase64() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -369,10 +372,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test12Soap12TestRpcPortEchoBoolean() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -392,10 +395,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test13Soap12TestRpcPortEchoDate() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -418,10 +421,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test14Soap12TestRpcPortEchoDecimal() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -444,10 +447,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test15Soap12TestRpcPortEchoFloat() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -468,10 +471,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test16Soap12TestRpcPortEchoString() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -492,10 +495,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test17Soap12TestRpcPortCountItems() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -515,10 +518,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     public void test18Soap12TestRpcPortIsNil() throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
+        Soap12TestRpcBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestRpcBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort();
+            binding = (Soap12TestRpcBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPort(new URL(RPC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -546,10 +549,10 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
      * @throws Exception
      */ 
     protected void testEchoOkHeaderWithEmptyBody(String role) throws Exception {
-        test.wsdl.soap12.assertion.Soap12TestDocBindingStub binding;
+        Soap12TestDocBindingStub binding;
         try {
-            binding = (test.wsdl.soap12.assertion.Soap12TestDocBindingStub)
-                          new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestDocPort();
+            binding = (Soap12TestDocBindingStub)
+                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestDocPort(new URL(DOC_ENDPOINT));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

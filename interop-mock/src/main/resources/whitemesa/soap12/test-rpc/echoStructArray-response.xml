@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
+   <SOAP-ENV:Body>
+      <m:echoStructArrayResponse SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding" xmlns:m="http://example.org/ts-tests">
+         <SOAP-RPC:result xmlns:SOAP-RPC="http://www.w3.org/2003/05/soap-rpc">return</SOAP-RPC:result>
+         <return SOAP-ENC:arraySize="1" SOAP-ENC:itemType="nsa:SOAPStruct" xmlns:SOAP-ENC="http://www.w3.org/2003/05/soap-encoding" xmlns:nsa="http://example.org/ts-tests/xsd">
+            <item>
+               <varString>EchoStruct</varString>
+               <varInt>10</varInt>
+               <varFloat>-5.0</varFloat>
+            </item>
+         </return>
+      </m:echoStructArrayResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

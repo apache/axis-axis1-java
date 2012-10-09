@@ -3,12 +3,12 @@
               xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <env:Header>
-    <ns:seekrit xmlns:ns="http://test-xmlp-17" env:role="http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver" xsi:type="xsd:string">${headerValue}</ns:seekrit>
+    <ns:seekrit xmlns:ns="http://test-xmlp-17" env:role="http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver" xsi:type="xsd:string"><t:value expression="${headerValue}" type="string" xmlns:t="http://axis.apache.org/mock/template"/></ns:seekrit>
   </env:Header>
   <env:Body>
     <sb:echoString xmlns:sb="http://soapinterop.org/"
         env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-      <inputString xsi:type="xsd:string">${inputString}</inputString>
+      <inputString xsi:type="xsd:string"><t:value expression="${inputString}" type="string" xmlns:t="http://axis.apache.org/mock/template"/></inputString>
     </sb:echoString>
   </env:Body>
 </env:Envelope>

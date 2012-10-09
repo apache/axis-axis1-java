@@ -4,6 +4,6 @@
               xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <env:Body>
     <sb:echoReceiverFault xmlns:sb="http://soapinterop.org/" 
-        xsi:type="xsd:string">${content}</sb:echoReceiverFault>
+        xsi:type="xsd:string"><t:value expression="${content}" type="string" xmlns:t="http://axis.apache.org/mock/template"/></sb:echoReceiverFault>
   </env:Body>
 </env:Envelope>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+      <ns1:echoStruct soapenv:encodingStyle="http://www.w3.org/2003/05/soap-encoding" xmlns:ns1="http://example.org/ts-tests">
+         <inputStruct id="id0" xsi:type="ns2:SOAPStruct" xmlns:ns2="http://example.org/ts-tests/xsd">
+            <varString xsi:type="xsd:string">EchoStruct</varString>
+            <varInt id="id1" xsi:type="xsd:int">10</varInt>
+            <varFloat id="id2" xsi:type="xsd:float">-5.0</varFloat>
+         </inputStruct>
+      </ns1:echoStruct>
+   </soapenv:Body>
+</soapenv:Envelope>
