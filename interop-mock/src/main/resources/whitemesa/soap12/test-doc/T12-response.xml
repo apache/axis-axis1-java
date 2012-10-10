@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
-   <SOAP-ENV:Body />
+   <SOAP-ENV:Header>
+      <SOAP-ENV:NotUnderstood qname="ns:Unknown" xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://example.org/ts-tests" />
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+      <SOAP-ENV:Fault>
+         <SOAP-ENV:Code>
+            <SOAP-ENV:Value xmlns:ns="http://www.w3.org/2003/05/soap-envelope">ns:MustUnderstand</SOAP-ENV:Value>
+         </SOAP-ENV:Code>
+         <SOAP-ENV:Reason>
+            <SOAP-ENV:Text xml:lang="en">Headers: Mandatory header block not understood.</SOAP-ENV:Text>
+         </SOAP-ENV:Reason>
+      </SOAP-ENV:Fault>
+   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>

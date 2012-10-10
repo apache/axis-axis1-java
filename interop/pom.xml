@@ -195,10 +195,6 @@
                             <includes>
                                 <include>**/*TestCase.java</include>
                             </includes>
-                            <excludes>
-                                <!-- TODO: need to create mock for this -->
-                                <exclude>test/wsdl/soap12/assertion/**</exclude>
-                            </excludes>
                             <systemPropertyVariables>
                                 <mock.httpPort>${mock.httpPort}</mock.httpPort>
                             </systemPropertyVariables>

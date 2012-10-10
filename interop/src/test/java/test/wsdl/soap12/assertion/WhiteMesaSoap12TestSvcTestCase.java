@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     public final String TEST_NS = "http://example.org/ts-tests";
-    public final String BASE_URL = "http://localhost:9080";
+    public final String BASE_URL = "http://localhost:" + System.getProperty("mock.httpPort", "9080");
     public final String RPC_ENDPOINT = BASE_URL + "/soap12/test-rpc";
     public final String DOC_ENDPOINT = BASE_URL + "/soap12/test-doc";
     public final String INTERMEDIARY_ENDPOINT = BASE_URL + "/soap12/test-intermediary";
@@ -653,7 +653,8 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         SOAPEnvelope reqEnv = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
         SOAPHeaderElement header = new SOAPHeaderElement(TEST_NS, "Unknown");
-        header.setObjectValue("test header");
+        header.appendChild(new Text("test header"));
+        header.setRole(Constants.URI_SOAP12_ULTIMATE_ROLE);
         header.setMustUnderstand(true);
         reqEnv.addHeader(header);
         try {

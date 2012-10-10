@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <soapenv:Header>
-      <ns1:Unknown soapenv:role="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="true" xsi:type="xsd:string" xmlns:ns1="http://example.org/ts-tests">test header</ns1:Unknown>
+      <ns1:Unknown soapenv:role="http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver" soapenv:mustUnderstand="true" xmlns:ns1="http://example.org/ts-tests">test header</ns1:Unknown>
    </soapenv:Header>
    <soapenv:Body/>
 </soapenv:Envelope>
