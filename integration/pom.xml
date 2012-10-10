@@ -1090,6 +1090,22 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>sequence</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/sequence/SequenceTest.wsdl</file>
+                            <generate>client</generate>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:SequenceTest2</namespace>
+                                    <package>test.wsdl.sequence</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>session</id>
                         <goals>
                             <goal>generate-test-sources</goal>

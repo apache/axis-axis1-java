@@ -7,6 +7,8 @@
 
 package test.wsdl.sequence;
 
+import test.HttpTestUtil;
+
 public class SequenceTestServiceTestCase extends junit.framework.TestCase {
     public SequenceTestServiceTestCase(String name) {
         super(name);
@@ -14,7 +16,8 @@ public class SequenceTestServiceTestCase extends junit.framework.TestCase {
 
     public void testSequenceTest() throws Exception {
         test.wsdl.sequence.SequenceTestPortType binding;
-        binding = new SequenceTestLocator().getSequenceTest();
+        SequenceTestLocator loc = new SequenceTestLocator();
+        binding = new SequenceTestLocator().getSequenceTest(HttpTestUtil.getTestEndpoint(loc.getSequenceTestAddress()));
         assertTrue("binding is null", binding != null);
         assertTrue("Test failed!",
                    binding.testSequence(new test.wsdl.sequence.SequenceInfo()));
