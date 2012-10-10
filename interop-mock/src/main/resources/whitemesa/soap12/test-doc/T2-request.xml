@@ -3,7 +3,5 @@
    <soapenv:Header>
       <ns1:echoOk soapenv:role="http://example.org/ts-tests/C" soapenv:mustUnderstand="false" xmlns:ns1="http://example.org/ts-tests">this is a test</ns1:echoOk>
    </soapenv:Header>
-   <soapenv:Body>
-      <emptyBody xmlns=""/>
-   </soapenv:Body>
+   <soapenv:Body/>
 </soapenv:Envelope>

@@ -9,13 +9,12 @@ package test.wsdl.soap12.assertion;
 
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.Text;
 import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.constants.Style;
 import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -549,33 +548,20 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
      * @throws Exception
      */ 
     protected void testEchoOkHeaderWithEmptyBody(String role) throws Exception {
-        Soap12TestDocBindingStub binding;
-        try {
-            binding = (Soap12TestDocBindingStub)
-                          new WhiteMesaSoap12TestSvcLocator().getSoap12TestDocPort(new URL(DOC_ENDPOINT));
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
         // Test operation
+        Call call = new Call(DOC_ENDPOINT);
+        call.setOperationStyle(Style.DOCUMENT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPEnvelope reqEnv = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
         SOAPHeaderElement header = 
                 new SOAPHeaderElement(TEST_NS, "echoOk");
-        if (role != null)
-            header.setRole(role);
-        header.setObjectValue("this is a test");
-        binding.setHeader(header);
-        binding.emptyBody();
+        header.setRole(role);
+        header.appendChild(new Text("this is a test"));
+        reqEnv.addHeader(header);
+        SOAPEnvelope respEnv = call.invoke(reqEnv);
+        
         // Get the response header
-        SOAPHeaderElement respHeader = 
-                binding.getHeader(TEST_NS,
-                                    "responseOk");
+        SOAPHeaderElement respHeader = respEnv.getHeaderByName(TEST_NS, "responseOk");
         assertNotNull("Missing response header", respHeader);
         assertEquals("this is a test", respHeader.getValue());
     }
@@ -608,12 +594,13 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     }
 
     /**
-     * Test T4 - echoOk header with empty body using role ""
+     * Test T4 - echoOk header with empty body using role
+     * "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"
      * 
      * @throws Exception
      */ 
     public void testT4() throws Exception {
-        testEchoOkHeaderWithEmptyBody("");
+        testEchoOkHeaderWithEmptyBody(Constants.URI_SOAP12_ULTIMATE_ROLE);
     }
     
     /**
