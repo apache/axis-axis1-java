@@ -81,6 +81,7 @@
                                 <ant antfile="src/test/ant/literal/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/multibinding/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/qname/build.xml" target="test" inheritrefs="true" />
+                                <ant antfile="src/test/ant/schemaImport/build.xml" target="test" inheritrefs="true" />
                                 <ant antfile="src/test/ant/split/build.xml" target="test" inheritrefs="true" />
                             </target>
                         </configuration>

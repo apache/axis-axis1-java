@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<project>
+  <target name="test">
+    <!-- Generate the WSDL file that the test will validate.-->
+    <mkdir dir="${project.build.directory}/work/test/wsdl/schemaImport"/>
+    <java2wsdl output="${project.build.directory}/work/test/wsdl/schemaImport/foo.wsdl" className="test.wsdl.schemaImport.foo" namespace="urn:ImportSchemaTest" importSchema="src/test/wsdl/schemaImport/foo.xsd" location="http://www.foo.com/foo" style="DOCUMENT">
+      <classpath refid="maven.test.classpath"/>
+      <mapping namespace="urn:ImportSchemaTest" package="test.wsdl.schemaImport"/>
+    </java2wsdl>
+  </target>
+</project>

@@ -42,7 +42,8 @@ public class SchemaImportTestCase extends junit.framework.TestCase {
     }
 
     public void testSchemaImport() {
-        String path = "build" + File.separator + "work" + File.separator +
+        String path = System.getProperty("basedir", ".") + File.separator +
+                "target" + File.separator + "work" + File.separator +
                 "test" + File.separator + "wsdl" + File.separator +
                 "schemaImport" + File.separator + "foo.wsdl";
         Document doc = null;
