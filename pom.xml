@@ -57,7 +57,7 @@
     </mailingLists>
     <inceptionYear>2000</inceptionYear>
     <modules>
-        <module>axis</module>
+        <module>axis-rt-core</module>
         <module>axis-jaxrpc</module>
         <module>axis-saaj</module>
         <module>axis-ant</module>

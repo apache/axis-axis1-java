@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis</artifactId>
+            <artifactId>axis-rt-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

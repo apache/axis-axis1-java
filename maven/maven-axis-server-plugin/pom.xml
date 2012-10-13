@@ -41,7 +41,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis</artifactId>
+            <artifactId>axis-rt-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
