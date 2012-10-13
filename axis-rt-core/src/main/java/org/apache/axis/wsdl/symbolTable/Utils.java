@@ -16,10 +16,24 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Input;
+import javax.wsdl.Operation;
+import javax.wsdl.Part;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
+import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import java.util.*;
@@ -31,6 +45,7 @@ import java.util.*;
  * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class Utils {
+    private static final Log log = LogFactory.getLog(Utils.class.getName());
 
     /** cache of namespaces -> maps of localNames -> QNames */
     static final Map nsmap = new HashMap();
@@ -772,5 +787,282 @@ public class Utils {
         }
         return localPart;
         
+    }
+
+    /**
+     * Get the QName that could be used in the xsi:type
+     * when serializing an object of the given type.
+     *
+     * @param te is the type entry
+     * @return the QName of the type's xsi type
+     */
+    public static QName getXSIType(TypeEntry te) {
+
+        QName xmlType = null;
+
+        // If the TypeEntry describes an Element, get
+        // the referenced Type.
+        if ((te != null) && (te instanceof Element)
+                && (te.getRefType() != null)) {
+            te = te.getRefType();
+        }
+
+        // If the TypeEntry is a CollectionTE, use
+        // the TypeEntry representing the component Type
+        // So for example a parameter that takes a
+        // collection type for
+        // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
+        // will be
+        // new ParameterDesc(<QName of A>, IN,
+        // <QName of xsd:string>,
+        // String[])
+        if ((te != null) && (te instanceof CollectionTE)
+                && (te.getRefType() != null)) {
+            te = te.getRefType();
+        }
+
+        if (te != null) {
+            xmlType = te.getQName();
+        }
+
+        return xmlType;
+    }
+
+    /**
+     * Given a MIME type, return the AXIS-specific type QName.
+     *
+     * @param mimeName the MIME type name
+     * @return the AXIS-specific QName for the MIME type
+     */
+    public static QName getMIMETypeQName(String mimeName) {
+
+        if ("text/plain".equals(mimeName)) {
+            return Constants.MIME_PLAINTEXT;
+        } else if ("image/gif".equals(mimeName)
+                || "image/jpeg".equals(mimeName)) {
+            return Constants.MIME_IMAGE;
+        } else if ("text/xml".equals(mimeName)
+                || "applications/xml".equals(mimeName)) {
+            return Constants.MIME_SOURCE;
+        } else if ("application/octet-stream".equals(mimeName) ||
+                   "application/octetstream".equals(mimeName)) {
+            return Constants.MIME_OCTETSTREAM;
+        } else if ((mimeName != null) && mimeName.startsWith("multipart/")) {
+            return Constants.MIME_MULTIPART;
+        } else {
+            return Constants.MIME_DATA_HANDLER;
+        }
+    }    // getMIMEType
+
+    /**
+     * Get the QName that could be used in the xsi:type
+     * when serializing an object for this parameter/return
+     *
+     * @param param is a parameter
+     * @return the QName of the parameter's xsi type
+     */
+    public static QName getXSIType(Parameter param) {
+
+        if (param.getMIMEInfo() != null) {
+            return getMIMETypeQName(param.getMIMEInfo().getType());
+        }
+
+        return getXSIType(param.getType());
+    }    // getXSIType
+
+    /**
+     * Are there any MIME parameters in the given binding?
+     *
+     * @param bEntry
+     * @return
+     */
+    public static boolean hasMIME(BindingEntry bEntry) {
+
+        List operations = bEntry.getBinding().getBindingOperations();
+
+        for (int i = 0; i < operations.size(); ++i) {
+            BindingOperation operation = (BindingOperation) operations.get(i);
+
+            if (hasMIME(bEntry, operation)) {
+                return true;
+            }
+        }
+
+        return false;
+    }    // hasMIME
+
+    /**
+     * Are there any MIME parameters in the given binding's operation?
+     *
+     * @param bEntry
+     * @param operation
+     * @return
+     */
+    public static boolean hasMIME(BindingEntry bEntry,
+                                  BindingOperation operation) {
+
+        Parameters parameters = bEntry.getParameters(operation.getOperation());
+
+        if (parameters != null) {
+            for (int idx = 0; idx < parameters.list.size(); ++idx) {
+                Parameter p = (Parameter) parameters.list.get(idx);
+
+                if (p.getMIMEInfo() != null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }    // hasMIME
+
+    /**
+     * Return the operation QName.  The namespace is determined from
+     * the soap:body namespace, if it exists, otherwise it is "".
+     *
+     * @param bindingOper the operation
+     * @param bEntry      the symbol table binding entry
+     * @param symbolTable SymbolTable
+     * @return the operation QName
+     */
+    public static QName getOperationQName(BindingOperation bindingOper,
+                                          BindingEntry bEntry,
+                                          SymbolTable symbolTable) {
+
+        Operation operation = bindingOper.getOperation();
+        String operationName = operation.getName();
+
+        // For the wrapped case, use the part element's name...which is
+        // is the same as the operation name, but may have a different
+        // namespace ?
+        // example:
+        // <part name="paramters" element="ns:myelem">
+        if ((bEntry.getBindingStyle() == Style.DOCUMENT)
+                && symbolTable.isWrapped()) {
+            Input input = operation.getInput();
+
+            if (input != null) {
+                Map parts = input.getMessage().getParts();
+
+                if ((parts != null) && !parts.isEmpty()) {
+                    Iterator i = parts.values().iterator();
+                    Part p = (Part) i.next();
+
+                    return p.getElementName();
+                }
+            }
+        }
+
+        String ns = null;
+
+        // Get a namespace from the soap:body tag, if any
+        // example:
+        // <soap:body namespace="this_is_what_we_want" ..>
+        BindingInput bindInput = bindingOper.getBindingInput();
+
+        if (bindInput != null) {
+            Iterator it = bindInput.getExtensibilityElements().iterator();
+
+            while (it.hasNext()) {
+                ExtensibilityElement elem = (ExtensibilityElement) it.next();
+
+                if (elem instanceof SOAPBody) {
+                    SOAPBody body = (SOAPBody) elem;
+
+                    ns = body.getNamespaceURI();
+                    if (bEntry.getInputBodyType(operation) == Use.ENCODED && (ns == null || ns.length() == 0)) {
+                        log.warn(Messages.getMessage("badNamespaceForOperation00",
+                                bEntry.getName(),
+                                operation.getName()));
+
+                    }
+                    break;
+                } else if (elem instanceof MIMEMultipartRelated) {
+                    Object part = null;
+                    javax.wsdl.extensions.mime.MIMEMultipartRelated mpr =
+                            (javax.wsdl.extensions.mime.MIMEMultipartRelated) elem;
+                    List l =
+                            mpr.getMIMEParts();
+
+                    for (int j = 0;
+                         (l != null) && (j < l.size()) && (part == null);
+                         j++) {
+                        javax.wsdl.extensions.mime.MIMEPart mp =
+                                (javax.wsdl.extensions.mime.MIMEPart) l.get(j);
+                        List ll =
+                                mp.getExtensibilityElements();
+
+                        for (int k = 0; (ll != null) && (k < ll.size())
+                                && (part == null); k++) {
+                            part = ll.get(k);
+
+                            if (part instanceof SOAPBody) {
+                                SOAPBody body = (SOAPBody) part;
+
+                                ns = body.getNamespaceURI();
+                                if (bEntry.getInputBodyType(operation) == Use.ENCODED && (ns == null || ns.length() == 0)) {
+                                    log.warn(Messages.getMessage("badNamespaceForOperation00",
+                                            bEntry.getName(),
+                                            operation.getName()));
+
+                                }
+                                break;
+                            } else {
+                                part = null;
+                            }
+                        }
+                    }
+                } else if (elem instanceof UnknownExtensibilityElement) {
+
+                    // TODO: After WSDL4J supports soap12, change this code
+                    UnknownExtensibilityElement unkElement =
+                            (UnknownExtensibilityElement) elem;
+                    QName name =
+                            unkElement.getElementType();
+
+                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
+                            && name.getLocalPart().equals("body")) {
+                        ns = unkElement.getElement().getAttribute("namespace");
+                    }
+                }
+            }
+        }
+
+        // If we didn't get a namespace from the soap:body, then
+        // use "".  We should probably use the targetNamespace,
+        // but the target namespace of what?  binding?  portType?
+        // Also, we don't have enough info for to get it.
+        if (ns == null) {
+            ns = "";
+        }
+
+        return new QName(ns, operationName);
+    }
+
+    /** A simple map of the primitive types and their holder objects */
+    protected static HashMap TYPES = new HashMap(7);
+
+    static {
+        TYPES.put("int", "java.lang.Integer");
+        TYPES.put("float", "java.lang.Float");
+        TYPES.put("boolean", "java.lang.Boolean");
+        TYPES.put("double", "java.lang.Double");
+        TYPES.put("byte", "java.lang.Byte");
+        TYPES.put("short", "java.lang.Short");
+        TYPES.put("long", "java.lang.Long");
+    }
+
+    /**
+     * Return a "wrapper" type for the given type name.  In other words,
+     * if it's a primitive type ("int") return the java wrapper class
+     * ("java.lang.Integer").  Otherwise return the type name itself.
+     *
+     * @param type
+     * @return the name of a java wrapper class for the type, or the type's
+     *         name if it's not primitive.
+     */
+    public static String getWrapperType(String type) {
+        String ret = (String)TYPES.get(type);
+        return (ret == null) ? type : ret;
     }
 }

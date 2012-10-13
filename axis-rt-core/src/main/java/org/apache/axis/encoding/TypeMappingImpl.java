@@ -30,9 +30,9 @@ import org.apache.axis.utils.ArrayUtil;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.wsdl.fromJava.Namespaces;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.wsdl.symbolTable.Utils;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;

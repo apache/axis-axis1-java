@@ -1450,7 +1450,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      */
     private String constructSignature(Parameters parms, String opName) {
 
-        String name = Utils.xmlNameToJava(opName);
+        String name = JavaUtils.xmlNameToJava(opName);
         String ret = "void";
 
         if ((parms != null) && (parms.returnParam != null)) {
@@ -1469,7 +1469,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 needComma = true;
             }
 
-            String javifiedName = Utils.xmlNameToJava(p.getName());
+            String javifiedName = JavaUtils.xmlNameToJava(p.getName());
 
             if (p.getMode() == Parameter.IN) {
                 signature += Utils.getParameterTypeName(p) + " " + javifiedName;

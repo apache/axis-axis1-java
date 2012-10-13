@@ -380,7 +380,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         if ((extendType != null) && extendType.getDimensions().equals("[]")) {
             String typeName = extendType.getName();
             String elemName = extendType.getQName().getLocalPart();
-            String variableName = Utils.xmlNameToJava(elemName);
+            String variableName = JavaUtils.xmlNameToJava(elemName);
 
             names.add(typeName);
             names.add(variableName);
@@ -713,7 +713,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
             if (i > 0) {
                 mangle = "_"
-                        + Utils.xmlNameToJava(te.getQName().getLocalPart())
+                        + JavaUtils.xmlNameToJava(te.getQName().getLocalPart())
                         + "_";
             }
 

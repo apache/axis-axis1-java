@@ -224,7 +224,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             }
 
             pw.print("binding.");
-            pw.print(Utils.xmlNameToJava(op.getName()));
+            pw.print(JavaUtils.xmlNameToJava(op.getName()));
             pw.print("(");
 
             Iterator iparam = params.list.iterator();

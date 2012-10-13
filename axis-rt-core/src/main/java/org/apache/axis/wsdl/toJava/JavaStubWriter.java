@@ -1195,7 +1195,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     needComma = true;
                 }
 
-                String javifiedName = Utils.xmlNameToJava(p.getName());
+                String javifiedName = JavaUtils.xmlNameToJava(p.getName());
 
                 if (p.getMode() != Parameter.IN) {
                     javifiedName += ".value";
@@ -1243,7 +1243,7 @@ public class JavaStubWriter extends JavaClassWriter {
                         p = (Parameter) parms.list.get(++i);
                     }
 
-                    String javifiedName = Utils.xmlNameToJava(p.getName());
+                    String javifiedName = JavaUtils.xmlNameToJava(p.getName());
                     String qnameName = Utils.getNewQNameWithLastLocalPart(p.getQName());
 
                     pw.println("            java.util.Map _output;");
@@ -1262,7 +1262,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
-                    String javifiedName = Utils.xmlNameToJava(p.getName());
+                    String javifiedName = JavaUtils.xmlNameToJava(p.getName());
                     String qnameName = 
                             Utils.getNewQNameWithLastLocalPart(p.getQName());
 

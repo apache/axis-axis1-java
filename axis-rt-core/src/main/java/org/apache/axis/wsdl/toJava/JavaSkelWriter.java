@@ -16,6 +16,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
@@ -149,7 +150,7 @@ public class JavaSkelWriter extends JavaClassWriter {
 
                 // The invoked java name of the bindingOper is stored.
                 String opName = bindingOper.getOperation().getName();
-                String javaOpName = Utils.xmlNameToJava(opName);
+                String javaOpName = JavaUtils.xmlNameToJava(opName);
 
                 pw.println(
                         "        _params = new org.apache.axis.description.ParameterDesc [] {");
@@ -274,7 +275,7 @@ public class JavaSkelWriter extends JavaClassWriter {
                     if (parameters == null) {
                         String opName =
                                 bindingOper.getOperation().getName();
-                        String javaOpName = Utils.xmlNameToJava(opName);
+                        String javaOpName = JavaUtils.xmlNameToJava(opName);
 
                         pw.println(
                                 "        _oper = "
@@ -492,7 +493,7 @@ public class JavaSkelWriter extends JavaClassWriter {
                     + " ret = ");
         }
 
-        String call = "impl." + Utils.xmlNameToJava(operation.getName())
+        String call = "impl." + JavaUtils.xmlNameToJava(operation.getName())
                 + "(";
         boolean needComma = false;
 
@@ -505,7 +506,7 @@ public class JavaSkelWriter extends JavaClassWriter {
 
             Parameter p = (Parameter) parms.list.get(i);
 
-            call = call + Utils.xmlNameToJava(p.getName());
+            call = call + JavaUtils.xmlNameToJava(p.getName());
         }
 
         call = call + ")";

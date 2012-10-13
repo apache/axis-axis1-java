@@ -15,6 +15,7 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
@@ -137,7 +138,7 @@ public class JavaImplWriter extends JavaClassWriter {
                     pw.println("        try {");
                 }
 
-                pw.println("        " + Utils.xmlNameToJava(param.getName())
+                pw.println("        " + JavaUtils.xmlNameToJava(param.getName())
                         + ".value = " + constructorString + ";");
 
                 if (bThrow.value) {

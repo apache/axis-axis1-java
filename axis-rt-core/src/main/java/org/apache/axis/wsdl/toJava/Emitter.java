@@ -22,6 +22,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
@@ -569,7 +570,7 @@ public class Emitter extends Parser {
         String javaName = getJavaVariableNameHook(typeQName, xmlName, isElement);
         if (javaName == null) {
             String elemName = Utils.getLastLocalPart(xmlName.getLocalPart());            
-            javaName = Utils.xmlNameToJava(elemName);
+            javaName = JavaUtils.xmlNameToJava(elemName);
         }
         return javaName;
     }

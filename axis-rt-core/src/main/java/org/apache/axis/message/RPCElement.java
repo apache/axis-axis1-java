@@ -31,7 +31,6 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -112,7 +111,7 @@ public class RPCElement extends SOAPBodyElement
         ServiceDesc serviceDesc =
             service.getInitializedServiceDesc(msgContext);
 
-        String lc = Utils.xmlNameToJava(name);
+        String lc = JavaUtils.xmlNameToJava(name);
         if (serviceDesc == null) {
             throw AxisFault.makeFault(
                    new ClassNotFoundException(

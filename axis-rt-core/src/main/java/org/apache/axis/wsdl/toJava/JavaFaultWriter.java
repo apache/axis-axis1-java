@@ -16,6 +16,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.constants.Use;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -92,7 +93,7 @@ public class JavaFaultWriter extends JavaClassWriter {
         for (int i = 0; i < params.size(); i++) {
             Parameter param = (Parameter) params.get(i);
             String type = param.getType().getName();
-            String variable = Utils.xmlNameToJava(param.getName());
+            String variable = JavaUtils.xmlNameToJava(param.getName());
 
             pw.println("    public " + type + " " + variable + ";");
             pw.println("    public " + type + " get"
@@ -128,7 +129,7 @@ public class JavaFaultWriter extends JavaClassWriter {
 
                 Parameter param = (Parameter) params.get(i);
                 String type = param.getType().getName();
-                String variable = Utils.xmlNameToJava(param.getName());
+                String variable = JavaUtils.xmlNameToJava(param.getName());
 
                 pw.print(type + " " + variable);
             }
@@ -137,7 +138,7 @@ public class JavaFaultWriter extends JavaClassWriter {
 
             for (int i = 0; i < params.size(); i++) {
                 Parameter param = (Parameter) params.get(i);
-                String variable = Utils.xmlNameToJava(param.getName());
+                String variable = JavaUtils.xmlNameToJava(param.getName());
 
                 pw.println("        this." + variable + " = " + variable + ";");
             }
@@ -158,7 +159,7 @@ public class JavaFaultWriter extends JavaClassWriter {
 
         for (int i = 0; i < params.size(); i++) {
             Parameter param = (Parameter) params.get(i);
-            String variable = Utils.xmlNameToJava(param.getName());
+            String variable = JavaUtils.xmlNameToJava(param.getName());
 
             pw.println("        context.serialize(qname, null, "
                     + Utils.wrapPrimitiveType(param.getType(), variable)

@@ -59,7 +59,7 @@ import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
-import org.apache.axis.wsdl.toJava.Utils;
+import org.apache.axis.wsdl.symbolTable.Utils;
 import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;
