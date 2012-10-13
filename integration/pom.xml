@@ -1060,6 +1060,30 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>refattr</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/refattr/refattr.wsdl</file>
+                            <generate>both</generate>
+                            <deployScope>session</deployScope>
+                            <skeleton>true</skeleton>
+                            <implementation>true</implementation>
+                            <deployWsdd>${project.build.directory}/wsdd/refattr.wsdl</deployWsdd>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:ref.types.test</namespace>
+                                    <package>test.wsdl.refattr</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:ref.types</namespace>
+                                    <package>test.wsdl.refattr</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>rpcParams</id>
                         <goals>
                             <goal>generate-test-sources</goal>
@@ -1456,6 +1480,8 @@
                                 <exclude>test/functional/TestAutoTypes.java</exclude>
                                 <!-- TODO: fails on Java 1.6 because of AXIS-2876 -->
                                 <exclude>test/wsdl/echo/ComplexEchoServiceTestCase.java</exclude>
+                                <!-- TODO: deserialization fails on server side (note: the test was not enabled in Axis 1.4 either) -->
+                                <exclude>test/wsdl/refattr/RefTestServiceTestCase.java</exclude>
                                 <!-- These are not test cases -->
                                 <exclude>test/wsdl/date/TestdateSoapBinding*</exclude>
                                 <exclude>test/wsdl/inout/TestFailed.java</exclude>

@@ -1034,18 +1034,20 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                      (v.elementAt(1) instanceof Element &&
                       v.elementAt(0) instanceof Type))) {
                     Element e;
+                    Type t;
                     if (v.elementAt(0) instanceof Element) {
                         e = (Element) v.elementAt(0);
+                        t = (Type) v.elementAt(1);
                     } else {
                         e = (Element) v.elementAt(1);
+                        t = (Type) v.elementAt(0);
                     }
 
                     BooleanHolder forElement = new BooleanHolder();
                     QName eType = Utils.getTypeQName(e.getNode(),
                             forElement, false);
 
-                    if ((eType != null) 
-                            && !forElement.value) {
+                    if ((eType != null) && !forElement.value && eType.equals(t.getQName())) {
                         resolve = false;
                     }
                 }
