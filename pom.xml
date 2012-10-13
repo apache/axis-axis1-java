@@ -63,7 +63,7 @@
         <module>axis-ant</module>
         <module>maven</module>
         <module>axis-standalone-server</module>
-        <module>axis-castor</module>
+        <module>axis-rt-databinding-castor</module>
         <module>axis-rt-transports-http-javanet</module>
         <module>axis-jms</module>
         <module>axis-testutils</module>

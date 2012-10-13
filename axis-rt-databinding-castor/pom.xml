@@ -25,8 +25,8 @@
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>axis-castor</artifactId>
-    <name>Axis :: Castor support</name>
+    <artifactId>axis-rt-databinding-castor</artifactId>
+    <name>Castor databinding support</name>
     <description>
         Contains serializers and deserializers for Castor.
     </description>
