@@ -64,6 +64,7 @@
         <module>axis-jms</module>
         <module>axis-rt-core</module>
         <module>axis-rt-databinding-castor</module>
+        <module>axis-rt-provider-bsf</module>
         <module>axis-rt-transports-http-javanet</module>
         <module>axis-saaj</module>
         <module>axis-standalone-server</module>

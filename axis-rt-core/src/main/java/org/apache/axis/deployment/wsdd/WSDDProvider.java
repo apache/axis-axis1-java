@@ -18,7 +18,6 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaCORBAProvider;
@@ -67,7 +66,6 @@ public abstract class WSDDProvider
         providers.put(WSDDConstants.QNAME_HANDLER_PROVIDER, new WSDDHandlerProvider());
         providers.put(WSDDConstants.QNAME_EJB_PROVIDER, new WSDDJavaEJBProvider());
         providers.put(WSDDConstants.QNAME_COM_PROVIDER, new WSDDComProvider());
-        providers.put(WSDDConstants.QNAME_BSF_PROVIDER, new WSDDBsfProvider());
         providers.put(WSDDConstants.QNAME_CORBA_PROVIDER, new WSDDJavaCORBAProvider());
         providers.put(WSDDConstants.QNAME_RMI_PROVIDER, new WSDDJavaRMIProvider());
         try {
