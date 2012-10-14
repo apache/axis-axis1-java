@@ -21,66 +21,44 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis</groupId>
-        <artifactId>maven</artifactId>
+        <artifactId>axis-project</artifactId>
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>maven-java2wsdl-plugin</artifactId>
-    <packaging>maven-plugin</packaging>
-    <name>Axis :: Maven :: maven-java2wsdl-plugin</name>
-    <description>
-        Axis java2wsdl Maven plugin.
-    </description>
-    <url>${baseUrl}/maven/java2wsdl</url>
+    <artifactId>axis-codegen</artifactId>
+    <name>Code Generator</name>
+    <url>${baseUrl}/codegen</url>
     <distributionManagement>
         <site>
             <id>axis</id>
-            <url>${baseSiteUrl}/maven/java2wsdl</url>
+            <url>${baseSiteUrl}/codegen</url>
         </site>
     </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis-rt-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis-codegen</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>nsmap</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.veithen.ulog</groupId>
-            <artifactId>ulog</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-compiler-manager</artifactId>
-            <version>1.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-compiler-javac</artifactId>
-            <version>1.8.1</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <reporting>
         <plugins>
             <plugin>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>2.9</version>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>dependencies</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>

@@ -1065,4 +1065,13 @@ public class Utils {
         String ret = (String)TYPES.get(type);
         return (ret == null) ? type : ret;
     }
+
+    /**
+    * Determines if the DOM Node represents an xs:<node>
+    */
+    public static boolean isXsNode (Node node, String nameName)
+    {
+        return (node.getLocalName().equals(nameName)
+                && Constants.isSchemaXSD (node.getNamespaceURI ()));
+    }
 }

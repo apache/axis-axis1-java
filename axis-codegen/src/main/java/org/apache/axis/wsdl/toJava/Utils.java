@@ -1062,17 +1062,6 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                         isXsNode(type.getNode(), "attributeGroup")))));
     }
 
-
-    /**
-    * Determines if the DOM Node represents an xs:<node>
-    */
-    public static boolean isXsNode (Node node, String nameName)
-    {
-		return (node.getLocalName().equals(nameName)
-                && Constants.isSchemaXSD (node.getNamespaceURI ()));
-	}
-
-
     public static QName getItemQName(TypeEntry te) {
         if (te instanceof DefinedElement) {
             te = te.getRefType();

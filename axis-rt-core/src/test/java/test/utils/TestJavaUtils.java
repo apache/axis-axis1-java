@@ -2,7 +2,6 @@ package test.utils;
 
 import junit.framework.TestCase;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.toJava.Utils;
 
 import javax.xml.rpc.holders.ByteHolder;
 import javax.xml.rpc.holders.LongHolder;
@@ -93,13 +92,6 @@ public class TestJavaUtils extends TestCase
      */ 
     public void testXmlNameToJava2() {
         assertEquals("_abstract", JavaUtils.xmlNameToJava("abstract"));
-    }
-    
-    /**
-     * Test for Bug 17995 - wsdl2java converts namespace to uncompilable packages
-     */ 
-    public void testPackageNaming() {
-        assertEquals("_0._1.util.liberty", Utils.makePackageName("urn:liberty:util:1.0"));
     }
     
     /**
