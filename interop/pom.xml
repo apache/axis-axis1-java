@@ -49,7 +49,7 @@
         <!-- TODO: we should run the tests with the standard HTTP transport, but this doesn't work yet -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis-rt-transports-http-javanet</artifactId>
+            <artifactId>axis-rt-transport-http-javanet</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

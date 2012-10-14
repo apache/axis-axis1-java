@@ -25,7 +25,7 @@
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>axis-rt-transports-http-javanet</artifactId>
+    <artifactId>axis-rt-transport-http-javanet</artifactId>
     <name>Axis :: java.net HTTP Transport</name>
     <description>
     	An alternative HTTP transport that uses the java.net.HttpURLConnection API. This transport only works with Java 1.5.

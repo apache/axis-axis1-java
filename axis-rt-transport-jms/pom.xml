@@ -25,7 +25,7 @@
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>axis-jms</artifactId>
+    <artifactId>axis-rt-transport-jms</artifactId>
     <name>Axis :: JMS transport</name>
     <description>
         Contains the Axis JMS transport.
