@@ -65,6 +65,11 @@
             <groupId>com.github.veithen.ulog</groupId>
             <artifactId>ulog</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

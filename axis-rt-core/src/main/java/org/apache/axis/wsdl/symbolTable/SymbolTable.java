@@ -27,6 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
@@ -170,6 +171,8 @@ public class SymbolTable {
     /** Field wsdlURI */
     private String wsdlURI = null;
 
+    private EntityResolver entityResolver;
+    
     /** If this is false, we will "unwrap" literal arrays, generating a plan "String[]" instead
      * of "ArrayOfString" when encountering an element containing a single maxOccurs="unbounded"
      * inner element.
@@ -424,6 +427,26 @@ public class SymbolTable {
     }
 
     /**
+     * Get the entity resolver.
+     * 
+     * @return the entity resolver, or <code>null</code> if no entity resolver is configured
+     */
+    public EntityResolver getEntityResolver() {
+        return entityResolver;
+    }
+
+    /**
+     * Set the entity resolver. This is used to load the WSDL file (unless it is supplied as a
+     * {@link Document}) and all imported WSDL and schema documents.
+     * 
+     * @param entityResolver
+     *            the entity resolver, or <code>null</code> to use a default entity resolver
+     */
+    public void setEntityResolver(EntityResolver entityResolver) {
+        this.entityResolver = entityResolver;
+    }
+
+    /**
      * Dump the contents of the symbol table.  For debugging purposes only.
      * 
      * @param out 
@@ -516,7 +539,9 @@ public class SymbolTable {
 
         reader.setFeature("javax.wsdl.verbose", verbose);
 
-        this.def = reader.readWSDL(context, doc);
+        this.def = reader.readWSDL(new WSDLLocatorAdapter(context,
+                entityResolver != null ? entityResolver : NullEntityResolver.INSTANCE),
+                doc.getDocumentElement());
 
         add(context, def, doc);
     }    // populate
