@@ -17,13 +17,11 @@
 package org.apache.axis.utils;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
 
 import javax.wsdl.Port;
 import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
-import javax.xml.namespace.QName;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -42,14 +40,8 @@ public class WSDLUtils {
             Object obj = li.next();
             if (obj instanceof SOAPAddress) {
                 return ((SOAPAddress) obj).getLocationURI();
-            } else if (obj instanceof UnknownExtensibilityElement){
-                //TODO: After WSDL4J supports soap12, change this code
-                UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
-                QName name = unkElement.getElementType();
-                if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
-                   name.getLocalPart().equals("address")) {
-                    return unkElement.getElement().getAttribute("location");
-                }
+            } else if (obj instanceof SOAP12Address){
+                return ((SOAP12Address) obj).getLocationURI();
             }
         }
         // didn't find it

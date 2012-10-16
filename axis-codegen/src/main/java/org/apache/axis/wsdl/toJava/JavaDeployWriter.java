@@ -15,7 +15,6 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.Constants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -41,8 +40,8 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -370,20 +369,8 @@ public class JavaDeployWriter extends JavaWriter {
         while (iterator.hasNext()) {
             Object obj = iterator.next();
 
-            if (obj instanceof SOAPBinding) {
+            if (obj instanceof SOAPBinding || obj instanceof SOAP12Binding) {
                 use = Use.ENCODED;
-            } else if (obj instanceof UnknownExtensibilityElement) {
-
-                // TODO: After WSDL4J supports soap12, change this code
-                UnknownExtensibilityElement unkElement =
-                        (UnknownExtensibilityElement) obj;
-                QName name =
-                        unkElement.getElementType();
-
-                if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("binding")) {
-                    use = Use.ENCODED;
-                }
             }
         }
 

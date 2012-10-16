@@ -57,6 +57,11 @@ import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPHeaderFault;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.wsdl.extensions.soap12.SOAP12Body;
+import javax.wsdl.extensions.soap12.SOAP12Fault;
+import javax.wsdl.extensions.soap12.SOAP12Header;
+import javax.wsdl.extensions.soap12.SOAP12HeaderFault;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -2475,24 +2480,14 @@ public class SymbolTable {
                     } else {
                         bEntry.setBindingType(BindingEntry.TYPE_HTTP_GET);
                     }
-                } else if (obj instanceof UnknownExtensibilityElement) {
+                } else if (obj instanceof SOAP12Binding) {
+                    bEntry.setBindingType(BindingEntry.TYPE_SOAP);
+                    
+                    SOAP12Binding sb = (SOAP12Binding) obj;
+                    String style = sb.getStyle();
 
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("binding")) {
-                        bEntry.setBindingType(BindingEntry.TYPE_SOAP);
-
-                        String style =
-                                unkElement.getElement().getAttribute("style");
-
-                        if ("rpc".equalsIgnoreCase(style)) {
-                            bEntry.setBindingStyle(Style.RPC);
-                        }
+                    if ("rpc".equalsIgnoreCase(style)) {
+                        bEntry.setBindingStyle(Style.RPC);
                     }
                 }
             }
@@ -2635,6 +2630,35 @@ public class SymbolTable {
                         operation,
                         addMIMETypes(
                                 bEntry, (MIMEMultipartRelated) obj, operation), input);
+            } else if (obj instanceof SOAP12Body) {
+                setBodyType(((SOAP12Body) obj).getUse(), bEntry, operation,
+                        input);
+            } else if (obj instanceof SOAP12Header) {
+                SOAP12Header header = (SOAP12Header) obj;
+
+                setBodyType(header.getUse(), bEntry, operation, input);
+
+                // Note, this only works for explicit headers - those whose
+                // parts come from messages used in the portType's operation
+                // input/output clauses - it does not work for implicit
+                // headers - those whose parts come from messages not used in
+                // the portType's operation's input/output clauses.  I don't
+                // know what we're supposed to emit for implicit headers.
+                bEntry.setHeaderPart(operation.getName(), header.getPart(),
+                        input
+                        ? BindingEntry.IN_HEADER
+                        : BindingEntry.OUT_HEADER);
+
+                // Add any soap12:headerFault info to the faults array
+                Iterator headerFaults = header.getSOAP12HeaderFaults().iterator();
+
+                while (headerFaults.hasNext()) {
+                    SOAP12HeaderFault headerFault =
+                            (SOAP12HeaderFault) headerFaults.next();
+
+                    faults.add(new FaultInfo(headerFault.getMessage(), headerFault.getPart(),
+                            headerFault.getUse(), headerFault.getNamespaceURI(), this));
+                }
             } else if (obj instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unkElement =
                         (UnknownExtensibilityElement) obj;
@@ -2644,61 +2668,6 @@ public class SymbolTable {
                 if (name.getNamespaceURI().equals(Constants.URI_DIME_WSDL)
                         && name.getLocalPart().equals("message")) {
                     fillInDIMEInformation(unkElement, input, operation, bEntry);
-                }
-
-                // TODO: After WSDL4J supports soap12, change this code
-                if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("body")) {
-                    setBodyType(unkElement.getElement().getAttribute("use"),
-                            bEntry, operation, input);
-                }
-
-                // TODO: After WSDL4J supports soap12, change this code
-                if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("header")) {
-                    setBodyType(unkElement.getElement().getAttribute("use"),
-                            bEntry, operation, input);
-
-                    // Note, this only works for explicit headers - those whose
-                    // parts come from messages used in the portType's operation
-                    // input/output clauses - it does not work for implicit
-                    // headers - those whose parts come from messages not used in
-                    // the portType's operation's input/output clauses.  I don't
-                    // know what we're supposed to emit for implicit headers.
-                    bEntry.setHeaderPart(
-                            operation.getName(),
-                            unkElement.getElement().getAttribute("part"), input
-                            ? BindingEntry.IN_HEADER
-                            : BindingEntry.OUT_HEADER);
-
-                    // Add any soap12:headerFault info to the faults array
-                    NodeList headerFaults =
-                            unkElement.getElement().getChildNodes();
-
-                    for (int i = 0; i < headerFaults.getLength(); i++) {
-                        String faultMessage =
-                                unkElement.getElement().getAttribute("message");
-                        String faultPart =
-                                unkElement.getElement().getAttribute("part");
-                        String faultUse =
-                                unkElement.getElement().getAttribute("use");
-                        String faultNamespaceURI =
-                                unkElement.getElement().getAttribute("namespace");
-                        QName faultMessageQName = null;
-                        int sep = faultMessage.indexOf(':');
-
-                        if (sep == -1) {
-                            faultMessageQName = new QName(faultMessage);
-                        } else {
-                            faultMessageQName =
-                                    new QName(faultMessage.substring(0, sep),
-                                            faultMessage.substring(sep + 1));
-                        }
-
-                        faults.add(new FaultInfo(faultMessageQName, faultPart,
-                                faultUse, faultNamespaceURI,
-                                this));
-                    }
                 }
             }
         }
@@ -2838,29 +2807,12 @@ public class SymbolTable {
                     soapFaultNamespace = ((SOAPFault) obj).getNamespaceURI();
 
                     break;
-                } else if (obj instanceof UnknownExtensibilityElement) {
+                } else if (obj instanceof SOAP12Fault) {
+                    foundSOAPFault = true;
+                    soapFaultUse = ((SOAP12Fault) obj).getUse();
+                    soapFaultNamespace = ((SOAP12Fault) obj).getNamespaceURI();
 
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("fault")) {
-                        if (unkElement.getElement().getAttribute("use")
-                                != null) {
-                            soapFaultUse =
-                                    unkElement.getElement().getAttribute("use");
-                        }
-
-                        if (unkElement.getElement().getAttribute("namespace")
-                                != null) {
-                            soapFaultNamespace =
-                                    unkElement.getElement().getAttribute(
-                                            "namespace");
-                        }
-                    }
+                    break;
                 }
             }
 
@@ -2985,27 +2937,16 @@ public class SymbolTable {
                     if (use.equalsIgnoreCase("literal")) {
                         bodyType = Use.LITERAL;
                     }
-                } else if (obj instanceof UnknownExtensibilityElement) {
+                } else if (obj instanceof SOAP12Body) {
+                    String use = ((SOAP12Body) obj).getUse();
 
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
+                    if (use == null) {
+                        throw new IOException(
+                                Messages.getMessage("noUse", op.getName()));
+                    }
 
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("body")) {
-                        String use =
-                                unkElement.getElement().getAttribute("use");
-
-                        if (use == null) {
-                            throw new IOException(
-                                    Messages.getMessage("noUse", op.getName()));
-                        }
-
-                        if (use.equalsIgnoreCase("literal")) {
-                            bodyType = Use.LITERAL;
-                        }
+                    if (use.equalsIgnoreCase("literal")) {
+                        bodyType = Use.LITERAL;
                     }
                 }
             }

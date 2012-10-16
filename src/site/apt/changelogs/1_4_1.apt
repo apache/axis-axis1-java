@@ -43,4 +43,6 @@ Changes from 1.4 final
       Note that this is only supported by the maven-wsdl2java-plugin, but not by the corresponding Ant task
       or command line tool. The feature can be used to consume MTOM enabled services. Check the
       {{{../maven/maven-wsdl2java-plugin/java-xml-type-mappings.html}plugin documentation}} for more information.
+    
+    * WSDL4J has been upgraded from 1.5.1 to 1.6.2.
 
