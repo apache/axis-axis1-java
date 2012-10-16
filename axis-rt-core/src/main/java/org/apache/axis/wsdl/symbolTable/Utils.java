@@ -31,9 +31,9 @@ import javax.wsdl.Input;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap12.SOAP12Body;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import java.util.*;
@@ -1012,18 +1012,8 @@ public class Utils {
                             }
                         }
                     }
-                } else if (elem instanceof UnknownExtensibilityElement) {
-
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) elem;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("body")) {
-                        ns = unkElement.getElement().getAttribute("namespace");
-                    }
+                } else if (elem instanceof SOAP12Body) {
+                    ns = ((SOAP12Body)elem).getNamespaceURI();
                 }
             }
         }

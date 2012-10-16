@@ -26,8 +26,8 @@ import org.w3c.dom.NodeList;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Message;
 import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap12.SOAP12Operation;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import java.io.File;
@@ -773,21 +773,10 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 SOAPOperation soapOp = (SOAPOperation) elem;
                 action = soapOp.getSoapActionURI();
                 found = true;
-            } else if (elem instanceof UnknownExtensibilityElement) {
-
-                // TODO: After WSDL4J supports soap12, change this code
-                UnknownExtensibilityElement unkElement =
-                        (UnknownExtensibilityElement) elem;
-                QName name =
-                        unkElement.getElementType();
-
-                if (name.getNamespaceURI().equals(
-                        Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("operation")) {
-                    action = unkElement.getElement().getAttribute(
-                                    "soapAction");
-                    found = true;
-                }
+            } else if (elem instanceof SOAP12Operation) {
+                SOAP12Operation soapOp = (SOAP12Operation) elem;
+                action = soapOp.getSoapActionURI();
+                found = true;
             }
         }
         return action;

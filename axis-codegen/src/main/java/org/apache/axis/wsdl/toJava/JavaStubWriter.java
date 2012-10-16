@@ -15,7 +15,6 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
@@ -42,9 +41,10 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.wsdl.extensions.soap12.SOAP12Operation;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -338,22 +338,11 @@ public class JavaStubWriter extends JavaClassWriter {
                                 "                    _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);");
                         pw.println(
                                 "                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
-                    } else if (obj instanceof UnknownExtensibilityElement) {
-
-                        // TODO: After WSDL4J supports soap12, change this code
-                        UnknownExtensibilityElement unkElement =
-                                (UnknownExtensibilityElement) obj;
-                        QName name =
-                                unkElement.getElementType();
-
-                        if (name.getNamespaceURI().equals(
-                                Constants.URI_WSDL12_SOAP)
-                                && name.getLocalPart().equals("binding")) {
-                            pw.println(
-                                    "                    _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
-                            pw.println(
-                                    "                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP12_ENC);");
-                        }
+                    } else if (obj instanceof SOAP12Binding) {
+                        pw.println(
+                                "                    _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
+                        pw.println(
+                                "                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP12_ENC);");
                     }
                 }
             }
@@ -431,24 +420,11 @@ public class JavaStubWriter extends JavaClassWriter {
                     opStyle = ((SOAPOperation) obj).getStyle();
 
                     break;
-                } else if (obj instanceof UnknownExtensibilityElement) {
+                } else if (obj instanceof SOAP12Operation) {
+                    soapAction = ((SOAP12Operation) obj).getSoapActionURI();
+                    opStyle = ((SOAP12Operation) obj).getStyle();
 
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("operation")) {
-                        if (unkElement.getElement().getAttribute("soapAction")
-                                != null) {
-                            soapAction = unkElement.getElement().getAttribute(
-                                    "soapAction");
-                        }
-
-                        opStyle = unkElement.getElement().getAttribute("style");
-                    }
+                    break;
                 }
             }
 
@@ -574,18 +550,10 @@ public class JavaStubWriter extends JavaClassWriter {
                     opStyle = ((SOAPOperation) obj).getStyle();
 
                     break;
-                } else if (obj instanceof UnknownExtensibilityElement) {
+                } else if (obj instanceof SOAP12Operation) {
+                    opStyle = ((SOAP12Operation) obj).getStyle();
 
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("operation")) {
-                        opStyle = unkElement.getElement().getAttribute("style");
-                    }
+                    break;
                 }
             }
 
@@ -1093,19 +1061,9 @@ public class JavaStubWriter extends JavaClassWriter {
             if (obj instanceof SOAPBinding) {
                 pw.println(
                         "        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);");
-            } else if (obj instanceof UnknownExtensibilityElement) {
-
-                // TODO: After WSDL4J supports soap12, change this code
-                UnknownExtensibilityElement unkElement =
-                        (UnknownExtensibilityElement) obj;
-                QName name =
-                        unkElement.getElementType();
-
-                if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("binding")) {
-                    pw.println(
-                            "        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
-                }
+            } else if (obj instanceof SOAP12Binding) {
+                pw.println(
+                        "        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
             }
         }
 
