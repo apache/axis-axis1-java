@@ -32,6 +32,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.xml.resolver.CatalogManager;
+import org.apache.xml.resolver.tools.CatalogResolver;
 
 import com.github.veithen.ulog.PlexusLoggerInjector;
 
@@ -66,6 +68,15 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
      * @parameter
      */
     private String url;
+    
+    /**
+     * The catalog file to resolve external entity references. This can be any type of catalog
+     * supported by <a
+     * href="http://xerces.apache.org/xml-commons/components/resolver/">xml-resolver</a>.
+     * 
+     * @parameter
+     */
+    private File catalog;
     
     /**
      * Determines the scope that will be specified for the service in the deployment WSDD. Valid
@@ -296,6 +307,12 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
         }
         
         configureEmitter(emitter);
+        
+        if (catalog != null) {
+            CatalogManager catalogManager = new CatalogManager();
+            catalogManager.setCatalogFiles(catalog.getAbsolutePath());
+            emitter.setEntityResolver(new CatalogResolver(catalogManager));
+        }
         
         getLog().info("Processing " + wsdlUrl);
         

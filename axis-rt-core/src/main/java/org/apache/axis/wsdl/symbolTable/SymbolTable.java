@@ -28,6 +28,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
@@ -708,6 +709,17 @@ public class SymbolTable {
         }
     }                // checkForUndefined
 
+    private Document newDocument(String systemId) throws SAXException, IOException, ParserConfigurationException {
+        InputSource is = null;
+        if (entityResolver != null) {
+            is = entityResolver.resolveEntity(null, systemId);
+        }
+        if (is == null) {
+            is = new InputSource(systemId);
+        }
+        return XMLUtils.newDocument(is);
+    }
+    
     /**
      * Add the given Definition and Document information to the symbol table (including imported
      * symbols), populating it with SymTabEntries for each of the top-level symbols.
@@ -765,7 +777,7 @@ public class SymbolTable {
                             URL url = getURL(context, imp.getLocationURI());
 
                             populate(url, imp.getDefinition(),
-                                    XMLUtils.newDocument(url.toString()),
+                                    newDocument(url.toString()),
                                     url.toString());
                         }
                     }
@@ -889,7 +901,7 @@ public class SymbolTable {
 
                         String filename = url.toString();
 
-                        populate(url, null, XMLUtils.newDocument(filename),
+                        populate(url, null, newDocument(filename),
                                 filename);
                     }
                 }
@@ -1099,7 +1111,7 @@ public class SymbolTable {
 
                 if (includeName != null) {
                     URL url = getURL(context, includeName);
-                    Document includeDoc = XMLUtils.newDocument(url.toString());
+                    Document includeDoc = newDocument(url.toString());
 
                     // Vidyanand : Fix for Bug #15124
                     org.w3c.dom.Element schemaEl =
