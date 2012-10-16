@@ -27,6 +27,7 @@ import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.axis.wsdl.symbolTable.Utils;
 import org.w3c.dom.Document;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
@@ -70,6 +71,8 @@ public class Parser {
     /** If this is false, we'll prefer "String[]" to "ArrayOfString" for literal wrapped arrays */
     protected boolean wrapArrays = false;
 
+    protected EntityResolver entityResolver;
+    
     // Timeout, in milliseconds, to let the Emitter do its work
 
     /** Field timeoutms */
@@ -169,6 +172,26 @@ public class Parser {
      */
     public void setNowrap(boolean nowrap) {
         this.nowrap = nowrap;
+    }
+
+    /**
+     * Get the entity resolver configured for this parser.
+     * 
+     * @return the entity resolver, or <code>null</code> if no entity resolver is configured
+     */
+    public EntityResolver getEntityResolver() {
+        return entityResolver;
+    }
+
+    /**
+     * Set the entity resolver for this parser. This is used to load the WSDL file (unless it is
+     * supplied as a {@link Document}) and all imported WSDL and schema documents.
+     * 
+     * @param entityResolver
+     *            the entity resolver, or <code>null</code> to use a default entity resolver
+     */
+    public void setEntityResolver(EntityResolver entityResolver) {
+        this.entityResolver = entityResolver;
     }
 
     /**
@@ -298,6 +321,7 @@ public class Parser {
                 verbose, nowrap);
         symbolTable.setQuiet(quiet);
         symbolTable.setWrapArrays(wrapArrays);
+        symbolTable.setEntityResolver(entityResolver);
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(symbolTable, wsdlURI);
@@ -395,6 +419,7 @@ public class Parser {
 
         symbolTable = new SymbolTable(genFactory.getBaseTypeMapping(), imports,
                 verbose, nowrap);
+        symbolTable.setEntityResolver(entityResolver);
 
         symbolTable.populate(context, doc);
         generate(symbolTable);

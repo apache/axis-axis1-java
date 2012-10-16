@@ -1,0 +1,5 @@
+import java.io.*;
+
+if (!new File(basedir, "target/generated-sources//wsdl2java/test/wsdl/wsrf/ResourceServiceLocator.java").exists()) {
+    throw new IllegalStateException("The build didn't generate the expected output file");
+}
