@@ -279,4 +279,18 @@
             </list>
         </property>
     </bean>
+    
+    <!-- Mock for http://msrmaps.com/terraservice2.asmx -->
+    
+    <bean name="/terraservice" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="wsdl" value="classpath:wsdl/TerraService.wsdl"/>
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:terra/GetPlaceList-request.xml"/>
+                    <property name="response" value="classpath:terra/GetPlaceList-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
 </beans>

@@ -1,0 +1,78 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <soap:Body>
+      <GetPlaceListResponse xmlns="http://msrmaps.com/">
+         <GetPlaceListResult>
+            <PlaceFacts>
+               <Place>
+                  <City>Boston</City>
+                  <State>Georgia</State>
+                  <Country>United States</Country>
+               </Place>
+               <Center>
+                  <Lon>-83.790000915527344</Lon>
+                  <Lat>30.790000915527344</Lat>
+               </Center>
+               <AvailableThemeMask>3</AvailableThemeMask>
+               <PlaceTypeId>CityTown</PlaceTypeId>
+               <Population>0</Population>
+            </PlaceFacts>
+            <PlaceFacts>
+               <Place>
+                  <City>Boston</City>
+                  <State>Pennsylvania</State>
+                  <Country>United States</Country>
+               </Place>
+               <Center>
+                  <Lon>-79.80999755859375</Lon>
+                  <Lat>40.299999237060547</Lat>
+               </Center>
+               <AvailableThemeMask>3</AvailableThemeMask>
+               <PlaceTypeId>CityTown</PlaceTypeId>
+               <Population>0</Population>
+            </PlaceFacts>
+            <PlaceFacts>
+               <Place>
+                  <City>Boston</City>
+                  <State>Massachusetts</State>
+                  <Country>United States</Country>
+               </Place>
+               <Center>
+                  <Lon>-71.050003051757812</Lon>
+                  <Lat>42.360000610351563</Lat>
+               </Center>
+               <AvailableThemeMask>3</AvailableThemeMask>
+               <PlaceTypeId>CityTown</PlaceTypeId>
+               <Population>0</Population>
+            </PlaceFacts>
+            <PlaceFacts>
+               <Place>
+                  <City>Boston</City>
+                  <State>Alabama</State>
+                  <Country>United States</Country>
+               </Place>
+               <Center>
+                  <Lon>-86.481941223144531</Lon>
+                  <Lat>31.467777252197266</Lat>
+               </Center>
+               <AvailableThemeMask>3</AvailableThemeMask>
+               <PlaceTypeId>OtherLandFeature</PlaceTypeId>
+               <Population>0</Population>
+            </PlaceFacts>
+            <PlaceFacts>
+               <Place>
+                  <City>Boston</City>
+                  <State>Arkansas</State>
+                  <Country>United States</Country>
+               </Place>
+               <Center>
+                  <Lon>-93.601112365722656</Lon>
+                  <Lat>35.840557098388672</Lat>
+               </Center>
+               <AvailableThemeMask>3</AvailableThemeMask>
+               <PlaceTypeId>OtherLandFeature</PlaceTypeId>
+               <Population>0</Population>
+            </PlaceFacts>
+         </GetPlaceListResult>
+      </GetPlaceListResponse>
+   </soap:Body>
+</soap:Envelope>

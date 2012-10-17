@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:msr="http://msrmaps.com/">
+   <soapenv:Body>
+      <msr:GetPlaceList>
+         <msr:placeName>Boston</msr:placeName>
+         <msr:MaxItems>5</msr:MaxItems>
+         <msr:imagePresence>true</msr:imagePresence>
+      </msr:GetPlaceList>
+   </soapenv:Body>
+</soapenv:Envelope>

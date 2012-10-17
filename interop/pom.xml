@@ -101,6 +101,23 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>terra</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>../interop-mock/src/main/resources/wsdl/TerraService.wsdl</file>
+                            <generate>client</generate>
+                            <wrapArrays>true</wrapArrays>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://msrmaps.com/</namespace>
+                                    <package>test.wsdl.terra</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

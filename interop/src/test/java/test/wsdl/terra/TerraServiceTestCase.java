@@ -7,19 +7,17 @@
 
 package test.wsdl.terra;
 
-import org.apache.axis.AxisFault;
-
-import java.net.ConnectException;
+import java.net.URL;
 
 public class TerraServiceTestCase extends junit.framework.TestCase {
     public TerraServiceTestCase(java.lang.String name) {
         super(name);
     }
 
-    public void test11TerraServiceSoapGetPlaceList() {
+    public void test11TerraServiceSoapGetPlaceList() throws Exception {
         TerraServiceSoap binding;
         try {
-            binding = new TerraServiceLocator().getTerraServiceSoap();
+            binding = new TerraServiceLocator().getTerraServiceSoap(new URL("http://localhost:" + System.getProperty("mock.httpPort", "9080") + "/terraservice"));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -43,14 +41,6 @@ public class TerraServiceTestCase extends junit.framework.TestCase {
             }
         }
         catch (java.rmi.RemoteException re) {
-            if (re instanceof AxisFault) {
-                AxisFault fault = (AxisFault) re;
-                if (fault.detail instanceof ConnectException ||
-                    fault.getFaultCode().getLocalPart().equals("HTTP")) {
-                    System.err.println("TerraService HTTP error: " + fault);
-                    return;
-                }
-            }
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }

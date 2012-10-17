@@ -104,6 +104,7 @@ public class MockPostHandler extends SOAPHandler implements InitializingBean {
             }
         }
         Element request = requestDocument.getDocumentElement();
+        DOMUtil.removeWhitespace(request);
         if (requestProcessors != null) {
             for (MessageProcessor processor : requestProcessors) {
                 if (log.isDebugEnabled()) {

@@ -29,6 +29,7 @@ import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -75,7 +76,19 @@ public final class DOMUtil {
             switch (child.getNodeType()) {
                 case Node.TEXT_NODE:
                     if (previousChild != null || nextChild != null) {
-                        element.removeChild(child);
+                        String content = ((Text)child).getData();
+                        boolean isWhitespace = true;
+                        for (int i=0; i<content.length(); i++) {
+                            // Non whitespace characters below 32 are illegal in XML 1.0 and would
+                            // have been rejected by the parser.
+                            if (content.charAt(i) > ' ') {
+                                isWhitespace = false;
+                                break;
+                            }
+                        }
+                        if (isWhitespace) {
+                            element.removeChild(child);
+                        }
                     }
                     break;
                 case Node.ELEMENT_NODE:
