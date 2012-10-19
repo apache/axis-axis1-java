@@ -4,5 +4,4 @@
     <system systemId="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" uri="wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
     <system systemId="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" uri="wsrf-WS-ResourceProperties-1.2-draft-01.xsd"/>
     <system systemId="http://schemas.xmlsoap.org/ws/2003/03/addressing" uri="addressing.xsd"/>
-    <system systemId="http://www.w3.org/2001/xml.xsd" uri="xml.xsd"/>
 </catalog>
