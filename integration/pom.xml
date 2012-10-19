@@ -51,6 +51,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>addr-sample</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>echo-sample</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <scope>test</scope>
@@ -194,44 +206,6 @@
                     <testDefaultHttpPort>8080</testDefaultHttpPort>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>samples-echo</id>
-                        <goals>
-                            <goal>generate-test-sources</goal>
-                        </goals>
-                        <configuration>
-                            <file>../samples/echo-sample/src/main/wsdl/InteropTest.wsdl</file>
-                            <generate>client</generate>
-                            <typeMappingVersion>1.1</typeMappingVersion>
-                            <mappings>
-                                <mapping>
-                                    <namespace>http://soapinterop.org/</namespace>
-                                    <package>samples.echo</package>
-                                </mapping>
-                                <mapping>
-                                    <namespace>http://soapinterop.org/xsd</namespace>
-                                    <package>samples.echo</package>
-                                </mapping>
-                            </mappings>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>samples-addr</id>
-                        <goals>
-                            <goal>generate-test-sources</goal>
-                        </goals>
-                        <configuration>
-                            <file>../distribution/src/main/files/samples/addr/AddressBook.wsdl</file>
-                            <generate>client</generate>
-                            <typeMappingVersion>1.1</typeMappingVersion>
-                            <mappings>
-                                <mapping>
-                                    <namespace>urn:AddressFetcher2</namespace>
-                                    <package>samples.addr</package>
-                                </mapping>
-                            </mappings>
-                        </configuration>
-                    </execution>
                     <!-- Import Test 1:  some namespace->package mappings from the -->
                     <!--                 command line, some generated, some from   -->
                     <!--                 NStoPkg.properties.                       -->

@@ -32,6 +32,7 @@
         Root POM for the Axis samples.
     </description>
     <modules>
+        <module>addr-sample</module>
         <module>attachments-sample</module>
         <module>bidbuy-sample</module>
         <module>echo-sample</module>

@@ -32,7 +32,7 @@ public class AddressBookTestCase extends TestCase {
     }
 
     public void doTest () throws Exception {
-        String[] args = {};
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080") };
         Main.main(args);
     }
 

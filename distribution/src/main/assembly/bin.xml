@@ -29,6 +29,18 @@
             <outputDirectory>/</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>../samples/addr-sample/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../samples/addr-sample/src/test/java</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../samples/addr-sample/src/main/wsdl</directory>
+            <outputDirectory>samples/addr</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>../samples/attachments-sample/src/main/java</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
