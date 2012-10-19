@@ -11,6 +11,7 @@ import samples.addr.AddressBookSOAPBindingStub;
 import samples.addr.AddressBookServiceLocator;
 import samples.addr.Phone;
 import samples.addr.StateType;
+import test.HttpTestUtil;
 
 import javax.xml.rpc.ServiceException;
 import java.net.ConnectException;
@@ -106,9 +107,10 @@ public class MultithreadTestCase extends TestCase {
         } // run
     } // class Run
 
-    public void testMultithreading() {
+    public void testMultithreading() throws Exception {
         try {
-            binding = new AddressBookServiceLocator().getAddressBook();
+            AddressBookServiceLocator loc = new AddressBookServiceLocator();
+            binding = loc.getAddressBook(HttpTestUtil.getTestEndpoint(loc.getAddressBookAddress()));
         }
         catch (ServiceException jre) {
             throw new AssertionFailedError("ServiceException caught: " + jre);
@@ -135,10 +137,5 @@ public class MultithreadTestCase extends TestCase {
             throw error;
         }
     } // testMultithreading
-
-    public static void main(String[] args) {
-        MultithreadTestCase testCase = new MultithreadTestCase("MultithreadTestCase");
-        testCase.testMultithreading();
-    }
 } // class MultithreadTestCase
 

@@ -101,6 +101,22 @@
                             </portNames>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>attach-wsdd</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/wsdd/AddressBook.wsdd</file>
+                                    <type>wsdd</type>
+                                    <classifier>deploy</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
