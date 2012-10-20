@@ -53,6 +53,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>axis-rt-transport-mail</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>axis-codegen</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -79,6 +84,7 @@
                                     <include>${project.groupId}:axis-rt-core</include>
                                     <include>${project.groupId}:axis-rt-databinding-castor</include>
                                     <include>${project.groupId}:axis-rt-provider-bsf</include>
+                                    <include>${project.groupId}:axis-rt-transport-mail</include>
                                     <include>${project.groupId}:axis-codegen</include>
                                     <include>${project.groupId}:axis-tools</include>
                                 </includes>

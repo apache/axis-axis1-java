@@ -48,7 +48,6 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.1</version>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
@@ -82,12 +81,6 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>1.0.0</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>jetty</groupId>

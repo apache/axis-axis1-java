@@ -66,6 +66,7 @@
         <module>axis-rt-provider-bsf</module>
         <module>axis-rt-transport-http-javanet</module>
         <module>axis-rt-transport-jms</module>
+        <module>axis-rt-transport-mail</module>
         <module>axis-saaj</module>
         <module>axis-standalone-server</module>
         <module>axis-testutils</module>
@@ -84,6 +85,11 @@
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
                 <version>1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.1</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
