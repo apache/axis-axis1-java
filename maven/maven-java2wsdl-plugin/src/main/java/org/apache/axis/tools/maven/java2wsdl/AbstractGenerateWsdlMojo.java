@@ -111,6 +111,14 @@ public abstract class AbstractGenerateWsdlMojo extends AbstractMojo {
     private String location;
     
     /**
+     * Indicates the name to use use for the portType element. If not specified, the
+     * class-of-portType name is used.
+     * 
+     * @parameter
+     */
+    private String portTypeName;
+
+    /**
      * The name of the output WSDL file.
      * 
      * @parameter
@@ -166,6 +174,9 @@ public abstract class AbstractGenerateWsdlMojo extends AbstractMojo {
         }
         emitter.setIntfNamespace(namespace);
         emitter.setLocationUrl(location);
+        if (portTypeName != null) {
+            emitter.setPortTypeName(portTypeName);
+        }
         output.getParentFile().mkdirs();
         try {
             emitter.emit(output.getAbsolutePath(), Emitter.MODE_ALL);

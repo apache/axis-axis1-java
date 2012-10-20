@@ -195,6 +195,27 @@
                             </mappings>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>webref</id>
+                        <goals>
+                            <goal>generate-wsdl</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <output>${project.build.directory}/work/test/wsdl/webref/DoubleBackService.wsdl</output>
+                            <className>test.wsdl.webref.DoubleBack</className>
+                            <style>DOCUMENT</style>
+                            <namespace>http://webref.wsdl.test/DoubleBack</namespace>
+                            <location>http://localhost:8080/axis/services/DoubleBackService</location>
+                            <portTypeName>DoubleBackPortType</portTypeName>
+                            <mappings>
+                                <mapping>
+                                    <package>test.wsdl.webref</package>
+                                    <namespace>http://webref.wsdl.test/DoubleBack</namespace>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -1153,6 +1174,25 @@
                                     <package>test.wsdl.union</package>
                                 </mapping>
                             </mappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>webref</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/work/test/wsdl/webref/DoubleBackService.wsdl</file>
+                            <generate>both</generate>
+                            <all>true</all>
+                            <implementationClassName>test.wsdl.webref.DoubleBack</implementationClassName>
+                            <mappings>
+                                <mapping>
+                                    <namespace>http://webref.wsdl.test/DoubleBack</namespace>
+                                    <package>test.wsdl.webref</package>
+                                </mapping>
+                            </mappings>
+                            <deployWsdd>${project.build.directory}/wsdd/webref.wsdd</deployWsdd>
                         </configuration>
                     </execution>
                     <execution>

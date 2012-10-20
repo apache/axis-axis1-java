@@ -7,6 +7,8 @@
 
 package test.wsdl.webref;
 
+import test.HttpTestUtil;
+
 public class DoubleBackServiceTestCase extends junit.framework.TestCase {
     public DoubleBackServiceTestCase(java.lang.String name) {
         super(name);
@@ -14,16 +16,16 @@ public class DoubleBackServiceTestCase extends junit.framework.TestCase {
 
     public void testDoubleBackServiceWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.webref.DoubleBackPortTypeServiceLocator().getDoubleBackServiceAddress() + "?WSDL");
-        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.webref.DoubleBackPortTypeServiceLocator().getServiceName());
+        java.net.URL url = HttpTestUtil.getTestEndpoint(new DoubleBackPortTypeServiceLocator().getDoubleBackServiceAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new DoubleBackPortTypeServiceLocator().getServiceName());
         assertTrue(service != null);
     }
 
     public void test1DoubleBackServiceEcho() throws Exception {
         test.wsdl.webref.DoubleBackServiceSoapBindingStub binding;
         try {
-            binding = (test.wsdl.webref.DoubleBackServiceSoapBindingStub)
-                          new test.wsdl.webref.DoubleBackPortTypeServiceLocator().getDoubleBackService();
+            DoubleBackPortTypeServiceLocator loc = new DoubleBackPortTypeServiceLocator();
+            binding = (DoubleBackServiceSoapBindingStub)loc.getDoubleBackService(HttpTestUtil.getTestEndpoint(loc.getDoubleBackServiceAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
