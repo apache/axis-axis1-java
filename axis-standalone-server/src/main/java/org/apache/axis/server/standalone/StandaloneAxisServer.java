@@ -85,6 +85,8 @@ public class StandaloneAxisServer {
         
         int port = Integer.parseInt(cmdLine.getOptionValue("p"));
         
+        StandaloneAxisServlet servlet = new StandaloneAxisServlet();
+        
         List resources = new ArrayList();
         
         // Add the work dir as a resource so that Axis can create its server-config.wsdd file there
@@ -98,6 +100,7 @@ public class StandaloneAxisServer {
             for (int i=0; i<jwsDirs.length; i++) {
                 resources.add(Resource.newResource(jwsDirs[i]));
             }
+            servlet.enableJWS();
             enableJWS = true;
         } else {
             enableJWS = false;
@@ -111,9 +114,9 @@ public class StandaloneAxisServer {
         QuitListener quitListener = new QuitListener();
         context.setAttribute(QuitHandler.QUIT_LISTENER, quitListener);
         ServletHandler servletHandler = context.getServletHandler();
-        ServletHolder axisServlet = new ServletHolder(StandaloneAxisServlet.class);
-        axisServlet.setName("AxisServlet");
-        servletHandler.addServlet(axisServlet);
+        ServletHolder axisServletHolder = new ServletHolder(servlet);
+        axisServletHolder.setName("AxisServlet");
+        servletHandler.addServlet(axisServletHolder);
         {
             ServletMapping mapping = new ServletMapping();
             mapping.setServletName("AxisServlet");

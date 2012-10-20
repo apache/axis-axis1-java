@@ -9,8 +9,6 @@
    <parameter name="dotNetSoapEncFix" value="true"/>
    <parameter name="enableNamespacePrefixOptimization" value="false"/>
    <requestFlow>
-     <!-- uncomment this if you want JWS support -->
-     <!--
      <handler type="java:org.apache.axis.handlers.JWSHandler">
         <parameter name="scope" value="session"/>
      </handler>
@@ -18,7 +16,6 @@
         <parameter name="scope" value="request"/>
         <parameter name="extension" value=".jwr"/>
      </handler>
-     -->
      <!-- uncomment this if you want the SOAP monitor -->
      <!--
      <handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/>

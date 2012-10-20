@@ -18,9 +18,15 @@
  */
 package org.apache.axis.server.standalone;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.ServletException;
 
 import org.apache.axis.WSDDEngineConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.http.AxisServlet;
@@ -32,13 +38,27 @@ import org.apache.axis.utils.XMLUtils;
  * @author Andreas Veithen
  */
 public class StandaloneAxisServlet extends AxisServlet {
+    private final List/*<URL>*/ wsddUrls;
+    
+    public StandaloneAxisServlet() {
+        wsddUrls = new ArrayList();
+        wsddUrls.add(StandaloneAxisServlet.class.getResource("quit-handler-deploy.wsdd"));
+    }
+    
+    public void enableJWS() {
+        wsddUrls.add(StandaloneAxisServlet.class.getResource("jws-handler.wsdd"));
+    }
+    
     public void init() throws ServletException {
         super.init();
         try {
             AxisServer engine = getEngine();
-            WSDDDocument wsdd = new WSDDDocument(XMLUtils.newDocument(
-                    StandaloneAxisServlet.class.getResource("quit-handler-deploy.wsdd").toExternalForm()));
-            wsdd.deploy(((WSDDEngineConfiguration)engine.getConfig()).getDeployment());
+            WSDDDeployment registry = ((WSDDEngineConfiguration)engine.getConfig()).getDeployment();
+            for (Iterator it = wsddUrls.iterator(); it.hasNext(); ) {
+                URL url = (URL)it.next();
+                WSDDDocument wsdd = new WSDDDocument(XMLUtils.newDocument(url.toExternalForm()));
+                wsdd.deploy(registry);
+            }
         } catch (Exception ex) {
             throw new ServletException(ex);
         }

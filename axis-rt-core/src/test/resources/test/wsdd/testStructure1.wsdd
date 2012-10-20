@@ -8,7 +8,7 @@
  </documentation>
 
  <chain name="chain.one">
-  <handler type="java:org.apache.axis.handlers.JWSHandler"/>
+  <handler type="java:test.wsdd.DummyHandler"/>
  </chain>
 
  <service name="service.one" provider="java:RPC">

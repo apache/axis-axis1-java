@@ -48,6 +48,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>axis-rt-jws</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>axis-rt-provider-bsf</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -83,6 +88,7 @@
                                 <includes>
                                     <include>${project.groupId}:axis-rt-core</include>
                                     <include>${project.groupId}:axis-rt-databinding-castor</include>
+                                    <include>${project.groupId}:axis-rt-jws</include>
                                     <include>${project.groupId}:axis-rt-provider-bsf</include>
                                     <include>${project.groupId}:axis-rt-transport-mail</include>
                                     <include>${project.groupId}:axis-codegen</include>

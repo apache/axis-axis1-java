@@ -39,9 +39,8 @@ public class TestStructure extends TestCase
         Handler chainOne_handler = chainOne_handlers[0];
         assertNotNull("chain.one's handler should be non-null!",
                       chainOne_handler);
-        assertTrue("chain.one's handler should be a JWSHandler!",
-                (chainOne_handler instanceof 
-                 org.apache.axis.handlers.JWSHandler));
+        assertTrue("chain.one's handler should be a DummyHandler!",
+                (chainOne_handler instanceof DummyHandler));
     }
 
     public void testServiceBackReference() throws Exception

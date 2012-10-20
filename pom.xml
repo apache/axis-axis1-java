@@ -62,6 +62,7 @@
         <module>axis-codegen</module>
         <module>axis-jaxrpc</module>
         <module>axis-rt-core</module>
+        <module>axis-rt-jws</module>
         <module>axis-rt-databinding-castor</module>
         <module>axis-rt-provider-bsf</module>
         <module>axis-rt-transport-http-javanet</module>
