@@ -18,6 +18,8 @@
  */
 package test.wsdl.multithread;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
@@ -30,15 +32,24 @@ class Invoker implements Runnable {
     private static Log log = LogFactory.getLog(Invoker.class.getName());
     
     private final AddressBook binding;
+    private final CountDownLatch readyLatch;
+    private final CountDownLatch startLatch;
     private final Report report;
     
-    Invoker(AddressBook binding, Report report) {
+    Invoker(AddressBook binding, CountDownLatch readyLatch, CountDownLatch startLatch, Report report) {
         this.binding = binding;
+        this.readyLatch = readyLatch;
+        this.startLatch = startLatch;
         this.report = report;
     }
 
     public void run() {
         try {
+            // This ensures that all threads start sending requests at the same time,
+            // thereby increasing the probability of triggering a concurrency issue.
+            readyLatch.countDown();
+            startLatch.await();
+            
             for (int i = 0; i < 4; ++i) {
                 Address address = new Address();
                 Phone phone = new Phone();

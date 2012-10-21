@@ -1,5 +1,7 @@
 package test.wsdl.multithread;
 
+import java.util.concurrent.CountDownLatch;
+
 import junit.framework.TestCase;
 import samples.addr.AddressBook;
 import samples.addr.AddressBookSOAPBindingStub;
@@ -44,16 +46,22 @@ public class MultithreadTestCase extends TestCase {
     private void testMultithreading(StubSupplier stubSupplier) throws Throwable {
         Report report = new Report();
         int NUM_THREADS = 50;
+        CountDownLatch readyLatch = new CountDownLatch(NUM_THREADS);
+        CountDownLatch startLatch = new CountDownLatch(1);
         Thread[] threads = new Thread[NUM_THREADS];
         for (int i = 0; i < NUM_THREADS; ++i) {
-            threads[i] = new Thread(new Invoker(stubSupplier.getStub(), report));
+            threads[i] = new Thread(new Invoker(stubSupplier.getStub(), readyLatch, startLatch, report));
             threads[i].start();
         }
+        readyLatch.await();
+        startLatch.countDown();
         for (int i = 0; i < NUM_THREADS; ++i) {
-            try {
-                threads[i].join();
-            }
-            catch (InterruptedException ie) {
+            threads[i].join(30000);
+            StackTraceElement[] stack = threads[i].getStackTrace();
+            if (stack.length > 0) {
+                Throwable t = new Throwable("Hanging thread detected");
+                t.setStackTrace(stack);
+                throw t;
             }
         }
         Throwable error = report.getError();
