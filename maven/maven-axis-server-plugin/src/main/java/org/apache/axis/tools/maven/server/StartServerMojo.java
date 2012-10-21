@@ -63,6 +63,13 @@ public class StartServerMojo extends AbstractStartProcessMojo {
     private int port;
     
     /**
+     * The maximum number of concurrently active sessions.
+     * 
+     * @parameter default-value="100"
+     */
+    private int maxSessions;
+    
+    /**
      * A set of WSDD files for services to deploy. The WSDD files may be deployment or undeployment
      * requests. Undeployment requests will be processed when the server is stopped. The primary use
      * case for this is to test undeployment.
@@ -202,6 +209,8 @@ public class StartServerMojo extends AbstractStartProcessMojo {
             args.add("-j");
             args.add(StringUtils.join(jwsDirs, File.pathSeparator));
         }
+        args.add("-m");
+        args.add(String.valueOf(maxSessions));
         try {
             AdminClient adminClient = new AdminClient(true);
             adminClient.setTargetEndpointAddress(new URL("http://localhost:" + actualPort + "/axis/services/AdminService"));

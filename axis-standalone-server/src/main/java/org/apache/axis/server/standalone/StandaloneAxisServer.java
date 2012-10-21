@@ -30,7 +30,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.SessionManager;
 import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.HashSessionManager;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.servlet.ServletMapping;
@@ -67,6 +69,12 @@ public class StandaloneAxisServer {
             options.addOption(option);
         }
         
+        {
+            Option option = new Option("m", true, "the maximum number of concurrently active sessions");
+            option.setArgName("count");
+            options.addOption(option);
+        }
+        
         if (args.length == 0) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp(StandaloneAxisServer.class.getName(), options);
@@ -84,6 +92,13 @@ public class StandaloneAxisServer {
         }
         
         int port = Integer.parseInt(cmdLine.getOptionValue("p"));
+        
+        int maxSessions;
+        if (cmdLine.hasOption("m")) {
+            maxSessions = Integer.parseInt(cmdLine.getOptionValue("m"));
+        } else {
+            maxSessions = -1;
+        }
         
         StandaloneAxisServlet servlet = new StandaloneAxisServlet();
         
@@ -110,7 +125,13 @@ public class StandaloneAxisServer {
         server.setGracefulShutdown(1000);
         Context context = new Context(server, "/axis");
         context.setBaseResource(new ResourceCollection((Resource[])resources.toArray(new Resource[resources.size()])));
-        context.setSessionHandler(new SessionHandler());
+        SessionManager sessionManager;
+        if (maxSessions == -1) {
+            sessionManager = new HashSessionManager();
+        } else {
+            sessionManager = new LimitSessionManager(maxSessions);
+        }
+        context.setSessionHandler(new SessionHandler(sessionManager));
         QuitListener quitListener = new QuitListener();
         context.setAttribute(QuitHandler.QUIT_LISTENER, quitListener);
         ServletHandler servletHandler = context.getServletHandler();
