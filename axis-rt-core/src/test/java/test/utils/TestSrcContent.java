@@ -214,21 +214,25 @@ public class TestSrcContent extends TestCase {
     private void checkFile(File file) {
         try {
             FileInputStream fis = new FileInputStream(file);
-            byte[] bytes = new byte[fis.available()];
-            fis.read(bytes);
-            String content = new String(bytes);
-
-            for (int i = 0; i < avoidPatterns.length; i++) {
-                if (avoidPatterns[i].noMatch(file.getPath(), content)) {
-                //                if (content.indexOf(avoidStrings[i]) >= 0) {
-                    errors = errors
-                        + "File: " + file.getPath() + ": "
-                        + (avoidPatterns[i].getExpectContent()
-                           ? "Expected: "
-                           : "Unexpected: ")
-                        + avoidPatterns[i].getContentPattern()
-                        + LS;
+            try {
+                byte[] bytes = new byte[fis.available()];
+                fis.read(bytes);
+                String content = new String(bytes);
+    
+                for (int i = 0; i < avoidPatterns.length; i++) {
+                    if (avoidPatterns[i].noMatch(file.getPath(), content)) {
+                    //                if (content.indexOf(avoidStrings[i]) >= 0) {
+                        errors = errors
+                            + "File: " + file.getPath() + ": "
+                            + (avoidPatterns[i].getExpectContent()
+                               ? "Expected: "
+                               : "Unexpected: ")
+                            + avoidPatterns[i].getContentPattern()
+                            + LS;
+                    }
                 }
+            } finally {
+                fis.close();
             }
         }
         catch (Throwable t) {
