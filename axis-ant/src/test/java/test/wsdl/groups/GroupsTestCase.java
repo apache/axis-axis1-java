@@ -39,7 +39,6 @@ public class GroupsTestCase extends junit.framework.TestCase {
      */
     protected Set shouldExist() {
         HashSet set = new HashSet();
-        set.add("GroupsTestCase.java");
         set.add("SomeType.java");
         return set;
     }
@@ -57,7 +56,8 @@ public class GroupsTestCase extends junit.framework.TestCase {
      * The directory containing the files that should exist.
      */
     protected String rootDir() {
-        return "build" + File.separator + "work" + File.separator + 
+        return System.getProperty("basedir", ".") + File.separator +
+                "target" + File.separator + "work" + File.separator + 
                 "test" + File.separator + "wsdl" + File.separator +
                 "groups";
     }
