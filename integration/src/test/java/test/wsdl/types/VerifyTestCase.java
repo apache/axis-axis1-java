@@ -37,6 +37,8 @@ import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.types.Year;
 import org.apache.axis.types.YearMonth;
+
+import test.HttpTestUtil;
 import test.wsdl.types.comprehensive_service.TypeTest;
 import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
 import test.wsdl.types.comprehensive_types.Animal;
@@ -103,7 +105,8 @@ public class VerifyTestCase extends junit.framework.TestCase {
     public void testTypeTest() throws Exception {
         TypeTest binding;
         try {
-            binding = new TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);

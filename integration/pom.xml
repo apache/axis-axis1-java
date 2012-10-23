@@ -1165,6 +1165,21 @@
                             <deployWsdd>${project.build.directory}/wsdd/stubheaders.wsdd</deployWsdd>
                         </configuration>
                     </execution>
+                    <!-- This is (OK, "will be") a comprehensive test of XML schema types -->
+                    <execution>
+                        <id>types</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/test/wsdl/types/ComprehensiveTypes.wsdl</file>
+                            <generate>both</generate>
+                            <skeleton>true</skeleton>
+                            <helperGen>true</helperGen>
+                            <implementation>true</implementation>
+                            <deployWsdd>${project.build.directory}/wsdd/types.wsdd</deployWsdd>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>union</id>
                         <goals>

@@ -39,6 +39,8 @@ import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.types.Year;
 import org.apache.axis.types.YearMonth;
+
+import test.HttpTestUtil;
 import test.wsdl.types.comprehensive_service.TypeTest;
 
 import javax.xml.namespace.QName;
@@ -79,11 +81,13 @@ public class DynamicProxyTestCase extends TestCase {
     private TypeTest getProxyWithWSDL() {
         try {
             Service service = ServiceFactory.newInstance().createService(
-                new URL("file", "", "test/wsdl/types/ComprehensiveTypes.wsdl"),
+                new URL("file", "", System.getProperty("basedir", ".") + "/src/test/wsdl/types/ComprehensiveTypes.wsdl"),
                 new QName("urn:comprehensive-service.types.wsdl.test",
                         "TypeTestService"));
-            return (TypeTest) service.getPort(
+            Stub stub = (Stub)service.getPort(
                 new QName("", "TypeTest"), TypeTest.class);
+            stub._setProperty(Stub.ENDPOINT_ADDRESS_PROPERTY, HttpTestUtil.getTestEndpoint((String)stub._getProperty(Stub.ENDPOINT_ADDRESS_PROPERTY)).toString());
+            return (TypeTest)stub;
         }
         catch (MalformedURLException mue) {
             throw new AssertionFailedError(

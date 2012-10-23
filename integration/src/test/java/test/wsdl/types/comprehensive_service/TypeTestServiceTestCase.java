@@ -7,6 +7,8 @@
 
 package test.wsdl.types.comprehensive_service;
 
+import test.HttpTestUtil;
+
 public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public TypeTestServiceTestCase(java.lang.String name) {
         super(name);
@@ -24,8 +26,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test1TypeTestAllPrimitivesIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -45,8 +47,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test2TypeTestAllPrimitivesInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -66,8 +68,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test3TypeTestAllPrimitivesOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -87,8 +89,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test4TypeTestEnumIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -108,8 +110,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test5TypeTestEnumInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -129,8 +131,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test6TypeTestEnumOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -150,8 +152,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test7TypeTestEnumReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -172,8 +174,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test8TypeTestEnumIntIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -193,8 +195,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test9TypeTestEnumIntInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -214,8 +216,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test10TypeTestEnumIntOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -235,8 +237,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test11TypeTestEnumIntReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -257,8 +259,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test12TypeTestArrayIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -278,8 +280,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test13TypeTestArrayInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -299,8 +301,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test14TypeTestArrayOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -320,8 +322,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test15TypeTestArrayReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -342,8 +344,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test16TypeTestArrayMIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -363,8 +365,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test17TypeTestArrayMInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -384,8 +386,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test18TypeTestArrayMOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -405,8 +407,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test19TypeTestArrayMReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -427,8 +429,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test20TypeTestComplexAllIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -448,8 +450,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test21TypeTestComplexAllInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -469,8 +471,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test22TypeTestComplexAllOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -490,8 +492,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test23TypeTestComplexAllReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -512,8 +514,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test24TypeTestComplexSequenceIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -533,8 +535,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test25TypeTestComplexSequenceInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -554,8 +556,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test26TypeTestComplexSequenceOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -575,8 +577,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test27TypeTestComplexSequenceReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -597,8 +599,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test32TypeTestComplexWComplexIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -618,8 +620,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test33TypeTestComplexWComplexInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -639,8 +641,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test34TypeTestComplexWComplexOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -660,8 +662,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test35TypeTestComplexWComplexReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -682,8 +684,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test36TypeTestEmptyComplexTypeIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -708,8 +710,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test37TypeTestEmptyComplexTypeInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -734,8 +736,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test38TypeTestEmptyComplexTypeOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -760,8 +762,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test39TypeTestEmptyComplexTypeReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -787,8 +789,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test40TypeTestAnyIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -808,8 +810,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test41TypeTestAnyInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -829,8 +831,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test42TypeTestAnyOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -850,8 +852,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test43TypeTestAnyReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -872,8 +874,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test44TypeTestAnimalIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -893,8 +895,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test45TypeTestAnimalInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -914,8 +916,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test46TypeTestAnimalOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -935,8 +937,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test47TypeTestAnimalReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -957,8 +959,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test48TypeTestCatIn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -978,8 +980,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test49TypeTestCatInout() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -999,8 +1001,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test50TypeTestCatOut() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1020,8 +1022,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test51TypeTestCatReturn() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1042,8 +1044,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test52TypeTestMethodBoolean() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1064,8 +1066,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test53TypeTestMethodByte() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1086,8 +1088,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test54TypeTestMethodShort() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1108,8 +1110,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test55TypeTestMethodInt() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1130,8 +1132,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test56TypeTestMethodLong() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1152,8 +1154,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test57TypeTestMethodFloat() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1174,8 +1176,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test58TypeTestMethodDouble() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1196,8 +1198,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test59TypeTestMethodString() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1218,8 +1220,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test60TypeTestMethodInteger() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1240,8 +1242,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test61TypeTestMethodDecimal() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1262,8 +1264,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test62TypeTestMethodDateTime() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1284,8 +1286,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test63TypeTestMethodQName() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1306,8 +1308,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test64TypeTestMethodTime() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1328,8 +1330,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test65TypeTestMethodUnsignedLong() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1350,8 +1352,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test66TypeTestMethodUnsignedInt() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1372,8 +1374,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test67TypeTestMethodUnsignedShort() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1394,8 +1396,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test68TypeTestMethodUnsignedByte() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1416,8 +1418,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test69TypeTestMethodNonNegativeInteger() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1438,8 +1440,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test70TypeTestMethodPositiveInteger() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1460,8 +1462,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test71TypeTestMethodNonPositiveInteger() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1482,8 +1484,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test72TypeTestMethodNegativeInteger() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1504,8 +1506,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test73TypeTestMethodAnyURI() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1526,8 +1528,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test74TypeTestMethodSimpleAnyURI() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1547,8 +1549,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test75TypeTestMethodYear() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1569,8 +1571,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test76TypeTestMethodMonth() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1591,8 +1593,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test77TypeTestMethodDay() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1613,8 +1615,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test78TypeTestMethodYearMonth() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1635,8 +1637,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test79TypeTestMethodMonthDay() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1657,8 +1659,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test80TypeTestMethodSoapString() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1679,8 +1681,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test81TypeTestMethodSoapBoolean() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1701,8 +1703,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test82TypeTestMethodSoapFloat() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1723,8 +1725,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test83TypeTestMethodSoapDouble() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1745,8 +1747,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test84TypeTestMethodSoapDecimal() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1767,8 +1769,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test85TypeTestMethodSoapInt() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -1789,8 +1791,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
     public void test86TypeTestMethodSoapShort() throws Exception {
         test.wsdl.types.comprehensive_service.TypeTestBindingStub binding;
         try {
-            binding = (test.wsdl.types.comprehensive_service.TypeTestBindingStub)
-                          new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTest();
+            TypeTestServiceLocator loc = new TypeTestServiceLocator();
+            binding = (TypeTestBindingStub)loc.getTypeTest(HttpTestUtil.getTestEndpoint(loc.getTypeTestAddress()));
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
