@@ -19,7 +19,7 @@ package samples.transport.tcp ;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.configuration.SimpleProvider;
 
 /**
@@ -38,8 +38,7 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
 
         // Deploy the transport on top of the default client configuration.
         EngineConfiguration defaultConfig = 
-            (new DefaultEngineConfigurationFactory()).
-            getClientEngineConfig();
+            EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig();
         SimpleProvider config = new SimpleProvider(defaultConfig);
         SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
         config.deployTransport("tcp", c);

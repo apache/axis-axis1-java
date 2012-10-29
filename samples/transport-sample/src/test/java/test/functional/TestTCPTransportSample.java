@@ -23,7 +23,7 @@ import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.encoding.XMLType;
 import org.apache.commons.logging.Log;
@@ -65,8 +65,7 @@ public class TestTCPTransportSample extends TestCase {
             String   symbol = "XXX"; // args[0] ;
 
             EngineConfiguration defaultConfig =
-                (new DefaultEngineConfigurationFactory()).
-                getClientEngineConfig();
+                EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig();
             SimpleProvider config = new SimpleProvider(defaultConfig);
             SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
             config.deployTransport("tcp", c);

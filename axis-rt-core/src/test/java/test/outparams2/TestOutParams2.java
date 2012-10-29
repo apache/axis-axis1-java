@@ -8,7 +8,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Message;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.OperationDesc;
@@ -84,7 +84,7 @@ public class TestOutParams2 extends TestCase {
         description.addOperationDesc(operation);
         service.setServiceDescription(description);
 
-        EngineConfiguration defaultConfig = (new DefaultEngineConfigurationFactory())
+        EngineConfiguration defaultConfig = EngineConfigurationFactoryFinder.newFactory()
                 .getServerEngineConfig();
         SimpleProvider config = new SimpleProvider(defaultConfig);
         config.deployService("outParamsTest", service);

@@ -9,7 +9,7 @@ import org.apache.axis.client.Service;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
@@ -63,7 +63,7 @@ public class TestOutParams extends TestCase {
         service.setOption("allowedMethods", "serviceMethod");
 
         EngineConfiguration defaultConfig =
-            (new DefaultEngineConfigurationFactory()).getServerEngineConfig();
+            EngineConfigurationFactoryFinder.newFactory().getServerEngineConfig();
         SimpleProvider config = new SimpleProvider(defaultConfig);
         config.deployService("outParamsTest", service);
         provider.deployService("outParamsTest", service);

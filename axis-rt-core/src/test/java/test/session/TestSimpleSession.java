@@ -5,7 +5,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -81,7 +81,7 @@ public class TestSimpleSession extends TestCase implements ServiceLifecycle {
         service.setOption("allowedMethods", "counter");
 
         EngineConfiguration defaultConfig =
-            (new DefaultEngineConfigurationFactory()).getServerEngineConfig();
+            EngineConfigurationFactoryFinder.newFactory().getServerEngineConfig();
         SimpleProvider config = new SimpleProvider(defaultConfig);
         config.deployService("sessionTest", service);
 
