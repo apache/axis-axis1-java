@@ -165,8 +165,6 @@
                         <exclude>org/apache/axis/components/net/IBM*.java</exclude>
                         <!-- TODO: contains reference to non existing class org.apache.axis.components.bridge.COMBridge -->
                         <exclude>org/apache/axis/providers/ComProvider.java</exclude>
-                        <!-- TODO: need to figure out how this is built -->
-                        <exclude>org/apache/axis/encoding/ser/xbeans/**</exclude>
                     </excludes>
                     <compilerArgument>
                         <!-- Necessary because we only support DOM 2 and SAAJ 1.2 -->
