@@ -27,11 +27,4 @@
     </parent>
     <artifactId>soapmonitor-applet</artifactId>
     <name>SOAP Monitor Applet</name>
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis-rt-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>

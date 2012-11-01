@@ -25,8 +25,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import org.apache.axis.monitor.SOAPMonitorConstants;
-
 /**
  * This is a SOAP Mointor Applet class.  This class provides
  * the user interface for displaying data from the SOAP
@@ -36,6 +34,8 @@ import org.apache.axis.monitor.SOAPMonitorConstants;
  *
  */
 public class SOAPMonitorApplet extends JApplet {
+    private static final int SOAP_MONITOR_REQUEST  = 0;
+    private static final int SOAP_MONITOR_RESPONSE = 1;
 
     /**
      * Private data
@@ -435,7 +435,7 @@ public class SOAPMonitorApplet extends JApplet {
                     message_type = (Integer) in.readObject();
                     // Process the data depending on its type
                     switch (message_type.intValue()) {
-                        case SOAPMonitorConstants.SOAP_MONITOR_REQUEST:
+                        case SOAP_MONITOR_REQUEST:
                             // Get the id, target and soap info
                             id = (Long) in.readObject();
                             target = (String) in.readObject();
@@ -450,7 +450,7 @@ public class SOAPMonitorApplet extends JApplet {
                                 valueChanged(null);
                             }
                             break;
-                        case SOAPMonitorConstants.SOAP_MONITOR_RESPONSE:
+                        case SOAP_MONITOR_RESPONSE:
                             // Get the id and soap info
                             id = (Long) in.readObject();
                             soap = (String) in.readObject();
