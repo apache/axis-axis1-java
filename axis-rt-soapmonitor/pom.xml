@@ -25,17 +25,12 @@
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>soapmonitor-client</artifactId>
-    <name>SOAP Monitor Client</name>
+    <artifactId>axis-rt-soapmonitor</artifactId>
+    <name>SOAP Monitor Handler and Service</name>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis-rt-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis-rt-soapmonitor</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
