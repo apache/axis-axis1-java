@@ -36,5 +36,11 @@
             <artifactId>axis-rt-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <version>5.1.10</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
