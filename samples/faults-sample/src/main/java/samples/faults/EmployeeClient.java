@@ -2,10 +2,7 @@ package samples.faults;
 
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.AxisFault;
 import org.apache.axis.utils.Options;
-import org.apache.axis.transport.http.SimpleAxisWorker;
-import org.apache.axis.description.OperationDesc;
 
 import javax.xml.rpc.ServiceFactory;
 import javax.xml.rpc.Service;
@@ -14,8 +11,6 @@ import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.encoding.TypeMapping;
 import javax.xml.namespace.QName;
 import java.net.URL;
-import java.util.Map;
-import java.util.Iterator;
 
 import samples.faults.Employee;
 
