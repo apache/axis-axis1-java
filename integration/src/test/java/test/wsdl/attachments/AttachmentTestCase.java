@@ -1,24 +1,40 @@
-/**
- * AttachmentTestCase.java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * This file was auto-generated from WSDL
- * by the Apache Axis WSDL2Java emitter.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
 package test.wsdl.attachments;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.axis.attachments.OctetStream;
+
 import test.HttpTestUtil;
 
 import java.util.Arrays;
 
-public class AttachmentTestCase extends junit.framework.TestCase {
-    public AttachmentTestCase(java.lang.String name) {
-        super(name);
-    }
+import junit.framework.TestCase;
 
+public class AttachmentTestCase extends TestCase {
+    private static Pt1 getBinding() throws Exception {
+        AttachmentLocator loc = new AttachmentLocator();
+        return loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
+    }
+    
     private MimeMultipart createMimeMultipart(String data) throws Exception {
         // create the root multipart
         MimeMultipart mpRoot = new MimeMultipart("mixed");
@@ -30,187 +46,50 @@ public class AttachmentTestCase extends junit.framework.TestCase {
         return mpRoot;
     }
 
-    public void test1AttachmentPortRPCGetCompanyInfo2() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        java.lang.String value = null;
-        value = binding.getCompanyInfo2(0, new java.lang.String("GetCompanyInfo2"), null);
-        assertEquals(value, "GetCompanyInfo2");
+    public void testGetCompanyInfo2() throws Exception {
+        assertEquals("GetCompanyInfo2", getBinding().getCompanyInfo2(0, "GetCompanyInfo2", null));
     }
 
-    public void test2AttachmentPortRPCInputPlainText() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        binding.inputPlainText(new java.lang.String("InputPlainText"));
+    public void testInputPlainText() throws Exception {
+        getBinding().inputPlainText("InputPlainText");
         // TBD - validate results
     }
 
-    public void test3AttachmentPortRPCInoutPlainText() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        java.lang.String value = null;
-        value = binding.inoutPlainText(new java.lang.String("InoutPlainText"));
-        // TBD - validate results
-        assertEquals(value, "InoutPlainText");
+    public void testInoutPlainText() throws Exception {
+        assertEquals("InoutPlainText", getBinding().inoutPlainText("InoutPlainText"));
     }
 
-    public void test4AttachmentPortRPCEchoPlainText() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        java.lang.String value = null;
-        value = binding.echoPlainText(new java.lang.String("EchoPlainText"));
-        // TBD - validate results
-        assertEquals(value, "EchoPlainText");
+    public void testEchoPlainText() throws Exception {
+        assertEquals("EchoPlainText", getBinding().echoPlainText("EchoPlainText"));
     }
 
-    public void test5AttachmentPortRPCOutputPlainText() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        java.lang.String value = null;
-        value = binding.outputPlainText();
-        // TBD - validate results
-        assertEquals(value, "OutputPlainText");
+    public void testOutputPlainText() throws Exception {
+        assertEquals("OutputPlainText", getBinding().outputPlainText());
     }
 
-    public void test6AttachmentPortRPCInputMimeMultipart() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        binding.inputMimeMultipart(createMimeMultipart("InputMimeMultipart"));
+    public void testInputMimeMultipart() throws Exception {
+        getBinding().inputMimeMultipart(createMimeMultipart("InputMimeMultipart"));
         // TBD - validate results
     }
 
-    public void test7AttachmentPortRPCInoutMimeMultipart() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        javax.mail.internet.MimeMultipart value = null;
-        value = binding.inoutMimeMultipart(createMimeMultipart("InoutMimeMultipart"));
+    public void testInoutMimeMultipart() throws Exception {
+        MimeMultipart value = getBinding().inoutMimeMultipart(createMimeMultipart("InoutMimeMultipart"));
         // TBD - validate results
     }
 
-    public void test8AttachmentPortRPCEchoMimeMultipart() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        javax.mail.internet.MimeMultipart value = null;
-        value = binding.echoMimeMultipart(createMimeMultipart("EchoMimeMultipart"));
+    public void testEchoMimeMultipart() throws Exception {
+        MimeMultipart value = getBinding().echoMimeMultipart(createMimeMultipart("EchoMimeMultipart"));
         // TBD - validate results
     }
 
-    public void test9AttachmentPortRPCOutputMimeMultipart() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        } catch (javax.xml.rpc.ServiceException jre) {
-            if (jre.getLinkedCause() != null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        javax.mail.internet.MimeMultipart value = null;
-        value = binding.outputMimeMultipart();
+    public void testOutputMimeMultipart() throws Exception {
+        MimeMultipart value = getBinding().outputMimeMultipart();
         // TBD - validate results
     }
 
-    public void test10AttachmentPortRPCEchoAttachment() throws Exception {
-        test.wsdl.attachments.Pt1 binding;
-        try {
-            AttachmentLocator loc = new AttachmentLocator();
-            binding = loc.getAttachmentPortRPC(HttpTestUtil.getTestEndpoint(loc.getAttachmentPortRPCAddress()));
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertTrue("binding is null", binding != null);
-
-        // Test operation
-        org.apache.axis.attachments.OctetStream input = new org.apache.axis.attachments.OctetStream("EchoAttachment".getBytes());
-        org.apache.axis.attachments.OctetStream output = null;
-        output = binding.echoAttachment(input);
-        // TBD - validate results
+    public void testEchoAttachment() throws Exception {
+        OctetStream input = new OctetStream("EchoAttachment".getBytes());
+        OctetStream output = getBinding().echoAttachment(input);
         assertTrue(Arrays.equals(input.getBytes(), output.getBytes()));
     }
 }
