@@ -20,8 +20,11 @@ package test.wsdl.attachments;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.xml.rpc.holders.FloatHolder;
+import javax.xml.rpc.holders.StringHolder;
 
 import org.apache.axis.attachments.OctetStream;
+import org.apache.axis.holders.ImageHolder;
 
 import test.HttpTestUtil;
 
@@ -46,6 +49,17 @@ public class AttachmentTestCase extends TestCase {
         return mpRoot;
     }
 
+    public void testGetCompanyInfo() throws Exception {
+        FloatHolder result = new FloatHolder();
+        StringHolder docs = new StringHolder();
+        ImageHolder logo = new ImageHolder();
+        getBinding().getCompanyInfo("IBM", result, docs, logo);
+        assertEquals(134, (int)(result.value*10));
+        assertEquals("IBM", docs.value);
+        assertEquals(24, logo.value.getWidth(null));
+        assertEquals(24, logo.value.getHeight(null));
+    }
+    
     public void testGetCompanyInfo2() throws Exception {
         assertEquals("GetCompanyInfo2", getBinding().getCompanyInfo2(0, "GetCompanyInfo2", null));
     }

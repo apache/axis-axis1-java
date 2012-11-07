@@ -59,12 +59,10 @@
   </message>
 
   <portType name="pt1">
-<!--
     <operation name="GetCompanyInfo">
       <input message="tns:pt1"/>
       <output message="tns:pt2"/>
     </operation>
--->
     <operation name="GetCompanyInfo2">
       <input message="tns:pt2"/>
       <output message="tns:pt1"/>
@@ -110,7 +108,6 @@
   <binding name="b1" type="tns:pt1">
     <soap:binding style="rpc"
                   transport="http://schemas.xmlsoap.org/soap/http"/>
-<!--
     <operation name="GetCompanyInfo">
       <soap:operation soapAction="http://example.com/GetCompanyInfo"/>
       <input>
@@ -131,7 +128,6 @@
         </mime:multipartRelated>
       </output>
     </operation>
--->
     <operation name="GetCompanyInfo2">
       <soap:operation soapAction="http://example.com/GetCompanyInfo2"/>
       <input>

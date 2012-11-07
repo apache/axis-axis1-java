@@ -1551,6 +1551,7 @@
                                 <exclude>test/wsdl/marshall2/types/**</exclude>
                             </excludes>
                             <systemPropertyVariables>
+                                <java.awt.headless>true</java.awt.headless>
                                 <test.functional.ServicePort>${test.functional.ServicePort}</test.functional.ServicePort>
                             </systemPropertyVariables>
                         </configuration>

@@ -7,9 +7,17 @@
 
 package test.wsdl.attachments;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.rmi.RemoteException;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.xml.rpc.holders.FloatHolder;
+import javax.xml.rpc.holders.StringHolder;
+
+import org.apache.axis.holders.ImageHolder;
 
 public class B1Impl implements test.wsdl.attachments.Pt1 {
 
@@ -22,6 +30,16 @@ public class B1Impl implements test.wsdl.attachments.Pt1 {
         mbp1.setText(data);
         mpRoot.addBodyPart(mbp1);
         return mpRoot;
+    }
+
+    public void getCompanyInfo(String tickerSymbol, FloatHolder result, StringHolder docs, ImageHolder logo) throws RemoteException {
+        result.value = 13.4f;
+        docs.value = tickerSymbol;
+        BufferedImage image = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.createGraphics();
+        g.drawLine(0, 0, 24, 24);
+        g.dispose();
+        logo.value = image;
     }
 
     public java.lang.String getCompanyInfo2(float result, java.lang.String docs, java.awt.Image logo) throws java.rmi.RemoteException {
