@@ -37,6 +37,9 @@
             <url>${baseSiteUrl}/transports/http-javanet</url>
         </site>
     </distributionManagement>
+    <properties>
+        <javaVersion>1.5</javaVersion>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

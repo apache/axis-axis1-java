@@ -28,6 +28,9 @@
     <artifactId>interop-mock</artifactId>
     <name>Interoperability mock services</name>
     <packaging>war</packaging>
+    <properties>
+        <javaVersion>1.5</javaVersion>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -72,14 +75,6 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>

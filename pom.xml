@@ -206,6 +206,11 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.1.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>1.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -224,6 +229,59 @@
                                     <version>3.0.4</version>
                                 </requireMavenVersion>
                             </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>${javaVersion}</source>
+                    <target>${javaVersion}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>select-java-signatures</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                javaVersion = project.properties['javaVersion']
+                                if (javaVersion == '1.4') {
+                                    artifactId = 'java14-sun'
+                                } else if (javaVersion == '1.5') {
+                                    artifactId = 'java15-sun'
+                                }
+                                project.properties['signatureArtifactId'] = artifactId
+                                project.properties['signatureVersion'] = '1.0'
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.9</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <signature>
+                                <groupId>org.codehaus.mojo.signature</groupId>
+                                <artifactId>${signatureArtifactId}</artifactId>
+                                <version>${signatureVersion}</version>
+                            </signature>
                         </configuration>
                     </execution>
                 </executions>
@@ -268,6 +326,7 @@
         </plugins>
     </reporting>
     <properties>
+        <javaVersion>1.4</javaVersion>
         <baseUrl>http://axis.apache.org/axis/java</baseUrl>
         <!-- Dummy site URL to be able to use site:stage -->
         <baseSiteUrl>dav:http://localhost/sites/axis</baseSiteUrl>
