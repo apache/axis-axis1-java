@@ -87,6 +87,17 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
      */
     private boolean jmx;
     
+    /**
+     * Arbitrary JVM options to set on the command line. Note that this parameter uses the same
+     * expression as the Surefire and Failsafe plugins. By setting the <code>argLine</code>
+     * property, it is therefore possible to easily pass a common set of JVM options to all
+     * processes involved in the tests. Since the JaCoCo Maven plugin also sets this property, code
+     * coverage generated on the server-side will be automatically included in the analysis.
+     * 
+     * @parameter expression="${argLine}"
+     */
+    private String argLine;
+    
     protected boolean isDebug() {
         return debug;
     }
@@ -124,6 +135,9 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
         }
         if (jmx) {
             processVMArgs(vmArgs, jmxArgs);
+        }
+        if (argLine != null) {
+            processVMArgs(vmArgs, argLine);
         }
         if (log.isDebugEnabled()) {
             log.debug("Additional VM args: " + vmArgs);
