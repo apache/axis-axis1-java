@@ -1211,7 +1211,6 @@ public class JavaBeanWriter extends JavaClassWriter {
                 + ")) return false;");
         pw.println("        " + className + " other = (" + className
                 + ") obj;");
-        pw.println("        if (obj == null) return false;");
         pw.println("        if (this == obj) return true;");
 
         // Have we been here before ? return true if yes otherwise false
