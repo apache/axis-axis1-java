@@ -16,7 +16,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.commons.logging.Log;
@@ -24,6 +23,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.activation.DataHandler;
+import javax.imageio.ImageIO;
+
 import java.awt.*;
 import java.io.InputStream;
 
@@ -47,7 +48,7 @@ public class ImageDataHandlerDeserializer extends JAFDataHandlerDeserializer {
                 DataHandler dh = (DataHandler) getValue();
 
                 InputStream is = dh.getInputStream();
-                Image image = ImageIOFactory.getImageIO().loadImage(is);
+                Image image = ImageIO.read(is);
                 setValue(image);
             }
             catch (Exception e) {

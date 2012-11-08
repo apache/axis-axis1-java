@@ -17,7 +17,6 @@ package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
@@ -25,6 +24,7 @@ import org.apache.axis.utils.IOUtils;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
+import javax.imageio.ImageIO;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.stream.StreamSource;
 import java.util.Iterator;
@@ -343,7 +343,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         } else if (ds.getContentType().equals("image/gif") ||
                    ds.getContentType().equals("image/jpeg")) {
             try {
-                return ImageIOFactory.getImageIO().loadImage(is);
+                return ImageIO.read(is);
             } catch (Exception ex) {
                 log.error(Messages.getMessage("javaIOException00"), ex);
                 throw new SOAPException(ex);

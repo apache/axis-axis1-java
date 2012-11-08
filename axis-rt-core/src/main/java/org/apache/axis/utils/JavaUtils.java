@@ -18,13 +18,12 @@ package org.apache.axis.utils;
 
 import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.attachments.OctetStream;
-import org.apache.axis.components.image.ImageIO;
-import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.types.HexBinary;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
+import javax.imageio.ImageIO;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -321,14 +320,7 @@ public class JavaUtils
                             return null;
                         }
                         else {
-                            ImageIO imageIO = ImageIOFactory.getImageIO();
-                            if (imageIO != null) {
-                                return getImageFromStream(is);
-                            }
-                            else {
-                                log.info(Messages.getMessage("needImageIO"));
-                                return arg;
-                            }
+                            return ImageIO.read(is);
                         }
                     }
                     else if (destClass == javax.xml.transform.Source.class) {
@@ -677,9 +669,12 @@ public class JavaUtils
         return false;
     }
 
+    /**
+     * @deprecated Use {@link ImageIO#read(InputStream)} instead.
+     */
     public static Image getImageFromStream(InputStream is) {
         try {
-            return ImageIOFactory.getImageIO().loadImage(is);
+            return ImageIO.read(is);
         }
         catch (Throwable t) {
             return null;
