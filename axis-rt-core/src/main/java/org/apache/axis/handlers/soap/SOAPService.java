@@ -28,7 +28,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
 import org.apache.axis.handlers.HandlerChainImpl;

@@ -42,8 +42,6 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 
-import org.w3c.dom.Document;
-
 public class DirProvider implements WSDDEngineConfiguration {
 
     protected static Log log =

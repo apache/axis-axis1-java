@@ -17,7 +17,6 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.attachments.AttachmentUtils;
-import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;

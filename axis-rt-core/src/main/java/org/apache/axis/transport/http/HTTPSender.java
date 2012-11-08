@@ -47,7 +47,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.

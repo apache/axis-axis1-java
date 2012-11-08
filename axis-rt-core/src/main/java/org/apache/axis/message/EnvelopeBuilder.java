@@ -25,7 +25,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
 
 /**
  * The EnvelopeBuilder is responsible for parsing the top-level

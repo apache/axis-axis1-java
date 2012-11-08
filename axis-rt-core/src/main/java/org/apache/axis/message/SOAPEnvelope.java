@@ -31,7 +31,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 

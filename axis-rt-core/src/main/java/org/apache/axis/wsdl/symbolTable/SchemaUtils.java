@@ -16,7 +16,6 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.DOMException;
@@ -27,7 +26,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
-import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.QNameHolder;
 import java.util.Arrays;
 import java.util.HashSet;

@@ -25,7 +25,6 @@ import org.xml.sax.SAXException;
 import javax.activation.DataHandler;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
-import java.io.StringReader;
 
 /**
  * SourceDataHandler Deserializer
