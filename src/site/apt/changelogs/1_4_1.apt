@@ -47,4 +47,7 @@ Changes from 1.4 final
     * WSDL4J has been upgraded from 1.5.1 to 1.6.2.
     
     * Support for Java 1.3 has been dropped.
-
+    
+    * <<<AxisServlet>>> no longer attempts to register the Axis MBeans automatically. To enable them, add
+      <<<axis-rt-management>>> as a dependency and register <<<org.apache.axis.management.servlet.AxisServerMBeanExporter>>>
+      as a listener in <<<web.xml>>>.

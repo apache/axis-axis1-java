@@ -9,6 +9,10 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     <listener>
         <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
     </listener>
+    <!-- Uncomment this to register the Axis MBeans -->
+    <!-- listener>
+        <listener-class>org.apache.axis.management.servlet.AxisServerMBeanExporter</listener-class>
+    </listener -->
     
   <servlet>
     <servlet-name>AxisServlet</servlet-name>
