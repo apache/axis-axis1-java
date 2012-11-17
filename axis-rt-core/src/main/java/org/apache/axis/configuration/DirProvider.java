@@ -22,27 +22,19 @@ import java.io.InputStream;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
-import org.apache.axis.Handler;
-import org.apache.axis.WSDDEngineConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 
-public class DirProvider implements WSDDEngineConfiguration {
+public class DirProvider extends DelegatingWSDDEngineConfiguration {
 
     protected static Log log =
         LogFactory.getLog(DirProvider.class.getName());
@@ -132,100 +124,5 @@ public class DirProvider implements WSDDEngineConfiguration {
     public void writeEngineConfig(AxisEngine engine)
         throws ConfigurationException {
         // this is not implemented
-    }
-
-    /**
-     * retrieve an instance of the named handler
-     * @param qname XXX
-     * @return XXX
-     * @throws ConfigurationException XXX
-     */
-    public Handler getHandler(QName qname) throws ConfigurationException {
-        return this.deployment.getHandler(qname);
-    }
-
-    /**
-     * retrieve an instance of the named service
-     * @param qname XXX
-     * @return XXX
-     * @throws ConfigurationException XXX
-     */
-    public SOAPService getService(QName qname) throws ConfigurationException {
-        SOAPService service = this.deployment.getService(qname);
-        if (service == null) {
-            throw new ConfigurationException(Messages.getMessage("noService10",
-                                                           qname.toString()));
-        }
-        return service;
-    }
-
-    /**
-     * Get a service which has been mapped to a particular namespace
-     * 
-     * @param namespace a namespace URI
-     * @return an instance of the appropriate Service, or null
-     */
-    public SOAPService getServiceByNamespaceURI(String namespace)
-            throws ConfigurationException {
-        return this.deployment.getServiceByNamespaceURI(namespace);
-    }
-
-    /**
-     * retrieve an instance of the named transport
-     * @param qname XXX
-     * @return XXX
-     * @throws ConfigurationException XXX
-     */
-    public Handler getTransport(QName qname) throws ConfigurationException {
-        return this.deployment.getTransport(qname);
-    }
-
-    public TypeMappingRegistry getTypeMappingRegistry()
-        throws ConfigurationException {
-        return this.deployment.getTypeMappingRegistry();
-    }
-
-    /**
-     * Returns a global request handler.
-     */
-    public Handler getGlobalRequest() throws ConfigurationException {
-        return this.deployment.getGlobalRequest();
-    }
-
-    /**
-     * Returns a global response handler.
-     */
-    public Handler getGlobalResponse() throws ConfigurationException {
-        return this.deployment.getGlobalResponse();
-    }
-
-    /**
-     * Returns the global configuration options.
-     */
-    public Hashtable getGlobalOptions() throws ConfigurationException {
-        WSDDGlobalConfiguration globalConfig
-            = this.deployment.getGlobalConfiguration();
-            
-        if (globalConfig != null)
-            return globalConfig.getParametersTable();
-
-        return null;
-    }
-
-    /**
-     * Get an enumeration of the services deployed to this engine
-     */
-    public Iterator getDeployedServices() throws ConfigurationException {
-        return this.deployment.getDeployedServices();
-    }
-
-    /**
-     * Get a list of roles that this engine plays globally.  Services
-     * within the engine configuration may also add additional roles.
-     *
-     * @return a <code>List</code> of the roles for this engine
-     */
-    public List getRoles() {
-        return this.deployment.getRoles();
     }
 }
