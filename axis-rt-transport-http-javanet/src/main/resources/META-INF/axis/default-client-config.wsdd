@@ -17,14 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!-- START SNIPPET: deployment -->
-<deployment name="testClientConfig"
+<deployment name="axis-rt-transport-http-javanet"
             xmlns="http://xml.apache.org/axis/wsdd/"
             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
-   <globalConfiguration>
-       <parameter name="disablePrettyXML" value="true"/>
-       <parameter name="enableNamespacePrefixOptimization" value="false"/>
-   </globalConfiguration>
-   <transport name="http" pivot="java:org.apache.axis.transport.http.javanet.JavaNetHTTPSender"/>
+    <transport name="http" pivot="java:org.apache.axis.transport.http.javanet.JavaNetHTTPSender"/>
 </deployment>
-<!-- END SNIPPET: deployment -->

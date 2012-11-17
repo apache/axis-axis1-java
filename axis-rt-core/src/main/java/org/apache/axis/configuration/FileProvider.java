@@ -156,21 +156,39 @@ public class FileProvider extends DelegatingWSDDEngineConfiguration {
                 try {
                     setInputStream(new FileInputStream(configFile));
                 } catch (Exception e) {
-                    if (searchClasspath)
-                        setInputStream(ClassUtils.getResourceAsStream(engine.getClass(), filename, true));
+                    // Ignore and continue
                 }
+            }
+            if (getInputStream() == null && searchClasspath) {
+                // Attempt to load the file from the classpath
+                setInputStream(ClassUtils.getResourceAsStream(filename, engine.getClass().getClassLoader()));
             }
 
             if (getInputStream() == null) {
-                throw new ConfigurationException(
-                        Messages.getMessage("noConfigFile"));
+                // Load the default configuration. This piece of code provides compatibility with Axis 1.4,
+                // which ends up loading org/apache/axis/(client|server)/(client|server)-config.wsdd if
+                // (1) filename is (client|server)-config.wsdd;
+                // (2) the runtime type of the engine is AxisClient or AxisServer;
+                // (3) the file is not found on the file system or in the classpath.
+                String type;
+                if (filename.equals(EngineConfigurationFactoryDefault.CLIENT_CONFIG_FILE)) {
+                    type = "client";
+                } else if (filename.equals(EngineConfigurationFactoryDefault.SERVER_CONFIG_FILE)) {
+                    type = "server";
+                } else {
+                    throw new ConfigurationException(
+                            Messages.getMessage("noConfigFile"));
+                }
+                DefaultConfiguration defaultConfig = new DefaultConfiguration(type);
+                defaultConfig.configureEngine(engine);
+                deployment = defaultConfig.getDeployment();
+            } else {
+                WSDDDocument doc = new WSDDDocument(XMLUtils.
+                                                    newDocument(getInputStream()));
+                deployment = doc.getDeployment();
+    
+                deployment.configureEngine(engine);
             }
-
-            WSDDDocument doc = new WSDDDocument(XMLUtils.
-                                                newDocument(getInputStream()));
-            deployment = doc.getDeployment();
-
-            deployment.configureEngine(engine);
             engine.refreshGlobalOptions();
 
             setInputStream(null);

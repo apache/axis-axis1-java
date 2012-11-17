@@ -36,9 +36,20 @@
   <<<HTTPSender>>>. However, it only works with Java 1.5 or higher because it relies on features of
   the <<<java.net.HttpURLConnection>>> API that were not available in earlier Java versions.
   
-  To use the java.net based HTTP transport, add <<<${project.artifactId}-${project.version}.jar>>> to the class path and set up
-  <<<client-config.wsdd>>> with the right pivot handler for the <<<http>>> transport, as shown in the following
+  To use the java.net based HTTP transport, add <<<${project.artifactId}-${project.version}.jar>>> to the class path.
+  If you are using the default client configuration, it will be configured automatically. If you provide your own
+  custom client configuration WSDD file, then configure the pivot handler for the <<<http>>> transport as shown in the following
   sample:
   
-%{snippet|id=deployment|file=${project.basedir}/src/test/resources/client-config.wsdd}
+-------------------------------------------------------------------------------------------------
+<deployment name="testClientConfig"
+            xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+   <globalConfiguration>
+       <parameter name="disablePrettyXML" value="true"/>
+       <parameter name="enableNamespacePrefixOptimization" value="false"/>
+   </globalConfiguration>
+   <transport name="http" pivot="java:org.apache.axis.transport.http.javanet.JavaNetHTTPSender"/>
+</deployment>
+-------------------------------------------------------------------------------------------------
   

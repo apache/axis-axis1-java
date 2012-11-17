@@ -161,30 +161,33 @@ public final class ClassUtils {
      * Get an input stream from a named resource.
      * Tries
      * <ol>
-     * <li>the classloader that loaded "clazz" first,
+     * <li>the thread context class loader
+     * <li>the given fallback classloader
      * <li>the system classloader
-     * <li>the class "clazz" itself
      * </ol>
-     * @param clazz class to use in the lookups
      * @param resource resource string to look for
-     * @param checkThreadContextFirst check the thread context first?
+     * @param fallbackClassLoader the class loader to use if the resource could not be loaded from
+     *        the thread context class loader
      * @return input stream if found, or null
      */
-    public static InputStream getResourceAsStream(Class clazz, String resource, boolean checkThreadContextFirst) {
-        InputStream myInputStream = null;
+    public static InputStream getResourceAsStream(String resource, ClassLoader fallbackClassLoader) {
+        InputStream is = null;
 
-        if (checkThreadContextFirst &&
-                Thread.currentThread().getContextClassLoader() != null) {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        if (tccl != null) {
             // try the context class loader.
-            myInputStream =
-                    Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream(resource);
+            is = tccl.getResourceAsStream(resource);
         }
-        if (myInputStream == null) {
+        if (is == null) {
             // if not found in context class loader fall back to default
-            myInputStream = getResourceAsStream(clazz, resource);
+            if (fallbackClassLoader != null) {
+                is = fallbackClassLoader.getResourceAsStream(resource);
+            } else {
+                // Try the system class loader.
+                is = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
+            }
         }
-        return myInputStream;
+        return is;
     }
     
     /**
