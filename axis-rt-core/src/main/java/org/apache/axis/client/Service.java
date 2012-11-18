@@ -47,6 +47,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.rmi.Remote;
 import java.util.HashMap;
@@ -439,7 +440,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             if (portName == null) {
                 call = (org.apache.axis.client.Call) createCall();
                 if (endpoint != null) {
-                    call.setTargetEndpointAddress(new URL(endpoint));
+                    call.setTargetEndpointAddress(new URI(endpoint));
                 }
             } else {
                 call = (org.apache.axis.client.Call) createCall(portName);
@@ -494,8 +495,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             if (obj instanceof SOAPAddress) {
                 try {
                     SOAPAddress addr = (SOAPAddress) obj;
-                    URL url = new URL(addr.getLocationURI());
-                    call.setTargetEndpointAddress(url);
+                    call.setTargetEndpointAddress(new URI(addr.getLocationURI()));
                 } catch (Exception exp) {
                     throw new ServiceException(
                             Messages.getMessage("cantSetURI00", "" + exp));
@@ -871,14 +871,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     /**
      * Register a Transport for a particular URL.
      */
-    void registerTransportForURL(URL url, Transport transport) {
+    void registerTransportForURL(URI url, Transport transport) {
         transportImpls.put(url.toString(), transport);
     }
 
     /**
      * Get any registered Transport object for a given URL.
      */
-    Transport getTransportForURL(URL url) {
+    Transport getTransportForURL(URI url) {
         return (Transport) transportImpls.get(url.toString());
     }
 

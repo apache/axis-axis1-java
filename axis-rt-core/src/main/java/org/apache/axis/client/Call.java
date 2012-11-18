@@ -82,6 +82,8 @@ import javax.xml.soap.SOAPMessage;
 
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -332,17 +334,17 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Build a call from a URL string.
      *
-     * This is handy so that you don't have to manually call Call.initialize()
-     * in order to register custom transports.  In other words, whereas doing
-     * a new URL("local:...") would fail, new Call("local:...") works because
-     * we do the initialization of our own and any configured custom protocols. 
-     *
      * @param url the target endpoint URL
      * @exception MalformedURLException
      */
     public Call(String url) throws MalformedURLException {
         this(new Service());
-        setTargetEndpointAddress(new URL(url));
+        try {
+            setTargetEndpointAddress(new URI(url));
+        } catch (URISyntaxException ex) {
+            // The method used to use new URL(...). Need this to ensure source code compatibility:
+            throw new MalformedURLException(ex.getMessage());
+        }
     }
 
     /**
@@ -803,31 +805,47 @@ public class Call implements javax.xml.rpc.Call {
      *                  as URI
      */
     public void setTargetEndpointAddress(String address) {
-        URL urlAddress;
-        try {
-            urlAddress = new URL(address);
+        // Special case: Since Axis 1.4 used java.net.URL, it accepted "<scheme>:" (e.g. "local:")
+        // as a valid URL. However this is not a valid URI. If we encounter this case, we add a
+        // slash to make it a valid URI: "<scheme>:/".
+        if (address.indexOf(':') == address.length() - 1) {
+            address += '/';
         }
-        catch (MalformedURLException mue) {
+        try {
+            setTargetEndpointAddress(new URI(address));
+        }
+        catch (URISyntaxException mue) {
             throw new JAXRPCException(mue);
         }
-        setTargetEndpointAddress(urlAddress);
     }
 
     /**
      * Sets the URL of the target Web Service.
-     *
+     * <p>
      * Note: Not part of JAX-RPC specification.
      *
      * @param address URL of the target Web Service
      */
-    public void setTargetEndpointAddress(java.net.URL address) {
+    public void setTargetEndpointAddress(URL address) {
+        // Note: the URL#toURI method is not available in Java 1.4
+        setTargetEndpointAddress(address == null ? null : address.toString());
+    }
+    
+    /**
+     * Sets the URL of the target Web Service.
+     * <p>
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param address URL of the target Web Service
+     */
+    public void setTargetEndpointAddress(URI address) {
         try {
             if ( address == null ) {
                 setTransport(null);
                 return ;
             }
 
-            String protocol = address.getProtocol();
+            String protocol = address.getScheme();
 
             // Handle the case where the protocol is the same but we
             // just want to change the URL - if so just set the URL,
@@ -840,8 +858,8 @@ public class Call implements javax.xml.rpc.Call {
             if ( this.transport != null ) {
                 String oldAddr = this.transport.getUrl();
                 if ( oldAddr != null && !oldAddr.equals("") ) {
-                    URL     tmpURL   = new URL( oldAddr );
-                    String  oldProto = tmpURL.getProtocol();
+                    URI     tmpURL   = new URI( oldAddr );
+                    String  oldProto = tmpURL.getScheme();
                     if ( protocol.equals(oldProto) ) {
                         this.transport.setUrl( address.toString() );
                         return ;
@@ -1623,7 +1641,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         // we reinitialize target endpoint only if we have wsdl
-        this.setTargetEndpointAddress( (URL) null );
+        this.setTargetEndpointAddress( (URI) null );
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null ) {
@@ -1639,8 +1657,7 @@ public class Call implements javax.xml.rpc.Call {
             if ( obj instanceof SOAPAddress ) {
                 try {
                     SOAPAddress addr = (SOAPAddress) obj ;
-                    URL         url  = new URL(addr.getLocationURI());
-                    this.setTargetEndpointAddress(url);
+                    this.setTargetEndpointAddress(new URI(addr.getLocationURI()));
                 }
                 catch(Exception exp) {
                     throw new JAXRPCException(
