@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment name="defaultClientConfig"
+            xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:handler="http://xml.apache.org/axis/wsdd/providers/handler">
+
+ <globalConfiguration>
+   <parameter name="disablePrettyXML" value="true"/>
+   <parameter name="dotNetSoapEncFix" value="true"/>
+   <parameter name="enableNamespacePrefixOptimization" value="false"/>
+   <requestFlow>
+     <!-- uncomment this if you want JWS support -->
+     <!--
+     <handler type="java:org.apache.axis.handlers.JWSHandler">
+        <parameter name="scope" value="session"/>
+     </handler>
+     <handler type="java:org.apache.axis.handlers.JWSHandler">
+        <parameter name="scope" value="request"/>
+        <parameter name="extension" value=".jwr"/>
+     </handler>
+     -->
+     <!-- uncomment this if you want the SOAP monitor -->
+     <!--
+     <handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/>
+     -->
+   </requestFlow>
+   <!-- uncomment this if you want the SOAP monitor -->
+   <!--
+   <responseFlow>
+     <handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/>
+   </responseFlow>
+   -->
+ </globalConfiguration>
+
+ <handler type="java:org.apache.axis.handlers.http.URLMapper" name="URLMapper"/>
+ <handler type="java:org.apache.axis.transport.local.LocalResponder" name="LocalResponder"/>
+ <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" name="Authenticate"/>
+
+ <service name="AdminService" provider="java:MSG">
+  <namespace>http://xml.apache.org/axis/wsdd/</namespace>
+  <parameter name="allowedMethods" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+ </service>
+
+ <service name="Version" provider="java:RPC">
+  <parameter name="allowedMethods" value="getVersion"/>
+  <parameter name="className" value="org.apache.axis.Version"/>
+ </service>
+
+ <transport name="http">
+  <parameter name="qs:list" 
+               value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs:method" 
+               value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs:wsdl" 
+               value="org.apache.axis.transport.http.QSWSDLHandler"/>
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+ </transport>
+
+ <transport name="local">
+  <responseFlow>
+   <handler type="LocalResponder"/>
+  </responseFlow>
+ </transport>
+
+  <service name="OrderServiceSOAP" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://axis.apache.org/test/spring"/>
+      <parameter name="wsdlServiceElement" value="OrderService"/>
+      <parameter name="schemaUnqualified" value="http://axis.apache.org/test/spring"/>
+      <parameter name="wsdlServicePort" value="OrderServiceSOAP"/>
+      <parameter name="className" value="org.apache.axis.test.spring.OrderEndpoint"/>
+      <parameter name="wsdlPortType" value="OrderManagerPortType"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="submitOrder" qname="operNS:SubmitOrder" xmlns:operNS="http://axis.apache.org/test/spring" returnQName="OrderID" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://axis.apache.org/test/spring/SubmitOrder" >
+        <parameter qname="Order" type="tns:Order" xmlns:tns="http://axis.apache.org/test/spring"/>
+      </operation>
+      <operation name="getOrder" qname="operNS:GetOrder" xmlns:operNS="http://axis.apache.org/test/spring" returnQName="Order" returnType="rtns:Order" xmlns:rtns="http://axis.apache.org/test/spring" soapAction="http://axis.apache.org/test/spring/GetOrder" >
+        <parameter qname="OrderID" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="submitOrder getOrder"/>
+      <parameter name="scope" value="Application"/>
+
+      <typeMapping
+        xmlns:ns="http://axis.apache.org/test/spring"
+        qname="ns:Order"
+        type="java:org.apache.axis.test.spring.Order"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://axis.apache.org/test/spring"
+        qname="ns:OrderItem"
+        type="java:org.apache.axis.test.spring.OrderItem"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

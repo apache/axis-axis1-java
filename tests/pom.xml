@@ -33,6 +33,7 @@
     </description>
     <modules>
         <module>interop-tests</module>
+        <module>spring-compat-tests</module>
     </modules>
     <build>
         <plugins>

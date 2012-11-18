@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://axis.apache.org/test/spring"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  name="OrderService"
+                  targetNamespace="http://axis.apache.org/test/spring">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://axis.apache.org/test/spring">
+      <xsd:element name="SubmitOrder">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Order" type="tns:Order"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SubmitOrderResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="OrderID" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetOrder">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="OrderID" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetOrderResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Order" type="tns:Order"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="Order">
+        <xsd:sequence>
+          <xsd:element name="CustomerID" type="xsd:string"/>
+          <xsd:element name="Item" type="tns:OrderItem" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="OrderItem">
+        <xsd:sequence>
+          <xsd:element name="ProductID" type="xsd:string"/>
+          <xsd:element name="Quantity" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="SubmitOrderRequest">
+    <wsdl:part element="tns:SubmitOrder" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SubmitOrderResponse">
+    <wsdl:part element="tns:SubmitOrderResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetOrderRequest">
+    <wsdl:part element="tns:GetOrder" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetOrderResponse">
+    <wsdl:part element="tns:GetOrderResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="OrderManagerPortType">
+    <wsdl:operation name="SubmitOrder">
+      <wsdl:input message="tns:SubmitOrderRequest"/>
+      <wsdl:output message="tns:SubmitOrderResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrder">
+      <wsdl:input message="tns:GetOrderRequest"/>
+      <wsdl:output message="tns:GetOrderResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="OrderManagerSOAP" type="tns:OrderManagerPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SubmitOrder">
+      <soap:operation soapAction="http://axis.apache.org/test/spring/SubmitOrder"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrder">
+      <soap:operation soapAction="http://axis.apache.org/test/spring/GetOrder"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OrderService">
+    <wsdl:port name="OrderServiceSOAP" binding="tns:OrderManagerSOAP">
+      <soap:address location="http://localhost:8080/axis/OrderServiceSOAP"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
