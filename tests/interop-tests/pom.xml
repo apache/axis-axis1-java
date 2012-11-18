@@ -21,11 +21,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis</groupId>
-        <artifactId>axis-project</artifactId>
+        <artifactId>tests</artifactId>
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>interop</artifactId>
+    <artifactId>interop-tests</artifactId>
     <name>Interoperability tests</name>
     <dependencies>
         <dependency>
@@ -67,7 +67,7 @@
                             <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
-                            <file>../interop-mock/src/main/resources/wsdl/soap12-add-test.wsdl</file>
+                            <file>../../interop-mock/src/main/resources/wsdl/soap12-add-test.wsdl</file>
                             <generate>both</generate>
                             <mappings>
                                 <mapping>
@@ -87,7 +87,7 @@
                             <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
-                            <file>../interop-mock/src/main/resources/wsdl/soap12-test.wsdl</file>
+                            <file>../../interop-mock/src/main/resources/wsdl/soap12-test.wsdl</file>
                             <generate>both</generate>
                             <mappings>
                                 <mapping>
@@ -107,7 +107,7 @@
                             <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
-                            <file>../interop-mock/src/main/resources/wsdl/TerraService.wsdl</file>
+                            <file>../../interop-mock/src/main/resources/wsdl/TerraService.wsdl</file>
                             <generate>client</generate>
                             <wrapArrays>true</wrapArrays>
                             <mappings>
@@ -218,19 +218,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <skipDeploy>true</skipDeploy>
-                </configuration>
             </plugin>
         </plugins>
     </build>

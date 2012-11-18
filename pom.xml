@@ -80,13 +80,13 @@
         <module>axis-war</module>
         <module>distribution</module>
         <module>integration</module>
-        <module>interop</module>
         <module>interop-mock</module>
         <module>maven</module>
         <module>samples</module>
         <module>soapmonitor-applet</module>
         <module>soapmonitor-client</module>
         <module>tcpmon</module>
+        <module>tests</module>
     </modules>
     <dependencyManagement>
         <dependencies>
