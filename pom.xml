@@ -120,6 +120,11 @@
                 <artifactId>commons-io</artifactId>
                 <version>1.4</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>axiom-testutils</artifactId>
+                <version>1.2.13</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <prerequisites>
