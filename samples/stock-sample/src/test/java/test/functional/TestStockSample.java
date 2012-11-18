@@ -29,11 +29,14 @@ public class TestStockSample extends TestCase {
                 "-uuser1", "-wpass1", "XXX", "-saxis/StockQuoteService.jws" };
         float val = new GetQuote().getQuote(args);
         assertEquals("TestStockSample.doTestStockJWS(): stock price should be 66.25", val, 66.25, 0.01);
-        
+    }
+    
+    public void testStockJWSInvalidURL() throws Exception {
         // This should FAIL
-        args[5] = "-sjws/AltStockQuoteService.jws";
+        String[] args = { "-p", System.getProperty("test.functional.ServicePort", "8080"),
+                "-uuser1", "-wpass1", "XXX", "-sjws/StockQuoteService.jws" };
         try {
-          val = new GetQuote().getQuote(args);
+            new GetQuote().getQuote(args);
         } catch (AxisFault e) {
             // Don't print stack trace unless there is an error
           // e.printStackTrace();
