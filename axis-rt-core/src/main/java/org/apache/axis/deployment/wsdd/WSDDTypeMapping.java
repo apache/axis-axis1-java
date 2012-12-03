@@ -16,11 +16,18 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.ser.BaseDeserializerFactory;
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
@@ -28,13 +35,14 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 
-
 /**
  *
  */
 public class WSDDTypeMapping
     extends WSDDElement
 {
+    private static final Log log = LogFactory.getLog(WSDDTypeMapping.class.getName());
+    
     protected QName qname = null;
     protected String serializer = null;
     protected String deserializer = null;
@@ -279,6 +287,46 @@ public class WSDDTypeMapping
     public void setDeserializer(String deser)
     {
         deserializer = deser;
+    }
+    
+    void registerTo(TypeMapping tm) throws WSDDException {
+        try {
+            SerializerFactory   ser   = null;
+            DeserializerFactory deser = null;
+
+            // Try to construct a serializerFactory by introspecting for the
+            // following:
+            // public static create(Class javaType, QName xmlType)
+            // public <constructor>(Class javaType, QName xmlType)
+            // public <constructor>()
+            //
+            // The BaseSerializerFactory createFactory() method is a utility
+            // that does this for us.
+            if (getSerializerName() != null &&
+                !getSerializerName().equals("")) {
+                ser = BaseSerializerFactory.createFactory(getSerializer(),
+                                                          getLanguageSpecificType(),
+                                                          getQName());
+            }
+            
+            setupSerializer(ser);
+
+            if (getDeserializerName() != null &&
+                !getDeserializerName().equals("")) {
+                deser = BaseDeserializerFactory.createFactory(getDeserializer(),
+                                                              getLanguageSpecificType(),
+                                                              getQName());
+            }
+            tm.register(getLanguageSpecificType(), getQName(), ser, deser);
+        } catch (ClassNotFoundException e) {
+            log.error(Messages.getMessage("unabletoDeployTypemapping00", getQName().toString()), e);
+            throw new WSDDNonFatalException(e);
+        } catch (Exception e) {
+            throw new WSDDException(e);
+        }
+    }
+    
+    void setupSerializer(SerializerFactory ser) {
     }
 }
 

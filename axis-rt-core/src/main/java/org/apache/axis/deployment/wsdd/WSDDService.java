@@ -29,15 +29,10 @@ import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
-import org.apache.axis.encoding.ser.ArraySerializerFactory;
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
@@ -515,53 +510,16 @@ public class WSDDService
         if (tmr == null) {
             createTMR();
         }
-        try {
-            // Get the encoding style from the mapping, if it isn't set
-            // use the use of the service to map doc/lit or rpc/enc
-            String encodingStyle = mapping.getEncodingStyle();
-            if (encodingStyle == null) {
-                encodingStyle = use.getEncoding();
-            }
-            TypeMapping tm = tmr.getOrMakeTypeMapping(encodingStyle);
-            desc.setTypeMappingRegistry(tmr);
-            desc.setTypeMapping(tm);
-
-            SerializerFactory   ser   = null;
-            DeserializerFactory deser = null;
-
-            // Try to construct a serializerFactory by introspecting for the
-            // following:
-            // public static create(Class javaType, QName xmlType)
-            // public <constructor>(Class javaType, QName xmlType)
-            // public <constructor>()
-            //
-            // The BaseSerializerFactory createFactory() method is a utility
-            // that does this for us.
-            if (mapping.getSerializerName() != null &&
-                !mapping.getSerializerName().equals("")) {
-                ser = BaseSerializerFactory.createFactory(mapping.getSerializer(),
-                                                          mapping.getLanguageSpecificType(),
-                                                          mapping.getQName());
-            }
-            if (mapping instanceof WSDDArrayMapping && ser instanceof ArraySerializerFactory) {
-                WSDDArrayMapping am = (WSDDArrayMapping) mapping;
-                ArraySerializerFactory factory = (ArraySerializerFactory) ser;
-                factory.setComponentType(am.getInnerType());
-            }
-
-            if (mapping.getDeserializerName() != null &&
-                !mapping.getDeserializerName().equals("")) {
-                deser = BaseDeserializerFactory.createFactory(mapping.getDeserializer(),
-                                                          mapping.getLanguageSpecificType(),
-                                                          mapping.getQName());
-            }
-            tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
-        } catch (ClassNotFoundException e) {
-            log.error(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
-            throw new WSDDNonFatalException(e);
-        } catch (Exception e) {
-            throw new WSDDException(e);
+        // Get the encoding style from the mapping, if it isn't set
+        // use the use of the service to map doc/lit or rpc/enc
+        String encodingStyle = mapping.getEncodingStyle();
+        if (encodingStyle == null) {
+            encodingStyle = use.getEncoding();
         }
+        TypeMapping tm = tmr.getOrMakeTypeMapping(encodingStyle);
+        desc.setTypeMappingRegistry(tmr);
+        desc.setTypeMapping(tm);
+        mapping.registerTo(tm);
     }
 
     /**

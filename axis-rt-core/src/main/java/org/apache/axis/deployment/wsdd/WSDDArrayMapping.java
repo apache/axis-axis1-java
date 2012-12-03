@@ -21,6 +21,8 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.utils.XMLUtils;
 
 
@@ -81,6 +83,12 @@ public class WSDDArrayMapping extends WSDDTypeMapping {
 
         context.startElement(QNAME_ARRAYMAPPING, attrs);
         context.endElement();
+    }
+
+    void setupSerializer(SerializerFactory ser) {
+        if (ser instanceof ArraySerializerFactory) {
+            ((ArraySerializerFactory)ser).setComponentType(getInnerType());
+        }
     }
 }
 

@@ -21,15 +21,10 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.WSDDEngineConfiguration;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
-import org.apache.axis.encoding.ser.ArraySerializerFactory;
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
@@ -264,53 +259,11 @@ public class WSDDDeployment
 
     private void deployMapping(WSDDTypeMapping mapping)
             throws WSDDException {
-        try {
-            String encodingStyle = mapping.getEncodingStyle();
-            if (encodingStyle == null) {
-                encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
-            }
-            TypeMapping tm = tmr.getOrMakeTypeMapping(encodingStyle);
-            SerializerFactory   ser = null;
-            DeserializerFactory deser = null;
-            // Try to construct a serializerFactory by introspecting for the
-            // following:
-            // public static create(Class javaType, QName xmlType)
-            // public <constructor>(Class javaType, QName xmlType)
-            // public <constructor>()
-            //
-            // The BaseSerializerFactory createFactory() method is a utility
-            // that does this for us.
-            //log.debug("start creating sf and df");
-            if (mapping.getSerializerName() != null &&
-                    !mapping.getSerializerName().equals("")) {
-                ser = BaseSerializerFactory.createFactory(mapping.getSerializer(),
-                        mapping.getLanguageSpecificType(),
-                        mapping.getQName());
-            }
-
-            if ((mapping instanceof WSDDArrayMapping) && (ser instanceof ArraySerializerFactory)) {
-                WSDDArrayMapping am = (WSDDArrayMapping) mapping;
-                ArraySerializerFactory factory = (ArraySerializerFactory) ser;
-                factory.setComponentType(am.getInnerType());
-            }
-
-            //log.debug("set ser factory");
-
-            if (mapping.getDeserializerName() != null &&
-                    !mapping.getDeserializerName().equals("")) {
-                deser = BaseDeserializerFactory.createFactory(mapping.getDeserializer(),
-                        mapping.getLanguageSpecificType(),
-                        mapping.getQName());
-            }
-            //log.debug("set dser factory");
-            tm.register(mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
-            //log.debug("registered");
-        } catch (ClassNotFoundException e) {
-            log.error(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
-            throw new WSDDNonFatalException(e);
-        } catch (Exception e) {
-            throw new WSDDException(e);
+        String encodingStyle = mapping.getEncodingStyle();
+        if (encodingStyle == null) {
+            encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
         }
+        mapping.registerTo(tmr.getOrMakeTypeMapping(encodingStyle));
     }
 
     public void writeToContext(SerializationContext context)
