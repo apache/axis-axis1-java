@@ -47,7 +47,6 @@ public class WSDDTypeMapping
     protected String serializer = null;
     protected String deserializer = null;
     protected QName typeQName = null;
-    protected String ref = null;
     protected String encodingStyle = null;
     
     /**
@@ -113,24 +112,6 @@ public class WSDDTypeMapping
 
     protected QName getElementName() {
         return QNAME_TYPEMAPPING;
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public String getRef()
-    {
-        return ref;
-    }
-
-    /**
-     *
-     * @param ref XXX
-     */
-    public void setRef(String ref)
-    {
-        this.ref = ref;
     }
 
     /**
