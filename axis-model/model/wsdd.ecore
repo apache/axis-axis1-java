@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="wsdd"
+    nsURI="http://xml.apache.org/axis/wsdd/" nsPrefix="wsdd">
+  <eClassifiers xsi:type="ecore:EEnum" name="Use">
+    <eLiterals name="LITERAL" literal="literal"/>
+    <eLiterals name="ENCODED" value="1" literal="encoded"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Style">
+    <eLiterals name="RPC" literal="rpc"/>
+    <eLiterals name="DOCUMENT" value="1" literal="document"/>
+    <eLiterals name="WRAPPED" value="2" literal="wrapped"/>
+    <eLiterals name="MESSAGE" value="3" literal="message"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Parameter">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Mapping" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="encodingStyle" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral=""/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TypeMapping" eSuperTypes="#//Mapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="serializer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="deserializer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ArrayMapping" eSuperTypes="#//Mapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="innerType" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BeanMapping" eSuperTypes="#//Mapping"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DeployableItem" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//DeployableItem">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="provider" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="use" eType="#//Use"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" eType="#//Style"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        eType="#//Parameter" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeMappings" upperBound="-1"
+        eType="#//TypeMapping" containment="true">
+      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+        <details key="kind" value="element"/>
+        <details key="name" value="typeMapping"/>
+        <details key="namespace" value="##targetNamespace"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="beanMappings" upperBound="-1"
+        eType="#//BeanMapping" containment="true">
+      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+        <details key="kind" value="element"/>
+        <details key="name" value="beanMapping"/>
+        <details key="namespace" value="##targetNamespace"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arrayMappings" upperBound="-1"
+        eType="#//ArrayMapping" containment="true">
+      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+        <details key="kind" value="element"/>
+        <details key="name" value="arrayMapping"/>
+        <details key="namespace" value="##targetNamespace"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Deployment">
+    <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+      <details key="name" value="deployment"/>
+      <details key="kind" value="element"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
+        eType="#//Service" containment="true">
+      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+        <details key="name" value="service"/>
+        <details key="kind" value="element"/>
+        <details key="namespace" value="##targetNamespace"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+</ecore:EPackage>
