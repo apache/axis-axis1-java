@@ -7,14 +7,17 @@
 package org.apache.axis.model.wsdd.impl;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.axis.model.wsdd.ArrayMapping;
 import org.apache.axis.model.wsdd.BeanMapping;
+import org.apache.axis.model.wsdd.Operation;
 import org.apache.axis.model.wsdd.Parameter;
 import org.apache.axis.model.wsdd.Service;
 import org.apache.axis.model.wsdd.Style;
 import org.apache.axis.model.wsdd.TypeMapping;
 import org.apache.axis.model.wsdd.Use;
+import org.apache.axis.model.wsdd.WSDDFactory;
 import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -38,6 +41,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getUse <em>Use</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getStyle <em>Style</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getOperations <em>Operations</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getTypeMappings <em>Type Mappings</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getBeanMappings <em>Bean Mappings</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getArrayMappings <em>Array Mappings</em>}</li>
@@ -116,6 +120,16 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @ordered
      */
     protected EList parameters;
+
+    /**
+     * The cached value of the '{@link #getOperations() <em>Operations</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getOperations()
+     * @generated
+     * @ordered
+     */
+    protected EList operations;
 
     /**
      * The cached value of the '{@link #getTypeMappings() <em>Type Mappings</em>}' containment reference list.
@@ -236,6 +250,18 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EList getOperations() {
+        if (operations == null) {
+            operations = new BasicInternalEList(Operation.class);
+        }
+        return operations;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EList getTypeMappings() {
         if (typeMappings == null) {
             typeMappings = new BasicInternalEList(TypeMapping.class);
@@ -267,6 +293,20 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
         return arrayMappings;
     }
 
+    public void setParameter(String name, String value) {
+        for (Iterator it = getParameters().iterator(); it.hasNext(); ) {
+            Parameter param = (Parameter)it.next();
+            if (name.equals(param.getName())) {
+                param.setValue(value);
+                return;
+            }
+        }
+        Parameter param = WSDDFactory.eINSTANCE.createParameter();
+        param.setName(name);
+        param.setValue(value);
+        getParameters().add(param);
+    }
+
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -276,6 +316,8 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
         switch (featureID) {
             case WSDDPackage.SERVICE__PARAMETERS:
                 return ((InternalEList)getParameters()).basicRemove(otherEnd, msgs);
+            case WSDDPackage.SERVICE__OPERATIONS:
+                return ((InternalEList)getOperations()).basicRemove(otherEnd, msgs);
             case WSDDPackage.SERVICE__TYPE_MAPPINGS:
                 return ((InternalEList)getTypeMappings()).basicRemove(otherEnd, msgs);
             case WSDDPackage.SERVICE__BEAN_MAPPINGS:
@@ -301,6 +343,8 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
                 return getStyle();
             case WSDDPackage.SERVICE__PARAMETERS:
                 return getParameters();
+            case WSDDPackage.SERVICE__OPERATIONS:
+                return getOperations();
             case WSDDPackage.SERVICE__TYPE_MAPPINGS:
                 return getTypeMappings();
             case WSDDPackage.SERVICE__BEAN_MAPPINGS:
@@ -330,6 +374,10 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
             case WSDDPackage.SERVICE__PARAMETERS:
                 getParameters().clear();
                 getParameters().addAll((Collection)newValue);
+                return;
+            case WSDDPackage.SERVICE__OPERATIONS:
+                getOperations().clear();
+                getOperations().addAll((Collection)newValue);
                 return;
             case WSDDPackage.SERVICE__TYPE_MAPPINGS:
                 getTypeMappings().clear();
@@ -366,6 +414,9 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
             case WSDDPackage.SERVICE__PARAMETERS:
                 getParameters().clear();
                 return;
+            case WSDDPackage.SERVICE__OPERATIONS:
+                getOperations().clear();
+                return;
             case WSDDPackage.SERVICE__TYPE_MAPPINGS:
                 getTypeMappings().clear();
                 return;
@@ -394,6 +445,8 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
                 return style != STYLE_EDEFAULT;
             case WSDDPackage.SERVICE__PARAMETERS:
                 return parameters != null && !parameters.isEmpty();
+            case WSDDPackage.SERVICE__OPERATIONS:
+                return operations != null && !operations.isEmpty();
             case WSDDPackage.SERVICE__TYPE_MAPPINGS:
                 return typeMappings != null && !typeMappings.isEmpty();
             case WSDDPackage.SERVICE__BEAN_MAPPINGS:

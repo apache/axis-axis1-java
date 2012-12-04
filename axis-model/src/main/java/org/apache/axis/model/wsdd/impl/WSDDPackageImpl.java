@@ -10,8 +10,12 @@ import org.apache.axis.model.wsdd.ArrayMapping;
 import org.apache.axis.model.wsdd.BeanMapping;
 import org.apache.axis.model.wsdd.DeployableItem;
 import org.apache.axis.model.wsdd.Deployment;
+import org.apache.axis.model.wsdd.Fault;
 import org.apache.axis.model.wsdd.Mapping;
+import org.apache.axis.model.wsdd.Operation;
+import org.apache.axis.model.wsdd.OperationParameter;
 import org.apache.axis.model.wsdd.Parameter;
+import org.apache.axis.model.wsdd.ParameterMode;
 import org.apache.axis.model.wsdd.Service;
 import org.apache.axis.model.wsdd.Style;
 import org.apache.axis.model.wsdd.TypeMapping;
@@ -22,6 +26,7 @@ import org.apache.axis.model.wsdd.WSDDPackage;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -76,6 +81,27 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    private EClass operationParameterEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass faultEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass operationEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     private EClass deployableItemEClass = null;
 
     /**
@@ -105,6 +131,13 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      * @generated
      */
     private EEnum styleEEnum = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EEnum parameterModeEEnum = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -292,6 +325,231 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getOperationParameter() {
+        return operationParameterEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperationParameter_Name() {
+        return (EAttribute)operationParameterEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperationParameter_Qname() {
+        return (EAttribute)operationParameterEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperationParameter_Type() {
+        return (EAttribute)operationParameterEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperationParameter_Mode() {
+        return (EAttribute)operationParameterEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperationParameter_InHeader() {
+        return (EAttribute)operationParameterEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperationParameter_OutHeader() {
+        return (EAttribute)operationParameterEClass.getEStructuralFeatures().get(5);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperationParameter_ItemQName() {
+        return (EAttribute)operationParameterEClass.getEStructuralFeatures().get(6);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getFault() {
+        return faultEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getFault_Name() {
+        return (EAttribute)faultEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getFault_Qname() {
+        return (EAttribute)faultEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getFault_Class() {
+        return (EAttribute)faultEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getFault_Type() {
+        return (EAttribute)faultEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getOperation() {
+        return operationEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_Name() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_Qname() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_ReturnQName() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_ReturnType() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_ReturnItemQName() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_ReturnItemType() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(5);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_SoapAction() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(6);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_Mep() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(7);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getOperation_ReturnHeader() {
+        return (EAttribute)operationEClass.getEStructuralFeatures().get(8);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getOperation_Parameters() {
+        return (EReference)operationEClass.getEStructuralFeatures().get(9);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getOperation_Faults() {
+        return (EReference)operationEClass.getEStructuralFeatures().get(10);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getDeployableItem() {
         return deployableItemEClass;
     }
@@ -355,7 +613,7 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getService_TypeMappings() {
+    public EReference getService_Operations() {
         return (EReference)serviceEClass.getEStructuralFeatures().get(4);
     }
 
@@ -364,7 +622,7 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getService_BeanMappings() {
+    public EReference getService_TypeMappings() {
         return (EReference)serviceEClass.getEStructuralFeatures().get(5);
     }
 
@@ -373,8 +631,17 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getService_ArrayMappings() {
+    public EReference getService_BeanMappings() {
         return (EReference)serviceEClass.getEStructuralFeatures().get(6);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getService_ArrayMappings() {
+        return (EReference)serviceEClass.getEStructuralFeatures().get(7);
     }
 
     /**
@@ -411,6 +678,15 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      */
     public EEnum getStyle() {
         return styleEEnum;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EEnum getParameterMode() {
+        return parameterModeEEnum;
     }
 
     /**
@@ -459,6 +735,34 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
 
         beanMappingEClass = createEClass(BEAN_MAPPING);
 
+        operationParameterEClass = createEClass(OPERATION_PARAMETER);
+        createEAttribute(operationParameterEClass, OPERATION_PARAMETER__NAME);
+        createEAttribute(operationParameterEClass, OPERATION_PARAMETER__QNAME);
+        createEAttribute(operationParameterEClass, OPERATION_PARAMETER__TYPE);
+        createEAttribute(operationParameterEClass, OPERATION_PARAMETER__MODE);
+        createEAttribute(operationParameterEClass, OPERATION_PARAMETER__IN_HEADER);
+        createEAttribute(operationParameterEClass, OPERATION_PARAMETER__OUT_HEADER);
+        createEAttribute(operationParameterEClass, OPERATION_PARAMETER__ITEM_QNAME);
+
+        faultEClass = createEClass(FAULT);
+        createEAttribute(faultEClass, FAULT__NAME);
+        createEAttribute(faultEClass, FAULT__QNAME);
+        createEAttribute(faultEClass, FAULT__CLASS);
+        createEAttribute(faultEClass, FAULT__TYPE);
+
+        operationEClass = createEClass(OPERATION);
+        createEAttribute(operationEClass, OPERATION__NAME);
+        createEAttribute(operationEClass, OPERATION__QNAME);
+        createEAttribute(operationEClass, OPERATION__RETURN_QNAME);
+        createEAttribute(operationEClass, OPERATION__RETURN_TYPE);
+        createEAttribute(operationEClass, OPERATION__RETURN_ITEM_QNAME);
+        createEAttribute(operationEClass, OPERATION__RETURN_ITEM_TYPE);
+        createEAttribute(operationEClass, OPERATION__SOAP_ACTION);
+        createEAttribute(operationEClass, OPERATION__MEP);
+        createEAttribute(operationEClass, OPERATION__RETURN_HEADER);
+        createEReference(operationEClass, OPERATION__PARAMETERS);
+        createEReference(operationEClass, OPERATION__FAULTS);
+
         deployableItemEClass = createEClass(DEPLOYABLE_ITEM);
         createEAttribute(deployableItemEClass, DEPLOYABLE_ITEM__NAME);
 
@@ -467,6 +771,7 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
         createEAttribute(serviceEClass, SERVICE__USE);
         createEAttribute(serviceEClass, SERVICE__STYLE);
         createEReference(serviceEClass, SERVICE__PARAMETERS);
+        createEReference(serviceEClass, SERVICE__OPERATIONS);
         createEReference(serviceEClass, SERVICE__TYPE_MAPPINGS);
         createEReference(serviceEClass, SERVICE__BEAN_MAPPINGS);
         createEReference(serviceEClass, SERVICE__ARRAY_MAPPINGS);
@@ -477,6 +782,7 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
         // Create enums
         useEEnum = createEEnum(USE);
         styleEEnum = createEEnum(STYLE);
+        parameterModeEEnum = createEEnum(PARAMETER_MODE);
     }
 
     /**
@@ -530,6 +836,34 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
 
         initEClass(beanMappingEClass, BeanMapping.class, "BeanMapping", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+        initEClass(operationParameterEClass, OperationParameter.class, "OperationParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getOperationParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperationParameter_Qname(), theXMLTypePackage.getQName(), "qname", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperationParameter_Type(), theXMLTypePackage.getQName(), "type", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperationParameter_Mode(), this.getParameterMode(), "mode", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperationParameter_InHeader(), ecorePackage.getEBooleanObject(), "inHeader", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperationParameter_OutHeader(), ecorePackage.getEBooleanObject(), "outHeader", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperationParameter_ItemQName(), theXMLTypePackage.getQName(), "itemQName", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(faultEClass, Fault.class, "Fault", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getFault_Name(), ecorePackage.getEString(), "name", null, 0, 1, Fault.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getFault_Qname(), theXMLTypePackage.getQName(), "qname", null, 0, 1, Fault.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getFault_Class(), ecorePackage.getEString(), "class", null, 0, 1, Fault.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getFault_Type(), theXMLTypePackage.getQName(), "type", null, 0, 1, Fault.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(operationEClass, Operation.class, "Operation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getOperation_Name(), ecorePackage.getEString(), "name", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_Qname(), theXMLTypePackage.getQName(), "qname", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_ReturnQName(), theXMLTypePackage.getQName(), "returnQName", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_ReturnType(), theXMLTypePackage.getQName(), "returnType", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_ReturnItemQName(), theXMLTypePackage.getQName(), "returnItemQName", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_ReturnItemType(), theXMLTypePackage.getQName(), "returnItemType", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_SoapAction(), ecorePackage.getEString(), "soapAction", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_Mep(), ecorePackage.getEString(), "mep", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getOperation_ReturnHeader(), ecorePackage.getEBooleanObject(), "returnHeader", null, 0, 1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getOperation_Parameters(), this.getOperationParameter(), null, "parameters", null, 0, -1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getOperation_Faults(), this.getFault(), null, "faults", null, 0, -1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
         initEClass(deployableItemEClass, DeployableItem.class, "DeployableItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getDeployableItem_Name(), ecorePackage.getEString(), "name", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -538,9 +872,14 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
         initEAttribute(getService_Use(), this.getUse(), "use", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getService_Style(), this.getStyle(), "style", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getService_Operations(), this.getOperation(), null, "operations", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_TypeMappings(), this.getTypeMapping(), null, "typeMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_BeanMappings(), this.getBeanMapping(), null, "beanMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_ArrayMappings(), this.getArrayMapping(), null, "arrayMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        EOperation op = addEOperation(serviceEClass, null, "setParameter");
+        addEParameter(op, ecorePackage.getEString(), "name", 1, 1);
+        addEParameter(op, ecorePackage.getEString(), "value", 1, 1);
 
         initEClass(deploymentEClass, Deployment.class, "Deployment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getDeployment_Services(), this.getService(), null, "services", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -555,6 +894,11 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
         addEEnumLiteral(styleEEnum, Style.DOCUMENT_LITERAL);
         addEEnumLiteral(styleEEnum, Style.WRAPPED_LITERAL);
         addEEnumLiteral(styleEEnum, Style.MESSAGE_LITERAL);
+
+        initEEnum(parameterModeEEnum, ParameterMode.class, "ParameterMode");
+        addEEnumLiteral(parameterModeEEnum, ParameterMode.IN_LITERAL);
+        addEEnumLiteral(parameterModeEEnum, ParameterMode.OUT_LITERAL);
+        addEEnumLiteral(parameterModeEEnum, ParameterMode.INOUT_LITERAL);
 
         // Create resource
         createResource(eNS_URI);
@@ -572,6 +916,38 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
      */
     protected void createExtendedMetaDataAnnotations() {
         String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";		
+        addAnnotation
+          (getOperation_Parameters(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "parameter",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getOperation_Faults(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "fault",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getService_Parameters(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "parameter",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getService_Operations(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "operation",
+             "namespace", "##targetNamespace"
+           });		
         addAnnotation
           (getService_TypeMappings(), 
            source, 

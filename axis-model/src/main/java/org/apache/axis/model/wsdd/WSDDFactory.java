@@ -62,6 +62,33 @@ public interface WSDDFactory extends EFactory {
     BeanMapping createBeanMapping();
 
     /**
+     * Returns a new object of class '<em>Operation Parameter</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Operation Parameter</em>'.
+     * @generated
+     */
+    OperationParameter createOperationParameter();
+
+    /**
+     * Returns a new object of class '<em>Fault</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Fault</em>'.
+     * @generated
+     */
+    Fault createFault();
+
+    /**
+     * Returns a new object of class '<em>Operation</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Operation</em>'.
+     * @generated
+     */
+    Operation createOperation();
+
+    /**
      * Returns a new object of class '<em>Service</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

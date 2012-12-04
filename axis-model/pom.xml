@@ -43,11 +43,11 @@
             <artifactId>ecore-xmi</artifactId>
             <version>2.2.3</version>
         </dependency>
-        <!-- dependency>
+        <dependency>
             <groupId>org.eclipse.xsd</groupId>
             <artifactId>xsd</artifactId>
             <version>2.2.3</version>
-        </dependency -->
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -73,7 +73,7 @@
                                    </includes>
                                 </filter> 
                             </filters>
-                            <minimizeJar>true</minimizeJar>
+                            <!-- minimizeJar>true</minimizeJar -->
                             <relocations>
                                 <relocation>
                                     <pattern>org.eclipse.emf</pattern>

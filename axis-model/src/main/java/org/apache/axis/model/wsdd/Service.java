@@ -20,6 +20,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.apache.axis.model.wsdd.Service#getUse <em>Use</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.Service#getStyle <em>Style</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.Service#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.Service#getOperations <em>Operations</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.Service#getTypeMappings <em>Type Mappings</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.Service#getBeanMappings <em>Bean Mappings</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.Service#getArrayMappings <em>Array Mappings</em>}</li>
@@ -127,9 +128,27 @@ public interface Service extends DeployableItem {
      * @return the value of the '<em>Parameters</em>' containment reference list.
      * @see org.apache.axis.model.wsdd.WSDDPackage#getService_Parameters()
      * @model type="org.apache.axis.model.wsdd.Parameter" containment="true"
+     *        extendedMetaData="kind='element' name='parameter' namespace='##targetNamespace'"
      * @generated
      */
     EList getParameters();
+
+    /**
+     * Returns the value of the '<em><b>Operations</b></em>' containment reference list.
+     * The list contents are of type {@link org.apache.axis.model.wsdd.Operation}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Operations</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Operations</em>' containment reference list.
+     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_Operations()
+     * @model type="org.apache.axis.model.wsdd.Operation" containment="true"
+     *        extendedMetaData="kind='element' name='operation' namespace='##targetNamespace'"
+     * @generated
+     */
+    EList getOperations();
 
     /**
      * Returns the value of the '<em><b>Type Mappings</b></em>' containment reference list.
@@ -181,5 +200,13 @@ public interface Service extends DeployableItem {
      * @generated
      */
     EList getArrayMappings();
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @model nameRequired="true" valueRequired="true"
+     * @generated
+     */
+    void setParameter(String name, String value);
 
 } // Service

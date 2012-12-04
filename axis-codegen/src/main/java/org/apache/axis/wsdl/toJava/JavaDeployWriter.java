@@ -22,6 +22,14 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Scope;
 import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
+import org.apache.axis.model.wsdd.ArrayMapping;
+import org.apache.axis.model.wsdd.Deployment;
+import org.apache.axis.model.wsdd.Fault;
+import org.apache.axis.model.wsdd.OperationParameter;
+import org.apache.axis.model.wsdd.ParameterMode;
+import org.apache.axis.model.wsdd.TypeMapping;
+import org.apache.axis.model.wsdd.WSDDFactory;
+import org.apache.axis.model.wsdd.WSDDUtil;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
@@ -31,6 +39,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;
@@ -135,10 +144,6 @@ public class JavaDeployWriter extends JavaWriter {
         pw.println(Messages.getMessage("deploy07"));
         pw.println(Messages.getMessage("deploy09"));
         pw.println();
-        pw.println("<deployment");
-        pw.println("    xmlns=\"" + WSDDConstants.URI_WSDD + "\"");
-        pw.println("    xmlns:" + WSDDConstants.NS_PREFIX_WSDD_JAVA + "=\""
-                + WSDDConstants.URI_WSDD_JAVA + "\">");
     }    // writeFileHeader
 
     /**
@@ -148,8 +153,9 @@ public class JavaDeployWriter extends JavaWriter {
      * @throws IOException
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
-        writeDeployServices(pw);
-        pw.println("</deployment>");
+        Deployment deployment = WSDDFactory.eINSTANCE.createDeployment();
+        writeDeployServices(deployment);
+        WSDDUtil.write(deployment, pw);
     }    // writeFileBody
 
     /**
@@ -158,7 +164,7 @@ public class JavaDeployWriter extends JavaWriter {
      * @param pw
      * @throws IOException
      */
-    protected void writeDeployServices(PrintWriter pw) throws IOException {
+    protected void writeDeployServices(Deployment deployment) throws IOException {
 
         // deploy the ports on each service
         Map serviceMap = definition.getServices();
@@ -166,13 +172,6 @@ public class JavaDeployWriter extends JavaWriter {
         for (Iterator mapIterator = serviceMap.values().iterator();
              mapIterator.hasNext();) {
             Service myService = (Service) mapIterator.next();
-
-            pw.println();
-            pw.println(
-                    "  <!-- "
-                    + Messages.getMessage(
-                            "wsdlService00", myService.getQName().getLocalPart()) + " -->");
-            pw.println();
 
             for (Iterator portIterator = myService.getPorts().values().iterator();
                  portIterator.hasNext();) {
@@ -185,7 +184,7 @@ public class JavaDeployWriter extends JavaWriter {
                     continue;
                 }
 
-                writeDeployPort(pw, myPort, myService, bEntry);
+                writeDeployPort(deployment, myPort, myService, bEntry);
             }
         }
     }    // writeDeployServices
@@ -201,20 +200,19 @@ public class JavaDeployWriter extends JavaWriter {
      * @throws IOException
      */
     protected void writeDeployTypes(
-            PrintWriter pw, Binding binding, boolean hasLiteral, boolean hasMIME, Use use)
+            org.apache.axis.model.wsdd.Service service, Binding binding, boolean hasLiteral, boolean hasMIME, Use use)
             throws IOException {
-
-        pw.println();
 
         if (hasMIME) {
             QName bQName = binding.getQName();
 
-            writeTypeMapping(
-                    pw, bQName.getNamespaceURI(), "DataHandler",
-                    "javax.activation.DataHandler",
-                    "org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory",
-                    "org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory",
-                    use.getEncoding());
+            TypeMapping typeMapping = WSDDFactory.eINSTANCE.createTypeMapping();
+            typeMapping.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(bQName.getNamespaceURI(), "DataHandler", "ns"));
+            typeMapping.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, "javax.activation.DataHandler", WSDDConstants.NS_PREFIX_WSDD_JAVA));
+            typeMapping.setSerializer("org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory");
+            typeMapping.setDeserializer("org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory");
+            typeMapping.setEncodingStyle(use.getEncoding());
+            service.getTypeMappings().add(typeMapping);
         }
 
         Map types = symbolTable.getTypeIndex();
@@ -282,68 +280,25 @@ public class JavaDeployWriter extends JavaWriter {
 
                 if (innerType == null) {
                     // no arrays
-                    writeTypeMapping(pw, namespaceURI, localPart, javaType,
-                        serializerFactory, deserializerFactory,
-                        encodingStyle);
+                    TypeMapping typeMapping = WSDDFactory.eINSTANCE.createTypeMapping();
+                    typeMapping.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(namespaceURI, localPart, "ns"));
+                    typeMapping.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, javaType, WSDDConstants.NS_PREFIX_WSDD_JAVA));
+                    typeMapping.setSerializer(serializerFactory);
+                    typeMapping.setDeserializer(deserializerFactory);
+                    typeMapping.setEncodingStyle(encodingStyle);
+                    service.getTypeMappings().add(typeMapping);
                 } else {
                     // arrays
-                    writeArrayTypeMapping(pw, namespaceURI, localPart, javaType,
-                            encodingStyle, innerType);
+                    ArrayMapping arrayMapping = WSDDFactory.eINSTANCE.createArrayMapping();
+                    arrayMapping.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(namespaceURI, localPart, "ns"));
+                    arrayMapping.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, javaType, WSDDConstants.NS_PREFIX_WSDD_JAVA));
+                    arrayMapping.setEncodingStyle(encodingStyle);
+                    arrayMapping.setInnerType(new org.apache.axis.model.ecore.xml.type.internal.QName(innerType.getNamespaceURI(), innerType.getLocalPart(), "cmp-ns"));
+                    service.getArrayMappings().add(arrayMapping);
                 }
             }
         }
     }    // writeDeployTypes
-
-    /**
-     * Raw routine that writes out the typeMapping.
-     *
-     * @param pw
-     * @param namespaceURI
-     * @param localPart
-     * @param javaType
-     * @param serializerFactory
-     * @param deserializerFactory
-     * @param encodingStyle
-     * @throws IOException
-     */
-    protected void writeArrayTypeMapping(
-            PrintWriter pw, String namespaceURI, String localPart, String javaType, String encodingStyle, QName innerType)
-            throws IOException {
-
-        pw.println("      <arrayMapping");
-        pw.println("        xmlns:ns=\"" + namespaceURI + "\"");
-        pw.println("        qname=\"ns:" + localPart + '"');
-        pw.println("        type=\"java:" + javaType + '"');
-        pw.println("        innerType=\"" + Utils.genQNameAttributeString(innerType, "cmp-ns") + '"');
-        pw.println("        encodingStyle=\"" + encodingStyle + "\"");
-        pw.println("      />");
-    }
-
-    /**
-     * Raw routine that writes out the typeMapping.
-     *
-     * @param pw
-     * @param namespaceURI
-     * @param localPart
-     * @param javaType
-     * @param serializerFactory
-     * @param deserializerFactory
-     * @param encodingStyle
-     * @throws IOException
-     */
-    protected void writeTypeMapping(
-            PrintWriter pw, String namespaceURI, String localPart, String javaType, String serializerFactory, String deserializerFactory, String encodingStyle)
-            throws IOException {
-
-        pw.println("      <typeMapping");
-        pw.println("        xmlns:ns=\"" + namespaceURI + "\"");
-        pw.println("        qname=\"ns:" + localPart + '"');
-        pw.println("        type=\"java:" + javaType + '"');
-        pw.println("        serializer=\"" + serializerFactory + "\"");
-        pw.println("        deserializer=\"" + deserializerFactory + "\"");
-        pw.println("        encodingStyle=\"" + encodingStyle + "\"");
-        pw.println("      />");
-    }
 
     /**
      * Write out deployment and undeployment instructions for given WSDL port
@@ -355,14 +310,13 @@ public class JavaDeployWriter extends JavaWriter {
      * @throws IOException
      */
     protected void writeDeployPort(
-            PrintWriter pw, Port port, Service service, BindingEntry bEntry)
+            Deployment deployment, Port port, Service service, BindingEntry bEntry)
             throws IOException {
 
         String serviceName = port.getName();
         boolean hasLiteral = bEntry.hasLiteral();
         boolean hasMIME = Utils.hasMIME(bEntry);
-        String prefix = WSDDConstants.NS_PREFIX_WSDD_JAVA;
-        String styleStr = "";
+        Style style;
         Iterator iterator =
                 bEntry.getBinding().getExtensibilityElements().iterator();
 
@@ -375,28 +329,26 @@ public class JavaDeployWriter extends JavaWriter {
         }
 
         if (symbolTable.isWrapped()) {
-            styleStr = " style=\"" + Style.WRAPPED + "\"";
+            style = Style.WRAPPED;
             use = Use.LITERAL;
         } else {
-            styleStr = " style=\"" + bEntry.getBindingStyle().getName() + "\"";
+            style = bEntry.getBindingStyle();
 
             if (hasLiteral) {
                 use = Use.LITERAL;
             }
         }
 
-        String useStr = " use=\"" + use + "\"";
-
-        pw.println("  <service name=\"" + serviceName + "\" provider=\""
-                + prefix + ":RPC" + "\"" + styleStr + useStr + ">");
-        pw.println("      <parameter name=\"wsdlTargetNamespace\" value=\""
-                + service.getQName().getNamespaceURI() + "\"/>");
-        pw.println("      <parameter name=\"wsdlServiceElement\" value=\""
-                + service.getQName().getLocalPart() + "\"/>");
+        org.apache.axis.model.wsdd.Service wsddService = WSDDFactory.eINSTANCE.createService();
+        wsddService.setName(serviceName);
+        wsddService.setProvider(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, "RPC", WSDDConstants.NS_PREFIX_WSDD_JAVA));
+        wsddService.setStyle(org.apache.axis.model.wsdd.Style.getByName(style.getName()));
+        wsddService.setUse(org.apache.axis.model.wsdd.Use.getByName(use.getName()));
+        wsddService.setParameter("wsdlTargetNamespace", service.getQName().getNamespaceURI());
+        wsddService.setParameter("wsdlServiceElement", service.getQName().getLocalPart());
         // MIME attachments don't work with multiref, so turn it off.
         if (hasMIME) {
-            pw.println(
-                    "      <parameter name=\"sendMultiRefs\" value=\"false\"/>");
+            wsddService.setParameter("sendMultiRefs", "false");
         }
         ArrayList qualified = new ArrayList();
         ArrayList unqualified = new ArrayList();
@@ -410,31 +362,16 @@ public class JavaDeployWriter extends JavaWriter {
             }
         }
         if(qualified.size()>0){
-            pw.print("      <parameter name=\"schemaQualified\" value=\"");
-            for(int i=0;i<qualified.size();i++){
-                pw.print(qualified.get(i));
-                if(i != qualified.size()-1){
-                    pw.print(',');
-                }
-            }
-            pw.println("\"/>");
+            wsddService.setParameter("schemaQualified", StringUtils.join(qualified, ','));
         }
         if(unqualified.size()>0){
-            pw.print("      <parameter name=\"schemaUnqualified\" value=\"");
-            for(int i=0;i<unqualified.size();i++){
-                pw.print(unqualified.get(i));
-                if(i != unqualified.size()-1){
-                    pw.print(',');
-                }
-            }
-            pw.println("\"/>");
+            wsddService.setParameter("schemaUnqualified", StringUtils.join(unqualified, ','));
         }
-        pw.println("      <parameter name=\"wsdlServicePort\" value=\""
-                + serviceName + "\"/>");
+        wsddService.setParameter("wsdlServicePort", serviceName);
 
-        writeDeployBinding(pw, bEntry);
-        writeDeployTypes(pw, bEntry.getBinding(), hasLiteral, hasMIME, use);
-        pw.println("  </service>");
+        writeDeployBinding(wsddService, bEntry);
+        writeDeployTypes(wsddService, bEntry.getBinding(), hasLiteral, hasMIME, use);
+        deployment.getServices().add(wsddService);
     }    // writeDeployPort
 
     /**
@@ -444,7 +381,7 @@ public class JavaDeployWriter extends JavaWriter {
      * @param bEntry
      * @throws IOException
      */
-    protected void writeDeployBinding(PrintWriter pw, BindingEntry bEntry)
+    protected void writeDeployBinding(org.apache.axis.model.wsdd.Service service, BindingEntry bEntry)
             throws IOException {
 
         Binding binding = bEntry.getBinding();
@@ -461,14 +398,9 @@ public class JavaDeployWriter extends JavaWriter {
 				 className += "Impl";
 		 }
 
-        pw.println("      <parameter name=\"className\" value=\"" + className
-                + "\"/>");
-
-        pw.println("      <parameter name=\"wsdlPortType\" value=\""
-                + binding.getPortType().getQName().getLocalPart() + "\"/>");
-
-        pw.println("      <parameter name=\"typeMappingVersion\" value=\""
-                   + emitter.getTypeMappingVersion() + "\"/>");
+        service.setParameter("className", className);
+        service.setParameter("wsdlPortType", binding.getPortType().getQName().getLocalPart());
+        service.setParameter("typeMappingVersion", emitter.getTypeMappingVersion());
 
         HashSet allowedMethods = new HashSet();
 
@@ -549,40 +481,19 @@ public class JavaDeployWriter extends JavaWriter {
                     String SOAPAction = Utils.getOperationSOAPAction(bindingOper);
 
                     // Write the operation metadata
-                    writeOperation(pw, javaOperName, elementQName, returnQName,
+                    writeOperation(service, javaOperName, elementQName, returnQName,
                             returnType, params, binding.getQName(),
                             faults, SOAPAction);
                 }
             }
         }
 
-        pw.print("      <parameter name=\"allowedMethods\" value=\"");
-
-        if (allowedMethods.isEmpty()) {
-            pw.println("*\"/>");
-        } else {
-            boolean first = true;
-
-            for (Iterator i = allowedMethods.iterator(); i.hasNext();) {
-                String method = (String) i.next();
-
-                if (first) {
-                    pw.print(method);
-
-                    first = false;
-                } else {
-                    pw.print(" " + method);
-                }
-            }
-
-            pw.println("\"/>");
-        }
+        service.setParameter("allowedMethods", allowedMethods.isEmpty() ? "*" : StringUtils.join(allowedMethods, ' '));
 
         Scope scope = emitter.getScope();
 
         if (scope != null) {
-            pw.println("      <parameter name=\"scope\" value=\""
-                    + scope.getName() + "\"/>");
+            service.setParameter("scope", scope.getName());
         }
     }    // writeDeployBinding
 
@@ -598,30 +509,26 @@ public class JavaDeployWriter extends JavaWriter {
      * @param bindingQName
      * @param faults
      */
-    protected void writeOperation(PrintWriter pw, String javaOperName,
+    protected void writeOperation(org.apache.axis.model.wsdd.Service service, String javaOperName,
                                   QName elementQName, QName returnQName,
                                   QName returnType, Parameters params,
                                   QName bindingQName, ArrayList faults,
                                   String SOAPAction) {
 
-        pw.print("      <operation name=\"" + javaOperName + "\"");
+        org.apache.axis.model.wsdd.Operation operation = WSDDFactory.eINSTANCE.createOperation();
+        
+        operation.setName(javaOperName);
 
         if (elementQName != null) {
-            pw.print(" qname=\""
-                    + Utils.genQNameAttributeString(elementQName, "operNS")
-                    + "\"");
+            operation.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(elementQName.getNamespaceURI(), elementQName.getLocalPart(), "operNS"));
         }
 
         if (returnQName != null) {
-            pw.print(" returnQName=\""
-                    + Utils.genQNameAttributeStringWithLastLocalPart(returnQName, "retNS")
-                    + "\"");
+            operation.setReturnQName(new org.apache.axis.model.ecore.xml.type.internal.QName(returnQName.getNamespaceURI(), Utils.getLastLocalPart(returnQName.getLocalPart()), "retNS"));
         }
 
         if (returnType != null) {
-            pw.print(" returnType=\""
-                    + Utils.genQNameAttributeString(returnType, "rtns")
-                    + "\"");
+            operation.setReturnQName(new org.apache.axis.model.ecore.xml.type.internal.QName(returnType.getNamespaceURI(), returnType.getLocalPart(), "rtns"));
         }
 
         Parameter retParam = params.returnParam;
@@ -629,38 +536,28 @@ public class JavaDeployWriter extends JavaWriter {
             TypeEntry type = retParam.getType();
             QName returnItemQName = Utils.getItemQName(type);
             if (returnItemQName != null) {
-                pw.print(" returnItemQName=\"");
-                pw.print(Utils.genQNameAttributeString(returnItemQName, "tns"));
-                pw.print("\"");
+                operation.setReturnItemQName(new org.apache.axis.model.ecore.xml.type.internal.QName(returnItemQName.getNamespaceURI(), returnItemQName.getLocalPart(), "tns"));
             }
             QName returnItemType = Utils.getItemType(type);
             if (returnItemType != null && use == Use.ENCODED) {
-                    pw.print(" returnItemType=\"");
-                    pw.print(Utils.genQNameAttributeString(returnItemType, "tns2"));
-                    pw.print("\"");
+                operation.setReturnItemType(new org.apache.axis.model.ecore.xml.type.internal.QName(returnItemType.getNamespaceURI(), returnItemType.getLocalPart(), "tns2"));
             }
         }
 
         if (SOAPAction != null) {
-            pw.print(" soapAction=\""
-                    + SOAPAction
-                    + "\"");
+            operation.setSoapAction(SOAPAction);
         }
 
         if (!OperationType.REQUEST_RESPONSE.equals(params.mep)) {
             String mepString = getMepString(params.mep);
             if (mepString != null) {
-                pw.print(" mep=\""
-                         + mepString
-                         + "\"");
+                operation.setMep(mepString);
             }
         }
 
         if ((params.returnParam != null) && params.returnParam.isOutHeader()) {
-            pw.print(" returnHeader=\"true\"");
+            operation.setReturnHeader(Boolean.TRUE);
         }
-
-        pw.println(" >");
 
         Vector paramList = params.list;
 
@@ -671,41 +568,36 @@ public class JavaDeployWriter extends JavaWriter {
             QName paramQName = param.getQName();
             QName paramType = Utils.getXSIType(param);
 
-            pw.print("        <parameter");
+            OperationParameter parameter = WSDDFactory.eINSTANCE.createOperationParameter();
 
             if (paramQName == null) {
-                pw.print(" name=\"" + param.getName() + "\"");
+                parameter.setName(param.getName());
             } else {
-                pw.print(" qname=\""
-                        + Utils.genQNameAttributeStringWithLastLocalPart(paramQName, "pns")
-                        + "\"");
+                parameter.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(paramQName.getNamespaceURI(), Utils.getLastLocalPart(paramQName.getLocalPart()), "pns"));
             }
 
-            pw.print(" type=\""
-                    + Utils.genQNameAttributeString(paramType, "tns") + "\"");
+            parameter.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(paramType.getNamespaceURI(), paramType.getLocalPart(), "tns"));
 
             // Get the parameter mode
             if (param.getMode() != Parameter.IN) {
-                pw.print(" mode=\"" + getModeString(param.getMode()) + "\"");
+                parameter.setMode(ParameterMode.get(param.getMode()));
             }
 
             // Is this a header?
             if (param.isInHeader()) {
-                pw.print(" inHeader=\"true\"");
+                parameter.setInHeader(Boolean.TRUE);
             }
 
             if (param.isOutHeader()) {
-                pw.print(" outHeader=\"true\"");
+                parameter.setOutHeader(Boolean.TRUE);
             }
 
             QName itemQName = Utils.getItemQName(param.getType());
             if (itemQName != null) {
-                pw.print(" itemQName=\"");
-                pw.print(Utils.genQNameAttributeString(itemQName, "itns"));
-                pw.print("\"");
+                parameter.setItemQName(new org.apache.axis.model.ecore.xml.type.internal.QName(itemQName.getNamespaceURI(), itemQName.getLocalPart(), "itns"));
             }
 
-            pw.println("/>");
+            operation.getParameters().add(parameter);
         }
 
         if (faults != null) {
@@ -718,39 +610,18 @@ public class JavaDeployWriter extends JavaWriter {
                             Utils.getFullExceptionName(faultInfo.getMessage(),
                                     symbolTable);
 
-                    pw.print("        <fault");
-                    pw.print(" name=\"" + faultInfo.getName() + "\"");
-                    pw.print(" qname=\""
-                            + Utils.genQNameAttributeString(faultQName, "fns")
-                            + "\"");
-                    pw.print(" class=\"" + className + "\"");
-                    pw.print(
-                            " type=\""
-                            + Utils.genQNameAttributeString(
-                                    faultInfo.getXMLType(), "tns") + "\"");
-                    pw.println("/>");
+                    Fault fault = WSDDFactory.eINSTANCE.createFault();
+                    fault.setName(faultInfo.getName());
+                    fault.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(faultQName.getNamespaceURI(), faultQName.getLocalPart(), "fns"));
+                    fault.setClass(className);
+                    QName type = faultInfo.getXMLType();
+                    fault.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(type.getNamespaceURI(), type.getLocalPart(), "tns"));
+                    operation.getFaults().add(fault);
                 }
             }
         }
 
-        pw.println("      </operation>");
-    }
-
-    /**
-     * Method getModeString
-     *
-     * @param mode
-     * @return
-     */
-    public String getModeString(byte mode) {
-
-        if (mode == Parameter.IN) {
-            return "IN";
-        } else if (mode == Parameter.INOUT) {
-            return "INOUT";
-        } else {
-            return "OUT";
-        }
+        service.getOperations().add(operation);
     }
 
     /**

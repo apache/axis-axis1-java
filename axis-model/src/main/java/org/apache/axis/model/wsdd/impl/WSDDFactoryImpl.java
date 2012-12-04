@@ -64,6 +64,9 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
             case WSDDPackage.TYPE_MAPPING: return createTypeMapping();
             case WSDDPackage.ARRAY_MAPPING: return createArrayMapping();
             case WSDDPackage.BEAN_MAPPING: return createBeanMapping();
+            case WSDDPackage.OPERATION_PARAMETER: return createOperationParameter();
+            case WSDDPackage.FAULT: return createFault();
+            case WSDDPackage.OPERATION: return createOperation();
             case WSDDPackage.SERVICE: return createService();
             case WSDDPackage.DEPLOYMENT: return createDeployment();
             default:
@@ -82,6 +85,8 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
                 return createUseFromString(eDataType, initialValue);
             case WSDDPackage.STYLE:
                 return createStyleFromString(eDataType, initialValue);
+            case WSDDPackage.PARAMETER_MODE:
+                return createParameterModeFromString(eDataType, initialValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -98,6 +103,8 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
                 return convertUseToString(eDataType, instanceValue);
             case WSDDPackage.STYLE:
                 return convertStyleToString(eDataType, instanceValue);
+            case WSDDPackage.PARAMETER_MODE:
+                return convertParameterModeToString(eDataType, instanceValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -141,6 +148,36 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public BeanMapping createBeanMapping() {
         BeanMappingImpl beanMapping = new BeanMappingImpl();
         return beanMapping;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public OperationParameter createOperationParameter() {
+        OperationParameterImpl operationParameter = new OperationParameterImpl();
+        return operationParameter;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Fault createFault() {
+        FaultImpl fault = new FaultImpl();
+        return fault;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Operation createOperation() {
+        OperationImpl operation = new OperationImpl();
+        return operation;
     }
 
     /**
@@ -200,6 +237,26 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      * @generated
      */
     public String convertStyleToString(EDataType eDataType, Object instanceValue) {
+        return instanceValue == null ? null : instanceValue.toString();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public ParameterMode createParameterModeFromString(EDataType eDataType, String initialValue) {
+        ParameterMode result = ParameterMode.get(initialValue);
+        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+        return result;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String convertParameterModeToString(EDataType eDataType, Object instanceValue) {
         return instanceValue == null ? null : instanceValue.toString();
     }
 
