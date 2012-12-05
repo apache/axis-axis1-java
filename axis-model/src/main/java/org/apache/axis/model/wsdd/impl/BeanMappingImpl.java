@@ -7,7 +7,6 @@
 package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.BeanMapping;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -36,7 +35,7 @@ public class BeanMappingImpl extends MappingImpl implements BeanMapping {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.BEAN_MAPPING;
+        return WSDDPackageImpl.Literals.BEAN_MAPPING;
     }
 
 } //BeanMappingImpl

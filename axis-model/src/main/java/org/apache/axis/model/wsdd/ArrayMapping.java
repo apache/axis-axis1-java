@@ -19,7 +19,6 @@ package org.apache.axis.model.wsdd;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getArrayMapping()
  * @model
  * @generated
  */
@@ -34,7 +33,6 @@ public interface ArrayMapping extends Mapping {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Inner Type</em>' attribute.
      * @see #setInnerType(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getArrayMapping_InnerType()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */

@@ -7,7 +7,6 @@
 package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.DeployableItem;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -62,7 +61,7 @@ public abstract class DeployableItemImpl extends EObjectImpl implements Deployab
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.DEPLOYABLE_ITEM;
+        return WSDDPackageImpl.Literals.DEPLOYABLE_ITEM;
     }
 
     /**
@@ -90,7 +89,7 @@ public abstract class DeployableItemImpl extends EObjectImpl implements Deployab
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYABLE_ITEM__NAME:
+            case WSDDPackageImpl.DEPLOYABLE_ITEM__NAME:
                 return getName();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -103,7 +102,7 @@ public abstract class DeployableItemImpl extends EObjectImpl implements Deployab
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYABLE_ITEM__NAME:
+            case WSDDPackageImpl.DEPLOYABLE_ITEM__NAME:
                 setName((String)newValue);
                 return;
         }
@@ -117,7 +116,7 @@ public abstract class DeployableItemImpl extends EObjectImpl implements Deployab
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYABLE_ITEM__NAME:
+            case WSDDPackageImpl.DEPLOYABLE_ITEM__NAME:
                 setName(NAME_EDEFAULT);
                 return;
         }
@@ -131,7 +130,7 @@ public abstract class DeployableItemImpl extends EObjectImpl implements Deployab
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYABLE_ITEM__NAME:
+            case WSDDPackageImpl.DEPLOYABLE_ITEM__NAME:
                 return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
         }
         return super.eIsSet(featureID);

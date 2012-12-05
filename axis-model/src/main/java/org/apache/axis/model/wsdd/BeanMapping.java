@@ -13,7 +13,6 @@ package org.apache.axis.model.wsdd;
  * <!-- end-user-doc -->
  *
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getBeanMapping()
  * @model
  * @generated
  */

@@ -7,6 +7,7 @@
 package org.apache.axis.model.wsdd.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Iterator;
 
 import org.apache.axis.model.wsdd.ArrayMapping;
@@ -18,7 +19,6 @@ import org.apache.axis.model.wsdd.Style;
 import org.apache.axis.model.wsdd.TypeMapping;
 import org.apache.axis.model.wsdd.Use;
 import org.apache.axis.model.wsdd.WSDDFactory;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -176,7 +176,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.SERVICE;
+        return WSDDPackageImpl.Literals.SERVICE;
     }
 
     /**
@@ -238,7 +238,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getParameters() {
+    public List getParameters() {
         if (parameters == null) {
             parameters = new BasicInternalEList(Parameter.class);
         }
@@ -250,7 +250,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getOperations() {
+    public List getOperations() {
         if (operations == null) {
             operations = new BasicInternalEList(Operation.class);
         }
@@ -262,7 +262,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getTypeMappings() {
+    public List getTypeMappings() {
         if (typeMappings == null) {
             typeMappings = new BasicInternalEList(TypeMapping.class);
         }
@@ -274,7 +274,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getBeanMappings() {
+    public List getBeanMappings() {
         if (beanMappings == null) {
             beanMappings = new BasicInternalEList(BeanMapping.class);
         }
@@ -286,7 +286,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getArrayMappings() {
+    public List getArrayMappings() {
         if (arrayMappings == null) {
             arrayMappings = new BasicInternalEList(ArrayMapping.class);
         }
@@ -301,7 +301,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
                 return;
             }
         }
-        Parameter param = WSDDFactory.eINSTANCE.createParameter();
+        Parameter param = WSDDFactory.INSTANCE.createParameter();
         param.setName(name);
         param.setValue(value);
         getParameters().add(param);
@@ -314,15 +314,15 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case WSDDPackage.SERVICE__PARAMETERS:
+            case WSDDPackageImpl.SERVICE__PARAMETERS:
                 return ((InternalEList)getParameters()).basicRemove(otherEnd, msgs);
-            case WSDDPackage.SERVICE__OPERATIONS:
+            case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return ((InternalEList)getOperations()).basicRemove(otherEnd, msgs);
-            case WSDDPackage.SERVICE__TYPE_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
                 return ((InternalEList)getTypeMappings()).basicRemove(otherEnd, msgs);
-            case WSDDPackage.SERVICE__BEAN_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
                 return ((InternalEList)getBeanMappings()).basicRemove(otherEnd, msgs);
-            case WSDDPackage.SERVICE__ARRAY_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
                 return ((InternalEList)getArrayMappings()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -335,21 +335,21 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.SERVICE__PROVIDER:
+            case WSDDPackageImpl.SERVICE__PROVIDER:
                 return getProvider();
-            case WSDDPackage.SERVICE__USE:
+            case WSDDPackageImpl.SERVICE__USE:
                 return getUse();
-            case WSDDPackage.SERVICE__STYLE:
+            case WSDDPackageImpl.SERVICE__STYLE:
                 return getStyle();
-            case WSDDPackage.SERVICE__PARAMETERS:
+            case WSDDPackageImpl.SERVICE__PARAMETERS:
                 return getParameters();
-            case WSDDPackage.SERVICE__OPERATIONS:
+            case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return getOperations();
-            case WSDDPackage.SERVICE__TYPE_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
                 return getTypeMappings();
-            case WSDDPackage.SERVICE__BEAN_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
                 return getBeanMappings();
-            case WSDDPackage.SERVICE__ARRAY_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
                 return getArrayMappings();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -362,32 +362,32 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.SERVICE__PROVIDER:
+            case WSDDPackageImpl.SERVICE__PROVIDER:
                 setProvider(newValue);
                 return;
-            case WSDDPackage.SERVICE__USE:
+            case WSDDPackageImpl.SERVICE__USE:
                 setUse((Use)newValue);
                 return;
-            case WSDDPackage.SERVICE__STYLE:
+            case WSDDPackageImpl.SERVICE__STYLE:
                 setStyle((Style)newValue);
                 return;
-            case WSDDPackage.SERVICE__PARAMETERS:
+            case WSDDPackageImpl.SERVICE__PARAMETERS:
                 getParameters().clear();
                 getParameters().addAll((Collection)newValue);
                 return;
-            case WSDDPackage.SERVICE__OPERATIONS:
+            case WSDDPackageImpl.SERVICE__OPERATIONS:
                 getOperations().clear();
                 getOperations().addAll((Collection)newValue);
                 return;
-            case WSDDPackage.SERVICE__TYPE_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
                 getTypeMappings().clear();
                 getTypeMappings().addAll((Collection)newValue);
                 return;
-            case WSDDPackage.SERVICE__BEAN_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
                 getBeanMappings().clear();
                 getBeanMappings().addAll((Collection)newValue);
                 return;
-            case WSDDPackage.SERVICE__ARRAY_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
                 getArrayMappings().clear();
                 getArrayMappings().addAll((Collection)newValue);
                 return;
@@ -402,28 +402,28 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.SERVICE__PROVIDER:
+            case WSDDPackageImpl.SERVICE__PROVIDER:
                 setProvider(PROVIDER_EDEFAULT);
                 return;
-            case WSDDPackage.SERVICE__USE:
+            case WSDDPackageImpl.SERVICE__USE:
                 setUse(USE_EDEFAULT);
                 return;
-            case WSDDPackage.SERVICE__STYLE:
+            case WSDDPackageImpl.SERVICE__STYLE:
                 setStyle(STYLE_EDEFAULT);
                 return;
-            case WSDDPackage.SERVICE__PARAMETERS:
+            case WSDDPackageImpl.SERVICE__PARAMETERS:
                 getParameters().clear();
                 return;
-            case WSDDPackage.SERVICE__OPERATIONS:
+            case WSDDPackageImpl.SERVICE__OPERATIONS:
                 getOperations().clear();
                 return;
-            case WSDDPackage.SERVICE__TYPE_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
                 getTypeMappings().clear();
                 return;
-            case WSDDPackage.SERVICE__BEAN_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
                 getBeanMappings().clear();
                 return;
-            case WSDDPackage.SERVICE__ARRAY_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
                 getArrayMappings().clear();
                 return;
         }
@@ -437,21 +437,21 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.SERVICE__PROVIDER:
+            case WSDDPackageImpl.SERVICE__PROVIDER:
                 return PROVIDER_EDEFAULT == null ? provider != null : !PROVIDER_EDEFAULT.equals(provider);
-            case WSDDPackage.SERVICE__USE:
+            case WSDDPackageImpl.SERVICE__USE:
                 return use != USE_EDEFAULT;
-            case WSDDPackage.SERVICE__STYLE:
+            case WSDDPackageImpl.SERVICE__STYLE:
                 return style != STYLE_EDEFAULT;
-            case WSDDPackage.SERVICE__PARAMETERS:
+            case WSDDPackageImpl.SERVICE__PARAMETERS:
                 return parameters != null && !parameters.isEmpty();
-            case WSDDPackage.SERVICE__OPERATIONS:
+            case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return operations != null && !operations.isEmpty();
-            case WSDDPackage.SERVICE__TYPE_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
                 return typeMappings != null && !typeMappings.isEmpty();
-            case WSDDPackage.SERVICE__BEAN_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
                 return beanMappings != null && !beanMappings.isEmpty();
-            case WSDDPackage.SERVICE__ARRAY_MAPPINGS:
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
                 return arrayMappings != null && !arrayMappings.isEmpty();
         }
         return super.eIsSet(featureID);

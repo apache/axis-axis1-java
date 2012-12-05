@@ -8,9 +8,9 @@ package org.apache.axis.model.wsdd.impl;
 
 import java.util.Collection;
 
+import java.util.List;
 import org.apache.axis.model.wsdd.Deployment;
 import org.apache.axis.model.wsdd.Service;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -63,7 +63,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.DEPLOYMENT;
+        return WSDDPackageImpl.Literals.DEPLOYMENT;
     }
 
     /**
@@ -71,7 +71,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getServices() {
+    public List getServices() {
         if (services == null) {
             services = new BasicInternalEList(Service.class);
         }
@@ -85,7 +85,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      */
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYMENT__SERVICES:
+            case WSDDPackageImpl.DEPLOYMENT__SERVICES:
                 return ((InternalEList)getServices()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -98,7 +98,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYMENT__SERVICES:
+            case WSDDPackageImpl.DEPLOYMENT__SERVICES:
                 return getServices();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -111,7 +111,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYMENT__SERVICES:
+            case WSDDPackageImpl.DEPLOYMENT__SERVICES:
                 getServices().clear();
                 getServices().addAll((Collection)newValue);
                 return;
@@ -126,7 +126,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYMENT__SERVICES:
+            case WSDDPackageImpl.DEPLOYMENT__SERVICES:
                 getServices().clear();
                 return;
         }
@@ -140,7 +140,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.DEPLOYMENT__SERVICES:
+            case WSDDPackageImpl.DEPLOYMENT__SERVICES:
                 return services != null && !services.isEmpty();
         }
         return super.eIsSet(featureID);

@@ -7,7 +7,6 @@
 package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.TypeMapping;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -81,7 +80,7 @@ public class TypeMappingImpl extends MappingImpl implements TypeMapping {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.TYPE_MAPPING;
+        return WSDDPackageImpl.Literals.TYPE_MAPPING;
     }
 
     /**
@@ -127,9 +126,9 @@ public class TypeMappingImpl extends MappingImpl implements TypeMapping {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.TYPE_MAPPING__SERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__SERIALIZER:
                 return getSerializer();
-            case WSDDPackage.TYPE_MAPPING__DESERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__DESERIALIZER:
                 return getDeserializer();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -142,10 +141,10 @@ public class TypeMappingImpl extends MappingImpl implements TypeMapping {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.TYPE_MAPPING__SERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__SERIALIZER:
                 setSerializer((String)newValue);
                 return;
-            case WSDDPackage.TYPE_MAPPING__DESERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__DESERIALIZER:
                 setDeserializer((String)newValue);
                 return;
         }
@@ -159,10 +158,10 @@ public class TypeMappingImpl extends MappingImpl implements TypeMapping {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.TYPE_MAPPING__SERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__SERIALIZER:
                 setSerializer(SERIALIZER_EDEFAULT);
                 return;
-            case WSDDPackage.TYPE_MAPPING__DESERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__DESERIALIZER:
                 setDeserializer(DESERIALIZER_EDEFAULT);
                 return;
         }
@@ -176,9 +175,9 @@ public class TypeMappingImpl extends MappingImpl implements TypeMapping {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.TYPE_MAPPING__SERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__SERIALIZER:
                 return SERIALIZER_EDEFAULT == null ? serializer != null : !SERIALIZER_EDEFAULT.equals(serializer);
-            case WSDDPackage.TYPE_MAPPING__DESERIALIZER:
+            case WSDDPackageImpl.TYPE_MAPPING__DESERIALIZER:
                 return DESERIALIZER_EDEFAULT == null ? deserializer != null : !DESERIALIZER_EDEFAULT.equals(deserializer);
         }
         return super.eIsSet(featureID);

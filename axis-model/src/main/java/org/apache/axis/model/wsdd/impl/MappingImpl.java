@@ -7,7 +7,6 @@
 package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.Mapping;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -104,7 +103,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.MAPPING;
+        return WSDDPackageImpl.Literals.MAPPING;
     }
 
     /**
@@ -168,11 +167,11 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.MAPPING__QNAME:
+            case WSDDPackageImpl.MAPPING__QNAME:
                 return getQname();
-            case WSDDPackage.MAPPING__TYPE:
+            case WSDDPackageImpl.MAPPING__TYPE:
                 return getType();
-            case WSDDPackage.MAPPING__ENCODING_STYLE:
+            case WSDDPackageImpl.MAPPING__ENCODING_STYLE:
                 return getEncodingStyle();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -185,13 +184,13 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.MAPPING__QNAME:
+            case WSDDPackageImpl.MAPPING__QNAME:
                 setQname(newValue);
                 return;
-            case WSDDPackage.MAPPING__TYPE:
+            case WSDDPackageImpl.MAPPING__TYPE:
                 setType(newValue);
                 return;
-            case WSDDPackage.MAPPING__ENCODING_STYLE:
+            case WSDDPackageImpl.MAPPING__ENCODING_STYLE:
                 setEncodingStyle((String)newValue);
                 return;
         }
@@ -205,13 +204,13 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.MAPPING__QNAME:
+            case WSDDPackageImpl.MAPPING__QNAME:
                 setQname(QNAME_EDEFAULT);
                 return;
-            case WSDDPackage.MAPPING__TYPE:
+            case WSDDPackageImpl.MAPPING__TYPE:
                 setType(TYPE_EDEFAULT);
                 return;
-            case WSDDPackage.MAPPING__ENCODING_STYLE:
+            case WSDDPackageImpl.MAPPING__ENCODING_STYLE:
                 setEncodingStyle(ENCODING_STYLE_EDEFAULT);
                 return;
         }
@@ -225,11 +224,11 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.MAPPING__QNAME:
+            case WSDDPackageImpl.MAPPING__QNAME:
                 return QNAME_EDEFAULT == null ? qname != null : !QNAME_EDEFAULT.equals(qname);
-            case WSDDPackage.MAPPING__TYPE:
+            case WSDDPackageImpl.MAPPING__TYPE:
                 return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
-            case WSDDPackage.MAPPING__ENCODING_STYLE:
+            case WSDDPackageImpl.MAPPING__ENCODING_STYLE:
                 return ENCODING_STYLE_EDEFAULT == null ? encodingStyle != null : !ENCODING_STYLE_EDEFAULT.equals(encodingStyle);
         }
         return super.eIsSet(featureID);

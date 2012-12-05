@@ -8,7 +8,6 @@ package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.OperationParameter;
 import org.apache.axis.model.wsdd.ParameterMode;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -189,7 +188,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.OPERATION_PARAMETER;
+        return WSDDPackageImpl.Literals.OPERATION_PARAMETER;
     }
 
     /**
@@ -325,19 +324,19 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.OPERATION_PARAMETER__NAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__NAME:
                 return getName();
-            case WSDDPackage.OPERATION_PARAMETER__QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__QNAME:
                 return getQname();
-            case WSDDPackage.OPERATION_PARAMETER__TYPE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__TYPE:
                 return getType();
-            case WSDDPackage.OPERATION_PARAMETER__MODE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__MODE:
                 return getMode();
-            case WSDDPackage.OPERATION_PARAMETER__IN_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__IN_HEADER:
                 return getInHeader();
-            case WSDDPackage.OPERATION_PARAMETER__OUT_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__OUT_HEADER:
                 return getOutHeader();
-            case WSDDPackage.OPERATION_PARAMETER__ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__ITEM_QNAME:
                 return getItemQName();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -350,25 +349,25 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.OPERATION_PARAMETER__NAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__NAME:
                 setName((String)newValue);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__QNAME:
                 setQname(newValue);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__TYPE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__TYPE:
                 setType(newValue);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__MODE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__MODE:
                 setMode((ParameterMode)newValue);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__IN_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__IN_HEADER:
                 setInHeader((Boolean)newValue);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__OUT_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__OUT_HEADER:
                 setOutHeader((Boolean)newValue);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__ITEM_QNAME:
                 setItemQName(newValue);
                 return;
         }
@@ -382,25 +381,25 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.OPERATION_PARAMETER__NAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__NAME:
                 setName(NAME_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__QNAME:
                 setQname(QNAME_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__TYPE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__TYPE:
                 setType(TYPE_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__MODE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__MODE:
                 setMode(MODE_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__IN_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__IN_HEADER:
                 setInHeader(IN_HEADER_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__OUT_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__OUT_HEADER:
                 setOutHeader(OUT_HEADER_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION_PARAMETER__ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__ITEM_QNAME:
                 setItemQName(ITEM_QNAME_EDEFAULT);
                 return;
         }
@@ -414,19 +413,19 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.OPERATION_PARAMETER__NAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__NAME:
                 return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-            case WSDDPackage.OPERATION_PARAMETER__QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__QNAME:
                 return QNAME_EDEFAULT == null ? qname != null : !QNAME_EDEFAULT.equals(qname);
-            case WSDDPackage.OPERATION_PARAMETER__TYPE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__TYPE:
                 return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
-            case WSDDPackage.OPERATION_PARAMETER__MODE:
+            case WSDDPackageImpl.OPERATION_PARAMETER__MODE:
                 return mode != MODE_EDEFAULT;
-            case WSDDPackage.OPERATION_PARAMETER__IN_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__IN_HEADER:
                 return IN_HEADER_EDEFAULT == null ? inHeader != null : !IN_HEADER_EDEFAULT.equals(inHeader);
-            case WSDDPackage.OPERATION_PARAMETER__OUT_HEADER:
+            case WSDDPackageImpl.OPERATION_PARAMETER__OUT_HEADER:
                 return OUT_HEADER_EDEFAULT == null ? outHeader != null : !OUT_HEADER_EDEFAULT.equals(outHeader);
-            case WSDDPackage.OPERATION_PARAMETER__ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION_PARAMETER__ITEM_QNAME:
                 return ITEM_QNAME_EDEFAULT == null ? itemQName != null : !ITEM_QNAME_EDEFAULT.equals(itemQName);
         }
         return super.eIsSet(featureID);

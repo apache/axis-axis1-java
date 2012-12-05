@@ -6,8 +6,6 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Parameter</b></em>'.
@@ -21,11 +19,10 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getParameter()
  * @model
  * @generated
  */
-public interface Parameter extends EObject {
+public interface Parameter {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -36,7 +33,6 @@ public interface Parameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Name</em>' attribute.
      * @see #setName(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getParameter_Name()
      * @model
      * @generated
      */
@@ -62,7 +58,6 @@ public interface Parameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Value</em>' attribute.
      * @see #setValue(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getParameter_Value()
      * @model
      * @generated
      */

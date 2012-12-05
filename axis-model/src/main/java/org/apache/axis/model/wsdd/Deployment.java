@@ -6,9 +6,7 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.common.util.EList;
-
-import org.eclipse.emf.ecore.EObject;
+import java.util.List;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,11 +20,10 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getDeployment()
  * @model extendedMetaData="name='deployment' kind='element'"
  * @generated
  */
-public interface Deployment extends EObject {
+public interface Deployment {
     /**
      * Returns the value of the '<em><b>Services</b></em>' containment reference list.
      * The list contents are of type {@link org.apache.axis.model.wsdd.Service}.
@@ -37,11 +34,10 @@ public interface Deployment extends EObject {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Services</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getDeployment_Services()
      * @model type="org.apache.axis.model.wsdd.Service" containment="true"
      *        extendedMetaData="name='service' kind='element' namespace='##targetNamespace'"
      * @generated
      */
-    EList getServices();
+    List getServices();
 
 } // Deployment

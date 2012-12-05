@@ -6,8 +6,6 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Deployable Item</b></em>'.
@@ -20,11 +18,10 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getDeployableItem()
  * @model abstract="true"
  * @generated
  */
-public interface DeployableItem extends EObject {
+public interface DeployableItem {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -35,7 +32,6 @@ public interface DeployableItem extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Name</em>' attribute.
      * @see #setName(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getDeployableItem_Name()
      * @model
      * @generated
      */

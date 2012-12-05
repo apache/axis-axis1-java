@@ -7,7 +7,6 @@
 package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.Fault;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -125,7 +124,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.FAULT;
+        return WSDDPackageImpl.Literals.FAULT;
     }
 
     /**
@@ -207,13 +206,13 @@ public class FaultImpl extends EObjectImpl implements Fault {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.FAULT__NAME:
+            case WSDDPackageImpl.FAULT__NAME:
                 return getName();
-            case WSDDPackage.FAULT__QNAME:
+            case WSDDPackageImpl.FAULT__QNAME:
                 return getQname();
-            case WSDDPackage.FAULT__CLASS:
+            case WSDDPackageImpl.FAULT__CLASS:
                 return getClass_();
-            case WSDDPackage.FAULT__TYPE:
+            case WSDDPackageImpl.FAULT__TYPE:
                 return getType();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -226,16 +225,16 @@ public class FaultImpl extends EObjectImpl implements Fault {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.FAULT__NAME:
+            case WSDDPackageImpl.FAULT__NAME:
                 setName((String)newValue);
                 return;
-            case WSDDPackage.FAULT__QNAME:
+            case WSDDPackageImpl.FAULT__QNAME:
                 setQname(newValue);
                 return;
-            case WSDDPackage.FAULT__CLASS:
+            case WSDDPackageImpl.FAULT__CLASS:
                 setClass((String)newValue);
                 return;
-            case WSDDPackage.FAULT__TYPE:
+            case WSDDPackageImpl.FAULT__TYPE:
                 setType(newValue);
                 return;
         }
@@ -249,16 +248,16 @@ public class FaultImpl extends EObjectImpl implements Fault {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.FAULT__NAME:
+            case WSDDPackageImpl.FAULT__NAME:
                 setName(NAME_EDEFAULT);
                 return;
-            case WSDDPackage.FAULT__QNAME:
+            case WSDDPackageImpl.FAULT__QNAME:
                 setQname(QNAME_EDEFAULT);
                 return;
-            case WSDDPackage.FAULT__CLASS:
+            case WSDDPackageImpl.FAULT__CLASS:
                 setClass(CLASS_EDEFAULT);
                 return;
-            case WSDDPackage.FAULT__TYPE:
+            case WSDDPackageImpl.FAULT__TYPE:
                 setType(TYPE_EDEFAULT);
                 return;
         }
@@ -272,13 +271,13 @@ public class FaultImpl extends EObjectImpl implements Fault {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.FAULT__NAME:
+            case WSDDPackageImpl.FAULT__NAME:
                 return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-            case WSDDPackage.FAULT__QNAME:
+            case WSDDPackageImpl.FAULT__QNAME:
                 return QNAME_EDEFAULT == null ? qname != null : !QNAME_EDEFAULT.equals(qname);
-            case WSDDPackage.FAULT__CLASS:
+            case WSDDPackageImpl.FAULT__CLASS:
                 return CLASS_EDEFAULT == null ? class_ != null : !CLASS_EDEFAULT.equals(class_);
-            case WSDDPackage.FAULT__TYPE:
+            case WSDDPackageImpl.FAULT__TYPE:
                 return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
         }
         return super.eIsSet(featureID);

@@ -6,8 +6,6 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Fault</b></em>'.
@@ -23,11 +21,10 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getFault()
  * @model
  * @generated
  */
-public interface Fault extends EObject {
+public interface Fault {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -38,7 +35,6 @@ public interface Fault extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Name</em>' attribute.
      * @see #setName(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getFault_Name()
      * @model
      * @generated
      */
@@ -64,7 +60,6 @@ public interface Fault extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Qname</em>' attribute.
      * @see #setQname(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getFault_Qname()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -90,7 +85,6 @@ public interface Fault extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Class</em>' attribute.
      * @see #setClass(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getFault_Class()
      * @model
      * @generated
      */
@@ -116,7 +110,6 @@ public interface Fault extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Type</em>' attribute.
      * @see #setType(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getFault_Type()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */

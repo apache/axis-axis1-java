@@ -6,9 +6,7 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.common.util.EList;
-
-import org.eclipse.emf.ecore.EObject;
+import java.util.List;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,11 +30,10 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation()
  * @model
  * @generated
  */
-public interface Operation extends EObject {
+public interface Operation {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -47,7 +44,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Name</em>' attribute.
      * @see #setName(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_Name()
      * @model
      * @generated
      */
@@ -73,7 +69,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Qname</em>' attribute.
      * @see #setQname(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_Qname()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -99,7 +94,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return QName</em>' attribute.
      * @see #setReturnQName(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_ReturnQName()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -125,7 +119,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return Type</em>' attribute.
      * @see #setReturnType(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_ReturnType()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -151,7 +144,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return Item QName</em>' attribute.
      * @see #setReturnItemQName(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_ReturnItemQName()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -177,7 +169,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return Item Type</em>' attribute.
      * @see #setReturnItemType(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_ReturnItemType()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -203,7 +194,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Soap Action</em>' attribute.
      * @see #setSoapAction(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_SoapAction()
      * @model
      * @generated
      */
@@ -229,7 +219,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Mep</em>' attribute.
      * @see #setMep(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_Mep()
      * @model
      * @generated
      */
@@ -255,7 +244,6 @@ public interface Operation extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return Header</em>' attribute.
      * @see #setReturnHeader(Boolean)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_ReturnHeader()
      * @model
      * @generated
      */
@@ -281,12 +269,11 @@ public interface Operation extends EObject {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Parameters</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_Parameters()
      * @model type="org.apache.axis.model.wsdd.OperationParameter" containment="true"
      *        extendedMetaData="kind='element' name='parameter' namespace='##targetNamespace'"
      * @generated
      */
-    EList getParameters();
+    List getParameters();
 
     /**
      * Returns the value of the '<em><b>Faults</b></em>' containment reference list.
@@ -298,11 +285,10 @@ public interface Operation extends EObject {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Faults</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperation_Faults()
      * @model type="org.apache.axis.model.wsdd.Fault" containment="true"
      *        extendedMetaData="kind='element' name='fault' namespace='##targetNamespace'"
      * @generated
      */
-    EList getFaults();
+    List getFaults();
 
 } // Operation

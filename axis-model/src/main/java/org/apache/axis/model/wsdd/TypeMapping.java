@@ -20,7 +20,6 @@ package org.apache.axis.model.wsdd;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getTypeMapping()
  * @model
  * @generated
  */
@@ -35,7 +34,6 @@ public interface TypeMapping extends Mapping {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Serializer</em>' attribute.
      * @see #setSerializer(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getTypeMapping_Serializer()
      * @model
      * @generated
      */
@@ -61,7 +59,6 @@ public interface TypeMapping extends Mapping {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Deserializer</em>' attribute.
      * @see #setDeserializer(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getTypeMapping_Deserializer()
      * @model
      * @generated
      */

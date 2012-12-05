@@ -153,7 +153,7 @@ public class JavaDeployWriter extends JavaWriter {
      * @throws IOException
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
-        Deployment deployment = WSDDFactory.eINSTANCE.createDeployment();
+        Deployment deployment = WSDDFactory.INSTANCE.createDeployment();
         writeDeployServices(deployment);
         WSDDUtil.write(deployment, pw);
     }    // writeFileBody
@@ -206,7 +206,7 @@ public class JavaDeployWriter extends JavaWriter {
         if (hasMIME) {
             QName bQName = binding.getQName();
 
-            TypeMapping typeMapping = WSDDFactory.eINSTANCE.createTypeMapping();
+            TypeMapping typeMapping = WSDDFactory.INSTANCE.createTypeMapping();
             typeMapping.setQname(new QName(bQName.getNamespaceURI(), "DataHandler"));
             typeMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, "javax.activation.DataHandler", WSDDConstants.NS_PREFIX_WSDD_JAVA));
             typeMapping.setSerializer("org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory");
@@ -278,7 +278,7 @@ public class JavaDeployWriter extends JavaWriter {
 
                 if (innerType == null) {
                     // no arrays
-                    TypeMapping typeMapping = WSDDFactory.eINSTANCE.createTypeMapping();
+                    TypeMapping typeMapping = WSDDFactory.INSTANCE.createTypeMapping();
                     typeMapping.setQname(type.getQName());
                     typeMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, javaType));
                     typeMapping.setSerializer(serializerFactory);
@@ -287,7 +287,7 @@ public class JavaDeployWriter extends JavaWriter {
                     service.getTypeMappings().add(typeMapping);
                 } else {
                     // arrays
-                    ArrayMapping arrayMapping = WSDDFactory.eINSTANCE.createArrayMapping();
+                    ArrayMapping arrayMapping = WSDDFactory.INSTANCE.createArrayMapping();
                     arrayMapping.setQname(type.getQName());
                     arrayMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, javaType));
                     arrayMapping.setEncodingStyle(encodingStyle);
@@ -337,7 +337,7 @@ public class JavaDeployWriter extends JavaWriter {
             }
         }
 
-        org.apache.axis.model.wsdd.Service wsddService = WSDDFactory.eINSTANCE.createService();
+        org.apache.axis.model.wsdd.Service wsddService = WSDDFactory.INSTANCE.createService();
         wsddService.setName(serviceName);
         wsddService.setProvider(new QName(WSDDConstants.URI_WSDD_JAVA, "RPC"));
         wsddService.setStyle(org.apache.axis.model.wsdd.Style.get(style.getValue()));
@@ -513,7 +513,7 @@ public class JavaDeployWriter extends JavaWriter {
                                   QName bindingQName, ArrayList faults,
                                   String SOAPAction) {
 
-        org.apache.axis.model.wsdd.Operation operation = WSDDFactory.eINSTANCE.createOperation();
+        org.apache.axis.model.wsdd.Operation operation = WSDDFactory.INSTANCE.createOperation();
         
         operation.setName(javaOperName);
 
@@ -553,7 +553,7 @@ public class JavaDeployWriter extends JavaWriter {
             QName paramQName = param.getQName();
             QName paramType = Utils.getXSIType(param);
 
-            OperationParameter parameter = WSDDFactory.eINSTANCE.createOperationParameter();
+            OperationParameter parameter = WSDDFactory.INSTANCE.createOperationParameter();
 
             if (paramQName == null) {
                 parameter.setName(param.getName());
@@ -592,7 +592,7 @@ public class JavaDeployWriter extends JavaWriter {
                             Utils.getFullExceptionName(faultInfo.getMessage(),
                                     symbolTable);
 
-                    Fault fault = WSDDFactory.eINSTANCE.createFault();
+                    Fault fault = WSDDFactory.INSTANCE.createFault();
                     fault.setName(faultInfo.getName());
                     fault.setQname(faultQName);
                     fault.setClass(className);

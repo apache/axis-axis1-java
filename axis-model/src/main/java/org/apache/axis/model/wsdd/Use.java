@@ -10,18 +10,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.emf.common.util.AbstractEnumerator;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the literals of the enumeration '<em><b>Use</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see org.apache.axis.model.wsdd.WSDDPackage#getUse()
+ * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getUse()
  * @model
  * @generated
  */
-public final class Use extends AbstractEnumerator {
+public final class Use extends InternalUse {
     /**
      * The '<em><b>ENCODED</b></em>' literal value.
      * <!-- begin-user-doc -->
@@ -149,3 +147,21 @@ public final class Use extends AbstractEnumerator {
     }
 
 } //Use
+
+/**
+ * A private implementation class to construct the instances.
+ * <!-- begin-user-doc -->
+ * <!-- end-user-doc -->
+ * @generated
+ */
+class InternalUse extends org.eclipse.emf.common.util.AbstractEnumerator {
+    /**
+     * Only this class can construct instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected InternalUse(int value, String name, String literal) {
+        super(value, name, literal);
+    }
+}

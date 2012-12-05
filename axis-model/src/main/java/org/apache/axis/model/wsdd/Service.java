@@ -6,7 +6,7 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,7 +27,6 @@ import org.eclipse.emf.common.util.EList;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getService()
  * @model
  * @generated
  */
@@ -42,7 +41,6 @@ public interface Service extends DeployableItem {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Provider</em>' attribute.
      * @see #setProvider(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_Provider()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -70,7 +68,6 @@ public interface Service extends DeployableItem {
      * @return the value of the '<em>Use</em>' attribute.
      * @see org.apache.axis.model.wsdd.Use
      * @see #setUse(Use)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_Use()
      * @model
      * @generated
      */
@@ -99,7 +96,6 @@ public interface Service extends DeployableItem {
      * @return the value of the '<em>Style</em>' attribute.
      * @see org.apache.axis.model.wsdd.Style
      * @see #setStyle(Style)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_Style()
      * @model
      * @generated
      */
@@ -126,12 +122,11 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Parameters</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_Parameters()
      * @model type="org.apache.axis.model.wsdd.Parameter" containment="true"
      *        extendedMetaData="kind='element' name='parameter' namespace='##targetNamespace'"
      * @generated
      */
-    EList getParameters();
+    List getParameters();
 
     /**
      * Returns the value of the '<em><b>Operations</b></em>' containment reference list.
@@ -143,12 +138,11 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Operations</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_Operations()
      * @model type="org.apache.axis.model.wsdd.Operation" containment="true"
      *        extendedMetaData="kind='element' name='operation' namespace='##targetNamespace'"
      * @generated
      */
-    EList getOperations();
+    List getOperations();
 
     /**
      * Returns the value of the '<em><b>Type Mappings</b></em>' containment reference list.
@@ -160,12 +154,11 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Type Mappings</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_TypeMappings()
      * @model type="org.apache.axis.model.wsdd.TypeMapping" containment="true"
      *        extendedMetaData="kind='element' name='typeMapping' namespace='##targetNamespace'"
      * @generated
      */
-    EList getTypeMappings();
+    List getTypeMappings();
 
     /**
      * Returns the value of the '<em><b>Bean Mappings</b></em>' containment reference list.
@@ -177,12 +170,11 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Bean Mappings</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_BeanMappings()
      * @model type="org.apache.axis.model.wsdd.BeanMapping" containment="true"
      *        extendedMetaData="kind='element' name='beanMapping' namespace='##targetNamespace'"
      * @generated
      */
-    EList getBeanMappings();
+    List getBeanMappings();
 
     /**
      * Returns the value of the '<em><b>Array Mappings</b></em>' containment reference list.
@@ -194,12 +186,11 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Array Mappings</em>' containment reference list.
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getService_ArrayMappings()
      * @model type="org.apache.axis.model.wsdd.ArrayMapping" containment="true"
      *        extendedMetaData="kind='element' name='arrayMapping' namespace='##targetNamespace'"
      * @generated
      */
-    EList getArrayMappings();
+    List getArrayMappings();
 
     /**
      * <!-- begin-user-doc -->

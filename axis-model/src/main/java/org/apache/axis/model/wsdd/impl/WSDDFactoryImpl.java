@@ -25,14 +25,22 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  */
 public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     /**
+     * The singleton instance of the factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public static final WSDDFactoryImpl eINSTANCE = init();
+
+    /**
      * Creates the default factory implementation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static WSDDFactory init() {
+    public static WSDDFactoryImpl init() {
         try {
-            WSDDFactory theWSDDFactory = (WSDDFactory)EPackage.Registry.INSTANCE.getEFactory("http://xml.apache.org/axis/wsdd/"); 
+            WSDDFactoryImpl theWSDDFactory = (WSDDFactoryImpl)EPackage.Registry.INSTANCE.getEFactory("http://xml.apache.org/axis/wsdd/"); 
             if (theWSDDFactory != null) {
                 return theWSDDFactory;
             }
@@ -60,15 +68,15 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      */
     public EObject create(EClass eClass) {
         switch (eClass.getClassifierID()) {
-            case WSDDPackage.PARAMETER: return createParameter();
-            case WSDDPackage.TYPE_MAPPING: return createTypeMapping();
-            case WSDDPackage.ARRAY_MAPPING: return createArrayMapping();
-            case WSDDPackage.BEAN_MAPPING: return createBeanMapping();
-            case WSDDPackage.OPERATION_PARAMETER: return createOperationParameter();
-            case WSDDPackage.FAULT: return createFault();
-            case WSDDPackage.OPERATION: return createOperation();
-            case WSDDPackage.SERVICE: return createService();
-            case WSDDPackage.DEPLOYMENT: return createDeployment();
+            case WSDDPackageImpl.PARAMETER: return (EObject)createParameter();
+            case WSDDPackageImpl.TYPE_MAPPING: return (EObject)createTypeMapping();
+            case WSDDPackageImpl.ARRAY_MAPPING: return (EObject)createArrayMapping();
+            case WSDDPackageImpl.BEAN_MAPPING: return (EObject)createBeanMapping();
+            case WSDDPackageImpl.OPERATION_PARAMETER: return (EObject)createOperationParameter();
+            case WSDDPackageImpl.FAULT: return (EObject)createFault();
+            case WSDDPackageImpl.OPERATION: return (EObject)createOperation();
+            case WSDDPackageImpl.SERVICE: return (EObject)createService();
+            case WSDDPackageImpl.DEPLOYMENT: return (EObject)createDeployment();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -81,11 +89,11 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      */
     public Object createFromString(EDataType eDataType, String initialValue) {
         switch (eDataType.getClassifierID()) {
-            case WSDDPackage.USE:
+            case WSDDPackageImpl.USE:
                 return createUseFromString(eDataType, initialValue);
-            case WSDDPackage.STYLE:
+            case WSDDPackageImpl.STYLE:
                 return createStyleFromString(eDataType, initialValue);
-            case WSDDPackage.PARAMETER_MODE:
+            case WSDDPackageImpl.PARAMETER_MODE:
                 return createParameterModeFromString(eDataType, initialValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
@@ -99,11 +107,11 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      */
     public String convertToString(EDataType eDataType, Object instanceValue) {
         switch (eDataType.getClassifierID()) {
-            case WSDDPackage.USE:
+            case WSDDPackageImpl.USE:
                 return convertUseToString(eDataType, instanceValue);
-            case WSDDPackage.STYLE:
+            case WSDDPackageImpl.STYLE:
                 return convertStyleToString(eDataType, instanceValue);
-            case WSDDPackage.PARAMETER_MODE:
+            case WSDDPackageImpl.PARAMETER_MODE:
                 return convertParameterModeToString(eDataType, instanceValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
@@ -265,8 +273,8 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public WSDDPackage getWSDDPackage() {
-        return (WSDDPackage)getEPackage();
+    public WSDDPackageImpl getWSDDPackage() {
+        return (WSDDPackageImpl)getEPackage();
     }
 
     /**
@@ -275,8 +283,8 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      * @deprecated
      * @generated
      */
-    public static WSDDPackage getPackage() {
-        return WSDDPackage.eINSTANCE;
+    public static WSDDPackageImpl getPackage() {
+        return WSDDPackageImpl.eINSTANCE;
     }
 
 } //WSDDFactoryImpl

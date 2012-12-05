@@ -8,10 +8,10 @@ package org.apache.axis.model.wsdd.impl;
 
 import java.util.Collection;
 
+import java.util.List;
 import org.apache.axis.model.wsdd.Fault;
 import org.apache.axis.model.wsdd.Operation;
 import org.apache.axis.model.wsdd.OperationParameter;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -264,7 +264,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.OPERATION;
+        return WSDDPackageImpl.Literals.OPERATION;
     }
 
     /**
@@ -434,7 +434,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getParameters() {
+    public List getParameters() {
         if (parameters == null) {
             parameters = new BasicInternalEList(OperationParameter.class);
         }
@@ -446,7 +446,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList getFaults() {
+    public List getFaults() {
         if (faults == null) {
             faults = new BasicInternalEList(Fault.class);
         }
@@ -460,9 +460,9 @@ public class OperationImpl extends EObjectImpl implements Operation {
      */
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case WSDDPackage.OPERATION__PARAMETERS:
+            case WSDDPackageImpl.OPERATION__PARAMETERS:
                 return ((InternalEList)getParameters()).basicRemove(otherEnd, msgs);
-            case WSDDPackage.OPERATION__FAULTS:
+            case WSDDPackageImpl.OPERATION__FAULTS:
                 return ((InternalEList)getFaults()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -475,27 +475,27 @@ public class OperationImpl extends EObjectImpl implements Operation {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.OPERATION__NAME:
+            case WSDDPackageImpl.OPERATION__NAME:
                 return getName();
-            case WSDDPackage.OPERATION__QNAME:
+            case WSDDPackageImpl.OPERATION__QNAME:
                 return getQname();
-            case WSDDPackage.OPERATION__RETURN_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_QNAME:
                 return getReturnQName();
-            case WSDDPackage.OPERATION__RETURN_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_TYPE:
                 return getReturnType();
-            case WSDDPackage.OPERATION__RETURN_ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_QNAME:
                 return getReturnItemQName();
-            case WSDDPackage.OPERATION__RETURN_ITEM_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_TYPE:
                 return getReturnItemType();
-            case WSDDPackage.OPERATION__SOAP_ACTION:
+            case WSDDPackageImpl.OPERATION__SOAP_ACTION:
                 return getSoapAction();
-            case WSDDPackage.OPERATION__MEP:
+            case WSDDPackageImpl.OPERATION__MEP:
                 return getMep();
-            case WSDDPackage.OPERATION__RETURN_HEADER:
+            case WSDDPackageImpl.OPERATION__RETURN_HEADER:
                 return getReturnHeader();
-            case WSDDPackage.OPERATION__PARAMETERS:
+            case WSDDPackageImpl.OPERATION__PARAMETERS:
                 return getParameters();
-            case WSDDPackage.OPERATION__FAULTS:
+            case WSDDPackageImpl.OPERATION__FAULTS:
                 return getFaults();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -508,38 +508,38 @@ public class OperationImpl extends EObjectImpl implements Operation {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.OPERATION__NAME:
+            case WSDDPackageImpl.OPERATION__NAME:
                 setName((String)newValue);
                 return;
-            case WSDDPackage.OPERATION__QNAME:
+            case WSDDPackageImpl.OPERATION__QNAME:
                 setQname(newValue);
                 return;
-            case WSDDPackage.OPERATION__RETURN_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_QNAME:
                 setReturnQName(newValue);
                 return;
-            case WSDDPackage.OPERATION__RETURN_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_TYPE:
                 setReturnType(newValue);
                 return;
-            case WSDDPackage.OPERATION__RETURN_ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_QNAME:
                 setReturnItemQName(newValue);
                 return;
-            case WSDDPackage.OPERATION__RETURN_ITEM_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_TYPE:
                 setReturnItemType(newValue);
                 return;
-            case WSDDPackage.OPERATION__SOAP_ACTION:
+            case WSDDPackageImpl.OPERATION__SOAP_ACTION:
                 setSoapAction((String)newValue);
                 return;
-            case WSDDPackage.OPERATION__MEP:
+            case WSDDPackageImpl.OPERATION__MEP:
                 setMep((String)newValue);
                 return;
-            case WSDDPackage.OPERATION__RETURN_HEADER:
+            case WSDDPackageImpl.OPERATION__RETURN_HEADER:
                 setReturnHeader((Boolean)newValue);
                 return;
-            case WSDDPackage.OPERATION__PARAMETERS:
+            case WSDDPackageImpl.OPERATION__PARAMETERS:
                 getParameters().clear();
                 getParameters().addAll((Collection)newValue);
                 return;
-            case WSDDPackage.OPERATION__FAULTS:
+            case WSDDPackageImpl.OPERATION__FAULTS:
                 getFaults().clear();
                 getFaults().addAll((Collection)newValue);
                 return;
@@ -554,37 +554,37 @@ public class OperationImpl extends EObjectImpl implements Operation {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.OPERATION__NAME:
+            case WSDDPackageImpl.OPERATION__NAME:
                 setName(NAME_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__QNAME:
+            case WSDDPackageImpl.OPERATION__QNAME:
                 setQname(QNAME_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__RETURN_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_QNAME:
                 setReturnQName(RETURN_QNAME_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__RETURN_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_TYPE:
                 setReturnType(RETURN_TYPE_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__RETURN_ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_QNAME:
                 setReturnItemQName(RETURN_ITEM_QNAME_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__RETURN_ITEM_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_TYPE:
                 setReturnItemType(RETURN_ITEM_TYPE_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__SOAP_ACTION:
+            case WSDDPackageImpl.OPERATION__SOAP_ACTION:
                 setSoapAction(SOAP_ACTION_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__MEP:
+            case WSDDPackageImpl.OPERATION__MEP:
                 setMep(MEP_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__RETURN_HEADER:
+            case WSDDPackageImpl.OPERATION__RETURN_HEADER:
                 setReturnHeader(RETURN_HEADER_EDEFAULT);
                 return;
-            case WSDDPackage.OPERATION__PARAMETERS:
+            case WSDDPackageImpl.OPERATION__PARAMETERS:
                 getParameters().clear();
                 return;
-            case WSDDPackage.OPERATION__FAULTS:
+            case WSDDPackageImpl.OPERATION__FAULTS:
                 getFaults().clear();
                 return;
         }
@@ -598,27 +598,27 @@ public class OperationImpl extends EObjectImpl implements Operation {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.OPERATION__NAME:
+            case WSDDPackageImpl.OPERATION__NAME:
                 return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-            case WSDDPackage.OPERATION__QNAME:
+            case WSDDPackageImpl.OPERATION__QNAME:
                 return QNAME_EDEFAULT == null ? qname != null : !QNAME_EDEFAULT.equals(qname);
-            case WSDDPackage.OPERATION__RETURN_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_QNAME:
                 return RETURN_QNAME_EDEFAULT == null ? returnQName != null : !RETURN_QNAME_EDEFAULT.equals(returnQName);
-            case WSDDPackage.OPERATION__RETURN_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_TYPE:
                 return RETURN_TYPE_EDEFAULT == null ? returnType != null : !RETURN_TYPE_EDEFAULT.equals(returnType);
-            case WSDDPackage.OPERATION__RETURN_ITEM_QNAME:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_QNAME:
                 return RETURN_ITEM_QNAME_EDEFAULT == null ? returnItemQName != null : !RETURN_ITEM_QNAME_EDEFAULT.equals(returnItemQName);
-            case WSDDPackage.OPERATION__RETURN_ITEM_TYPE:
+            case WSDDPackageImpl.OPERATION__RETURN_ITEM_TYPE:
                 return RETURN_ITEM_TYPE_EDEFAULT == null ? returnItemType != null : !RETURN_ITEM_TYPE_EDEFAULT.equals(returnItemType);
-            case WSDDPackage.OPERATION__SOAP_ACTION:
+            case WSDDPackageImpl.OPERATION__SOAP_ACTION:
                 return SOAP_ACTION_EDEFAULT == null ? soapAction != null : !SOAP_ACTION_EDEFAULT.equals(soapAction);
-            case WSDDPackage.OPERATION__MEP:
+            case WSDDPackageImpl.OPERATION__MEP:
                 return MEP_EDEFAULT == null ? mep != null : !MEP_EDEFAULT.equals(mep);
-            case WSDDPackage.OPERATION__RETURN_HEADER:
+            case WSDDPackageImpl.OPERATION__RETURN_HEADER:
                 return RETURN_HEADER_EDEFAULT == null ? returnHeader != null : !RETURN_HEADER_EDEFAULT.equals(returnHeader);
-            case WSDDPackage.OPERATION__PARAMETERS:
+            case WSDDPackageImpl.OPERATION__PARAMETERS:
                 return parameters != null && !parameters.isEmpty();
-            case WSDDPackage.OPERATION__FAULTS:
+            case WSDDPackageImpl.OPERATION__FAULTS:
                 return faults != null && !faults.isEmpty();
         }
         return super.eIsSet(featureID);

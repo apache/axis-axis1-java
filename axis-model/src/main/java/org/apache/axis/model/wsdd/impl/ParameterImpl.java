@@ -7,7 +7,6 @@
 package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.Parameter;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -83,7 +82,7 @@ public class ParameterImpl extends EObjectImpl implements Parameter {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.PARAMETER;
+        return WSDDPackageImpl.Literals.PARAMETER;
     }
 
     /**
@@ -129,9 +128,9 @@ public class ParameterImpl extends EObjectImpl implements Parameter {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.PARAMETER__NAME:
+            case WSDDPackageImpl.PARAMETER__NAME:
                 return getName();
-            case WSDDPackage.PARAMETER__VALUE:
+            case WSDDPackageImpl.PARAMETER__VALUE:
                 return getValue();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -144,10 +143,10 @@ public class ParameterImpl extends EObjectImpl implements Parameter {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.PARAMETER__NAME:
+            case WSDDPackageImpl.PARAMETER__NAME:
                 setName((String)newValue);
                 return;
-            case WSDDPackage.PARAMETER__VALUE:
+            case WSDDPackageImpl.PARAMETER__VALUE:
                 setValue((String)newValue);
                 return;
         }
@@ -161,10 +160,10 @@ public class ParameterImpl extends EObjectImpl implements Parameter {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.PARAMETER__NAME:
+            case WSDDPackageImpl.PARAMETER__NAME:
                 setName(NAME_EDEFAULT);
                 return;
-            case WSDDPackage.PARAMETER__VALUE:
+            case WSDDPackageImpl.PARAMETER__VALUE:
                 setValue(VALUE_EDEFAULT);
                 return;
         }
@@ -178,9 +177,9 @@ public class ParameterImpl extends EObjectImpl implements Parameter {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.PARAMETER__NAME:
+            case WSDDPackageImpl.PARAMETER__NAME:
                 return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-            case WSDDPackage.PARAMETER__VALUE:
+            case WSDDPackageImpl.PARAMETER__VALUE:
                 return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
         }
         return super.eIsSet(featureID);

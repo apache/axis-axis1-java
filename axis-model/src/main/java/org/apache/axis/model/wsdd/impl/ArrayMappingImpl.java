@@ -7,7 +7,6 @@
 package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.ArrayMapping;
-import org.apache.axis.model.wsdd.WSDDPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -60,7 +59,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackage.Literals.ARRAY_MAPPING;
+        return WSDDPackageImpl.Literals.ARRAY_MAPPING;
     }
 
     /**
@@ -88,7 +87,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackage.ARRAY_MAPPING__INNER_TYPE:
+            case WSDDPackageImpl.ARRAY_MAPPING__INNER_TYPE:
                 return getInnerType();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -101,7 +100,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackage.ARRAY_MAPPING__INNER_TYPE:
+            case WSDDPackageImpl.ARRAY_MAPPING__INNER_TYPE:
                 setInnerType(newValue);
                 return;
         }
@@ -115,7 +114,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackage.ARRAY_MAPPING__INNER_TYPE:
+            case WSDDPackageImpl.ARRAY_MAPPING__INNER_TYPE:
                 setInnerType(INNER_TYPE_EDEFAULT);
                 return;
         }
@@ -129,7 +128,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackage.ARRAY_MAPPING__INNER_TYPE:
+            case WSDDPackageImpl.ARRAY_MAPPING__INNER_TYPE:
                 return INNER_TYPE_EDEFAULT == null ? innerType != null : !INNER_TYPE_EDEFAULT.equals(innerType);
         }
         return super.eIsSet(featureID);

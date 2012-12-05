@@ -6,8 +6,6 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Mapping</b></em>'.
@@ -22,11 +20,10 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getMapping()
  * @model abstract="true"
  * @generated
  */
-public interface Mapping extends EObject {
+public interface Mapping {
     /**
      * Returns the value of the '<em><b>Qname</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -37,7 +34,6 @@ public interface Mapping extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Qname</em>' attribute.
      * @see #setQname(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getMapping_Qname()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -63,7 +59,6 @@ public interface Mapping extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Type</em>' attribute.
      * @see #setType(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getMapping_Type()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -89,7 +84,6 @@ public interface Mapping extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Encoding Style</em>' attribute.
      * @see #setEncodingStyle(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getMapping_EncodingStyle()
      * @model
      * @generated
      */

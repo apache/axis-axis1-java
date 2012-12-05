@@ -6,8 +6,6 @@
  */
 package org.apache.axis.model.wsdd;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Operation Parameter</b></em>'.
@@ -26,11 +24,10 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter()
  * @model
  * @generated
  */
-public interface OperationParameter extends EObject {
+public interface OperationParameter {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -41,7 +38,6 @@ public interface OperationParameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Name</em>' attribute.
      * @see #setName(String)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter_Name()
      * @model
      * @generated
      */
@@ -67,7 +63,6 @@ public interface OperationParameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Qname</em>' attribute.
      * @see #setQname(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter_Qname()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -93,7 +88,6 @@ public interface OperationParameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Type</em>' attribute.
      * @see #setType(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter_Type()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
@@ -121,7 +115,6 @@ public interface OperationParameter extends EObject {
      * @return the value of the '<em>Mode</em>' attribute.
      * @see org.apache.axis.model.wsdd.ParameterMode
      * @see #setMode(ParameterMode)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter_Mode()
      * @model
      * @generated
      */
@@ -148,7 +141,6 @@ public interface OperationParameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>In Header</em>' attribute.
      * @see #setInHeader(Boolean)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter_InHeader()
      * @model
      * @generated
      */
@@ -174,7 +166,6 @@ public interface OperationParameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Out Header</em>' attribute.
      * @see #setOutHeader(Boolean)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter_OutHeader()
      * @model
      * @generated
      */
@@ -200,7 +191,6 @@ public interface OperationParameter extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Item QName</em>' attribute.
      * @see #setItemQName(Object)
-     * @see org.apache.axis.model.wsdd.WSDDPackage#getOperationParameter_ItemQName()
      * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
      * @generated
      */
