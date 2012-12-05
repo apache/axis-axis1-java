@@ -207,8 +207,8 @@ public class JavaDeployWriter extends JavaWriter {
             QName bQName = binding.getQName();
 
             TypeMapping typeMapping = WSDDFactory.eINSTANCE.createTypeMapping();
-            typeMapping.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(bQName.getNamespaceURI(), "DataHandler", "ns"));
-            typeMapping.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, "javax.activation.DataHandler", WSDDConstants.NS_PREFIX_WSDD_JAVA));
+            typeMapping.setQname(new QName(bQName.getNamespaceURI(), "DataHandler"));
+            typeMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, "javax.activation.DataHandler", WSDDConstants.NS_PREFIX_WSDD_JAVA));
             typeMapping.setSerializer("org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory");
             typeMapping.setDeserializer("org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory");
             typeMapping.setEncodingStyle(use.getEncoding());
@@ -281,8 +281,8 @@ public class JavaDeployWriter extends JavaWriter {
                 if (innerType == null) {
                     // no arrays
                     TypeMapping typeMapping = WSDDFactory.eINSTANCE.createTypeMapping();
-                    typeMapping.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(namespaceURI, localPart, "ns"));
-                    typeMapping.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, javaType, WSDDConstants.NS_PREFIX_WSDD_JAVA));
+                    typeMapping.setQname(new QName(namespaceURI, localPart));
+                    typeMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, javaType));
                     typeMapping.setSerializer(serializerFactory);
                     typeMapping.setDeserializer(deserializerFactory);
                     typeMapping.setEncodingStyle(encodingStyle);
@@ -290,10 +290,10 @@ public class JavaDeployWriter extends JavaWriter {
                 } else {
                     // arrays
                     ArrayMapping arrayMapping = WSDDFactory.eINSTANCE.createArrayMapping();
-                    arrayMapping.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(namespaceURI, localPart, "ns"));
-                    arrayMapping.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, javaType, WSDDConstants.NS_PREFIX_WSDD_JAVA));
+                    arrayMapping.setQname(new QName(namespaceURI, localPart));
+                    arrayMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, javaType));
                     arrayMapping.setEncodingStyle(encodingStyle);
-                    arrayMapping.setInnerType(new org.apache.axis.model.ecore.xml.type.internal.QName(innerType.getNamespaceURI(), innerType.getLocalPart(), "cmp-ns"));
+                    arrayMapping.setInnerType(innerType);
                     service.getArrayMappings().add(arrayMapping);
                 }
             }
@@ -341,7 +341,7 @@ public class JavaDeployWriter extends JavaWriter {
 
         org.apache.axis.model.wsdd.Service wsddService = WSDDFactory.eINSTANCE.createService();
         wsddService.setName(serviceName);
-        wsddService.setProvider(new org.apache.axis.model.ecore.xml.type.internal.QName(WSDDConstants.URI_WSDD_JAVA, "RPC", WSDDConstants.NS_PREFIX_WSDD_JAVA));
+        wsddService.setProvider(new QName(WSDDConstants.URI_WSDD_JAVA, "RPC"));
         wsddService.setStyle(org.apache.axis.model.wsdd.Style.getByName(style.getName()));
         wsddService.setUse(org.apache.axis.model.wsdd.Use.getByName(use.getName()));
         wsddService.setParameter("wsdlTargetNamespace", service.getQName().getNamespaceURI());
@@ -520,15 +520,15 @@ public class JavaDeployWriter extends JavaWriter {
         operation.setName(javaOperName);
 
         if (elementQName != null) {
-            operation.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(elementQName.getNamespaceURI(), elementQName.getLocalPart(), "operNS"));
+            operation.setQname(elementQName);
         }
 
         if (returnQName != null) {
-            operation.setReturnQName(new org.apache.axis.model.ecore.xml.type.internal.QName(returnQName.getNamespaceURI(), Utils.getLastLocalPart(returnQName.getLocalPart()), "retNS"));
+            operation.setReturnQName(new QName(returnQName.getNamespaceURI(), Utils.getLastLocalPart(returnQName.getLocalPart())));
         }
 
         if (returnType != null) {
-            operation.setReturnQName(new org.apache.axis.model.ecore.xml.type.internal.QName(returnType.getNamespaceURI(), returnType.getLocalPart(), "rtns"));
+            operation.setReturnQName(returnType);
         }
 
         Parameter retParam = params.returnParam;
@@ -536,11 +536,11 @@ public class JavaDeployWriter extends JavaWriter {
             TypeEntry type = retParam.getType();
             QName returnItemQName = Utils.getItemQName(type);
             if (returnItemQName != null) {
-                operation.setReturnItemQName(new org.apache.axis.model.ecore.xml.type.internal.QName(returnItemQName.getNamespaceURI(), returnItemQName.getLocalPart(), "tns"));
+                operation.setReturnItemQName(returnItemQName);
             }
             QName returnItemType = Utils.getItemType(type);
             if (returnItemType != null && use == Use.ENCODED) {
-                operation.setReturnItemType(new org.apache.axis.model.ecore.xml.type.internal.QName(returnItemType.getNamespaceURI(), returnItemType.getLocalPart(), "tns2"));
+                operation.setReturnItemType(returnItemType);
             }
         }
 
@@ -573,10 +573,10 @@ public class JavaDeployWriter extends JavaWriter {
             if (paramQName == null) {
                 parameter.setName(param.getName());
             } else {
-                parameter.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(paramQName.getNamespaceURI(), Utils.getLastLocalPart(paramQName.getLocalPart()), "pns"));
+                parameter.setQname(new QName(paramQName.getNamespaceURI(), Utils.getLastLocalPart(paramQName.getLocalPart())));
             }
 
-            parameter.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(paramType.getNamespaceURI(), paramType.getLocalPart(), "tns"));
+            parameter.setType(paramType);
 
             // Get the parameter mode
             if (param.getMode() != Parameter.IN) {
@@ -594,7 +594,7 @@ public class JavaDeployWriter extends JavaWriter {
 
             QName itemQName = Utils.getItemQName(param.getType());
             if (itemQName != null) {
-                parameter.setItemQName(new org.apache.axis.model.ecore.xml.type.internal.QName(itemQName.getNamespaceURI(), itemQName.getLocalPart(), "itns"));
+                parameter.setItemQName(itemQName);
             }
 
             operation.getParameters().add(parameter);
@@ -612,10 +612,9 @@ public class JavaDeployWriter extends JavaWriter {
 
                     Fault fault = WSDDFactory.eINSTANCE.createFault();
                     fault.setName(faultInfo.getName());
-                    fault.setQname(new org.apache.axis.model.ecore.xml.type.internal.QName(faultQName.getNamespaceURI(), faultQName.getLocalPart(), "fns"));
+                    fault.setQname(faultQName);
                     fault.setClass(className);
-                    QName type = faultInfo.getXMLType();
-                    fault.setType(new org.apache.axis.model.ecore.xml.type.internal.QName(type.getNamespaceURI(), type.getLocalPart(), "tns"));
+                    fault.setType(faultInfo.getXMLType());
                     operation.getFaults().add(fault);
                 }
             }

@@ -21,14 +21,14 @@ package org.apache.axis.model.wsdd;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
+import org.apache.axis.model.util.AxisXMLResource;
 import org.eclipse.emf.ecore.xmi.util.XMLProcessor;
 
 public final class WSDDUtil {
     private WSDDUtil() {}
 
     public static void write(Deployment deployment, Writer writer) throws IOException {
-        XMLResourceImpl resource = new XMLResourceImpl();
+        AxisXMLResource resource = new AxisXMLResource();
         XMLProcessor processor = new XMLProcessor();
         resource.getContents().add(deployment);
         processor.save(writer, resource, null);        

@@ -29,6 +29,12 @@
     <name>EMF Model for WSDD Files</name>
     <dependencies>
         <dependency>
+            <!-- This is just to get javax.xml.namespace.QName -->
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>common</artifactId>
             <version>2.2.3</version>
