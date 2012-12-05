@@ -20,8 +20,11 @@ package org.apache.axis.model.wsdd;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.axis.model.util.AxisXMLResource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.util.XMLProcessor;
 
 public final class WSDDUtil {
@@ -31,6 +34,8 @@ public final class WSDDUtil {
         AxisXMLResource resource = new AxisXMLResource();
         XMLProcessor processor = new XMLProcessor();
         resource.getContents().add(deployment);
-        processor.save(writer, resource, null);        
+        Map options = new HashMap();
+        options.put(XMLResource.OPTION_DECLARE_XML, Boolean.FALSE);
+        processor.save(writer, resource, options);        
     }
 }
