@@ -230,8 +230,6 @@ public class JavaDeployWriter extends JavaWriter {
             }
 
             if (process) {
-                String namespaceURI = type.getQName().getNamespaceURI();
-                String localPart = type.getQName().getLocalPart();
                 String javaType = type.getName();
                 String serializerFactory;
                 String deserializerFactory;
@@ -281,7 +279,7 @@ public class JavaDeployWriter extends JavaWriter {
                 if (innerType == null) {
                     // no arrays
                     TypeMapping typeMapping = WSDDFactory.eINSTANCE.createTypeMapping();
-                    typeMapping.setQname(new QName(namespaceURI, localPart));
+                    typeMapping.setQname(type.getQName());
                     typeMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, javaType));
                     typeMapping.setSerializer(serializerFactory);
                     typeMapping.setDeserializer(deserializerFactory);
@@ -290,7 +288,7 @@ public class JavaDeployWriter extends JavaWriter {
                 } else {
                     // arrays
                     ArrayMapping arrayMapping = WSDDFactory.eINSTANCE.createArrayMapping();
-                    arrayMapping.setQname(new QName(namespaceURI, localPart));
+                    arrayMapping.setQname(type.getQName());
                     arrayMapping.setType(new QName(WSDDConstants.URI_WSDD_JAVA, javaType));
                     arrayMapping.setEncodingStyle(encodingStyle);
                     arrayMapping.setInnerType(innerType);
@@ -519,40 +517,27 @@ public class JavaDeployWriter extends JavaWriter {
         
         operation.setName(javaOperName);
 
-        if (elementQName != null) {
-            operation.setQname(elementQName);
-        }
+        operation.setQname(elementQName);
 
         if (returnQName != null) {
             operation.setReturnQName(new QName(returnQName.getNamespaceURI(), Utils.getLastLocalPart(returnQName.getLocalPart())));
         }
 
-        if (returnType != null) {
-            operation.setReturnQName(returnType);
-        }
+        operation.setReturnQName(returnType);
 
         Parameter retParam = params.returnParam;
         if (retParam != null) {
             TypeEntry type = retParam.getType();
-            QName returnItemQName = Utils.getItemQName(type);
-            if (returnItemQName != null) {
-                operation.setReturnItemQName(returnItemQName);
-            }
-            QName returnItemType = Utils.getItemType(type);
-            if (returnItemType != null && use == Use.ENCODED) {
-                operation.setReturnItemType(returnItemType);
+            operation.setReturnItemQName(Utils.getItemQName(type));
+            if (use == Use.ENCODED) {
+                operation.setReturnItemType(Utils.getItemType(type));
             }
         }
 
-        if (SOAPAction != null) {
-            operation.setSoapAction(SOAPAction);
-        }
+        operation.setSoapAction(SOAPAction);
 
         if (!OperationType.REQUEST_RESPONSE.equals(params.mep)) {
-            String mepString = getMepString(params.mep);
-            if (mepString != null) {
-                operation.setMep(mepString);
-            }
+            operation.setMep(getMepString(params.mep));
         }
 
         if ((params.returnParam != null) && params.returnParam.isOutHeader()) {
@@ -592,10 +577,7 @@ public class JavaDeployWriter extends JavaWriter {
                 parameter.setOutHeader(Boolean.TRUE);
             }
 
-            QName itemQName = Utils.getItemQName(param.getType());
-            if (itemQName != null) {
-                parameter.setItemQName(itemQName);
-            }
+            parameter.setItemQName(Utils.getItemQName(param.getType()));
 
             operation.getParameters().add(parameter);
         }
