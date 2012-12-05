@@ -81,7 +81,6 @@ public interface Mapping extends EObject {
 
     /**
      * Returns the value of the '<em><b>Encoding Style</b></em>' attribute.
-     * The default value is <code>""</code>.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Encoding Style</em>' attribute isn't clear,
@@ -91,7 +90,7 @@ public interface Mapping extends EObject {
      * @return the value of the '<em>Encoding Style</em>' attribute.
      * @see #setEncodingStyle(String)
      * @see org.apache.axis.model.wsdd.WSDDPackage#getMapping_EncodingStyle()
-     * @model default=""
+     * @model
      * @generated
      */
     String getEncodingStyle();

@@ -23,21 +23,6 @@ import org.eclipse.emf.common.util.AbstractEnumerator;
  */
 public final class Use extends AbstractEnumerator {
     /**
-     * The '<em><b>LITERAL</b></em>' literal value.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of '<em><b>LITERAL</b></em>' literal object isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @see #LITERAL_LITERAL
-     * @model literal="literal"
-     * @generated
-     * @ordered
-     */
-    public static final int LITERAL = 0;
-
-    /**
      * The '<em><b>ENCODED</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
@@ -50,17 +35,22 @@ public final class Use extends AbstractEnumerator {
      * @generated
      * @ordered
      */
-    public static final int ENCODED = 1;
+    public static final int ENCODED = 0;
 
     /**
-     * The '<em><b>LITERAL</b></em>' literal object.
+     * The '<em><b>LITERAL</b></em>' literal value.
      * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of '<em><b>LITERAL</b></em>' literal object isn't clear,
+     * there really should be more of a description here...
+     * </p>
      * <!-- end-user-doc -->
-     * @see #LITERAL
+     * @see #LITERAL_LITERAL
+     * @model literal="literal"
      * @generated
      * @ordered
      */
-    public static final Use LITERAL_LITERAL = new Use(LITERAL, "LITERAL", "literal");
+    public static final int LITERAL = 1;
 
     /**
      * The '<em><b>ENCODED</b></em>' literal object.
@@ -73,6 +63,16 @@ public final class Use extends AbstractEnumerator {
     public static final Use ENCODED_LITERAL = new Use(ENCODED, "ENCODED", "encoded");
 
     /**
+     * The '<em><b>LITERAL</b></em>' literal object.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #LITERAL
+     * @generated
+     * @ordered
+     */
+    public static final Use LITERAL_LITERAL = new Use(LITERAL, "LITERAL", "literal");
+
+    /**
      * An array of all the '<em><b>Use</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -80,8 +80,8 @@ public final class Use extends AbstractEnumerator {
      */
     private static final Use[] VALUES_ARRAY =
         new Use[] {
-            LITERAL_LITERAL,
             ENCODED_LITERAL,
+            LITERAL_LITERAL,
         };
 
     /**
@@ -132,8 +132,8 @@ public final class Use extends AbstractEnumerator {
      */
     public static Use get(int value) {
         switch (value) {
-            case LITERAL: return LITERAL_LITERAL;
             case ENCODED: return ENCODED_LITERAL;
+            case LITERAL: return LITERAL_LITERAL;
         }
         return null;
     }

@@ -4,8 +4,8 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="wsdd"
     nsURI="http://xml.apache.org/axis/wsdd/" nsPrefix="wsdd">
   <eClassifiers xsi:type="ecore:EEnum" name="Use">
-    <eLiterals name="LITERAL" literal="literal"/>
-    <eLiterals name="ENCODED" value="1" literal="encoded"/>
+    <eLiterals name="ENCODED" literal="encoded"/>
+    <eLiterals name="LITERAL" value="1" literal="literal"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Style">
     <eLiterals name="RPC" literal="rpc"/>
@@ -14,7 +14,7 @@
     <eLiterals name="MESSAGE" value="3" literal="message"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterMode">
-    <eLiterals name="IN" value="1"/>
+    <eLiterals name="IN" value="1" literal="IN"/>
     <eLiterals name="OUT" value="2" literal="OUT"/>
     <eLiterals name="INOUT" value="3" literal="INOUT"/>
   </eClassifiers>
@@ -25,8 +25,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Mapping" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="encodingStyle" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        defaultValueLiteral=""/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="encodingStyle" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypeMapping" eSuperTypes="#//Mapping">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="serializer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

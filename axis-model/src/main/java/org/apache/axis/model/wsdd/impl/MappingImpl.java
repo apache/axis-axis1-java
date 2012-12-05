@@ -77,7 +77,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * @generated
      * @ordered
      */
-    protected static final String ENCODING_STYLE_EDEFAULT = "";
+    protected static final String ENCODING_STYLE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getEncodingStyle() <em>Encoding Style</em>}' attribute.

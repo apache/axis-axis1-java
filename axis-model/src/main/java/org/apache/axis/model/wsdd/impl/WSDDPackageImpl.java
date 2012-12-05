@@ -825,7 +825,7 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
         initEClass(mappingEClass, Mapping.class, "Mapping", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getMapping_Qname(), theXMLTypePackage.getQName(), "qname", null, 0, 1, Mapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getMapping_Type(), theXMLTypePackage.getQName(), "type", null, 0, 1, Mapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getMapping_EncodingStyle(), ecorePackage.getEString(), "encodingStyle", "", 0, 1, Mapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getMapping_EncodingStyle(), ecorePackage.getEString(), "encodingStyle", null, 0, 1, Mapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(typeMappingEClass, TypeMapping.class, "TypeMapping", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getTypeMapping_Serializer(), ecorePackage.getEString(), "serializer", null, 0, 1, TypeMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -886,8 +886,8 @@ public class WSDDPackageImpl extends EPackageImpl implements WSDDPackage {
 
         // Initialize enums and add enum literals
         initEEnum(useEEnum, Use.class, "Use");
-        addEEnumLiteral(useEEnum, Use.LITERAL_LITERAL);
         addEEnumLiteral(useEEnum, Use.ENCODED_LITERAL);
+        addEEnumLiteral(useEEnum, Use.LITERAL_LITERAL);
 
         initEEnum(styleEEnum, Style.class, "Style");
         addEEnumLiteral(styleEEnum, Style.RPC_LITERAL);

@@ -79,7 +79,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      * @ordered
      */
-    protected static final Use USE_EDEFAULT = Use.LITERAL_LITERAL;
+    protected static final Use USE_EDEFAULT = Use.ENCODED_LITERAL;
 
     /**
      * The cached value of the '{@link #getUse() <em>Use</em>}' attribute.
