@@ -8,6 +8,8 @@ package org.apache.axis.model.wsdd;
 
 import java.util.List;
 import javax.xml.namespace.QName;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 
 /**
  * <!-- begin-user-doc -->
@@ -85,7 +87,6 @@ public interface Service extends DeployableItem {
 
     /**
      * Returns the value of the '<em><b>Use</b></em>' attribute.
-     * The literals are from the enumeration {@link org.apache.axis.model.wsdd.Use}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Use</em>' attribute isn't clear,
@@ -93,9 +94,8 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Use</em>' attribute.
-     * @see org.apache.axis.model.wsdd.Use
      * @see #setUse(Use)
-     * @model
+     * @model dataType="org.apache.axis.model.soap.Use"
      * @generated
      */
     Use getUse();
@@ -105,7 +105,6 @@ public interface Service extends DeployableItem {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Use</em>' attribute.
-     * @see org.apache.axis.model.wsdd.Use
      * @see #getUse()
      * @generated
      */
@@ -113,7 +112,6 @@ public interface Service extends DeployableItem {
 
     /**
      * Returns the value of the '<em><b>Style</b></em>' attribute.
-     * The literals are from the enumeration {@link org.apache.axis.model.wsdd.Style}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Style</em>' attribute isn't clear,
@@ -121,9 +119,8 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Style</em>' attribute.
-     * @see org.apache.axis.model.wsdd.Style
      * @see #setStyle(Style)
-     * @model
+     * @model dataType="org.apache.axis.model.soap.Style"
      * @generated
      */
     Style getStyle();
@@ -133,7 +130,6 @@ public interface Service extends DeployableItem {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Style</em>' attribute.
-     * @see org.apache.axis.model.wsdd.Style
      * @see #getStyle()
      * @generated
      */

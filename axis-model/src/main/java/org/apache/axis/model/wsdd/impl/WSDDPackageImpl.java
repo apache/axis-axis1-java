@@ -6,6 +6,7 @@
  */
 package org.apache.axis.model.wsdd.impl;
 
+import org.apache.axis.model.soap.impl.SOAPPackageImpl;
 import org.apache.axis.model.wsdd.ArrayMapping;
 import org.apache.axis.model.wsdd.BeanMapping;
 import org.apache.axis.model.wsdd.DeployableItem;
@@ -21,10 +22,8 @@ import org.apache.axis.model.wsdd.Parameter;
 import org.apache.axis.model.wsdd.ParameterMode;
 import org.apache.axis.model.wsdd.Parameterizable;
 import org.apache.axis.model.wsdd.Service;
-import org.apache.axis.model.wsdd.Style;
 import org.apache.axis.model.wsdd.Transport;
 import org.apache.axis.model.wsdd.TypeMapping;
-import org.apache.axis.model.wsdd.Use;
 import org.apache.axis.model.wsdd.WSDDFactory;
 
 import org.apache.axis.model.xml.impl.XmlPackageImpl;
@@ -37,8 +36,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
-import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -1034,26 +1031,6 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int DEPLOYMENT_FEATURE_COUNT = 5;
 
     /**
-     * The meta object id for the '{@link org.apache.axis.model.wsdd.Use <em>Use</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.apache.axis.model.wsdd.Use
-     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getUse()
-     * @generated
-     */
-    public static final int USE = 16;
-
-    /**
-     * The meta object id for the '{@link org.apache.axis.model.wsdd.Style <em>Style</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.apache.axis.model.wsdd.Style
-     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getStyle()
-     * @generated
-     */
-    public static final int STYLE = 17;
-
-    /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.ParameterMode <em>Parameter Mode</em>}' enum.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1061,7 +1038,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getParameterMode()
      * @generated
      */
-    public static final int PARAMETER_MODE = 18;
+    public static final int PARAMETER_MODE = 16;
 
     /**
      * <!-- begin-user-doc -->
@@ -1180,20 +1157,6 @@ public class WSDDPackageImpl extends EPackageImpl {
      * <!-- end-user-doc -->
      * @generated
      */
-    private EEnum useEEnum = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EEnum styleEEnum = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EEnum parameterModeEEnum = null;
 
     /**
@@ -1244,14 +1207,17 @@ public class WSDDPackageImpl extends EPackageImpl {
 
         // Obtain or create and register interdependencies
         XmlPackageImpl theXmlPackage = (XmlPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(XmlPackageImpl.eNS_URI) instanceof XmlPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(XmlPackageImpl.eNS_URI) : XmlPackageImpl.eINSTANCE);
+        SOAPPackageImpl theSOAPPackage = (SOAPPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(SOAPPackageImpl.eNS_URI) instanceof SOAPPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(SOAPPackageImpl.eNS_URI) : SOAPPackageImpl.eINSTANCE);
 
         // Create package meta-data objects
         theWSDDPackage.createPackageContents();
         theXmlPackage.createPackageContents();
+        theSOAPPackage.createPackageContents();
 
         // Initialize created meta-data
         theWSDDPackage.initializePackageContents();
         theXmlPackage.initializePackageContents();
+        theSOAPPackage.initializePackageContents();
 
         // Mark meta-data to indicate it can't be changed
         theWSDDPackage.freeze();
@@ -2131,30 +2097,6 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for enum '{@link org.apache.axis.model.wsdd.Use <em>Use</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for enum '<em>Use</em>'.
-     * @see org.apache.axis.model.wsdd.Use
-     * @generated
-     */
-    public EEnum getUse() {
-        return useEEnum;
-    }
-
-    /**
-     * Returns the meta object for enum '{@link org.apache.axis.model.wsdd.Style <em>Style</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for enum '<em>Style</em>'.
-     * @see org.apache.axis.model.wsdd.Style
-     * @generated
-     */
-    public EEnum getStyle() {
-        return styleEEnum;
-    }
-
-    /**
      * Returns the meta object for enum '{@link org.apache.axis.model.wsdd.ParameterMode <em>Parameter Mode</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2281,8 +2223,6 @@ public class WSDDPackageImpl extends EPackageImpl {
         createEReference(deploymentEClass, DEPLOYMENT__SERVICES);
 
         // Create enums
-        useEEnum = createEEnum(USE);
-        styleEEnum = createEEnum(STYLE);
         parameterModeEEnum = createEEnum(PARAMETER_MODE);
     }
 
@@ -2311,6 +2251,7 @@ public class WSDDPackageImpl extends EPackageImpl {
 
         // Obtain other dependent packages
         XmlPackageImpl theXmlPackage = (XmlPackageImpl)EPackage.Registry.INSTANCE.getEPackage(XmlPackageImpl.eNS_URI);
+        SOAPPackageImpl theSOAPPackage = (SOAPPackageImpl)EPackage.Registry.INSTANCE.getEPackage(SOAPPackageImpl.eNS_URI);
 
         // Add supertypes to classes
         typeMappingEClass.getESuperTypes().add(this.getMapping());
@@ -2396,8 +2337,8 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEClass(serviceEClass, Service.class, "Service", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getService_Name(), ecorePackage.getEString(), "name", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getService_Provider(), theXmlPackage.getQName(), "provider", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getService_Use(), this.getUse(), "use", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getService_Style(), this.getStyle(), "style", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getService_Use(), theSOAPPackage.getUse(), "use", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getService_Style(), theSOAPPackage.getStyle(), "style", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getService_Namespaces(), ecorePackage.getEString(), "namespaces", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_Operations(), this.getOperation(), null, "operations", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_TypeMappings(), this.getTypeMapping(), null, "typeMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2415,16 +2356,6 @@ public class WSDDPackageImpl extends EPackageImpl {
         addEParameter(op, this.getDeployment(), "other", 1, 1);
 
         // Initialize enums and add enum literals
-        initEEnum(useEEnum, Use.class, "Use");
-        addEEnumLiteral(useEEnum, Use.ENCODED_LITERAL);
-        addEEnumLiteral(useEEnum, Use.LITERAL_LITERAL);
-
-        initEEnum(styleEEnum, Style.class, "Style");
-        addEEnumLiteral(styleEEnum, Style.RPC_LITERAL);
-        addEEnumLiteral(styleEEnum, Style.DOCUMENT_LITERAL);
-        addEEnumLiteral(styleEEnum, Style.WRAPPED_LITERAL);
-        addEEnumLiteral(styleEEnum, Style.MESSAGE_LITERAL);
-
         initEEnum(parameterModeEEnum, ParameterMode.class, "ParameterMode");
         addEEnumLiteral(parameterModeEEnum, ParameterMode.IN_LITERAL);
         addEEnumLiteral(parameterModeEEnum, ParameterMode.OUT_LITERAL);
@@ -3139,26 +3070,6 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EReference DEPLOYMENT__SERVICES = eINSTANCE.getDeployment_Services();
-
-        /**
-         * The meta object literal for the '{@link org.apache.axis.model.wsdd.Use <em>Use</em>}' enum.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.apache.axis.model.wsdd.Use
-         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getUse()
-         * @generated
-         */
-        public static final EEnum USE = eINSTANCE.getUse();
-
-        /**
-         * The meta object literal for the '{@link org.apache.axis.model.wsdd.Style <em>Style</em>}' enum.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.apache.axis.model.wsdd.Style
-         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getStyle()
-         * @generated
-         */
-        public static final EEnum STYLE = eINSTANCE.getStyle();
 
         /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.ParameterMode <em>Parameter Mode</em>}' enum.

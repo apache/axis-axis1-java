@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import org.apache.axis.model.wsdd.ArrayMapping;
 import org.apache.axis.model.wsdd.BeanMapping;
 import org.apache.axis.model.wsdd.Operation;
 import org.apache.axis.model.wsdd.Service;
-import org.apache.axis.model.wsdd.Style;
 import org.apache.axis.model.wsdd.TypeMapping;
-import org.apache.axis.model.wsdd.Use;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -98,7 +98,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      * @ordered
      */
-    protected static final Use USE_EDEFAULT = Use.ENCODED_LITERAL;
+    protected static final Use USE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getUse() <em>Use</em>}' attribute.
@@ -118,7 +118,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      * @ordered
      */
-    protected static final Style STYLE_EDEFAULT = Style.RPC_LITERAL;
+    protected static final Style STYLE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
@@ -249,7 +249,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      */
     public void setUse(Use newUse) {
-        use = newUse == null ? USE_EDEFAULT : newUse;
+        use = newUse;
     }
 
     /**
@@ -267,7 +267,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      */
     public void setStyle(Style newStyle) {
-        style = newStyle == null ? STYLE_EDEFAULT : newStyle;
+        style = newStyle;
     }
 
     /**
@@ -471,9 +471,9 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
             case WSDDPackageImpl.SERVICE__PROVIDER:
                 return PROVIDER_EDEFAULT == null ? provider != null : !PROVIDER_EDEFAULT.equals(provider);
             case WSDDPackageImpl.SERVICE__USE:
-                return use != USE_EDEFAULT;
+                return USE_EDEFAULT == null ? use != null : !USE_EDEFAULT.equals(use);
             case WSDDPackageImpl.SERVICE__STYLE:
-                return style != STYLE_EDEFAULT;
+                return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
             case WSDDPackageImpl.SERVICE__NAMESPACES:
                 return namespaces != null && !namespaces.isEmpty();
             case WSDDPackageImpl.SERVICE__OPERATIONS:

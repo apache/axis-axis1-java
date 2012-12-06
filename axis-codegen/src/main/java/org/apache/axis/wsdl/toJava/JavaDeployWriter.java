@@ -340,8 +340,8 @@ public class JavaDeployWriter extends JavaWriter {
         org.apache.axis.model.wsdd.Service wsddService = WSDDFactory.INSTANCE.createService();
         wsddService.setName(serviceName);
         wsddService.setProvider(new QName(WSDDConstants.URI_WSDD_JAVA, "RPC"));
-        wsddService.setStyle(org.apache.axis.model.wsdd.Style.get(style.getValue()));
-        wsddService.setUse(org.apache.axis.model.wsdd.Use.get(use.getValue()));
+        wsddService.setStyle(style);
+        wsddService.setUse(use);
         wsddService.setParameter("wsdlTargetNamespace", service.getQName().getNamespaceURI());
         wsddService.setParameter("wsdlServiceElement", service.getQName().getLocalPart());
         // MIME attachments don't work with multiref, so turn it off.

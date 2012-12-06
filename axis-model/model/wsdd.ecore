@@ -3,16 +3,6 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="wsdd"
     nsURI="http://xml.apache.org/axis/wsdd/" nsPrefix="wsdd">
-  <eClassifiers xsi:type="ecore:EEnum" name="Use">
-    <eLiterals name="ENCODED" literal="encoded"/>
-    <eLiterals name="LITERAL" value="1" literal="literal"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="Style">
-    <eLiterals name="RPC" literal="rpc"/>
-    <eLiterals name="DOCUMENT" value="1" literal="document"/>
-    <eLiterals name="WRAPPED" value="2" literal="wrapped"/>
-    <eLiterals name="MESSAGE" value="3" literal="message"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterMode">
     <eLiterals name="IN" value="1" literal="IN"/>
     <eLiterals name="OUT" value="2" literal="OUT"/>
@@ -119,8 +109,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//DeployableItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="provider" eType="ecore:EDataType xml.ecore#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="use" eType="#//Use"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" eType="#//Style"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="use" eType="ecore:EDataType soap.ecore#//Use"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" eType="ecore:EDataType soap.ecore#//Style"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="namespaces" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">

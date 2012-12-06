@@ -94,10 +94,6 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      */
     public Object createFromString(EDataType eDataType, String initialValue) {
         switch (eDataType.getClassifierID()) {
-            case WSDDPackageImpl.USE:
-                return createUseFromString(eDataType, initialValue);
-            case WSDDPackageImpl.STYLE:
-                return createStyleFromString(eDataType, initialValue);
             case WSDDPackageImpl.PARAMETER_MODE:
                 return createParameterModeFromString(eDataType, initialValue);
             default:
@@ -112,10 +108,6 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      */
     public String convertToString(EDataType eDataType, Object instanceValue) {
         switch (eDataType.getClassifierID()) {
-            case WSDDPackageImpl.USE:
-                return convertUseToString(eDataType, instanceValue);
-            case WSDDPackageImpl.STYLE:
-                return convertStyleToString(eDataType, instanceValue);
             case WSDDPackageImpl.PARAMETER_MODE:
                 return convertParameterModeToString(eDataType, instanceValue);
             default:
@@ -261,46 +253,6 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public Deployment createDeployment() {
         DeploymentImpl deployment = new DeploymentImpl();
         return deployment;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Use createUseFromString(EDataType eDataType, String initialValue) {
-        Use result = Use.get(initialValue);
-        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-        return result;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertUseToString(EDataType eDataType, Object instanceValue) {
-        return instanceValue == null ? null : instanceValue.toString();
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Style createStyleFromString(EDataType eDataType, String initialValue) {
-        Style result = Style.get(initialValue);
-        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-        return result;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertStyleToString(EDataType eDataType, Object instanceValue) {
-        return instanceValue == null ? null : instanceValue.toString();
     }
 
     /**

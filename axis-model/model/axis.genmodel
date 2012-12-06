@@ -12,16 +12,6 @@
   <foreignModel>wsdd.ecore</foreignModel>
   <genPackages prefix="WSDD" basePackage="org.apache.axis.model" disposableProviderFactory="true"
       adapterFactory="false" contentTypeIdentifier="" ecorePackage="wsdd.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="wsdd.ecore#//Use">
-      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//Use/ENCODED"/>
-      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//Use/LITERAL"/>
-    </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="wsdd.ecore#//Style">
-      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//Style/RPC"/>
-      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//Style/DOCUMENT"/>
-      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//Style/WRAPPED"/>
-      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//Style/MESSAGE"/>
-    </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="wsdd.ecore#//ParameterMode">
       <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//ParameterMode/IN"/>
       <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//ParameterMode/OUT"/>
@@ -119,5 +109,9 @@
   </genPackages>
   <genPackages prefix="Xml" basePackage="org.apache.axis.model" ecorePackage="xml.ecore#/">
     <genDataTypes ecoreDataType="xml.ecore#//QName"/>
+  </genPackages>
+  <genPackages prefix="SOAP" basePackage="org.apache.axis.model" ecorePackage="soap.ecore#/">
+    <genDataTypes ecoreDataType="soap.ecore#//Use"/>
+    <genDataTypes ecoreDataType="soap.ecore#//Style"/>
   </genPackages>
 </genmodel:GenModel>

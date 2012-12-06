@@ -29,9 +29,8 @@
     <name>EMF Model for WSDD Files</name>
     <dependencies>
         <dependency>
-            <!-- This is just to get javax.xml.namespace.QName -->
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis-jaxrpc</artifactId>
+            <artifactId>axis-rt-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
