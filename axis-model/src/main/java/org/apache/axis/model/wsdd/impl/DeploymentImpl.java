@@ -73,7 +73,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      */
     protected GlobalConfiguration globalConfiguration;
     /**
-     * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' reference list.
+     * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see #getHandlers()
@@ -82,7 +82,7 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
      */
     protected EList handlers;
     /**
-     * The cached value of the '{@link #getTransports() <em>Transports</em>}' reference list.
+     * The cached value of the '{@link #getTransports() <em>Transports</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see #getTransports()
@@ -209,6 +209,17 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
         return services;
     }
 
+    public void merge(Deployment other) {
+        // TODO: very naive implementation; need more fine grained merging
+        GlobalConfiguration otherGlobalConfiguration = other.getGlobalConfiguration();
+        if (otherGlobalConfiguration != null) {
+            setGlobalConfiguration(otherGlobalConfiguration);
+        }
+        getHandlers().addAll(other.getHandlers());
+        getTransports().addAll(other.getTransports());
+        getServices().addAll(other.getServices());
+    }
+
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -218,6 +229,10 @@ public class DeploymentImpl extends EObjectImpl implements Deployment {
         switch (featureID) {
             case WSDDPackageImpl.DEPLOYMENT__GLOBAL_CONFIGURATION:
                 return basicSetGlobalConfiguration(null, msgs);
+            case WSDDPackageImpl.DEPLOYMENT__HANDLERS:
+                return ((InternalEList)getHandlers()).basicRemove(otherEnd, msgs);
+            case WSDDPackageImpl.DEPLOYMENT__TRANSPORTS:
+                return ((InternalEList)getTransports()).basicRemove(otherEnd, msgs);
             case WSDDPackageImpl.DEPLOYMENT__SERVICES:
                 return ((InternalEList)getServices()).basicRemove(otherEnd, msgs);
         }

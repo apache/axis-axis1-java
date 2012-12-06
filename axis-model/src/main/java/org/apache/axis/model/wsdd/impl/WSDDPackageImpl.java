@@ -668,7 +668,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int HANDLER_FEATURE_COUNT = PARAMETERIZABLE_FEATURE_COUNT + 2;
 
     /**
-     * The feature id for the '<em><b>Handlers</b></em>' reference list.
+     * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -705,7 +705,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int DEPLOYABLE_ITEM__PARAMETERS = PARAMETERIZABLE__PARAMETERS;
 
     /**
-     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * The feature id for the '<em><b>Request Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -714,7 +714,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int DEPLOYABLE_ITEM__REQUEST_FLOW = PARAMETERIZABLE_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * The feature id for the '<em><b>Response Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -751,7 +751,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int GLOBAL_CONFIGURATION__PARAMETERS = DEPLOYABLE_ITEM__PARAMETERS;
 
     /**
-     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * The feature id for the '<em><b>Request Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -760,7 +760,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int GLOBAL_CONFIGURATION__REQUEST_FLOW = DEPLOYABLE_ITEM__REQUEST_FLOW;
 
     /**
-     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * The feature id for the '<em><b>Response Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -797,7 +797,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int TRANSPORT__PARAMETERS = DEPLOYABLE_ITEM__PARAMETERS;
 
     /**
-     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * The feature id for the '<em><b>Request Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -806,7 +806,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int TRANSPORT__REQUEST_FLOW = DEPLOYABLE_ITEM__REQUEST_FLOW;
 
     /**
-     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * The feature id for the '<em><b>Response Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -861,7 +861,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int SERVICE__PARAMETERS = DEPLOYABLE_ITEM__PARAMETERS;
 
     /**
-     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * The feature id for the '<em><b>Request Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -870,7 +870,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int SERVICE__REQUEST_FLOW = DEPLOYABLE_ITEM__REQUEST_FLOW;
 
     /**
-     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * The feature id for the '<em><b>Response Flow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -997,7 +997,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int DEPLOYMENT__GLOBAL_CONFIGURATION = 1;
 
     /**
-     * The feature id for the '<em><b>Handlers</b></em>' reference list.
+     * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -1006,7 +1006,7 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int DEPLOYMENT__HANDLERS = 2;
 
     /**
-     * The feature id for the '<em><b>Transports</b></em>' reference list.
+     * The feature id for the '<em><b>Transports</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -1310,10 +1310,10 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for the reference list '{@link org.apache.axis.model.wsdd.Flow#getHandlers <em>Handlers</em>}'.
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Flow#getHandlers <em>Handlers</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference list '<em>Handlers</em>'.
+     * @return the meta object for the containment reference list '<em>Handlers</em>'.
      * @see org.apache.axis.model.wsdd.Flow#getHandlers()
      * @see #getFlow()
      * @generated
@@ -1846,10 +1846,10 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for the reference '{@link org.apache.axis.model.wsdd.DeployableItem#getRequestFlow <em>Request Flow</em>}'.
+     * Returns the meta object for the containment reference '{@link org.apache.axis.model.wsdd.DeployableItem#getRequestFlow <em>Request Flow</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference '<em>Request Flow</em>'.
+     * @return the meta object for the containment reference '<em>Request Flow</em>'.
      * @see org.apache.axis.model.wsdd.DeployableItem#getRequestFlow()
      * @see #getDeployableItem()
      * @generated
@@ -1859,10 +1859,10 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for the reference '{@link org.apache.axis.model.wsdd.DeployableItem#getResponseFlow <em>Response Flow</em>}'.
+     * Returns the meta object for the containment reference '{@link org.apache.axis.model.wsdd.DeployableItem#getResponseFlow <em>Response Flow</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference '<em>Response Flow</em>'.
+     * @return the meta object for the containment reference '<em>Response Flow</em>'.
      * @see org.apache.axis.model.wsdd.DeployableItem#getResponseFlow()
      * @see #getDeployableItem()
      * @generated
@@ -2089,10 +2089,10 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for the reference list '{@link org.apache.axis.model.wsdd.Deployment#getHandlers <em>Handlers</em>}'.
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Deployment#getHandlers <em>Handlers</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference list '<em>Handlers</em>'.
+     * @return the meta object for the containment reference list '<em>Handlers</em>'.
      * @see org.apache.axis.model.wsdd.Deployment#getHandlers()
      * @see #getDeployment()
      * @generated
@@ -2102,10 +2102,10 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for the reference list '{@link org.apache.axis.model.wsdd.Deployment#getTransports <em>Transports</em>}'.
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Deployment#getTransports <em>Transports</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference list '<em>Transports</em>'.
+     * @return the meta object for the containment reference list '<em>Transports</em>'.
      * @see org.apache.axis.model.wsdd.Deployment#getTransports()
      * @see #getDeployment()
      * @generated
@@ -2378,11 +2378,11 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEAttribute(getHandler_Type(), theXMLTypePackage.getQName(), "type", null, 0, 1, Handler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(flowEClass, Flow.class, "Flow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getFlow_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getFlow_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(deployableItemEClass, DeployableItem.class, "DeployableItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getDeployableItem_RequestFlow(), this.getFlow(), null, "requestFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getDeployableItem_ResponseFlow(), this.getFlow(), null, "responseFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployableItem_RequestFlow(), this.getFlow(), null, "requestFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployableItem_ResponseFlow(), this.getFlow(), null, "responseFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(globalConfigurationEClass, GlobalConfiguration.class, "GlobalConfiguration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -2404,9 +2404,12 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEClass(deploymentEClass, Deployment.class, "Deployment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getDeployment_Name(), ecorePackage.getEString(), "name", null, 0, 1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getDeployment_GlobalConfiguration(), this.getGlobalConfiguration(), null, "globalConfiguration", null, 0, 1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getDeployment_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getDeployment_Transports(), this.getTransport(), null, "transports", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployment_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployment_Transports(), this.getTransport(), null, "transports", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getDeployment_Services(), this.getService(), null, "services", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        op = addEOperation(deploymentEClass, null, "merge");
+        addEParameter(op, this.getDeployment(), "other", 1, 1);
 
         // Initialize enums and add enum literals
         initEEnum(useEEnum, Use.class, "Use");
@@ -2595,7 +2598,7 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EClass FLOW = eINSTANCE.getFlow();
 
         /**
-         * The meta object literal for the '<em><b>Handlers</b></em>' reference list feature.
+         * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
@@ -2951,7 +2954,7 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EClass DEPLOYABLE_ITEM = eINSTANCE.getDeployableItem();
 
         /**
-         * The meta object literal for the '<em><b>Request Flow</b></em>' reference feature.
+         * The meta object literal for the '<em><b>Request Flow</b></em>' containment reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
@@ -2959,7 +2962,7 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EReference DEPLOYABLE_ITEM__REQUEST_FLOW = eINSTANCE.getDeployableItem_RequestFlow();
 
         /**
-         * The meta object literal for the '<em><b>Response Flow</b></em>' reference feature.
+         * The meta object literal for the '<em><b>Response Flow</b></em>' containment reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
@@ -3111,7 +3114,7 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EReference DEPLOYMENT__GLOBAL_CONFIGURATION = eINSTANCE.getDeployment_GlobalConfiguration();
 
         /**
-         * The meta object literal for the '<em><b>Handlers</b></em>' reference list feature.
+         * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
@@ -3119,7 +3122,7 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EReference DEPLOYMENT__HANDLERS = eINSTANCE.getDeployment_Handlers();
 
         /**
-         * The meta object literal for the '<em><b>Transports</b></em>' reference list feature.
+         * The meta object literal for the '<em><b>Transports</b></em>' containment reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated

@@ -79,7 +79,7 @@ public interface Deployment {
     void setGlobalConfiguration(GlobalConfiguration value);
 
     /**
-     * Returns the value of the '<em><b>Handlers</b></em>' reference list.
+     * Returns the value of the '<em><b>Handlers</b></em>' containment reference list.
      * The list contents are of type {@link org.apache.axis.model.wsdd.Handler}.
      * <!-- begin-user-doc -->
      * <p>
@@ -87,15 +87,15 @@ public interface Deployment {
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Handlers</em>' reference list.
-     * @model type="org.apache.axis.model.wsdd.Handler"
+     * @return the value of the '<em>Handlers</em>' containment reference list.
+     * @model type="org.apache.axis.model.wsdd.Handler" containment="true"
      *        extendedMetaData="name='handler' kind='element' namespace='##targetNamespace'"
      * @generated
      */
     List getHandlers();
 
     /**
-     * Returns the value of the '<em><b>Transports</b></em>' reference list.
+     * Returns the value of the '<em><b>Transports</b></em>' containment reference list.
      * The list contents are of type {@link org.apache.axis.model.wsdd.Transport}.
      * <!-- begin-user-doc -->
      * <p>
@@ -103,8 +103,8 @@ public interface Deployment {
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Transports</em>' reference list.
-     * @model type="org.apache.axis.model.wsdd.Transport"
+     * @return the value of the '<em>Transports</em>' containment reference list.
+     * @model type="org.apache.axis.model.wsdd.Transport" containment="true"
      *        extendedMetaData="name='transport' kind='element' namespace='##targetNamespace'"
      * @generated
      */
@@ -125,5 +125,13 @@ public interface Deployment {
      * @generated
      */
     List getServices();
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @model otherRequired="true"
+     * @generated
+     */
+    void merge(Deployment other);
 
 } // Deployment

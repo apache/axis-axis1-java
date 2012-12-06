@@ -11,11 +11,14 @@ import java.util.List;
 import org.apache.axis.model.wsdd.Flow;
 
 import org.apache.axis.model.wsdd.Handler;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.BasicInternalEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,7 +35,7 @@ import org.eclipse.emf.ecore.util.BasicInternalEList;
  */
 public class FlowImpl extends EObjectImpl implements Flow {
     /**
-     * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' reference list.
+     * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see #getHandlers()
@@ -69,6 +72,19 @@ public class FlowImpl extends EObjectImpl implements Flow {
             handlers = new BasicInternalEList(Handler.class);
         }
         return handlers;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case WSDDPackageImpl.FLOW__HANDLERS:
+                return ((InternalEList)getHandlers()).basicRemove(otherEnd, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
     }
 
     /**

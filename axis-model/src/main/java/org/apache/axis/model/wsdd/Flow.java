@@ -27,7 +27,7 @@ import java.util.List;
 public interface Flow {
 
     /**
-     * Returns the value of the '<em><b>Handlers</b></em>' reference list.
+     * Returns the value of the '<em><b>Handlers</b></em>' containment reference list.
      * The list contents are of type {@link org.apache.axis.model.wsdd.Handler}.
      * <!-- begin-user-doc -->
      * <p>
@@ -35,8 +35,8 @@ public interface Flow {
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Handlers</em>' reference list.
-     * @model type="org.apache.axis.model.wsdd.Handler"
+     * @return the value of the '<em>Handlers</em>' containment reference list.
+     * @model type="org.apache.axis.model.wsdd.Handler" containment="true"
      *        extendedMetaData="name='handler' kind='element' namespace='##targetNamespace'"
      * @generated
      */

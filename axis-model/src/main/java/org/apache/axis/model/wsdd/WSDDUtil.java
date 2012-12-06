@@ -19,6 +19,7 @@
 package org.apache.axis.model.wsdd;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,15 @@ public final class WSDDUtil {
         options.put(XMLResource.OPTION_EXTENDED_META_DATA, ExtendedMetaData.INSTANCE);
         resource.load(is, options);
         return (Deployment)resource.getContents().get(0);        
+    }
+    
+    public static void save(Deployment deployment, OutputStream out) throws IOException {
+        AxisXMLResource resource = new AxisXMLResource();
+        XMLProcessor processor = new XMLProcessor();
+        resource.getContents().add(deployment);
+        Map options = new HashMap();
+        options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+        processor.save(out, resource, options);        
     }
     
     public static void save(Deployment deployment, Writer writer) throws IOException {

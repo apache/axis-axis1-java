@@ -97,7 +97,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Flow">
     <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
-        eType="#//Handler">
+        eType="#//Handler" containment="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="name" value="handler"/>
         <details key="kind" value="element"/>
@@ -106,8 +106,10 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DeployableItem" abstract="true" eSuperTypes="#//Parameterizable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="requestFlow" eType="#//Flow"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="responseFlow" eType="#//Flow"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="requestFlow" eType="#//Flow"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="responseFlow" eType="#//Flow"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GlobalConfiguration" eSuperTypes="#//DeployableItem"/>
   <eClassifiers xsi:type="ecore:EClass" name="Transport" eSuperTypes="#//DeployableItem">
@@ -165,11 +167,14 @@
       <details key="name" value="deployment"/>
       <details key="kind" value="element"/>
     </eAnnotations>
+    <eOperations name="merge">
+      <eParameters name="other" lowerBound="1" eType="#//Deployment"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="globalConfiguration" eType="#//GlobalConfiguration"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
-        eType="#//Handler">
+        eType="#//Handler" containment="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="name" value="handler"/>
         <details key="kind" value="element"/>
@@ -177,7 +182,7 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="transports" upperBound="-1"
-        eType="#//Transport">
+        eType="#//Transport" containment="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="name" value="transport"/>
         <details key="kind" value="element"/>

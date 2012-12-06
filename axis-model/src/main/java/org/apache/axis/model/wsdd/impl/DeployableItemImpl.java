@@ -9,6 +9,7 @@ package org.apache.axis.model.wsdd.impl;
 import org.apache.axis.model.wsdd.DeployableItem;
 
 import org.apache.axis.model.wsdd.Flow;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.EObject;
@@ -30,7 +31,7 @@ import org.eclipse.emf.ecore.InternalEObject;
  */
 public abstract class DeployableItemImpl extends ParameterizableImpl implements DeployableItem {
     /**
-     * The cached value of the '{@link #getRequestFlow() <em>Request Flow</em>}' reference.
+     * The cached value of the '{@link #getRequestFlow() <em>Request Flow</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see #getRequestFlow()
@@ -39,7 +40,7 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      */
     protected Flow requestFlow;
     /**
-     * The cached value of the '{@link #getResponseFlow() <em>Response Flow</em>}' reference.
+     * The cached value of the '{@link #getResponseFlow() <em>Response Flow</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see #getResponseFlow()
@@ -72,12 +73,6 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * @generated
      */
     public Flow getRequestFlow() {
-        if (requestFlow != null && ((EObject)requestFlow).eIsProxy()) {
-            InternalEObject oldRequestFlow = (InternalEObject)requestFlow;
-            requestFlow = (Flow)eResolveProxy(oldRequestFlow);
-            if (requestFlow != oldRequestFlow) {
-            }
-        }
         return requestFlow;
     }
 
@@ -86,8 +81,10 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public Flow basicGetRequestFlow() {
-        return requestFlow;
+    public NotificationChain basicSetRequestFlow(Flow newRequestFlow, NotificationChain msgs) {
+        Flow oldRequestFlow = requestFlow;
+        requestFlow = newRequestFlow;
+        return msgs;
     }
 
     /**
@@ -96,7 +93,15 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * @generated
      */
     public void setRequestFlow(Flow newRequestFlow) {
-        requestFlow = newRequestFlow;
+        if (newRequestFlow != requestFlow) {
+            NotificationChain msgs = null;
+            if (requestFlow != null)
+                msgs = ((InternalEObject)requestFlow).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WSDDPackageImpl.DEPLOYABLE_ITEM__REQUEST_FLOW, null, msgs);
+            if (newRequestFlow != null)
+                msgs = ((InternalEObject)newRequestFlow).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WSDDPackageImpl.DEPLOYABLE_ITEM__REQUEST_FLOW, null, msgs);
+            msgs = basicSetRequestFlow(newRequestFlow, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
     }
 
     /**
@@ -105,12 +110,6 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * @generated
      */
     public Flow getResponseFlow() {
-        if (responseFlow != null && ((EObject)responseFlow).eIsProxy()) {
-            InternalEObject oldResponseFlow = (InternalEObject)responseFlow;
-            responseFlow = (Flow)eResolveProxy(oldResponseFlow);
-            if (responseFlow != oldResponseFlow) {
-            }
-        }
         return responseFlow;
     }
 
@@ -119,8 +118,10 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public Flow basicGetResponseFlow() {
-        return responseFlow;
+    public NotificationChain basicSetResponseFlow(Flow newResponseFlow, NotificationChain msgs) {
+        Flow oldResponseFlow = responseFlow;
+        responseFlow = newResponseFlow;
+        return msgs;
     }
 
     /**
@@ -129,7 +130,30 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * @generated
      */
     public void setResponseFlow(Flow newResponseFlow) {
-        responseFlow = newResponseFlow;
+        if (newResponseFlow != responseFlow) {
+            NotificationChain msgs = null;
+            if (responseFlow != null)
+                msgs = ((InternalEObject)responseFlow).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - WSDDPackageImpl.DEPLOYABLE_ITEM__RESPONSE_FLOW, null, msgs);
+            if (newResponseFlow != null)
+                msgs = ((InternalEObject)newResponseFlow).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - WSDDPackageImpl.DEPLOYABLE_ITEM__RESPONSE_FLOW, null, msgs);
+            msgs = basicSetResponseFlow(newResponseFlow, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case WSDDPackageImpl.DEPLOYABLE_ITEM__REQUEST_FLOW:
+                return basicSetRequestFlow(null, msgs);
+            case WSDDPackageImpl.DEPLOYABLE_ITEM__RESPONSE_FLOW:
+                return basicSetResponseFlow(null, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
     }
 
     /**
@@ -140,11 +164,9 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case WSDDPackageImpl.DEPLOYABLE_ITEM__REQUEST_FLOW:
-                if (resolve) return getRequestFlow();
-                return basicGetRequestFlow();
+                return getRequestFlow();
             case WSDDPackageImpl.DEPLOYABLE_ITEM__RESPONSE_FLOW:
-                if (resolve) return getResponseFlow();
-                return basicGetResponseFlow();
+                return getResponseFlow();
         }
         return super.eGet(featureID, resolve, coreType);
     }
