@@ -6,6 +6,8 @@
  */
 package org.apache.axis.model.wsdd;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -58,11 +60,11 @@ public interface Transport extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Pivot</em>' attribute.
-     * @see #setPivot(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setPivot(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getPivot();
+    QName getPivot();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Transport#getPivot <em>Pivot</em>}' attribute.
@@ -72,6 +74,6 @@ public interface Transport extends DeployableItem {
      * @see #getPivot()
      * @generated
      */
-    void setPivot(Object value);
+    void setPivot(QName value);
 
 } // Transport

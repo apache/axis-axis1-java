@@ -6,6 +6,7 @@
  */
 package org.apache.axis.model.wsdd.impl;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.Transport;
 
 import org.eclipse.emf.ecore.EClass;
@@ -53,7 +54,7 @@ public class TransportImpl extends DeployableItemImpl implements Transport {
      * @generated
      * @ordered
      */
-    protected static final Object PIVOT_EDEFAULT = null;
+    protected static final QName PIVOT_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getPivot() <em>Pivot</em>}' attribute.
@@ -63,7 +64,7 @@ public class TransportImpl extends DeployableItemImpl implements Transport {
      * @generated
      * @ordered
      */
-    protected Object pivot = PIVOT_EDEFAULT;
+    protected QName pivot = PIVOT_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -106,7 +107,7 @@ public class TransportImpl extends DeployableItemImpl implements Transport {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getPivot() {
+    public QName getPivot() {
         return pivot;
     }
 
@@ -115,7 +116,7 @@ public class TransportImpl extends DeployableItemImpl implements Transport {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setPivot(Object newPivot) {
+    public void setPivot(QName newPivot) {
         pivot = newPivot;
     }
 
@@ -145,7 +146,7 @@ public class TransportImpl extends DeployableItemImpl implements Transport {
                 setName((String)newValue);
                 return;
             case WSDDPackageImpl.TRANSPORT__PIVOT:
-                setPivot(newValue);
+                setPivot((QName)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

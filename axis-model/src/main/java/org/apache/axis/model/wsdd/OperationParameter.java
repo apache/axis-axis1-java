@@ -6,6 +6,8 @@
  */
 package org.apache.axis.model.wsdd;
 
+import javax.xml.namespace.QName;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Operation Parameter</b></em>'.
@@ -62,11 +64,11 @@ public interface OperationParameter {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Qname</em>' attribute.
-     * @see #setQname(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setQname(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getQname();
+    QName getQname();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.OperationParameter#getQname <em>Qname</em>}' attribute.
@@ -76,7 +78,7 @@ public interface OperationParameter {
      * @see #getQname()
      * @generated
      */
-    void setQname(Object value);
+    void setQname(QName value);
 
     /**
      * Returns the value of the '<em><b>Type</b></em>' attribute.
@@ -87,11 +89,11 @@ public interface OperationParameter {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Type</em>' attribute.
-     * @see #setType(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setType(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getType();
+    QName getType();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.OperationParameter#getType <em>Type</em>}' attribute.
@@ -101,7 +103,7 @@ public interface OperationParameter {
      * @see #getType()
      * @generated
      */
-    void setType(Object value);
+    void setType(QName value);
 
     /**
      * Returns the value of the '<em><b>Mode</b></em>' attribute.
@@ -190,11 +192,11 @@ public interface OperationParameter {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Item QName</em>' attribute.
-     * @see #setItemQName(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setItemQName(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getItemQName();
+    QName getItemQName();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.OperationParameter#getItemQName <em>Item QName</em>}' attribute.
@@ -204,6 +206,6 @@ public interface OperationParameter {
      * @see #getItemQName()
      * @generated
      */
-    void setItemQName(Object value);
+    void setItemQName(QName value);
 
 } // OperationParameter

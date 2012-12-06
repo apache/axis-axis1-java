@@ -9,6 +9,7 @@ package org.apache.axis.model.wsdd.impl;
 import java.util.Collection;
 
 import java.util.List;
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.Fault;
 import org.apache.axis.model.wsdd.Operation;
 import org.apache.axis.model.wsdd.OperationParameter;
@@ -77,7 +78,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected static final Object QNAME_EDEFAULT = null;
+    protected static final QName QNAME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getQname() <em>Qname</em>}' attribute.
@@ -87,7 +88,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected Object qname = QNAME_EDEFAULT;
+    protected QName qname = QNAME_EDEFAULT;
 
     /**
      * The default value of the '{@link #getReturnQName() <em>Return QName</em>}' attribute.
@@ -97,7 +98,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected static final Object RETURN_QNAME_EDEFAULT = null;
+    protected static final QName RETURN_QNAME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getReturnQName() <em>Return QName</em>}' attribute.
@@ -107,7 +108,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected Object returnQName = RETURN_QNAME_EDEFAULT;
+    protected QName returnQName = RETURN_QNAME_EDEFAULT;
 
     /**
      * The default value of the '{@link #getReturnType() <em>Return Type</em>}' attribute.
@@ -117,7 +118,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected static final Object RETURN_TYPE_EDEFAULT = null;
+    protected static final QName RETURN_TYPE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getReturnType() <em>Return Type</em>}' attribute.
@@ -127,7 +128,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected Object returnType = RETURN_TYPE_EDEFAULT;
+    protected QName returnType = RETURN_TYPE_EDEFAULT;
 
     /**
      * The default value of the '{@link #getReturnItemQName() <em>Return Item QName</em>}' attribute.
@@ -137,7 +138,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected static final Object RETURN_ITEM_QNAME_EDEFAULT = null;
+    protected static final QName RETURN_ITEM_QNAME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getReturnItemQName() <em>Return Item QName</em>}' attribute.
@@ -147,7 +148,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected Object returnItemQName = RETURN_ITEM_QNAME_EDEFAULT;
+    protected QName returnItemQName = RETURN_ITEM_QNAME_EDEFAULT;
 
     /**
      * The default value of the '{@link #getReturnItemType() <em>Return Item Type</em>}' attribute.
@@ -157,7 +158,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected static final Object RETURN_ITEM_TYPE_EDEFAULT = null;
+    protected static final QName RETURN_ITEM_TYPE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getReturnItemType() <em>Return Item Type</em>}' attribute.
@@ -167,7 +168,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * @generated
      * @ordered
      */
-    protected Object returnItemType = RETURN_ITEM_TYPE_EDEFAULT;
+    protected QName returnItemType = RETURN_ITEM_TYPE_EDEFAULT;
 
     /**
      * The default value of the '{@link #getSoapAction() <em>Soap Action</em>}' attribute.
@@ -290,7 +291,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getQname() {
+    public QName getQname() {
         return qname;
     }
 
@@ -299,7 +300,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setQname(Object newQname) {
+    public void setQname(QName newQname) {
         qname = newQname;
     }
 
@@ -308,7 +309,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getReturnQName() {
+    public QName getReturnQName() {
         return returnQName;
     }
 
@@ -317,7 +318,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setReturnQName(Object newReturnQName) {
+    public void setReturnQName(QName newReturnQName) {
         returnQName = newReturnQName;
     }
 
@@ -326,7 +327,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getReturnType() {
+    public QName getReturnType() {
         return returnType;
     }
 
@@ -335,7 +336,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setReturnType(Object newReturnType) {
+    public void setReturnType(QName newReturnType) {
         returnType = newReturnType;
     }
 
@@ -344,7 +345,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getReturnItemQName() {
+    public QName getReturnItemQName() {
         return returnItemQName;
     }
 
@@ -353,7 +354,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setReturnItemQName(Object newReturnItemQName) {
+    public void setReturnItemQName(QName newReturnItemQName) {
         returnItemQName = newReturnItemQName;
     }
 
@@ -362,7 +363,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getReturnItemType() {
+    public QName getReturnItemType() {
         return returnItemType;
     }
 
@@ -371,7 +372,7 @@ public class OperationImpl extends EObjectImpl implements Operation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setReturnItemType(Object newReturnItemType) {
+    public void setReturnItemType(QName newReturnItemType) {
         returnItemType = newReturnItemType;
     }
 
@@ -512,19 +513,19 @@ public class OperationImpl extends EObjectImpl implements Operation {
                 setName((String)newValue);
                 return;
             case WSDDPackageImpl.OPERATION__QNAME:
-                setQname(newValue);
+                setQname((QName)newValue);
                 return;
             case WSDDPackageImpl.OPERATION__RETURN_QNAME:
-                setReturnQName(newValue);
+                setReturnQName((QName)newValue);
                 return;
             case WSDDPackageImpl.OPERATION__RETURN_TYPE:
-                setReturnType(newValue);
+                setReturnType((QName)newValue);
                 return;
             case WSDDPackageImpl.OPERATION__RETURN_ITEM_QNAME:
-                setReturnItemQName(newValue);
+                setReturnItemQName((QName)newValue);
                 return;
             case WSDDPackageImpl.OPERATION__RETURN_ITEM_TYPE:
-                setReturnItemType(newValue);
+                setReturnItemType((QName)newValue);
                 return;
             case WSDDPackageImpl.OPERATION__SOAP_ACTION:
                 setSoapAction((String)newValue);

@@ -7,6 +7,7 @@
 package org.apache.axis.model.wsdd;
 
 import java.util.List;
+import javax.xml.namespace.QName;
 
 /**
  * <!-- begin-user-doc -->
@@ -68,11 +69,11 @@ public interface Operation {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Qname</em>' attribute.
-     * @see #setQname(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setQname(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getQname();
+    QName getQname();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Operation#getQname <em>Qname</em>}' attribute.
@@ -82,7 +83,7 @@ public interface Operation {
      * @see #getQname()
      * @generated
      */
-    void setQname(Object value);
+    void setQname(QName value);
 
     /**
      * Returns the value of the '<em><b>Return QName</b></em>' attribute.
@@ -93,11 +94,11 @@ public interface Operation {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return QName</em>' attribute.
-     * @see #setReturnQName(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setReturnQName(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getReturnQName();
+    QName getReturnQName();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Operation#getReturnQName <em>Return QName</em>}' attribute.
@@ -107,7 +108,7 @@ public interface Operation {
      * @see #getReturnQName()
      * @generated
      */
-    void setReturnQName(Object value);
+    void setReturnQName(QName value);
 
     /**
      * Returns the value of the '<em><b>Return Type</b></em>' attribute.
@@ -118,11 +119,11 @@ public interface Operation {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return Type</em>' attribute.
-     * @see #setReturnType(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setReturnType(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getReturnType();
+    QName getReturnType();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Operation#getReturnType <em>Return Type</em>}' attribute.
@@ -132,7 +133,7 @@ public interface Operation {
      * @see #getReturnType()
      * @generated
      */
-    void setReturnType(Object value);
+    void setReturnType(QName value);
 
     /**
      * Returns the value of the '<em><b>Return Item QName</b></em>' attribute.
@@ -143,11 +144,11 @@ public interface Operation {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return Item QName</em>' attribute.
-     * @see #setReturnItemQName(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setReturnItemQName(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getReturnItemQName();
+    QName getReturnItemQName();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Operation#getReturnItemQName <em>Return Item QName</em>}' attribute.
@@ -157,7 +158,7 @@ public interface Operation {
      * @see #getReturnItemQName()
      * @generated
      */
-    void setReturnItemQName(Object value);
+    void setReturnItemQName(QName value);
 
     /**
      * Returns the value of the '<em><b>Return Item Type</b></em>' attribute.
@@ -168,11 +169,11 @@ public interface Operation {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Return Item Type</em>' attribute.
-     * @see #setReturnItemType(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setReturnItemType(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getReturnItemType();
+    QName getReturnItemType();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Operation#getReturnItemType <em>Return Item Type</em>}' attribute.
@@ -182,7 +183,7 @@ public interface Operation {
      * @see #getReturnItemType()
      * @generated
      */
-    void setReturnItemType(Object value);
+    void setReturnItemType(QName value);
 
     /**
      * Returns the value of the '<em><b>Soap Action</b></em>' attribute.

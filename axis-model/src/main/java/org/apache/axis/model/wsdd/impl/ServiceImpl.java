@@ -9,6 +9,7 @@ package org.apache.axis.model.wsdd.impl;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.ArrayMapping;
 import org.apache.axis.model.wsdd.BeanMapping;
 import org.apache.axis.model.wsdd.Operation;
@@ -77,7 +78,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      * @ordered
      */
-    protected static final Object PROVIDER_EDEFAULT = null;
+    protected static final QName PROVIDER_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getProvider() <em>Provider</em>}' attribute.
@@ -87,7 +88,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @generated
      * @ordered
      */
-    protected Object provider = PROVIDER_EDEFAULT;
+    protected QName provider = PROVIDER_EDEFAULT;
 
     /**
      * The default value of the '{@link #getUse() <em>Use</em>}' attribute.
@@ -220,7 +221,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getProvider() {
+    public QName getProvider() {
         return provider;
     }
 
@@ -229,7 +230,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setProvider(Object newProvider) {
+    public void setProvider(QName newProvider) {
         provider = newProvider;
     }
 
@@ -388,7 +389,7 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
                 setName((String)newValue);
                 return;
             case WSDDPackageImpl.SERVICE__PROVIDER:
-                setProvider(newValue);
+                setProvider((QName)newValue);
                 return;
             case WSDDPackageImpl.SERVICE__USE:
                 setUse((Use)newValue);

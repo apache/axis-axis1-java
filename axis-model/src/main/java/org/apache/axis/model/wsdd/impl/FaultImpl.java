@@ -6,6 +6,7 @@
  */
 package org.apache.axis.model.wsdd.impl;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.Fault;
 
 import org.eclipse.emf.ecore.EClass;
@@ -57,7 +58,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * @generated
      * @ordered
      */
-    protected static final Object QNAME_EDEFAULT = null;
+    protected static final QName QNAME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getQname() <em>Qname</em>}' attribute.
@@ -67,7 +68,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * @generated
      * @ordered
      */
-    protected Object qname = QNAME_EDEFAULT;
+    protected QName qname = QNAME_EDEFAULT;
 
     /**
      * The default value of the '{@link #getClass_() <em>Class</em>}' attribute.
@@ -97,7 +98,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * @generated
      * @ordered
      */
-    protected static final Object TYPE_EDEFAULT = null;
+    protected static final QName TYPE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
@@ -107,7 +108,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * @generated
      * @ordered
      */
-    protected Object type = TYPE_EDEFAULT;
+    protected QName type = TYPE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -150,7 +151,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getQname() {
+    public QName getQname() {
         return qname;
     }
 
@@ -159,7 +160,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setQname(Object newQname) {
+    public void setQname(QName newQname) {
         qname = newQname;
     }
 
@@ -186,7 +187,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getType() {
+    public QName getType() {
         return type;
     }
 
@@ -195,7 +196,7 @@ public class FaultImpl extends EObjectImpl implements Fault {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setType(Object newType) {
+    public void setType(QName newType) {
         type = newType;
     }
 
@@ -229,13 +230,13 @@ public class FaultImpl extends EObjectImpl implements Fault {
                 setName((String)newValue);
                 return;
             case WSDDPackageImpl.FAULT__QNAME:
-                setQname(newValue);
+                setQname((QName)newValue);
                 return;
             case WSDDPackageImpl.FAULT__CLASS:
                 setClass((String)newValue);
                 return;
             case WSDDPackageImpl.FAULT__TYPE:
-                setType(newValue);
+                setType((QName)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

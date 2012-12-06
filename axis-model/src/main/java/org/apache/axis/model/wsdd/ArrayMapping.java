@@ -6,6 +6,8 @@
  */
 package org.apache.axis.model.wsdd;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -32,11 +34,11 @@ public interface ArrayMapping extends Mapping {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Inner Type</em>' attribute.
-     * @see #setInnerType(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setInnerType(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getInnerType();
+    QName getInnerType();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.ArrayMapping#getInnerType <em>Inner Type</em>}' attribute.
@@ -46,6 +48,6 @@ public interface ArrayMapping extends Mapping {
      * @see #getInnerType()
      * @generated
      */
-    void setInnerType(Object value);
+    void setInnerType(QName value);
 
 } // ArrayMapping

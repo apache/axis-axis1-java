@@ -6,6 +6,7 @@
  */
 package org.apache.axis.model.wsdd.impl;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.ArrayMapping;
 
 import org.eclipse.emf.ecore.EClass;
@@ -32,7 +33,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      * @generated
      * @ordered
      */
-    protected static final Object INNER_TYPE_EDEFAULT = null;
+    protected static final QName INNER_TYPE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getInnerType() <em>Inner Type</em>}' attribute.
@@ -42,7 +43,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      * @generated
      * @ordered
      */
-    protected Object innerType = INNER_TYPE_EDEFAULT;
+    protected QName innerType = INNER_TYPE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -67,7 +68,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getInnerType() {
+    public QName getInnerType() {
         return innerType;
     }
 
@@ -76,7 +77,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setInnerType(Object newInnerType) {
+    public void setInnerType(QName newInnerType) {
         innerType = newInnerType;
     }
 
@@ -101,7 +102,7 @@ public class ArrayMappingImpl extends MappingImpl implements ArrayMapping {
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case WSDDPackageImpl.ARRAY_MAPPING__INNER_TYPE:
-                setInnerType(newValue);
+                setInnerType((QName)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

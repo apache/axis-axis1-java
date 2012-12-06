@@ -6,6 +6,7 @@
  */
 package org.apache.axis.model.wsdd.impl;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.OperationParameter;
 import org.apache.axis.model.wsdd.ParameterMode;
 
@@ -61,7 +62,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * @generated
      * @ordered
      */
-    protected static final Object QNAME_EDEFAULT = null;
+    protected static final QName QNAME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getQname() <em>Qname</em>}' attribute.
@@ -71,7 +72,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * @generated
      * @ordered
      */
-    protected Object qname = QNAME_EDEFAULT;
+    protected QName qname = QNAME_EDEFAULT;
 
     /**
      * The default value of the '{@link #getType() <em>Type</em>}' attribute.
@@ -81,7 +82,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * @generated
      * @ordered
      */
-    protected static final Object TYPE_EDEFAULT = null;
+    protected static final QName TYPE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
@@ -91,7 +92,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * @generated
      * @ordered
      */
-    protected Object type = TYPE_EDEFAULT;
+    protected QName type = TYPE_EDEFAULT;
 
     /**
      * The default value of the '{@link #getMode() <em>Mode</em>}' attribute.
@@ -161,7 +162,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * @generated
      * @ordered
      */
-    protected static final Object ITEM_QNAME_EDEFAULT = null;
+    protected static final QName ITEM_QNAME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getItemQName() <em>Item QName</em>}' attribute.
@@ -171,7 +172,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * @generated
      * @ordered
      */
-    protected Object itemQName = ITEM_QNAME_EDEFAULT;
+    protected QName itemQName = ITEM_QNAME_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -214,7 +215,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getQname() {
+    public QName getQname() {
         return qname;
     }
 
@@ -223,7 +224,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setQname(Object newQname) {
+    public void setQname(QName newQname) {
         qname = newQname;
     }
 
@@ -232,7 +233,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getType() {
+    public QName getType() {
         return type;
     }
 
@@ -241,7 +242,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setType(Object newType) {
+    public void setType(QName newType) {
         type = newType;
     }
 
@@ -304,7 +305,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getItemQName() {
+    public QName getItemQName() {
         return itemQName;
     }
 
@@ -313,7 +314,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setItemQName(Object newItemQName) {
+    public void setItemQName(QName newItemQName) {
         itemQName = newItemQName;
     }
 
@@ -353,10 +354,10 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
                 setName((String)newValue);
                 return;
             case WSDDPackageImpl.OPERATION_PARAMETER__QNAME:
-                setQname(newValue);
+                setQname((QName)newValue);
                 return;
             case WSDDPackageImpl.OPERATION_PARAMETER__TYPE:
-                setType(newValue);
+                setType((QName)newValue);
                 return;
             case WSDDPackageImpl.OPERATION_PARAMETER__MODE:
                 setMode((ParameterMode)newValue);
@@ -368,7 +369,7 @@ public class OperationParameterImpl extends EObjectImpl implements OperationPara
                 setOutHeader((Boolean)newValue);
                 return;
             case WSDDPackageImpl.OPERATION_PARAMETER__ITEM_QNAME:
-                setItemQName(newValue);
+                setItemQName((QName)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

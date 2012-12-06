@@ -23,8 +23,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Mapping" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType xml.ecore#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType xml.ecore#//QName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="encodingStyle" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypeMapping" eSuperTypes="#//Mapping">
@@ -32,31 +32,31 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="deserializer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArrayMapping" eSuperTypes="#//Mapping">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="innerType" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="innerType" eType="ecore:EDataType xml.ecore#//QName"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BeanMapping" eSuperTypes="#//Mapping"/>
   <eClassifiers xsi:type="ecore:EClass" name="OperationParameter">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType xml.ecore#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType xml.ecore#//QName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="mode" eType="#//ParameterMode"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="inHeader" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="outHeader" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="itemQName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="itemQName" eType="ecore:EDataType xml.ecore#//QName"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Fault">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType xml.ecore#//QName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="class" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType xml.ecore#//QName"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Operation">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnQName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnType" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnItemQName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnItemType" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qname" eType="ecore:EDataType xml.ecore#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnQName" eType="ecore:EDataType xml.ecore#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnType" eType="ecore:EDataType xml.ecore#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnItemQName" eType="ecore:EDataType xml.ecore#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnItemType" eType="ecore:EDataType xml.ecore#//QName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="soapAction" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="mep" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnHeader" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"/>
@@ -93,7 +93,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Handler" eSuperTypes="#//Parameterizable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType xml.ecore#//QName"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Flow">
     <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
@@ -114,11 +114,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="GlobalConfiguration" eSuperTypes="#//DeployableItem"/>
   <eClassifiers xsi:type="ecore:EClass" name="Transport" eSuperTypes="#//DeployableItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pivot" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pivot" eType="ecore:EDataType xml.ecore#//QName"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//DeployableItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="provider" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//QName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="provider" eType="ecore:EDataType xml.ecore#//QName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="use" eType="#//Use"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" eType="#//Style"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="namespaces" upperBound="-1"

@@ -6,6 +6,7 @@
  */
 package org.apache.axis.model.wsdd.impl;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.Mapping;
 
 import org.eclipse.emf.ecore.EClass;
@@ -36,7 +37,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * @generated
      * @ordered
      */
-    protected static final Object QNAME_EDEFAULT = null;
+    protected static final QName QNAME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getQname() <em>Qname</em>}' attribute.
@@ -46,7 +47,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * @generated
      * @ordered
      */
-    protected Object qname = QNAME_EDEFAULT;
+    protected QName qname = QNAME_EDEFAULT;
 
     /**
      * The default value of the '{@link #getType() <em>Type</em>}' attribute.
@@ -56,7 +57,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * @generated
      * @ordered
      */
-    protected static final Object TYPE_EDEFAULT = null;
+    protected static final QName TYPE_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
@@ -66,7 +67,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * @generated
      * @ordered
      */
-    protected Object type = TYPE_EDEFAULT;
+    protected QName type = TYPE_EDEFAULT;
 
     /**
      * The default value of the '{@link #getEncodingStyle() <em>Encoding Style</em>}' attribute.
@@ -111,7 +112,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getQname() {
+    public QName getQname() {
         return qname;
     }
 
@@ -120,7 +121,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setQname(Object newQname) {
+    public void setQname(QName newQname) {
         qname = newQname;
     }
 
@@ -129,7 +130,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getType() {
+    public QName getType() {
         return type;
     }
 
@@ -138,7 +139,7 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setType(Object newType) {
+    public void setType(QName newType) {
         type = newType;
     }
 
@@ -185,10 +186,10 @@ public abstract class MappingImpl extends EObjectImpl implements Mapping {
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case WSDDPackageImpl.MAPPING__QNAME:
-                setQname(newValue);
+                setQname((QName)newValue);
                 return;
             case WSDDPackageImpl.MAPPING__TYPE:
-                setType(newValue);
+                setType((QName)newValue);
                 return;
             case WSDDPackageImpl.MAPPING__ENCODING_STYLE:
                 setEncodingStyle((String)newValue);

@@ -6,6 +6,7 @@
  */
 package org.apache.axis.model.wsdd.impl;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.model.wsdd.Handler;
 
 import org.eclipse.emf.ecore.EClass;
@@ -51,7 +52,7 @@ public class HandlerImpl extends ParameterizableImpl implements Handler {
      * @generated
      * @ordered
      */
-    protected static final Object TYPE_EDEFAULT = null;
+    protected static final QName TYPE_EDEFAULT = null;
     /**
      * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -60,7 +61,7 @@ public class HandlerImpl extends ParameterizableImpl implements Handler {
      * @generated
      * @ordered
      */
-    protected Object type = TYPE_EDEFAULT;
+    protected QName type = TYPE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -103,7 +104,7 @@ public class HandlerImpl extends ParameterizableImpl implements Handler {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Object getType() {
+    public QName getType() {
         return type;
     }
 
@@ -112,7 +113,7 @@ public class HandlerImpl extends ParameterizableImpl implements Handler {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setType(Object newType) {
+    public void setType(QName newType) {
         type = newType;
     }
 
@@ -142,7 +143,7 @@ public class HandlerImpl extends ParameterizableImpl implements Handler {
                 setName((String)newValue);
                 return;
             case WSDDPackageImpl.HANDLER__TYPE:
-                setType(newValue);
+                setType((QName)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

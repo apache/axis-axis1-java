@@ -7,6 +7,7 @@
 package org.apache.axis.model.wsdd;
 
 import java.util.List;
+import javax.xml.namespace.QName;
 
 /**
  * <!-- begin-user-doc -->
@@ -66,11 +67,11 @@ public interface Service extends DeployableItem {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Provider</em>' attribute.
-     * @see #setProvider(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setProvider(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getProvider();
+    QName getProvider();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Service#getProvider <em>Provider</em>}' attribute.
@@ -80,7 +81,7 @@ public interface Service extends DeployableItem {
      * @see #getProvider()
      * @generated
      */
-    void setProvider(Object value);
+    void setProvider(QName value);
 
     /**
      * Returns the value of the '<em><b>Use</b></em>' attribute.

@@ -6,6 +6,8 @@
  */
 package org.apache.axis.model.wsdd;
 
+import javax.xml.namespace.QName;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Fault</b></em>'.
@@ -59,11 +61,11 @@ public interface Fault {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Qname</em>' attribute.
-     * @see #setQname(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setQname(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getQname();
+    QName getQname();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Fault#getQname <em>Qname</em>}' attribute.
@@ -73,7 +75,7 @@ public interface Fault {
      * @see #getQname()
      * @generated
      */
-    void setQname(Object value);
+    void setQname(QName value);
 
     /**
      * Returns the value of the '<em><b>Class</b></em>' attribute.
@@ -109,11 +111,11 @@ public interface Fault {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Type</em>' attribute.
-     * @see #setType(Object)
-     * @model dataType="org.eclipse.emf.ecore.xml.type.QName"
+     * @see #setType(QName)
+     * @model dataType="org.apache.axis.model.xml.QName"
      * @generated
      */
-    Object getType();
+    QName getType();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.Fault#getType <em>Type</em>}' attribute.
@@ -123,6 +125,6 @@ public interface Fault {
      * @see #getType()
      * @generated
      */
-    void setType(Object value);
+    void setType(QName value);
 
 } // Fault
