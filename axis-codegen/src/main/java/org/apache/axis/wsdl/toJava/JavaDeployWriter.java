@@ -155,7 +155,7 @@ public class JavaDeployWriter extends JavaWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         Deployment deployment = WSDDFactory.INSTANCE.createDeployment();
         writeDeployServices(deployment);
-        WSDDUtil.write(deployment, pw);
+        WSDDUtil.save(deployment, pw);
     }    // writeFileBody
 
     /**

@@ -24,13 +24,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.axis.model.util.AxisXMLResource;
+import org.apache.axis.model.wsdd.impl.WSDDPackageImpl;
+import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.util.XMLProcessor;
+import org.xml.sax.InputSource;
 
 public final class WSDDUtil {
     private WSDDUtil() {}
 
-    public static void write(Deployment deployment, Writer writer) throws IOException {
+    public static Deployment load(InputSource is) throws IOException {
+        WSDDPackageImpl.eINSTANCE.eClass();
+        AxisXMLResource resource = new AxisXMLResource();
+        Map options = new HashMap();
+        options.put(XMLResource.OPTION_EXTENDED_META_DATA, ExtendedMetaData.INSTANCE);
+        resource.load(is, options);
+        return (Deployment)resource.getContents().get(0);        
+    }
+    
+    public static void save(Deployment deployment, Writer writer) throws IOException {
         AxisXMLResource resource = new AxisXMLResource();
         XMLProcessor processor = new XMLProcessor();
         resource.getContents().add(deployment);
