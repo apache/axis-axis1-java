@@ -14,37 +14,63 @@ package org.apache.axis.model.wsdd;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.apache.axis.model.wsdd.DeployableItem#getName <em>Name</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.DeployableItem#getRequestFlow <em>Request Flow</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.DeployableItem#getResponseFlow <em>Response Flow</em>}</li>
  * </ul>
  * </p>
  *
  * @model abstract="true"
  * @generated
  */
-public interface DeployableItem {
+public interface DeployableItem extends Parameterizable {
     /**
-     * Returns the value of the '<em><b>Name</b></em>' attribute.
+     * Returns the value of the '<em><b>Request Flow</b></em>' reference.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Name</em>' attribute isn't clear,
+     * If the meaning of the '<em>Request Flow</em>' reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Name</em>' attribute.
-     * @see #setName(String)
+     * @return the value of the '<em>Request Flow</em>' reference.
+     * @see #setRequestFlow(Flow)
      * @model
      * @generated
      */
-    String getName();
+    Flow getRequestFlow();
 
     /**
-     * Sets the value of the '{@link org.apache.axis.model.wsdd.DeployableItem#getName <em>Name</em>}' attribute.
+     * Sets the value of the '{@link org.apache.axis.model.wsdd.DeployableItem#getRequestFlow <em>Request Flow</em>}' reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Name</em>' attribute.
-     * @see #getName()
+     * @param value the new value of the '<em>Request Flow</em>' reference.
+     * @see #getRequestFlow()
      * @generated
      */
-    void setName(String value);
+    void setRequestFlow(Flow value);
+
+    /**
+     * Returns the value of the '<em><b>Response Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Response Flow</em>' reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Response Flow</em>' reference.
+     * @see #setResponseFlow(Flow)
+     * @model
+     * @generated
+     */
+    Flow getResponseFlow();
+
+    /**
+     * Sets the value of the '{@link org.apache.axis.model.wsdd.DeployableItem#getResponseFlow <em>Response Flow</em>}' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Response Flow</em>' reference.
+     * @see #getResponseFlow()
+     * @generated
+     */
+    void setResponseFlow(Flow value);
 
 } // DeployableItem

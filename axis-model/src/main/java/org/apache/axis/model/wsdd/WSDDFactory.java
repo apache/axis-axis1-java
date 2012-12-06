@@ -31,6 +31,15 @@ public interface WSDDFactory {
     Parameter createParameter();
 
     /**
+     * Returns a new object of class '<em>Flow</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Flow</em>'.
+     * @generated
+     */
+    Flow createFlow();
+
+    /**
      * Returns a new object of class '<em>Type Mapping</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -83,6 +92,42 @@ public interface WSDDFactory {
      * @generated
      */
     Operation createOperation();
+
+    /**
+     * Returns a new object of class '<em>Parameterizable</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Parameterizable</em>'.
+     * @generated
+     */
+    Parameterizable createParameterizable();
+
+    /**
+     * Returns a new object of class '<em>Handler</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Handler</em>'.
+     * @generated
+     */
+    Handler createHandler();
+
+    /**
+     * Returns a new object of class '<em>Global Configuration</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Global Configuration</em>'.
+     * @generated
+     */
+    GlobalConfiguration createGlobalConfiguration();
+
+    /**
+     * Returns a new object of class '<em>Transport</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Transport</em>'.
+     * @generated
+     */
+    Transport createTransport();
 
     /**
      * Returns a new object of class '<em>Service</em>'.

@@ -11,13 +11,18 @@ import org.apache.axis.model.wsdd.BeanMapping;
 import org.apache.axis.model.wsdd.DeployableItem;
 import org.apache.axis.model.wsdd.Deployment;
 import org.apache.axis.model.wsdd.Fault;
+import org.apache.axis.model.wsdd.Flow;
+import org.apache.axis.model.wsdd.GlobalConfiguration;
+import org.apache.axis.model.wsdd.Handler;
 import org.apache.axis.model.wsdd.Mapping;
 import org.apache.axis.model.wsdd.Operation;
 import org.apache.axis.model.wsdd.OperationParameter;
 import org.apache.axis.model.wsdd.Parameter;
 import org.apache.axis.model.wsdd.ParameterMode;
+import org.apache.axis.model.wsdd.Parameterizable;
 import org.apache.axis.model.wsdd.Service;
 import org.apache.axis.model.wsdd.Style;
+import org.apache.axis.model.wsdd.Transport;
 import org.apache.axis.model.wsdd.TypeMapping;
 import org.apache.axis.model.wsdd.Use;
 import org.apache.axis.model.wsdd.WSDDFactory;
@@ -111,6 +116,16 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @ordered
      */
     public static final int PARAMETER_FEATURE_COUNT = 2;
+
+    /**
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.FlowImpl <em>Flow</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.apache.axis.model.wsdd.impl.FlowImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getFlow()
+     * @generated
+     */
+    public static final int FLOW = 10;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.MappingImpl <em>Mapping</em>}' class.
@@ -579,14 +594,51 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int OPERATION_FEATURE_COUNT = 11;
 
     /**
-     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.DeployableItemImpl <em>Deployable Item</em>}' class.
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.ParameterizableImpl <em>Parameterizable</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see org.apache.axis.model.wsdd.impl.DeployableItemImpl
-     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getDeployableItem()
+     * @see org.apache.axis.model.wsdd.impl.ParameterizableImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getParameterizable()
      * @generated
      */
-    public static final int DEPLOYABLE_ITEM = 8;
+    public static final int PARAMETERIZABLE = 8;
+
+    /**
+     * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int PARAMETERIZABLE__PARAMETERS = 0;
+
+    /**
+     * The number of structural features of the '<em>Parameterizable</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int PARAMETERIZABLE_FEATURE_COUNT = 1;
+
+    /**
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.HandlerImpl <em>Handler</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.apache.axis.model.wsdd.impl.HandlerImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getHandler()
+     * @generated
+     */
+    public static final int HANDLER = 9;
+
+    /**
+     * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int HANDLER__PARAMETERS = PARAMETERIZABLE__PARAMETERS;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -595,7 +647,80 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYABLE_ITEM__NAME = 0;
+    public static final int HANDLER__NAME = PARAMETERIZABLE_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Type</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int HANDLER__TYPE = PARAMETERIZABLE_FEATURE_COUNT + 1;
+
+    /**
+     * The number of structural features of the '<em>Handler</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int HANDLER_FEATURE_COUNT = PARAMETERIZABLE_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>Handlers</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int FLOW__HANDLERS = 0;
+
+    /**
+     * The number of structural features of the '<em>Flow</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int FLOW_FEATURE_COUNT = 1;
+
+    /**
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.DeployableItemImpl <em>Deployable Item</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.apache.axis.model.wsdd.impl.DeployableItemImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getDeployableItem()
+     * @generated
+     */
+    public static final int DEPLOYABLE_ITEM = 11;
+
+    /**
+     * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYABLE_ITEM__PARAMETERS = PARAMETERIZABLE__PARAMETERS;
+
+    /**
+     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYABLE_ITEM__REQUEST_FLOW = PARAMETERIZABLE_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYABLE_ITEM__RESPONSE_FLOW = PARAMETERIZABLE_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Deployable Item</em>' class.
@@ -604,7 +729,117 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYABLE_ITEM_FEATURE_COUNT = 1;
+    public static final int DEPLOYABLE_ITEM_FEATURE_COUNT = PARAMETERIZABLE_FEATURE_COUNT + 2;
+
+    /**
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.GlobalConfigurationImpl <em>Global Configuration</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.apache.axis.model.wsdd.impl.GlobalConfigurationImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getGlobalConfiguration()
+     * @generated
+     */
+    public static final int GLOBAL_CONFIGURATION = 12;
+
+    /**
+     * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int GLOBAL_CONFIGURATION__PARAMETERS = DEPLOYABLE_ITEM__PARAMETERS;
+
+    /**
+     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int GLOBAL_CONFIGURATION__REQUEST_FLOW = DEPLOYABLE_ITEM__REQUEST_FLOW;
+
+    /**
+     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int GLOBAL_CONFIGURATION__RESPONSE_FLOW = DEPLOYABLE_ITEM__RESPONSE_FLOW;
+
+    /**
+     * The number of structural features of the '<em>Global Configuration</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int GLOBAL_CONFIGURATION_FEATURE_COUNT = DEPLOYABLE_ITEM_FEATURE_COUNT + 0;
+
+    /**
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.TransportImpl <em>Transport</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.apache.axis.model.wsdd.impl.TransportImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getTransport()
+     * @generated
+     */
+    public static final int TRANSPORT = 13;
+
+    /**
+     * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int TRANSPORT__PARAMETERS = DEPLOYABLE_ITEM__PARAMETERS;
+
+    /**
+     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int TRANSPORT__REQUEST_FLOW = DEPLOYABLE_ITEM__REQUEST_FLOW;
+
+    /**
+     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int TRANSPORT__RESPONSE_FLOW = DEPLOYABLE_ITEM__RESPONSE_FLOW;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int TRANSPORT__NAME = DEPLOYABLE_ITEM_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Pivot</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int TRANSPORT__PIVOT = DEPLOYABLE_ITEM_FEATURE_COUNT + 1;
+
+    /**
+     * The number of structural features of the '<em>Transport</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int TRANSPORT_FEATURE_COUNT = DEPLOYABLE_ITEM_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.ServiceImpl <em>Service</em>}' class.
@@ -614,43 +849,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getService()
      * @generated
      */
-    public static final int SERVICE = 9;
-
-    /**
-     * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__NAME = DEPLOYABLE_ITEM__NAME;
-
-    /**
-     * The feature id for the '<em><b>Provider</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__PROVIDER = DEPLOYABLE_ITEM_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Use</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__USE = DEPLOYABLE_ITEM_FEATURE_COUNT + 1;
-
-    /**
-     * The feature id for the '<em><b>Style</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__STYLE = DEPLOYABLE_ITEM_FEATURE_COUNT + 2;
+    public static final int SERVICE = 14;
 
     /**
      * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -659,7 +858,70 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE__PARAMETERS = DEPLOYABLE_ITEM_FEATURE_COUNT + 3;
+    public static final int SERVICE__PARAMETERS = DEPLOYABLE_ITEM__PARAMETERS;
+
+    /**
+     * The feature id for the '<em><b>Request Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__REQUEST_FLOW = DEPLOYABLE_ITEM__REQUEST_FLOW;
+
+    /**
+     * The feature id for the '<em><b>Response Flow</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__RESPONSE_FLOW = DEPLOYABLE_ITEM__RESPONSE_FLOW;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__NAME = DEPLOYABLE_ITEM_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Provider</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__PROVIDER = DEPLOYABLE_ITEM_FEATURE_COUNT + 1;
+
+    /**
+     * The feature id for the '<em><b>Use</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__USE = DEPLOYABLE_ITEM_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>Style</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__STYLE = DEPLOYABLE_ITEM_FEATURE_COUNT + 3;
+
+    /**
+     * The feature id for the '<em><b>Namespaces</b></em>' attribute list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__NAMESPACES = DEPLOYABLE_ITEM_FEATURE_COUNT + 4;
 
     /**
      * The feature id for the '<em><b>Operations</b></em>' containment reference list.
@@ -668,7 +930,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE__OPERATIONS = DEPLOYABLE_ITEM_FEATURE_COUNT + 4;
+    public static final int SERVICE__OPERATIONS = DEPLOYABLE_ITEM_FEATURE_COUNT + 5;
 
     /**
      * The feature id for the '<em><b>Type Mappings</b></em>' containment reference list.
@@ -677,7 +939,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE__TYPE_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 5;
+    public static final int SERVICE__TYPE_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 6;
 
     /**
      * The feature id for the '<em><b>Bean Mappings</b></em>' containment reference list.
@@ -686,7 +948,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE__BEAN_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 6;
+    public static final int SERVICE__BEAN_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 7;
 
     /**
      * The feature id for the '<em><b>Array Mappings</b></em>' containment reference list.
@@ -695,7 +957,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE__ARRAY_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 7;
+    public static final int SERVICE__ARRAY_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 8;
 
     /**
      * The number of structural features of the '<em>Service</em>' class.
@@ -704,7 +966,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE_FEATURE_COUNT = DEPLOYABLE_ITEM_FEATURE_COUNT + 8;
+    public static final int SERVICE_FEATURE_COUNT = DEPLOYABLE_ITEM_FEATURE_COUNT + 9;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.DeploymentImpl <em>Deployment</em>}' class.
@@ -714,7 +976,43 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getDeployment()
      * @generated
      */
-    public static final int DEPLOYMENT = 10;
+    public static final int DEPLOYMENT = 15;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYMENT__NAME = 0;
+
+    /**
+     * The feature id for the '<em><b>Global Configuration</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYMENT__GLOBAL_CONFIGURATION = 1;
+
+    /**
+     * The feature id for the '<em><b>Handlers</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYMENT__HANDLERS = 2;
+
+    /**
+     * The feature id for the '<em><b>Transports</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYMENT__TRANSPORTS = 3;
 
     /**
      * The feature id for the '<em><b>Services</b></em>' containment reference list.
@@ -723,7 +1021,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT__SERVICES = 0;
+    public static final int DEPLOYMENT__SERVICES = 4;
 
     /**
      * The number of structural features of the '<em>Deployment</em>' class.
@@ -732,7 +1030,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT_FEATURE_COUNT = 1;
+    public static final int DEPLOYMENT_FEATURE_COUNT = 5;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.Use <em>Use</em>}' enum.
@@ -742,7 +1040,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getUse()
      * @generated
      */
-    public static final int USE = 11;
+    public static final int USE = 16;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.Style <em>Style</em>}' enum.
@@ -752,7 +1050,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getStyle()
      * @generated
      */
-    public static final int STYLE = 12;
+    public static final int STYLE = 17;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.ParameterMode <em>Parameter Mode</em>}' enum.
@@ -762,7 +1060,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getParameterMode()
      * @generated
      */
-    public static final int PARAMETER_MODE = 13;
+    public static final int PARAMETER_MODE = 18;
 
     /**
      * <!-- begin-user-doc -->
@@ -770,6 +1068,13 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     private EClass parameterEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass flowEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -825,7 +1130,35 @@ public class WSDDPackageImpl extends EPackageImpl {
      * <!-- end-user-doc -->
      * @generated
      */
+    private EClass parameterizableEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass handlerEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     private EClass deployableItemEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass globalConfigurationEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass transportEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -962,6 +1295,31 @@ public class WSDDPackageImpl extends EPackageImpl {
      */
     public EAttribute getParameter_Value() {
         return (EAttribute)parameterEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.Flow <em>Flow</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Flow</em>'.
+     * @see org.apache.axis.model.wsdd.Flow
+     * @generated
+     */
+    public EClass getFlow() {
+        return flowEClass;
+    }
+
+    /**
+     * Returns the meta object for the reference list '{@link org.apache.axis.model.wsdd.Flow#getHandlers <em>Handlers</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Handlers</em>'.
+     * @see org.apache.axis.model.wsdd.Flow#getHandlers()
+     * @see #getFlow()
+     * @generated
+     */
+    public EReference getFlow_Handlers() {
+        return (EReference)flowEClass.getEStructuralFeatures().get(0);
     }
 
     /**
@@ -1413,6 +1771,69 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
+     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.Parameterizable <em>Parameterizable</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Parameterizable</em>'.
+     * @see org.apache.axis.model.wsdd.Parameterizable
+     * @generated
+     */
+    public EClass getParameterizable() {
+        return parameterizableEClass;
+    }
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Parameterizable#getParameters <em>Parameters</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Parameters</em>'.
+     * @see org.apache.axis.model.wsdd.Parameterizable#getParameters()
+     * @see #getParameterizable()
+     * @generated
+     */
+    public EReference getParameterizable_Parameters() {
+        return (EReference)parameterizableEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.Handler <em>Handler</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Handler</em>'.
+     * @see org.apache.axis.model.wsdd.Handler
+     * @generated
+     */
+    public EClass getHandler() {
+        return handlerEClass;
+    }
+
+    /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Handler#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.apache.axis.model.wsdd.Handler#getName()
+     * @see #getHandler()
+     * @generated
+     */
+    public EAttribute getHandler_Name() {
+        return (EAttribute)handlerEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Handler#getType <em>Type</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Type</em>'.
+     * @see org.apache.axis.model.wsdd.Handler#getType()
+     * @see #getHandler()
+     * @generated
+     */
+    public EAttribute getHandler_Type() {
+        return (EAttribute)handlerEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
      * Returns the meta object for class '{@link org.apache.axis.model.wsdd.DeployableItem <em>Deployable Item</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1425,16 +1846,79 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.DeployableItem#getName <em>Name</em>}'.
+     * Returns the meta object for the reference '{@link org.apache.axis.model.wsdd.DeployableItem#getRequestFlow <em>Request Flow</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Name</em>'.
-     * @see org.apache.axis.model.wsdd.DeployableItem#getName()
+     * @return the meta object for the reference '<em>Request Flow</em>'.
+     * @see org.apache.axis.model.wsdd.DeployableItem#getRequestFlow()
      * @see #getDeployableItem()
      * @generated
      */
-    public EAttribute getDeployableItem_Name() {
-        return (EAttribute)deployableItemEClass.getEStructuralFeatures().get(0);
+    public EReference getDeployableItem_RequestFlow() {
+        return (EReference)deployableItemEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * Returns the meta object for the reference '{@link org.apache.axis.model.wsdd.DeployableItem#getResponseFlow <em>Response Flow</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>Response Flow</em>'.
+     * @see org.apache.axis.model.wsdd.DeployableItem#getResponseFlow()
+     * @see #getDeployableItem()
+     * @generated
+     */
+    public EReference getDeployableItem_ResponseFlow() {
+        return (EReference)deployableItemEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.GlobalConfiguration <em>Global Configuration</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Global Configuration</em>'.
+     * @see org.apache.axis.model.wsdd.GlobalConfiguration
+     * @generated
+     */
+    public EClass getGlobalConfiguration() {
+        return globalConfigurationEClass;
+    }
+
+    /**
+     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.Transport <em>Transport</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Transport</em>'.
+     * @see org.apache.axis.model.wsdd.Transport
+     * @generated
+     */
+    public EClass getTransport() {
+        return transportEClass;
+    }
+
+    /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Transport#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.apache.axis.model.wsdd.Transport#getName()
+     * @see #getTransport()
+     * @generated
+     */
+    public EAttribute getTransport_Name() {
+        return (EAttribute)transportEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Transport#getPivot <em>Pivot</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Pivot</em>'.
+     * @see org.apache.axis.model.wsdd.Transport#getPivot()
+     * @see #getTransport()
+     * @generated
+     */
+    public EAttribute getTransport_Pivot() {
+        return (EAttribute)transportEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -1450,6 +1934,19 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Service#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.apache.axis.model.wsdd.Service#getName()
+     * @see #getService()
+     * @generated
+     */
+    public EAttribute getService_Name() {
+        return (EAttribute)serviceEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
      * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Service#getProvider <em>Provider</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1459,7 +1956,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EAttribute getService_Provider() {
-        return (EAttribute)serviceEClass.getEStructuralFeatures().get(0);
+        return (EAttribute)serviceEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -1472,7 +1969,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EAttribute getService_Use() {
-        return (EAttribute)serviceEClass.getEStructuralFeatures().get(1);
+        return (EAttribute)serviceEClass.getEStructuralFeatures().get(2);
     }
 
     /**
@@ -1485,20 +1982,20 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EAttribute getService_Style() {
-        return (EAttribute)serviceEClass.getEStructuralFeatures().get(2);
+        return (EAttribute)serviceEClass.getEStructuralFeatures().get(3);
     }
 
     /**
-     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Service#getParameters <em>Parameters</em>}'.
+     * Returns the meta object for the attribute list '{@link org.apache.axis.model.wsdd.Service#getNamespaces <em>Namespaces</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Parameters</em>'.
-     * @see org.apache.axis.model.wsdd.Service#getParameters()
+     * @return the meta object for the attribute list '<em>Namespaces</em>'.
+     * @see org.apache.axis.model.wsdd.Service#getNamespaces()
      * @see #getService()
      * @generated
      */
-    public EReference getService_Parameters() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(3);
+    public EAttribute getService_Namespaces() {
+        return (EAttribute)serviceEClass.getEStructuralFeatures().get(4);
     }
 
     /**
@@ -1511,7 +2008,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EReference getService_Operations() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(4);
+        return (EReference)serviceEClass.getEStructuralFeatures().get(5);
     }
 
     /**
@@ -1524,7 +2021,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EReference getService_TypeMappings() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(5);
+        return (EReference)serviceEClass.getEStructuralFeatures().get(6);
     }
 
     /**
@@ -1537,7 +2034,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EReference getService_BeanMappings() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(6);
+        return (EReference)serviceEClass.getEStructuralFeatures().get(7);
     }
 
     /**
@@ -1550,7 +2047,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EReference getService_ArrayMappings() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(7);
+        return (EReference)serviceEClass.getEStructuralFeatures().get(8);
     }
 
     /**
@@ -1566,6 +2063,58 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Deployment#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.apache.axis.model.wsdd.Deployment#getName()
+     * @see #getDeployment()
+     * @generated
+     */
+    public EAttribute getDeployment_Name() {
+        return (EAttribute)deploymentEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * Returns the meta object for the containment reference '{@link org.apache.axis.model.wsdd.Deployment#getGlobalConfiguration <em>Global Configuration</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Global Configuration</em>'.
+     * @see org.apache.axis.model.wsdd.Deployment#getGlobalConfiguration()
+     * @see #getDeployment()
+     * @generated
+     */
+    public EReference getDeployment_GlobalConfiguration() {
+        return (EReference)deploymentEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * Returns the meta object for the reference list '{@link org.apache.axis.model.wsdd.Deployment#getHandlers <em>Handlers</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Handlers</em>'.
+     * @see org.apache.axis.model.wsdd.Deployment#getHandlers()
+     * @see #getDeployment()
+     * @generated
+     */
+    public EReference getDeployment_Handlers() {
+        return (EReference)deploymentEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * Returns the meta object for the reference list '{@link org.apache.axis.model.wsdd.Deployment#getTransports <em>Transports</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Transports</em>'.
+     * @see org.apache.axis.model.wsdd.Deployment#getTransports()
+     * @see #getDeployment()
+     * @generated
+     */
+    public EReference getDeployment_Transports() {
+        return (EReference)deploymentEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
      * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Deployment#getServices <em>Services</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1575,7 +2124,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EReference getDeployment_Services() {
-        return (EReference)deploymentEClass.getEStructuralFeatures().get(0);
+        return (EReference)deploymentEClass.getEStructuralFeatures().get(4);
     }
 
     /**
@@ -1690,20 +2239,42 @@ public class WSDDPackageImpl extends EPackageImpl {
         createEReference(operationEClass, OPERATION__PARAMETERS);
         createEReference(operationEClass, OPERATION__FAULTS);
 
+        parameterizableEClass = createEClass(PARAMETERIZABLE);
+        createEReference(parameterizableEClass, PARAMETERIZABLE__PARAMETERS);
+
+        handlerEClass = createEClass(HANDLER);
+        createEAttribute(handlerEClass, HANDLER__NAME);
+        createEAttribute(handlerEClass, HANDLER__TYPE);
+
+        flowEClass = createEClass(FLOW);
+        createEReference(flowEClass, FLOW__HANDLERS);
+
         deployableItemEClass = createEClass(DEPLOYABLE_ITEM);
-        createEAttribute(deployableItemEClass, DEPLOYABLE_ITEM__NAME);
+        createEReference(deployableItemEClass, DEPLOYABLE_ITEM__REQUEST_FLOW);
+        createEReference(deployableItemEClass, DEPLOYABLE_ITEM__RESPONSE_FLOW);
+
+        globalConfigurationEClass = createEClass(GLOBAL_CONFIGURATION);
+
+        transportEClass = createEClass(TRANSPORT);
+        createEAttribute(transportEClass, TRANSPORT__NAME);
+        createEAttribute(transportEClass, TRANSPORT__PIVOT);
 
         serviceEClass = createEClass(SERVICE);
+        createEAttribute(serviceEClass, SERVICE__NAME);
         createEAttribute(serviceEClass, SERVICE__PROVIDER);
         createEAttribute(serviceEClass, SERVICE__USE);
         createEAttribute(serviceEClass, SERVICE__STYLE);
-        createEReference(serviceEClass, SERVICE__PARAMETERS);
+        createEAttribute(serviceEClass, SERVICE__NAMESPACES);
         createEReference(serviceEClass, SERVICE__OPERATIONS);
         createEReference(serviceEClass, SERVICE__TYPE_MAPPINGS);
         createEReference(serviceEClass, SERVICE__BEAN_MAPPINGS);
         createEReference(serviceEClass, SERVICE__ARRAY_MAPPINGS);
 
         deploymentEClass = createEClass(DEPLOYMENT);
+        createEAttribute(deploymentEClass, DEPLOYMENT__NAME);
+        createEReference(deploymentEClass, DEPLOYMENT__GLOBAL_CONFIGURATION);
+        createEReference(deploymentEClass, DEPLOYMENT__HANDLERS);
+        createEReference(deploymentEClass, DEPLOYMENT__TRANSPORTS);
         createEReference(deploymentEClass, DEPLOYMENT__SERVICES);
 
         // Create enums
@@ -1742,6 +2313,10 @@ public class WSDDPackageImpl extends EPackageImpl {
         typeMappingEClass.getESuperTypes().add(this.getMapping());
         arrayMappingEClass.getESuperTypes().add(this.getMapping());
         beanMappingEClass.getESuperTypes().add(this.getMapping());
+        handlerEClass.getESuperTypes().add(this.getParameterizable());
+        deployableItemEClass.getESuperTypes().add(this.getParameterizable());
+        globalConfigurationEClass.getESuperTypes().add(this.getDeployableItem());
+        transportEClass.getESuperTypes().add(this.getDeployableItem());
         serviceEClass.getESuperTypes().add(this.getDeployableItem());
 
         // Initialize classes and features; add operations and parameters
@@ -1791,24 +2366,46 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEReference(getOperation_Parameters(), this.getOperationParameter(), null, "parameters", null, 0, -1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getOperation_Faults(), this.getFault(), null, "faults", null, 0, -1, Operation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+        initEClass(parameterizableEClass, Parameterizable.class, "Parameterizable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getParameterizable_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Parameterizable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        EOperation op = addEOperation(parameterizableEClass, null, "setParameter");
+        addEParameter(op, ecorePackage.getEString(), "name", 1, 1);
+        addEParameter(op, ecorePackage.getEString(), "value", 1, 1);
+
+        initEClass(handlerEClass, Handler.class, "Handler", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getHandler_Name(), ecorePackage.getEString(), "name", null, 0, 1, Handler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getHandler_Type(), theXMLTypePackage.getQName(), "type", null, 0, 1, Handler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(flowEClass, Flow.class, "Flow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getFlow_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
         initEClass(deployableItemEClass, DeployableItem.class, "DeployableItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getDeployableItem_Name(), ecorePackage.getEString(), "name", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployableItem_RequestFlow(), this.getFlow(), null, "requestFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployableItem_ResponseFlow(), this.getFlow(), null, "responseFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(globalConfigurationEClass, GlobalConfiguration.class, "GlobalConfiguration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+        initEClass(transportEClass, Transport.class, "Transport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getTransport_Name(), ecorePackage.getEString(), "name", null, 0, 1, Transport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getTransport_Pivot(), theXMLTypePackage.getQName(), "pivot", null, 0, 1, Transport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(serviceEClass, Service.class, "Service", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getService_Name(), ecorePackage.getEString(), "name", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getService_Provider(), theXMLTypePackage.getQName(), "provider", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getService_Use(), this.getUse(), "use", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getService_Style(), this.getStyle(), "style", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getService_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getService_Namespaces(), ecorePackage.getEString(), "namespaces", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_Operations(), this.getOperation(), null, "operations", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_TypeMappings(), this.getTypeMapping(), null, "typeMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_BeanMappings(), this.getBeanMapping(), null, "beanMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_ArrayMappings(), this.getArrayMapping(), null, "arrayMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        EOperation op = addEOperation(serviceEClass, null, "setParameter");
-        addEParameter(op, ecorePackage.getEString(), "name", 1, 1);
-        addEParameter(op, ecorePackage.getEString(), "value", 1, 1);
-
         initEClass(deploymentEClass, Deployment.class, "Deployment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getDeployment_Name(), ecorePackage.getEString(), "name", null, 0, 1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployment_GlobalConfiguration(), this.getGlobalConfiguration(), null, "globalConfiguration", null, 0, 1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployment_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployment_Transports(), this.getTransport(), null, "transports", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getDeployment_Services(), this.getService(), null, "services", null, 0, -1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Initialize enums and add enum literals
@@ -1860,11 +2457,27 @@ public class WSDDPackageImpl extends EPackageImpl {
              "namespace", "##targetNamespace"
            });		
         addAnnotation
-          (getService_Parameters(), 
+          (getParameterizable_Parameters(), 
            source, 
            new String[] {
              "kind", "element",
              "name", "parameter",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getFlow_Handlers(), 
+           source, 
+           new String[] {
+             "name", "handler",
+             "kind", "element",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getService_Namespaces(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "namespace",
              "namespace", "##targetNamespace"
            });		
         addAnnotation
@@ -1905,6 +2518,22 @@ public class WSDDPackageImpl extends EPackageImpl {
            new String[] {
              "name", "deployment",
              "kind", "element"
+           });		
+        addAnnotation
+          (getDeployment_Handlers(), 
+           source, 
+           new String[] {
+             "name", "handler",
+             "kind", "element",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getDeployment_Transports(), 
+           source, 
+           new String[] {
+             "name", "transport",
+             "kind", "element",
+             "namespace", "##targetNamespace"
            });		
         addAnnotation
           (getDeployment_Services(), 
@@ -1954,6 +2583,24 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EAttribute PARAMETER__VALUE = eINSTANCE.getParameter_Value();
+
+        /**
+         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.FlowImpl <em>Flow</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.apache.axis.model.wsdd.impl.FlowImpl
+         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getFlow()
+         * @generated
+         */
+        public static final EClass FLOW = eINSTANCE.getFlow();
+
+        /**
+         * The meta object literal for the '<em><b>Handlers</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference FLOW__HANDLERS = eINSTANCE.getFlow_Handlers();
 
         /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.MappingImpl <em>Mapping</em>}' class.
@@ -2250,6 +2897,50 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EReference OPERATION__FAULTS = eINSTANCE.getOperation_Faults();
 
         /**
+         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.ParameterizableImpl <em>Parameterizable</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.apache.axis.model.wsdd.impl.ParameterizableImpl
+         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getParameterizable()
+         * @generated
+         */
+        public static final EClass PARAMETERIZABLE = eINSTANCE.getParameterizable();
+
+        /**
+         * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference PARAMETERIZABLE__PARAMETERS = eINSTANCE.getParameterizable_Parameters();
+
+        /**
+         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.HandlerImpl <em>Handler</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.apache.axis.model.wsdd.impl.HandlerImpl
+         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getHandler()
+         * @generated
+         */
+        public static final EClass HANDLER = eINSTANCE.getHandler();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EAttribute HANDLER__NAME = eINSTANCE.getHandler_Name();
+
+        /**
+         * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EAttribute HANDLER__TYPE = eINSTANCE.getHandler_Type();
+
+        /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.DeployableItemImpl <em>Deployable Item</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -2260,12 +2951,56 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EClass DEPLOYABLE_ITEM = eINSTANCE.getDeployableItem();
 
         /**
+         * The meta object literal for the '<em><b>Request Flow</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference DEPLOYABLE_ITEM__REQUEST_FLOW = eINSTANCE.getDeployableItem_RequestFlow();
+
+        /**
+         * The meta object literal for the '<em><b>Response Flow</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference DEPLOYABLE_ITEM__RESPONSE_FLOW = eINSTANCE.getDeployableItem_ResponseFlow();
+
+        /**
+         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.GlobalConfigurationImpl <em>Global Configuration</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.apache.axis.model.wsdd.impl.GlobalConfigurationImpl
+         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getGlobalConfiguration()
+         * @generated
+         */
+        public static final EClass GLOBAL_CONFIGURATION = eINSTANCE.getGlobalConfiguration();
+
+        /**
+         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.TransportImpl <em>Transport</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.apache.axis.model.wsdd.impl.TransportImpl
+         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getTransport()
+         * @generated
+         */
+        public static final EClass TRANSPORT = eINSTANCE.getTransport();
+
+        /**
          * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        public static final EAttribute DEPLOYABLE_ITEM__NAME = eINSTANCE.getDeployableItem_Name();
+        public static final EAttribute TRANSPORT__NAME = eINSTANCE.getTransport_Name();
+
+        /**
+         * The meta object literal for the '<em><b>Pivot</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EAttribute TRANSPORT__PIVOT = eINSTANCE.getTransport_Pivot();
 
         /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.ServiceImpl <em>Service</em>}' class.
@@ -2276,6 +3011,14 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EClass SERVICE = eINSTANCE.getService();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EAttribute SERVICE__NAME = eINSTANCE.getService_Name();
 
         /**
          * The meta object literal for the '<em><b>Provider</b></em>' attribute feature.
@@ -2302,12 +3045,12 @@ public class WSDDPackageImpl extends EPackageImpl {
         public static final EAttribute SERVICE__STYLE = eINSTANCE.getService_Style();
 
         /**
-         * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
+         * The meta object literal for the '<em><b>Namespaces</b></em>' attribute list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        public static final EReference SERVICE__PARAMETERS = eINSTANCE.getService_Parameters();
+        public static final EAttribute SERVICE__NAMESPACES = eINSTANCE.getService_Namespaces();
 
         /**
          * The meta object literal for the '<em><b>Operations</b></em>' containment reference list feature.
@@ -2350,6 +3093,38 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EClass DEPLOYMENT = eINSTANCE.getDeployment();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EAttribute DEPLOYMENT__NAME = eINSTANCE.getDeployment_Name();
+
+        /**
+         * The meta object literal for the '<em><b>Global Configuration</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference DEPLOYMENT__GLOBAL_CONFIGURATION = eINSTANCE.getDeployment_GlobalConfiguration();
+
+        /**
+         * The meta object literal for the '<em><b>Handlers</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference DEPLOYMENT__HANDLERS = eINSTANCE.getDeployment_Handlers();
+
+        /**
+         * The meta object literal for the '<em><b>Transports</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference DEPLOYMENT__TRANSPORTS = eINSTANCE.getDeployment_Transports();
 
         /**
          * The meta object literal for the '<em><b>Services</b></em>' containment reference list feature.

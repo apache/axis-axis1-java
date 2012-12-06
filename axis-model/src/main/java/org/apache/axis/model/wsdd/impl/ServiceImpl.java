@@ -8,17 +8,14 @@ package org.apache.axis.model.wsdd.impl;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Iterator;
 
 import org.apache.axis.model.wsdd.ArrayMapping;
 import org.apache.axis.model.wsdd.BeanMapping;
 import org.apache.axis.model.wsdd.Operation;
-import org.apache.axis.model.wsdd.Parameter;
 import org.apache.axis.model.wsdd.Service;
 import org.apache.axis.model.wsdd.Style;
 import org.apache.axis.model.wsdd.TypeMapping;
 import org.apache.axis.model.wsdd.Use;
-import org.apache.axis.model.wsdd.WSDDFactory;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -37,10 +34,11 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getProvider <em>Provider</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getUse <em>Use</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getStyle <em>Style</em>}</li>
- *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getNamespaces <em>Namespaces</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getOperations <em>Operations</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getTypeMappings <em>Type Mappings</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getBeanMappings <em>Bean Mappings</em>}</li>
@@ -51,6 +49,26 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @generated
  */
 public class ServiceImpl extends DeployableItemImpl implements Service {
+    /**
+     * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getName()
+     * @generated
+     * @ordered
+     */
+    protected static final String NAME_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getName()
+     * @generated
+     * @ordered
+     */
+    protected String name = NAME_EDEFAULT;
+
     /**
      * The default value of the '{@link #getProvider() <em>Provider</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -112,14 +130,14 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
     protected Style style = STYLE_EDEFAULT;
 
     /**
-     * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
+     * The cached value of the '{@link #getNamespaces() <em>Namespaces</em>}' attribute list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getParameters()
+     * @see #getNamespaces()
      * @generated
      * @ordered
      */
-    protected EList parameters;
+    protected EList namespaces;
 
     /**
      * The cached value of the '{@link #getOperations() <em>Operations</em>}' containment reference list.
@@ -184,6 +202,24 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setName(String newName) {
+        name = newName;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public Object getProvider() {
         return provider;
     }
@@ -238,11 +274,11 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * <!-- end-user-doc -->
      * @generated
      */
-    public List getParameters() {
-        if (parameters == null) {
-            parameters = new BasicInternalEList(Parameter.class);
+    public List getNamespaces() {
+        if (namespaces == null) {
+            namespaces = new BasicInternalEList(String.class);
         }
-        return parameters;
+        return namespaces;
     }
 
     /**
@@ -293,20 +329,6 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
         return arrayMappings;
     }
 
-    public void setParameter(String name, String value) {
-        for (Iterator it = getParameters().iterator(); it.hasNext(); ) {
-            Parameter param = (Parameter)it.next();
-            if (name.equals(param.getName())) {
-                param.setValue(value);
-                return;
-            }
-        }
-        Parameter param = WSDDFactory.INSTANCE.createParameter();
-        param.setName(name);
-        param.setValue(value);
-        getParameters().add(param);
-    }
-
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -314,8 +336,6 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case WSDDPackageImpl.SERVICE__PARAMETERS:
-                return ((InternalEList)getParameters()).basicRemove(otherEnd, msgs);
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return ((InternalEList)getOperations()).basicRemove(otherEnd, msgs);
             case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
@@ -335,14 +355,16 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__NAME:
+                return getName();
             case WSDDPackageImpl.SERVICE__PROVIDER:
                 return getProvider();
             case WSDDPackageImpl.SERVICE__USE:
                 return getUse();
             case WSDDPackageImpl.SERVICE__STYLE:
                 return getStyle();
-            case WSDDPackageImpl.SERVICE__PARAMETERS:
-                return getParameters();
+            case WSDDPackageImpl.SERVICE__NAMESPACES:
+                return getNamespaces();
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return getOperations();
             case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
@@ -362,6 +384,9 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__NAME:
+                setName((String)newValue);
+                return;
             case WSDDPackageImpl.SERVICE__PROVIDER:
                 setProvider(newValue);
                 return;
@@ -371,9 +396,9 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
             case WSDDPackageImpl.SERVICE__STYLE:
                 setStyle((Style)newValue);
                 return;
-            case WSDDPackageImpl.SERVICE__PARAMETERS:
-                getParameters().clear();
-                getParameters().addAll((Collection)newValue);
+            case WSDDPackageImpl.SERVICE__NAMESPACES:
+                getNamespaces().clear();
+                getNamespaces().addAll((Collection)newValue);
                 return;
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 getOperations().clear();
@@ -402,6 +427,9 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__NAME:
+                setName(NAME_EDEFAULT);
+                return;
             case WSDDPackageImpl.SERVICE__PROVIDER:
                 setProvider(PROVIDER_EDEFAULT);
                 return;
@@ -411,8 +439,8 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
             case WSDDPackageImpl.SERVICE__STYLE:
                 setStyle(STYLE_EDEFAULT);
                 return;
-            case WSDDPackageImpl.SERVICE__PARAMETERS:
-                getParameters().clear();
+            case WSDDPackageImpl.SERVICE__NAMESPACES:
+                getNamespaces().clear();
                 return;
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 getOperations().clear();
@@ -437,14 +465,16 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__NAME:
+                return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
             case WSDDPackageImpl.SERVICE__PROVIDER:
                 return PROVIDER_EDEFAULT == null ? provider != null : !PROVIDER_EDEFAULT.equals(provider);
             case WSDDPackageImpl.SERVICE__USE:
                 return use != USE_EDEFAULT;
             case WSDDPackageImpl.SERVICE__STYLE:
                 return style != STYLE_EDEFAULT;
-            case WSDDPackageImpl.SERVICE__PARAMETERS:
-                return parameters != null && !parameters.isEmpty();
+            case WSDDPackageImpl.SERVICE__NAMESPACES:
+                return namespaces != null && !namespaces.isEmpty();
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return operations != null && !operations.isEmpty();
             case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
@@ -466,12 +496,16 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (provider: ");
+        result.append(" (name: ");
+        result.append(name);
+        result.append(", provider: ");
         result.append(provider);
         result.append(", use: ");
         result.append(use);
         result.append(", style: ");
         result.append(style);
+        result.append(", namespaces: ");
+        result.append(namespaces);
         result.append(')');
         return result.toString();
     }

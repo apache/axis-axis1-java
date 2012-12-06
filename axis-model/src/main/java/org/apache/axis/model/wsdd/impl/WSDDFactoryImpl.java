@@ -75,6 +75,11 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
             case WSDDPackageImpl.OPERATION_PARAMETER: return (EObject)createOperationParameter();
             case WSDDPackageImpl.FAULT: return (EObject)createFault();
             case WSDDPackageImpl.OPERATION: return (EObject)createOperation();
+            case WSDDPackageImpl.PARAMETERIZABLE: return (EObject)createParameterizable();
+            case WSDDPackageImpl.HANDLER: return (EObject)createHandler();
+            case WSDDPackageImpl.FLOW: return (EObject)createFlow();
+            case WSDDPackageImpl.GLOBAL_CONFIGURATION: return (EObject)createGlobalConfiguration();
+            case WSDDPackageImpl.TRANSPORT: return (EObject)createTransport();
             case WSDDPackageImpl.SERVICE: return (EObject)createService();
             case WSDDPackageImpl.DEPLOYMENT: return (EObject)createDeployment();
             default:
@@ -126,6 +131,16 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public Parameter createParameter() {
         ParameterImpl parameter = new ParameterImpl();
         return parameter;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Flow createFlow() {
+        FlowImpl flow = new FlowImpl();
+        return flow;
     }
 
     /**
@@ -186,6 +201,46 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public Operation createOperation() {
         OperationImpl operation = new OperationImpl();
         return operation;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Parameterizable createParameterizable() {
+        ParameterizableImpl parameterizable = new ParameterizableImpl();
+        return parameterizable;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Handler createHandler() {
+        HandlerImpl handler = new HandlerImpl();
+        return handler;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public GlobalConfiguration createGlobalConfiguration() {
+        GlobalConfigurationImpl globalConfiguration = new GlobalConfigurationImpl();
+        return globalConfiguration;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Transport createTransport() {
+        TransportImpl transport = new TransportImpl();
+        return transport;
     }
 
     /**
