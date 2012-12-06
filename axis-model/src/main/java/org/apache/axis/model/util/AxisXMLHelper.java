@@ -18,8 +18,11 @@
  */
 package org.apache.axis.model.util;
 
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 
+import org.apache.axis.model.xml.impl.XmlPackageImpl;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EPackage;
@@ -37,8 +40,46 @@ import org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl;
  */
 // TODO: this is actually not entirely correct; Axis may generate QNames that are not strictly valid (such as "ns:>fault") and they should be represented using a specific class
 public class AxisXMLHelper extends XMLHelperImpl {
+    private String ignoreNamespaceForUnqualifiedQName;
+    
     public AxisXMLHelper(XMLResource resource) {
         super(resource);
+    }
+
+    public void setOptions(Map options) {
+        super.setOptions(options);
+        ignoreNamespaceForUnqualifiedQName = (String)options.get(AxisXMLResource.OPTION_IGNORE_NAMESPACE_FOR_UNQUALIFIED_QNAME);
+    }
+
+    protected Object createFromString(EFactory eFactory, EDataType eDataType, String value) {
+        if (eDataType == XmlPackageImpl.eINSTANCE.getQName()) {
+            String prefix;
+            String localName;
+            int idx = value.indexOf(':');
+            if (idx == -1) {
+                prefix = "";
+                localName = value;
+            } else {
+                prefix = value.substring(0, idx);
+                localName = value.substring(idx+1);
+            }
+            String namespaceURI = getURI(prefix);
+            if (namespaceURI == null) {
+                if (prefix.length() == 0) {
+                    namespaceURI = "";
+                } else {
+                    throw new IllegalArgumentException("The prefix '" + prefix + "' is not declared for the QName '" + value + "'");
+                }
+            }
+            if (prefix.length() == 0 && namespaceURI.equals(ignoreNamespaceForUnqualifiedQName)) {
+                // TODO: emit warning here
+                // TODO: add unit test for this case
+                namespaceURI = "";
+            }
+            return new QName(namespaceURI, localName, prefix);
+        } else {
+            return super.createFromString(eFactory, eDataType, value);
+        }
     }
 
     protected String updateQNamePrefix(EFactory factory, EDataType dataType, Object value, boolean list) {

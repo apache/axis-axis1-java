@@ -39,6 +39,7 @@ public final class WSDDUtil {
         AxisXMLResource resource = new AxisXMLResource();
         Map options = new HashMap();
         options.put(XMLResource.OPTION_EXTENDED_META_DATA, ExtendedMetaData.INSTANCE);
+        options.put(AxisXMLResource.OPTION_IGNORE_NAMESPACE_FOR_UNQUALIFIED_QNAME, WSDDPackageImpl.eNS_URI);
         resource.load(is, options);
         return (Deployment)resource.getContents().get(0);        
     }

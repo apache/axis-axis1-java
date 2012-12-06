@@ -27,6 +27,40 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
  * @author Andreas Veithen
  */
 public class AxisXMLResource extends XMLResourceImpl {
+    /**
+     * Option to specify a namespace that will be ignored if it is used in an unqualified
+     * <tt>xsd:QName</tt> literal.
+     * <p>
+     * Axis 1.4 incorrectly assumes that <tt>xsd:QName</tt> literals that have no prefix don't
+     * belong to any namespace. This is incorrect: values of type <tt>xsd:QName</tt> are resolved in
+     * the same way as element names. An unqualified literal therefore belongs to the default
+     * namespace in scope where the <tt>xsd:QName</tt> appears.
+     * <p>
+     * Consider the following example:
+     * 
+     * <pre>
+     * &lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
+     *             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+     *   &lt;transport name="http">
+     *     &lt;requestFlow>
+     *       &lt;handler type="URLMapper"/>
+     *       &lt;handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+     *     &lt;/requestFlow>
+     *   &lt;/transport>
+     * &lt;/deployment>
+     * </pre>
+     * 
+     * If the <tt>type</tt> attribute is assumed to be of type <tt>xsd:QName</tt>, then the
+     * <tt>URLMapper</tt> literal actually resolves to
+     * <tt>{http://xml.apache.org/axis/wsdd/}URLMapper</tt>. However, Axis 1.4 incorrectly assumes
+     * that it has no namespace because it is unprefixed.
+     * <p>
+     * This option allows to preserve compatibility with Axis 1.4 by specifying a namespace that
+     * will be ignored if it is encountered in the resolution of a <tt>xsd:QName</tt> literal
+     * without prefix.
+     */
+    public static final String OPTION_IGNORE_NAMESPACE_FOR_UNQUALIFIED_QNAME = "IGNORE_NAMESPACE_FOR_UNQUALIFIED_QNAME";
+    
     protected XMLHelper createXMLHelper() {
         return new AxisXMLHelper(this);
     }

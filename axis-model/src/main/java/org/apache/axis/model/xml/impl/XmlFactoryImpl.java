@@ -8,6 +8,7 @@ package org.apache.axis.model.xml.impl;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.model.util.AxisXMLResource;
 import org.apache.axis.model.xml.*;
 
 import org.eclipse.emf.ecore.EClass;
@@ -103,22 +104,12 @@ public class XmlFactoryImpl extends EFactoryImpl implements XmlFactory {
         }
     }
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public QName createQNameFromString(EDataType eDataType, String initialValue) {
-        return (QName)super.createFromString(eDataType, initialValue);
+        throw new UnsupportedOperationException("Please use " + AxisXMLResource.class.getName() + " to load the model from XML");
     }
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public String convertQNameToString(EDataType eDataType, Object instanceValue) {
-        return super.convertToString(eDataType, instanceValue);
+        throw new UnsupportedOperationException("Please use " + AxisXMLResource.class.getName() + " to save the model to XML");
     }
 
     /**

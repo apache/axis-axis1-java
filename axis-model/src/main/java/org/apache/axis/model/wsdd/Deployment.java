@@ -64,6 +64,7 @@ public interface Deployment {
      * @return the value of the '<em>Global Configuration</em>' containment reference.
      * @see #setGlobalConfiguration(GlobalConfiguration)
      * @model containment="true"
+     *        extendedMetaData="kind='element' name='globalConfiguration' namespace='##targetNamespace'"
      * @generated
      */
     GlobalConfiguration getGlobalConfiguration();

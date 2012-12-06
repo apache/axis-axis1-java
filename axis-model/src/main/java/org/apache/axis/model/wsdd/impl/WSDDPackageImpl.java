@@ -2410,6 +2410,22 @@ public class WSDDPackageImpl extends EPackageImpl {
              "namespace", "##targetNamespace"
            });		
         addAnnotation
+          (getDeployableItem_RequestFlow(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "requestFlow",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getDeployableItem_ResponseFlow(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "responseFlow",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
           (getService_Namespaces(), 
            source, 
            new String[] {
@@ -2455,6 +2471,14 @@ public class WSDDPackageImpl extends EPackageImpl {
            new String[] {
              "name", "deployment",
              "kind", "element"
+           });		
+        addAnnotation
+          (getDeployment_GlobalConfiguration(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "globalConfiguration",
+             "namespace", "##targetNamespace"
            });		
         addAnnotation
           (getDeployment_Handlers(), 

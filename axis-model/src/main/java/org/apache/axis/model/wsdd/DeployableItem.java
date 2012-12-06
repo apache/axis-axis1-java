@@ -34,6 +34,7 @@ public interface DeployableItem extends Parameterizable {
      * @return the value of the '<em>Request Flow</em>' containment reference.
      * @see #setRequestFlow(Flow)
      * @model containment="true"
+     *        extendedMetaData="kind='element' name='requestFlow' namespace='##targetNamespace'"
      * @generated
      */
     Flow getRequestFlow();
@@ -59,6 +60,7 @@ public interface DeployableItem extends Parameterizable {
      * @return the value of the '<em>Response Flow</em>' containment reference.
      * @see #setResponseFlow(Flow)
      * @model containment="true"
+     *        extendedMetaData="kind='element' name='responseFlow' namespace='##targetNamespace'"
      * @generated
      */
     Flow getResponseFlow();
