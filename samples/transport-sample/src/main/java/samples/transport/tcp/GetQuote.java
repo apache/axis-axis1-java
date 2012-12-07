@@ -28,7 +28,6 @@ import org.apache.axis.utils.Options;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
-import java.net.URL;
 
 /**
  *
@@ -39,7 +38,6 @@ public class GetQuote {
     
     // helper function; does all the real work
     public float getQuote (String args[]) throws Exception {
-        Call.addTransportPackage("samples.transport");
         Call.setTransportForProtocol("tcp", TCPTransport.class);
         
         Options opts = new Options( args );
@@ -65,7 +63,7 @@ public class GetQuote {
         
         call.setTransport(new TCPTransport());
         
-        call.setTargetEndpointAddress( new URL(opts.getURL()) );
+        call.setTargetEndpointAddress(opts.getURL());
         call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
         call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
         call.setReturnType( XMLType.XSD_FLOAT );

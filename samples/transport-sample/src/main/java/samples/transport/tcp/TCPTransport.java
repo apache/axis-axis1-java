@@ -17,13 +17,15 @@
 package samples.transport.tcp;
 
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Transport;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  *
@@ -63,17 +65,17 @@ public class TCPTransport extends Transport
      */
     public void setupMessageContextImpl(MessageContext mc,
                                         Call call,
-                                        AxisEngine engine)
+                                        AxisEngine engine) throws AxisFault
     {
         try {
           String urlString = mc.getStrProp(MessageContext.TRANS_URL);
           if (urlString != null) {
-            URL url = new URL(urlString);
+            URI url = new URI(urlString);
             host = url.getHost();
             port = new Integer(url.getPort()).toString();
           }
-        } catch (java.net.MalformedURLException e) {
-          // Do nothing here?
+        } catch (URISyntaxException ex) {
+            throw AxisFault.makeFault(ex);
         }
 
         if (host != null) mc.setProperty(HOST, host);

@@ -27,6 +27,8 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -228,17 +230,18 @@ public class Options {
         String  servlet = null ;   // -s    also -f (file)
         String  protocol = null ;
 
-        URL     url = null ;
+        URI     url = null ;
         
-        // Just in case...
-        org.apache.axis.client.Call.initialize();
-
         if ( (tmp = isValueSet( 'l' )) != null ) {
-            url = new URL( tmp );
+            try {
+                url = IOUtils.toURI( tmp );
+            } catch (URISyntaxException ex) {
+                throw new MalformedURLException(ex.getMessage());
+            }
             host = url.getHost();
             port = "" + url.getPort();
-            servlet = url.getFile();
-            protocol = url.getProtocol();
+            servlet = url.getPath();
+            protocol = url.getScheme();
         }
 
         if ( (tmp = isValueSet( 'f' )) != null ) {

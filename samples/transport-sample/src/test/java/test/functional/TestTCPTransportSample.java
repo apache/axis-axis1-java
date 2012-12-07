@@ -33,7 +33,6 @@ import samples.transport.tcp.TCPSender;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
-import java.net.URL;
 
 /** Test the stock sample code.
  */
@@ -74,7 +73,7 @@ public class TestTCPTransportSample extends TestCase {
 
             Call     call    = (Call) service.createCall();
 
-            call.setTargetEndpointAddress( new URL(uri) );
+            call.setTargetEndpointAddress(uri);
             call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
             call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
             call.setReturnType( XMLType.XSD_FLOAT );

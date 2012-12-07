@@ -33,7 +33,6 @@ import org.apache.axis.configuration.SimpleProvider;
 public class AdminClient extends org.apache.axis.client.AdminClient {
     public static void main(String args[]) {
 
-        Call.addTransportPackage("samples.transport");
         Call.setTransportForProtocol("tcp", TCPTransport.class);
 
         // Deploy the transport on top of the default client configuration.

@@ -21,6 +21,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.utils.IOUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 import org.apache.axis.utils.StringUtils;
@@ -30,6 +31,7 @@ import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.Vector;
 
@@ -346,7 +348,7 @@ public class AdminClient
             throw new Exception(Messages.getMessage("nullCall00"));
         }
 
-        URL address = new URL(opts.getURL());
+        URI address = IOUtils.toURI(opts.getURL());
         setTargetEndpointAddress(address);
         setLogin(opts.getUser(), opts.getPassword());
 
@@ -374,6 +376,15 @@ public class AdminClient
         call.setTargetEndpointAddress( address );
     }
 
+    /**
+     * set the URL to deploy to
+     * requires that call!=null
+     * @param address
+     */
+    public void setTargetEndpointAddress(URI address) {
+        call.setTargetEndpointAddress( address );
+    }
+    
     /**
      * set the transport to deploy with.
      * requires that call!=null

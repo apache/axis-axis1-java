@@ -51,6 +51,7 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.IOUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.LockableHashtable;
@@ -340,7 +341,7 @@ public class Call implements javax.xml.rpc.Call {
     public Call(String url) throws MalformedURLException {
         this(new Service());
         try {
-            setTargetEndpointAddress(new URI(url));
+            setTargetEndpointAddress(IOUtils.toURI(url));
         } catch (URISyntaxException ex) {
             // The method used to use new URL(...). Need this to ensure source code compatibility:
             throw new MalformedURLException(ex.getMessage());
@@ -805,14 +806,8 @@ public class Call implements javax.xml.rpc.Call {
      *                  as URI
      */
     public void setTargetEndpointAddress(String address) {
-        // Special case: Since Axis 1.4 used java.net.URL, it accepted "<scheme>:" (e.g. "local:")
-        // as a valid URL. However this is not a valid URI. If we encounter this case, we add a
-        // slash to make it a valid URI: "<scheme>:/".
-        if (address.indexOf(':') == address.length() - 1) {
-            address += '/';
-        }
         try {
-            setTargetEndpointAddress(new URI(address));
+            setTargetEndpointAddress(IOUtils.toURI(address));
         }
         catch (URISyntaxException mue) {
             throw new JAXRPCException(mue);
@@ -858,7 +853,7 @@ public class Call implements javax.xml.rpc.Call {
             if ( this.transport != null ) {
                 String oldAddr = this.transport.getUrl();
                 if ( oldAddr != null && !oldAddr.equals("") ) {
-                    URI     tmpURL   = new URI( oldAddr );
+                    URI     tmpURL   = IOUtils.toURI( oldAddr );
                     String  oldProto = tmpURL.getScheme();
                     if ( protocol.equals(oldProto) ) {
                         this.transport.setUrl( address.toString() );
@@ -1657,7 +1652,7 @@ public class Call implements javax.xml.rpc.Call {
             if ( obj instanceof SOAPAddress ) {
                 try {
                     SOAPAddress addr = (SOAPAddress) obj ;
-                    this.setTargetEndpointAddress(new URI(addr.getLocationURI()));
+                    this.setTargetEndpointAddress(addr.getLocationURI());
                 }
                 catch(Exception exp) {
                     throw new JAXRPCException(

@@ -18,6 +18,9 @@ package org.apache.axis.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Utility class containing IO helper methods
@@ -61,5 +64,26 @@ public class IOUtils
                     return total;
             }
         }
+    }
+    
+    /**
+     * Constructs a {@link URI} by parsing the given string. This method basically does the same as
+     * {@link URI#URI(String)}, with one exception: it accepts URIs of the form
+     * <tt>&lt;scheme>:</tt> (e.g. <tt>local:</tt>). They are accepted by {@link URL}, but they are
+     * not valid URIs. If the passed string is of that form, the method adds a slash to make it a
+     * valid URI, i.e. it transforms <tt>&lt;scheme>:</tt> into <tt>&lt;scheme>:/</tt>. This ensures
+     * compatibility with Axis 1.4 (which used {@link URL} internally).
+     * 
+     * @param str
+     *            the string to be parsed into a URI
+     * @return the URI
+     * @throws URISyntaxException
+     *             if the given string is not a valid URI
+     */
+    public static URI toURI(String str) throws URISyntaxException {
+        if (str.indexOf(':') == str.length() - 1) {
+            str += '/';
+        }
+        return new URI(str);
     }
 }

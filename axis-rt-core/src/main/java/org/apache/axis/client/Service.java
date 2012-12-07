@@ -440,7 +440,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             if (portName == null) {
                 call = (org.apache.axis.client.Call) createCall();
                 if (endpoint != null) {
-                    call.setTargetEndpointAddress(new URI(endpoint));
+                    call.setTargetEndpointAddress(endpoint);
                 }
             } else {
                 call = (org.apache.axis.client.Call) createCall(portName);
@@ -495,7 +495,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             if (obj instanceof SOAPAddress) {
                 try {
                     SOAPAddress addr = (SOAPAddress) obj;
-                    call.setTargetEndpointAddress(new URI(addr.getLocationURI()));
+                    call.setTargetEndpointAddress(addr.getLocationURI());
                 } catch (Exception exp) {
                     throw new ServiceException(
                             Messages.getMessage("cantSetURI00", "" + exp));
