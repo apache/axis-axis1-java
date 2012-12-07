@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/axis-model/src/main/java"
+    editDirectory="" editorDirectory="" modelPluginID="" redirection="" modelName="Axis"
+    editPluginClass="" editorPluginClass="" updateClasspath="false" rootExtendsInterface=""
+    suppressEMFTypes="true" suppressEMFMetaData="true" testsDirectory="" testSuiteClass=""
+    importerID="org.eclipse.emf.importer.ecore" bundleManifest="false" suppressNotification="true"
+    suppressGenModelAnnotations="false" copyrightFields="false" binaryCompatibleReflectiveMethods="true"
+    editPluginID="" editorPluginID="" runtimeVersion="2.2" language="" interfaceNamePattern=""
+    classNamePattern="">
+  <foreignModel>wsdd.ecore</foreignModel>
+  <genPackages prefix="WSDD" basePackage="org.apache.axis.model" disposableProviderFactory="true"
+      adapterFactory="false" contentTypeIdentifier="" ecorePackage="wsdd.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="wsdd.ecore#//ParameterMode">
+      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//ParameterMode/IN"/>
+      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//ParameterMode/OUT"/>
+      <genEnumLiterals ecoreEnumLiteral="wsdd.ecore#//ParameterMode/INOUT"/>
+    </genEnums>
+    <genClasses ecoreClass="wsdd.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Parameter/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Parameter/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="wsdd.ecore#//Mapping">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Mapping/qname"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Mapping/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Mapping/encodingStyle"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//TypeMapping">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//TypeMapping/serializer"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//TypeMapping/deserializer"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//ArrayMapping">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//ArrayMapping/innerType"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//BeanMapping"/>
+    <genClasses ecoreClass="wsdd.ecore#//OperationParameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//OperationParameter/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//OperationParameter/qname"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//OperationParameter/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//OperationParameter/mode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//OperationParameter/inHeader"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//OperationParameter/outHeader"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//OperationParameter/itemQName"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//Fault">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Fault/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Fault/qname"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Fault/class"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Fault/type"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//Operation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/qname"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/returnQName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/returnType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/returnItemQName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/returnItemType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/soapAction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/mep"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Operation/returnHeader"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Operation/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Operation/faults"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//Parameterizable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Parameterizable/parameters"/>
+      <genOperations ecoreOperation="wsdd.ecore#//Parameterizable/setParameter">
+        <genParameters ecoreParameter="wsdd.ecore#//Parameterizable/setParameter/name"/>
+        <genParameters ecoreParameter="wsdd.ecore#//Parameterizable/setParameter/value"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//Handler">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Handler/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Handler/type"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//Flow">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Flow/handlers"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="wsdd.ecore#//DeployableItem">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//DeployableItem/requestFlow"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//DeployableItem/responseFlow"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//GlobalConfiguration"/>
+    <genClasses ecoreClass="wsdd.ecore#//Transport">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Transport/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Transport/pivot"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//Service">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Service/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Service/provider"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Service/use"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Service/style"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Service/namespaces"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Service/operations"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Service/typeMappings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Service/beanMappings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Service/arrayMappings"/>
+    </genClasses>
+    <genClasses ecoreClass="wsdd.ecore#//Deployment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute wsdd.ecore#//Deployment/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Deployment/globalConfiguration"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Deployment/handlers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Deployment/transports"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference wsdd.ecore#//Deployment/services"/>
+      <genOperations ecoreOperation="wsdd.ecore#//Deployment/merge">
+        <genParameters ecoreParameter="wsdd.ecore#//Deployment/merge/other"/>
+      </genOperations>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Xml" basePackage="org.apache.axis.model" ecorePackage="xml.ecore#/">
+    <genDataTypes ecoreDataType="xml.ecore#//QName"/>
+  </genPackages>
+  <genPackages prefix="SOAP" basePackage="org.apache.axis.model" ecorePackage="soap.ecore#/">
+    <genDataTypes ecoreDataType="soap.ecore#//Use"/>
+    <genDataTypes ecoreDataType="soap.ecore#//Style"/>
+  </genPackages>
+</genmodel:GenModel>

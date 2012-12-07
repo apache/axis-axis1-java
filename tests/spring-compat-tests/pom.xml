@@ -68,8 +68,27 @@
                             <deployScope>application</deployScope>
                             <implementationClassName>org.apache.axis.test.spring.OrderEndpoint</implementationClassName>
                             <writeStubToTestSources>true</writeStubToTestSources>
-                            <!-- TODO: need to merge the output into server-config.wsdd -->
                             <deployWsdd>${project.build.directory}/wsdd/OrderService.wsdd</deployWsdd>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>maven-wsdd-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-wsdd</goal>
+                        </goals>
+                        <configuration>
+                            <type>server</type>
+                            <files>
+                                <file>${project.build.directory}/wsdd/OrderService.wsdd</file>
+                            </files>
+                            <output>${project.build.directory}/webapp/WEB-INF/server-config.wsdd</output>
                         </configuration>
                     </execution>
                 </executions>
@@ -104,6 +123,12 @@
                             <port>${test.httpPort}</port>
                         </connector>
                     </connectors>
+                    <webApp>
+                        <resourceBases>
+                            <resourceBase>${basedir}/src/main/webapp</resourceBase>
+                            <resourceBase>${project.build.directory}/webapp</resourceBase>
+                        </resourceBases>
+                    </webApp>
                 </configuration>
                 <executions>
                     <execution>

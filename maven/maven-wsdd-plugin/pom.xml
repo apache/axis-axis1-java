@@ -21,54 +21,48 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis</groupId>
-        <artifactId>axis-project</artifactId>
+        <artifactId>maven</artifactId>
         <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>axis-codegen</artifactId>
-    <name>Code Generator</name>
-    <url>${baseUrl}/codegen</url>
+    <artifactId>maven-wsdd-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <name>maven-wsdd-plugin</name>
+    <description>
+        Maven plugin to process WSDD files.
+    </description>
+    <url>${baseUrl}/maven/wsdd</url>
     <distributionManagement>
         <site>
             <id>axis</id>
-            <url>${baseSiteUrl}/codegen</url>
+            <url>${baseSiteUrl}/maven/wsdd</url>
         </site>
     </distributionManagement>
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis-rt-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis-model</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.veithen.ulog</groupId>
+            <artifactId>ulog</artifactId>
         </dependency>
     </dependencies>
-    <reporting>
+    <!-- reporting>
         <plugins>
             <plugin>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.4</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>index</report>
-                            <report>dependencies</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.9</version>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting -->
 </project>

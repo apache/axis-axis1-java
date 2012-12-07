@@ -1,0 +1,83 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from Schema2Service WSDL service -->
+
+  <service name="Schema2Service" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="urn:schema2.wsdl.test"/>
+      <parameter name="wsdlServiceElement" value="Schema2Service"/>
+      <parameter name="schemaQualified" value="urn:schema2.wsdl.test"/>
+      <parameter name="wsdlServicePort" value="Schema2Service"/>
+      <parameter name="className" value="test.wsdl.schema2.Schema2ServiceSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="Schema2Test"/>
+      <parameter name="typeMappingVersion" value="1.3"/>
+      <operation name="echoLanguageTypeTest" qname="echoLanguageTypeTest" returnQName="retNS:languageElem1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:language" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:languageElem" xmlns:pns="urn:schema2.wsdl.test" type="tns:language" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoTokenTypeTest" qname="echoTokenTypeTest" returnQName="retNS:tokenElem1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:token" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:tokenElem" xmlns:pns="urn:schema2.wsdl.test" type="tns:token" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNameTypeTest" qname="echoNameTypeTest" returnQName="retNS:nameElem1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:Name" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:nameElem" xmlns:pns="urn:schema2.wsdl.test" type="tns:Name" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNCNameTypeTest" qname="echoNCNameTypeTest" returnQName="retNS:NCNameElem1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:NCName" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:NCNameElem" xmlns:pns="urn:schema2.wsdl.test" type="tns:NCName" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoIDTypeTest" qname="echoIDTypeTest" returnQName="retNS:IDElem1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:ID" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:IDElem" xmlns:pns="urn:schema2.wsdl.test" type="tns:ID" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedShortTest" qname="echoUnsignedShortTest" returnQName="retNS:UnsignedShort1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:unsignedShort" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:UnsignedShort" xmlns:pns="urn:schema2.wsdl.test" type="tns:unsignedShort" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedIntTest" qname="echoUnsignedIntTest" returnQName="retNS:UnsignedInt1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:unsignedInt" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:UnsignedInt" xmlns:pns="urn:schema2.wsdl.test" type="tns:unsignedInt" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedByteTest" qname="echoUnsignedByteTest" returnQName="retNS:UnsignedByte1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:unsignedByte" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:UnsignedByte" xmlns:pns="urn:schema2.wsdl.test" type="tns:unsignedByte" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedLongTest" qname="echoUnsignedLongTest" returnQName="retNS:UnsignedLong1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:unsignedLong" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:UnsignedLong" xmlns:pns="urn:schema2.wsdl.test" type="tns:unsignedLong" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNonPositiveIntegerTest" qname="echoNonPositiveIntegerTest" returnQName="retNS:NonPositiveInteger1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:nonPositiveInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:NonPositiveInteger" xmlns:pns="urn:schema2.wsdl.test" type="tns:nonPositiveInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNonNegativeIntegerTest" qname="echoNonNegativeIntegerTest" returnQName="retNS:NonNegativeInteger1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:nonNegativeInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:NonNegativeInteger" xmlns:pns="urn:schema2.wsdl.test" type="tns:nonNegativeInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoPositiveIntegerTest" qname="echoPositiveIntegerTest" returnQName="retNS:PositiveInteger1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:positiveInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:PositiveInteger" xmlns:pns="urn:schema2.wsdl.test" type="tns:positiveInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNegativeIntegerTest" qname="echoNegativeIntegerTest" returnQName="retNS:NegativeInteger1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:negativeInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:NegativeInteger" xmlns:pns="urn:schema2.wsdl.test" type="tns:negativeInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoTimeTest" qname="echoTimeTest" returnQName="retNS:Time1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:time" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:Time" xmlns:pns="urn:schema2.wsdl.test" type="tns:time" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoDateTest" qname="echoDateTest" returnQName="retNS:Date1" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:date" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:Date" xmlns:pns="urn:schema2.wsdl.test" type="tns:date" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoDocument" qname="echoDocument" returnQName="retNS:EchoDocumentResponse" xmlns:retNS="urn:schema2.wsdl.test" returnType="rtns:Document" xmlns:rtns="urn:schema2.wsdl.test" soapAction="" >
+        <parameter qname="pns:EchoDocumentRequest" xmlns:pns="urn:schema2.wsdl.test" type="tns:Document" xmlns:tns="urn:schema2.wsdl.test"/>
+      </operation>
+      <parameter name="allowedMethods" value="echoNonPositiveIntegerTest echoNCNameTypeTest echoIDTypeTest echoLanguageTypeTest echoUnsignedByteTest echoDocument echoNameTypeTest echoDateTest echoNonNegativeIntegerTest echoNegativeIntegerTest echoUnsignedShortTest echoUnsignedLongTest echoTokenTypeTest echoUnsignedIntTest echoTimeTest echoPositiveIntegerTest"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="urn:schema2.wsdl.test"
+        qname="ns:Document"
+        type="java:test.wsdl.schema2.Document"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

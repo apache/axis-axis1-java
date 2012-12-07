@@ -61,6 +61,7 @@
         <module>axis-ant</module>
         <module>axis-codegen</module>
         <module>axis-jaxrpc</module>
+        <module>axis-model</module>
         <module>axis-rt-compat</module>
         <module>axis-rt-core</module>
         <module>axis-rt-jws</module>
@@ -124,6 +125,11 @@
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-testutils</artifactId>
                 <version>1.2.13</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
