@@ -125,7 +125,7 @@
                     </connectors>
                     <webApp>
                         <resourceBases>
-                            <resourceBase>src/main/webapp</resourceBase>
+                            <resourceBase>${basedir}/src/main/webapp</resourceBase>
                             <resourceBase>${project.build.directory}/webapp</resourceBase>
                         </resourceBases>
                     </webApp>
