@@ -32,13 +32,13 @@ public class TestAutoTypes extends TestCase {
 
     protected void setUp() throws java.lang.Exception {
         AxisProperties.setProperty("axis.doAutoTypes", "true");
-        String[] args = { System.getProperty("basedir") + "/src/test/wsdd/functional/auto-deploy.wsdd" };
+        String[] args = { "src/test/wsdd/functional/auto-deploy.wsdd" };
         AdminClient.main(args);
     }
 
     protected void tearDown() throws java.lang.Exception {
         AxisProperties.setProperty("axis.doAutoTypes", "false");
-        String[] args = { System.getProperty("basedir") + "/src/test/wsdd/functional/auto-undeploy.wsdd" };
+        String[] args = { "/src/test/wsdd/functional/auto-undeploy.wsdd" };
         AdminClient.main(args);
     }
 

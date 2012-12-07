@@ -104,6 +104,24 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>maven-wsdd-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <!-- We create a server-config.wsdd file to prevent Axis from creating a default one in the source tree -->
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>generate-wsdd</goal>
+                        </goals>
+                        <configuration>
+                            <type>server</type>
+                            <output>${project.build.directory}/server-config.wsdd</output>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
@@ -115,9 +133,8 @@
                             <includes>
                                 <include>**/Test*.java</include>
                             </includes>
-                            <!-- Prevent Axis from creating a server-config.wsdd file in the source tree -->
-                            <workingDirectory>${project.build.directory}/work</workingDirectory>
                             <systemPropertyVariables>
+                                <axis.ServerConfigFile>${project.build.directory}/server-config.wsdd</axis.ServerConfigFile>
                                 <test.functional.TCPListenerPort>${test.functional.TCPListenerPort}</test.functional.TCPListenerPort>
                             </systemPropertyVariables>
                         </configuration>

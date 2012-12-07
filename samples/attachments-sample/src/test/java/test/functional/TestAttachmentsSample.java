@@ -31,27 +31,27 @@ public class TestAttachmentsSample extends TestCase {
     }
 
     public void testAttachments1() throws Exception {
-        boolean res = new EchoAttachment(opts).echo(false, System.getProperty("basedir") + "/pom.xml");
+        boolean res = new EchoAttachment(opts).echo(false, "pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
     public void testAttachmentsD1() throws Exception {
-        boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/pom.xml");
+        boolean res = new EchoAttachment(opts).echo(true, "pom.xml");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
     
     public void testAttachmentsDimeLeaveEmpty() throws Exception {
-        boolean res = new EchoAttachment(opts).echo(true, System.getProperty("basedir") + "/src/test/files/leaveempty.txt");
+        boolean res = new EchoAttachment(opts).echo(true, "src/test/files/leaveempty.txt");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
 
     public void testAttachments2() throws Exception {
-        boolean res = new EchoAttachment(opts).echoDir(false, System.getProperty("basedir") + "/src/main/java/samples/attachments");
+        boolean res = new EchoAttachment(opts).echoDir(false, "src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 
     public void testAttachmentsD2() throws Exception {
-        boolean res = new EchoAttachment(opts).echoDir(true, System.getProperty("basedir") + "/src/main/java/samples/attachments");
+        boolean res = new EchoAttachment(opts).echoDir(true, "src/main/java/samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
 

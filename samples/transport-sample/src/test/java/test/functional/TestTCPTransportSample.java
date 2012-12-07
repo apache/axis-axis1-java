@@ -48,7 +48,7 @@ public class TestTCPTransportSample extends TestCase {
     }
 
     public void doTestDeploy () throws Exception {
-        String[] args = { "-l" + uri, System.getProperty("basedir", ".") + "/src/main/wsdd/deploy.wsdd" };
+        String[] args = { "-l" + uri, "src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
 

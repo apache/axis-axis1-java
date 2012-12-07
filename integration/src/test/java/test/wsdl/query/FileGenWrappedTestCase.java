@@ -59,8 +59,7 @@ public class FileGenWrappedTestCase extends AxisFileGenTestBase {
      * The directory containing the files that should exist.
      */
     protected String rootDir() {
-        return System.getProperty("basedir", ".") + File.separator +
-                "target" + File.separator + "generated-test-sources" + File.separator +
+        return "target" + File.separator + "generated-test-sources" + File.separator +
                 "wsdl2java" + File.separator +
                 "test" + File.separator + "wsdl" + File.separator +
                 "query";

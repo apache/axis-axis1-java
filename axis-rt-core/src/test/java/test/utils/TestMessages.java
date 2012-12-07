@@ -125,9 +125,8 @@ public class TestMessages extends TestCase {
      *     matches the excpected number of parameters (in the source code).
      */
     public void testForMissingMessages() {
-        String baseDir = System.getProperty("basedir");
         char sep = File.separatorChar;
-        String srcDirStr = baseDir + sep + "src" + sep + "main" + sep + "java";
+        String srcDirStr = "src" + sep + "main" + sep + "java";
 
         File srcDir = new File(srcDirStr);
         if (srcDir.exists()) {

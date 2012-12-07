@@ -54,8 +54,7 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
     };
 
     public void testFileGen() throws IOException {
-        String rootDir = System.getProperty("basedir", ".") + File.separator +
-                "target" + File.separator + "work" + File.separator + 
+        String rootDir = "target" + File.separator + "work" + File.separator + 
                 "test" + File.separator + "wsdl" + File.separator + "literal";
         // open up the output directory and check what files exist.
         File outputDir = new File(rootDir);

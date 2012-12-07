@@ -303,7 +303,7 @@ public class TestXMLUtils extends AxisTestBase
 
     String msg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
         "<!DOCTYPE project [" +
-        "<!ENTITY buildxml SYSTEM \"file:" + System.getProperty("basedir") + "/pom.xml\">" +
+        "<!ENTITY buildxml SYSTEM \"file:pom.xml\">" +
         "]>" +
         "<SOAP-ENV:Envelope " +
         "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +

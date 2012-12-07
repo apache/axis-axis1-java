@@ -745,41 +745,6 @@ public class Utils {
          */
     }    // getNestedTypes
 
-    /**
-     * Generate an XML prefixed attribute value with a corresponding xmlns
-     * declaration for the prefix.  If there is no namespace,
-     * don't prefix the name or emit the xmlns attribute.
-     * <p/>
-     * Caller should provide the enclosing quotes.
-     * <p/>
-     * Usage:  println("name=\"" + genXMLQNameString(qname, "foo") + "\""
-     * 
-     * @param qname  
-     * @param prefix 
-     * @return 
-     */
-    public static String genQNameAttributeString(QName qname, String prefix) {
-
-        if ((qname.getNamespaceURI() == null)
-                || qname.getNamespaceURI().equals("")) {
-            return qname.getLocalPart();
-        }
-
-        return prefix + ":" + qname.getLocalPart() + "\" xmlns:" + prefix
-                + "=\"" + qname.getNamespaceURI();
-    }
-    
-    public static String genQNameAttributeStringWithLastLocalPart(QName qname, String prefix) {
-        String lastLocalPart = getLastLocalPart(qname.getLocalPart());
-        if ((qname.getNamespaceURI() == null)
-                || qname.getNamespaceURI().equals("")) {
-            return lastLocalPart;
-        }
-
-        return prefix + ":" + lastLocalPart + "\" xmlns:" + prefix
-                + "=\"" + qname.getNamespaceURI();
-    }
-
     public static String getLastLocalPart(String localPart) {
         int anonymousDelimitorIndex = localPart.lastIndexOf('>');
         if (anonymousDelimitorIndex > -1 && anonymousDelimitorIndex < localPart.length()-1) {

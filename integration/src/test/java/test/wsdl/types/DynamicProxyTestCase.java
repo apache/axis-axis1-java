@@ -66,6 +66,8 @@ import javax.xml.rpc.holders.QNameHolder;
 import javax.xml.rpc.holders.ShortHolder;
 import javax.xml.rpc.holders.ShortWrapperHolder;
 import javax.xml.rpc.holders.StringHolder;
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -81,7 +83,7 @@ public class DynamicProxyTestCase extends TestCase {
     private TypeTest getProxyWithWSDL() {
         try {
             Service service = ServiceFactory.newInstance().createService(
-                new URL("file", "", System.getProperty("basedir", ".") + "/src/test/wsdl/types/ComprehensiveTypes.wsdl"),
+                new File("src/test/wsdl/types/ComprehensiveTypes.wsdl").getAbsoluteFile().toURL(),
                 new QName("urn:comprehensive-service.types.wsdl.test",
                         "TypeTestService"));
             Stub stub = (Stub)service.getPort(

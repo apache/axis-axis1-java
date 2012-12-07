@@ -26,7 +26,7 @@ import org.apache.commons.io.FileUtils;
 
 public class VerifyFilesTest extends TestCase {
     public void testDeployUseless() throws Exception {
-        File file = new File(System.getProperty("basedir", "."), "target/work/example1/com/examples/www/wsdl/HelloService_wsdl/Hello_Service.lst");
+        File file = new File("target/work/example1/com/examples/www/wsdl/HelloService_wsdl/Hello_Service.lst");
         assertTrue(file.exists());
         assertEquals("Hello_Port", FileUtils.readFileToString(file).trim());
     }

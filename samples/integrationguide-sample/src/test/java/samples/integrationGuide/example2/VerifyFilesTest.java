@@ -26,7 +26,7 @@ import org.apache.commons.io.FileUtils;
 
 public class VerifyFilesTest extends TestCase {
     public void testDeployUseless() throws Exception {
-        File file = new File(System.getProperty("basedir", "."), "target/work/example2/com/examples/www/wsdl/HelloService_wsdl/deploy.useless");
+        File file = new File("target/work/example2/com/examples/www/wsdl/HelloService_wsdl/deploy.useless");
         assertTrue(file.exists());
         assertEquals("Hi ho!  Hi ho!  It's off to work we go.", FileUtils.readFileToString(file).trim());
     }

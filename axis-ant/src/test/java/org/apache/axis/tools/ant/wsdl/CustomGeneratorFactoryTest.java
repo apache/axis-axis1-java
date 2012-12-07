@@ -26,7 +26,7 @@ import org.apache.commons.io.FileUtils;
 
 public class CustomGeneratorFactoryTest extends TestCase {
     public void test() throws Exception {
-        File file = new File(System.getProperty("basedir", "."), "target/work/com/example/stockquote_wsdl/StockQuoteServiceLocator.java");
+        File file = new File("target/work/com/example/stockquote_wsdl/StockQuoteServiceLocator.java");
         assertTrue(FileUtils.readFileToString(file).contains("My header comment"));
     }
 }
