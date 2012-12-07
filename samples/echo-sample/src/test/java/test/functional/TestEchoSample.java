@@ -43,7 +43,7 @@ public class TestEchoSample extends TestCase {
         // deploy the echo service
         String[] args = {"-l",
                          "local:///AdminService",
-                         System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd"};
+                         "src/main/wsdd/deploy.wsdd"};
         AdminClient.main(args);
 
         // define the tests using JUnit assert facilities, and tell client to

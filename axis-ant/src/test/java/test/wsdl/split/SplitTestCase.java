@@ -33,8 +33,7 @@ import junit.framework.TestCase;
 public class SplitTestCase extends TestCase {
     public void testValidateWSDL() throws Exception {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        Definition definition = reader.readWSDL(new File(System.getProperty("basedir", ".")
-                + "/target/work/test/wsdl/split/SplitTestImpl.wsdl").toURI().toString());
+        Definition definition = reader.readWSDL(new File("target/work/test/wsdl/split/SplitTestImpl.wsdl").getAbsoluteFile().toURI().toString());
         Service service = definition.getService(new QName("http://split.wsdl.test", "MyPortTypeService"));
         Port port = service.getPort("SplitTest");
         // This is the critical part: the binding is defined in the imported WSDL

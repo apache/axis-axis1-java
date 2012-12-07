@@ -56,8 +56,7 @@ public class GroupsTestCase extends junit.framework.TestCase {
      * The directory containing the files that should exist.
      */
     protected String rootDir() {
-        return System.getProperty("basedir", ".") + File.separator +
-                "target" + File.separator + "work" + File.separator + 
+        return "target" + File.separator + "work" + File.separator + 
                 "test" + File.separator + "wsdl" + File.separator +
                 "groups";
     }

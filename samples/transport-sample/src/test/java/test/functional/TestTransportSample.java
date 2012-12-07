@@ -35,7 +35,7 @@ public class TestTransportSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "-llocal:", System.getProperty("basedir") + "/src/main/wsdd/deploy.wsdd" };
+        String[] args = { "-llocal:", "src/main/wsdd/deploy.wsdd" };
         AdminClient.main(args);
     }
     
