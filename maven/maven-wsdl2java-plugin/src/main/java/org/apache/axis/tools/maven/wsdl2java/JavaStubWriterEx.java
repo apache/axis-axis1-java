@@ -35,7 +35,7 @@ public class JavaStubWriterEx extends JavaStubWriter {
         if (clientOutputDirectory == null) {
             return super.getFileName();
         } else {
-            return clientOutputDirectory + File.separator + packageName.replaceAll("\\.", File.separator) + File.separator + className + ".java";
+            return clientOutputDirectory + File.separator + packageName.replace('.', File.separatorChar) + File.separator + className + ".java";
         }
     }
 }
