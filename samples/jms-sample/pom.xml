@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.axis</groupId>
+        <artifactId>samples</artifactId>
+        <version>1.4.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>jms-sample</artifactId>
+    <name>JMS Sample</name>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-rt-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-rt-transport-jms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>stock-sample</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <version>5.6.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-testutils</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>maven-wsdl2java-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-sources</goal>
+                        </goals>
+                        <configuration>
+                            <file>src/main/wsdl/GetQuote.wsdl</file>
+                            <generate>client</generate>
+                            <typeMappingVersion>1.1</typeMappingVersion>
+                            <deployScope>session</deployScope>
+                            <allowInvalidURL>true</allowInvalidURL>
+                            <mappings>
+                                <mapping>
+                                    <namespace>urn:xmltoday-delayed-quotes</namespace>
+                                    <package>samples.jms.stub.xmltoday_delayed_quotes</package>
+                                </mapping>
+                                <mapping>
+                                    <namespace>urn:xmltoday-delayed-quotes</namespace>
+                                    <package>samples.jms.stub.xmltoday_delayed_quotes</package>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <configuration>
+                            <portNames>
+                                <portName>test.brokerPort</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/conf</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.directory}/conf</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>maven-axis-server-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-broker</id>
+                        <goals>
+                            <goal>start-daemon</goal>
+                        </goals>
+                        <configuration>
+                            <daemonClass>samples.jms.ActiveMQDaemon</daemonClass>
+                            <args>
+                                <arg>${test.brokerPort}</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-broker</id>
+                        <goals>
+                            <goal>stop-all</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Executing samples.jms.JMSTest ..."/>
+                                <java classname="samples.jms.JMSTest" fork="true" failonerror="true">
+                                    <classpath refid="maven.test.classpath"/>
+                                    <sysproperty key="axis.ServerConfigFile" file="src/main/wsdd/server-config.wsdd"/>
+                                    <arg value="-c"/>
+                                    <arg value="${project.build.directory}/conf/activemq-connection-factory.properties"/>
+                                    <arg value="-d"/>
+                                    <arg value="dynamicQueues/testQ"/>
+                                    <arg value="XXX"/>
+                                </java>
+                                <echo message="Executing samples.jms.dii.JMSURLTest ..."/>
+                                <java classname="samples.jms.dii.JMSURLTest" fork="true" failonerror="true">
+                                    <classpath refid="maven.test.classpath"/>
+                                    <sysproperty key="axis.ServerConfigFile" file="src/main/wsdd/server-config.wsdd"/>
+                                    <arg value="-c"/>
+                                    <arg value="${project.build.directory}/conf/activemq-connection-factory.properties"/>
+                                    <arg value="-d"/>
+                                    <arg value="dynamicQueues/testQ"/>
+                                    <arg value="-e"/>
+                                    <arg value="jms:/dynamicQueues/testQ?java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;java.naming.provider.url=tcp://localhost:${test.brokerPort}&amp;ConnectionFactoryJNDIName=ConnectionFactory"/>
+                                    <arg value="XXX"/>
+                                </java>
+                                <echo message="Executing samples.jms.stub.JMSURLStubTest ..."/>
+                                <java classname="samples.jms.stub.JMSURLStubTest" fork="true" failonerror="true">
+                                    <classpath refid="maven.test.classpath"/>
+                                    <sysproperty key="axis.ServerConfigFile" file="src/main/wsdd/server-config.wsdd"/>
+                                    <sysproperty key="axis.ClientConfigFile" file="src/main/wsdd/client-config.wsdd"/>
+                                    <arg value="-c"/>
+                                    <arg value="${project.build.directory}/conf/activemq-connection-factory.properties"/>
+                                    <arg value="-d"/>
+                                    <arg value="dynamicQueues/testQ"/>
+                                    <arg value="-e"/>
+                                    <arg value="jms:/dynamicQueues/testQ?java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;java.naming.provider.url=tcp://localhost:${test.brokerPort}&amp;ConnectionFactoryJNDIName=ConnectionFactory"/>
+                                    <arg value="XXX"/>
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

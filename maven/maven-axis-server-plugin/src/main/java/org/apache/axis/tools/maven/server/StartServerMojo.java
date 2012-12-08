@@ -219,11 +219,10 @@ public class StartServerMojo extends AbstractStartProcessMojo {
                     "org.apache.axis.server.standalone.StandaloneAxisServer",
                     (String[])args.toArray(new String[args.size()]),
                     workDir,
-                    new AxisServerStartAction(actualPort, adminClient,
+                    new AxisServerProcessControl(actualPort, adminClient,
                             (File[])deployments.toArray(new File[deployments.size()]),
-                            isDebug() || foreground ? Integer.MAX_VALUE : 20000),
-                    new AxisServerStopAction(adminClient,
-                            (File[])undeployments.toArray(new File[undeployments.size()])));
+                            (File[])undeployments.toArray(new File[undeployments.size()]),
+                            isDebug() || foreground ? Integer.MAX_VALUE : 20000));
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

@@ -16,25 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.tools.maven.server;
+package samples.jms;
 
-import java.io.File;
+import org.apache.activemq.broker.BrokerFactory;
+import org.apache.activemq.broker.BrokerService;
+import org.apache.axis.testutils.daemon.Daemon;
 
-import org.apache.axis.client.AdminClient;
-import org.codehaus.plexus.logging.Logger;
-
-public class AxisServerStopAction implements ProcessStopAction {
-    private final AdminClient adminClient;
-    private final File[] undeployments;
-
-    public AxisServerStopAction(AdminClient adminClient, File[] undeployments) {
-        this.adminClient = adminClient;
-        this.undeployments = undeployments;
+public class ActiveMQDaemon implements Daemon {
+    private BrokerService broker;
+    
+    public void start(String[] args) throws Exception {
+        broker = BrokerFactory.createBroker("broker:(tcp://localhost:" + args[0] + ")?useJmx=false&persistent=false");
+        broker.start();
     }
 
-    public int execute(Logger logger) throws Exception {
-        AdminClientUtils.process(logger, adminClient, undeployments);
-        adminClient.quit();
-        return STOPPING;
+    public void stop() throws Exception {
+        broker.stop();
     }
 }

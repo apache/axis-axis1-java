@@ -102,7 +102,7 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
         return debug;
     }
 
-    protected void startJavaProcess(String description, String mainClass, String[] args, File workDir, ProcessStartAction startAction, ProcessStopAction stopAction) throws MojoExecutionException, MojoFailureException {
+    protected void startJavaProcess(String description, String mainClass, String[] args, File workDir, ProcessControl processControl) throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
         // Locate java executable to use
@@ -155,8 +155,7 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
                     description,
                     (String[])cmdline.toArray(new String[cmdline.size()]),
                     workDir,
-                    startAction,
-                    stopAction);
+                    processControl);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

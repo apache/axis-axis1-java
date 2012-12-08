@@ -16,21 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.tools.maven.server;
+package org.apache.axis.testutils.daemon;
 
-import org.codehaus.plexus.logging.Logger;
-
-/**
- * Action to be executed after a given process has been started. This is typically used to configure
- * the server process, e.g. to deploy services.
- * 
- * @author Andreas Veithen
- */
-public interface ProcessStartAction {
-    ProcessStartAction NOP = new ProcessStartAction() {
-        public void execute(Logger logger, Process process) throws Exception {
-        }
-    };
-    
-    void execute(Logger logger, Process process) throws Exception;
+public interface Daemon {
+    void start(String[] args) throws Exception;
+    void stop() throws Exception;
 }

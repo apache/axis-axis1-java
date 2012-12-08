@@ -19,26 +19,27 @@
 package org.apache.axis.tools.maven.server;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.logging.Logger;
 
 /**
- * Start an arbitrary Java process.
+ * Start a daemon.
  * 
- * @goal start-process
+ * @goal start-daemon
  * @phase pre-integration-test
  * @requiresDependencyResolution test
  */
-public class StartProcessMojo extends AbstractStartProcessMojo {
+public class StartDaemonMojo extends AbstractStartProcessMojo {
     /**
-     * The main class.
+     * The daemon class.
      * 
      * @parameter
      * @required
      */
-    private String mainClass;
+    private String daemonClass;
     
     /**
      * The arguments to be passed to the main class.
@@ -56,14 +57,21 @@ public class StartProcessMojo extends AbstractStartProcessMojo {
     private File workDir;
 
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
+        int controlPort;
+        try {
+            ServerSocket ss = new ServerSocket(0);
+            controlPort = ss.getLocalPort();
+            ss.close();
+        } catch (IOException ex) {
+            throw new MojoFailureException("Failed to allocate port number", ex);
+        }
         workDir.mkdirs();
-        startJavaProcess(mainClass, mainClass, args != null ? args : new String[0], workDir, new ProcessControl() {
-            public void initializeProcess(Logger logger, Process process) throws Exception {
-            }
-
-            public int shutdownProcess(Logger logger) throws Exception {
-                return RUNNING;
-            }
-        });
+        String[] vmArgs = new String[args != null ? args.length + 2 : 2];
+        vmArgs[0] = daemonClass;
+        vmArgs[1] = String.valueOf(controlPort);
+        if (args != null) {
+            System.arraycopy(args, 0, vmArgs, 2, args.length);
+        }
+        startJavaProcess(daemonClass, "org.apache.axis.testutils.daemon.Launcher", vmArgs, workDir, new DaemonProcessControl(controlPort));
     }
 }

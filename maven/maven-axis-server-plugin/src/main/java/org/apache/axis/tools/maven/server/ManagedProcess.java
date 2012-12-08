@@ -21,12 +21,12 @@ package org.apache.axis.tools.maven.server;
 public class ManagedProcess {
     private final Process process;
     private final String description;
-    private final ProcessStopAction stopAction;
+    private final ProcessControl processControl;
 
-    public ManagedProcess(Process process, String description, ProcessStopAction stopAction) {
+    public ManagedProcess(Process process, String description, ProcessControl processControl) {
         this.process = process;
         this.description = description;
-        this.stopAction = stopAction;
+        this.processControl = processControl;
     }
 
     public Process getProcess() {
@@ -37,7 +37,7 @@ public class ManagedProcess {
         return description;
     }
 
-    public ProcessStopAction getStopAction() {
-        return stopAction;
+    public ProcessControl getProcessControl() {
+        return processControl;
     }
 }
