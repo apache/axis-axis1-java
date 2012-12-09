@@ -72,6 +72,7 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
             case WSDDPackageImpl.TYPE_MAPPING: return (EObject)createTypeMapping();
             case WSDDPackageImpl.ARRAY_MAPPING: return (EObject)createArrayMapping();
             case WSDDPackageImpl.BEAN_MAPPING: return (EObject)createBeanMapping();
+            case WSDDPackageImpl.MAPPING_CONTAINER: return (EObject)createMappingContainer();
             case WSDDPackageImpl.OPERATION_PARAMETER: return (EObject)createOperationParameter();
             case WSDDPackageImpl.FAULT: return (EObject)createFault();
             case WSDDPackageImpl.OPERATION: return (EObject)createOperation();
@@ -163,6 +164,16 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public BeanMapping createBeanMapping() {
         BeanMappingImpl beanMapping = new BeanMappingImpl();
         return beanMapping;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public MappingContainer createMappingContainer() {
+        MappingContainerImpl mappingContainer = new MappingContainerImpl();
+        return mappingContainer;
     }
 
     /**

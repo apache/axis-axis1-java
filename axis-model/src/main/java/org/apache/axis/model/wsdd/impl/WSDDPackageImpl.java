@@ -16,6 +16,7 @@ import org.apache.axis.model.wsdd.Flow;
 import org.apache.axis.model.wsdd.GlobalConfiguration;
 import org.apache.axis.model.wsdd.Handler;
 import org.apache.axis.model.wsdd.Mapping;
+import org.apache.axis.model.wsdd.MappingContainer;
 import org.apache.axis.model.wsdd.Operation;
 import org.apache.axis.model.wsdd.OperationParameter;
 import org.apache.axis.model.wsdd.Parameter;
@@ -123,7 +124,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getFlow()
      * @generated
      */
-    public static final int FLOW = 10;
+    public static final int FLOW = 11;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.MappingImpl <em>Mapping</em>}' class.
@@ -337,6 +338,52 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int BEAN_MAPPING_FEATURE_COUNT = MAPPING_FEATURE_COUNT + 0;
 
     /**
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.MappingContainerImpl <em>Mapping Container</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.apache.axis.model.wsdd.impl.MappingContainerImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getMappingContainer()
+     * @generated
+     */
+    public static final int MAPPING_CONTAINER = 5;
+
+    /**
+     * The feature id for the '<em><b>Type Mappings</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int MAPPING_CONTAINER__TYPE_MAPPINGS = 0;
+
+    /**
+     * The feature id for the '<em><b>Bean Mappings</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int MAPPING_CONTAINER__BEAN_MAPPINGS = 1;
+
+    /**
+     * The feature id for the '<em><b>Array Mappings</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int MAPPING_CONTAINER__ARRAY_MAPPINGS = 2;
+
+    /**
+     * The number of structural features of the '<em>Mapping Container</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int MAPPING_CONTAINER_FEATURE_COUNT = 3;
+
+    /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.OperationParameterImpl <em>Operation Parameter</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -344,7 +391,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getOperationParameter()
      * @generated
      */
-    public static final int OPERATION_PARAMETER = 5;
+    public static final int OPERATION_PARAMETER = 6;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -426,7 +473,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getFault()
      * @generated
      */
-    public static final int FAULT = 6;
+    public static final int FAULT = 7;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -481,7 +528,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getOperation()
      * @generated
      */
-    public static final int OPERATION = 7;
+    public static final int OPERATION = 8;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -599,7 +646,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getParameterizable()
      * @generated
      */
-    public static final int PARAMETERIZABLE = 8;
+    public static final int PARAMETERIZABLE = 9;
 
     /**
      * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -627,7 +674,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getHandler()
      * @generated
      */
-    public static final int HANDLER = 9;
+    public static final int HANDLER = 10;
 
     /**
      * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -691,7 +738,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getDeployableItem()
      * @generated
      */
-    public static final int DEPLOYABLE_ITEM = 11;
+    public static final int DEPLOYABLE_ITEM = 12;
 
     /**
      * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -737,7 +784,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getGlobalConfiguration()
      * @generated
      */
-    public static final int GLOBAL_CONFIGURATION = 12;
+    public static final int GLOBAL_CONFIGURATION = 13;
 
     /**
      * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -783,7 +830,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getTransport()
      * @generated
      */
-    public static final int TRANSPORT = 13;
+    public static final int TRANSPORT = 14;
 
     /**
      * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -847,7 +894,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getService()
      * @generated
      */
-    public static final int SERVICE = 14;
+    public static final int SERVICE = 15;
 
     /**
      * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -877,67 +924,13 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int SERVICE__RESPONSE_FLOW = DEPLOYABLE_ITEM__RESPONSE_FLOW;
 
     /**
-     * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__NAME = DEPLOYABLE_ITEM_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Provider</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__PROVIDER = DEPLOYABLE_ITEM_FEATURE_COUNT + 1;
-
-    /**
-     * The feature id for the '<em><b>Use</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__USE = DEPLOYABLE_ITEM_FEATURE_COUNT + 2;
-
-    /**
-     * The feature id for the '<em><b>Style</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__STYLE = DEPLOYABLE_ITEM_FEATURE_COUNT + 3;
-
-    /**
-     * The feature id for the '<em><b>Namespaces</b></em>' attribute list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__NAMESPACES = DEPLOYABLE_ITEM_FEATURE_COUNT + 4;
-
-    /**
-     * The feature id for the '<em><b>Operations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    public static final int SERVICE__OPERATIONS = DEPLOYABLE_ITEM_FEATURE_COUNT + 5;
-
-    /**
      * The feature id for the '<em><b>Type Mappings</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    public static final int SERVICE__TYPE_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 6;
+    public static final int SERVICE__TYPE_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Bean Mappings</b></em>' containment reference list.
@@ -946,7 +939,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE__BEAN_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 7;
+    public static final int SERVICE__BEAN_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Array Mappings</b></em>' containment reference list.
@@ -955,7 +948,61 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int SERVICE__ARRAY_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 8;
+    public static final int SERVICE__ARRAY_MAPPINGS = DEPLOYABLE_ITEM_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__NAME = DEPLOYABLE_ITEM_FEATURE_COUNT + 3;
+
+    /**
+     * The feature id for the '<em><b>Provider</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__PROVIDER = DEPLOYABLE_ITEM_FEATURE_COUNT + 4;
+
+    /**
+     * The feature id for the '<em><b>Use</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__USE = DEPLOYABLE_ITEM_FEATURE_COUNT + 5;
+
+    /**
+     * The feature id for the '<em><b>Style</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__STYLE = DEPLOYABLE_ITEM_FEATURE_COUNT + 6;
+
+    /**
+     * The feature id for the '<em><b>Namespaces</b></em>' attribute list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__NAMESPACES = DEPLOYABLE_ITEM_FEATURE_COUNT + 7;
+
+    /**
+     * The feature id for the '<em><b>Operations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int SERVICE__OPERATIONS = DEPLOYABLE_ITEM_FEATURE_COUNT + 8;
 
     /**
      * The number of structural features of the '<em>Service</em>' class.
@@ -974,7 +1021,34 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getDeployment()
      * @generated
      */
-    public static final int DEPLOYMENT = 15;
+    public static final int DEPLOYMENT = 16;
+
+    /**
+     * The feature id for the '<em><b>Type Mappings</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYMENT__TYPE_MAPPINGS = MAPPING_CONTAINER__TYPE_MAPPINGS;
+
+    /**
+     * The feature id for the '<em><b>Bean Mappings</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYMENT__BEAN_MAPPINGS = MAPPING_CONTAINER__BEAN_MAPPINGS;
+
+    /**
+     * The feature id for the '<em><b>Array Mappings</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int DEPLOYMENT__ARRAY_MAPPINGS = MAPPING_CONTAINER__ARRAY_MAPPINGS;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -983,7 +1057,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT__NAME = 0;
+    public static final int DEPLOYMENT__NAME = MAPPING_CONTAINER_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Global Configuration</b></em>' containment reference.
@@ -992,7 +1066,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT__GLOBAL_CONFIGURATION = 1;
+    public static final int DEPLOYMENT__GLOBAL_CONFIGURATION = MAPPING_CONTAINER_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -1001,7 +1075,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT__HANDLERS = 2;
+    public static final int DEPLOYMENT__HANDLERS = MAPPING_CONTAINER_FEATURE_COUNT + 2;
 
     /**
      * The feature id for the '<em><b>Transports</b></em>' containment reference list.
@@ -1010,7 +1084,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT__TRANSPORTS = 3;
+    public static final int DEPLOYMENT__TRANSPORTS = MAPPING_CONTAINER_FEATURE_COUNT + 3;
 
     /**
      * The feature id for the '<em><b>Services</b></em>' containment reference list.
@@ -1019,7 +1093,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT__SERVICES = 4;
+    public static final int DEPLOYMENT__SERVICES = MAPPING_CONTAINER_FEATURE_COUNT + 4;
 
     /**
      * The number of structural features of the '<em>Deployment</em>' class.
@@ -1028,7 +1102,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int DEPLOYMENT_FEATURE_COUNT = 5;
+    public static final int DEPLOYMENT_FEATURE_COUNT = MAPPING_CONTAINER_FEATURE_COUNT + 5;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.ParameterMode <em>Parameter Mode</em>}' enum.
@@ -1038,7 +1112,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getParameterMode()
      * @generated
      */
-    public static final int PARAMETER_MODE = 16;
+    public static final int PARAMETER_MODE = 17;
 
     /**
      * <!-- begin-user-doc -->
@@ -1081,6 +1155,13 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     private EClass beanMappingEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass mappingContainerEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -1415,6 +1496,57 @@ public class WSDDPackageImpl extends EPackageImpl {
      */
     public EClass getBeanMapping() {
         return beanMappingEClass;
+    }
+
+    /**
+     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.MappingContainer <em>Mapping Container</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Mapping Container</em>'.
+     * @see org.apache.axis.model.wsdd.MappingContainer
+     * @generated
+     */
+    public EClass getMappingContainer() {
+        return mappingContainerEClass;
+    }
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.MappingContainer#getTypeMappings <em>Type Mappings</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Type Mappings</em>'.
+     * @see org.apache.axis.model.wsdd.MappingContainer#getTypeMappings()
+     * @see #getMappingContainer()
+     * @generated
+     */
+    public EReference getMappingContainer_TypeMappings() {
+        return (EReference)mappingContainerEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.MappingContainer#getBeanMappings <em>Bean Mappings</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Bean Mappings</em>'.
+     * @see org.apache.axis.model.wsdd.MappingContainer#getBeanMappings()
+     * @see #getMappingContainer()
+     * @generated
+     */
+    public EReference getMappingContainer_BeanMappings() {
+        return (EReference)mappingContainerEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.MappingContainer#getArrayMappings <em>Array Mappings</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Array Mappings</em>'.
+     * @see org.apache.axis.model.wsdd.MappingContainer#getArrayMappings()
+     * @see #getMappingContainer()
+     * @generated
+     */
+    public EReference getMappingContainer_ArrayMappings() {
+        return (EReference)mappingContainerEClass.getEStructuralFeatures().get(2);
     }
 
     /**
@@ -1981,45 +2113,6 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
-     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Service#getTypeMappings <em>Type Mappings</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Type Mappings</em>'.
-     * @see org.apache.axis.model.wsdd.Service#getTypeMappings()
-     * @see #getService()
-     * @generated
-     */
-    public EReference getService_TypeMappings() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(6);
-    }
-
-    /**
-     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Service#getBeanMappings <em>Bean Mappings</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Bean Mappings</em>'.
-     * @see org.apache.axis.model.wsdd.Service#getBeanMappings()
-     * @see #getService()
-     * @generated
-     */
-    public EReference getService_BeanMappings() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(7);
-    }
-
-    /**
-     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Service#getArrayMappings <em>Array Mappings</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Array Mappings</em>'.
-     * @see org.apache.axis.model.wsdd.Service#getArrayMappings()
-     * @see #getService()
-     * @generated
-     */
-    public EReference getService_ArrayMappings() {
-        return (EReference)serviceEClass.getEStructuralFeatures().get(8);
-    }
-
-    /**
      * Returns the meta object for class '{@link org.apache.axis.model.wsdd.Deployment <em>Deployment</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2156,6 +2249,11 @@ public class WSDDPackageImpl extends EPackageImpl {
 
         beanMappingEClass = createEClass(BEAN_MAPPING);
 
+        mappingContainerEClass = createEClass(MAPPING_CONTAINER);
+        createEReference(mappingContainerEClass, MAPPING_CONTAINER__TYPE_MAPPINGS);
+        createEReference(mappingContainerEClass, MAPPING_CONTAINER__BEAN_MAPPINGS);
+        createEReference(mappingContainerEClass, MAPPING_CONTAINER__ARRAY_MAPPINGS);
+
         operationParameterEClass = createEClass(OPERATION_PARAMETER);
         createEAttribute(operationParameterEClass, OPERATION_PARAMETER__NAME);
         createEAttribute(operationParameterEClass, OPERATION_PARAMETER__QNAME);
@@ -2211,9 +2309,6 @@ public class WSDDPackageImpl extends EPackageImpl {
         createEAttribute(serviceEClass, SERVICE__STYLE);
         createEAttribute(serviceEClass, SERVICE__NAMESPACES);
         createEReference(serviceEClass, SERVICE__OPERATIONS);
-        createEReference(serviceEClass, SERVICE__TYPE_MAPPINGS);
-        createEReference(serviceEClass, SERVICE__BEAN_MAPPINGS);
-        createEReference(serviceEClass, SERVICE__ARRAY_MAPPINGS);
 
         deploymentEClass = createEClass(DEPLOYMENT);
         createEAttribute(deploymentEClass, DEPLOYMENT__NAME);
@@ -2262,6 +2357,8 @@ public class WSDDPackageImpl extends EPackageImpl {
         globalConfigurationEClass.getESuperTypes().add(this.getDeployableItem());
         transportEClass.getESuperTypes().add(this.getDeployableItem());
         serviceEClass.getESuperTypes().add(this.getDeployableItem());
+        serviceEClass.getESuperTypes().add(this.getMappingContainer());
+        deploymentEClass.getESuperTypes().add(this.getMappingContainer());
 
         // Initialize classes and features; add operations and parameters
         initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2281,6 +2378,11 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEAttribute(getArrayMapping_InnerType(), theXmlPackage.getQName(), "innerType", null, 0, 1, ArrayMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(beanMappingEClass, BeanMapping.class, "BeanMapping", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+        initEClass(mappingContainerEClass, MappingContainer.class, "MappingContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getMappingContainer_TypeMappings(), this.getTypeMapping(), null, "typeMappings", null, 0, -1, MappingContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getMappingContainer_BeanMappings(), this.getBeanMapping(), null, "beanMappings", null, 0, -1, MappingContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getMappingContainer_ArrayMappings(), this.getArrayMapping(), null, "arrayMappings", null, 0, -1, MappingContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(operationParameterEClass, OperationParameter.class, "OperationParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getOperationParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, OperationParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2341,9 +2443,6 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEAttribute(getService_Style(), theSOAPPackage.getStyle(), "style", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getService_Namespaces(), ecorePackage.getEString(), "namespaces", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getService_Operations(), this.getOperation(), null, "operations", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getService_TypeMappings(), this.getTypeMapping(), null, "typeMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getService_BeanMappings(), this.getBeanMapping(), null, "beanMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getService_ArrayMappings(), this.getArrayMapping(), null, "arrayMappings", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(deploymentEClass, Deployment.class, "Deployment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getDeployment_Name(), ecorePackage.getEString(), "name", null, 0, 1, Deployment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2377,6 +2476,30 @@ public class WSDDPackageImpl extends EPackageImpl {
      */
     protected void createExtendedMetaDataAnnotations() {
         String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";		
+        addAnnotation
+          (getMappingContainer_TypeMappings(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "typeMapping",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getMappingContainer_BeanMappings(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "beanMapping",
+             "namespace", "##targetNamespace"
+           });		
+        addAnnotation
+          (getMappingContainer_ArrayMappings(), 
+           source, 
+           new String[] {
+             "kind", "element",
+             "name", "arrayMapping",
+             "namespace", "##targetNamespace"
+           });		
         addAnnotation
           (getOperation_Parameters(), 
            source, 
@@ -2439,30 +2562,6 @@ public class WSDDPackageImpl extends EPackageImpl {
            new String[] {
              "kind", "element",
              "name", "operation",
-             "namespace", "##targetNamespace"
-           });		
-        addAnnotation
-          (getService_TypeMappings(), 
-           source, 
-           new String[] {
-             "kind", "element",
-             "name", "typeMapping",
-             "namespace", "##targetNamespace"
-           });		
-        addAnnotation
-          (getService_BeanMappings(), 
-           source, 
-           new String[] {
-             "kind", "element",
-             "name", "beanMapping",
-             "namespace", "##targetNamespace"
-           });		
-        addAnnotation
-          (getService_ArrayMappings(), 
-           source, 
-           new String[] {
-             "kind", "element",
-             "name", "arrayMapping",
              "namespace", "##targetNamespace"
            });		
         addAnnotation
@@ -2650,6 +2749,40 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EClass BEAN_MAPPING = eINSTANCE.getBeanMapping();
+
+        /**
+         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.MappingContainerImpl <em>Mapping Container</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.apache.axis.model.wsdd.impl.MappingContainerImpl
+         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getMappingContainer()
+         * @generated
+         */
+        public static final EClass MAPPING_CONTAINER = eINSTANCE.getMappingContainer();
+
+        /**
+         * The meta object literal for the '<em><b>Type Mappings</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference MAPPING_CONTAINER__TYPE_MAPPINGS = eINSTANCE.getMappingContainer_TypeMappings();
+
+        /**
+         * The meta object literal for the '<em><b>Bean Mappings</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference MAPPING_CONTAINER__BEAN_MAPPINGS = eINSTANCE.getMappingContainer_BeanMappings();
+
+        /**
+         * The meta object literal for the '<em><b>Array Mappings</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference MAPPING_CONTAINER__ARRAY_MAPPINGS = eINSTANCE.getMappingContainer_ArrayMappings();
 
         /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.OperationParameterImpl <em>Operation Parameter</em>}' class.
@@ -3020,30 +3153,6 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EReference SERVICE__OPERATIONS = eINSTANCE.getService_Operations();
-
-        /**
-         * The meta object literal for the '<em><b>Type Mappings</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public static final EReference SERVICE__TYPE_MAPPINGS = eINSTANCE.getService_TypeMappings();
-
-        /**
-         * The meta object literal for the '<em><b>Bean Mappings</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public static final EReference SERVICE__BEAN_MAPPINGS = eINSTANCE.getService_BeanMappings();
-
-        /**
-         * The meta object literal for the '<em><b>Array Mappings</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public static final EReference SERVICE__ARRAY_MAPPINGS = eINSTANCE.getService_ArrayMappings();
 
         /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.DeploymentImpl <em>Deployment</em>}' class.

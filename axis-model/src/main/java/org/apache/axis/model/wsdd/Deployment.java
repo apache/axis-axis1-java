@@ -27,7 +27,7 @@ import java.util.List;
  * @model extendedMetaData="name='deployment' kind='element'"
  * @generated
  */
-public interface Deployment {
+public interface Deployment extends MappingContainer {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->

@@ -14,6 +14,7 @@ import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
 import org.apache.axis.model.wsdd.ArrayMapping;
 import org.apache.axis.model.wsdd.BeanMapping;
+import org.apache.axis.model.wsdd.MappingContainer;
 import org.apache.axis.model.wsdd.Operation;
 import org.apache.axis.model.wsdd.Service;
 import org.apache.axis.model.wsdd.TypeMapping;
@@ -35,21 +36,51 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getTypeMappings <em>Type Mappings</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getBeanMappings <em>Bean Mappings</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getArrayMappings <em>Array Mappings</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getProvider <em>Provider</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getUse <em>Use</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getStyle <em>Style</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getNamespaces <em>Namespaces</em>}</li>
  *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getOperations <em>Operations</em>}</li>
- *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getTypeMappings <em>Type Mappings</em>}</li>
- *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getBeanMappings <em>Bean Mappings</em>}</li>
- *   <li>{@link org.apache.axis.model.wsdd.impl.ServiceImpl#getArrayMappings <em>Array Mappings</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
 public class ServiceImpl extends DeployableItemImpl implements Service {
+    /**
+     * The cached value of the '{@link #getTypeMappings() <em>Type Mappings</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getTypeMappings()
+     * @generated
+     * @ordered
+     */
+    protected EList typeMappings;
+
+    /**
+     * The cached value of the '{@link #getBeanMappings() <em>Bean Mappings</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getBeanMappings()
+     * @generated
+     * @ordered
+     */
+    protected EList beanMappings;
+
+    /**
+     * The cached value of the '{@link #getArrayMappings() <em>Array Mappings</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getArrayMappings()
+     * @generated
+     * @ordered
+     */
+    protected EList arrayMappings;
+
     /**
      * The default value of the '{@link #getName() <em>Name</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -149,36 +180,6 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      * @ordered
      */
     protected EList operations;
-
-    /**
-     * The cached value of the '{@link #getTypeMappings() <em>Type Mappings</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getTypeMappings()
-     * @generated
-     * @ordered
-     */
-    protected EList typeMappings;
-
-    /**
-     * The cached value of the '{@link #getBeanMappings() <em>Bean Mappings</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getBeanMappings()
-     * @generated
-     * @ordered
-     */
-    protected EList beanMappings;
-
-    /**
-     * The cached value of the '{@link #getArrayMappings() <em>Array Mappings</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getArrayMappings()
-     * @generated
-     * @ordered
-     */
-    protected EList arrayMappings;
 
     /**
      * <!-- begin-user-doc -->
@@ -337,14 +338,14 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case WSDDPackageImpl.SERVICE__OPERATIONS:
-                return ((InternalEList)getOperations()).basicRemove(otherEnd, msgs);
             case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
                 return ((InternalEList)getTypeMappings()).basicRemove(otherEnd, msgs);
             case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
                 return ((InternalEList)getBeanMappings()).basicRemove(otherEnd, msgs);
             case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
                 return ((InternalEList)getArrayMappings()).basicRemove(otherEnd, msgs);
+            case WSDDPackageImpl.SERVICE__OPERATIONS:
+                return ((InternalEList)getOperations()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -356,6 +357,12 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
+                return getTypeMappings();
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
+                return getBeanMappings();
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
+                return getArrayMappings();
             case WSDDPackageImpl.SERVICE__NAME:
                 return getName();
             case WSDDPackageImpl.SERVICE__PROVIDER:
@@ -368,12 +375,6 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
                 return getNamespaces();
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return getOperations();
-            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
-                return getTypeMappings();
-            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
-                return getBeanMappings();
-            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
-                return getArrayMappings();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -385,6 +386,18 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
+                getTypeMappings().clear();
+                getTypeMappings().addAll((Collection)newValue);
+                return;
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
+                getBeanMappings().clear();
+                getBeanMappings().addAll((Collection)newValue);
+                return;
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
+                getArrayMappings().clear();
+                getArrayMappings().addAll((Collection)newValue);
+                return;
             case WSDDPackageImpl.SERVICE__NAME:
                 setName((String)newValue);
                 return;
@@ -405,18 +418,6 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
                 getOperations().clear();
                 getOperations().addAll((Collection)newValue);
                 return;
-            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
-                getTypeMappings().clear();
-                getTypeMappings().addAll((Collection)newValue);
-                return;
-            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
-                getBeanMappings().clear();
-                getBeanMappings().addAll((Collection)newValue);
-                return;
-            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
-                getArrayMappings().clear();
-                getArrayMappings().addAll((Collection)newValue);
-                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -428,6 +429,15 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
+                getTypeMappings().clear();
+                return;
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
+                getBeanMappings().clear();
+                return;
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
+                getArrayMappings().clear();
+                return;
             case WSDDPackageImpl.SERVICE__NAME:
                 setName(NAME_EDEFAULT);
                 return;
@@ -446,15 +456,6 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 getOperations().clear();
                 return;
-            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
-                getTypeMappings().clear();
-                return;
-            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
-                getBeanMappings().clear();
-                return;
-            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
-                getArrayMappings().clear();
-                return;
         }
         super.eUnset(featureID);
     }
@@ -466,6 +467,12 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
+            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
+                return typeMappings != null && !typeMappings.isEmpty();
+            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
+                return beanMappings != null && !beanMappings.isEmpty();
+            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
+                return arrayMappings != null && !arrayMappings.isEmpty();
             case WSDDPackageImpl.SERVICE__NAME:
                 return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
             case WSDDPackageImpl.SERVICE__PROVIDER:
@@ -478,14 +485,42 @@ public class ServiceImpl extends DeployableItemImpl implements Service {
                 return namespaces != null && !namespaces.isEmpty();
             case WSDDPackageImpl.SERVICE__OPERATIONS:
                 return operations != null && !operations.isEmpty();
-            case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS:
-                return typeMappings != null && !typeMappings.isEmpty();
-            case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS:
-                return beanMappings != null && !beanMappings.isEmpty();
-            case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS:
-                return arrayMappings != null && !arrayMappings.isEmpty();
         }
         return super.eIsSet(featureID);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public int eBaseStructuralFeatureID(int derivedFeatureID, Class baseClass) {
+        if (baseClass == MappingContainer.class) {
+            switch (derivedFeatureID) {
+                case WSDDPackageImpl.SERVICE__TYPE_MAPPINGS: return WSDDPackageImpl.MAPPING_CONTAINER__TYPE_MAPPINGS;
+                case WSDDPackageImpl.SERVICE__BEAN_MAPPINGS: return WSDDPackageImpl.MAPPING_CONTAINER__BEAN_MAPPINGS;
+                case WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS: return WSDDPackageImpl.MAPPING_CONTAINER__ARRAY_MAPPINGS;
+                default: return -1;
+            }
+        }
+        return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public int eDerivedStructuralFeatureID(int baseFeatureID, Class baseClass) {
+        if (baseClass == MappingContainer.class) {
+            switch (baseFeatureID) {
+                case WSDDPackageImpl.MAPPING_CONTAINER__TYPE_MAPPINGS: return WSDDPackageImpl.SERVICE__TYPE_MAPPINGS;
+                case WSDDPackageImpl.MAPPING_CONTAINER__BEAN_MAPPINGS: return WSDDPackageImpl.SERVICE__BEAN_MAPPINGS;
+                case WSDDPackageImpl.MAPPING_CONTAINER__ARRAY_MAPPINGS: return WSDDPackageImpl.SERVICE__ARRAY_MAPPINGS;
+                default: return -1;
+            }
+        }
+        return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
     }
 
     /**

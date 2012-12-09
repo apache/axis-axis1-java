@@ -67,6 +67,15 @@ public interface WSDDFactory {
     BeanMapping createBeanMapping();
 
     /**
+     * Returns a new object of class '<em>Mapping Container</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Mapping Container</em>'.
+     * @generated
+     */
+    MappingContainer createMappingContainer();
+
+    /**
      * Returns a new object of class '<em>Operation Parameter</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
