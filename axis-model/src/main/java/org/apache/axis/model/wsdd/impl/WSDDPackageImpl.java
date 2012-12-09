@@ -713,13 +713,31 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int CHAIN = 11;
 
     /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int CHAIN__NAME = 0;
+
+    /**
+     * The feature id for the '<em><b>Type</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    public static final int CHAIN__TYPE = 1;
+
+    /**
      * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    public static final int CHAIN__HANDLERS = 0;
+    public static final int CHAIN__HANDLERS = 2;
 
     /**
      * The number of structural features of the '<em>Chain</em>' class.
@@ -728,7 +746,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      * @ordered
      */
-    public static final int CHAIN_FEATURE_COUNT = 1;
+    public static final int CHAIN_FEATURE_COUNT = 3;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.DeployableItemImpl <em>Deployable Item</em>}' class.
@@ -1922,6 +1940,32 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Chain#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.apache.axis.model.wsdd.Chain#getName()
+     * @see #getChain()
+     * @generated
+     */
+    public EAttribute getChain_Name() {
+        return (EAttribute)chainEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * Returns the meta object for the attribute '{@link org.apache.axis.model.wsdd.Chain#getType <em>Type</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Type</em>'.
+     * @see org.apache.axis.model.wsdd.Chain#getType()
+     * @see #getChain()
+     * @generated
+     */
+    public EAttribute getChain_Type() {
+        return (EAttribute)chainEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
      * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Chain#getHandlers <em>Handlers</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1931,7 +1975,7 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     public EReference getChain_Handlers() {
-        return (EReference)chainEClass.getEStructuralFeatures().get(0);
+        return (EReference)chainEClass.getEStructuralFeatures().get(2);
     }
 
     /**
@@ -2290,6 +2334,8 @@ public class WSDDPackageImpl extends EPackageImpl {
         createEAttribute(handlerEClass, HANDLER__TYPE);
 
         chainEClass = createEClass(CHAIN);
+        createEAttribute(chainEClass, CHAIN__NAME);
+        createEAttribute(chainEClass, CHAIN__TYPE);
         createEReference(chainEClass, CHAIN__HANDLERS);
 
         deployableItemEClass = createEClass(DEPLOYABLE_ITEM);
@@ -2424,6 +2470,8 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEAttribute(getHandler_Type(), theXmlPackage.getQName(), "type", null, 0, 1, Handler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(chainEClass, Chain.class, "Chain", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getChain_Name(), ecorePackage.getEString(), "name", null, 0, 1, Chain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getChain_Type(), theXmlPackage.getQName(), "type", null, 0, 1, Chain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getChain_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Chain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(deployableItemEClass, DeployableItem.class, "DeployableItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -3025,6 +3073,22 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EClass CHAIN = eINSTANCE.getChain();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EAttribute CHAIN__NAME = eINSTANCE.getChain_Name();
+
+        /**
+         * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EAttribute CHAIN__TYPE = eINSTANCE.getChain_Type();
 
         /**
          * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.

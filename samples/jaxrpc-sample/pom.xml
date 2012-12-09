@@ -120,13 +120,13 @@
                                 <wsdd>
                                     <directory>src/main/wsdd</directory>
                                     <includes>
-                                        <include>**/*.wsdd</include>
+                                        <include>**/deploy.wsdd</include>
                                     </includes>
                                 </wsdd>
                                 <wsdd>
                                     <directory>../stock-sample/src/main/wsdd</directory>
                                     <includes>
-                                        <include>**/*.wsdd</include>
+                                        <include>deploy.wsdd</include>
                                     </includes>
                                 </wsdd>
                                 <wsdd>

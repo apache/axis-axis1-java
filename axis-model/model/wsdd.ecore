@@ -112,6 +112,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType xml.ecore#//QName"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Chain">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType xml.ecore#//QName"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
         eType="#//Handler" containment="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">

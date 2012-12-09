@@ -96,7 +96,7 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
     /**
      * @component
      */
-    protected ArtifactFactory artifactFactory;
+    private ArtifactFactory artifactFactory;
     
     /**
      * @component
@@ -159,6 +159,16 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
      */
     private String argLine;
     
+    /**
+     * @parameter default-value="${plugin.version}"
+     * @required
+     * @readonly
+     */
+    private String axisVersion;
+    
+    private final Set/*<Artifact>*/ additionalDependencies = new HashSet();
+    private List/*<File>*/ classpath;
+    
     private Logger logger;
     
     public void enableLogging(Logger logger) {
@@ -169,61 +179,72 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
         return debug;
     }
 
-    private List/*<File>*/ buildClasspath(Set/*<Artifact>*/ additionalArtifacts) throws ProjectBuildingException, InvalidDependencyVersionException, ArtifactResolutionException, ArtifactNotFoundException {
-        final Log log = getLog();
-        
-        // We need dependencies in scope test. Since this is the largest scope, we don't need
-        // to do any additional filtering based on dependency scope.
-        Set projectDependencies = project.getArtifacts();
-        
-        final Set artifacts = new HashSet(projectDependencies);
-        
-        if (additionalArtifacts != null) {
-            for (Iterator it = additionalArtifacts.iterator(); it.hasNext(); ) {
-                Artifact a = (Artifact)it.next();
-                if (log.isDebugEnabled()) {
-                    log.debug("Resolving artifact to be added to classpath: " + a);
-                }
-                ArtifactFilter filter = new ArtifactFilter() {
-                    public boolean include(Artifact artifact) {
-                        String id = artifact.getDependencyConflictId();
-                        for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
-                            if (id.equals(((Artifact)it.next()).getDependencyConflictId())) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                };
-                MavenProject p = projectBuilder.buildFromRepository(a, remoteArtifactRepositories, localRepository);
-                if (filter.include(p.getArtifact())) {
-                    Set s = p.createArtifacts(artifactFactory, Artifact.SCOPE_RUNTIME, filter);
-                    artifacts.addAll(artifactCollector.collect(s,
-                            p.getArtifact(), p.getManagedVersionMap(),
-                            localRepository, remoteArtifactRepositories, artifactMetadataSource, filter,
-                            Collections.singletonList(new DebugResolutionListener(logger))).getArtifacts());
-                    artifacts.add(p.getArtifact());
-                }
-            }
-        }
-        
-        List/*<File>*/ cp = new ArrayList();
-        cp.add(project.getBuild().getTestOutputDirectory());
-        cp.add(project.getBuild().getOutputDirectory());
-        for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
-            Artifact a = (Artifact)it.next();
-            if (a.getArtifactHandler().isAddedToClasspath()) {
-                if (a.getFile() == null) {
-                    artifactResolver.resolve(a, remoteArtifactRepositories, localRepository);
-                }
-                cp.add(a.getFile());
-            }
-        }
-        
-        return cp;
+    protected final void addDependency(String groupId, String artifactId, String version) {
+        additionalDependencies.add(artifactFactory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_TEST, "jar"));
+        classpath = null;
     }
     
-    protected final void startJavaProcess(String description, String mainClass, Set additionalDependencies, String[] args, File workDir, ProcessControl processControl) throws MojoExecutionException, MojoFailureException {
+    protected final void addAxisDependency(String artifactId) {
+        addDependency("org.apache.axis", artifactId, axisVersion);
+    }
+    
+    protected final List/*<File>*/ getClasspath() throws ProjectBuildingException, InvalidDependencyVersionException, ArtifactResolutionException, ArtifactNotFoundException {
+        if (classpath == null) {
+            final Log log = getLog();
+            
+            // We need dependencies in scope test. Since this is the largest scope, we don't need
+            // to do any additional filtering based on dependency scope.
+            Set projectDependencies = project.getArtifacts();
+            
+            final Set artifacts = new HashSet(projectDependencies);
+            
+            if (additionalDependencies != null) {
+                for (Iterator it = additionalDependencies.iterator(); it.hasNext(); ) {
+                    Artifact a = (Artifact)it.next();
+                    if (log.isDebugEnabled()) {
+                        log.debug("Resolving artifact to be added to classpath: " + a);
+                    }
+                    ArtifactFilter filter = new ArtifactFilter() {
+                        public boolean include(Artifact artifact) {
+                            String id = artifact.getDependencyConflictId();
+                            for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
+                                if (id.equals(((Artifact)it.next()).getDependencyConflictId())) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                    };
+                    MavenProject p = projectBuilder.buildFromRepository(a, remoteArtifactRepositories, localRepository);
+                    if (filter.include(p.getArtifact())) {
+                        Set s = p.createArtifacts(artifactFactory, Artifact.SCOPE_RUNTIME, filter);
+                        artifacts.addAll(artifactCollector.collect(s,
+                                p.getArtifact(), p.getManagedVersionMap(),
+                                localRepository, remoteArtifactRepositories, artifactMetadataSource, filter,
+                                Collections.singletonList(new DebugResolutionListener(logger))).getArtifacts());
+                        artifacts.add(p.getArtifact());
+                    }
+                }
+            }
+            
+            classpath = new ArrayList();
+            classpath.add(new File(project.getBuild().getTestOutputDirectory()));
+            classpath.add(new File(project.getBuild().getOutputDirectory()));
+            for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
+                Artifact a = (Artifact)it.next();
+                if (a.getArtifactHandler().isAddedToClasspath()) {
+                    if (a.getFile() == null) {
+                        artifactResolver.resolve(a, remoteArtifactRepositories, localRepository);
+                    }
+                    classpath.add(a.getFile());
+                }
+            }
+        }
+        
+        return classpath;
+    }
+    
+    protected final void startJavaProcess(String description, String mainClass, String[] args, File workDir, ProcessControl processControl) throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
         // Locate java executable to use
@@ -241,7 +262,7 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
         // Get class path
         List classpath;
         try {
-            classpath = buildClasspath(additionalDependencies);
+            classpath = getClasspath();
         } catch (Exception ex) {
             throw new MojoExecutionException("Failed to build classpath", ex);
         }

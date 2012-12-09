@@ -19,27 +19,24 @@
 package org.apache.axis.tools.maven.server;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axis.client.AdminClient;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.maven.artifact.Artifact;
+import org.apache.axis.model.wsdd.Deployment;
+import org.apache.axis.model.wsdd.WSDDUtil;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
-import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 /**
  * Start a {@link org.apache.axis.server.standalone.StandaloneAxisServer} instance in a separate
@@ -50,13 +47,6 @@ import org.w3c.dom.Element;
  * @requiresDependencyResolution test
  */
 public class StartServerMojo extends AbstractStartProcessMojo {
-    /**
-     * @parameter default-value="${plugin.version}"
-     * @required
-     * @readonly
-     */
-    private String axisVersion;
-    
     /**
      * @parameter default-value="${project.build.directory}/axis-server"
      * @required
@@ -80,9 +70,7 @@ public class StartServerMojo extends AbstractStartProcessMojo {
     private int maxSessions;
     
     /**
-     * A set of WSDD files for services to deploy. The WSDD files may be deployment or undeployment
-     * requests. Undeployment requests will be processed when the server is stopped. The primary use
-     * case for this is to test undeployment.
+     * A set of WSDD files for services to deploy.
      * 
      * @parameter
      */
@@ -129,56 +117,13 @@ public class StartServerMojo extends AbstractStartProcessMojo {
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
+        // Need to setup additional dependencies before building the default configuration!
+        addAxisDependency("axis-standalone-server");
+        
         // Determine the port to be used
         int actualPort = foreground && foregroundPort != -1 ? foregroundPort : port;
         
-        // Select WSDD files
-        List deployments = new ArrayList();
-        List undeployments = new ArrayList();
-        if (wsdds != null && wsdds.length > 0) {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            DocumentBuilder documentBuilder;
-            try {
-                documentBuilder = dbf.newDocumentBuilder();
-            } catch (ParserConfigurationException ex) {
-                throw new MojoFailureException("Unable to initialize DOM parser", ex);
-            }
-            for (int i=0; i<wsdds.length; i++) {
-                FileSet wsdd = wsdds[i];
-                DirectoryScanner scanner = wsdd.createScanner();
-                scanner.scan();
-                String[] includedFiles = scanner.getIncludedFiles();
-                for (int j=0; j<includedFiles.length; j++) {
-                    File wsddFile = new File(wsdd.getDirectory(), includedFiles[j]);
-                    Element wsddElement;
-                    try {
-                        wsddElement = documentBuilder.parse(wsddFile).getDocumentElement();
-                    } catch (Exception ex) {
-                        log.warn("Skipping " + wsddFile + ": not an XML file", ex);
-                        continue;
-                    }
-                    if (WSDDConstants.URI_WSDD.equals(wsddElement.getNamespaceURI())) {
-                        String type = wsddElement.getLocalName();
-                        if (type.equals(WSDDConstants.ELEM_WSDD_DEPLOY)) {
-                            deployments.add(wsddFile);
-                        } else if (type.equals(WSDDConstants.ELEM_WSDD_UNDEPLOY)) {
-                            undeployments.add(wsddFile);
-                        } else {
-                            log.warn("Skipping " + wsddFile + ": unexpected WSDD type");
-                        }
-                    } else {
-                        log.warn("Skipping " + wsddFile + ": not a WSDD file");
-                    }
-                }
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("Deployments: " + deployments);
-                log.debug("Undeployments: " + undeployments);
-            }
-        }
-        
-        // Prepare a work directory where the server can create a server-config.wsdd file
+        // Prepare a work directory where we can place the server-config.wsdd file
         File workDir = new File(workDirBase, String.valueOf(actualPort));
         if (workDir.exists()) {
             try {
@@ -187,11 +132,50 @@ public class StartServerMojo extends AbstractStartProcessMojo {
                 throw new MojoFailureException("Failed to clean the work directory", ex);
             }
         }
-        workDir.mkdirs();
+        File webInfDir = new File(workDir, "WEB-INF");
+        webInfDir.mkdirs();
+        
+        // Start with the default configuration (which depends on the JARs in the classpath)
+        Deployment deployment;
+        try {
+            deployment = WSDDUtil.buildDefaultConfiguration(buildClassLoader(), "server");
+        } catch (IOException ex) {
+            throw new MojoExecutionException("Failed to build default server configuration", ex);
+        }
+        
+        // Select WSDD files
+        if (wsdds != null) {
+            for (int i=0; i<wsdds.length; i++) {
+                FileSet wsdd = wsdds[i];
+                DirectoryScanner scanner = wsdd.createScanner();
+                scanner.scan();
+                String[] includedFiles = scanner.getIncludedFiles();
+                for (int j=0; j<includedFiles.length; j++) {
+                    File wsddFile = new File(wsdd.getDirectory(), includedFiles[j]);
+                    try {
+                        deployment.merge(WSDDUtil.load(new InputSource(wsddFile.toURI().toString())));
+                    } catch (IOException ex) {
+                        throw new MojoExecutionException("Failed to load " + wsddFile, ex);
+                    }
+                    getLog().info("Processed " + wsddFile);
+                }
+            }
+        }
+        
+        // Write the server-config.wsdd file
+        File serverConfigWsdd = new File(webInfDir, "server-config.wsdd");
+        try {
+            FileOutputStream out = new FileOutputStream(serverConfigWsdd);
+            try {
+                WSDDUtil.save(deployment, out);
+            } finally {
+                out.close();
+            }
+        } catch (IOException ex) {
+            throw new MojoExecutionException("Failed to write " + serverConfigWsdd, ex);
+        }
         
         if (configs != null && configs.length > 0) {
-            File webInfDir = new File(workDir, "WEB-INF");
-            webInfDir.mkdirs();
             for (int i=0; i<configs.length; i++) {
                 FileSet config = configs[i];
                 DirectoryScanner scanner = config.createScanner();
@@ -224,17 +208,12 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         try {
             AdminClient adminClient = new AdminClient(true);
             adminClient.setTargetEndpointAddress(new URL("http://localhost:" + actualPort + "/axis/services/AdminService"));
-            Set additionalDependencies = new HashSet();
-            additionalDependencies.add(artifactFactory.createArtifact("org.apache.axis", "axis-standalone-server", axisVersion, Artifact.SCOPE_TEST, "jar"));
             startJavaProcess(
                     "Server on port " + actualPort,
                     "org.apache.axis.server.standalone.StandaloneAxisServer",
-                    additionalDependencies,
                     (String[])args.toArray(new String[args.size()]),
                     workDir,
                     new AxisServerProcessControl(actualPort, adminClient,
-                            (File[])deployments.toArray(new File[deployments.size()]),
-                            (File[])undeployments.toArray(new File[undeployments.size()]),
                             isDebug() || foreground ? Integer.MAX_VALUE : 20000));
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
@@ -252,5 +231,23 @@ public class StartServerMojo extends AbstractStartProcessMojo {
                 }
             }
         }
+    }
+    
+    private ClassLoader buildClassLoader() throws MojoExecutionException {
+        List classpath;
+        try {
+            classpath = getClasspath();
+        } catch (Exception ex) {
+            throw new MojoExecutionException("Failed to build classpath", ex);
+        }
+        URL[] urls = new URL[classpath.size()];
+        for (int i=0; i<classpath.size(); i++) {
+            try {
+                urls[i] = ((File)classpath.get(i)).toURI().toURL();
+            } catch (MalformedURLException ex) {
+                throw new MojoExecutionException("Unexpected exception", ex);
+            }
+        }
+        return new URLClassLoader(urls);
     }
 }

@@ -86,7 +86,8 @@
                                 <wsdd>
                                     <directory>src/main/wsdd</directory>
                                     <includes>
-                                        <include>**/*.wsdd</include>
+                                        <include>attachdeploy.wsdd</include>
+                                        <include>testref.wsdd</include>
                                     </includes>
                                 </wsdd>
                             </wsdds>

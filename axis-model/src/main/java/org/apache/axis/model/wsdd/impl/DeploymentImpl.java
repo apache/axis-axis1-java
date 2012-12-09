@@ -216,6 +216,9 @@ public class DeploymentImpl extends MappingContainerImpl implements Deployment {
         getHandlers().addAll(other.getHandlers());
         getTransports().addAll(other.getTransports());
         getServices().addAll(other.getServices());
+        getTypeMappings().addAll(other.getTypeMappings());
+        getBeanMappings().addAll(other.getBeanMappings());
+        getArrayMappings().addAll(other.getArrayMappings());
     }
 
     /**

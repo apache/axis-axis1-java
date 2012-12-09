@@ -18,7 +18,6 @@
  */
 package org.apache.axis.tools.maven.server;
 
-import java.io.File;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -31,15 +30,11 @@ import org.codehaus.plexus.logging.Logger;
 public class AxisServerProcessControl implements ProcessControl {
     private final int port;
     private final AdminClient adminClient;
-    private final File[] deployments;
-    private final File[] undeployments;
     private final int timeout;
     
-    public AxisServerProcessControl(int port, AdminClient adminClient, File[] deployments, File[] undeployments, int timeout) {
+    public AxisServerProcessControl(int port, AdminClient adminClient, int timeout) {
         this.port = port;
         this.adminClient = adminClient;
-        this.deployments = deployments;
-        this.undeployments = undeployments;
         this.timeout = timeout;
     }
 
@@ -68,13 +63,9 @@ public class AxisServerProcessControl implements ProcessControl {
             }
             Thread.sleep(200);
         }
-        
-        // Deploy services
-        AdminClientUtils.process(logger, adminClient, deployments);
     }
 
     public int shutdownProcess(Logger logger) throws Exception {
-        AdminClientUtils.process(logger, adminClient, undeployments);
         adminClient.quit();
         return STOPPING;
     }

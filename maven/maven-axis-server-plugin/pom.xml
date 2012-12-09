@@ -44,6 +44,11 @@
             <artifactId>axis-rt-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
         </dependency>
@@ -69,13 +74,13 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>daemon-launcher</artifactId>
             <version>${project.version}</version>
-            <type>pom</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis-standalone-server</artifactId>
             <version>${project.version}</version>
-            <type>pom</type>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <reporting>
