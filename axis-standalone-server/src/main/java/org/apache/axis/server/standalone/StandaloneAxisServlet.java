@@ -45,10 +45,6 @@ public class StandaloneAxisServlet extends AxisServlet {
         wsddUrls.add(StandaloneAxisServlet.class.getResource("quit-handler-deploy.wsdd"));
     }
     
-    public void enableJWS() {
-        wsddUrls.add(StandaloneAxisServlet.class.getResource("jws-handler.wsdd"));
-    }
-    
     public void init() throws ServletException {
         super.init();
         try {

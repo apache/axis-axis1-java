@@ -119,6 +119,9 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         
         // Need to setup additional dependencies before building the default configuration!
         addAxisDependency("axis-standalone-server");
+        if (jwsDirs != null && jwsDirs.length > 0) {
+            addAxisDependency("axis-rt-jws");
+        }
         
         // Determine the port to be used
         int actualPort = foreground && foregroundPort != -1 ? foregroundPort : port;
