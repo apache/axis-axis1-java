@@ -44,6 +44,11 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-daemon</groupId>
+            <artifactId>commons-daemon</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -84,10 +89,10 @@
                     <execution>
                         <id>start-server</id>
                         <goals>
-                            <goal>start-process</goal>
+                            <goal>start-daemon</goal>
                         </goals>
                         <configuration>
-                            <mainClass>samples.transport.tcp.TCPListener</mainClass>
+                            <daemonClass>samples.transport.tcp.TCPListenerDaemon</daemonClass>
                             <args>
                                 <arg>-p</arg>
                                 <arg>${test.functional.TCPListenerPort}</arg>
