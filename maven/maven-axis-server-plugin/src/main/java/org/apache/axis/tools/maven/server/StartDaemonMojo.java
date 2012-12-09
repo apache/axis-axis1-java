@@ -72,6 +72,6 @@ public class StartDaemonMojo extends AbstractStartProcessMojo {
         if (args != null) {
             System.arraycopy(args, 0, vmArgs, 2, args.length);
         }
-        startJavaProcess(daemonClass, "org.apache.axis.testutils.daemon.Launcher", vmArgs, workDir, new DaemonProcessControl(controlPort));
+        startJavaProcess(daemonClass, "org.apache.axis.testutils.daemon.Launcher", null, vmArgs, workDir, new DaemonProcessControl(controlPort));
     }
 }

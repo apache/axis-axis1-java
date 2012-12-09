@@ -21,19 +21,37 @@ package org.apache.axis.tools.maven.server;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.DebugResolutionListener;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.logging.LogEnabled;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 
-public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
+public abstract class AbstractStartProcessMojo extends AbstractServerMojo implements LogEnabled {
     /**
      * The maven project.
      *
@@ -51,6 +69,49 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
      * @readonly
      */
     private MavenSession session;
+    
+    /**
+     * @component
+     */
+    private MavenProjectBuilder projectBuilder;
+    
+    /**
+     * Local maven repository.
+     * 
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+    
+    /**
+     * Remote repositories.
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List remoteArtifactRepositories;
+    
+    /**
+     * @component
+     */
+    protected ArtifactFactory artifactFactory;
+    
+    /**
+     * @component
+     */
+    private ArtifactResolver artifactResolver;
+    
+    /**
+     * @component
+     */
+    private ArtifactCollector artifactCollector;
+    
+    /**
+     * @component
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
     
     /**
      * @component
@@ -98,11 +159,71 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
      */
     private String argLine;
     
+    private Logger logger;
+    
+    public void enableLogging(Logger logger) {
+        this.logger = logger;
+    }
+    
     protected boolean isDebug() {
         return debug;
     }
 
-    protected void startJavaProcess(String description, String mainClass, String[] args, File workDir, ProcessControl processControl) throws MojoExecutionException, MojoFailureException {
+    private List/*<File>*/ buildClasspath(Set/*<Artifact>*/ additionalArtifacts) throws ProjectBuildingException, InvalidDependencyVersionException, ArtifactResolutionException, ArtifactNotFoundException {
+        final Log log = getLog();
+        
+        // We need dependencies in scope test. Since this is the largest scope, we don't need
+        // to do any additional filtering based on dependency scope.
+        Set projectDependencies = project.getArtifacts();
+        
+        final Set artifacts = new HashSet(projectDependencies);
+        
+        if (additionalArtifacts != null) {
+            for (Iterator it = additionalArtifacts.iterator(); it.hasNext(); ) {
+                Artifact a = (Artifact)it.next();
+                if (log.isDebugEnabled()) {
+                    log.debug("Resolving artifact to be added to classpath: " + a);
+                }
+                ArtifactFilter filter = new ArtifactFilter() {
+                    public boolean include(Artifact artifact) {
+                        String id = artifact.getDependencyConflictId();
+                        for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
+                            if (id.equals(((Artifact)it.next()).getDependencyConflictId())) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                };
+                MavenProject p = projectBuilder.buildFromRepository(a, remoteArtifactRepositories, localRepository);
+                if (filter.include(p.getArtifact())) {
+                    Set s = p.createArtifacts(artifactFactory, Artifact.SCOPE_RUNTIME, filter);
+                    artifacts.addAll(artifactCollector.collect(s,
+                            p.getArtifact(), p.getManagedVersionMap(),
+                            localRepository, remoteArtifactRepositories, artifactMetadataSource, filter,
+                            Collections.singletonList(new DebugResolutionListener(logger))).getArtifacts());
+                    artifacts.add(p.getArtifact());
+                }
+            }
+        }
+        
+        List/*<File>*/ cp = new ArrayList();
+        cp.add(project.getBuild().getTestOutputDirectory());
+        cp.add(project.getBuild().getOutputDirectory());
+        for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
+            Artifact a = (Artifact)it.next();
+            if (a.getArtifactHandler().isAddedToClasspath()) {
+                if (a.getFile() == null) {
+                    artifactResolver.resolve(a, remoteArtifactRepositories, localRepository);
+                }
+                cp.add(a.getFile());
+            }
+        }
+        
+        return cp;
+    }
+    
+    protected final void startJavaProcess(String description, String mainClass, Set additionalDependencies, String[] args, File workDir, ProcessControl processControl) throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
         // Locate java executable to use
@@ -120,9 +241,9 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo {
         // Get class path
         List classpath;
         try {
-            classpath = project.getTestClasspathElements();
-        } catch (DependencyResolutionRequiredException ex) {
-            throw new MojoExecutionException("Unexpected exception", ex);
+            classpath = buildClasspath(additionalDependencies);
+        } catch (Exception ex) {
+            throw new MojoExecutionException("Failed to build classpath", ex);
         }
         if (log.isDebugEnabled()) {
             log.debug("Class path elements: " + classpath);

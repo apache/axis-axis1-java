@@ -57,7 +57,7 @@ public class StartProcessMojo extends AbstractStartProcessMojo {
 
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
         workDir.mkdirs();
-        startJavaProcess(mainClass, mainClass, args != null ? args : new String[0], workDir, new ProcessControl() {
+        startJavaProcess(mainClass, mainClass, null, args != null ? args : new String[0], workDir, new ProcessControl() {
             public void initializeProcess(Logger logger, Process process) throws Exception {
             }
 

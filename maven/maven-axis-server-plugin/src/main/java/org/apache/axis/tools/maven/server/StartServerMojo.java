@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -47,6 +50,13 @@ import org.w3c.dom.Element;
  * @requiresDependencyResolution test
  */
 public class StartServerMojo extends AbstractStartProcessMojo {
+    /**
+     * @parameter default-value="${plugin.version}"
+     * @required
+     * @readonly
+     */
+    private String axisVersion;
+    
     /**
      * @parameter default-value="${project.build.directory}/axis-server"
      * @required
@@ -214,9 +224,12 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         try {
             AdminClient adminClient = new AdminClient(true);
             adminClient.setTargetEndpointAddress(new URL("http://localhost:" + actualPort + "/axis/services/AdminService"));
+            Set additionalDependencies = new HashSet();
+            additionalDependencies.add(artifactFactory.createArtifact("org.apache.axis", "axis-standalone-server", axisVersion, Artifact.SCOPE_TEST, "jar"));
             startJavaProcess(
                     "Server on port " + actualPort,
                     "org.apache.axis.server.standalone.StandaloneAxisServer",
+                    additionalDependencies,
                     (String[])args.toArray(new String[args.size()]),
                     workDir,
                     new AxisServerProcessControl(actualPort, adminClient,
