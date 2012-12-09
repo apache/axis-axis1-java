@@ -8,7 +8,7 @@ package org.apache.axis.model.wsdd.impl;
 
 import java.util.Collection;
 import java.util.List;
-import org.apache.axis.model.wsdd.Flow;
+import org.apache.axis.model.wsdd.Chain;
 
 import org.apache.axis.model.wsdd.Handler;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -27,13 +27,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.apache.axis.model.wsdd.impl.FlowImpl#getHandlers <em>Handlers</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.impl.ChainImpl#getHandlers <em>Handlers</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class FlowImpl extends EObjectImpl implements Flow {
+public class ChainImpl extends EObjectImpl implements Chain {
     /**
      * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
      * <!-- begin-user-doc -->
@@ -49,7 +49,7 @@ public class FlowImpl extends EObjectImpl implements Flow {
      * <!-- end-user-doc -->
      * @generated
      */
-    protected FlowImpl() {
+    protected ChainImpl() {
         super();
     }
 
@@ -59,7 +59,7 @@ public class FlowImpl extends EObjectImpl implements Flow {
      * @generated
      */
     protected EClass eStaticClass() {
-        return WSDDPackageImpl.Literals.FLOW;
+        return WSDDPackageImpl.Literals.CHAIN;
     }
 
     /**
@@ -81,7 +81,7 @@ public class FlowImpl extends EObjectImpl implements Flow {
      */
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case WSDDPackageImpl.FLOW__HANDLERS:
+            case WSDDPackageImpl.CHAIN__HANDLERS:
                 return ((InternalEList)getHandlers()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -94,7 +94,7 @@ public class FlowImpl extends EObjectImpl implements Flow {
      */
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case WSDDPackageImpl.FLOW__HANDLERS:
+            case WSDDPackageImpl.CHAIN__HANDLERS:
                 return getHandlers();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -107,7 +107,7 @@ public class FlowImpl extends EObjectImpl implements Flow {
      */
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case WSDDPackageImpl.FLOW__HANDLERS:
+            case WSDDPackageImpl.CHAIN__HANDLERS:
                 getHandlers().clear();
                 getHandlers().addAll((Collection)newValue);
                 return;
@@ -122,7 +122,7 @@ public class FlowImpl extends EObjectImpl implements Flow {
      */
     public void eUnset(int featureID) {
         switch (featureID) {
-            case WSDDPackageImpl.FLOW__HANDLERS:
+            case WSDDPackageImpl.CHAIN__HANDLERS:
                 getHandlers().clear();
                 return;
         }
@@ -136,7 +136,7 @@ public class FlowImpl extends EObjectImpl implements Flow {
      */
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case WSDDPackageImpl.FLOW__HANDLERS:
+            case WSDDPackageImpl.CHAIN__HANDLERS:
                 return handlers != null && !handlers.isEmpty();
         }
         return super.eIsSet(featureID);

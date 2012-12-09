@@ -8,7 +8,7 @@ package org.apache.axis.model.wsdd.impl;
 
 import org.apache.axis.model.wsdd.DeployableItem;
 
-import org.apache.axis.model.wsdd.Flow;
+import org.apache.axis.model.wsdd.Chain;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 
@@ -37,7 +37,7 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * @generated
      * @ordered
      */
-    protected Flow requestFlow;
+    protected Chain requestFlow;
     /**
      * The cached value of the '{@link #getResponseFlow() <em>Response Flow</em>}' containment reference.
      * <!-- begin-user-doc -->
@@ -46,7 +46,7 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * @generated
      * @ordered
      */
-    protected Flow responseFlow;
+    protected Chain responseFlow;
 
     /**
      * <!-- begin-user-doc -->
@@ -71,7 +71,7 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public Flow getRequestFlow() {
+    public Chain getRequestFlow() {
         return requestFlow;
     }
 
@@ -80,8 +80,8 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public NotificationChain basicSetRequestFlow(Flow newRequestFlow, NotificationChain msgs) {
-        Flow oldRequestFlow = requestFlow;
+    public NotificationChain basicSetRequestFlow(Chain newRequestFlow, NotificationChain msgs) {
+        Chain oldRequestFlow = requestFlow;
         requestFlow = newRequestFlow;
         return msgs;
     }
@@ -91,7 +91,7 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setRequestFlow(Flow newRequestFlow) {
+    public void setRequestFlow(Chain newRequestFlow) {
         if (newRequestFlow != requestFlow) {
             NotificationChain msgs = null;
             if (requestFlow != null)
@@ -108,7 +108,7 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public Flow getResponseFlow() {
+    public Chain getResponseFlow() {
         return responseFlow;
     }
 
@@ -117,8 +117,8 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public NotificationChain basicSetResponseFlow(Flow newResponseFlow, NotificationChain msgs) {
-        Flow oldResponseFlow = responseFlow;
+    public NotificationChain basicSetResponseFlow(Chain newResponseFlow, NotificationChain msgs) {
+        Chain oldResponseFlow = responseFlow;
         responseFlow = newResponseFlow;
         return msgs;
     }
@@ -128,7 +128,7 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setResponseFlow(Flow newResponseFlow) {
+    public void setResponseFlow(Chain newResponseFlow) {
         if (newResponseFlow != responseFlow) {
             NotificationChain msgs = null;
             if (responseFlow != null)
@@ -178,10 +178,10 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case WSDDPackageImpl.DEPLOYABLE_ITEM__REQUEST_FLOW:
-                setRequestFlow((Flow)newValue);
+                setRequestFlow((Chain)newValue);
                 return;
             case WSDDPackageImpl.DEPLOYABLE_ITEM__RESPONSE_FLOW:
-                setResponseFlow((Flow)newValue);
+                setResponseFlow((Chain)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -195,10 +195,10 @@ public abstract class DeployableItemImpl extends ParameterizableImpl implements 
     public void eUnset(int featureID) {
         switch (featureID) {
             case WSDDPackageImpl.DEPLOYABLE_ITEM__REQUEST_FLOW:
-                setRequestFlow((Flow)null);
+                setRequestFlow((Chain)null);
                 return;
             case WSDDPackageImpl.DEPLOYABLE_ITEM__RESPONSE_FLOW:
-                setResponseFlow((Flow)null);
+                setResponseFlow((Chain)null);
                 return;
         }
         super.eUnset(featureID);

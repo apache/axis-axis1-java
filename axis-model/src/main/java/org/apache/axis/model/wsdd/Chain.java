@@ -17,14 +17,14 @@ import java.util.List;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.apache.axis.model.wsdd.Flow#getHandlers <em>Handlers</em>}</li>
+ *   <li>{@link org.apache.axis.model.wsdd.Chain#getHandlers <em>Handlers</em>}</li>
  * </ul>
  * </p>
  *
  * @model
  * @generated
  */
-public interface Flow {
+public interface Chain {
 
     /**
      * Returns the value of the '<em><b>Handlers</b></em>' containment reference list.

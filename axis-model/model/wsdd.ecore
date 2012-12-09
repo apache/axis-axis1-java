@@ -111,7 +111,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType xml.ecore#//QName"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Flow">
+  <eClassifiers xsi:type="ecore:EClass" name="Chain">
     <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
         eType="#//Handler" containment="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
@@ -122,7 +122,7 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DeployableItem" abstract="true" eSuperTypes="#//Parameterizable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="requestFlow" eType="#//Flow"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="requestFlow" eType="#//Chain"
         containment="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="kind" value="element"/>
@@ -130,7 +130,7 @@
         <details key="namespace" value="##targetNamespace"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="responseFlow" eType="#//Flow"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="responseFlow" eType="#//Chain"
         containment="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="kind" value="element"/>

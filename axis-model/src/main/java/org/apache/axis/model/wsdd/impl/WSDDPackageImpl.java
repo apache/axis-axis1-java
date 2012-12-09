@@ -12,7 +12,7 @@ import org.apache.axis.model.wsdd.BeanMapping;
 import org.apache.axis.model.wsdd.DeployableItem;
 import org.apache.axis.model.wsdd.Deployment;
 import org.apache.axis.model.wsdd.Fault;
-import org.apache.axis.model.wsdd.Flow;
+import org.apache.axis.model.wsdd.Chain;
 import org.apache.axis.model.wsdd.GlobalConfiguration;
 import org.apache.axis.model.wsdd.Handler;
 import org.apache.axis.model.wsdd.Mapping;
@@ -115,16 +115,6 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @ordered
      */
     public static final int PARAMETER_FEATURE_COUNT = 2;
-
-    /**
-     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.FlowImpl <em>Flow</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.apache.axis.model.wsdd.impl.FlowImpl
-     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getFlow()
-     * @generated
-     */
-    public static final int FLOW = 11;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.MappingImpl <em>Mapping</em>}' class.
@@ -713,22 +703,32 @@ public class WSDDPackageImpl extends EPackageImpl {
     public static final int HANDLER_FEATURE_COUNT = PARAMETERIZABLE_FEATURE_COUNT + 2;
 
     /**
+     * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.ChainImpl <em>Chain</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.apache.axis.model.wsdd.impl.ChainImpl
+     * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getChain()
+     * @generated
+     */
+    public static final int CHAIN = 11;
+
+    /**
      * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    public static final int FLOW__HANDLERS = 0;
+    public static final int CHAIN__HANDLERS = 0;
 
     /**
-     * The number of structural features of the '<em>Flow</em>' class.
+     * The number of structural features of the '<em>Chain</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    public static final int FLOW_FEATURE_COUNT = 1;
+    public static final int CHAIN_FEATURE_COUNT = 1;
 
     /**
      * The meta object id for the '{@link org.apache.axis.model.wsdd.impl.DeployableItemImpl <em>Deployable Item</em>}' class.
@@ -1126,13 +1126,6 @@ public class WSDDPackageImpl extends EPackageImpl {
      * <!-- end-user-doc -->
      * @generated
      */
-    private EClass flowEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EClass mappingEClass = null;
 
     /**
@@ -1197,6 +1190,13 @@ public class WSDDPackageImpl extends EPackageImpl {
      * @generated
      */
     private EClass handlerEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass chainEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -1345,31 +1345,6 @@ public class WSDDPackageImpl extends EPackageImpl {
      */
     public EAttribute getParameter_Value() {
         return (EAttribute)parameterEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.Flow <em>Flow</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Flow</em>'.
-     * @see org.apache.axis.model.wsdd.Flow
-     * @generated
-     */
-    public EClass getFlow() {
-        return flowEClass;
-    }
-
-    /**
-     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Flow#getHandlers <em>Handlers</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Handlers</em>'.
-     * @see org.apache.axis.model.wsdd.Flow#getHandlers()
-     * @see #getFlow()
-     * @generated
-     */
-    public EReference getFlow_Handlers() {
-        return (EReference)flowEClass.getEStructuralFeatures().get(0);
     }
 
     /**
@@ -1935,6 +1910,31 @@ public class WSDDPackageImpl extends EPackageImpl {
     }
 
     /**
+     * Returns the meta object for class '{@link org.apache.axis.model.wsdd.Chain <em>Chain</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Chain</em>'.
+     * @see org.apache.axis.model.wsdd.Chain
+     * @generated
+     */
+    public EClass getChain() {
+        return chainEClass;
+    }
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.apache.axis.model.wsdd.Chain#getHandlers <em>Handlers</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Handlers</em>'.
+     * @see org.apache.axis.model.wsdd.Chain#getHandlers()
+     * @see #getChain()
+     * @generated
+     */
+    public EReference getChain_Handlers() {
+        return (EReference)chainEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
      * Returns the meta object for class '{@link org.apache.axis.model.wsdd.DeployableItem <em>Deployable Item</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2289,8 +2289,8 @@ public class WSDDPackageImpl extends EPackageImpl {
         createEAttribute(handlerEClass, HANDLER__NAME);
         createEAttribute(handlerEClass, HANDLER__TYPE);
 
-        flowEClass = createEClass(FLOW);
-        createEReference(flowEClass, FLOW__HANDLERS);
+        chainEClass = createEClass(CHAIN);
+        createEReference(chainEClass, CHAIN__HANDLERS);
 
         deployableItemEClass = createEClass(DEPLOYABLE_ITEM);
         createEReference(deployableItemEClass, DEPLOYABLE_ITEM__REQUEST_FLOW);
@@ -2423,12 +2423,12 @@ public class WSDDPackageImpl extends EPackageImpl {
         initEAttribute(getHandler_Name(), ecorePackage.getEString(), "name", null, 0, 1, Handler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getHandler_Type(), theXmlPackage.getQName(), "type", null, 0, 1, Handler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(flowEClass, Flow.class, "Flow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getFlow_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEClass(chainEClass, Chain.class, "Chain", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getChain_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Chain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(deployableItemEClass, DeployableItem.class, "DeployableItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getDeployableItem_RequestFlow(), this.getFlow(), null, "requestFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getDeployableItem_ResponseFlow(), this.getFlow(), null, "responseFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployableItem_RequestFlow(), this.getChain(), null, "requestFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getDeployableItem_ResponseFlow(), this.getChain(), null, "responseFlow", null, 0, 1, DeployableItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(globalConfigurationEClass, GlobalConfiguration.class, "GlobalConfiguration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -2525,7 +2525,7 @@ public class WSDDPackageImpl extends EPackageImpl {
              "namespace", "##targetNamespace"
            });		
         addAnnotation
-          (getFlow_Handlers(), 
+          (getChain_Handlers(), 
            source, 
            new String[] {
              "name", "handler",
@@ -2643,24 +2643,6 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EAttribute PARAMETER__VALUE = eINSTANCE.getParameter_Value();
-
-        /**
-         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.FlowImpl <em>Flow</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.apache.axis.model.wsdd.impl.FlowImpl
-         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getFlow()
-         * @generated
-         */
-        public static final EClass FLOW = eINSTANCE.getFlow();
-
-        /**
-         * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public static final EReference FLOW__HANDLERS = eINSTANCE.getFlow_Handlers();
 
         /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.MappingImpl <em>Mapping</em>}' class.
@@ -3033,6 +3015,24 @@ public class WSDDPackageImpl extends EPackageImpl {
          * @generated
          */
         public static final EAttribute HANDLER__TYPE = eINSTANCE.getHandler_Type();
+
+        /**
+         * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.ChainImpl <em>Chain</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.apache.axis.model.wsdd.impl.ChainImpl
+         * @see org.apache.axis.model.wsdd.impl.WSDDPackageImpl#getChain()
+         * @generated
+         */
+        public static final EClass CHAIN = eINSTANCE.getChain();
+
+        /**
+         * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        public static final EReference CHAIN__HANDLERS = eINSTANCE.getChain_Handlers();
 
         /**
          * The meta object literal for the '{@link org.apache.axis.model.wsdd.impl.DeployableItemImpl <em>Deployable Item</em>}' class.

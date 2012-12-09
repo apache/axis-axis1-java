@@ -78,7 +78,7 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
             case WSDDPackageImpl.OPERATION: return (EObject)createOperation();
             case WSDDPackageImpl.PARAMETERIZABLE: return (EObject)createParameterizable();
             case WSDDPackageImpl.HANDLER: return (EObject)createHandler();
-            case WSDDPackageImpl.FLOW: return (EObject)createFlow();
+            case WSDDPackageImpl.CHAIN: return (EObject)createChain();
             case WSDDPackageImpl.GLOBAL_CONFIGURATION: return (EObject)createGlobalConfiguration();
             case WSDDPackageImpl.TRANSPORT: return (EObject)createTransport();
             case WSDDPackageImpl.SERVICE: return (EObject)createService();
@@ -124,16 +124,6 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public Parameter createParameter() {
         ParameterImpl parameter = new ParameterImpl();
         return parameter;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Flow createFlow() {
-        FlowImpl flow = new FlowImpl();
-        return flow;
     }
 
     /**
@@ -224,6 +214,16 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public Handler createHandler() {
         HandlerImpl handler = new HandlerImpl();
         return handler;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Chain createChain() {
+        ChainImpl chain = new ChainImpl();
+        return chain;
     }
 
     /**
