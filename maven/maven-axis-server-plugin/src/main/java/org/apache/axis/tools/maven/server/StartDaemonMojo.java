@@ -21,7 +21,10 @@ package org.apache.axis.tools.maven.server;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -33,6 +36,13 @@ import org.apache.maven.plugin.MojoFailureException;
  * @requiresDependencyResolution test
  */
 public class StartDaemonMojo extends AbstractStartProcessMojo {
+    /**
+     * @parameter default-value="${plugin.version}"
+     * @required
+     * @readonly
+     */
+    private String axisVersion;
+    
     /**
      * The daemon class.
      * 
@@ -72,6 +82,8 @@ public class StartDaemonMojo extends AbstractStartProcessMojo {
         if (args != null) {
             System.arraycopy(args, 0, vmArgs, 2, args.length);
         }
-        startJavaProcess(daemonClass, "org.apache.axis.testutils.daemon.Launcher", null, vmArgs, workDir, new DaemonProcessControl(controlPort));
+        Set additionalDependencies = new HashSet();
+        additionalDependencies.add(artifactFactory.createArtifact("org.apache.axis", "daemon-launcher", axisVersion, Artifact.SCOPE_TEST, "jar"));
+        startJavaProcess(daemonClass, "org.apache.axis.tools.daemon.Launcher", additionalDependencies, vmArgs, workDir, new DaemonProcessControl(controlPort));
     }
 }

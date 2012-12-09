@@ -54,9 +54,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis-testutils</artifactId>
-            <version>${project.version}</version>
+            <groupId>commons-daemon</groupId>
+            <artifactId>commons-daemon</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

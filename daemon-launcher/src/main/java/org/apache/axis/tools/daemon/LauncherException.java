@@ -16,30 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package samples.jms;
+package org.apache.axis.tools.daemon;
 
-import org.apache.activemq.broker.BrokerFactory;
-import org.apache.activemq.broker.BrokerService;
-import org.apache.commons.daemon.Daemon;
-import org.apache.commons.daemon.DaemonContext;
-import org.apache.commons.daemon.DaemonInitException;
+final class LauncherException extends Exception {
+    private static final long serialVersionUID = 9049901854635661634L;
 
-public class ActiveMQDaemon implements Daemon {
-    private BrokerService broker;
-    
-    public void init(DaemonContext context) throws DaemonInitException, Exception {
-        broker = BrokerFactory.createBroker("broker:(tcp://localhost:" + context.getArguments()[0] + ")?useJmx=false&persistent=false");
-    }
-
-    public void start() throws Exception {
-        broker.start();
-    }
-
-    public void stop() throws Exception {
-        broker.stop();
-    }
-
-    public void destroy() {
-        broker = null;
+    public LauncherException(String msg) {
+        super(msg);
     }
 }

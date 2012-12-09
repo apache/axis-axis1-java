@@ -16,9 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.testutils.daemon;
+package org.apache.axis.tools.daemon;
 
-public interface Daemon {
-    void start(String[] args) throws Exception;
-    void stop() throws Exception;
+import org.apache.commons.daemon.DaemonContext;
+import org.apache.commons.daemon.DaemonController;
+
+final class DaemonContextImpl implements DaemonContext {
+    private final String[] args;
+
+    public DaemonContextImpl(String[] args) {
+        this.args = args;
+    }
+
+    public DaemonController getController() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String[] getArguments() {
+        return args;
+    }
 }
