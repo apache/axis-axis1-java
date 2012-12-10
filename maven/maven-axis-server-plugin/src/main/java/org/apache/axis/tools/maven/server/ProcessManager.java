@@ -21,6 +21,6 @@ package org.apache.axis.tools.maven.server;
 import java.io.File;
 
 public interface ProcessManager {
-    void startProcess(String description, String[] cmdline, File workDir, ProcessStartAction startAction, ProcessStopAction stopAction) throws Exception;
+    void startProcess(String description, String[] cmdline, File workDir, ProcessControl processControl) throws Exception;
     void stopAll() throws Exception;
 }

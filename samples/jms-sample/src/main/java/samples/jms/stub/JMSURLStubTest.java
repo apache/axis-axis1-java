@@ -25,6 +25,8 @@ import java.util.HashMap;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.xml.rpc.ServiceException;
@@ -44,17 +46,23 @@ public class JMSURLStubTest extends TestCase {
         super(name);
     }
 
-    public static Float getQuote(String ticker) throws AxisFault {
+    public static Float getQuote(String endptAddr, String ticker) throws AxisFault {
         float quote = -1.0F;
 
         GetQuoteServiceLocator locator = new GetQuoteServiceLocator();
         GetQuote getQuote;
 
+        if (endptAddr == null) {
+            endptAddr = locator.getGetQuoteAddress();
+        }
+        
         try {
-            getQuote = locator.getGetQuote();
+            getQuote = locator.getGetQuote(new URL(endptAddr));
         }
         catch (ServiceException e) {
             throw new AxisFault("JAX-RPC ServiceException caught: ", e);
+        } catch (MalformedURLException e) {
+            throw new AxisFault("MalformedURLException caught: ", e);
         }
         assertTrue("getQuote is null", getQuote != null);
 
@@ -64,7 +72,6 @@ public class JMSURLStubTest extends TestCase {
 
             // close matching connectors
             // note: this is optional, as all connectors will be closed upon exit
-            String endptAddr = locator.getGetQuoteAddress();
             JMSTransport.closeMatchingJMSConnectors(endptAddr, null, null);
         }
         catch (RemoteException e) {
@@ -82,6 +89,7 @@ public class JMSURLStubTest extends TestCase {
         System.out.println("       -c connection factory properties filename");
         System.out.println("       -d destination");
         System.out.println("       -t topic [absence of -t indicates queue]");
+        System.out.println("       -e the JMS endpoint URL to use for the client");
         System.out.println();
         System.out.println("       -u username");
         System.out.println("       -w password");
@@ -110,6 +118,8 @@ public class JMSURLStubTest extends TestCase {
         HashMap cfMap = SimpleJMSListener.createCFMap(opts);
         String destination = opts.isValueSet('d');
 
+        String endptAddr = opts.isValueSet('e');
+        
         args = opts.getRemainingArgs();
         if ( args == null || args.length == 0)
             printUsage();
@@ -129,17 +139,18 @@ public class JMSURLStubTest extends TestCase {
         {
             try
             {
-                Float quote = stubTest.getQuote(args[i]);
+                Float quote = stubTest.getQuote(endptAddr, args[i]);
                 System.out.println(args[i] + ": " + quote);
             }
             catch(AxisFault af)
             {
                 System.out.println(af.dumpToString());
+                System.exit(1);
             }
         }
 
         listener.shutdown();
 
-        System.exit(1);
+        System.exit(0);
     }
 }

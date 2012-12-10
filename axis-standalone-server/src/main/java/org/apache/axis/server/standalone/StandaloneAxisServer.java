@@ -115,7 +115,6 @@ public class StandaloneAxisServer {
             for (int i=0; i<jwsDirs.length; i++) {
                 resources.add(Resource.newResource(jwsDirs[i]));
             }
-            servlet.enableJWS();
             enableJWS = true;
         } else {
             enableJWS = false;

@@ -21,18 +21,12 @@ package org.apache.axis.tools.maven.server;
 import org.codehaus.plexus.logging.Logger;
 
 /**
- * Action to be executed when a process is stopped. Typically (but not necessarily) this involves
- * sending a request to initiate a clean shutdown of the process.
+ * Defines the actions to be executed after a given process has been started and when a process is
+ * stopped.
  * 
  * @author Andreas Veithen
  */
-public interface ProcessStopAction {
-    ProcessStopAction NOP = new ProcessStopAction() {
-        public int execute(Logger logger) throws Exception {
-            return RUNNING;
-        }
-    };
-    
+public interface ProcessControl {
     /**
      * Indicates that the process is expected to be still running after the action is completed.
      */
@@ -44,5 +38,23 @@ public interface ProcessStopAction {
      */
     int STOPPING = 2;
     
-    int execute(Logger logger) throws Exception;
+    /**
+     * Initialize the process. This typically involves waiting for the process to be completely
+     * started and to configure the server process, e.g. to deploy services.
+     * 
+     * @param logger
+     * @param process
+     * @throws Exception
+     */
+    void initializeProcess(Logger logger, Process process) throws Exception;
+    
+    /**
+     * Prepare the process for shutdown. Typically (but not necessarily) this involves sending a
+     * request to initiate a clean shutdown of the process.
+     * 
+     * @param logger
+     * @return
+     * @throws Exception
+     */
+    int shutdownProcess(Logger logger) throws Exception;
 }

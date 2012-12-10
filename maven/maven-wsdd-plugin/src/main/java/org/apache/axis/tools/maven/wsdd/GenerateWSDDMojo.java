@@ -106,47 +106,11 @@ public class GenerateWSDDMojo extends AbstractMojo {
         
         Deployment deployment;
         
-        // Note: To locate the different parts of the default configuration, we use the same
-        //       algorithm as in DefaultConfiguration.
-        
-        // Load the base configuration
-        String resourceName = "org/apache/axis/" + type + "/" + type + "-config.wsdd";
-        InputStream in = cl.getResourceAsStream(resourceName);
-        if (in == null) {
-            throw new MojoFailureException("Resource " + resourceName + " not found");
-        }
-        getLog().info("Loading resource " + resourceName);
+        getLog().info("Loading default configuration");
         try {
-            try {
-                deployment = WSDDUtil.load(new InputSource(in));
-            } finally {
-                in.close();
-            }
+            deployment = WSDDUtil.buildDefaultConfiguration(cl, type);
         } catch (IOException ex) {
-            throw new MojoFailureException("Failed to process resource " + resourceName, ex);
-        }
-        
-        // Discover and load additional default configuration fragments
-        resourceName = "META-INF/axis/default-" + type + "-config.wsdd";
-        Enumeration resources;
-        try {
-            resources = cl.getResources(resourceName);
-        } catch (IOException ex) {
-            throw new MojoFailureException("Failed to discover resources with name " + resourceName, ex);
-        }
-        while (resources.hasMoreElements()) {
-            URL url = (URL)resources.nextElement();
-            getLog().info("Loading " + url);
-            try {
-                in = url.openStream();
-                try {
-                    deployment.merge(WSDDUtil.load(new InputSource(in)));
-                } finally {
-                    in.close();
-                }
-            } catch (Exception ex) {
-                throw new MojoFailureException("Failed to process " + url, ex);
-            }
+            throw new MojoFailureException("Unable to build default configuration", ex);
         }
         
         if (files != null) {

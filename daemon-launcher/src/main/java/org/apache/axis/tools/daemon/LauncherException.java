@@ -16,25 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.tools.maven.server;
+package org.apache.axis.tools.daemon;
 
-import java.io.File;
+final class LauncherException extends Exception {
+    private static final long serialVersionUID = 9049901854635661634L;
 
-import org.apache.axis.client.AdminClient;
-import org.codehaus.plexus.logging.Logger;
-
-public class AxisServerStopAction implements ProcessStopAction {
-    private final AdminClient adminClient;
-    private final File[] undeployments;
-
-    public AxisServerStopAction(AdminClient adminClient, File[] undeployments) {
-        this.adminClient = adminClient;
-        this.undeployments = undeployments;
-    }
-
-    public int execute(Logger logger) throws Exception {
-        AdminClientUtils.process(logger, adminClient, undeployments);
-        adminClient.quit();
-        return STOPPING;
+    public LauncherException(String msg) {
+        super(msg);
     }
 }

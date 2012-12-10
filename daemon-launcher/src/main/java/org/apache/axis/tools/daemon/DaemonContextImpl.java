@@ -16,21 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.tools.maven.server;
+package org.apache.axis.tools.daemon;
 
-import org.codehaus.plexus.logging.Logger;
+import org.apache.commons.daemon.DaemonContext;
+import org.apache.commons.daemon.DaemonController;
 
-/**
- * Action to be executed after a given process has been started. This is typically used to configure
- * the server process, e.g. to deploy services.
- * 
- * @author Andreas Veithen
- */
-public interface ProcessStartAction {
-    ProcessStartAction NOP = new ProcessStartAction() {
-        public void execute(Logger logger, Process process) throws Exception {
-        }
-    };
-    
-    void execute(Logger logger, Process process) throws Exception;
+final class DaemonContextImpl implements DaemonContext {
+    private final String[] args;
+
+    public DaemonContextImpl(String[] args) {
+        this.args = args;
+    }
+
+    public DaemonController getController() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String[] getArguments() {
+        return args;
+    }
 }

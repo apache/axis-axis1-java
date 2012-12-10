@@ -44,6 +44,11 @@
             <artifactId>axis-rt-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
         </dependency>
@@ -59,6 +64,23 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-toolchain</artifactId>
             <version>1.0</version>
+        </dependency>
+        
+        <!-- These dependencies are here merely to ensure that in the Axis build they are built
+             before this project. This is necessary because these artifacts may be loaded by
+             the plug-in at runtime and we need to make sure that they are available and that
+             we get the latest version. -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>daemon-launcher</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis-standalone-server</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <reporting>

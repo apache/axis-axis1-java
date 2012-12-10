@@ -38,11 +38,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis-standalone-server</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -91,7 +86,7 @@
                                 <wsdd>
                                     <directory>src/main/wsdd</directory>
                                     <includes>
-                                        <include>**/*.wsdd</include>
+                                        <include>deploy.wsdd</include>
                                     </includes>
                                 </wsdd>
                             </wsdds>

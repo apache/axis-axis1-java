@@ -32,12 +32,12 @@ public interface DeployableItem extends Parameterizable {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Request Flow</em>' containment reference.
-     * @see #setRequestFlow(Flow)
+     * @see #setRequestFlow(Chain)
      * @model containment="true"
      *        extendedMetaData="kind='element' name='requestFlow' namespace='##targetNamespace'"
      * @generated
      */
-    Flow getRequestFlow();
+    Chain getRequestFlow();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.DeployableItem#getRequestFlow <em>Request Flow</em>}' containment reference.
@@ -47,7 +47,7 @@ public interface DeployableItem extends Parameterizable {
      * @see #getRequestFlow()
      * @generated
      */
-    void setRequestFlow(Flow value);
+    void setRequestFlow(Chain value);
 
     /**
      * Returns the value of the '<em><b>Response Flow</b></em>' containment reference.
@@ -58,12 +58,12 @@ public interface DeployableItem extends Parameterizable {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Response Flow</em>' containment reference.
-     * @see #setResponseFlow(Flow)
+     * @see #setResponseFlow(Chain)
      * @model containment="true"
      *        extendedMetaData="kind='element' name='responseFlow' namespace='##targetNamespace'"
      * @generated
      */
-    Flow getResponseFlow();
+    Chain getResponseFlow();
 
     /**
      * Sets the value of the '{@link org.apache.axis.model.wsdd.DeployableItem#getResponseFlow <em>Response Flow</em>}' containment reference.
@@ -73,6 +73,6 @@ public interface DeployableItem extends Parameterizable {
      * @see #getResponseFlow()
      * @generated
      */
-    void setResponseFlow(Flow value);
+    void setResponseFlow(Chain value);
 
 } // DeployableItem

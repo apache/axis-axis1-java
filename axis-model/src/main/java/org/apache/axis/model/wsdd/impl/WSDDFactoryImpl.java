@@ -72,12 +72,13 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
             case WSDDPackageImpl.TYPE_MAPPING: return (EObject)createTypeMapping();
             case WSDDPackageImpl.ARRAY_MAPPING: return (EObject)createArrayMapping();
             case WSDDPackageImpl.BEAN_MAPPING: return (EObject)createBeanMapping();
+            case WSDDPackageImpl.MAPPING_CONTAINER: return (EObject)createMappingContainer();
             case WSDDPackageImpl.OPERATION_PARAMETER: return (EObject)createOperationParameter();
             case WSDDPackageImpl.FAULT: return (EObject)createFault();
             case WSDDPackageImpl.OPERATION: return (EObject)createOperation();
             case WSDDPackageImpl.PARAMETERIZABLE: return (EObject)createParameterizable();
             case WSDDPackageImpl.HANDLER: return (EObject)createHandler();
-            case WSDDPackageImpl.FLOW: return (EObject)createFlow();
+            case WSDDPackageImpl.CHAIN: return (EObject)createChain();
             case WSDDPackageImpl.GLOBAL_CONFIGURATION: return (EObject)createGlobalConfiguration();
             case WSDDPackageImpl.TRANSPORT: return (EObject)createTransport();
             case WSDDPackageImpl.SERVICE: return (EObject)createService();
@@ -130,16 +131,6 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Flow createFlow() {
-        FlowImpl flow = new FlowImpl();
-        return flow;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public TypeMapping createTypeMapping() {
         TypeMappingImpl typeMapping = new TypeMappingImpl();
         return typeMapping;
@@ -163,6 +154,16 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public BeanMapping createBeanMapping() {
         BeanMappingImpl beanMapping = new BeanMappingImpl();
         return beanMapping;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public MappingContainer createMappingContainer() {
+        MappingContainerImpl mappingContainer = new MappingContainerImpl();
+        return mappingContainer;
     }
 
     /**
@@ -213,6 +214,16 @@ public class WSDDFactoryImpl extends EFactoryImpl implements WSDDFactory {
     public Handler createHandler() {
         HandlerImpl handler = new HandlerImpl();
         return handler;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Chain createChain() {
+        ChainImpl chain = new ChainImpl();
+        return chain;
     }
 
     /**

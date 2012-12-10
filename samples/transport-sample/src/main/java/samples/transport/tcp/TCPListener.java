@@ -59,7 +59,7 @@ public class TCPListener implements Runnable {
     private AxisEngine engine = null ;
 
     // becomes true when we want to quit
-    private boolean done = false;
+    private volatile boolean done = false;
 
     static final String wsdd =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
@@ -115,6 +115,10 @@ public class TCPListener implements Runnable {
         }
     }
 
+    public void stop() throws IOException {
+        done = true;
+        srvSocket.close();
+    }
 
     public class SocketHandler implements Runnable {
         private Socket socket;

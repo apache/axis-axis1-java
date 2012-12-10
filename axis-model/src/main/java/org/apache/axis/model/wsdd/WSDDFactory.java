@@ -31,15 +31,6 @@ public interface WSDDFactory {
     Parameter createParameter();
 
     /**
-     * Returns a new object of class '<em>Flow</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>Flow</em>'.
-     * @generated
-     */
-    Flow createFlow();
-
-    /**
      * Returns a new object of class '<em>Type Mapping</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -65,6 +56,15 @@ public interface WSDDFactory {
      * @generated
      */
     BeanMapping createBeanMapping();
+
+    /**
+     * Returns a new object of class '<em>Mapping Container</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Mapping Container</em>'.
+     * @generated
+     */
+    MappingContainer createMappingContainer();
 
     /**
      * Returns a new object of class '<em>Operation Parameter</em>'.
@@ -110,6 +110,15 @@ public interface WSDDFactory {
      * @generated
      */
     Handler createHandler();
+
+    /**
+     * Returns a new object of class '<em>Chain</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Chain</em>'.
+     * @generated
+     */
+    Chain createChain();
 
     /**
      * Returns a new object of class '<em>Global Configuration</em>'.

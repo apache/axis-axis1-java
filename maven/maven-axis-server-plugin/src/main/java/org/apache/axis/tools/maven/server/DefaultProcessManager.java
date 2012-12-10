@@ -36,15 +36,15 @@ public class DefaultProcessManager implements ProcessManager, LogEnabled {
         this.logger = logger;
     }
 
-    public void startProcess(String description, String[] cmdline, File workDir, ProcessStartAction startAction, ProcessStopAction stopAction) throws Exception {
+    public void startProcess(String description, String[] cmdline, File workDir, ProcessControl processControl) throws Exception {
         if (logger.isDebugEnabled()) {
             logger.debug("Starting process with command line: " + Arrays.asList(cmdline));
         }
         Process process = Runtime.getRuntime().exec(cmdline, null, workDir);
-        managedProcesses.add(new ManagedProcess(process, description, stopAction));
+        managedProcesses.add(new ManagedProcess(process, description, processControl));
         new Thread(new StreamPump(process.getInputStream(), System.out)).start();
         new Thread(new StreamPump(process.getErrorStream(), System.err)).start();
-        startAction.execute(logger, process);
+        processControl.initializeProcess(logger, process);
     }
     
     public void stopAll() throws Exception {
@@ -54,7 +54,7 @@ public class DefaultProcessManager implements ProcessManager, LogEnabled {
             int result;
             logger.debug("Executing stop action");
             try {
-                result = managedProcess.getStopAction().execute(logger);
+                result = managedProcess.getProcessControl().shutdownProcess(logger);
             } catch (Exception ex) {
                 if (savedException == null) {
                     savedException = ex;
@@ -64,7 +64,7 @@ public class DefaultProcessManager implements ProcessManager, LogEnabled {
             if (logger.isDebugEnabled()) {
                 logger.debug("result = " + result);
             }
-            if (result == ProcessStopAction.STOPPING) {
+            if (result == ProcessControl.STOPPING) {
                 managedProcess.getProcess().waitFor();
             } else {
                 managedProcess.getProcess().destroy();

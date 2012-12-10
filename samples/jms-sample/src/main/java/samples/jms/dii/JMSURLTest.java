@@ -1,20 +1,4 @@
-/*
- * Copyright 2001, 2002,2004 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package samples.jms;
+package samples.jms.dii;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
@@ -22,7 +6,6 @@ import org.apache.axis.client.Service;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.transport.jms.JMSConstants;
 import org.apache.axis.transport.jms.JMSTransport;
 import org.apache.axis.transport.jms.SimpleJMSListener;
 import org.apache.axis.utils.Options;
@@ -31,22 +14,16 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
 import java.util.HashMap;
 
-/** Tests the JMS transport.  To run:
- *      java org.apache.axis.utils.Admin client client_deploy.xml
- *      java org.apache.axis.utils.Admin server deploy.xml
- *      java samples.transport.FileTest IBM
- *      java samples.transport.FileTest XXX
+/**
+ * Demonstrates use of a JMS URL endpoint address to drive the JMS transport.
  *
- * JMSTest is a simple test driver for the JMS transport. It sets up a
- *   JMS listener, then calls a delayed quote service for each of the symbols
- *   specified on the command line.
+ * The JMS listener is an intermediary that receives the JMS service request and
+ * invokes the actual stock quote service over HTTP.
  *
- * @author Jaime Meritt  (jmeritt@sonicsoftware.com)
- * @author Richard Chung (rchung@sonicsoftware.com)
- * @author Dave Chappell (chappell@sonicsoftware.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 
-public class JMSTest {
+public class JMSURLTest {
     static final String wsdd =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
                   "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\">\n" +
@@ -57,6 +34,9 @@ public class JMSTest {
             " </service>\n" +
             "</deployment>";
 
+    // the JMS URL target endpoint address
+    static String sampleJmsUrl;
+
     public static void main(String args[]) throws Exception {
         Options opts = new Options( args );
 
@@ -64,11 +44,18 @@ public class JMSTest {
         if ((opts.isFlagSet('?') > 0) || (opts.isFlagSet('h') > 0))
             printUsage();
 
+        String username = opts.getUser();
+        String password = opts.getPassword();
+
         HashMap connectorMap = SimpleJMSListener.createConnectorMap(opts);
         HashMap cfMap = SimpleJMSListener.createCFMap(opts);
         String destination = opts.isValueSet('d');
-        String username = opts.getUser();
-        String password = opts.getPassword();
+
+        sampleJmsUrl = opts.isValueSet('e');
+        if (sampleJmsUrl == null) {
+            printUsage();
+        }
+        
         // create the jms listener
         SimpleJMSListener listener = new SimpleJMSListener(connectorMap,
                                                            cfMap,
@@ -82,61 +69,77 @@ public class JMSTest {
         if ( args == null || args.length == 0)
             printUsage();
 
-        Service  service = new Service(new XMLStringProvider(wsdd));
-
-        // create the transport
-        JMSTransport transport = new JMSTransport(connectorMap, cfMap);
-
-        // create a new Call object
-        Call     call    = (Call) service.createCall();
-
-        call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
-        call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
-        call.setReturnType( XMLType.XSD_FLOAT );
-        call.setTransport(transport);
-
-        // set additional params on the call if desired
-        //call.setUsername(username );
-        //call.setPassword(password );
-        //call.setProperty(JMSConstants.WAIT_FOR_RESPONSE, Boolean.FALSE);
-        //call.setProperty(JMSConstants.PRIORITY, new Integer(5));
-        //call.setProperty(JMSConstants.DELIVERY_MODE,
-        //    new Integer(javax.jms.DeliveryMode.PERSISTENT));
-        //call.setProperty(JMSConstants.TIME_TO_LIVE, new Long(20000));
-
-        call.setProperty(JMSConstants.DESTINATION, destination);
-        call.setTimeout(new Integer(10000));
-
-        Float res = new Float(0.0F);
-
-        // invoke a call for each of the symbols and print out
         for (int i = 0; i < args.length; i++)
         {
             try
             {
-            res = (Float) call.invoke(new Object[] {args[i]});
-            System.out.println(args[i] + ": " + res);
+                Float res = getQuote(args[i], username, password);
+                System.out.println(args[i] + ": " + res);
             }
             catch(AxisFault af)
             {
                 System.out.println(af.dumpToString());
+                System.exit(1);
             }
         }
 
         // shutdown
         listener.shutdown();
-        transport.shutdown();
+
+        // close all JMSConnectors whose configuration matches that of the JMS URL
+        // note: this is optional, as all connectors will be closed upon exit
+        JMSTransport.closeMatchingJMSConnectors(sampleJmsUrl, username, password);
+
+        System.exit(0);
+    }
+
+    public static Float getQuote(String ticker, String username, String password)
+        throws javax.xml.rpc.ServiceException, AxisFault
+    {
+        Float res = new Float(-1.0);
+
+        Service  service = new Service(new XMLStringProvider(wsdd));
+
+        // create a new Call object
+        Call     call    = (Call) service.createCall();
+        call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
+        call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
+        call.setReturnType( XMLType.XSD_FLOAT );
+
+        try
+        {
+            java.net.URL jmsurl = new java.net.URL(sampleJmsUrl);
+            call.setTargetEndpointAddress(jmsurl);
+
+            // set additional params on the call if desired
+            call.setUsername(username);
+            call.setPassword(password);
+            call.setTimeout(new Integer(30000));
+
+            res = (Float) call.invoke(new Object[] {ticker});
+        }
+        catch (java.net.MalformedURLException e)
+        {
+            throw new AxisFault("Invalid JMS URL", e);
+        }
+        catch (java.rmi.RemoteException e)
+        {
+            throw new AxisFault("Failed in getQuote()", e);
+        }
+
+        return res;
     }
 
     public static void printUsage()
     {
-        System.out.println("JMSTest: Tests JMS transport by obtaining stock quote");
-        System.out.println("  Usage: JMSTest <symbol 1> <symbol 2> <symbol 3> ...");
+        System.out.println("JMSURLTest: Tests JMS transport by obtaining stock quote");
+        System.out.println("  Usage: JMSURLTest <symbol 1> <symbol 2> <symbol 3> ...");
         System.out.println("   Opts: -? this message");
         System.out.println();
         System.out.println("       -c connection factory properties filename");
         System.out.println("       -d destination");
         System.out.println("       -t topic [absence of -t indicates queue]");
+        System.out.println("       -e the JMS endpoint URL to use for the client");
         System.out.println();
         System.out.println("       -u username");
         System.out.println("       -w password");

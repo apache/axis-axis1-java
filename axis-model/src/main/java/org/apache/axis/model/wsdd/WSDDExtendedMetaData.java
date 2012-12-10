@@ -16,27 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.tools.maven.server;
+package org.apache.axis.model.wsdd;
 
-import java.io.File;
+import org.apache.axis.model.wsdd.impl.WSDDPackageImpl;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.BasicExtendedMetaData;
 
-import org.apache.axis.client.AdminClient;
-import org.codehaus.plexus.logging.Logger;
-
-public final class AdminClientUtils {
-    private AdminClientUtils() {}
+final class WSDDExtendedMetaData extends BasicExtendedMetaData {
+    private static final EClass mapping = WSDDPackageImpl.eINSTANCE.getMapping();
     
-    public static void process(Logger logger, AdminClient adminClient, File[] wsddFiles) throws Exception {
-        for (int i=0; i<wsddFiles.length; i++) {
-            File wsddFile = wsddFiles[i];
-            if (logger.isDebugEnabled()) {
-                logger.debug("Starting to process " + wsddFile);
-            }
-            String result = adminClient.process(wsddFile.getPath());
-            if (logger.isDebugEnabled()) {
-                logger.debug("AdminClient result: " + result);
-            }
-            logger.info("Processed " + wsddFile);
+    public EStructuralFeature getAttribute(EClass eClass, String namespace, String name) {
+        if (mapping.isSuperTypeOf(eClass) && namespace == null && name.equals("languageSpecificType")) {
+            // TODO: emit warning
+            return mapping.getEStructuralFeature(WSDDPackageImpl.MAPPING__TYPE);
+        } else {
+            return super.getAttribute(eClass, namespace, name);
         }
     }
 }

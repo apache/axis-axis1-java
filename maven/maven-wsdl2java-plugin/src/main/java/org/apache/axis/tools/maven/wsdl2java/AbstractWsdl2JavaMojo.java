@@ -180,6 +180,13 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
     private boolean helperGen;
     
     /**
+     * 
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean allowInvalidURL;
+    
+    /**
      * The location of the deployment WSDD file to be generated. This parameter is ignored if
      * {@link #generate} is set to <code>client</code>. If this parameter is not specified, then no
      * deployment WSDD will be generated.
@@ -269,7 +276,7 @@ public abstract class AbstractWsdl2JavaMojo extends AbstractMojo {
 //        emitter.setQuiet(quiet);
         emitter.setTypeMappingVersion(typeMappingVersion);
         emitter.setNowrap(noWrapped);
-//        emitter.setAllowInvalidURL(allowInvalidURL);
+        emitter.setAllowInvalidURL(allowInvalidURL);
         emitter.setWrapArrays(wrapArrays);
 //        if (namespaceMappingFile != null) {
 //            emitter.setNStoPkg(namespaceMappingFile.toString());
