@@ -26,10 +26,11 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.IOUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -114,8 +115,8 @@ public class LocalSender extends BasicHandler {
         String transURL = clientContext.getStrProp(MessageContext.TRANS_URL);
         if (transURL != null) {
             try {
-                URL url = new URL(transURL);
-                String file = url.getFile();
+                URI url = IOUtils.toURI(transURL);
+                String file = url.getPath();
                 if (file.length()>0 && file.charAt(0)=='/') {
                     file = file.substring(1);
                 }

@@ -108,8 +108,7 @@ public class JMSURLTest {
 
         try
         {
-            java.net.URL jmsurl = new java.net.URL(sampleJmsUrl);
-            call.setTargetEndpointAddress(jmsurl);
+            call.setTargetEndpointAddress(sampleJmsUrl);
 
             // set additional params on the call if desired
             call.setUsername(username);
@@ -117,10 +116,6 @@ public class JMSURLTest {
             call.setTimeout(new Integer(30000));
 
             res = (Float) call.invoke(new Object[] {ticker});
-        }
-        catch (java.net.MalformedURLException e)
-        {
-            throw new AxisFault("Invalid JMS URL", e);
         }
         catch (java.rmi.RemoteException e)
         {
