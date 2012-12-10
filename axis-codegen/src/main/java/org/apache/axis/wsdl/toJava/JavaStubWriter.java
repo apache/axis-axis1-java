@@ -189,6 +189,17 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println();
         pw.println(
                 "    public " + className
+                + "(java.lang.String endpoint, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
+        pw.println("         this(service);");
+        pw.println("         try {");
+        pw.println("             super.cachedEndpoint = org.apache.axis.utils.IOUtils.toURL(endpoint);");
+        pw.println("         } catch (java.net.MalformedURLException ex) {");
+        pw.println("             throw org.apache.axis.AxisFault.makeFault(ex);");
+        pw.println("         }");
+        pw.println("    }");
+        pw.println();
+        pw.println(
+                "    public " + className
                 + "(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
         pw.println("        if (service == null) {");
         pw.println(

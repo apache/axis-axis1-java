@@ -256,6 +256,8 @@ public class JavaServiceImplWriter extends JavaClassWriter {
             writeGetPortName(pw, bindingType, portName);
             writeGetPortNameURL(pw, bindingType, portName, stubClass,
                     wsddServiceName);
+            writeGetPortNameString(pw, bindingType, portName, stubClass,
+                    wsddServiceName);
             writeSetPortEndpointAddress(pw, portName);
         }
 
@@ -394,6 +396,36 @@ public class JavaServiceImplWriter extends JavaClassWriter {
 
         pw.println("    public " + bindingType + " get" + portName
                 + "(java.net.URL portAddress) throws "
+                + javax.xml.rpc.ServiceException.class.getName() + " {");
+        pw.println("        try {");
+        pw.println("            " + stubClass + " _stub = new " + stubClass
+                + "(portAddress, this);");
+        pw.println("            _stub.setPortName(get" + wsddServiceName
+                + "());");
+        pw.println("            return _stub;");
+        pw.println("        }");
+        pw.println("        catch (org.apache.axis.AxisFault e) {");
+        pw.println("            return null;");
+        pw.println("        }");
+        pw.println("    }");
+        pw.println();
+    }    // writeGetPortNameURL
+
+    /**
+     * Write the get<portName>(String) method.
+     * 
+     * @param pw              
+     * @param bindingType     
+     * @param portName        
+     * @param stubClass       
+     * @param wsddServiceName 
+     */
+    protected void writeGetPortNameString(PrintWriter pw, String bindingType,
+                                          String portName, String stubClass,
+                                          String wsddServiceName) {
+
+        pw.println("    public " + bindingType + " get" + portName
+                + "(java.lang.String portAddress) throws "
                 + javax.xml.rpc.ServiceException.class.getName() + " {");
         pw.println("        try {");
         pw.println("            " + stubClass + " _stub = new " + stubClass

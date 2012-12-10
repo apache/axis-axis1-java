@@ -25,8 +25,6 @@ import java.util.HashMap;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.xml.rpc.ServiceException;
@@ -57,12 +55,10 @@ public class JMSURLStubTest extends TestCase {
         }
         
         try {
-            getQuote = locator.getGetQuote(new URL(endptAddr));
+            getQuote = locator.getGetQuote(endptAddr);
         }
         catch (ServiceException e) {
             throw new AxisFault("JAX-RPC ServiceException caught: ", e);
-        } catch (MalformedURLException e) {
-            throw new AxisFault("MalformedURLException caught: ", e);
         }
         assertTrue("getQuote is null", getQuote != null);
 
