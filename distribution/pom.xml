@@ -81,7 +81,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
+                            <target unless="${skipTests}">
                                 <unzip src="${project.build.directory}/${project.artifactId}-${project.version}-bin.zip" dest="${project.build.directory}" />
                             </target>
                         </configuration>
@@ -93,7 +93,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
+                            <target unless="${skipTests}">
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/addr"/>
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/attachments"/>
                                 <ant dir="${project.build.directory}/axis-${project.version}/samples/bidbuy"/>
@@ -140,6 +140,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/axis-${project.version}/lib</outputDirectory>
                             <includeArtifactIds>junit</includeArtifactIds>
+                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -159,6 +160,7 @@
                             <overWrite>true</overWrite>
                             <outputDirectory>${project.build.directory}/jboss/lib</outputDirectory>
                             <stripVersion>true</stripVersion>
+                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                 </executions>
