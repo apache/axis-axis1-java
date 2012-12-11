@@ -37,7 +37,7 @@ import org.apache.axis.utils.XMLUtils;
  * 
  * @author Andreas Veithen
  */
-public class StandaloneAxisServlet extends AxisServlet {
+final class StandaloneAxisServlet extends AxisServlet {
     private final List/*<URL>*/ wsddUrls;
     
     public StandaloneAxisServlet() {

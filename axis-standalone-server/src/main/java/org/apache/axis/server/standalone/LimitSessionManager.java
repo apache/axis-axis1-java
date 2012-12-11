@@ -32,7 +32,7 @@ import org.mortbay.jetty.servlet.HashSessionManager;
  * 
  * @author Andreas Veithen
  */
-public class LimitSessionManager extends HashSessionManager {
+final class LimitSessionManager extends HashSessionManager {
     // This is only needed to get access to some protected methods/fields.
     class Session extends HashSessionManager.Session {
         private static final long serialVersionUID = -6648322281268846583L;
@@ -54,7 +54,7 @@ public class LimitSessionManager extends HashSessionManager {
     private Timer timer;
     private TimerTask task;
 
-    public LimitSessionManager(int maxSessions) {
+    LimitSessionManager(int maxSessions) {
         this.maxSessions = maxSessions;
     }
 

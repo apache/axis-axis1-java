@@ -18,22 +18,10 @@
  */
 package org.apache.axis.server.standalone;
 
-/**
- * Used to trigger the shutdown of the stand-alone server.
- * 
- * @author Andreas Veithen
- */
-final class QuitListener {
-    private boolean quit;
-    
-    synchronized void requestQuit() {
-        quit = true;
-        notifyAll();
-    }
-    
-    synchronized void awaitQuitRequest() throws InterruptedException {
-        while (!quit) {
-            wait();
-        }
+public class ServerException extends Exception {
+    private static final long serialVersionUID = 2996112474203025829L;
+
+    public ServerException(Throwable cause) {
+        super(cause);
     }
 }

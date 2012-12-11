@@ -49,12 +49,31 @@
             <version>1.2</version>
         </dependency>
         <dependency>
+            <groupId>commons-daemon</groupId>
+            <artifactId>commons-daemon</artifactId>
+        </dependency>
+        <dependency>
             <!-- Jetty 6.1 is the last version with support for Java 1.4 -->
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
             <version>6.1.26</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.apache.axis.server.standalone.cli.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <reporting>
         <plugins>
             <plugin>

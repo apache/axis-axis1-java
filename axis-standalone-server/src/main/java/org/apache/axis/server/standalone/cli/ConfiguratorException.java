@@ -16,28 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis.tools.maven.server;
+package org.apache.axis.server.standalone.cli;
 
-public class ManagedProcess {
-    private final Process process;
-    private final String description;
-    private final ProcessControl processControl;
+public class ConfiguratorException extends Exception {
+    private static final long serialVersionUID = 664045878448812254L;
 
-    public ManagedProcess(Process process, String description, ProcessControl processControl) {
-        this.process = process;
-        this.description = description;
-        this.processControl = processControl;
+    public ConfiguratorException(Throwable cause) {
+        super(cause);
     }
 
-    public Process getProcess() {
-        return process;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public ProcessControl getProcessControl() {
-        return processControl;
+    public ConfiguratorException(String message) {
+        super(message);
     }
 }

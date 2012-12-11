@@ -24,7 +24,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 import com.github.veithen.ulog.PlexusLoggerInjector;
 
-public abstract class AbstractServerMojo extends AbstractMojo {
+public abstract class AbstractDaemonControlMojo extends AbstractMojo {
     /**
      * @component
      */
@@ -35,7 +35,7 @@ public abstract class AbstractServerMojo extends AbstractMojo {
     /**
      * @component
      */
-    private ProcessManager processManager;
+    private DaemonManager daemonManager;
 
     /**
      * Set this to <code>true</code> to skip running tests, but still compile them. This is the same
@@ -45,8 +45,8 @@ public abstract class AbstractServerMojo extends AbstractMojo {
      */
     private boolean skipTests;
     
-    public ProcessManager getProcessManager() {
-        return processManager;
+    public final DaemonManager getDaemonManager() {
+        return daemonManager;
     }
 
     public final void execute() throws MojoExecutionException, MojoFailureException {

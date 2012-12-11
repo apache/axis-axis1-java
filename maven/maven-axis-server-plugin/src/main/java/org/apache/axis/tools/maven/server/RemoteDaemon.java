@@ -28,16 +28,28 @@ import java.net.Socket;
 
 import org.codehaus.plexus.logging.Logger;
 
-public class DaemonProcessControl implements ProcessControl {
+public class RemoteDaemon {
+    private final Process process;
+    private final String description;
     private final int controlPort;
     private BufferedReader controlIn;
     private Writer controlOut;
 
-    public DaemonProcessControl(int controlPort) {
+    public RemoteDaemon(Process process, String description, int controlPort) {
+        this.process = process;
+        this.description = description;
         this.controlPort = controlPort;
     }
 
-    public void initializeProcess(Logger logger, Process process) throws Exception {
+    public Process getProcess() {
+        return process;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void startDaemon(Logger logger) throws Exception {
         logger.debug("Attempting to establish control connection on port " + controlPort);
         Socket controlSocket;
         while (true) {
@@ -45,6 +57,12 @@ public class DaemonProcessControl implements ProcessControl {
                 controlSocket = new Socket(InetAddress.getByName("localhost"), controlPort);
                 break;
             } catch (IOException ex) {
+                try {
+                    int exitValue = process.exitValue();
+                    throw new IllegalStateException("Process terminated prematurely with exit code " + exitValue);
+                } catch (IllegalThreadStateException ex2) {
+                    // Process is still running; continue
+                }
                 Thread.sleep(100);
             }
         }
@@ -56,11 +74,10 @@ public class DaemonProcessControl implements ProcessControl {
         logger.debug("Daemon is ready");
     }
 
-    public int shutdownProcess(Logger logger) throws Exception {
+    public void stopDaemon(Logger logger) throws Exception {
         controlOut.write("STOP\r\n");
         controlOut.flush();
         expectStatus("STOPPED");
-        return STOPPING;
     }
     
     private void expectStatus(String expectedStatus) throws IOException {

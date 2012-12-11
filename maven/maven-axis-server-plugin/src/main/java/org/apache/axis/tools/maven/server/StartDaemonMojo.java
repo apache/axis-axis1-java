@@ -19,8 +19,6 @@
 package org.apache.axis.tools.maven.server;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -32,7 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @phase pre-integration-test
  * @requiresDependencyResolution test
  */
-public class StartDaemonMojo extends AbstractStartProcessMojo {
+public class StartDaemonMojo extends AbstractStartDaemonMojo {
     /**
      * The daemon class.
      * 
@@ -56,23 +54,8 @@ public class StartDaemonMojo extends AbstractStartProcessMojo {
      */
     private File workDir;
 
-    protected void doExecute() throws MojoExecutionException, MojoFailureException {
-        int controlPort;
-        try {
-            ServerSocket ss = new ServerSocket(0);
-            controlPort = ss.getLocalPort();
-            ss.close();
-        } catch (IOException ex) {
-            throw new MojoFailureException("Failed to allocate port number", ex);
-        }
+    protected void doStartDaemon() throws MojoExecutionException, MojoFailureException {
         workDir.mkdirs();
-        String[] vmArgs = new String[args != null ? args.length + 2 : 2];
-        vmArgs[0] = daemonClass;
-        vmArgs[1] = String.valueOf(controlPort);
-        if (args != null) {
-            System.arraycopy(args, 0, vmArgs, 2, args.length);
-        }
-        addAxisDependency("daemon-launcher");
-        startJavaProcess(daemonClass, "org.apache.axis.tools.daemon.Launcher", vmArgs, workDir, new DaemonProcessControl(controlPort));
+        startDaemon(daemonClass, daemonClass, args, workDir);
     }
 }

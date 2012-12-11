@@ -20,7 +20,7 @@ package org.apache.axis.tools.maven.server;
 
 import java.io.File;
 
-public interface ProcessManager {
-    void startProcess(String description, String[] cmdline, File workDir, ProcessControl processControl) throws Exception;
+public interface DaemonManager {
+    void startDaemon(String description, String[] cmdline, File workDir, int controlPort) throws Exception;
     void stopAll() throws Exception;
 }

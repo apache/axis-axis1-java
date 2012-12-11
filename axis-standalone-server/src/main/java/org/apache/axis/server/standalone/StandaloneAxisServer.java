@@ -19,16 +19,10 @@
 package org.apache.axis.server.standalone;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.SessionManager;
 import org.mortbay.jetty.servlet.Context;
@@ -45,82 +39,71 @@ import org.mortbay.resource.ResourceCollection;
  * 
  * @author Andreas Veithen
  */
-public class StandaloneAxisServer {
-    public static void main(String[] args) throws Exception {
-        Options options = new Options();
-        
-        {
-            Option option = new Option("p", true, "the HTTP port");
-            option.setArgName("port");
-            option.setRequired(true);
-            options.addOption(option);
-        }
-        
-        {
-            Option option = new Option("w", true, "the work directory");
-            option.setArgName("dir");
-            option.setRequired(true);
-            options.addOption(option);
-        }
-        
-        {
-            Option option = new Option("j", true, "a list of directories to look up JWS files from");
-            option.setArgName("dirs");
-            options.addOption(option);
-        }
-        
-        {
-            Option option = new Option("m", true, "the maximum number of concurrently active sessions");
-            option.setArgName("count");
-            options.addOption(option);
-        }
-        
-        if (args.length == 0) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp(StandaloneAxisServer.class.getName(), options);
-            return;
-        }
-        
-        CommandLineParser parser = new GnuParser();
-        CommandLine cmdLine;
-        try {
-            cmdLine = parser.parse(options, args);
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(1);
-            return; // Make compiler happy
-        }
-        
-        int port = Integer.parseInt(cmdLine.getOptionValue("p"));
-        
-        int maxSessions;
-        if (cmdLine.hasOption("m")) {
-            maxSessions = Integer.parseInt(cmdLine.getOptionValue("m"));
-        } else {
-            maxSessions = -1;
-        }
-        
+public final class StandaloneAxisServer {
+    private int port;
+    private File workDir;
+    private int maxSessions = -1;
+    private File[] jwsDirs;
+    
+    private Server server;
+    private QuitListener quitListener;
+    
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public File getWorkDir() {
+        return workDir;
+    }
+
+    public void setWorkDir(File workDir) {
+        this.workDir = workDir;
+    }
+
+    public int getMaxSessions() {
+        return maxSessions;
+    }
+
+    public void setMaxSessions(int maxSessions) {
+        this.maxSessions = maxSessions;
+    }
+
+    public File[] getJwsDirs() {
+        return jwsDirs == null ? null : (File[])jwsDirs.clone();
+    }
+
+    public void setJwsDirs(File[] jwsDirs) {
+        this.jwsDirs = jwsDirs == null ? null : (File[])jwsDirs.clone();
+    }
+
+    public void init() throws ServerException {
         StandaloneAxisServlet servlet = new StandaloneAxisServlet();
         
         List resources = new ArrayList();
         
         // Add the work dir as a resource so that Axis can create its server-config.wsdd file there
-        File workDir = new File(cmdLine.getOptionValue("w"));
         new File(workDir, "WEB-INF").mkdir();
-        resources.add(Resource.newResource(workDir.getAbsolutePath()));
-        
-        boolean enableJWS;
-        if (cmdLine.hasOption("j")) {
-            String[] jwsDirs = cmdLine.getOptionValue("j").split(File.pathSeparator);
-            for (int i=0; i<jwsDirs.length; i++) {
-                resources.add(Resource.newResource(jwsDirs[i]));
-            }
-            enableJWS = true;
-        } else {
-            enableJWS = false;
+        try {
+            resources.add(Resource.newResource(workDir.getAbsolutePath()));
+        } catch (IOException ex) {
+            throw new ServerException(ex);
         }
         
-        Server server = new Server(port);
+        if (jwsDirs != null) {
+            for (int i=0; i<jwsDirs.length; i++) {
+                try {
+                    resources.add(Resource.newResource(jwsDirs[i].getAbsolutePath()));
+                } catch (IOException ex) {
+                    throw new ServerException(ex);
+                }
+            }
+        }
+        
+        server = new Server(port);
         server.setGracefulShutdown(1000);
         Context context = new Context(server, "/axis");
         context.setBaseResource(new ResourceCollection((Resource[])resources.toArray(new Resource[resources.size()])));
@@ -131,7 +114,7 @@ public class StandaloneAxisServer {
             sessionManager = new LimitSessionManager(maxSessions);
         }
         context.setSessionHandler(new SessionHandler(sessionManager));
-        QuitListener quitListener = new QuitListener();
+        quitListener = new QuitListener();
         context.setAttribute(QuitHandler.QUIT_LISTENER, quitListener);
         ServletHandler servletHandler = context.getServletHandler();
         ServletHolder axisServletHolder = new ServletHolder(servlet);
@@ -149,18 +132,31 @@ public class StandaloneAxisServer {
             mapping.setPathSpec("/servlet/AxisServlet");
             servletHandler.addServletMapping(mapping);
         }
-        if (enableJWS) {
+        if (jwsDirs != null && jwsDirs.length > 0) {
             ServletMapping mapping = new ServletMapping();
             mapping.setServletName("AxisServlet");
             mapping.setPathSpec("*.jws");
             servletHandler.addServletMapping(mapping);
         }
-        server.start();
+    }
+    
+    public void start() throws ServerException {
         try {
-            quitListener.awaitQuitRequest();
-        } catch (InterruptedException ex) {
-            // Just continue and stop the server
+            server.start();
+        } catch (Exception ex) {
+            throw new ServerException(ex);
         }
-        server.stop();
+    }
+    
+    public void awaitQuitRequest() throws InterruptedException {
+        quitListener.awaitQuitRequest();
+    }
+    
+    public void stop() throws ServerException {
+        try {
+            server.stop();
+        } catch (Exception ex) {
+            throw new ServerException(ex);
+        }
     }
 }

@@ -19,6 +19,8 @@
 package org.apache.axis.tools.maven.server;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +53,7 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 
-public abstract class AbstractStartProcessMojo extends AbstractServerMojo implements LogEnabled {
+public abstract class AbstractStartDaemonMojo extends AbstractDaemonControlMojo implements LogEnabled {
     /**
      * The maven project.
      *
@@ -171,14 +173,10 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
     
     private Logger logger;
     
-    public void enableLogging(Logger logger) {
+    public final void enableLogging(Logger logger) {
         this.logger = logger;
     }
     
-    protected boolean isDebug() {
-        return debug;
-    }
-
     protected final void addDependency(String groupId, String artifactId, String version) {
         additionalDependencies.add(artifactFactory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_TEST, "jar"));
         classpath = null;
@@ -244,7 +242,18 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
         return classpath;
     }
     
-    protected final void startJavaProcess(String description, String mainClass, String[] args, File workDir, ProcessControl processControl) throws MojoExecutionException, MojoFailureException {
+    private int allocatePort() throws MojoFailureException {
+        try {
+            ServerSocket ss = new ServerSocket(0);
+            int port = ss.getLocalPort();
+            ss.close();
+            return port;
+        } catch (IOException ex) {
+            throw new MojoFailureException("Failed to allocate port number", ex);
+        }
+    }
+    
+    protected final void startDaemon(String description, String daemonClass, String[] args, File workDir) throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
         // Locate java executable to use
@@ -258,6 +267,8 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
         if (log.isDebugEnabled()) {
             log.debug("Java executable: " + jvm);
         }
+        
+        int controlPort = allocatePort();
         
         // Get class path
         List classpath;
@@ -290,14 +301,16 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
         cmdline.add("-cp");
         cmdline.add(StringUtils.join(classpath.iterator(), File.pathSeparator));
         cmdline.addAll(vmArgs);
-        cmdline.add(mainClass);
+        cmdline.add("org.apache.axis.tools.daemon.Launcher");
+        cmdline.add(daemonClass);
+        cmdline.add(String.valueOf(controlPort));
         cmdline.addAll(Arrays.asList(args));
         try {
-            getProcessManager().startProcess(
+            getDaemonManager().startDaemon(
                     description,
                     (String[])cmdline.toArray(new String[cmdline.size()]),
                     workDir,
-                    processControl);
+                    controlPort);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }
@@ -306,4 +319,11 @@ public abstract class AbstractStartProcessMojo extends AbstractServerMojo implem
     private static void processVMArgs(List vmArgs, String args) {
         vmArgs.addAll(Arrays.asList(args.split(" ")));
     }
+
+    protected final void doExecute() throws MojoExecutionException, MojoFailureException {
+        addAxisDependency("daemon-launcher");
+        doStartDaemon();
+    }
+    
+    protected abstract void doStartDaemon() throws MojoExecutionException, MojoFailureException;
 }

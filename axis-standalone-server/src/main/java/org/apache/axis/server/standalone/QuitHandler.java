@@ -29,10 +29,13 @@ import org.apache.axis.utils.Admin;
 /**
  * Handler that looks for the {@link MessageContext#QUIT_REQUESTED} flag set by {@link Admin} and
  * initiates the shutdown procedure if the flag is set.
+ * <p>
+ * Note: this is an internal class that should not be used by application code.
  * 
  * @author Andreas Veithen
  */
-public class QuitHandler extends BasicHandler {
+// Must be public so that the Axis core can load it
+public final class QuitHandler extends BasicHandler {
     public static final String QUIT_LISTENER = QuitListener.class.getName();
     
     public void invoke(MessageContext msgContext) throws AxisFault {

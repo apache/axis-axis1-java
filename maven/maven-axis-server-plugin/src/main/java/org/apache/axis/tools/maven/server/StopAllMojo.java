@@ -27,10 +27,10 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal stop-all
  * @phase post-integration-test
  */
-public class StopAllMojo extends AbstractServerMojo {
+public class StopAllMojo extends AbstractDaemonControlMojo {
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
         try {
-            getProcessManager().stopAll();
+            getDaemonManager().stopAll();
         } catch (Exception ex) {
             throw new MojoFailureException("Errors occurred while attempting to stop processes", ex);
         }

@@ -41,10 +41,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis-rt-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>axis-model</artifactId>
             <version>${project.version}</version>
         </dependency>

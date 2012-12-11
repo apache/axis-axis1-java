@@ -27,7 +27,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.axis.client.AdminClient;
 import org.apache.axis.model.wsdd.Deployment;
 import org.apache.axis.model.wsdd.WSDDUtil;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -46,7 +45,7 @@ import org.xml.sax.InputSource;
  * @phase pre-integration-test
  * @requiresDependencyResolution test
  */
-public class StartServerMojo extends AbstractStartProcessMojo {
+public class StartServerMojo extends AbstractStartDaemonMojo {
     /**
      * @parameter default-value="${project.build.directory}/axis-server"
      * @required
@@ -114,7 +113,7 @@ public class StartServerMojo extends AbstractStartProcessMojo {
      */
     private int foregroundPort = -1;
     
-    protected void doExecute() throws MojoExecutionException, MojoFailureException {
+    protected void doStartDaemon() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         
         // Need to setup additional dependencies before building the default configuration!
@@ -209,15 +208,11 @@ public class StartServerMojo extends AbstractStartProcessMojo {
         args.add("-m");
         args.add(String.valueOf(maxSessions));
         try {
-            AdminClient adminClient = new AdminClient(true);
-            adminClient.setTargetEndpointAddress(new URL("http://localhost:" + actualPort + "/axis/services/AdminService"));
-            startJavaProcess(
+            startDaemon(
                     "Server on port " + actualPort,
-                    "org.apache.axis.server.standalone.StandaloneAxisServer",
+                    "org.apache.axis.server.standalone.daemon.AxisServerDaemon",
                     (String[])args.toArray(new String[args.size()]),
-                    workDir,
-                    new AxisServerProcessControl(actualPort, adminClient,
-                            isDebug() || foreground ? Integer.MAX_VALUE : 20000));
+                    workDir);
         } catch (Exception ex) {
             throw new MojoFailureException("Failed to start server", ex);
         }

@@ -27,8 +27,8 @@ import java.util.List;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
-public class DefaultProcessManager implements ProcessManager, LogEnabled {
-    private final List managedProcesses = new ArrayList();
+public class DefaultDaemonManager implements DaemonManager, LogEnabled {
+    private final List daemons = new ArrayList();
     
     private Logger logger;
     
@@ -36,44 +36,48 @@ public class DefaultProcessManager implements ProcessManager, LogEnabled {
         this.logger = logger;
     }
 
-    public void startProcess(String description, String[] cmdline, File workDir, ProcessControl processControl) throws Exception {
+    public void startDaemon(String description, String[] cmdline, File workDir, int controlPort) throws Exception {
         if (logger.isDebugEnabled()) {
             logger.debug("Starting process with command line: " + Arrays.asList(cmdline));
         }
         Process process = Runtime.getRuntime().exec(cmdline, null, workDir);
-        managedProcesses.add(new ManagedProcess(process, description, processControl));
+        RemoteDaemon daemon = new RemoteDaemon(process, description, controlPort);
+        daemons.add(daemon);
         new Thread(new StreamPump(process.getInputStream(), System.out)).start();
         new Thread(new StreamPump(process.getErrorStream(), System.err)).start();
-        processControl.initializeProcess(logger, process);
+        daemon.startDaemon(logger);
     }
     
     public void stopAll() throws Exception {
         Exception savedException = null;
-        for (Iterator it = managedProcesses.iterator(); it.hasNext(); ) {
-            ManagedProcess managedProcess = (ManagedProcess)it.next();
-            int result;
-            logger.debug("Executing stop action");
+        for (Iterator it = daemons.iterator(); it.hasNext(); ) {
+            RemoteDaemon daemon = (RemoteDaemon)it.next();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Stopping " + daemon.getDescription());
+            }
+            boolean success;
             try {
-                result = managedProcess.getProcessControl().shutdownProcess(logger);
+                daemon.stopDaemon(logger);
+                success = true;
             } catch (Exception ex) {
                 if (savedException == null) {
                     savedException = ex;
                 }
-                result = -1;
+                success = false;
             }
             if (logger.isDebugEnabled()) {
-                logger.debug("result = " + result);
+                logger.debug("success = " + success);
             }
-            if (result == ProcessControl.STOPPING) {
-                managedProcess.getProcess().waitFor();
+            if (success) {
+                daemon.getProcess().waitFor();
             } else {
-                managedProcess.getProcess().destroy();
+                daemon.getProcess().destroy();
             }
-            logger.info(managedProcess.getDescription() + " stopped");
+            logger.info(daemon.getDescription() + " stopped");
         }
         // TODO: need to clear the collection because the same ServerManager instance may be used by multiple projects in a reactor build;
         //       note that this means that the plugin is not thread safe (i.e. doesn't support parallel builds in Maven 3)
-        managedProcesses.clear();
+        daemons.clear();
         if (savedException != null) {
             throw savedException;
         }
