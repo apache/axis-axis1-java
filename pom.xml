@@ -57,6 +57,7 @@
     </mailingLists>
     <inceptionYear>2000</inceptionYear>
     <modules>
+        <module>apidocs</module>
         <module>axis</module>
         <module>axis-ant</module>
         <module>axis-codegen</module>
@@ -326,6 +327,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <!-- This serves two purposes:
+                      (1) we want to generate source JARs for all builds, not just release builds;
+                      (2) we need (some of) the source JARs to generate the Javadoc in the apidocs module. -->
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Use the same ID as in org.apache:apache; otherwise, the goal
+                             will be executed twice when the apache-release profile is
+                             activated -->
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -375,25 +396,6 @@
                             <!-- report>project-team</report -->
                             <report>scm</report>
                         </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8.1</version>
-                <inherited>false</inherited>
-                <reportSets>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                        <configuration>
-                            <source>1.4</source>
-                            <excludePackageNames>test.*:samples.*</excludePackageNames>
-                            <destDir>apiDocs</destDir>
-                        </configuration>
                     </reportSet>
                 </reportSets>
             </plugin>
