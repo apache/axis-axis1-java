@@ -27,6 +27,8 @@
             <item name="axis-admin" href="axis-admin.html"/>
             <item name="axis-java2wsdl" href="axis-java2wsdl.html"/>
             <item name="axis-wsdl2java" href="axis-wsdl2java.html"/>
+            <item name="foreach" href="foreach.html"/>
+            <item name="runaxisfunctionaltests" href="runaxisfunctionaltests.html"/>
         </menu>
     </body>
 </project>

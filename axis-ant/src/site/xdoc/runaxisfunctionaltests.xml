@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Runaxisfunctionaltests Task</title>
+  </properties>
+  <body>
+
+<section name="Description">
+
+<p>Ant task for starting / stopping servers and running junit in the middle. Based on the Cactus org.apache.commons.cactus.ant package, heavily munged and cruftily dumped into one file.</p>
+<p><i>For Axis development; there is no support or stability associated with this task</i></p>
+
+</section>
+
+<section name="Parameters">
+
+<table>
+  <tr>
+    <th>Attribute</th>
+    <th>Description</th>
+    <th>Type</th>
+  </tr>
+  <tr>
+    <td>httpservertarget</td>
+    <td>Sets the target to call to start server 2.</td>
+    <td>java.lang.String</td>
+  </tr>
+  <tr>
+    <td>httpstoptarget</td>
+    <td>Sets the stop target. This is the target which does a HTTP admin shutdown on the simple server.</td>
+    <td>java.lang.String</td>
+  </tr>
+  <tr>
+    <td>tcpservertarget</td>
+    <td>Sets the target to call to start server 1.</td>
+    <td>java.lang.String</td>
+  </tr>
+  <tr>
+    <td>testtarget</td>
+    <td>Sets the target to call to run the tests.</td>
+    <td>java.lang.String</td>
+  </tr>
+  <tr>
+    <td>url</td>
+    <td>Sets the target URL (just http://host:port)</td>
+    <td>java.lang.String</td>
+  </tr>
+</table>
+
+</section>
+
+  </body>
+</document>

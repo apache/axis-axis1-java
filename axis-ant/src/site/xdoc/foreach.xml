@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Foreach Task</title>
+  </properties>
+  <body>
+
+<section name="Description">
+
+<p>Call a target foreach entry in a set of parameters based on a fileset.</p>
+<p><i>For Axis development; there is no support or stability associated with this task</i></p>
+<source>&lt;target name="target1"&gt;
+      &lt;foreach target="target2"&gt;
+        &lt;param name="param1"&gt;
+            &lt;fileset refid="fset1"/&gt;
+        &lt;/param&gt;
+        &lt;param name="param2"&gt;
+          &lt;item value="jar" /&gt;
+          &lt;item value="zip" /&gt;
+        &lt;/param&gt;
+       &lt;/foreach&gt;
+    &lt;/target&gt;
+
+    &lt;target name="target2"&gt;
+      &lt;echo message="prop is ${param1}.${param2}" /&gt;
+    &lt;/target&gt;</source>
+<p>Really this just a wrapper around "AntCall"<br/>
+                Added a "type" attribute that works precisely like
+                its equivalent in <CODE>ExecuteOn</CODE>. It allows
+                the user to specify whether directories, files, or
+                both directories and files from the filesets are
+                included as entries in the parameter set.</p>
+
+</section>
+
+<section name="Parameters">
+
+<table>
+  <tr>
+    <th>Attribute</th>
+    <th>Description</th>
+    <th>Type</th>
+  </tr>
+  <tr>
+    <td>fork</td>
+    <td>If true, forks the ant invocation.</td>
+    <td>boolean</td>
+  </tr>
+  <tr>
+    <td>inheritall</td>
+    <td>If true, pass all properties to the new Ant project. Defaults to true.</td>
+    <td>boolean</td>
+  </tr>
+  <tr>
+    <td>inheritrefs</td>
+    <td>If true, pass all references to the new Ant project. Defaults to false</td>
+    <td>boolean</td>
+  </tr>
+  <tr>
+    <td>target</td>
+    <td>Target to execute, required.</td>
+    <td>java.lang.String</td>
+  </tr>
+  <tr>
+    <td>verbose</td>
+    <td>Enable verbose output when signing ; optional: default false</td>
+    <td>boolean</td>
+  </tr>
+</table>
+
+</section>
+
+<section name="Parameters as nested elements">
+
+<p>param (org.apache.axis.tools.ant.foreach.ParamSet)<br/></p>
+
+</section>
+
+  </body>
+</document>
