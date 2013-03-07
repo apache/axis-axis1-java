@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>SOAPMonitor User's Guide</title>
+  </properties>
+  <body>
+
+<section name="Table of Contents">
+
+<macro name="toc"/>
+
+</section>
+
+<section name="Introduction">
+
+<p>Web service developers often have the need to see the SOAP messages being used to invoke web services along with the results of those messages. The goal of the SOAP Monitor utility is to provide a way for these developers to monitor the SOAP messages being used without requiring any special configuration or restarting of the server.</p>
+
+<subsection name="What is SOAPMonitor ?">
+
+<p>It's a utility what can be found in the org.apache.axis.utils package. It provides the monitoring capability described above to Web service developers.</p>
+
+</subsection>
+
+<subsection name="When should I use it ?">
+<p>It's a good opportunity for using this utility that you hope to monitor the SOAP messages for debugging. You can see all SOAP messages of what you want to monitor without any additional developments, special configurations or restarting of the application server.</p>
+<p><b>Please note that it doesn't display any protocol specific data such as HTTP protocol headers. If you need to do this, you should use the TCP Monitor (tcpmon). Please see the <a href="user-guide.html">Axis User's Guide</a> for details on tcpmon</b>.</p>
+
+</subsection>
+
+</section>
+
+<section name="Usage">
+
+<subsection name="Preparation">
+
+<ul>
+  <li><b>step 1:</b> Create an account for the administrator
+    <p>Open and edit the "webapps/axis/WEB-INF/users.lst".<br/>
+      The default account for administrator is "admin", set a password to anything you want.</p>
+    <p>ex.) Like as follows; -  i.e. "admin password".</p>
+    <source>user1 pass1
+user2
+user3 pass3
+admin password</source>
+  </li>
+
+  <li><b>step 2:</b> Setting CLASSPATH
+    <p>Before running this utility, you'll need to make sure that your CLASSPATH includes:</p>
+    <ul>
+      <li>axis.jar</li>
+      <li>jaxrpc.jar</li>
+      <li>saaj.jar</li>
+      <li>commons-logging.jar</li>
+      <li>commons-discovery.jar</li>
+      <li>activation.jar</li>
+      <li>mail.jar</li>
+      <li>A JAXP-1.1 compliant XML parser such as Xerces or Crimson</li>
+    </ul>
+  </li>
+  
+  <li><b>That's all.</b></li>
+</ul>
+
+</subsection>
+
+<subsection name="How to use it ?">
+
+<ul>
+  <li><b>step 0:</b> Make sure you have completed <a href="#prepare">the preparation phase.</a></li>
+
+  <li><b>step 1:</b> Start the SOAPMonitor application.
+    <p><code>% java org.apache.axis.utils.SOAPMonitor [-u admin] [-w password] [-l axisURL]</code></p>
+    <p>or</p>
+    <p><code>% javaw org.apache.axis.utils.SOAPMonitor [-u admin] [-w password] [-l axisURL]</code></p>
+  </li>
+
+  <li><b>step 2:</b> Login
+    <p>Try login with the account which you specified as an administrator.</p>
+    <p><img src="images/LoginDialog.jpg"/></p>
+  </li>
+
+  <li><b>step 3:</b> Please wait for a while.
+    <p><img src="images/DataLoading.jpg" width="400"/></p>
+  </li>
+
+  <li><b>step 4:</b> Administration screen will be displayed
+    <p><img src="images/InitialScreen.jpg"/></p>
+  </li>
+
+  <li><b>step 5-a:</b> To enable monitoring
+    <p>Click services to enable monitoring, then push "Turn On" button.</p>
+    <p><img src="images/ToEnableMonitoring.jpg"/></p>
+    <p>The following screen should be displayed.</p>
+    <p><img src="images/AfterTurnOn.jpg"/></p>
+  </li>
+
+  <li><b>step 5-b:</b> To disable monitoring
+    <p>Click services to disable monitoring, then push "Turn Off" button.</p>
+    <p><img src="images/ToDisableMonitoring.jpg"/></p>
+    <p>The following screen should be displayed.</p>
+    <p><img src="images/AfterTurnOff.jpg"/></p>
+  </li>
+
+  <li><b>step 6:</b> Save changes
+    <p>Push "Save changes" button to save the current state.</p>
+    <p>The following screen should be displayed.</p>
+    <p><img src="images/DeployStatus.jpg"/></p>
+  </li>
+
+  <li><b>step 7:</b> Monitoring
+    <p>Push "Monitoring" tab to start monitoring with the current settings.</p>
+    <p>The following screen should be displayed.</p>
+    <p><img src="images/MonitoringScreen.jpg"/></p>
+  </li>
+</ul>
+
+</subsection>
+
+</section>
+
+<section name="Appendixes">
+
+<subsection name="Version comparison chart">
+
+<table>
+  <tr>
+    <th>Item</th>
+    <th>SOAPMonitorApplet(Old version)</th>
+    <th>SOAPMonitor(<a href="http://cvs.apache.org/viewcvs.cgi/ws-axis/java/src/org/apache/axis/utils/SOAPMonitor.java?view=markup">This version</a>)</th>
+  </tr>
+  <tr>
+    <td>App Type</td>
+    <td>Applet</td>
+    <td>Swing application</td>
+  </tr>
+  <tr>
+    <td>Security</td>
+    <td>N/A (No authentication)</td>
+    <td>OK (Authentication added)</td>
+  </tr>
+  <tr>
+    <td>Install &amp; Use</td>
+    <td>
+      <ol>
+        <li>Compile the component, at first</li>
+        <li>Deploy the soapmonitor handler to "server-config.wsdd"</li>
+        <li>Deploy a service which to be monitored with the soapmonitor handler</li>
+        <li>Have an access to "http://localhost:8080/axis/SOAPMonitor"</li>
+        <li>Redeploy the service with no soapmonitor to disable monitoring</li>
+      </ol>
+      <ul>
+        <li>More detail is <a href="http://www.sosnoski.com/presents/java-xml/axis/axis-monitor.html">here</a>.</li>
+        <li>All of steps are the non-GUI based operations and these process are complicated for users</li>
+      </ul>
+    </td>
+    <td>Just do "java org.apache.axis.utils.SOAPMonitor" (within the axis.jar)
+       <ul>
+         <li>All of steps are the GUI based operations</li>
+       </ul>
+    </td>
+  </tr>
+</table>
+
+</subsection>
+
+<subsection name="Error Messages">
+
+<p>You may meet the following screens, if you have an access denied.</p>
+
+<ul>
+  <li><b>In case of "Unknown host":</b>
+    <p><img src="images/UnknownHost.jpg"/></p>
+  </li>
+  <li><b>In case of "Port mismatch":</b>
+    <p><img src="images/ConnectionRefused.jpg"/></p>
+  </li>
+  <li><b>In case of "Authorization failure":</b>
+    <p><img src="images/Unauthorized.jpg"/></p>
+  </li>
+</ul>
+
+</subsection>
+
+</section>
+
+  </body>
+</document>
