@@ -1,0 +1,38 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements. See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership. The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License. You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied. See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+           ----------------------
+           Guide to building Axis
+           ----------------------
+  
+  The current Axis trunk uses {{{http://maven.apache.org/}Maven 3}} and the build is fully automated.
+  To build Axis, first check out the sources from SVN:
+
+---------------------------------------------------------
+svn checkout https://svn.apache.org/repos/asf/axis/axis1/java/trunk axis
+---------------------------------------------------------
+
+  Then change to the <<<axis>>> directory and execute the Maven build:
+  
+---------------------------------------------------------
+mvn clean install
+---------------------------------------------------------
+
+  At the time of writing, the Axis build requires at least Maven 3.0.4 and Java 1.5. The build
+  is configured to fail early if an incompatible Maven or Java version is detected.
+  Note that the compatibility of the produced artifacts with Java 1.4 is enforced using the
+  {{{http://mojo.codehaus.org/animal-sniffer-maven-plugin/}Animal Sniffer Plugin}}.
