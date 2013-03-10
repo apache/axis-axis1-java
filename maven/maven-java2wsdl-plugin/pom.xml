@@ -27,7 +27,7 @@
     </parent>
     <artifactId>maven-java2wsdl-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Axis :: Maven :: maven-java2wsdl-plugin</name>
+    <name>maven-java2wsdl-plugin</name>
     <description>
         Axis java2wsdl Maven plugin.
     </description>

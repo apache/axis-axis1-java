@@ -27,7 +27,7 @@
     </parent>
     <artifactId>maven-axis-server-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Axis :: Maven :: maven-axis-server-plugin</name>
+    <name>maven-axis-server-plugin</name>
     <description>
         Axis server Maven plugin.
     </description>

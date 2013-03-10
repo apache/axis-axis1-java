@@ -28,13 +28,7 @@
     <artifactId>axis</artifactId>
     <name>Axis Uber-JAR</name>
     <description>Uber-JAR containing the same packages as the corresponding JAR from Axis 1.4. For compatibility only.</description>
-    <url>${baseUrl}/core</url>
-    <distributionManagement>
-        <site>
-            <id>axis</id>
-            <url>${baseSiteUrl}/core</url>
-        </site>
-    </distributionManagement>
+    <url>${baseUrl}</url>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -99,6 +93,13 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
             </plugin>
         </plugins>
     </build>

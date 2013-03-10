@@ -20,7 +20,7 @@
 <project name="Ant tasks">
     <body>
         <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
+            <item name="Introduction" href="ant.html"/>
             <item name="Dependencies" href="dependencies.html"/>
         </menu>
         <menu name="Tasks">

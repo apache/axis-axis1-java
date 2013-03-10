@@ -72,7 +72,7 @@
             <item name="Reading Guide" href="reading.html"/>
         </menu>
         <menu name="More...">
-            <item name="Ant tasks" href="ant/index.html"/>
+            <item name="Ant tasks" href="ant/ant.html"/>
             <item name="Maven plugins" href="maven/index.html"/>
             <item name="Castor support" href="castor/index.html"/>
             <item name="JMS transport" href="transports/jms/index.html"/>

@@ -26,7 +26,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>maven</artifactId>
-    <name>Axis :: Maven</name>
+    <name>Axis Maven Plugins</name>
     <packaging>pom</packaging>
     <description>
         Root POM for the Axis Maven plugins.
