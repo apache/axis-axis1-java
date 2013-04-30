@@ -26,7 +26,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>axis-rt-transport-http-javanet</artifactId>
-    <name>Axis :: java.net HTTP Transport</name>
+    <name>java.net HTTP Transport</name>
     <description>
     	An alternative HTTP transport that uses the java.net.HttpURLConnection API. This transport only works with Java 1.5.
     </description>
@@ -232,6 +232,7 @@
                     <reportSet>
                         <reports>
                             <report>index</report>
+                            <report>summary</report>
                             <report>dependencies</report>
                         </reports>
                     </reportSet>

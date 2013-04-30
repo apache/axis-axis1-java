@@ -27,6 +27,13 @@
     </parent>
     <artifactId>axis-rt-databinding-xmlbeans</artifactId>
     <name>XmlBeans Databinding</name>
+    <url>${baseUrl}/xmlbeans</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/xmlbeans</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -55,4 +62,21 @@
             </plugin>        
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>dependencies</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

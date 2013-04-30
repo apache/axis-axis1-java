@@ -17,11 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="java.net HTTP transport">
+<project>
     <body>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-            <item name="Dependencies" href="dependencies.html"/>
-        </menu>
+        <menu ref="reports"/>
     </body>
 </project>

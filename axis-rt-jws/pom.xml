@@ -27,6 +27,13 @@
     </parent>
     <artifactId>axis-rt-jws</artifactId>
     <name>JWS Support</name>
+    <url>${baseUrl}/jws</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/jws</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -34,4 +41,21 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>dependencies</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

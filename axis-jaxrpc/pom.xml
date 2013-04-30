@@ -26,7 +26,15 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>axis-jaxrpc</artifactId>
-    <name>Axis :: JAX-RPC</name>
+    <name>JAX-RPC API</name>
+    <description>Contains the JAX-RPC 1.1 API</description>
+    <url>${baseUrl}/jaxrpc</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/jaxrpc</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -58,13 +66,23 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <skipDeploy>true</skipDeploy>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>dependencies</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

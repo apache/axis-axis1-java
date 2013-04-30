@@ -58,6 +58,7 @@
                     <reportSet>
                         <reports>
                             <report>index</report>
+                            <report>summary</report>
                             <report>dependencies</report>
                         </reports>
                     </reportSet>

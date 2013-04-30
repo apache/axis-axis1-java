@@ -17,7 +17,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="Ant tasks">
+<project>
     <body>
         <menu name="Overview">
             <item name="Introduction" href="ant.html"/>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Artifacts and dependencies</title>
+    </properties>
+    <body>
+        <section name="Artifacts and dependencies">
+            <p>
+                Axis 1.4 was packaged into four JAR artifacts: <tt>axis-saaj</tt>, <tt>axis-jaxrpc</tt>, <tt>axis</tt> and <tt>axis-ant</tt>
+                (respectively named <tt>saaj.jar</tt>, <tt>jaxrpc.jar</tt>, <tt>axis.jar</tt> and <tt>axis-ant.jar</tt> in the
+                Axis 1.4 binary distribution).
+                In Axis 1.4.1, the <tt>axis</tt> JAR has been split into several smaller artifacts. This reduces the volume of
+                code that needs to be added to the dependencies of an Axis based project and makes dependency management easier (provided
+                that the project is built using Maven or a tool that can access Maven repositories). It also makes security auditing easier:
+                e.g. the <tt>axis</tt> artifact contains the code for the SOAP monitor, which may be considered as a security risk if it is not properly
+                disabled in production systems.
+            </p>
+            <p>
+                Nevertheless, Axis 1.4.1 also contains an all-in-one <tt>axis</tt> JAR that contains the same components
+                as in Axis 1.4. This can be used as a drop-in replacement for the <tt>axis.jar</tt> from earlier versions,
+                although it is strongly recommended to use the new modularized artifacts.
+                The table below shows the relationships between the new modularized artifacts and the all-in-one JAR in Axis 1.4.1,
+                and the artifacts included in Axis 1.4.
+                Note that new components introduced in Axis 1.4.1 are not included in the all-in-one JAR.
+            </p>
+            <p>
+                To see the dependencies of an artifact, click on the artifact's name.
+            </p>
+            <table class="table table-bordered" style="width: auto">
+                <col width="25%"/>
+                <col width="25%"/>
+                <col width="25%"/>
+                <col width="25%"/>
+                <thead>
+                    <tr>
+                        <td rowspan="2"></td>
+                        <td style="text-align: center; vertical-align:middle" rowspan="2">Axis 1.4</td>
+                        <td style="text-align: center" colspan="2">Axis 1.4.1</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">All-in-one</td>
+                        <td style="text-align: center">Modularized</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SAAJ API</td>
+                        <td style="text-align: center" colspan="3"><a href="saaj/dependencies.html">axis-saaj</a></td>
+                    </tr>
+                    <tr>
+                        <td>JAX-RPC API</td>
+                        <td style="text-align: center" colspan="3"><a href="jaxrpc/dependencies.html">axis-jaxrpc</a></td>
+                    </tr>
+                    <tr>
+                        <td>Runtime Core</td>
+                        <td style="text-align: center; vertical-align:middle" colspan="2" rowspan="14">axis</td>
+                        <td style="text-align: center"><a href="core/dependencies.html">axis-rt-core</a></td>
+                    </tr>
+                    <tr>
+                        <td>Castor Databinding</td>
+                        <td style="text-align: center"><a href="castor/dependencies.html">axis-rt-databinding-castor</a></td>
+                    </tr>
+                    <tr>
+                        <td>XmlBeans Databinding</td>
+                        <td style="text-align: center"><a href="xmlbeans/dependencies.html">axis-rt-databinding-xmlbeans</a></td>
+                    </tr>
+                    <tr>
+                        <td>JWS Support</td>
+                        <td style="text-align: center"><a href="jws/dependencies.html">axis-rt-jws</a></td>
+                    </tr>
+                    <tr>
+                        <td>JMX Support</td>
+                        <td style="text-align: center"><a href="jmx/dependencies.html">axis-rt-management</a></td>
+                    </tr>
+                    <tr>
+                        <td>BSF Provider</td>
+                        <td style="text-align: center"><a href="bsf/dependencies.html">axis-rt-provider-bsf</a></td>
+                    </tr>
+                    <tr>
+                        <td>JMS Transport</td>
+                        <td style="text-align: center"><a href="transports/jms/dependencies.html">axis-rt-transport-jms</a></td>
+                    </tr>
+                    <tr>
+                        <td>HttpClient 3 Transport</td>
+                        <td style="text-align: center"><a href="transports/http-hc3/dependencies.html">axis-rt-transport-http-hc3</a></td>
+                    </tr>
+                    <tr>
+                        <td>Mail Transport</td>
+                        <td style="text-align: center"><a href="transports/mail/dependencies.html">axis-rt-transport-mail</a></td>
+                    </tr>
+                    <tr>
+                        <td>Code Generator</td>
+                        <td style="text-align: center"><a href="codegen/dependencies.html">axis-codegen</a></td>
+                    </tr>
+                    <tr>
+                        <td>Command Line Tools</td>
+                        <td style="text-align: center"><a href="tools/dependencies.html">axis-tools</a></td>
+                    </tr>
+                    <tr>
+                        <td>SOAP Monitor Handler/Service</td>
+                        <td style="text-align: center"><a href="soapmonitor/runtime/dependencies.html">axis-rt-soapmonitor</a></td>
+                    </tr>
+                    <tr>
+                        <td>TCP Monitor</td>
+                        <td style="text-align: center"><a href="tcpmon/dependencies.html">tcpmon</a></td>
+                    </tr>
+                    <tr>
+                        <td>Compatibility Classes</td>
+                        <td style="text-align: center"><a href="compat/dependencies.html">axis-rt-compat</a></td>
+                    </tr>
+                    <tr>
+                        <td>Ant Tasks</td>
+                        <td style="text-align: center" colspan="3"><a href="ant/dependencies.html">axis-ant</a></td>
+                    </tr>
+                    <tr>
+                        <td>Stand-alone Server</td>
+                        <td style="text-align: center">N/A</td>
+                        <td style="text-align: center" colspan="2"><a href="standalone-server/dependencies.html">axis-standalone-server</a></td>
+                    </tr>
+                    <tr>
+                        <td>java.net HTTP Transport</td>
+                        <td style="text-align: center">N/A</td>
+                        <td style="text-align: center" colspan="2"><a href="transports/http-javanet/dependencies.html">axis-rt-transport-http-javanet</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </body>
+</document>

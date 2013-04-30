@@ -26,7 +26,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>axis-standalone-server</artifactId>
-    <name>Axis :: Stand-alone server</name>
+    <name>Stand-alone Server</name>
     <description>
         A Jetty based stand-alone Axis server that replaces the former SimpleAxisServer.
     </description>
@@ -80,6 +80,7 @@
                     <reportSet>
                         <reports>
                             <report>index</report>
+                            <report>summary</report>
                             <report>dependencies</report>
                         </reports>
                     </reportSet>

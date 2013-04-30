@@ -79,13 +79,20 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
+                                    <include>${project.groupId}:axis-rt-compat</include>
                                     <include>${project.groupId}:axis-rt-core</include>
                                     <include>${project.groupId}:axis-rt-databinding-castor</include>
+                                    <include>${project.groupId}:axis-rt-databinding-xmlbeans</include>
+                                    <include>${project.groupId}:axis-rt-management</include>
                                     <include>${project.groupId}:axis-rt-jws</include>
                                     <include>${project.groupId}:axis-rt-provider-bsf</include>
+                                    <include>${project.groupId}:axis-rt-soapmonitor</include>
+                                    <include>${project.groupId}:axis-rt-transport-jms</include>
+                                    <include>${project.groupId}:axis-rt-transport-http-hc3</include>
                                     <include>${project.groupId}:axis-rt-transport-mail</include>
                                     <include>${project.groupId}:axis-codegen</include>
                                     <include>${project.groupId}:axis-tools</include>
+                                    <include>${project.groupId}:tcpmon</include>
                                 </includes>
                             </artifactSet>
                             <promoteTransitiveDependencies>true</promoteTransitiveDependencies>

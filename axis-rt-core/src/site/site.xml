@@ -19,9 +19,6 @@
   -->
 <project name="Core">
     <body>
-        <menu name="Reports">
-            <item name="Dependencies" href="dependencies.html"/>
-            <item name="JDepend" href="jdepend-report.html"/>
-        </menu>
+        <menu ref="reports"/>
     </body>
 </project>
