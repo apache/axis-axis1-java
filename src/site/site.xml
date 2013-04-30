@@ -21,13 +21,15 @@
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
-        <version>1.0</version>
+        <version>1.3.0</version>
     </skin>
     <publishDate format="yyyy-MM-dd" position="right"/>
     <version position="right"/>
     <custom>
         <fluidoSkin>
-            <searchEnabled>true</searchEnabled>
+            <googleSearch>
+                <sitesearch>ws.apache.org/axis/java</sitesearch>
+            </googleSearch>
         </fluidoSkin>
     </custom>
     <bannerRight>
