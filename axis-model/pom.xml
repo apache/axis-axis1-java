@@ -99,6 +99,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <!-- TODO: skipping for now -->
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

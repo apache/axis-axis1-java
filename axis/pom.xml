@@ -92,6 +92,7 @@
                                     <include>${project.groupId}:axis-rt-transport-mail</include>
                                     <include>${project.groupId}:axis-codegen</include>
                                     <include>${project.groupId}:axis-tools</include>
+                                    <include>${project.groupId}:soapmonitor-client</include>
                                     <include>${project.groupId}:tcpmon</include>
                                 </includes>
                             </artifactSet>

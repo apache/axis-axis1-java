@@ -27,6 +27,13 @@
     </parent>
     <artifactId>soapmonitor-client</artifactId>
     <name>SOAP Monitor Client</name>
+    <url>${baseUrl}/soapmonitor/client</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/soapmonitor/client</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

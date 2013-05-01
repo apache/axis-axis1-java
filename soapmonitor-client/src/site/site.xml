@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -17,21 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.apache.axis</groupId>
-        <artifactId>axis-project</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    <artifactId>soapmonitor-applet</artifactId>
-    <name>SOAP Monitor Applet</name>
-    <url>${baseUrl}/soapmonitor/applet</url>
-    <distributionManagement>
-        <site>
-            <id>axis</id>
-            <url>${baseSiteUrl}/soapmonitor/applet</url>
-        </site>
-    </distributionManagement>
+<project>
+    <body>
+        <menu ref="reports"/>
+    </body>
 </project>

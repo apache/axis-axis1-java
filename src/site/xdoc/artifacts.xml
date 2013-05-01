@@ -73,7 +73,7 @@
                     </tr>
                     <tr>
                         <td>Runtime Core</td>
-                        <td style="text-align: center; vertical-align:middle" colspan="2" rowspan="14">axis</td>
+                        <td style="text-align: center; vertical-align:middle" colspan="2" rowspan="15">axis</td>
                         <td style="text-align: center"><a href="core/dependencies.html">axis-rt-core</a></td>
                     </tr>
                     <tr>
@@ -121,6 +121,10 @@
                         <td style="text-align: center"><a href="soapmonitor/runtime/dependencies.html">axis-rt-soapmonitor</a></td>
                     </tr>
                     <tr>
+                        <td>SOAP Monitor Client</td>
+                        <td style="text-align: center"><a href="soapmonitor/client/dependencies.html">soapmonitor-client</a></td>
+                    </tr>
+                    <tr>
                         <td>TCP Monitor</td>
                         <td style="text-align: center"><a href="tcpmon/dependencies.html">tcpmon</a></td>
                     </tr>
@@ -133,13 +137,17 @@
                         <td style="text-align: center" colspan="3"><a href="ant/dependencies.html">axis-ant</a></td>
                     </tr>
                     <tr>
+                        <td>SOAP Monitor Applet</td>
+                        <td style="text-align: center">N/A (not included in any JAR)</td>
+                        <td style="text-align: center" colspan="2"><a href="soapmonitor/applet/dependencies.html">soapmonitor-applet</a></td>
+                    </tr>
+                    <tr>
                         <td>Stand-alone Server</td>
-                        <td style="text-align: center">N/A</td>
+                        <td style="text-align: center; vertical-align:middle" rowspan="2">N/A (added in Axis 1.4.1)</td>
                         <td style="text-align: center" colspan="2"><a href="standalone-server/dependencies.html">axis-standalone-server</a></td>
                     </tr>
                     <tr>
                         <td>java.net HTTP Transport</td>
-                        <td style="text-align: center">N/A</td>
                         <td style="text-align: center" colspan="2"><a href="transports/http-javanet/dependencies.html">axis-rt-transport-http-javanet</a></td>
                     </tr>
                 </tbody>
