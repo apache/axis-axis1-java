@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * 
+ * Generates a WSDL description from a Java class.
  * 
  * @goal generate-wsdl
  * @requiresDependencyResolution compile

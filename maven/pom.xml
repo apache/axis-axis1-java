@@ -76,12 +76,15 @@
     <build>
         <plugins>
             <plugin>
-                <!-- This overrides the set of reports just for this project (we don't want to
-                     generate the reports defined in the parent POM) -->
+                <!-- This overrides the set of reports (we don't want to generate the reports defined in the parent POM) -->
                 <artifactId>maven-site-plugin</artifactId>
-                <inherited>false</inherited>
                 <configuration>
                     <reportPlugins>
+                        <plugin>
+                            <!-- This will be ignored for this project, but executed in submodules -->
+                            <artifactId>maven-plugin-plugin</artifactId>
+                            <version>2.9</version>
+                        </plugin>
                         <plugin>
                             <artifactId>maven-project-info-reports-plugin</artifactId>
                             <version>2.6</version>
