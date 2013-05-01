@@ -1,0 +1,48 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements. See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership. The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License. You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied. See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+      -----
+      About
+      -----
+
+  Apache Axis\u2122 is a second generation SOAP engine, the successor to the Apache SOAP project,
+  itself based on the original SOAP4J code that IBM contributed to Apache in April 2000.
+  In contrast to its predecessor, Axis is fully WSDL aware. It also supports the JAX-RPC API.
+
+~~ Ref.: http://markmail.org/thread/qa7w2e6onva2sn5m
+
+  Today, Apache Axis is to a large extend superseded by a new generation of SOAP stacks
+  such as {{{http://axis.apache.org/axis2/java/core/}Apache Axis2}},
+  {{{http://cxf.apache.org/}Apache CXF}} and {{{http://metro.java.net/}Metro}}.
+  However, Axis is still relevant for the following type of projects:
+  
+    * Projects that need to use JAX-RPC. There are only two Open Source implementations
+      of that API: Axis and {{{http://java.net/projects/jax-rpc/}Sun's reference implementation}}.
+    
+    * Projects that need to consume or expose Web services that use SOAP encoding.
+      SOAP encoding has been deprecated and is no longer supported by modern Web service
+      frameworks. However, there are still legacy services that use type of encoding.
+    
+    * Existing projects that were built using Axis and for which the return on investment
+      of rewriting them using a modern Web service framework would be too low.
+
+  []
+  
+=====================
+
+  Apache Axis, Axis, Apache, the Apache feather logo, and the Apache Axis project logo are
+  trademarks of The Apache Software Foundation.
