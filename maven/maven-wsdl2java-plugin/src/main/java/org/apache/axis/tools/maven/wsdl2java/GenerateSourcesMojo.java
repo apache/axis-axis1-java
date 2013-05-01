@@ -39,7 +39,7 @@ public class GenerateSourcesMojo extends AbstractWsdl2JavaMojo {
     /**
      * Flag indicating whether the stub and locator should be written to
      * {@link #sourceOutputDirectory} (<code>false</code>) or to {@link #testSourceOutputDirectory}
-     * (<code>false</code>). Set this parameter to <code>true</code> if the main artifact of your
+     * (<code>true</code>). Set this parameter to <code>true</code> if the main artifact of your
      * project should not contain client-side code, but you need it in your test cases. Note that
      * this parameter is only meaningful if <code>generate</code> is set to <code>both</code>.
      * 
