@@ -367,6 +367,20 @@
                     </reportPlugins>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <!-- Required by maven-scm-publish-plugin -->
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>1.0-beta-2</version>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -427,8 +441,7 @@
     <properties>
         <javaVersion>1.4</javaVersion>
         <baseUrl>http://axis.apache.org/axis/java</baseUrl>
-        <!-- Dummy site URL to be able to use site:stage -->
-        <baseSiteUrl>dav:http://localhost/sites/axis</baseSiteUrl>
+        <baseSiteUrl>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis/java</baseSiteUrl>
     </properties>
     <distributionManagement>
         <site>
