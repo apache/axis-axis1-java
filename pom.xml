@@ -418,6 +418,9 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
