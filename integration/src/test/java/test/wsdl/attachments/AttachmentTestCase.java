@@ -56,6 +56,7 @@ public class AttachmentTestCase extends TestCase {
         getBinding().getCompanyInfo("IBM", result, docs, logo);
         assertEquals(134, (int)(result.value*10));
         assertEquals("IBM", docs.value);
+        assertNotNull(logo.value);
         assertEquals(24, logo.value.getWidth(null));
         assertEquals(24, logo.value.getHeight(null));
     }
