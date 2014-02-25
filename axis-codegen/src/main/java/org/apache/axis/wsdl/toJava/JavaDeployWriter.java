@@ -32,6 +32,7 @@ import org.apache.axis.model.wsdd.WSDDFactory;
 import org.apache.axis.model.wsdd.WSDDUtil;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.StringUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -39,7 +40,6 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;

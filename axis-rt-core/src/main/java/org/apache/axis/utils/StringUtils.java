@@ -19,6 +19,8 @@ package org.apache.axis.utils;
 import org.apache.axis.InternalException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.io.Writer;
 import java.io.IOException;
@@ -120,6 +122,30 @@ public class StringUtils {
         return (String[]) list.toArray(new String[list.size()]);
     }
 
+    /**
+     * Joins the elements of the provided collection into a single string using
+     * the given separator.
+     * 
+     * @param items
+     *            the collection of strings to join together
+     * @param separatorChar
+     *            the separator character to use
+     * @return the joined string
+     */
+    public static String join(Collection items, char separatorChar) {
+        StringBuffer buffer = new StringBuffer();
+        boolean first = true;
+        for (Iterator it = items.iterator(); it.hasNext(); ) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(separatorChar);
+            }
+            buffer.append((String)it.next());
+        }
+        return buffer.toString();
+    }
+    
     // Empty checks
     //-----------------------------------------------------------------------
     /**
