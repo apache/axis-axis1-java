@@ -345,7 +345,14 @@ public class Parser {
         }
 
         if (runnable.getFailure() != null) {
-            throw runnable.getFailure();
+            Throwable failure = runnable.getFailure();
+            if (failure instanceof Exception) {
+                throw (Exception)failure;
+            } else if (failure instanceof Error){
+                throw (Error)failure;
+            } else {
+                throw new Error(failure);
+            }
         }
     }    // run
 
@@ -363,7 +370,7 @@ public class Parser {
         private String wsdlURI;
 
         /** Field failure */
-        private Exception failure = null;
+        private Throwable failure = null;
 
         /**
          * Constructor WSDLRunnable
@@ -384,7 +391,7 @@ public class Parser {
             try {
                 symbolTable.populate(wsdlURI, username, password);
                 generate(symbolTable);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 failure = e;
             }
         }    // run
@@ -394,7 +401,7 @@ public class Parser {
          *
          * @return
          */
-        public Exception getFailure() {
+        public Throwable getFailure() {
             return failure;
         }    // getFailure
     }    // WSDLRunnable
