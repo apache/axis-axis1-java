@@ -17,23 +17,9 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.AxisFault;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 import samples.jaxm.DelayedStockQuote;
-
-import javax.xml.messaging.URLEndpoint;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
-import java.net.SocketException;
-
 
 /**
  * Test the JAX-RPC compliance samples.
@@ -76,32 +62,8 @@ public class TestJAXMSamples extends TestCase {
 //    } // testGetQuote
 
     public void testDelayedStockQuote() throws Exception {
-        try {
-            log.info("Testing JAXM DelayedStockQuote sample.");
-            DelayedStockQuote stockQuote = new DelayedStockQuote();
-            System.out.print("The last price for SUNW is " + stockQuote.getStockQuote("SUNW"));
-            log.info("Test complete.");
-        } catch (javax.xml.soap.SOAPException e) {
-            Throwable t = e.getCause();
-            if (t != null) {
-                t.printStackTrace();
-                if (t instanceof AxisFault) {
-                  AxisFault af = (AxisFault) t;
-                  if ((af.detail instanceof SocketException)
-							|| (af.getFaultCode().getLocalPart().equals("HTTP"))) {
-						System.out.println("Connect failure caused JAXM DelayedStockQuote to be skipped.");
-						return;
-					}
-                }
-                throw new Exception("Fault returned from test: " + t);
-            } else {
-                e.printStackTrace();
-                throw new Exception("Exception returned from test: " + e);
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new Exception("Fault returned from test: " + t);
-        }
+        DelayedStockQuote stockQuote = new DelayedStockQuote("http://localhost:" + System.getProperty("jetty.httpPort") + "/xmethods/delayed-quotes");
+        assertEquals("3.67", stockQuote.getStockQuote("SUNW"));
     } // testGetQuote
     
     public static void main(String args[]) throws Exception {

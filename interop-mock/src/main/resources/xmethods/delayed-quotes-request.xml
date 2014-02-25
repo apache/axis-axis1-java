@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <env:Body>
+    <ns:getQuote xmlns:ns="urn:xmethods-delayed-quotes">
+      <symbol>SUNW</symbol>
+    </ns:getQuote>
+  </env:Body>
+</env:Envelope>

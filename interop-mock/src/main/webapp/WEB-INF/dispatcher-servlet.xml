@@ -293,4 +293,17 @@
             </list>
         </property>
     </bean>
+    
+    <!-- Mock for XMethods stock quote service (http://64.124.140.30/soap) -->
+    
+    <bean name="/xmethods/delayed-quotes" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:xmethods/delayed-quotes-request.xml"/>
+                    <property name="response" value="classpath:xmethods/delayed-quotes-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
 </beans>

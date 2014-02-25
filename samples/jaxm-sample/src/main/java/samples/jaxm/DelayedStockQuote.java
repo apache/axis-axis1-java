@@ -30,6 +30,16 @@ import javax.xml.soap.SOAPPart;
 import java.util.Iterator;
 
 public class DelayedStockQuote {
+    private final String url;
+    
+    public DelayedStockQuote() {
+        this("http://64.124.140.30/soap");
+    }
+    
+    public DelayedStockQuote(String url) {
+        this.url = url;
+    }
+    
     public static void main(String[] args) throws Exception {
         DelayedStockQuote stockQuote = new DelayedStockQuote();
         System.out.print("The last price for SUNW is " + stockQuote.getStockQuote("SUNW"));
@@ -57,7 +67,7 @@ public class DelayedStockQuote {
         SOAPElement symbol = gltp.addChildElement(name);
         symbol.addTextNode(tickerSymbol);
 
-        URLEndpoint endpoint = new URLEndpoint("http://64.124.140.30/soap");
+        URLEndpoint endpoint = new URLEndpoint(url);
         SOAPMessage response = con.call(message, endpoint);
         con.close();
 

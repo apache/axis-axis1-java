@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <env:Body>
+    <ns:getQuoteResponse xmlns:ns="urn:xmethods-delayed-quotes" env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+      <Result xsi:type="xsd:float">3.67</Result>
+    </ns:getQuoteResponse>
+  </env:Body>
+</env:Envelope>
