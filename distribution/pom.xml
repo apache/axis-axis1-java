@@ -34,7 +34,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis-rt-core</artifactId>
+            <artifactId>axis</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -44,13 +44,17 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis-tools</artifactId>
+            <artifactId>axis-jaxrpc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis-standalone-server</artifactId>
+            <artifactId>axis-saaj</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -144,7 +148,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/axis-${project.version}/lib</outputDirectory>
-                            <includeArtifactIds>junit</includeArtifactIds>
+                            <includeArtifactIds>junit,mail</includeArtifactIds>
                             <skip>${skipTests}</skip>
                         </configuration>
                     </execution>

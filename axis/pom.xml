@@ -79,6 +79,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
+                                    <!-- Please keep src/site/xdoc/artifacts.xml in sync with this list -->
                                     <include>${project.groupId}:axis-rt-compat</include>
                                     <include>${project.groupId}:axis-rt-core</include>
                                     <include>${project.groupId}:axis-rt-databinding-castor</include>
@@ -90,6 +91,7 @@
                                     <include>${project.groupId}:axis-rt-transport-jms</include>
                                     <include>${project.groupId}:axis-rt-transport-http-hc3</include>
                                     <include>${project.groupId}:axis-rt-transport-mail</include>
+                                    <include>${project.groupId}:axis-model</include>
                                     <include>${project.groupId}:axis-codegen</include>
                                     <include>${project.groupId}:axis-tools</include>
                                     <include>${project.groupId}:soapmonitor-client</include>

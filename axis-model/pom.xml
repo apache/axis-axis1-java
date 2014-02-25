@@ -27,6 +27,13 @@
     </parent>
     <artifactId>axis-model</artifactId>
     <name>EMF Model for WSDD Files</name>
+    <url>${baseUrl}/model</url>
+    <distributionManagement>
+        <site>
+            <id>axis</id>
+            <url>${baseSiteUrl}/model</url>
+        </site>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -98,14 +105,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <!-- TODO: skipping for now -->
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <skipDeploy>true</skipDeploy>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -73,7 +73,7 @@
                     </tr>
                     <tr>
                         <td>Runtime Core</td>
-                        <td style="text-align: center; vertical-align:middle" colspan="2" rowspan="15">axis</td>
+                        <td style="text-align: center; vertical-align:middle" colspan="2" rowspan="16">axis</td>
                         <td style="text-align: center"><a href="core/dependencies.html">axis-rt-core</a></td>
                     </tr>
                     <tr>
@@ -107,6 +107,10 @@
                     <tr>
                         <td>Mail Transport</td>
                         <td style="text-align: center"><a href="transports/mail/dependencies.html">axis-rt-transport-mail</a></td>
+                    </tr>
+                    <tr>
+                        <td>EMF Models</td>
+                        <td style="text-align: center"><a href="model/dependencies.html">axis-model</a></td>
                     </tr>
                     <tr>
                         <td>Code Generator</td>

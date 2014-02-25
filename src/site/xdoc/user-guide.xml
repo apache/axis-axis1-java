@@ -120,17 +120,16 @@
 
 <p>See the <a href="install.html">Axis Installation Guide</a> for instructions on installing Axis as a web application on your J2EE server.</p>
 
-<p>Before running the examples in this guide, you'll need to make sure that your CLASSPATH includes (Note: If you build Axis from a CVS checkout, these will be in xml-axis/java/build/lib instead of axis-1_2/lib):</p>
+<p>Before running the examples in this guide, you'll need to make sure that your CLASSPATH includes the following elements from the Axis binary distribution:</p>
 
 <ul>
-  <li>axis-1_2/lib/axis.jar</li>
-  <li>axis-1_2/lib/jaxrpc.jar</li>
-  <li>axis-1_2/lib/saaj.jar</li>
-  <li>axis-1_2/lib/commons-logging.jar</li>
-  <li>axis-1_2/lib/commons-discovery.jar</li>
-  <li>axis-1_2/lib/wsdl4j.jar</li>
-  <li>axis-1_2/ <i>(for the sample code)</i></li>
-  <li>A JAXP-1.1 compliant XML parser such as Xerces or Crimson. We recommend <a href="http://xml.apache.org/xerces2-j/">Xerces</a>, as it is the one that the product has been tested against.</li>
+  <li>axis-<i>&lt;version></i>/lib/axis.jar</li>
+  <li>axis-<i>&lt;version></i>/lib/jaxrpc.jar</li>
+  <li>axis-<i>&lt;version></i>/lib/saaj.jar</li>
+  <li>axis-<i>&lt;version></i>/lib/commons-logging-<i>&lt;version></i>.jar</li>
+  <li>axis-<i>&lt;version></i>/lib/commons-discovery-<i>&lt;version></i>.jar</li>
+  <li>axis-<i>&lt;version></i>/lib/wsdl4j-<i>&lt;version></i>.jar</li>
+  <li>axis-<i>&lt;version></i>/ <i>(for the sample code)</i></li>
 </ul>
 
 </section>
