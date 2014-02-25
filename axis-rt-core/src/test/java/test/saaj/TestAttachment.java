@@ -50,8 +50,8 @@ public class TestAttachment extends junit.framework.TestCase {
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage msg = factory.createMessage();
-        java.net.URL url1 = new java.net.URL("http://slashdot.org/slashdot.xml");
-        java.net.URL url2 = new java.net.URL("http://www.apache.org/LICENSE.txt");
+        java.net.URL url1 = TestAttachment.class.getResource("slashdot.xml");
+        java.net.URL url2 = TestAttachment.class.getResource("LICENSE.txt");
 
         AttachmentPart a1 = msg.createAttachmentPart(new javax.activation.DataHandler(url1));
         a1.setContentType("text/xml");
