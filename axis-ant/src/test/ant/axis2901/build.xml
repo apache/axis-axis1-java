@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+    <mkdir dir="${project.build.directory}/work"/>
+    <wsdl2java url="src/test/wsdl/axis2901/sample.wsdl"
+               output="${project.build.directory}/work">
+      <mapping namespace="http://sample.com/URI" package="test.wsdl.axis2901.service"/>
+      <!-- This is essential: the issue occurs only if the two namespaces are mapped to the same package -->
+      <mapping namespace="http://com.sample.MyDetails.xsd" package="test.wsdl.axis2901"/>
+      <mapping namespace="http://com.sample.MyDetailsRequest.xsd" package="test.wsdl.axis2901"/>
+    </wsdl2java>
+  </target>
+</project>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:ns1="http://com.sample.MyDetails.xsd" xmlns:tns="http://sample.com/URI" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://com.sample.MyDetailsRequest.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="Untitled" targetNamespace="http://sample.com/URI">
+    <wsdl:types>
+       
+        <xs:schema xmlns="http://com.sample.MyDetails.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://com.sample.MyDetails.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:element name="Name">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns1:FirstElement" minOccurs="0"/>
+                        <xs:element ref="ns1:SecondElement" minOccurs="0"/>
+                        <xs:element ref="ns1:ThirdElement" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="MyDetails">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns1:Name" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="FirstElement" type="xs:string"/>
+            <xs:element name="SecondElement" type="xs:string"/>
+            <xs:element name="ThirdElement" type="xs:string"/>
+        </xs:schema>
+        <xs:schema xmlns="http://com.sample.MyDetailsRequest.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://com.sample.MyDetailsRequest.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:element name="MyRequestDetails">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:Names" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Names">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:FirstElement"/>
+                        <xs:element ref="ns0:SecondElement"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="FirstElement" type="xs:string"/>
+            <xs:element name="SecondElement" type="xs:string"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="GetXXsProcess">
+        <wsdl:port name="GetXXsProcess" binding="tns:GetXXsProcessBinding">
+            <soap:address location="http://com.sample/service"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="MyDetailsService">
+        <wsdl:operation name="MyOperation">
+            <wsdl:input message="tns:MyRequest"/>
+            <wsdl:output message="tns:MyResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="GetXXsProcessBinding" type="tns:MyDetailsService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="MyOperation">
+            <soap:operation style="document" soapAction="/Action/GetXXsProcess"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="MyRequestParameter"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="MyResponseParameter"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="MyRequest">
+        <wsdl:part name="MyRequestParameter" element="ns0:MyRequestDetails"/>
+    </wsdl:message>
+    <wsdl:message name="MyResponse">
+        <wsdl:part name="MyResponseParameter" element="ns1:MyDetails"/>
+    </wsdl:message>
+   
+</wsdl:definitions>

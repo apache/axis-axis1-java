@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:mycompany:/crCarl/TransformServiceWithURL" xmlns:tns="urn:mycompany:/crCarl/TransformServiceWithURL" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns1="http://www.example.org/NewXMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <schema targetNamespace="http://www.example.org/NewXMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.example.org/NewXMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<xsd:simpleType name="URL">
+<xsd:restriction base="string">
+<xsd:maxLength value="1024"/>
+</xsd:restriction>
+</xsd:simpleType>   
+
+<xsd:simpleType name="URL_Type">
+<xsd:restriction base="tns:URL"/>
+</xsd:simpleType>
+
+<xsd:element name="URL" type="tns:URL_Type"/>
+
+<xsd:complexType name="ContactInfo_Type">
+<xsd:sequence>
+<xsd:element minOccurs="0" ref="tns:URL"/>
+</xsd:sequence>
+</xsd:complexType>
+
+
+</schema>
+  </wsdl:types>
+  <wsdl:message name="transformTransformServiceWithURLRequest">
+    <wsdl:part name="NewXMLSchema" element="tns1:URL"/>
+  </wsdl:message>
+  <wsdl:message name="transformTransformServiceWithURLResponse">
+    <wsdl:part name="NewXMLSchema2" element="tns1:URL"/>
+  </wsdl:message>
+  <wsdl:portType name="TransformServiceWithURL">
+    <wsdl:operation name="transformTransformServiceWithURL">
+      <wsdl:input name="transformTransformServiceWithURLRequest" message="tns:transformTransformServiceWithURLRequest"/>
+      <wsdl:output name="transformTransformServiceWithURLResponse" message="tns:transformTransformServiceWithURLResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TransformServiceWithURLHTTP_Binding" type="tns:TransformServiceWithURL">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="transformTransformServiceWithURL">
+      <soap:operation soapAction="urn:mycompany:/crCarl/TransformServiceWithURL/TransformServiceWithURL/transformTransformServiceWithURLRequest#"/>
+      <wsdl:input name="transformTransformServiceWithURLRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="transformTransformServiceWithURLResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TransformServiceWithURL">
+    <wsdl:port name="TransformServiceWithURL_SOAP_HTTP_Port" binding="tns:TransformServiceWithURLHTTP_Binding">
+      <soap:address location="http://DANIELVA.sybase.com:8080/TransformServiceWithURL/services/SOAPHandler/HTTPTransport/urn~3Amycompany~3A/crCarl/TransformServiceWithURL/TransformServiceWithURL"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
