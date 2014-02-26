@@ -433,15 +433,6 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     }
 
     /**
-     * Get string representation.
-     * 
-     * @return 
-     */
-    public String toString() {
-        return toString("");
-    }
-
-    /**
      * Get string representation with indentation
      * 
      * @param indent 
