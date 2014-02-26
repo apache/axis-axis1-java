@@ -24,12 +24,8 @@ package test.wsdl.filegen;
 import test.AxisFileGenTestBase;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
-
 
 public class FileGenTestCase extends AxisFileGenTestBase {
     public FileGenTestCase(String name) {
@@ -50,14 +46,6 @@ public class FileGenTestCase extends AxisFileGenTestBase {
         return set;
     }
     
-    /**
-     * List of files which may or may not be generated.
-     */
-    protected Set mayExist() {
-        HashSet set = new HashSet();
-        return set;
-    }
-
     /**
      * The directory containing the files that should exist.
      */

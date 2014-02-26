@@ -24,7 +24,9 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AllOptionTestCase extends FileGenTestCase {
+import test.AxisFileGenTestBase;
+
+public class AllOptionTestCase extends AxisFileGenTestBase {
     public AllOptionTestCase(String name) {
         super(name);
     }

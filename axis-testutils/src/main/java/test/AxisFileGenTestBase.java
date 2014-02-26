@@ -17,8 +17,6 @@
 
 package test;
 
-import org.custommonkey.xmlunit.XMLTestCase;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -44,7 +42,15 @@ public abstract class AxisFileGenTestBase extends AxisTestBase {
         }
     }
 
-    abstract protected Set mayExist();
+    /**
+     * List of files which may or may not be generated. May be overridden by
+     * subclasses.
+     */
+    protected Set mayExist() {
+        HashSet set = new HashSet();
+        return set;
+    }
+
     abstract protected String rootDir();
     abstract protected Set shouldExist();
 
