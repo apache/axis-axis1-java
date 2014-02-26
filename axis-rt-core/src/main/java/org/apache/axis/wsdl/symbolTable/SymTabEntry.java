@@ -147,9 +147,10 @@ public abstract class SymTabEntry {
      */
     protected String toString(String indent) {
 
-        String string = indent + "QName:         " + qname + '\n' + indent
-                + "name:          " + name + '\n' + indent
-                + "isReferenced?  " + isReferenced + '\n';
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(indent).append("QName:         ").append(qname).append('\n');
+        buffer.append(indent).append("name:          ").append(name).append('\n');
+        buffer.append(indent).append("isReferenced?  ").append(isReferenced).append('\n');
         String prefix = indent + "dynamicVars:   ";
         Iterator entries = dynamicVars.entrySet().iterator();
 
@@ -157,10 +158,10 @@ public abstract class SymTabEntry {
             Map.Entry entry = (Map.Entry) entries.next();
             Object key = entry.getKey();
 
-            string += prefix + key + " = " + entry.getValue() + '\n';
+            buffer.append(prefix).append(key).append(" = ").append(entry.getValue()).append('\n');
             prefix = indent + "               ";
         }
 
-        return string;
+        return buffer.toString();
     }    // toString
 }    // abstract class SymTabEntry
