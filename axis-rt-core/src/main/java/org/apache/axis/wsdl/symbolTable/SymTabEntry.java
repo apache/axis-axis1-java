@@ -149,6 +149,7 @@ public abstract class SymTabEntry {
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(indent).append("QName:         ").append(qname).append('\n');
+        buffer.append(indent).append("Class:         ").append(this.getClass().getName()).append('\n'); 
         buffer.append(indent).append("name:          ").append(name).append('\n');
         buffer.append(indent).append("isReferenced?  ").append(isReferenced).append('\n');
         String prefix = indent + "dynamicVars:   ";
