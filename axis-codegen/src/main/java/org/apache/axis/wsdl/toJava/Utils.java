@@ -282,16 +282,13 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     public static boolean isFaultComplex(Message faultMessage,
                                          SymbolTable symbolTable) {
 
-        MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName());
-        Boolean ret =
-                (Boolean) me.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-
-        if (ret != null) {
-            return ret.booleanValue();
-        } else {
-            return false;
-        }
+        return isFaultComplex(symbolTable.getMessageEntry(faultMessage.getQName()));
     }    // isFaultComplex
+    
+    static boolean isFaultComplex(SymTabEntry entry) {
+        Boolean value = (Boolean) entry.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+        return value != null && value.booleanValue();
+    }
 
     /**
      * If the specified node represents a supported JAX-RPC enumeration,

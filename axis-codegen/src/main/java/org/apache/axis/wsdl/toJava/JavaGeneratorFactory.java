@@ -805,10 +805,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             } else {
 
                 // Complex Type Exception
-                Boolean isComplexFault = (Boolean) te.getDynamicVar(
-                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-
-                if ((isComplexFault == null) || !isComplexFault.booleanValue()) {
+                if (!Utils.isFaultComplex(te)) {
 
                     // Mark the type as a complex type fault
                     te.setDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT,
@@ -1153,8 +1150,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                 }                                                                
                                 
                                 // Appended Suffix for avoiding name collisions (JAX-RPC 1.1)
-                                Boolean isComplexTypeFault = (Boolean)entry.getDynamicVar(COMPLEX_TYPE_FAULT);
-                                if ((isComplexTypeFault != null) && isComplexTypeFault.booleanValue()) {
+                                boolean isComplexTypeFault = Utils.isFaultComplex(entry);
+                                if (isComplexTypeFault) {
                                     entry.setName(mangleName(entry.getName(), EXCEPTION_SUFFIX));
                                 } 
                                 else {
@@ -1173,13 +1170,12 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                 }           
                                 
                                 // Need to resolve a complex-type exception message.
-                                if ((isComplexTypeFault != null) && isComplexTypeFault.booleanValue()) {
+                                if (isComplexTypeFault) {
                                     // SHOULD update the exception class name of a referencing message entry.
                                     List messageEntries = symbolTable.getMessageEntries();
                                     for (int j = 0; j < messageEntries.size(); j++) {
                                         MessageEntry messageEntry = (MessageEntry)messageEntries.get(j);
-                                        Boolean isComplexTypeFaultMsg = (Boolean)messageEntry.getDynamicVar(COMPLEX_TYPE_FAULT);
-                                        if ((isComplexTypeFaultMsg != null) && (isComplexTypeFaultMsg.booleanValue())) {
+                                        if (Utils.isFaultComplex(messageEntry)) {
                                             QName exceptionDataType = (QName)messageEntry.getDynamicVar(EXCEPTION_DATA_TYPE);
                                             if (((TypeEntry)entry).getQName().equals(exceptionDataType)) {
                                                 String className = (String)messageEntry.getDynamicVar(EXCEPTION_CLASS_NAME);
@@ -1194,9 +1190,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         } else if (entry instanceof ServiceEntry) {
                             entry.setName(mangleName(entry.getName(), SERVICE_SUFFIX));
                         } else if (entry instanceof MessageEntry) {
-                            Boolean complexTypeFault = 
-                                (Boolean) entry.getDynamicVar(COMPLEX_TYPE_FAULT);
-                            if ((complexTypeFault == null) || !complexTypeFault.booleanValue()) {
+                            if (!Utils.isFaultComplex(entry)) {
                                 String exceptionClassName = (String) entry.getDynamicVar(EXCEPTION_CLASS_NAME);
                                 entry.setDynamicVar(EXCEPTION_CLASS_NAME, exceptionClassName + EXCEPTION_SUFFIX);
                             }                            

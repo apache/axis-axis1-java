@@ -160,10 +160,7 @@ public class JavaTypeWriter implements Generator {
         // If this complexType is referenced in a
         // fault context, emit a bean-like exception
         // class
-        Boolean isComplexFault = (Boolean) type.getDynamicVar(
-                JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-
-        if ((isComplexFault != null) && isComplexFault.booleanValue()) {
+        if (Utils.isFaultComplex(type)) {
 
             return new JavaBeanFaultWriter(emitter, type, elements, base,
                 attributes,

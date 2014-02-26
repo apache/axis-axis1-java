@@ -109,19 +109,8 @@ public class JavaDefinitionWriter implements Generator {
             // by JavaTypeWriter.
             MessageEntry me =
                     symbolTable.getMessageEntry(message.getQName());
-            boolean emitSimpleFault = true;
 
-            if (me != null) {
-                Boolean complexTypeFault = (Boolean) me.getDynamicVar(
-                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-
-                if ((complexTypeFault != null)
-                        && complexTypeFault.booleanValue()) {
-                    emitSimpleFault = false;
-                }
-            }
-
-            if (emitSimpleFault) {
+            if (me == null || !Utils.isFaultComplex(me)) {
                 try {
                     JavaFaultWriter writer = new JavaFaultWriter(emitter,
                             symbolTable, faultInfo);
