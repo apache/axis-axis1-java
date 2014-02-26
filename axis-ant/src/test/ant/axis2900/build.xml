@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<project>
+  <target name="test">
+    <mkdir dir="${project.build.directory}/work"/>
+    <wsdl2java url="src/test/wsdl/axis2900/sample.wsdl"
+               output="${project.build.directory}/work">
+      <mapping namespace="http://example.com" package="test.wsdl.axis2900"/>
+    </wsdl2java>
+  </target>
+</project>

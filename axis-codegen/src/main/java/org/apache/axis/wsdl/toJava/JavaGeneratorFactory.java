@@ -1008,7 +1008,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 if (v.elementAt(index) instanceof MessageEntry) {
                     // Need to resolve a Exception message.
                     MessageEntry msgEntry = (MessageEntry) v.elementAt(index);                    
-                    if (msgEntry.getDynamicVar(EXCEPTION_CLASS_NAME) == null) {
+                    // AXIS-2900: Only simple type faults generate additional classes; message entries for
+                    // complex type faults don't cause any collisions.
+                    if (Utils.isFaultComplex(msgEntry) || msgEntry.getDynamicVar(EXCEPTION_CLASS_NAME) == null) {
                         v.removeElementAt(index);
                     } else {                        
                         index++;
