@@ -1088,7 +1088,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         SymTabEntry entry = (SymTabEntry) v.elementAt(i);
 
                         if (entry instanceof Element) {
-                            entry.setName(mangleName(entry.getName(), ELEMENT_SUFFIX));
+                            mangleName(entry, ELEMENT_SUFFIX);
 
                             // If this global element was defined using
                             // an anonymous type, then need to change the
@@ -1153,12 +1153,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                 
                                 // Appended Suffix for avoiding name collisions (JAX-RPC 1.1)
                                 boolean isComplexTypeFault = Utils.isFaultComplex(entry);
-                                if (isComplexTypeFault) {
-                                    entry.setName(mangleName(entry.getName(), EXCEPTION_SUFFIX));
-                                } 
-                                else {
-                                    entry.setName(mangleName(entry.getName(), TYPE_SUFFIX));
-                                }
+                                mangleName(entry, isComplexTypeFault ? EXCEPTION_SUFFIX : TYPE_SUFFIX);
                                 
                                 // should update the class name of ElementEntry which references this type entry
                                 Map elementIndex = symbolTable.getElementIndex();
@@ -1188,9 +1183,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                 }
                             }
                         } else if (entry instanceof PortTypeEntry) {
-                            entry.setName(mangleName(entry.getName(), PORT_TYPE_SUFFIX));   // "_Port" --> "_PortType" for JAX-RPC 1.1
+                            mangleName(entry, PORT_TYPE_SUFFIX);   // "_Port" --> "_PortType" for JAX-RPC 1.1
                         } else if (entry instanceof ServiceEntry) {
-                            entry.setName(mangleName(entry.getName(), SERVICE_SUFFIX));
+                            mangleName(entry, SERVICE_SUFFIX);
                         } else if (entry instanceof MessageEntry) {
                             if (!Utils.isFaultComplex(entry)) {
                                 String exceptionClassName = (String) entry.getDynamicVar(EXCEPTION_CLASS_NAME);
@@ -1210,8 +1205,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             // named after the binding name, so there is the
                             // possibility of a name clash.
                             if (bEntry.hasLiteral()) {
-                                entry.setName(mangleName(entry.getName(),
-                                        BINDING_SUFFIX));
+                                mangleName(entry, BINDING_SUFFIX);
                             }
                         }
                     }
@@ -1221,24 +1215,28 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     }                                          // resolveNameClashes
 
     /**
-     * Change the indicated type name into a mangled form using the mangle string.
+     * Change the type name of the given symbol table entry into a mangled
+     * form using the given suffix.
      *
-     * @param name
-     * @param mangle
-     * @return
+     * @param entry
+     * @param suffix
      */
-    private String mangleName(String name, String mangle) {
+    private void mangleName(SymTabEntry entry, String suffix) {
+        String name = entry.getName();
 
         int index = name.indexOf("[");
 
+        String newName;
         if (index >= 0) {
             String pre = name.substring(0, index);
             String post = name.substring(index);
 
-            return pre + mangle + post;
+            newName = pre + suffix + post;
         } else {
-            return name + mangle;
+            newName = name + suffix;
         }
+        
+        entry.setName(newName);
     }
 
     /**
