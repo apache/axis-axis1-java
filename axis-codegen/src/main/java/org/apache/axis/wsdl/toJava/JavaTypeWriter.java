@@ -202,4 +202,8 @@ public class JavaTypeWriter implements Generator {
     protected Generator getHolderWriter(Emitter emitter, TypeEntry type) {
         return new JavaHolderWriter(emitter, type);
     }
+
+    public String toString() {
+        return "JavaTypeWriter[typeWriter=" + typeWriter + ",holderWriter=" + holderWriter + "]";
+    }
 }    // class JavaTypeWriter

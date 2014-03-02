@@ -64,7 +64,7 @@ import java.util.Vector;
  * This is Wsdl2java's implementation of the GeneratorFactory
  */
 public class JavaGeneratorFactory implements GeneratorFactory {
-    private static final Log log_ =
+    private static final Log log =
         LogFactory.getLog(JavaGeneratorFactory.class.getName());
 
     /** Field emitter */
@@ -450,6 +450,10 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 gen.generate();
             }
         }    // generate
+
+        public String toString() {
+            return "Writers[baseWriter=" + baseWriter + ",writers=" + writers + ",entry.name=" + (entry == null ? "N/A" : entry.getName()) + "]";
+        }
     }    // class Writers
 
     /**
@@ -459,6 +463,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @param generator
      */
     public void addGenerator(Class wsdlClass, Class generator) {
+        if (log.isDebugEnabled()) {
+            log.debug("Adding generator for " + wsdlClass.getName() + ": " + generator.getName());
+        }
 
         // This is just a hack right now... it just works with Service
         if (Message.class.isAssignableFrom(wsdlClass)) {
@@ -1237,6 +1244,10 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
         
         entry.setName(newName);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Symbol table of type " + entry.getClass().getName() + " mangled: " + name + " -> " + newName);
+        }
     }
 
     /**
@@ -1644,7 +1655,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             doInclude = true;
         }
         else {
-            log_.info(
+            log.info(
                 "excluding code generation for non-included QName:" + qName);
 
         }

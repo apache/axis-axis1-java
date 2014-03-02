@@ -15,8 +15,10 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.gen.Generator;
+import org.apache.commons.logging.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -76,6 +78,7 @@ import java.util.StringTokenizer;
  * </dl>
  */
 public abstract class JavaWriter implements Generator {
+    private static final Log log = LogFactory.getLog(JavaWriter.class.getName());
 
     /** This controls how many characters per line for javadoc comments */
     protected final static int LINE_LENGTH = 65;
@@ -121,6 +124,10 @@ public abstract class JavaWriter implements Generator {
             }
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Start generating file " + file);
+        }
+        
         PrintWriter pw = getPrintWriter(file);
 
         writeFileHeader(pw);
