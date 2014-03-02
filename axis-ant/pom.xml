@@ -61,6 +61,11 @@
             <artifactId>commons-io</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -76,8 +81,9 @@
                         </goals>
                         <configuration>
                             <target>
-                                <taskdef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask" classpathref="maven.compile.classpath" />
-                                <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask" classpathref="maven.compile.classpath" />
+                                <!-- TODO: be a bit more selective here: add maven.compile.classpath + log4j.jar + log4j.properties -->
+                                <taskdef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask" classpathref="maven.test.classpath" />
+                                <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask" classpathref="maven.test.classpath" />
                                 <!-- ant antfile="src/test/ant/axis2378/build.xml" target="test" inheritrefs="true" /-->
                                 <ant antfile="src/test/ant/axis2900/build.xml" target="test" inheritrefs="true" />
                                 <!-- ant antfile="src/test/ant/axis2901/build.xml" target="test" inheritrefs="true" /-->
