@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 import samples.jaxm.DelayedStockQuote;
+import samples.jaxm.UddiPing;
 
 /**
  * Test the JAX-RPC compliance samples.
@@ -31,35 +32,9 @@ public class TestJAXMSamples extends TestCase {
         super(name);
     } // ctor
 
-//    // This is timing out for some reason - removed for the nonce.
-//    // -- gdaniels, 4/21/2003
-//    public void testUddiPing() throws Exception {
-//        try {
-//            log.info("Testing JAXM UddiPing sample.");
-//            UddiPing.searchUDDI("IBM", "http://www-3.ibm.com/services/uddi/testregistry/inquiryapi");
-//            log.info("Test complete.");
-//        } catch (javax.xml.soap.SOAPException e) {
-//            Throwable t = e.getCause();
-//            if (t != null) {
-//                t.printStackTrace();
-//                if (t instanceof AxisFault) {
-//                    AxisFault af = (AxisFault) t;
-//                    if ((af.detail instanceof SocketException) ||
-//                        (af.getFaultCode().getLocalPart().equals("HTTP")) ) {
-//                        System.out.println("Connect failure caused JAXM UddiPing to be skipped.");
-//                        return;
-//                    }
-//                }
-//                throw new Exception("Fault returned from test: " + t);
-//            } else {
-//                e.printStackTrace();
-//                throw new Exception("Exception returned from test: " + e);
-//            }
-//        } catch (Throwable t) {
-//            t.printStackTrace();
-//            throw new Exception("Fault returned from test: " + t);
-//        }
-//    } // testGetQuote
+    public void testUddiPing() throws Exception {
+        UddiPing.searchUDDI("Microsoft", "http://localhost:" + System.getProperty("jetty.httpPort") + "/uddi_v1");
+    } // testGetQuote
 
     public void testDelayedStockQuote() throws Exception {
         DelayedStockQuote stockQuote = new DelayedStockQuote("http://localhost:" + System.getProperty("jetty.httpPort") + "/xmethods/delayed-quotes");

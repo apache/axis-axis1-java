@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'>
+    <Body>
+        <find_business generic="1.0" maxRows="100" xmlns="urn:uddi-org:api">
+            <name>Microsoft</name>
+        </find_business>
+    </Body>
+</Envelope>

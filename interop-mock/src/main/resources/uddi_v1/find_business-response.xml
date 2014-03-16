@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'>
+    <Body>
+        <businessList generic="1.0" operator="Microsoft Corporation" truncated="false" xmlns="urn:uddi-org:api">
+            <businessInfos>
+                <businessInfo businessKey="0076B468-EB27-42E5-AC09-9955CFF462A3">
+                    <name>Microsoft Corporation</name>
+                    <description xml:lang="en">Empowering people through great software - any time, any place and on any device.</description>
+                    <serviceInfos>
+                        <serviceInfo businessKey="0076B468-EB27-42E5-AC09-955CFF462A3" serviceKey="8BF2F51F-8ED4-43FE-B665-38D8205D1333">
+                            <name>Electronic Business Integration Services</name>
+                        </serviceInfo>
+                        <serviceInfo businessKey="0076B468-EB27-42E5-AC09-955CFF462A3" serviceKey="D2BC296A-723B-4C45-9ED4-494F9E53F1D1">
+                            <name>UDDI Web Services</name>
+                        </serviceInfo>
+                    </serviceInfos>
+                </businessInfo>
+            </businessInfos>
+        </businessList>
+    </Body>
+</Envelope>

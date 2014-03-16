@@ -306,4 +306,17 @@
             </list>
         </property>
     </bean>
+    
+    <!-- UDDI v1 mock -->
+    
+    <bean name="/uddi_v1" class="org.apache.axis.test.interop.mock.MockPostHandler">
+        <property name="exchanges">
+            <list>
+                <bean class="org.apache.axis.test.interop.mock.Exchange">
+                    <property name="request" value="classpath:uddi_v1/find_business-request.xml"/>
+                    <property name="response" value="classpath:uddi_v1/find_business-response.xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
 </beans>

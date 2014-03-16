@@ -1,0 +1,1 @@
+Request/response constructed from samples found on the Internet.
