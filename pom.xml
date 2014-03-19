@@ -155,6 +155,18 @@
     <prerequisites>
         <maven>3.0.3</maven>
     </prerequisites>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cloudbees-snapshot</id>
+            <url>http://repository-veithen.forge.cloudbees.com/snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
     <build>
         <pluginManagement>
             <plugins>
@@ -249,6 +261,11 @@
                 <plugin>
                     <artifactId>maven-eclipse-plugin</artifactId>
                     <version>2.9</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.veithen.filecheck</groupId>
+                    <artifactId>filecheck-maven-plugin</artifactId>
+                    <version>0.1-SNAPSHOT</version>
                 </plugin>
             </plugins>
         </pluginManagement>
