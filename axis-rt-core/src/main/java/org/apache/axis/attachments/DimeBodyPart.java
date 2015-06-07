@@ -322,48 +322,57 @@ public class DimeBodyPart {
     
         BufferedInputStream in = new BufferedInputStream(dh.getInputStream());
         
-        final int myChunkSize = dh.getChunkSize();
-        
-        byte[] buffer1 = new byte[myChunkSize]; 
-        byte[] buffer2 = new byte[myChunkSize]; 
-        
-        int bytesRead1 = 0 , bytesRead2 = 0;
-
-        bytesRead1 = in.read(buffer1);
-        
-        if(bytesRead1 < 0) {
-            sendHeader(os, position, 0, ONLY_CHUNK);
-            os.write(pad, 0, dimePadding(0));
-            return;
-        }
-        byte chunkbyte = CHUNK;
-        do {
-            bytesRead2 = in.read(buffer2);
+        try {
+            final int myChunkSize = dh.getChunkSize();
             
-            if(bytesRead2 < 0) {
-                //last record...do not set the chunk bit.
-                //buffer1 contains the last chunked record!!
-               
-                //Need to distinguish if this is the first 
-                //chunk to ensure the TYPE and ID are sent
-                if ( chunkbyte == CHUNK ){
-                    chunkbyte = ONLY_CHUNK;
-                } else {
-                    chunkbyte = LAST_CHUNK;
-                }
-                sendChunk(os, position, buffer1, 0, bytesRead1, chunkbyte);
-                break;
+            byte[] buffer1 = new byte[myChunkSize]; 
+            byte[] buffer2 = new byte[myChunkSize]; 
+            
+            int bytesRead1 = 0 , bytesRead2 = 0;
+    
+            bytesRead1 = in.read(buffer1);
+            
+            if(bytesRead1 < 0) {
+                sendHeader(os, position, 0, ONLY_CHUNK);
+                os.write(pad, 0, dimePadding(0));
+                return;
             }
-            
-            sendChunk(os, position, buffer1, 0, bytesRead1, chunkbyte);
-            //set chunk byte to next chunk flag to avoid
-            //sending TYPE and ID on subsequent chunks
-            chunkbyte = CHUNK_NEXT;
-            //now that we have written out buffer1, copy buffer2 into to buffer1
-            System.arraycopy(buffer2,0,buffer1,0,myChunkSize);
-            bytesRead1 = bytesRead2;
-            
-        }while(bytesRead2 > 0);
+            byte chunkbyte = CHUNK;
+            do {
+                bytesRead2 = in.read(buffer2);
+                
+                if(bytesRead2 < 0) {
+                    //last record...do not set the chunk bit.
+                    //buffer1 contains the last chunked record!!
+                   
+                    //Need to distinguish if this is the first 
+                    //chunk to ensure the TYPE and ID are sent
+                    if ( chunkbyte == CHUNK ){
+                        chunkbyte = ONLY_CHUNK;
+                    } else {
+                        chunkbyte = LAST_CHUNK;
+                    }
+                    sendChunk(os, position, buffer1, 0, bytesRead1, chunkbyte);
+                    break;
+                }
+                
+                sendChunk(os, position, buffer1, 0, bytesRead1, chunkbyte);
+                //set chunk byte to next chunk flag to avoid
+                //sending TYPE and ID on subsequent chunks
+                chunkbyte = CHUNK_NEXT;
+                //now that we have written out buffer1, copy buffer2 into to buffer1
+                System.arraycopy(buffer2,0,buffer1,0,myChunkSize);
+                bytesRead1 = bytesRead2;
+                
+            }while(bytesRead2 > 0);
+        } finally {
+            try {
+                in.close();
+            }
+            catch (IOException e) {
+                // ignore
+            }
+        }
     }
 
     protected void sendChunk(java.io.OutputStream os,

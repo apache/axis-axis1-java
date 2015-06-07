@@ -126,8 +126,8 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-testutils</artifactId>
-                <version>1.2.13</version>
+                <artifactId>testutils</artifactId>
+                <version>1.2.15-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
