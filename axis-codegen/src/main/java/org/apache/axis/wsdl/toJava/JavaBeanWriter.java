@@ -637,9 +637,14 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println();
     }
 
+    /**
+     * Write a constructor containing the fields in this class.
+     * Will not write a construtor with more than 254 arguments as
+     * the Java compiler will choke.
+     */
     protected void writeMinimalConstructor() {
 
-        if (isUnion() || names.size() == 0) {
+        if (isUnion() || names.size() == 0 || names.size() > 254) {
             return;
         }
 
@@ -770,7 +775,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         int localParams = paramTypes.size() - names.size() / 2;
 
         // Now write the constructor signature
-        if (paramTypes.size() > 0) {
+        if (paramTypes.size() > 0 && paramTypes.size() < 255) {
 
             // Prevent name clash between local parameters and the
             // parameters for the super class
