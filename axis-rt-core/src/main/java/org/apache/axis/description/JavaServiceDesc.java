@@ -36,12 +36,13 @@ import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -520,11 +521,15 @@ public class JavaServiceDesc implements ServiceDesc {
         getSyncedOperationsForName(implClass,
                                    ((OperationDesc)overloads.get(0)).getName());
 
+        // Convert to array before sorting to avoid concurrency issues
+        OperationDesc[] array = (OperationDesc[])overloads.toArray(
+                new OperationDesc[overloads.size()]);
+
         // Sort the overloads by number of arguments - prevents us calling methods
         // with more parameters than supplied in the request (with missing parameters
         // defaulted to null) when a perfectly good method exists with exactly the
         // supplied parameters.
-        Collections.sort(overloads,
+        Arrays.sort(array,
             new Comparator() {
                 public int compare(Object o1, Object o2)
                 {
@@ -535,8 +540,7 @@ public class JavaServiceDesc implements ServiceDesc {
                 }
             });
 
-        OperationDesc [] array = new OperationDesc [overloads.size()];
-        return (OperationDesc[])overloads.toArray(array);
+        return array;
     }
 
     private synchronized void initQNameMap() {
